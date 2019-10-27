@@ -1,14 +1,10 @@
-gleam_stdlib
-=====
+# Gleam stdlib
 
-An OTP library
+Gleam's standard library!
 
-Build
------
+## Quick reference
 
-    $ rebar3 compile
-
-Run Tests
------
-
-    $ rebar3 eunit
+```sh
+# Run the unit tests
+rebar3 eunit
+```
