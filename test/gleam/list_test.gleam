@@ -85,8 +85,8 @@ pub fn map_test() {
 pub fn traverse_test() {
   let fun = fn(x) {
     case x == 6 || x == 5 || x == 4 {
-    | True -> Ok(x * 2)
-    | False -> Error(x)
+      True -> Ok(x * 2)
+      False -> Error(x)
     }
   }
 
@@ -156,8 +156,8 @@ pub fn fold_right_test() {
 pub fn find_map_test() {
   let f = fn(x) {
     case x {
-    | 2 -> Ok(4)
-    | _ -> Error(0)
+      2 -> Ok(4)
+      _ -> Error(0)
     }
   }
 

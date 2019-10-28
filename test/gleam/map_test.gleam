@@ -194,8 +194,8 @@ pub fn update_test() {
 
   let inc_or_zero = fn(x) {
     case x {
-    | Ok(i) -> i + 1
-    | Error(_) -> 0
+      Ok(i) -> i + 1
+      Error(_) -> 0
     }
   }
 

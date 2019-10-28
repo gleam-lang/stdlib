@@ -36,8 +36,9 @@ pub external fn uppercase(Iodata) -> Iodata = "string" "uppercase"
 
 pub external fn reverse(Iodata) -> Iodata = "string" "reverse"
 
-enum Direction =
-  | All
+enum Direction {
+  All
+}
 
 external fn erl_split(Iodata, String, Direction) -> List(Iodata) =
   "string" "split"

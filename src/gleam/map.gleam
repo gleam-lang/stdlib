@@ -78,15 +78,15 @@ pub fn drop(from map, drop disallowed_keys) {
 
 pub fn update(in map, update key, with fun) {
   case get(map, key) {
-  | Ok(value) -> insert(map, key, fun(Ok(value)))
-  | Error(_) -> insert(map, key, fun(Error(Nil)))
+    Ok(value) -> insert(map, key, fun(Ok(value)))
+    Error(_) -> insert(map, key, fun(Error(Nil)))
   }
 }
 
 fn do_fold(list, initial, fun) {
   case list {
-    | [] -> initial
-    | [Pair(k, v) | tail] -> do_fold(tail, fun(k, v, initial), fun)
+    [] -> initial
+    [Pair(k, v) | tail] -> do_fold(tail, fun(k, v, initial), fun)
   }
 }
 
