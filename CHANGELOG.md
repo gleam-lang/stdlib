@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Syntax has been for Gleam v0.5.
 - Labels have been added to functions throughout the stdlib.
 - `map.fetch` has been renamed to `map.get` and `map.put` to `map.insert`.
 - `list.find` has been renamed `list.find_map` and a new `list.find` has been
