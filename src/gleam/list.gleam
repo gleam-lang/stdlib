@@ -245,7 +245,7 @@ fn merge_sort(a, b, compare) {
     _, [] -> a
     [ax | ar], [bx | br] ->
       case compare(ax, bx) {
-        order.lt -> [ax | merge_sort(ar, b, compare)]
+        order.Lt -> [ax | merge_sort(ar, b, compare)]
         _ -> [bx | merge_sort(a, br, compare)]
       }
   }
