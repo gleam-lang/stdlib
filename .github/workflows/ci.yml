@@ -1,0 +1,17 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container:
+      image: erlang:22.1
+    steps:
+      - uses: actions/checkout@v1
+      - run: rebar3 compile
+      - run: rebar3 eunit
