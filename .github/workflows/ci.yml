@@ -3,15 +3,21 @@ name: CI
 on:
   push:
     branches:
-      - '*'
+      - 'master'
+      - 'v*.*.*'
   pull_request:
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    container:
-      image: erlang:22.1
     steps:
-      - uses: actions/checkout@v1
-      - run: rebar3 compile
+      - uses: actions/checkout@v1.0.0
+      - uses: gleam-lang/setup-erlang@v1.0.0
+        with:
+          otp-version: 22.1
+      - uses: gleam-lang/setup-gleam@v1.0.1
+        with:
+          # gleam-version: 0.4.2
+          gleam-version: ref:master
+      - run: rebar3 install_deps
       - run: rebar3 eunit
