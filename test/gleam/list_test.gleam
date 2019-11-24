@@ -352,39 +352,50 @@ pub fn repeat_test() {
 }
 
 pub fn split_test() {
-  list.split([], 0)
+  []
+  |> list.split(_, 0)
   |> expect.equal(_, struct([], []))
 
-  list.split([0, 1, 2, 3, 4], 0)
+  [0, 1, 2, 3, 4]
+  |> list.split(_, 0)
   |> expect.equal(_, struct([], [0, 1, 2, 3, 4]))
 
-  list.split([0, 1, 2, 3, 4], -2)
+  [0, 1, 2, 3, 4]
+  |> list.split(_, -2)
   |> expect.equal(_, struct([], [0, 1, 2, 3, 4]))
 
-  list.split([0, 1, 2, 3, 4], 1)
+  [0, 1, 2, 3, 4]
+  |> list.split(_, 1)
   |> expect.equal(_, struct([0], [1, 2, 3, 4]))
 
-  list.split([0, 1, 2, 3, 4], 3)
+  [0, 1, 2, 3, 4]
+  |> list.split(_, 3)
   |> expect.equal(_, struct([0, 1, 2], [3, 4]))
 
-  list.split([0, 1, 2, 3, 4], 9)
+  [0, 1, 2, 3, 4]
+  |> list.split(_, 9)
   |> expect.equal(_, struct([0, 1, 2, 3, 4], []))
 }
 
 pub fn split_while_test() {
-  list.split_while([], fn(x) { x <= 5 })
+  []
+  |> list.split_while(_, fn(x) { x <= 5 })
   |> expect.equal(_, struct([], []))
 
-  list.split_while([1, 2, 3, 4, 5], fn(x) { x <= 5 })
+  [1, 2, 3, 4, 5]
+  |> list.split_while(_, fn(x) { x <= 5 })
   |> expect.equal(_, struct([1, 2, 3, 4, 5], []))
 
-  list.split_while([1, 2, 3, 4, 5], fn(x) { x == 2 })
+  [1, 2, 3, 4, 5]
+  |> list.split_while(_, fn(x) { x == 2 })
   |> expect.equal(_, struct([], [1, 2, 3, 4, 5]))
 
-  list.split_while([1, 2, 3, 4, 5], fn(x) { x <= 3 })
+  [1, 2, 3, 4, 5]
+  |> list.split_while(_, fn(x) { x <= 3 })
   |> expect.equal(_, struct([1, 2, 3], [4, 5]))
 
-  list.split_while([1, 2, 3, 4, 5], fn(x) { x <= -3 })
+  [1, 2, 3, 4, 5]
+  |> list.split_while(_, fn(x) { x <= -3 })
   |> expect.equal(_, struct([], [1, 2, 3, 4, 5]))
 }
 
