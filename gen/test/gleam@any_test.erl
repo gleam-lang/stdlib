@@ -1,7 +1,7 @@
 -module(gleam@any_test).
 -compile(no_auto_import).
 
--export([string_test/0, int_test/0, float_test/0, thunk_test/0, bool_test/0, atom_test/0, list_test/0, pair_test/0, field_test/0]).
+-export([string_test/0, int_test/0, float_test/0, thunk_test/0, bool_test/0, atom_test/0, list_test/0, field_test/0]).
 
 string_test() ->
     gleam@expect:equal(gleam@any:string(gleam@any:from(<<"">>)), {ok, <<"">>}),
@@ -115,36 +115,6 @@ list_test() ->
             ),
             fun gleam@any:int/1
         )
-    ).
-
-pair_test() ->
-    gleam@expect:equal(
-        gleam@any:pair(gleam@any:from({1, []})),
-        {ok, {gleam@any:from(1), gleam@any:from([])}}
-    ),
-    gleam@expect:equal(
-        gleam@any:pair(gleam@any:from({<<"ok">>, <<"ok">>})),
-        {ok, {gleam@any:from(<<"ok">>), gleam@any:from(<<"ok">>)}}
-    ),
-    gleam@expect:equal(
-        gleam@result:then(
-            gleam@result:then(
-                gleam@any:pair(gleam@any:from({1, 2.0})),
-                fun(X) ->
-                    gleam@result:map(
-                        gleam@any:int(gleam@pair:first(X)),
-                        fun(F) -> {F, gleam@pair:second(X)} end
-                    )
-                end
-            ),
-            fun(X) ->
-                gleam@result:map(
-                    gleam@any:float(gleam@pair:second(X)),
-                    fun(F) -> {gleam@pair:first(X), F} end
-                )
-            end
-        ),
-        {ok, {1, 2.0}}
     ).
 
 field_test() ->

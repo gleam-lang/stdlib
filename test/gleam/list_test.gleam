@@ -3,7 +3,7 @@ import gleam/list
 import gleam/int
 import gleam/float
 import gleam/string
-import gleam/pair.{Pair}
+import gleam/pair
 
 pub fn length_test() {
   list.length([])
@@ -222,13 +222,13 @@ pub fn zip_test() {
   |> expect.equal(_, [])
 
   list.zip([1, 2, 3], [4, 5, 6])
-  |> expect.equal(_, [Pair(1, 4), Pair(2, 5), Pair(3, 6)])
+  |> expect.equal(_, [struct(1, 4), struct(2, 5), struct(3, 6)])
 
   list.zip([5, 6], [1, 2, 3])
-  |> expect.equal(_, [Pair(5, 1), Pair(6, 2)])
+  |> expect.equal(_, [struct(5, 1), struct(6, 2)])
 
   list.zip([5, 6, 7], [1, 2])
-  |> expect.equal(_, [Pair(5, 1), Pair(6, 2)])
+  |> expect.equal(_, [struct(5, 1), struct(6, 2)])
 }
 
 pub fn strict_zip_test() {
@@ -240,9 +240,9 @@ pub fn strict_zip_test() {
 
   list.strict_zip([1, 2, 3], [4, 5, 6])
   |> expect.equal(_, Ok([
-    Pair(1, 4),
-    Pair(2, 5),
-    Pair(3, 6),
+    struct(1, 4),
+    struct(2, 5),
+    struct(3, 6),
   ]))
 
   list.strict_zip([5, 6], [1, 2, 3])
@@ -307,8 +307,8 @@ pub fn sort_test() {
 }
 
 pub fn index_map_test() {
-  list.index_map([3, 4, 5], fn(i, x) { Pair(i, x) })
-  |> expect.equal(_, [Pair(0, 3), Pair(1, 4), Pair(2, 5)])
+  list.index_map([3, 4, 5], fn(i, x) { struct(i, x) })
+  |> expect.equal(_, [struct(0, 3), struct(1, 4), struct(2, 5)])
 
   let f = fn(i, x) {
     string.append(x, int.to_string(i))
@@ -353,44 +353,44 @@ pub fn repeat_test() {
 
 pub fn split_test() {
   list.split([], 0)
-  |> expect.equal(_, Pair([], []))
+  |> expect.equal(_, struct([], []))
 
   list.split([0, 1, 2, 3, 4], 0)
-  |> expect.equal(_, Pair([], [0, 1, 2, 3, 4]))
+  |> expect.equal(_, struct([], [0, 1, 2, 3, 4]))
 
   list.split([0, 1, 2, 3, 4], -2)
-  |> expect.equal(_, Pair([], [0, 1, 2, 3, 4]))
+  |> expect.equal(_, struct([], [0, 1, 2, 3, 4]))
 
   list.split([0, 1, 2, 3, 4], 1)
-  |> expect.equal(_, Pair([0], [1, 2, 3, 4]))
+  |> expect.equal(_, struct([0], [1, 2, 3, 4]))
 
   list.split([0, 1, 2, 3, 4], 3)
-  |> expect.equal(_, Pair([0, 1, 2], [3, 4]))
+  |> expect.equal(_, struct([0, 1, 2], [3, 4]))
 
   list.split([0, 1, 2, 3, 4], 9)
-  |> expect.equal(_, Pair([0, 1, 2, 3, 4], []))
+  |> expect.equal(_, struct([0, 1, 2, 3, 4], []))
 }
 
 pub fn split_while_test() {
   list.split_while([], fn(x) { x <= 5 })
-  |> expect.equal(_, Pair([], []))
+  |> expect.equal(_, struct([], []))
 
   list.split_while([1, 2, 3, 4, 5], fn(x) { x <= 5 })
-  |> expect.equal(_, Pair([1, 2, 3, 4, 5], []))
+  |> expect.equal(_, struct([1, 2, 3, 4, 5], []))
 
   list.split_while([1, 2, 3, 4, 5], fn(x) { x == 2 })
-  |> expect.equal(_, Pair([], [1, 2, 3, 4, 5]))
+  |> expect.equal(_, struct([], [1, 2, 3, 4, 5]))
 
   list.split_while([1, 2, 3, 4, 5], fn(x) { x <= 3 })
-  |> expect.equal(_, Pair([1, 2, 3], [4, 5]))
+  |> expect.equal(_, struct([1, 2, 3], [4, 5]))
 
   list.split_while([1, 2, 3, 4, 5], fn(x) { x <= -3 })
-  |> expect.equal(_, Pair([], [1, 2, 3, 4, 5]))
+  |> expect.equal(_, struct([], [1, 2, 3, 4, 5]))
 }
 
 
 pub fn key_find_test() {
-  let proplist = [Pair(0, "1"), Pair(1, "2")]
+  let proplist = [struct(0, "1"), struct(1, "2")]
 
   proplist
   |> list.key_find(_, 0)

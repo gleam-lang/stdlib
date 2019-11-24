@@ -1,29 +1,24 @@
-pub struct Pair(a, b) {
-  first: a
-  second: b
-}
-
-pub fn first(tup) {
-  let Pair(a, _) = tup
+pub fn first(pair) {
+  let struct(a, _) = pair
   a
 }
 
-pub fn second(tup) {
-  let Pair(_, a) = tup
+pub fn second(pair) {
+  let struct(_, a) = pair
   a
 }
 
-pub fn swap(tup) {
-  let Pair(a, b) = tup
-  Pair(b, a)
+pub fn swap(pair) {
+  let struct(a, b) = pair
+  struct(b, a)
 }
 
-pub fn map_first(of tup, with fun) {
-    let Pair(a, b) = tup
-    Pair(fun(a), b)
+pub fn map_first(of pair, with fun) {
+    let struct(a, b) = pair
+    struct(fun(a), b)
 }
 
-pub fn map_second(of tup, with fun) {
-    let Pair(a, b) = tup
-    Pair(a, fun(b))
+pub fn map_second(of pair, with fun) {
+    let struct(a, b) = pair
+    struct(a, fun(b))
 }
