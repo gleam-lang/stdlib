@@ -1,17 +1,16 @@
 import gleam/any
 import gleam/result
 import gleam/list
-import gleam/pair.{Pair}
 
 pub external type Map(key, value);
 
 pub external fn size(Map(k, v)) -> Int
   = "maps" "size"
 
-pub external fn to_list(Map(key, value)) -> List(Pair(key, value))
+pub external fn to_list(Map(key, value)) -> List(struct(key, value))
   = "maps" "to_list"
 
-pub external fn from_list(List(Pair(key, value))) -> Map(key, value)
+pub external fn from_list(List(struct(key, value))) -> Map(key, value)
   = "maps" "from_list"
 
 external fn is_key(key, Map(key, v)) -> Bool
@@ -86,7 +85,7 @@ pub fn update(in map, update key, with fun) {
 fn do_fold(list, initial, fun) {
   case list {
     [] -> initial
-    [Pair(k, v) | tail] -> do_fold(tail, fun(k, v, initial), fun)
+    [struct(k, v) | tail] -> do_fold(tail, fun(k, v, initial), fun)
   }
 }
 

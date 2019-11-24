@@ -1,7 +1,7 @@
 -module(gleam@any).
 -compile(no_auto_import).
 
--export([from/1, unsafe_coerce/1, string/1, int/1, float/1, atom/1, bool/1, thunk/1, list/2, pair/1, field/2]).
+-export([from/1, unsafe_coerce/1, string/1, int/1, float/1, atom/1, bool/1, thunk/1, list/2, field/2]).
 
 from(A) ->
     gleam_stdlib:identity(A).
@@ -35,9 +35,6 @@ list(Any, DecoderType) ->
         list_any(Any),
         fun(Capture1) -> gleam@list:traverse(Capture1, DecoderType) end
     ).
-
-pair(A) ->
-    gleam_stdlib:decode_pair(A).
 
 field(A, B) ->
     gleam_stdlib:decode_field(A, B).
