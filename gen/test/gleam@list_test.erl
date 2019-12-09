@@ -42,14 +42,14 @@ filter_test() ->
         [5, 7]
     ),
     gleam@expect:equal(
-        gleam@list:filter([0, 4, 5, 7, 3], fun(X) -> X < 4 end),
+        gleam@list:filter([0, 4, 5, 7, 3], fun(X1) -> X1 < 4 end),
         [0, 3]
     ).
 
 map_test() ->
     gleam@expect:equal(gleam@list:map([], fun(X) -> X * 2 end), []),
     gleam@expect:equal(
-        gleam@list:map([0, 4, 5, 7, 3], fun(X) -> X * 2 end),
+        gleam@list:map([0, 4, 5, 7, 3], fun(X1) -> X1 * 2 end),
         [0, 8, 10, 14, 6]
     ).
 
@@ -126,7 +126,7 @@ all_test() ->
         true
     ),
     gleam@expect:equal(
-        gleam@list:all([1, 2, 3, 4, 5], fun(X) -> X < 0 end),
+        gleam@list:all([1, 2, 3, 4, 5], fun(X1) -> X1 < 0 end),
         false
     ),
     gleam@expect:equal(gleam@list:all([], fun(_) -> false end), true).
@@ -137,7 +137,7 @@ any_test() ->
         true
     ),
     gleam@expect:equal(
-        gleam@list:any([1, 2, 3, 4, 5], fun(X) -> X < 0 end),
+        gleam@list:any([1, 2, 3, 4, 5], fun(X1) -> X1 < 0 end),
         false
     ),
     gleam@expect:equal(gleam@list:any([], fun(_) -> false end), false).
@@ -216,7 +216,7 @@ index_map_test() ->
         gleam@list:index_map([3, 4, 5], fun(I, X) -> {I, X} end),
         [{0, 3}, {1, 4}, {2, 5}]
     ),
-    F = fun(I, X) -> gleam@string:append(X, gleam@int:to_string(I)) end,
+    F = fun(I1, X1) -> gleam@string:append(X1, gleam@int:to_string(I1)) end,
     gleam@expect:equal(
         gleam@list:index_map([<<"a">>, <<"b">>, <<"c">>], F),
         [<<"a0">>, <<"b1">>, <<"c2">>]
@@ -268,19 +268,19 @@ split_while_test() ->
         {[], []}
     ),
     gleam@expect:equal(
-        gleam@list:split_while([1, 2, 3, 4, 5], fun(X) -> X =< 5 end),
+        gleam@list:split_while([1, 2, 3, 4, 5], fun(X1) -> X1 =< 5 end),
         {[1, 2, 3, 4, 5], []}
     ),
     gleam@expect:equal(
-        gleam@list:split_while([1, 2, 3, 4, 5], fun(X) -> X =:= 2 end),
+        gleam@list:split_while([1, 2, 3, 4, 5], fun(X2) -> X2 =:= 2 end),
         {[], [1, 2, 3, 4, 5]}
     ),
     gleam@expect:equal(
-        gleam@list:split_while([1, 2, 3, 4, 5], fun(X) -> X =< 3 end),
+        gleam@list:split_while([1, 2, 3, 4, 5], fun(X3) -> X3 =< 3 end),
         {[1, 2, 3], [4, 5]}
     ),
     gleam@expect:equal(
-        gleam@list:split_while([1, 2, 3, 4, 5], fun(X) -> X =< -3 end),
+        gleam@list:split_while([1, 2, 3, 4, 5], fun(X4) -> X4 =< -3 end),
         {[], [1, 2, 3, 4, 5]}
     ).
 
