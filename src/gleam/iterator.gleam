@@ -63,7 +63,6 @@ pub fn repeat(x: element) -> Iterator(element) {
   repeatedly(fn() { x })
 }
 
-// TODO: test
 // TODO: document
 pub fn from_list(list: List(element)) -> Iterator(element) {
   unfold(list, fn(acc) {
@@ -96,11 +95,28 @@ pub fn run(iterator) -> Nil {
   fold(iterator, Nil, fn(_, acc) { acc })
 }
 
-// TODO: test
 // TODO: document
 pub fn to_list(iterator: Iterator(element)) -> List(element) {
   iterator
   |> fold(_, [], fn(e, acc) { [e | acc] })
+  |> list.reverse
+}
+
+fn do_take(iterator, desired, acc) {
+  case desired > 0 {
+    True -> case iterator() {
+      Continue(element, iterator) -> do_take(iterator, desired - 1, [element | acc])
+      Stop -> acc
+    }
+    False -> acc
+  }
+}
+
+// TODO: document
+pub fn take(from iterator: Iterator(e), up_to desired: Int) -> List(e) {
+  iterator
+  |> unopaque
+  |> do_take(_, desired, [])
   |> list.reverse
 }
 
