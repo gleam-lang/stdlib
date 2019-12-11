@@ -92,3 +92,10 @@ pub fn filter_test() {
   test([1, 2, 3, 4, 5], even)
   test([1, 2, 3, 4, 5, 6], even)
 }
+
+pub fn repeat_test() {
+  1
+  |> iterator.repeat
+  |> iterator.take(_, 5)
+  |> expect.equal(_, [1, 1, 1, 1, 1])
+}
