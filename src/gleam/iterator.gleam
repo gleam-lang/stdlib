@@ -59,7 +59,6 @@ pub fn repeatedly(f: fn() -> element) -> Iterator(element) {
   unfold(Nil, fn(acc) { Next(f(), acc) })
 }
 
-// TODO: test
 // TODO: document
 pub fn repeat(x: element) -> Iterator(element) {
   repeatedly(fn() { x })
@@ -154,7 +153,6 @@ fn do_filter(iterator, predicate) {
   }
 }
 
-// TODO: test
 // TODO: document
 pub fn filter(iterator: Iterator(a), for predicate: fn(a) -> Bool) -> Iterator(a) {
   iterator
