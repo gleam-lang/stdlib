@@ -48,7 +48,9 @@ fn do_unfold(initial, f) {
 // TODO: test
 // TODO: document
 pub fn unfold(from initial: acc, with f: fn(acc) -> Step(element, acc)) -> Iterator(element) {
-  opaque(do_unfold(initial, f))
+  initial
+  |> do_unfold(_, f)
+  |> opaque
 }
 
 // TODO: test
@@ -82,10 +84,11 @@ fn do_fold(iterator, initial, f) {
   }
 }
 
-// TODO: test
 // TODO: document
 pub fn fold(over iterator: Iterator(e), from initial: acc, with f: fn(e, acc) -> acc) -> acc {
-  do_fold(unopaque(iterator), initial, f)
+  iterator
+  |> unopaque
+  |> do_fold(_, initial, f)
 }
 
 // TODO: test
@@ -134,7 +137,10 @@ fn do_map(iterator, f) {
 // TODO: test
 // TODO: document
 pub fn map(over iterator: Iterator(a), with f: fn(a) -> b) -> Iterator(b) {
-  opaque(do_map(unopaque(iterator), f))
+  iterator
+  |> unopaque
+  |> do_map(_, f)
+  |> opaque
 }
 
 fn do_filter(iterator, predicate) {
@@ -152,5 +158,8 @@ fn do_filter(iterator, predicate) {
 // TODO: test
 // TODO: document
 pub fn filter(iterator: Iterator(a), for predicate: fn(a) -> Bool) -> Iterator(a) {
-  opaque(do_filter(unopaque(iterator), predicate))
+  iterator
+  |> unopaque
+  |> do_filter(_, predicate)
+  |> opaque
 }
