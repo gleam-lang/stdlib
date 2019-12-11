@@ -39,3 +39,19 @@ pub fn take_test() {
   test(2, [0, 1, 2, 3, 4])
   test(22, [0, 1, 2, 3, 4])
 }
+
+// a |> from_list |> fold(_, a, f) == a |> list.fold(_, a, f)
+pub fn fold_test() {
+  let test = fn(subject, acc, f) {
+    subject
+    |> iterator.from_list
+    |> iterator.fold(_, acc, f)
+    |> expect.equal(_, list.fold(subject, acc, f))
+  }
+
+  let f = fn(e, acc) { [e | acc] }
+  test([], [], f)
+  test([1], [], f)
+  test([1, 2, 3], [], f)
+  test([1, 2, 3, 4, 5, 6, 7, 8], [], f)
+}
