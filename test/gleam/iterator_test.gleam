@@ -55,3 +55,20 @@ pub fn fold_test() {
   test([1, 2, 3], [], f)
   test([1, 2, 3, 4, 5, 6, 7, 8], [], f)
 }
+
+// a |> from_list |> map(_, f) |> to_list == a |> list.map(_, f)
+pub fn map_test() {
+  let test = fn(subject, f) {
+    subject
+    |> iterator.from_list
+    |> iterator.map(_, f)
+    |> iterator.to_list
+    |> expect.equal(_, list.map(subject, f))
+  }
+
+  let f = fn(e) { e * 2 }
+  test([], f)
+  test([1], f)
+  test([1, 2, 3], f)
+  test([1, 2, 3, 4, 5, 6, 7, 8], f)
+}
