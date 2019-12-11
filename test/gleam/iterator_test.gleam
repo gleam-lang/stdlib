@@ -72,3 +72,23 @@ pub fn map_test() {
   test([1, 2, 3], f)
   test([1, 2, 3, 4, 5, 6, 7, 8], f)
 }
+
+// a |> from_list |> filter(_, f) |> to_list == a |> list.filter(_, f)
+pub fn filter_test() {
+  let test = fn(subject, f) {
+    subject
+    |> iterator.from_list
+    |> iterator.filter(_, f)
+    |> iterator.to_list
+    |> expect.equal(_, list.filter(subject, f))
+  }
+
+  let even = fn(x) { x % 2 == 0 }
+  test([], even)
+  test([1], even)
+  test([1, 2], even)
+  test([1, 2, 3], even)
+  test([1, 2, 3, 4], even)
+  test([1, 2, 3, 4, 5], even)
+  test([1, 2, 3, 4, 5, 6], even)
+}

@@ -134,7 +134,6 @@ fn do_map(iterator, f) {
   }
 }
 
-// TODO: test
 // TODO: document
 pub fn map(over iterator: Iterator(a), with f: fn(a) -> b) -> Iterator(b) {
   iterator
@@ -147,7 +146,7 @@ fn do_filter(iterator, predicate) {
   fn() {
     case iterator() {
       Continue(e, iterator) -> case predicate(e) {
-        True -> Continue(e, iterator)
+        True -> Continue(e, do_filter(iterator, predicate))
         False -> do_filter(iterator, predicate)()
       }
       Stop -> Stop
