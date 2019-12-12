@@ -45,7 +45,6 @@ fn do_unfold(initial, f) {
   }
 }
 
-// TODO: test
 // TODO: document
 pub fn unfold(from initial: acc, with f: fn(acc) -> Step(element, acc)) -> Iterator(element) {
   initial
