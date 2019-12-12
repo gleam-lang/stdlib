@@ -107,3 +107,13 @@ pub fn cycle_test() {
   |> iterator.take(_, 9)
   |> expect.equal(_, [1, 2, 3, 1, 2, 3, 1, 2, 3])
 }
+
+pub fn unfold_test() {
+  iterator.unfold(2, fn(acc) { iterator.Next(acc, acc * 2) })
+  |> iterator.take(_, 5)
+  |> expect.equal(_, [2, 4, 8, 16, 32])
+
+  iterator.unfold(2, fn(_) { iterator.Done })
+  |> iterator.take(_, 5)
+  |> expect.equal(_, [])
+}
