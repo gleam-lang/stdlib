@@ -176,3 +176,20 @@ pub fn cycle(iterator: Iterator(a)) -> Iterator(a) {
   |> do_cycle(_, iterator)
   |> opaque
 }
+
+fn do_range(current, limit, inc) -> fn() -> Action(Int) {
+  case current == limit {
+    True -> fn() { Stop }
+    False -> fn() { Continue(current, do_range(current + inc, limit, inc)) }
+  }
+}
+
+// TODO: document
+pub fn range(from start, to stop) -> Iterator(Int) {
+  case start < stop {
+    True -> 1
+    False -> -1
+  }
+  |> do_range(start, stop, _)
+  |> opaque
+}

@@ -117,3 +117,29 @@ pub fn unfold_test() {
   |> iterator.take(_, 5)
   |> expect.equal(_, [])
 }
+
+pub fn range_test() {
+  iterator.range(0, 0)
+  |> iterator.to_list
+  |> expect.equal(_, [])
+
+  iterator.range(1, 1)
+  |> iterator.to_list
+  |> expect.equal(_, [])
+
+  iterator.range(-1, -1)
+  |> iterator.to_list
+  |> expect.equal(_, [])
+
+  iterator.range(0, 1)
+  |> iterator.to_list
+  |> expect.equal(_, [0])
+
+  iterator.range(0, 5)
+  |> iterator.to_list
+  |> expect.equal(_, [0, 1, 2, 3, 4])
+
+  iterator.range(1, -5)
+  |> iterator.to_list
+  |> expect.equal(_, [1, 0, -1, -2, -3, -4])
+}
