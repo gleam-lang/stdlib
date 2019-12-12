@@ -99,3 +99,11 @@ pub fn repeat_test() {
   |> iterator.take(_, 5)
   |> expect.equal(_, [1, 1, 1, 1, 1])
 }
+
+pub fn cycle_test() {
+  [1, 2, 3]
+  |> iterator.from_list
+  |> iterator.cycle
+  |> iterator.take(_, 9)
+  |> expect.equal(_, [1, 2, 3, 1, 2, 3, 1, 2, 3])
+}
