@@ -160,3 +160,20 @@ pub fn filter(iterator: Iterator(a), for predicate: fn(a) -> Bool) -> Iterator(a
   |> do_filter(_, predicate)
   |> opaque
 }
+
+fn do_cycle(next: fn() -> Action(a), reset: fn() -> Action(a)) {
+  fn() {
+    case next() {
+      Continue(e, iterator) -> Continue(e, do_cycle(iterator, reset))
+      Stop -> do_cycle(reset, reset)()
+    }
+  }
+}
+
+// TODO: document
+pub fn cycle(iterator: Iterator(a)) -> Iterator(a) {
+  let iterator = iterator |> unopaque
+  iterator
+  |> do_cycle(_, iterator)
+  |> opaque
+}
