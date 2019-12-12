@@ -119,27 +119,23 @@ pub fn unfold_test() {
 }
 
 pub fn range_test() {
-  iterator.range(0, 0)
-  |> iterator.to_list
-  |> expect.equal(_, [])
+  let test = fn(a, b, expected) {
+    iterator.range(a, b)
+    |> iterator.to_list
+    |> expect.equal(_, expected)
+  }
 
-  iterator.range(1, 1)
-  |> iterator.to_list
-  |> expect.equal(_, [])
+  test(0, 0, [])
+  test(1, 1, [])
+  test(-1, -1, [])
+  test(0, 1, [0])
+  test(0, 5, [0, 1, 2, 3, 4])
+  test(1, -5, [1, 0, -1, -2, -3, -4])
+}
 
-  iterator.range(-1, -1)
+pub fn drop_test() {
+  iterator.range(0, 10)
+  |> iterator.drop(_, 5)
   |> iterator.to_list
-  |> expect.equal(_, [])
-
-  iterator.range(0, 1)
-  |> iterator.to_list
-  |> expect.equal(_, [0])
-
-  iterator.range(0, 5)
-  |> iterator.to_list
-  |> expect.equal(_, [0, 1, 2, 3, 4])
-
-  iterator.range(1, -5)
-  |> iterator.to_list
-  |> expect.equal(_, [1, 0, -1, -2, -3, -4])
+  |> expect.equal(_, [5, 6, 7, 8, 9])
 }
