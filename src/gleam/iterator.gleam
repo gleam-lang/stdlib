@@ -121,6 +121,24 @@ pub fn take(from iterator: Iterator(e), up_to desired: Int) -> List(e) {
   |> list.reverse
 }
 
+fn do_drop(iterator, desired) {
+  case desired > 0 {
+    True -> case iterator() {
+      Continue(_, iterator) -> do_drop(iterator, desired - 1)
+      Stop -> fn() { Stop }
+    }
+    False -> iterator
+  }
+}
+
+// TODO: document
+pub fn drop(from iterator: Iterator(e), up_to desired: Int) -> Iterator(e) {
+  iterator
+  |> unopaque
+  |> do_drop(_, desired)
+  |> opaque
+}
+
 // Transforming Iterators
 
 fn do_map(iterator, f) {
