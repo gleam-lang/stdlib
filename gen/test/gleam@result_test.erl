@@ -18,7 +18,7 @@ map_test() ->
         {ok, <<"2">>}
     ),
     gleam@expect:equal(
-        gleam@result:map({error, 1}, fun(X) -> X + 1 end),
+        gleam@result:map({error, 1}, fun(X1) -> X1 + 1 end),
         {error, 1}
     ).
 
@@ -28,7 +28,7 @@ map_error_test() ->
         {ok, 1}
     ),
     gleam@expect:equal(
-        gleam@result:map_error({error, 1}, fun(X) -> {<<"ok">>, X + 1} end),
+        gleam@result:map_error({error, 1}, fun(X1) -> {<<"ok">>, X1 + 1} end),
         {error, {<<"ok">>, 2}}
     ).
 
@@ -47,7 +47,7 @@ then_test() ->
         {error, 1}
     ),
     gleam@expect:equal(
-        gleam@result:then({ok, 1}, fun(X) -> {ok, X + 1} end),
+        gleam@result:then({ok, 1}, fun(X1) -> {ok, X1 + 1} end),
         {ok, 2}
     ),
     gleam@expect:equal(

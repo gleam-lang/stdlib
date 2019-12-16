@@ -1,4 +1,3 @@
-import gleam/any
 import gleam/result
 import gleam/list
 

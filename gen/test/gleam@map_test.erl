@@ -145,6 +145,6 @@ fold_test() ->
     ),
     Add = fun(_, V, Acc) -> V + Acc end,
     gleam@expect:equal(gleam@map:fold(Dict, 0, Add), 6),
-    Concat = fun(K, _, Acc) -> gleam@string:append(Acc, K) end,
+    Concat = fun(K, _, Acc1) -> gleam@string:append(Acc1, K) end,
     gleam@expect:equal(gleam@map:fold(Dict, <<"">>, Concat), <<"abcd">>),
     gleam@expect:equal(gleam@map:fold(gleam@map:from_list([]), 0, Add), 0).
