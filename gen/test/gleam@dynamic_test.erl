@@ -188,9 +188,10 @@ element_test() ->
         gleam@dynamic:element(gleam@dynamic:from(OkOneStruct), -1)
     ),
     gleam@expect:is_error(gleam@dynamic:element(gleam@dynamic:from(1), 0)),
-    gleam@expect:is_error(
+    gleam@expect:equal(
         gleam@dynamic:element(
             gleam@dynamic:from(gleam@map:insert(gleam@map:new(), 1, OkAtom)),
             0
-        )
+        ),
+        {error, nil}
     ).
