@@ -256,5 +256,5 @@ pub fn element_test() {
   |> map.insert(_, 1, ok_atom)
   |> dynamic.from
   |> dynamic.element(_, 0)
-  |> expect.is_error
+  |> expect.equal(_, Error(Nil))
 }
