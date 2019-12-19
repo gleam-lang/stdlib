@@ -221,3 +221,40 @@ pub fn field_test() {
   |> dynamic.field(_, [])
   |> expect.is_error
 }
+
+pub fn element_test() {
+  let Ok(ok_atom) = atom.from_string("ok")
+  let Ok(error_atom) = atom.from_string("ok")
+  let ok_one_struct = struct(ok_atom, 1)
+
+  ok_one_struct
+  |> dynamic.from
+  |> dynamic.element(_, 0)
+  |> expect.equal(_, Ok(dynamic.from(ok_atom)))
+
+  ok_one_struct
+  |> dynamic.from
+  |> dynamic.element(_, 1)
+  |> expect.equal(_, Ok(dynamic.from(1)))
+
+  ok_one_struct
+  |> dynamic.from
+  |> dynamic.element(_, 2)
+  |> expect.is_error
+
+  ok_one_struct
+  |> dynamic.from
+  |> dynamic.element(_, -1)
+  |> expect.is_error
+
+  1
+  |> dynamic.from
+  |> dynamic.element(_, 0)
+  |> expect.is_error
+
+  map.new()
+  |> map.insert(_, 1, ok_atom)
+  |> dynamic.from
+  |> dynamic.element(_, 0)
+  |> expect.is_error
+}
