@@ -1,7 +1,7 @@
 -module(gleam@dynamic_test).
 -compile(no_auto_import).
 
--export([string_test/0, int_test/0, float_test/0, thunk_test/0, bool_test/0, atom_test/0, list_test/0, field_test/0]).
+-export([string_test/0, int_test/0, float_test/0, thunk_test/0, bool_test/0, atom_test/0, list_test/0, field_test/0, element_test/0]).
 
 string_test() ->
     gleam@expect:equal(
@@ -168,3 +168,29 @@ field_test() ->
     ),
     gleam@expect:is_error(gleam@dynamic:field(gleam@dynamic:from(1), OkAtom)),
     gleam@expect:is_error(gleam@dynamic:field(gleam@dynamic:from([]), [])).
+
+element_test() ->
+    {ok, OkAtom} = gleam@atom:from_string(<<"ok">>),
+    {ok, ErrorAtom} = gleam@atom:from_string(<<"ok">>),
+    OkOneStruct = {OkAtom, 1},
+    gleam@expect:equal(
+        gleam@dynamic:element(gleam@dynamic:from(OkOneStruct), 0),
+        {ok, gleam@dynamic:from(OkAtom)}
+    ),
+    gleam@expect:equal(
+        gleam@dynamic:element(gleam@dynamic:from(OkOneStruct), 1),
+        {ok, gleam@dynamic:from(1)}
+    ),
+    gleam@expect:is_error(
+        gleam@dynamic:element(gleam@dynamic:from(OkOneStruct), 2)
+    ),
+    gleam@expect:is_error(
+        gleam@dynamic:element(gleam@dynamic:from(OkOneStruct), -1)
+    ),
+    gleam@expect:is_error(gleam@dynamic:element(gleam@dynamic:from(1), 0)),
+    gleam@expect:is_error(
+        gleam@dynamic:element(
+            gleam@dynamic:from(gleam@map:insert(gleam@map:new(), 1, OkAtom)),
+            0
+        )
+    ).

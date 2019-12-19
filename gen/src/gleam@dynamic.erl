@@ -1,7 +1,7 @@
 -module(gleam@dynamic).
 -compile(no_auto_import).
 
--export([from/1, unsafe_coerce/1, string/1, int/1, float/1, atom/1, bool/1, thunk/1, list/2, field/2]).
+-export([from/1, unsafe_coerce/1, string/1, int/1, float/1, atom/1, bool/1, thunk/1, list/2, field/2, element/2]).
 
 from(A) ->
     gleam_stdlib:identity(A).
@@ -38,3 +38,6 @@ list(Dynamic, DecoderType) ->
 
 field(A, B) ->
     gleam_stdlib:decode_field(A, B).
+
+element(A, B) ->
+    gleam_stdlib:decode_element(A, B).
