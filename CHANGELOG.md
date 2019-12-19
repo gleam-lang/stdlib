@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.5.0 - 2019-12-16
 
 - Syntax has been updated for Gleam v0.5.
 - Labels have been added to functions throughout the stdlib.
