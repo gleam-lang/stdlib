@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- The `dynamic` module gains an `element` for decoding tuples.
+
 ## v0.5.0 - 2019-12-16
 
 - Syntax has been updated for Gleam v0.5.
@@ -13,6 +17,7 @@
 - The `string` module gains the `compare` function.
 - The `float` module gains the `max`,  and `min` functions.
 - The `int` module gains the `max`, and `min` functions.
+- The `Any` type and module have been renamed to `Dynamic`.
 
 ## v0.4.0 - 2019-09-19
 
