@@ -171,7 +171,6 @@ field_test() ->
 
 element_test() ->
     {ok, OkAtom} = gleam@atom:from_string(<<"ok">>),
-    {ok, ErrorAtom} = gleam@atom:from_string(<<"ok">>),
     OkOneStruct = {OkAtom, 1},
     gleam@expect:equal(
         gleam@dynamic:element(gleam@dynamic:from(OkOneStruct), 0),
@@ -188,10 +187,9 @@ element_test() ->
         gleam@dynamic:element(gleam@dynamic:from(OkOneStruct), -1)
     ),
     gleam@expect:is_error(gleam@dynamic:element(gleam@dynamic:from(1), 0)),
-    gleam@expect:equal(
+    gleam@expect:is_error(
         gleam@dynamic:element(
             gleam@dynamic:from(gleam@map:insert(gleam@map:new(), 1, OkAtom)),
             0
-        ),
-        {error, nil}
+        )
     ).

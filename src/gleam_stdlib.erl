@@ -70,17 +70,15 @@ decode_field(Data, Key) ->
       decode_error_msg(io_lib:format("a map with key `~p`", [Key]), Data)
   end.
 
-decode_element(Data, Position) ->
+decode_element(Data, Position) when is_tuple(Data) ->
   case catch element(Position + 1, Data) of
     {'EXIT', _Reason} ->
-      {error, nil};
+      {error, "Element position is out-of-bounds"};
 
     Value ->
-      {ok, Value};
-
-    _ ->
-      {error, nil}
-  end.
+      {ok, Value}
+  end;
+decode_element(Data, Position) -> decode_error_msg("a Tuple", Data).
 
 parse_int(String) ->
   case string:to_integer(binary:bin_to_list(String)) of
