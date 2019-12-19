@@ -224,7 +224,6 @@ pub fn field_test() {
 
 pub fn element_test() {
   let Ok(ok_atom) = atom.from_string("ok")
-  let Ok(error_atom) = atom.from_string("ok")
   let ok_one_struct = struct(ok_atom, 1)
 
   ok_one_struct
@@ -256,5 +255,5 @@ pub fn element_test() {
   |> map.insert(_, 1, ok_atom)
   |> dynamic.from
   |> dynamic.element(_, 0)
-  |> expect.equal(_, Error(Nil))
+  |> expect.is_error
 }

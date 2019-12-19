@@ -49,5 +49,5 @@ pub fn list(from dynamic, containing decoder_type) {
 pub external fn field(from: Dynamic, named: a) -> Result(Dynamic, String)
   = "gleam_stdlib" "decode_field"
 
-pub external fn element(from: Dynamic, position: Int) -> Result(Dynamic, Nil)
+pub external fn element(from: Dynamic, position: Int) -> Result(Dynamic, String)
   = "gleam_stdlib" "decode_element"
