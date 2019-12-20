@@ -78,7 +78,7 @@ decode_element(Data, Position) when is_tuple(Data) ->
     Value ->
       {ok, Value}
   end;
-decode_element(Data, Position) -> decode_error_msg("a Tuple", Data).
+decode_element(Data, _Position) -> decode_error_msg("a Tuple", Data).
 
 parse_int(String) ->
   case string:to_integer(binary:bin_to_list(String)) of
