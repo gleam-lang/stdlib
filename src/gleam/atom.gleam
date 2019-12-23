@@ -1,6 +1,8 @@
 pub external type Atom;
 
-pub struct AtomNotLoaded {}
+pub type AtomNotLoaded {
+  AtomNotLoaded
+}
 
 pub external fn from_string(String) -> Result(Atom, AtomNotLoaded) =
   "gleam_stdlib" "atom_from_string";

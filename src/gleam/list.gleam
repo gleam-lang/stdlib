@@ -2,7 +2,9 @@ import gleam/int
 import gleam/order
 import gleam/pair
 
-pub struct LengthMismatch {}
+pub type LengthMismatch {
+  LengthMismatch
+}
 
 // Using the Erlang C BIF implementation.
 //
@@ -196,7 +198,7 @@ pub fn zip(xs, ys) {
   case xs, ys {
     [], _ -> []
     _, [] -> []
-    [x | xs], [y | ys] -> [ struct(x, y) | zip(xs, ys) ]
+    [x | xs], [y | ys] -> [ tuple(x, y) | zip(xs, ys) ]
   }
 }
 
@@ -290,10 +292,10 @@ pub fn repeat(item a, times times) {
 
 fn do_split(list, n, taken) {
   case n <= 0 {
-    True -> struct(reverse(taken), list)
+    True -> tuple(reverse(taken), list)
     False ->
       case list {
-        [] -> struct(reverse(taken), [])
+        [] -> tuple(reverse(taken), [])
         [x | xs] -> do_split(xs, n - 1, [x | taken])
       }
   }
@@ -305,10 +307,10 @@ pub fn split(list list, on target) {
 
 fn do_split_while(list, f, acc) {
   case list {
-    [] -> struct(reverse(acc), [])
+    [] -> tuple(reverse(acc), [])
     [x | xs] ->
       case f(x) {
-        False -> struct(reverse(acc), list)
+        False -> tuple(reverse(acc), list)
         _ -> do_split_while(xs, f, [x | acc])
       }
   }

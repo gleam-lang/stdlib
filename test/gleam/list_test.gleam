@@ -222,13 +222,13 @@ pub fn zip_test() {
   |> expect.equal(_, [])
 
   list.zip([1, 2, 3], [4, 5, 6])
-  |> expect.equal(_, [struct(1, 4), struct(2, 5), struct(3, 6)])
+  |> expect.equal(_, [tuple(1, 4), tuple(2, 5), tuple(3, 6)])
 
   list.zip([5, 6], [1, 2, 3])
-  |> expect.equal(_, [struct(5, 1), struct(6, 2)])
+  |> expect.equal(_, [tuple(5, 1), tuple(6, 2)])
 
   list.zip([5, 6, 7], [1, 2])
-  |> expect.equal(_, [struct(5, 1), struct(6, 2)])
+  |> expect.equal(_, [tuple(5, 1), tuple(6, 2)])
 }
 
 pub fn strict_zip_test() {
@@ -240,9 +240,9 @@ pub fn strict_zip_test() {
 
   list.strict_zip([1, 2, 3], [4, 5, 6])
   |> expect.equal(_, Ok([
-    struct(1, 4),
-    struct(2, 5),
-    struct(3, 6),
+    tuple(1, 4),
+    tuple(2, 5),
+    tuple(3, 6),
   ]))
 
   list.strict_zip([5, 6], [1, 2, 3])
@@ -307,8 +307,8 @@ pub fn sort_test() {
 }
 
 pub fn index_map_test() {
-  list.index_map([3, 4, 5], fn(i, x) { struct(i, x) })
-  |> expect.equal(_, [struct(0, 3), struct(1, 4), struct(2, 5)])
+  list.index_map([3, 4, 5], fn(i, x) { tuple(i, x) })
+  |> expect.equal(_, [tuple(0, 3), tuple(1, 4), tuple(2, 5)])
 
   let f = fn(i, x) {
     string.append(x, int.to_string(i))
@@ -354,54 +354,54 @@ pub fn repeat_test() {
 pub fn split_test() {
   []
   |> list.split(_, 0)
-  |> expect.equal(_, struct([], []))
+  |> expect.equal(_, tuple([], []))
 
   [0, 1, 2, 3, 4]
   |> list.split(_, 0)
-  |> expect.equal(_, struct([], [0, 1, 2, 3, 4]))
+  |> expect.equal(_, tuple([], [0, 1, 2, 3, 4]))
 
   [0, 1, 2, 3, 4]
   |> list.split(_, -2)
-  |> expect.equal(_, struct([], [0, 1, 2, 3, 4]))
+  |> expect.equal(_, tuple([], [0, 1, 2, 3, 4]))
 
   [0, 1, 2, 3, 4]
   |> list.split(_, 1)
-  |> expect.equal(_, struct([0], [1, 2, 3, 4]))
+  |> expect.equal(_, tuple([0], [1, 2, 3, 4]))
 
   [0, 1, 2, 3, 4]
   |> list.split(_, 3)
-  |> expect.equal(_, struct([0, 1, 2], [3, 4]))
+  |> expect.equal(_, tuple([0, 1, 2], [3, 4]))
 
   [0, 1, 2, 3, 4]
   |> list.split(_, 9)
-  |> expect.equal(_, struct([0, 1, 2, 3, 4], []))
+  |> expect.equal(_, tuple([0, 1, 2, 3, 4], []))
 }
 
 pub fn split_while_test() {
   []
   |> list.split_while(_, fn(x) { x <= 5 })
-  |> expect.equal(_, struct([], []))
+  |> expect.equal(_, tuple([], []))
 
   [1, 2, 3, 4, 5]
   |> list.split_while(_, fn(x) { x <= 5 })
-  |> expect.equal(_, struct([1, 2, 3, 4, 5], []))
+  |> expect.equal(_, tuple([1, 2, 3, 4, 5], []))
 
   [1, 2, 3, 4, 5]
   |> list.split_while(_, fn(x) { x == 2 })
-  |> expect.equal(_, struct([], [1, 2, 3, 4, 5]))
+  |> expect.equal(_, tuple([], [1, 2, 3, 4, 5]))
 
   [1, 2, 3, 4, 5]
   |> list.split_while(_, fn(x) { x <= 3 })
-  |> expect.equal(_, struct([1, 2, 3], [4, 5]))
+  |> expect.equal(_, tuple([1, 2, 3], [4, 5]))
 
   [1, 2, 3, 4, 5]
   |> list.split_while(_, fn(x) { x <= -3 })
-  |> expect.equal(_, struct([], [1, 2, 3, 4, 5]))
+  |> expect.equal(_, tuple([], [1, 2, 3, 4, 5]))
 }
 
 
 pub fn key_find_test() {
-  let proplist = [struct(0, "1"), struct(1, "2")]
+  let proplist = [tuple(0, "1"), tuple(1, "2")]
 
   proplist
   |> list.key_find(_, 0)

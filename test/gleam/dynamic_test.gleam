@@ -187,8 +187,6 @@ pub fn list_test() {
   |> expect.is_error
 }
 
-// TODO: struct2
-
 pub fn field_test() {
   let Ok(ok_atom) = atom.from_string("ok")
   let Ok(error_atom) = atom.from_string("error")
@@ -224,24 +222,24 @@ pub fn field_test() {
 
 pub fn element_test() {
   let Ok(ok_atom) = atom.from_string("ok")
-  let ok_one_struct = struct(ok_atom, 1)
+  let ok_one_tuple = tuple(ok_atom, 1)
 
-  ok_one_struct
+  ok_one_tuple
   |> dynamic.from
   |> dynamic.element(_, 0)
   |> expect.equal(_, Ok(dynamic.from(ok_atom)))
 
-  ok_one_struct
+  ok_one_tuple
   |> dynamic.from
   |> dynamic.element(_, 1)
   |> expect.equal(_, Ok(dynamic.from(1)))
 
-  ok_one_struct
+  ok_one_tuple
   |> dynamic.from
   |> dynamic.element(_, 2)
   |> expect.is_error
 
-  ok_one_struct
+  ok_one_tuple
   |> dynamic.from
   |> dynamic.element(_, -1)
   |> expect.is_error

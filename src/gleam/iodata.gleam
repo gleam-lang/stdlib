@@ -36,7 +36,7 @@ pub external fn uppercase(Iodata) -> Iodata = "string" "uppercase"
 
 pub external fn reverse(Iodata) -> Iodata = "string" "reverse"
 
-enum Direction {
+type Direction {
   All
 }
 

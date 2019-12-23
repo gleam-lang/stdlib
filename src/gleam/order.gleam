@@ -1,4 +1,4 @@
-pub enum Order {
+pub type Order {
   Lt
   Eq
   Gt

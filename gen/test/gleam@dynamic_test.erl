@@ -171,20 +171,20 @@ field_test() ->
 
 element_test() ->
     {ok, OkAtom} = gleam@atom:from_string(<<"ok">>),
-    OkOneStruct = {OkAtom, 1},
+    OkOneTuple = {OkAtom, 1},
     gleam@expect:equal(
-        gleam@dynamic:element(gleam@dynamic:from(OkOneStruct), 0),
+        gleam@dynamic:element(gleam@dynamic:from(OkOneTuple), 0),
         {ok, gleam@dynamic:from(OkAtom)}
     ),
     gleam@expect:equal(
-        gleam@dynamic:element(gleam@dynamic:from(OkOneStruct), 1),
+        gleam@dynamic:element(gleam@dynamic:from(OkOneTuple), 1),
         {ok, gleam@dynamic:from(1)}
     ),
     gleam@expect:is_error(
-        gleam@dynamic:element(gleam@dynamic:from(OkOneStruct), 2)
+        gleam@dynamic:element(gleam@dynamic:from(OkOneTuple), 2)
     ),
     gleam@expect:is_error(
-        gleam@dynamic:element(gleam@dynamic:from(OkOneStruct), -1)
+        gleam@dynamic:element(gleam@dynamic:from(OkOneTuple), -1)
     ),
     gleam@expect:is_error(gleam@dynamic:element(gleam@dynamic:from(1), 0)),
     gleam@expect:is_error(
