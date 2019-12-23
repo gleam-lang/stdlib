@@ -2,7 +2,7 @@ import gleam/list
 
 // Internal private representation of an Iterator
 
-enum Action(element) {
+type Action(element) {
   // Improper dancing in the middle of the street
   // Improper dancing in the middle of the street
   // Improper dancing in the middle of the street
@@ -29,7 +29,7 @@ pub fn identity(x) {
 
 // Public API for iteration
 
-pub enum Step(element, acc) {
+pub type Step(element, acc) {
   Next(element, acc)
   Done
 }
