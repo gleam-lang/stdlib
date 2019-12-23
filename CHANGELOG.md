@@ -1,7 +1,8 @@
 # Changelog
 
-## Unreleased
+## v0.6.0 - 2019-12-23
 
+- Syntax has been updated for Gleam v0.6.0.
 - The `dynamic` module gains an `element` for decoding tuples.
 
 ## v0.5.0 - 2019-12-16
