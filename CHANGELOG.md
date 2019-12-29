@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- `generic` module created with `identity`, `always`, `flip`, and `compose`.
+
 ## v0.6.0 - 2019-12-23
 
 - Syntax has been updated for Gleam v0.6.0.
