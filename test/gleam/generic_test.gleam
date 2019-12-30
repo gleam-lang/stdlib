@@ -1,21 +1,9 @@
 import gleam/expect
-import gleam/generic.{identity, always, flip, compose}
+import gleam/generic.{flip, compose}
 import gleam/int as int_mod
 import gleam/list
 import gleam/result
 import gleam/string as string_mod
-
-pub fn identity_test() {
-  1
-  |> identity
-  |> expect.equal(_, 1)
-}
-
-pub fn always_test() {
-  1
-  |> always(_, 2)
-  |> expect.equal(_, 2)
-}
 
 pub fn flip_test() {
   let fun = fn(string: String, int: Int) {

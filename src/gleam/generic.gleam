@@ -1,9 +1,3 @@
-// A function that returns exactly what it was given.
-pub fn identity(a: a) -> a { a }
-
-// A function that, given two values, ignores one and always returns the other.
-pub fn always(_a: a, b: b) -> b { b }
-
 // Takes a function that takes two arguments and returns a new function that
 // takes the same two arguments, but in reverse order.
 pub fn flip(fun: fn(a, b) -> c) -> fn(b, a) -> c {

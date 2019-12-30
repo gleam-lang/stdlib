@@ -1,13 +1,7 @@
 -module(gleam@generic_test).
 -compile(no_auto_import).
 
--export([identity_test/0, always_test/0, flip_test/0, compose_test/0]).
-
-identity_test() ->
-    gleam@expect:equal(gleam@generic:identity(1), 1).
-
-always_test() ->
-    gleam@expect:equal(gleam@generic:always(1, 2), 2).
+-export([flip_test/0, compose_test/0]).
 
 flip_test() ->
     Fun = fun(String, Int) ->
