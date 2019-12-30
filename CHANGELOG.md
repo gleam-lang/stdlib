@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- `generic` module created with `identity`, `always`, `flip`, and `compose`.
+- `function` module created with `compose` and `flip`.
 
 ## v0.6.0 - 2019-12-23
 

@@ -1,27 +1,9 @@
 import gleam/expect
-import gleam/function.{flip, compose}
+import gleam/function.{compose, flip}
 import gleam/int as int_mod
 import gleam/list
 import gleam/result
 import gleam/string as string_mod
-
-pub fn flip_test() {
-  let fun = fn(string: String, int: Int) {
-    string
-    |> string_mod.append("String: '", _)
-    |> string_mod.append(_, "', Int: '")
-    |> string_mod.append(_, int_mod.to_string(int))
-    |> string_mod.append(_, "'")
-  }
-
-  let flipped_fun = flip(fun)
-
-  fun("Bob", 1)
-  |> expect.equal(_, "String: 'Bob', Int: '1'")
-
-  flipped_fun(2, "Alice")
-  |> expect.equal(_, "String: 'Alice', Int: '2'")
-}
 
 pub fn compose_test() {
   let add_two = fn(int: Int) { int + 2 }
@@ -51,4 +33,22 @@ pub fn compose_test() {
   []
   |> head_to_string
   |> expect.equal(_, "0")
+}
+
+pub fn flip_test() {
+  let fun = fn(string: String, int: Int) {
+    string
+    |> string_mod.append("String: '", _)
+    |> string_mod.append(_, "', Int: '")
+    |> string_mod.append(_, int_mod.to_string(int))
+    |> string_mod.append(_, "'")
+  }
+
+  let flipped_fun = flip(fun)
+
+  fun("Bob", 1)
+  |> expect.equal(_, "String: 'Bob', Int: '1'")
+
+  flipped_fun(2, "Alice")
+  |> expect.equal(_, "String: 'Alice', Int: '2'")
 }
