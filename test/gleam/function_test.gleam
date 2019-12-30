@@ -1,5 +1,5 @@
 import gleam/expect
-import gleam/generic.{flip, compose}
+import gleam/function.{flip, compose}
 import gleam/int as int_mod
 import gleam/list
 import gleam/result
