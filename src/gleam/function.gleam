@@ -9,3 +9,8 @@ pub fn compose(fun1: fn(a) -> b, fun2: fn(b) -> c) -> fn(a) -> c {
 pub fn flip(fun: fn(a, b) -> c) -> fn(b, a) -> c {
   fn(b, a) { fun(a, b) }
 }
+
+// A function that always returns its input value.
+pub fn identity(x: a) -> a {
+  x
+}
