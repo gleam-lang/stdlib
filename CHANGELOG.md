@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- `function` module created with `compose` and `flip`.
+- `function` module created with `identity`, `compose`, and `flip` functions.
 
 ## v0.6.0 - 2019-12-23
 
