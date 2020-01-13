@@ -1,13 +1,13 @@
-import gleam/order
+import gleam/order.{Order}
 
-pub fn negate(bool) {
+pub fn negate(bool: Bool) -> Bool {
   case bool {
     True -> False
     False -> True
   }
 }
 
-pub fn compare(a, b) {
+pub fn compare(a: Bool, b: Bool) -> Order {
   case a, b {
     True, True -> order.Eq
     True, False -> order.Gt
@@ -16,21 +16,21 @@ pub fn compare(a, b) {
   }
 }
 
-pub fn max(a, b) {
+pub fn max(a: Bool, b: Bool) -> Bool {
   case a {
     True -> True
     False -> b
   }
 }
 
-pub fn min(a, b) {
+pub fn min(a: Bool, b: Bool) -> Bool {
   case a {
     False -> False
     True -> b
   }
 }
 
-pub fn to_int(bool) {
+pub fn to_int(bool: Bool) -> Int {
   case bool {
     False -> 0
     True -> 1
