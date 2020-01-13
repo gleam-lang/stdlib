@@ -43,14 +43,18 @@ type Direction {
 external fn erl_split(Iodata, String, Direction) -> List(Iodata) =
   "string" "split"
 
-pub fn split(iodata, on pattern) {
+pub fn split(iodata: Iodata, on pattern: String) -> List(Iodata) {
   erl_split(iodata, pattern, All)
 }
 
 external fn erl_replace(Iodata, String, String, Direction) -> Iodata =
   "string" "replace"
 
-pub fn replace(in iodata, all pattern, with substitute) {
+pub fn replace(
+  in iodata: Iodata,
+  all pattern: String,
+  with substitute: String,
+) -> Iodata {
   erl_replace(iodata, pattern, substitute, All)
 }
 
