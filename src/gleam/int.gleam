@@ -1,4 +1,4 @@
-import gleam/order
+import gleam/order.{Order}
 
 pub external fn parse(String) -> Result(Int, Nil) = "gleam_stdlib" "parse_int";
 
@@ -6,7 +6,7 @@ pub external fn to_string(Int) -> String = "erlang" "integer_to_binary"
 
 pub external fn to_base_string(Int, Int) -> String = "erlang" "integer_to_binary"
 
-pub fn compare(a, b) {
+pub fn compare(a: Int, b: Int) -> Order {
   case a == b {
     True -> order.Eq
     False ->
@@ -17,14 +17,14 @@ pub fn compare(a, b) {
   }
 }
 
-pub fn min(a, b) {
+pub fn min(a: Int, b: Int) -> Int {
   case a < b {
     True -> a
     False -> b
   }
 }
 
-pub fn max(a, b) {
+pub fn max(a: Int, b: Int) -> Int {
   case a > b {
     True -> a
     False -> b
