@@ -15,6 +15,6 @@ pub external fn is_ok(Result(a, b)) -> Expectation = "gleam_stdlib" "expect_is_o
 
 pub external fn is_error(Result(a, b)) -> Expectation = "gleam_stdlib" "expect_is_error";
 
-pub fn fail() {
+pub fn fail() -> Expectation {
   true(False)
 }
