@@ -1,16 +1,16 @@
 import gleam/iodata
-import gleam/order
+import gleam/order.{Order}
 
-pub external fn parse(String) -> Result(Float, Nil) =
-  "gleam_stdlib" "parse_float";
+pub external fn parse(String) -> Result(Float, Nil)
+  = "gleam_stdlib" "parse_float";
 
-pub fn to_string(f) {
+pub fn to_string(f: Float) -> String {
   f
   |> iodata.from_float
   |> iodata.to_string
 }
 
-pub fn compare(a, b) {
+pub fn compare(a: Float, b: Float) -> Order {
   case a == b {
     True -> order.Eq
     False ->
@@ -21,14 +21,14 @@ pub fn compare(a, b) {
   }
 }
 
-pub fn min(a, b) {
+pub fn min(a: Float, b: Float) -> Float {
   case a <. b {
     True -> a
     False -> b
   }
 }
 
-pub fn max(a, b) {
+pub fn max(a: Float, b: Float) -> Float {
   case a >. b {
     True -> a
     False -> b
