@@ -40,7 +40,10 @@ pub external fn thunk(from: Dynamic) -> Result(fn() -> Dynamic, String)
 external fn list_dynamic(from: Dynamic) -> Result(List(Dynamic), String)
   = "gleam_stdlib" "decode_list"
 
-pub fn list(from dynamic, containing decoder_type) {
+pub fn list(
+  from dynamic: Dynamic,
+  containing decoder_type: fn(Dynamic) -> Result(inner, String),
+) -> Result(List(inner), String) {
   dynamic
   |> list_dynamic
   |> result.then(_, list_mod.traverse(_, decoder_type))
