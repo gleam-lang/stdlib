@@ -15,7 +15,7 @@ pub external fn from_list(List(tuple(key, value))) -> Map(key, value)
 external fn is_key(key, Map(key, v)) -> Bool
   = "maps" "is_key"
 
-pub fn has_key(map, key) {
+pub fn has_key(map: Map(k, v), key: k) -> Bool {
   is_key(key, map)
 }
 
@@ -28,15 +28,15 @@ pub external fn get(from: Map(key, value), get: key) -> Result(value, Nil)
 external fn erl_insert(key, value, Map(key, value)) -> Map(key, value)
   = "maps" "put";
 
-pub fn insert(into map, for key, insert value) {
+pub fn insert(into map: Map(k, v), for key: k, insert value: v) -> Map(k, v) {
   erl_insert(key, value, map)
 }
 
-external fn erl_map_values(fn(key, value) -> value, Map(key, value))
-  -> Map(key, value)
+external fn erl_map_values(fn(key, a) -> b, Map(key, value))
+  -> Map(key, b)
   = "maps" "map";
 
-pub fn map_values(in map, with fun) {
+pub fn map_values(in map: Map(k, v), with fun: fn(k, v) -> w) -> Map(k, w) {
   erl_map_values(fun, map)
 }
 
@@ -50,45 +50,56 @@ external fn erl_filter(fn(key, value) -> Bool, Map(key, value))
   -> Map(key, value)
   = "maps" "filter";
 
-pub fn filter(in map, for predicate) {
+pub fn filter(in map: Map(k, v), for predicate: fn(k, v) -> Bool) -> Map(k, v) {
   erl_filter(predicate, map)
 }
 
-external fn erl_take(List(k), Map(k, v)) -> Map(k, v) = "maps" "with"
+external fn erl_take(List(k), Map(k, v)) -> Map(k, v)
+  = "maps" "with"
 
-pub fn take(from map, drop desired_keys) {
+pub fn take(from map: Map(k, v), drop desired_keys: List(k)) -> Map(k, v) {
   erl_take(desired_keys, map)
 }
 
-pub external fn merge(into: Map(k, v), merge: Map(k, v)) -> Map(k, v) = "maps" "merge"
+pub external fn merge(into: Map(k, v), merge: Map(k, v)) -> Map(k, v)
+  = "maps" "merge"
 
-external fn erl_delete(k, Map(k, v)) -> Map(k, v) = "maps" "remove"
+external fn erl_delete(k, Map(k, v)) -> Map(k, v)
+  = "maps" "remove"
 
-pub fn delete(from map, delete key) {
+pub fn delete(from map: Map(k, v), delete key: k) -> Map(k, v) {
   erl_delete(key, map)
 }
 
-pub fn drop(from map, drop disallowed_keys) {
+pub fn drop(from map: Map(k, v), drop disallowed_keys: List(k)) -> Map(k, v) {
   list.fold(disallowed_keys, map, fn(key, acc) {
     delete(acc, key)
   })
 }
 
-pub fn update(in map, update key, with fun) {
-  case get(map, key) {
-    Ok(value) -> insert(map, key, fun(Ok(value)))
-    Error(_) -> insert(map, key, fun(Error(Nil)))
-  }
+pub fn update(
+  in map: Map(k, v),
+  update key: k,
+  with fun: fn(Result(v, Nil)) -> v,
+) -> Map(k, v) {
+  map |> get(_, key) |> fun |> insert(map, key, _)
 }
 
-fn do_fold(list, initial, fun) {
+fn do_fold(
+  list: List(tuple(k, v)),
+  initial: acc,
+  fun: fn(k, v, acc) -> acc,
+) -> acc {
   case list {
     [] -> initial
     [tuple(k, v) | tail] -> do_fold(tail, fun(k, v, initial), fun)
   }
 }
 
-pub fn fold(map, from initial, with fun) {
-  let kvs = to_list(map)
-  do_fold(kvs, initial, fun)
+pub fn fold(
+  map: Map(k, v),
+  from initial: acc,
+  with fun: fn(k, v, acc) -> acc,
+) -> acc {
+  map |> to_list |> do_fold(_, initial, fun)
 }

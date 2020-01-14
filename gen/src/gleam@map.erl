@@ -67,13 +67,7 @@ drop(Map, DisallowedKeys) ->
     gleam@list:fold(DisallowedKeys, Map, fun(Key, Acc) -> delete(Acc, Key) end).
 
 update(Map, Key, Fun) ->
-    case get(Map, Key) of
-        {ok, Value} ->
-            insert(Map, Key, Fun({ok, Value}));
-
-        {error, _} ->
-            insert(Map, Key, Fun({error, nil}))
-    end.
+    insert(Map, Key, Fun(get(Map, Key))).
 
 do_fold(List, Initial, Fun) ->
     case List of
@@ -85,5 +79,4 @@ do_fold(List, Initial, Fun) ->
     end.
 
 fold(Map, Initial, Fun) ->
-    Kvs = to_list(Map),
-    do_fold(Kvs, Initial, Fun).
+    do_fold(to_list(Map), Initial, Fun).
