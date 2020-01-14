@@ -1,5 +1,5 @@
 import gleam/int
-import gleam/order
+import gleam/order.{Order}
 import gleam/pair
 
 pub type LengthMismatch {
@@ -14,32 +14,32 @@ pub external fn length(List(a)) -> Int = "erlang" "length"
 //
 pub external fn reverse(List(a)) -> List(a) = "lists" "reverse"
 
-pub fn is_empty(list) {
+pub fn is_empty(list: List(a)) -> Bool {
   list == []
 }
 
-pub fn contains(list, has elem) {
+pub fn contains(list: List(a), has elem: a) -> Bool {
   case list {
     [] -> False
     [head | rest] -> head == elem || contains(rest, elem)
   }
 }
 
-pub fn head(list) {
+pub fn head(list: List(a)) -> Result(a, Nil) {
   case list {
     [] -> Error(Nil)
     [x | _] -> Ok(x)
   }
 }
 
-pub fn tail(list) {
+pub fn tail(list: List(a)) -> Result(List(a), Nil) {
   case list {
     [] -> Error(Nil)
     [_ | xs] -> Ok(xs)
   }
 }
 
-fn do_filter(list, fun, acc) {
+fn do_filter(list: List(a), fun: fn(a) -> Bool, acc: List(a)) -> List(a) {
   case list {
     [] -> reverse(acc)
     [x | xs] -> {
@@ -52,33 +52,43 @@ fn do_filter(list, fun, acc) {
   }
 }
 
-pub fn filter(list, for predicate) {
+pub fn filter(list: List(a), for predicate: fn(a) -> Bool) -> List(a) {
   do_filter(list, predicate, [])
 }
 
-fn do_map(list, fun, acc) {
+fn do_map(list: List(a), fun: fn(a) -> b, acc: List(b)) -> List(b) {
   case list {
     [] -> reverse(acc)
     [x | xs] -> do_map(xs, fun, [fun(x) | acc])
   }
 }
 
-pub fn map(list, with fun) {
+pub fn map(list: List(a), with fun: fn(a) -> b) -> List(b) {
   do_map(list, fun, [])
 }
 
-fn do_index_map(list, fun, index, acc) {
+fn do_index_map(
+  list: List(a),
+  fun: fn(Int, a) -> b,
+  index: Int,
+  acc: List(b),
+) -> List(b) {
   case list {
     [] -> reverse(acc)
     [x | xs] -> do_index_map(xs, fun, index + 1, [fun(index, x) | acc])
   }
 }
 
-pub fn index_map(list, with fun) {
+pub fn index_map(list: List(a), with fun: fn(Int, a) -> b) -> List(b) {
   do_index_map(list, fun, 0, [])
 }
 
-fn do_traverse(list, fun, acc) {
+// fn do_traverse(list: List(a), fun: fn(a) -> Result(b, e), acc: List(b)) -> Result(List(b), e) {
+fn do_traverse(
+  list: List(a),
+  fun: fn(a) -> Result(b, e),
+  acc: List(b),
+) -> Result(List(b), e) {
   case list {
     [] -> Ok(reverse(acc))
     [x | xs] ->
@@ -89,11 +99,14 @@ fn do_traverse(list, fun, acc) {
   }
 }
 
-pub fn traverse(list, with fun) {
+pub fn traverse(
+  list: List(a),
+  with fun: fn(a) -> Result(b, e),
+) -> Result(List(b), e) {
   do_traverse(list, fun, [])
 }
 
-pub fn drop(from list, up_to n) {
+pub fn drop(from list: List(a), up_to n: Int) -> List(a) {
   case n <= 0 {
     True -> list
     False ->
@@ -104,7 +117,7 @@ pub fn drop(from list, up_to n) {
   }
 }
 
-fn do_take(list, n, acc) {
+fn do_take(list: List(a), n: Int, acc: List(a)) -> List(a) {
   case n <= 0 {
     True -> reverse(acc)
     False ->
@@ -115,42 +128,50 @@ fn do_take(list, n, acc) {
   }
 }
 
-pub fn take(from list, up_to n) {
+pub fn take(from list: List(a), up_to n: Int) -> List(a) {
   do_take(list, n, [])
 }
 
-pub fn new() {
+pub fn new() -> List(a) {
   []
 }
 
-pub external fn append(List(a), List(a)) -> List(a) = "lists" "append";
+pub external fn append(List(a), List(a)) -> List(a)
+  = "lists" "append";
 
-fn do_flatten(lists, acc) {
+fn do_flatten(lists: List(List(a)), acc: List(a)) -> List(a) {
   case lists {
     [] -> acc
     [l | rest] -> do_flatten(rest, append(acc, l))
   }
 }
 
-pub fn flatten(lists) {
+pub fn flatten(lists: List(List(a))) -> List(a) {
   do_flatten(lists, [])
 }
 
-pub fn fold(list, from initial, with fun) {
+pub fn fold(list: List(a), from initial: b, with fun: fn(a, b) -> b) -> b {
   case list {
     [] -> initial
     [x | rest] -> fold(rest, fun(x, initial), fun)
   }
 }
 
-pub fn fold_right(list, from initial, with fun) {
+pub fn fold_right(
+  list: List(a),
+  from initial: b,
+  with fun: fn(a, b) -> b,
+) -> b {
   case list {
     [] -> initial
     [x | rest] -> fun(x, fold_right(rest, initial, fun))
   }
 }
 
-pub fn find(in haystack, one_that is_desired) {
+pub fn find(
+  in haystack: List(a),
+  one_that is_desired: fn(a) -> Bool,
+) -> Result(a, Nil) {
   case haystack {
     [] -> Error(Nil)
     [x | rest] ->
@@ -161,7 +182,10 @@ pub fn find(in haystack, one_that is_desired) {
   }
 }
 
-pub fn find_map(in haystack, with fun) {
+pub fn find_map(
+  in haystack: List(a),
+  with fun: fn(a) -> Result(b, Nil),
+) -> Result(b, Nil) {
   case haystack {
     [] -> Error(Nil)
     [x | rest] ->
@@ -172,18 +196,18 @@ pub fn find_map(in haystack, with fun) {
   }
 }
 
-pub fn all(in list, satisfying predicate) {
+pub fn all(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
   case list {
-      [] -> True
-      [x | rest] ->
-      case predicate(x) {
-        True -> all(rest, predicate)
-        _ -> False
-      }
+    [] -> True
+    [x | rest] ->
+    case predicate(x) {
+      True -> all(rest, predicate)
+      _ -> False
+    }
   }
 }
 
-pub fn any(in list, satisfying predicate) {
+pub fn any(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
   case list {
     [] -> False
     [x | rest] ->
@@ -194,30 +218,30 @@ pub fn any(in list, satisfying predicate) {
   }
 }
 
-pub fn zip(xs, ys) {
+pub fn zip(xs: List(a), ys: List(b)) -> List(tuple(a, b)) {
   case xs, ys {
     [], _ -> []
     _, [] -> []
-    [x | xs], [y | ys] -> [ tuple(x, y) | zip(xs, ys) ]
+    [x | xs], [y | ys] -> [tuple(x, y) | zip(xs, ys)]
   }
 }
 
-pub fn strict_zip(l1, l2) {
+pub fn strict_zip(l1: List(a), l2: List(b)) -> Result(List(tuple(a, b)), LengthMismatch) {
   case length(l1) == length(l2) {
     True -> Ok(zip(l1, l2))
     False -> Error(LengthMismatch)
   }
 }
 
-pub fn intersperse(list, with elem) {
+pub fn intersperse(list: List(a), with elem: a) -> List(a) {
   case list {
-      [] -> []
-      [x | []] -> [x]
-      [x | rest] -> [x | [elem | intersperse(rest, elem)]]
+    [] -> []
+    [x | []] -> [x]
+    [x | rest] -> [x | [elem | intersperse(rest, elem)]]
   }
 }
 
-pub fn at(in list, get index) {
+pub fn at(in list: List(a), get index: Int) -> Result(a, Nil) {
   case index < 0 {
     True -> Error(Nil)
     False ->
@@ -232,14 +256,14 @@ pub fn at(in list, get index) {
   }
 }
 
-pub fn unique(list) {
+pub fn unique(list: List(a)) -> List(a) {
   case list {
     [] -> []
     [x | rest] -> [x | unique(filter(rest, fn(y) { y != x }))]
   }
 }
 
-fn merge_sort(a, b, compare) {
+fn merge_sort(a: List(a), b: List(a), compare: fn(a, a) -> Order) -> List(a) {
   case a, b {
     [], _ -> b
     _, [] -> a
@@ -251,7 +275,7 @@ fn merge_sort(a, b, compare) {
   }
 }
 
-fn do_sort(list, compare, list_length) {
+fn do_sort(list: List(a), compare: fn(a, a) -> Order, list_length: Int) -> List(a) {
   case list_length < 2 {
     True -> list
     False -> {
@@ -267,11 +291,11 @@ fn do_sort(list, compare, list_length) {
   }
 }
 
-pub fn sort(list, sort_by compare) {
+pub fn sort(list: List(a), sort_by compare: fn(a, a) -> Order) -> List(a) {
   do_sort(list, compare, length(list))
 }
 
-pub fn range(from start, to stop) {
+pub fn range(from start: Int, to stop: Int) -> List(Int) {
   case int.compare(start, stop) {
     order.Eq -> []
     order.Gt -> [start | range(start - 1, stop)]
@@ -279,18 +303,18 @@ pub fn range(from start, to stop) {
   }
 }
 
-fn do_repeat(a, times, acc) {
+fn do_repeat(a: a, times: Int, acc: List(a)) -> List(a) {
   case times <= 0 {
     True -> acc
     False -> do_repeat(a, times - 1, [a | acc])
   }
 }
 
-pub fn repeat(item a, times times) {
+pub fn repeat(item a: a, times times: Int) -> List(a) {
   do_repeat(a, times, [])
 }
 
-fn do_split(list, n, taken) {
+fn do_split(list: List(a), n: Int, taken: List(a)) -> tuple(List(a), List(a)) {
   case n <= 0 {
     True -> tuple(reverse(taken), list)
     False ->
@@ -301,11 +325,15 @@ fn do_split(list, n, taken) {
   }
 }
 
-pub fn split(list list, on target) {
-  do_split(list, target, [])
+pub fn split(list list: List(a), at index: Int) -> tuple(List(a), List(a)) {
+  do_split(list, index, [])
 }
 
-fn do_split_while(list, f, acc) {
+fn do_split_while(
+  list: List(a),
+  f: fn(a) -> Bool,
+  acc: List(a),
+) -> tuple(List(a), List(a)) {
   case list {
     [] -> tuple(reverse(acc), [])
     [x | xs] ->
@@ -316,14 +344,21 @@ fn do_split_while(list, f, acc) {
   }
 }
 
-pub fn split_while(list list, while predicate) {
+pub fn split_while(
+  list list: List(a),
+  while predicate: fn(a) -> Bool,
+) -> tuple(List(a), List(a)) {
   do_split_while(list, predicate, [])
 }
 
-pub fn key_find(in haystack, find needle) {
-  find_map(haystack, fn(p) {
-    case pair.first(p) == needle {
-      True -> p |> pair.second |> Ok
+pub fn key_find(
+  in keyword_list: List(tuple(k, v)),
+  find desired_key: k,
+) -> Result(v, Nil) {
+  find_map(keyword_list, fn(keyword) {
+    let tuple(key, value) = keyword
+    case key == desired_key {
+      True -> Ok(value)
       False -> Error(Nil)
     }
   })

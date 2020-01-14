@@ -368,8 +368,8 @@ do_split(List, N, Taken) ->
             end
     end.
 
-split(List, Target) ->
-    do_split(List, Target, []).
+split(List, Index) ->
+    do_split(List, Index, []).
 
 do_split_while(List, F, Acc) ->
     case List of
@@ -389,10 +389,11 @@ do_split_while(List, F, Acc) ->
 split_while(List, Predicate) ->
     do_split_while(List, Predicate, []).
 
-key_find(Haystack, Needle) ->
-    find_map(Haystack, fun(P) -> case gleam@pair:first(P) =:= Needle of
+key_find(KeywordList, DesiredKey) ->
+    find_map(KeywordList, fun(Keyword) -> {Key, Value} = Keyword,
+            case Key =:= DesiredKey of
                 true ->
-                    {ok, gleam@pair:second(P)};
+                    {ok, Value};
 
                 false ->
                     {error, nil}

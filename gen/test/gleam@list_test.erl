@@ -108,7 +108,7 @@ find_map_test() ->
                 {ok, 4};
 
             _ ->
-                {error, 0}
+                {error, nil}
         end end,
     gleam@expect:equal(gleam@list:find_map([1, 2, 3], F), {ok, 4}),
     gleam@expect:equal(gleam@list:find_map([1, 3, 2], F), {ok, 4}),

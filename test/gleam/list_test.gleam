@@ -157,7 +157,7 @@ pub fn find_map_test() {
   let f = fn(x) {
     case x {
       2 -> Ok(4)
-      _ -> Error(0)
+      _ -> Error(Nil)
     }
   }
 
