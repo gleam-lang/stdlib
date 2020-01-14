@@ -4,7 +4,7 @@ pub type Order {
   Gt
 }
 
-pub fn reverse(order) {
+pub fn reverse(order: Order) -> Order {
   case order {
     Lt -> Gt
     Eq -> Eq
@@ -12,7 +12,7 @@ pub fn reverse(order) {
   }
 }
 
-pub fn to_int(order) {
+pub fn to_int(order: Order) -> Int {
   case order {
     Lt -> -1
     Eq -> 0
@@ -20,7 +20,7 @@ pub fn to_int(order) {
   }
 }
 
-pub fn compare(a, b) {
+pub fn compare(a: Order, b: Order) -> Order {
   case a, b {
     Lt, Lt -> Eq
     Lt, _ -> Lt
@@ -31,7 +31,7 @@ pub fn compare(a, b) {
   }
 }
 
-pub fn max(a, b) {
+pub fn max(a: Order, b: Order) -> Order {
   case a, b {
     Gt, _ -> Gt
     Eq, Lt -> Eq
@@ -39,7 +39,7 @@ pub fn max(a, b) {
   }
 }
 
-pub fn min(a, b) {
+pub fn min(a: Order, b: Order) -> Order {
   case a, b {
     Lt, _ -> Lt
     Eq, Gt -> Eq
