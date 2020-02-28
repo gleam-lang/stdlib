@@ -11,10 +11,10 @@ pub fn compare(a: Int, b: Int) -> Order {
   case a == b {
     True -> order.Eq
     False ->
-    case a < b {
-      True -> order.Lt
-      False -> order.Gt
-    }
+      case a < b {
+        True -> order.Lt
+        False -> order.Gt
+      }
   }
 }
 

@@ -253,13 +253,13 @@ strict_zip(L1, L2) ->
 intersperse(List, Elem) ->
     case List of
         [] ->
-            [];
+            List;
 
-        [X] ->
-            [X];
+        [_] ->
+            List;
 
-        [X1 | Rest] ->
-            [X1, Elem | intersperse(Rest, Elem)]
+        [X | Rest] ->
+            [X, Elem | intersperse(Rest, Elem)]
     end.
 
 at(List, Index) ->

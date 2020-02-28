@@ -235,8 +235,7 @@ pub fn strict_zip(l1: List(a), l2: List(b)) -> Result(List(tuple(a, b)), LengthM
 
 pub fn intersperse(list: List(a), with elem: a) -> List(a) {
   case list {
-    [] -> []
-    [x | []] -> [x]
+    [] | [_] -> list
     [x | rest] -> [x | [elem | intersperse(rest, elem)]]
   }
 }
@@ -248,10 +247,10 @@ pub fn at(in list: List(a), get index: Int) -> Option(a) {
     case list {
       [] -> result.none()
       [x | rest] ->
-      case index == 0 {
-        True -> Ok(x)
-        False -> at(rest, index - 1)
-      }
+        case index == 0 {
+          True -> Ok(x)
+          False -> at(rest, index - 1)
+        }
     }
   }
 }
