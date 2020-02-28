@@ -1,7 +1,8 @@
 import gleam/iodata
 import gleam/order.{Order}
+import gleam/result.{Option}
 
-pub external fn parse(String) -> Result(Float, Nil)
+pub external fn parse(String) -> Option(Float)
   = "gleam_stdlib" "parse_float";
 
 pub fn to_string(f: Float) -> String {

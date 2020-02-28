@@ -24,7 +24,7 @@ contains(List, Elem) ->
 head(List) ->
     case List of
         [] ->
-            {error, nil};
+            gleam@result:none();
 
         [X | _] ->
             {ok, X}
@@ -33,7 +33,7 @@ head(List) ->
 tail(List) ->
     case List of
         [] ->
-            {error, nil};
+            gleam@result:none();
 
         [_ | Xs] ->
             {ok, Xs}
@@ -172,7 +172,7 @@ fold_right(List, Initial, Fun) ->
 find(Haystack, IsDesired) ->
     case Haystack of
         [] ->
-            {error, nil};
+            gleam@result:none();
 
         [X | Rest] ->
             case IsDesired(X) of
@@ -187,7 +187,7 @@ find(Haystack, IsDesired) ->
 find_map(Haystack, Fun) ->
     case Haystack of
         [] ->
-            {error, nil};
+            gleam@result:none();
 
         [X | Rest] ->
             case Fun(X) of
@@ -258,19 +258,19 @@ intersperse(List, Elem) ->
         [X] ->
             [X];
 
-        [X | Rest] ->
-            [X, Elem | intersperse(Rest, Elem)]
+        [X1 | Rest] ->
+            [X1, Elem | intersperse(Rest, Elem)]
     end.
 
 at(List, Index) ->
     case Index < 0 of
         true ->
-            {error, nil};
+            gleam@result:none();
 
         false ->
             case List of
                 [] ->
-                    {error, nil};
+                    gleam@result:none();
 
                 [X | Rest] ->
                     case Index =:= 0 of
@@ -396,5 +396,5 @@ key_find(KeywordList, DesiredKey) ->
                     {ok, Value};
 
                 false ->
-                    {error, nil}
+                    gleam@result:none()
             end end).
