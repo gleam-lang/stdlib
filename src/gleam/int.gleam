@@ -1,6 +1,7 @@
 import gleam/order.{Order}
+import gleam/result.{Option}
 
-pub external fn parse(String) -> Result(Int, Nil) = "gleam_stdlib" "parse_int";
+pub external fn parse(String) -> Option(Int) = "gleam_stdlib" "parse_int";
 
 pub external fn to_string(Int) -> String = "erlang" "integer_to_binary"
 

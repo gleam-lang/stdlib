@@ -1,5 +1,6 @@
 import gleam/result
 import gleam/list
+import gleam/result.{Option}
 
 pub external type Map(key, value);
 
@@ -22,7 +23,7 @@ pub fn has_key(map: Map(k, v), key: k) -> Bool {
 pub external fn new() -> Map(key, value)
   = "maps" "new"
 
-pub external fn get(from: Map(key, value), get: key) -> Result(value, Nil)
+pub external fn get(from: Map(key, value), get: key) -> Option(value)
   = "gleam_stdlib" "map_get";
 
 external fn erl_insert(key, value, Map(key, value)) -> Map(key, value)
@@ -80,7 +81,7 @@ pub fn drop(from map: Map(k, v), drop disallowed_keys: List(k)) -> Map(k, v) {
 pub fn update(
   in map: Map(k, v),
   update key: k,
-  with fun: fn(Result(v, Nil)) -> v,
+  with fun: fn(Option(v)) -> v,
 ) -> Map(k, v) {
   map |> get(_, key) |> fun |> insert(map, key, _)
 }

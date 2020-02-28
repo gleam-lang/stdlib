@@ -58,3 +58,11 @@ pub fn unwrap(result: Result(a, e), or default: a) -> a {
     Error(_) -> default
   }
 }
+
+// A value that is either there or not there
+pub type Option(value) =
+  Result(value, Nil)
+
+pub fn none() -> Option(a) {
+  Error(Nil)
+}

@@ -1,7 +1,7 @@
 -module(gleam@result).
 -compile(no_auto_import).
 
--export([is_ok/1, is_error/1, map/2, map_error/2, flatten/1, then/2, unwrap/2]).
+-export([is_ok/1, is_error/1, map/2, map_error/2, flatten/1, then/2, unwrap/2, none/0]).
 
 is_ok(Result) ->
     case Result of
@@ -65,3 +65,6 @@ unwrap(Result, Default) ->
         {error, _} ->
             Default
     end.
+
+none() ->
+    {error, nil}.
