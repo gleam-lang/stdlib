@@ -29,17 +29,11 @@ to_int(Order) ->
 
 compare(A, B) ->
     case {A, B} of
-        {lt, lt} ->
+        {X, Y} when X =:= Y ->
             eq;
 
         {lt, _} ->
             lt;
-
-        {eq, eq} ->
-            eq;
-
-        {gt, gt} ->
-            eq;
 
         {eq, gt} ->
             lt;

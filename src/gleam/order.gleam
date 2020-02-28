@@ -22,11 +22,8 @@ pub fn to_int(order: Order) -> Int {
 
 pub fn compare(a: Order, b: Order) -> Order {
   case a, b {
-    Lt, Lt -> Eq
-    Lt, _ -> Lt
-    Eq, Eq -> Eq
-    Gt, Gt -> Eq
-    Eq, Gt -> Lt
+    x, y if x == y -> Eq
+    Lt, _ | Eq, Gt -> Lt
     _, _ -> Gt
   }
 }

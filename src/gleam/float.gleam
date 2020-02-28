@@ -15,10 +15,10 @@ pub fn compare(a: Float, b: Float) -> Order {
   case a == b {
     True -> order.Eq
     False ->
-    case a <. b {
-      True -> order.Lt
-      False -> order.Gt
-    }
+      case a <. b {
+        True -> order.Lt
+        False -> order.Gt
+      }
   }
 }
 
