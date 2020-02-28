@@ -2,7 +2,9 @@
 
 ## Unreleased
 
-- `function` module created with `identity`, `compose`, and `flip` functions.
+- The `result` module gains an `Option` type alias.
+- The `function` module has been created with `identity`, `compose`, and
+  `flip` functions.
 - The error type of `list.find_map` is now `Nil`.
 - The labels for `list.split` are now `split(list: _, at: _)`.
 
