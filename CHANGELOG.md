@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.7.0 - 2020-03-03
 
 - The `result` module gains an `Option` type alias.
 - The `function` module has been created with `identity`, `compose`, and
