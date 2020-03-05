@@ -111,3 +111,26 @@ pub fn max_test() {
   int.max(-1, -1)
   |> expect.equal(_, -1)
 }
+
+pub fn is_even_test() {
+  int.is_even(0)
+  |> expect.true
+
+  int.is_even(2)
+  |> expect.true
+
+  int.is_even(-2)
+  |> expect.true
+
+  int.is_even(10006)
+  |> expect.true
+
+  int.is_even(1)
+  |> expect.false
+
+  int.is_even(-3)
+  |> expect.false
+
+  int.is_even(10005)
+  |> expect.false
+}

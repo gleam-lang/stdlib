@@ -1,7 +1,7 @@
 -module(gleam@int).
 -compile(no_auto_import).
 
--export([parse/1, to_string/1, to_base_string/2, compare/2, min/2, max/2]).
+-export([parse/1, to_string/1, to_base_string/2, compare/2, min/2, max/2, is_even/1]).
 
 parse(A) ->
     gleam_stdlib:parse_int(A).
@@ -44,3 +44,6 @@ max(A, B) ->
         false ->
             B
     end.
+
+is_even(X) ->
+    X rem 2 =:= 0.

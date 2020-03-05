@@ -32,3 +32,6 @@ pub fn max(a: Int, b: Int) -> Int {
   }
 }
 
+pub fn is_even(x: Int) -> Bool {
+  x % 2 == 0
+}
