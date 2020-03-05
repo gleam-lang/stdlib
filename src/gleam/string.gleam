@@ -48,3 +48,10 @@ pub fn concat(strings: List(String)) -> String {
   |> iodata.from_strings
   |> iodata.to_string
 }
+
+pub fn join(strings: List(String), with separator: String) -> String {
+  strings
+  |> list.intersperse(_, with: separator)
+  |> iodata.from_strings
+  |> iodata.to_string
+}

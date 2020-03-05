@@ -74,3 +74,17 @@ pub fn concat_test() {
   |> string.concat
   |> expect.equal(_, "Hello, world!")
 }
+
+pub fn join_test() {
+  [
+    "Hello", "world!",
+  ]
+  |> string.join(_, with: ", ")
+  |> expect.equal(_, "Hello, world!")
+
+  [
+    "Hello", "world!",
+  ]
+  |> string.join(_, with: "-")
+  |> expect.equal(_, "Hello-world!")
+}

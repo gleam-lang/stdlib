@@ -1,7 +1,7 @@
 -module(gleam@string).
 -compile(no_auto_import).
 
--export([length/1, lowercase/1, uppercase/1, compare/2, reverse/1, split/2, replace/3, append/2, concat/1]).
+-export([length/1, lowercase/1, uppercase/1, compare/2, reverse/1, split/2, replace/3, append/2, concat/1, join/2]).
 
 length(A) ->
     string:length(A).
@@ -36,3 +36,8 @@ append(First, Second) ->
 
 concat(Strings) ->
     gleam@iodata:to_string(gleam@iodata:from_strings(Strings)).
+
+join(Strings, Separator) ->
+    gleam@iodata:to_string(
+        gleam@iodata:from_strings(gleam@list:intersperse(Strings, Separator))
+    ).
