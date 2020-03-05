@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- The `string` module gains a `concat` function.
+
 ## v0.7.0 - 2020-03-03
 
 - The `result` module gains an `Option` type alias.
