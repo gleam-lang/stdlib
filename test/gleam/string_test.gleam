@@ -66,3 +66,11 @@ pub fn compare_test() {
   string.compare("t", "ABC")
   |> expect.equal(_, order.Gt)
 }
+
+pub fn concat_test() {
+  [
+    "Hello", ", ", "world!",
+  ]
+  |> string.concat
+  |> expect.equal(_, "Hello, world!")
+}

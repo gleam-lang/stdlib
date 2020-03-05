@@ -1,7 +1,7 @@
 -module(gleam@string_test).
 -compile(no_auto_import).
 
--export([length_test/0, lowercase_test/0, uppercase_test/0, reverse_test/0, split_test/0, replace_test/0, append_test/0, compare_test/0]).
+-export([length_test/0, lowercase_test/0, uppercase_test/0, reverse_test/0, split_test/0, replace_test/0, append_test/0, compare_test/0, concat_test/0]).
 
 length_test() ->
     gleam@expect:equal(gleam@string:length(<<"ß↑e̊">>), 3),
@@ -45,3 +45,9 @@ compare_test() ->
     gleam@expect:equal(gleam@string:compare(<<"a">>, <<"A">>), gt),
     gleam@expect:equal(gleam@string:compare(<<"A">>, <<"B">>), lt),
     gleam@expect:equal(gleam@string:compare(<<"t">>, <<"ABC">>), gt).
+
+concat_test() ->
+    gleam@expect:equal(
+        gleam@string:concat([<<"Hello">>, <<", ">>, <<"world!">>]),
+        <<"Hello, world!">>
+    ).

@@ -42,3 +42,9 @@ pub fn append(to first: String, suffix second: String) -> String {
   |> iodata.append(_, second)
   |> iodata.to_string
 }
+
+pub fn concat(strings: List(String)) -> String {
+  strings
+  |> iodata.from_strings
+  |> iodata.to_string
+}
