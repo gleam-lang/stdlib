@@ -3,6 +3,7 @@
 ## Unreleased
 
 - The `string` module gains `join` and `concat` function.
+- The `int` module gains an `is_even` function.
 
 ## v0.7.0 - 2020-03-03
 
