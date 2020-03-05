@@ -134,3 +134,26 @@ pub fn is_even_test() {
   int.is_even(10005)
   |> expect.false
 }
+
+pub fn is_odd_test() {
+  int.is_odd(0)
+  |> expect.false
+
+  int.is_odd(2)
+  |> expect.false
+
+  int.is_odd(-2)
+  |> expect.false
+
+  int.is_odd(10006)
+  |> expect.false
+
+  int.is_odd(1)
+  |> expect.true
+
+  int.is_odd(-3)
+  |> expect.true
+
+  int.is_odd(10005)
+  |> expect.true
+}

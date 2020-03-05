@@ -35,3 +35,7 @@ pub fn max(a: Int, b: Int) -> Int {
 pub fn is_even(x: Int) -> Bool {
   x % 2 == 0
 }
+
+pub fn is_odd(x: Int) -> Bool {
+  x % 2 != 0
+}

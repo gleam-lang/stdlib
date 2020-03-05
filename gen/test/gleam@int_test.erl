@@ -1,7 +1,7 @@
 -module(gleam@int_test).
 -compile(no_auto_import).
 
--export([to_string/0, parse/0, to_base_string/0, compare_test/0, min_test/0, max_test/0, is_even_test/0]).
+-export([to_string/0, parse/0, to_base_string/0, compare_test/0, min_test/0, max_test/0, is_even_test/0, is_odd_test/0]).
 
 to_string() ->
     gleam@expect:equal(gleam@int:to_string(123), <<"123">>),
@@ -52,3 +52,12 @@ is_even_test() ->
     gleam@expect:false(gleam@int:is_even(1)),
     gleam@expect:false(gleam@int:is_even(-3)),
     gleam@expect:false(gleam@int:is_even(10005)).
+
+is_odd_test() ->
+    gleam@expect:false(gleam@int:is_odd(0)),
+    gleam@expect:false(gleam@int:is_odd(2)),
+    gleam@expect:false(gleam@int:is_odd(-2)),
+    gleam@expect:false(gleam@int:is_odd(10006)),
+    gleam@expect:true(gleam@int:is_odd(1)),
+    gleam@expect:true(gleam@int:is_odd(-3)),
+    gleam@expect:true(gleam@int:is_odd(10005)).
