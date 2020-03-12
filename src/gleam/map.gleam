@@ -2,6 +2,7 @@ import gleam/result
 import gleam/list
 import gleam/result.{Option}
 
+/// An Erlang map. See [the Erlang map module](https://erlang.org/doc/man/maps.html) for details
 pub external type Map(key, value);
 
 pub external fn size(Map(k, v)) -> Int
