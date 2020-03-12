@@ -5,18 +5,15 @@ import gleam/result
 // `Dynamic` data is data that we don"t know the type of yet.
 // We likely get data like this from interop with Erlang, or from
 // IO with the outside world.
-//
 pub external type Dynamic;
 
 // Convert any Gleam data into `Dynamic` data.
-//
 pub external fn from(a) -> Dynamic = "gleam_stdlib" "identity";
 
 // Unsafely cast a Dynamic value into any other type.
 //
 // This is an escape hatch for the type system that may be useful when wrapping
 // native Erlang APIs. It is to be used as a last measure only.
-//
 pub external fn unsafe_coerce(a) -> b = "gleam_stdlib" "identity";
 
 pub external fn string(from: Dynamic) -> Result(String, String)
