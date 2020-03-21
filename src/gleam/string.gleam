@@ -18,7 +18,7 @@ import gleam/order
 /// ## Examples
 /// ```
 /// > is_empty("") == True
-/// > isEmpty("the world") == False
+/// > is_empty("the world") == False
 /// ```
 ///
 pub fn is_empty(str: String) -> Bool {
@@ -132,14 +132,14 @@ pub external fn compare(String, String) -> order.Order =
 
 /// Drop *n* characters from the left side of a 
 ///
-/// > dropLeft(from: "The Lone Gunmen", num_characters: 2) == "e Lone Gunmen"
+/// > drop_left(from: "The Lone Gunmen", num_characters: 2) == "e Lone Gunmen"
 /// 
 // pub fn drop_left(from string: String, num_characters: Int) -> String {}
 
 
 /// Drop *n* characters from the right side of a 
 ///
-/// > dropRight("Cigarette Smoking Man", 2) == "Cigarette Smoking M"
+/// > drop_right("Cigarette Smoking Man", 2) == "Cigarette Smoking M"
 /// 
 // pub fn drop_right(from string: String, num_characters: Int) -> String {}
 
@@ -162,8 +162,8 @@ pub external fn compare(String, String) -> order.Order =
 
 /// See if the second string starts with the first one.
 ///
-/// > startsWith("theory", this: "the") == True
-/// > startsWith("theory", this: "ory") == False
+/// > starts_with("theory", this: "the") == True
+/// > starts_with("theory", this: "ory") == False
 ///
 // pub fn starts_with(this: String, in: String) -> String {}
 
