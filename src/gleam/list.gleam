@@ -7,10 +7,10 @@ pub type LengthMismatch {
   LengthMismatch
 }
 
-// Using the Erlang C BIF implementation.
+/// Using the Erlang C BIF implementation.
 pub external fn length(List(a)) -> Int = "erlang" "length"
 
-// Using the Erlang C BIF implementation.
+/// Using the Erlang C BIF implementation.
 pub external fn reverse(List(a)) -> List(a) = "lists" "reverse"
 
 pub fn is_empty(list: List(a)) -> Bool {

@@ -1,5 +1,5 @@
-// Result represents the result of something that may succeed or fail.
-// `Ok` means it was successful, `Error` means it failed.
+/// Result represents the result of something that may succeed or fail.
+/// `Ok` means it was successful, `Error` means it failed.
 
 pub fn is_ok(result: Result(a, e)) -> Bool {
   case result {
@@ -59,7 +59,7 @@ pub fn unwrap(result: Result(a, e), or default: a) -> a {
   }
 }
 
-// A value that is either there or not there
+/// A value that is either there or not there
 pub type Option(value) =
   Result(value, Nil)
 
