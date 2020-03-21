@@ -4,13 +4,7 @@
 -export([is_empty/1, length/1, reverse/1, replace/3, lowercase/1, uppercase/1, compare/2, split/2, append/2, concat/1, join/2]).
 
 is_empty(Str) ->
-    case Str of
-        <<"">> ->
-            true;
-
-        _ ->
-            false
-    end.
+    Str =:= <<"">>.
 
 length(A) ->
     string:length(A).
@@ -32,9 +26,9 @@ uppercase(A) ->
 compare(A, B) ->
     gleam_stdlib:compare_strings(A, B).
 
-split(X, Pattern) ->
+split(X, Substring) ->
     gleam@list:map(
-        gleam@iodata:split(gleam@iodata:new(X), Pattern),
+        gleam@iodata:split(gleam@iodata:new(X), Substring),
         fun gleam@iodata:to_string/1
     ).
 

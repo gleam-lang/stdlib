@@ -52,7 +52,7 @@ external fn erl_replace(Iodata, String, String, Direction) -> Iodata =
 
 pub fn replace(
   in iodata: Iodata,
-  all pattern: String,
+  each pattern: String,
   with substitute: String,
 ) -> Iodata {
   erl_replace(iodata, pattern, substitute, All)

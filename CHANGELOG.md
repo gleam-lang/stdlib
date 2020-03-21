@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- The `string.replace` and `iodata.replace` `all` arguement label has been
+  changed to `each`.
 - The `string` module gains `is_empty`, `join` and `concat` functions.
 - The `int` module gains `is_even` and `is_odd` functions.
 

@@ -258,8 +258,8 @@ intersperse(List, Elem) ->
         [_] ->
             List;
 
-        [X1 | Rest] ->
-            [X1, Elem | intersperse(Rest, Elem)]
+        [X | Rest] ->
+            [X, Elem | intersperse(Rest, Elem)]
     end.
 
 at(List, Index) ->
