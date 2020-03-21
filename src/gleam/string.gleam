@@ -103,6 +103,7 @@ pub external fn compare(String, String) -> order.Order =
 
 /// ## Get Substrings
 
+// TODO
 /// Take a substring given a start and end Grapheme indexes. Negative indexes
 /// are taken starting from the *end* of the list.
 ///
@@ -115,6 +116,7 @@ pub external fn compare(String, String) -> order.Order =
 ///
 // pub fn slice(out_of string: String, from start: Int, end: Int) -> String {}
 
+// TODO
 /// Drop *n* Graphemes from the left side of a
 ///
 /// ## Examples
@@ -124,6 +126,7 @@ pub external fn compare(String, String) -> order.Order =
 ///
 // pub fn drop_left(from string: String, up_to num_graphemes: Int) -> String {}
 
+// TODO
 /// Drop *n* Graphemes from the right side of a
 ///
 /// ## Examples
@@ -135,6 +138,7 @@ pub external fn compare(String, String) -> order.Order =
 
 /// ## Check for Substrings
 
+// TODO
 // TODO: Not sure about the name and labels here
 /// See if the second string contains the first one.
 ///
@@ -147,6 +151,7 @@ pub external fn compare(String, String) -> order.Order =
 ///
 // pub fn contains(does haystack: String, contain needle: String) -> String {}
 
+// TODO
 // TODO: Not sure about the name and labels here
 /// See if the second string starts with the first one.
 ///
@@ -157,6 +162,7 @@ pub external fn compare(String, String) -> order.Order =
 ///
 // pub fn starts_with(does string: String, start_with prefix: String) -> String {}
 
+// TODO
 // TODO: Not sure about the name and labels here
 /// See if the second string ends with the first one.
 ///
@@ -227,6 +233,7 @@ pub fn join(strings: List(String), with separator: String) -> String {
 
 /// ## Formatting
 
+// TODO
 /// Pad a string on the left until it has at least given number of Graphemes.
 ///
 /// ## Examples
@@ -238,6 +245,7 @@ pub fn join(strings: List(String), with separator: String) -> String {
 ///
 // pub fn pad_left(string: String, to size: Int, with: String) {}
 
+// TODO
 /// Pad a string on the right until it has a given length.
 ///
 /// ## Examples
@@ -249,6 +257,7 @@ pub fn join(strings: List(String), with separator: String) -> String {
 ///
 // pub fn pad_right(string: String, to size: Int, with: String) {}
 
+// TODO
 /// Get rid of whitespace on both sides of a String.
 ///
 /// ## Examples
@@ -258,6 +267,7 @@ pub fn join(strings: List(String), with separator: String) -> String {
 ///
 // pub fn trim(string: String) -> String {}
 
+// TODO
 /// Get rid of whitespace on the left of a String.
 ///
 /// ## Examples
@@ -267,6 +277,7 @@ pub fn join(strings: List(String), with separator: String) -> String {
 ///
 // pub fn trim_left(string: String) -> String {}
 
+// TODO
 /// Get rid of whitespace on the right of a String.
 ///
 /// ## Examples
@@ -281,12 +292,14 @@ pub fn join(strings: List(String), with separator: String) -> String {
 // These functions convert to and from Grapheme, which currently
 // does not exist as a type in Gleam.
 
+// TODO
 // /// Convert a string to a list of Graphemes.
 // ///
 // /// to_graphemes("abc") == ['a','b','c']
 // ///
 // pub fn to_graphemes(string: String) -> List(String) {}
 
+// TODO
 // /// Convert a list of characters into a String. Can be useful if you
 // /// want to create a string primarily by consing, perhaps for decoding
 // /// something.
@@ -295,6 +308,7 @@ pub fn join(strings: List(String), with separator: String) -> String {
 // ///
 // // pub fn from_graphemes(graphemes: List(Grapheme)) -> String {}
 
+// TODO
 /// Split a non-empty string into its head and tail. This lets you
 /// pattern match on strings exactly as you would with lists.
 ///
