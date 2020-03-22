@@ -84,7 +84,7 @@ pub fn update(
   update key: k,
   with fun: fn(Option(v)) -> v,
 ) -> Map(k, v) {
-  map |> get(_, key) |> fun |> insert(map, key, _)
+  map |> get(key) |> fun |> insert(map, key, _)
 }
 
 fn do_fold(
@@ -103,5 +103,5 @@ pub fn fold(
   from initial: acc,
   with fun: fn(k, v, acc) -> acc,
 ) -> acc {
-  map |> to_list |> do_fold(_, initial, fun)
+  map |> to_list |> do_fold(initial, fun)
 }
