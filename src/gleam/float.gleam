@@ -20,7 +20,7 @@ pub external fn parse(String) -> Option(Float)
 ///
 /// ## Examples
 /// ```gleam
-/// parse(2.3) == "2.3"
+/// to_string(2.3) == "2.3"
 /// ```
 ///
 pub fn to_string(f: Float) -> String {
