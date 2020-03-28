@@ -7,7 +7,7 @@ compose_test() ->
     AddTwo = fun(Int) -> Int + 2 end,
     AddThree = fun(Int1) -> Int1 + 3 end,
     AddFive = gleam@function:compose(AddTwo, AddThree),
-    gleam@expect:equal(AddFive(1), 6),
+    gleam@should:equal(AddFive(1), 6),
     HeadToString = gleam@function:compose(
         gleam@function:compose(
             fun gleam@list:head/1,
@@ -15,8 +15,8 @@ compose_test() ->
         ),
         fun gleam@int:to_string/1
     ),
-    gleam@expect:equal(HeadToString([1]), <<"1">>),
-    gleam@expect:equal(HeadToString([]), <<"0">>).
+    gleam@should:equal(HeadToString([1]), <<"1">>),
+    gleam@should:equal(HeadToString([]), <<"0">>).
 
 flip_test() ->
     Fun = fun(S, I) ->
@@ -32,14 +32,14 @@ flip_test() ->
         )
     end,
     FlippedFun = gleam@function:flip(Fun),
-    gleam@expect:equal(Fun(<<"Bob">>, 1), <<"String: 'Bob', Int: '1'">>),
-    gleam@expect:equal(
+    gleam@should:equal(Fun(<<"Bob">>, 1), <<"String: 'Bob', Int: '1'">>),
+    gleam@should:equal(
         FlippedFun(2, <<"Alice">>),
         <<"String: 'Alice', Int: '2'">>
     ).
 
 identity_test() ->
-    gleam@expect:equal(gleam@function:identity(1), 1),
-    gleam@expect:equal(gleam@function:identity(<<"">>), <<"">>),
-    gleam@expect:equal(gleam@function:identity([]), []),
-    gleam@expect:equal(gleam@function:identity({1, 2.0}), {1, 2.0}).
+    gleam@should:equal(gleam@function:identity(1), 1),
+    gleam@should:equal(gleam@function:identity(<<"">>), <<"">>),
+    gleam@should:equal(gleam@function:identity([]), []),
+    gleam@should:equal(gleam@function:identity({1, 2.0}), {1, 2.0}).
