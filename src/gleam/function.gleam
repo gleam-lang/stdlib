@@ -1,3 +1,5 @@
+/// A set of utility higher-order functions for working with functions.
+
 /// Takes two functions and chains them together to form one function that takes
 /// the input from the first and returns the output of the second.
 pub fn compose(fun1: fn(a) -> b, fun2: fn(b) -> c) -> fn(a) -> c {

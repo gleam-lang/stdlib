@@ -1,6 +1,8 @@
 /// Result represents the result of something that may succeed or fail.
 /// `Ok` means it was successful, `Error` means it failed.
 
+/// Returns whether the value is Ok
+///
 pub fn is_ok(result: Result(a, e)) -> Bool {
   case result {
     Error(_) -> False
@@ -8,6 +10,7 @@ pub fn is_ok(result: Result(a, e)) -> Bool {
   }
 }
 
+/// Returns whether the value is Error
 pub fn is_error(result: Result(a, e)) -> Bool {
   case result {
     Ok(_) -> False
@@ -15,6 +18,9 @@ pub fn is_error(result: Result(a, e)) -> Bool {
   }
 }
 
+/// Executes the function `with` on inner value when Result is Ok, will noop
+/// if it is Error
+///
 pub fn map(
   over result: Result(a, e),
   with fun: fn(a) -> b,
@@ -25,6 +31,9 @@ pub fn map(
   }
 }
 
+/// Will execute the function `with` on inner value  when Result is Err, will noop
+/// if it is Ok
+///
 pub fn map_error(
   over result: Result(a, e),
   with fun: fn(e) -> f,
@@ -35,6 +44,8 @@ pub fn map_error(
   }
 }
 
+/// Will unnest the inner value of a result nested within another result
+///
 pub fn flatten(result: Result(Result(a, e), e)) -> Result(a, e) {
   case result {
     Ok(x) -> x
@@ -42,6 +53,8 @@ pub fn flatten(result: Result(Result(a, e), e)) -> Result(a, e) {
   }
 }
 
+/// An alias of `map`
+///
 pub fn then(
   result: Result(a, e),
   apply fun: fn(a) -> Result(b, e),
@@ -52,6 +65,9 @@ pub fn then(
   }
 }
 
+/// Will return the inner value of a Ok value.  If an error, will
+/// return the value provided as `or`
+///
 pub fn unwrap(result: Result(a, e), or default: a) -> a {
   case result {
     Ok(v) -> v
