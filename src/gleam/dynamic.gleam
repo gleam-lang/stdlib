@@ -53,8 +53,8 @@ pub external fn float(from: Dynamic) -> Result(Float, String)
 ///
 /// ## Examples
 /// ```gleam
-/// import gleam/atom.{create_from_string, to_string}
-/// to_string(atom(from(create_from_string("hello")))) == "hello"
+/// import gleam/atom
+/// atom(from(atom.create_from_string("hello"))) == OK("hello")
 /// atom(from(123)) == Error("Expected an Atom, got `123`")
 /// ```
 pub external fn atom(from: Dynamic) -> Result(atom.Atom, String)
@@ -76,7 +76,7 @@ pub external fn bool(from: Dynamic) -> Result(Bool, String)
 /// ```gleam
 /// import gleam/result
 /// let f = fn() { 1 }
-/// result.map(thunk(from(f)), fn(v) { v == f}) == True
+/// thunk(from(f)) |> result.is_ok == True
 /// thunk(from(123)) == Error("Expected a zero arity function, got `123`")
 /// ```
 pub external fn thunk(from: Dynamic) -> Result(fn() -> Dynamic, String)
