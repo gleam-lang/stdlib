@@ -1,70 +1,70 @@
 import gleam/string
-import gleam/expect
+import gleam/should
 import gleam/order
 
 pub fn length_test() {
   string.length("ß↑e̊")
-  |> expect.equal(_, 3)
+  |> should.equal(_, 3)
 
   string.length("Gleam")
-  |> expect.equal(_, 5)
+  |> should.equal(_, 5)
 
   string.length("")
-  |> expect.equal(_, 0)
+  |> should.equal(_, 0)
 }
 
 pub fn lowercase_test() {
   string.lowercase("Gleam")
-  |> expect.equal(_, "gleam")
+  |> should.equal(_, "gleam")
 }
 
 pub fn uppercase_test() {
   string.uppercase("Gleam")
-  |> expect.equal(_, "GLEAM")
+  |> should.equal(_, "GLEAM")
 }
 
 pub fn reverse_test() {
   string.reverse("Gleam")
-  |> expect.equal(_, "maelG")
+  |> should.equal(_, "maelG")
 }
 
 pub fn split_test() {
   "Gleam,Erlang,Elixir"
   |> string.split(_, ",")
-  |> expect.equal(_, ["Gleam", "Erlang", "Elixir"])
+  |> should.equal(_, ["Gleam", "Erlang", "Elixir"])
 
   "Gleam, Erlang,Elixir"
   |> string.split(_, ", ")
-  |> expect.equal(_, ["Gleam", "Erlang,Elixir"])
+  |> should.equal(_, ["Gleam", "Erlang,Elixir"])
 }
 
 pub fn replace_test() {
   "Gleam,Erlang,Elixir"
   |> string.replace(_, ",", "++")
-  |> expect.equal(_, "Gleam++Erlang++Elixir")
+  |> should.equal(_, "Gleam++Erlang++Elixir")
 }
 
 pub fn append_test() {
   "Test"
   |> string.append(_, " Me")
-  |> expect.equal(_, "Test Me")
+  |> should.equal(_, "Test Me")
 }
 
 pub fn compare_test() {
   string.compare("", "")
-  |> expect.equal(_, order.Eq)
+  |> should.equal(_, order.Eq)
 
   string.compare("a", "")
-  |> expect.equal(_, order.Gt)
+  |> should.equal(_, order.Gt)
 
   string.compare("a", "A")
-  |> expect.equal(_, order.Gt)
+  |> should.equal(_, order.Gt)
 
   string.compare("A", "B")
-  |> expect.equal(_, order.Lt)
+  |> should.equal(_, order.Lt)
 
   string.compare("t", "ABC")
-  |> expect.equal(_, order.Gt)
+  |> should.equal(_, order.Gt)
 }
 
 pub fn concat_test() {
@@ -72,7 +72,7 @@ pub fn concat_test() {
     "Hello", ", ", "world!",
   ]
   |> string.concat
-  |> expect.equal(_, "Hello, world!")
+  |> should.equal(_, "Hello, world!")
 }
 
 pub fn join_test() {
@@ -80,11 +80,11 @@ pub fn join_test() {
     "Hello", "world!",
   ]
   |> string.join(_, with: ", ")
-  |> expect.equal(_, "Hello, world!")
+  |> should.equal(_, "Hello, world!")
 
   [
     "Hello", "world!",
   ]
   |> string.join(_, with: "-")
-  |> expect.equal(_, "Hello-world!")
+  |> should.equal(_, "Hello-world!")
 }

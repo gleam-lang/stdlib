@@ -11,8 +11,8 @@ iodata_test() ->
         ),
         <<"H">>
     ),
-    gleam@expect:equal(gleam@iodata:to_string(Data), <<"Hello, world!">>),
-    gleam@expect:equal(gleam@iodata:byte_size(Data), 13),
+    gleam@should:equal(gleam@iodata:to_string(Data), <<"Hello, world!">>),
+    gleam@should:equal(gleam@iodata:byte_size(Data), 13),
     Data1 = gleam@iodata:prepend_iodata(
         gleam@iodata:append_iodata(
             gleam@iodata:append_iodata(
@@ -25,11 +25,11 @@ iodata_test() ->
         ),
         gleam@iodata:new(<<"H">>)
     ),
-    gleam@expect:equal(gleam@iodata:to_string(Data1), <<"Hello, world!">>),
-    gleam@expect:equal(gleam@iodata:byte_size(Data1), 13).
+    gleam@should:equal(gleam@iodata:to_string(Data1), <<"Hello, world!">>),
+    gleam@should:equal(gleam@iodata:byte_size(Data1), 13).
 
 lowercase_test() ->
-    gleam@expect:equal(
+    gleam@should:equal(
         gleam@iodata:to_string(
             gleam@iodata:lowercase(
                 gleam@iodata:from_strings([<<"Gleam">>, <<"Gleam">>])
@@ -39,7 +39,7 @@ lowercase_test() ->
     ).
 
 uppercase_test() ->
-    gleam@expect:equal(
+    gleam@should:equal(
         gleam@iodata:to_string(
             gleam@iodata:uppercase(
                 gleam@iodata:from_strings([<<"Gleam">>, <<"Gleam">>])
@@ -49,13 +49,13 @@ uppercase_test() ->
     ).
 
 split_test() ->
-    gleam@expect:equal(
+    gleam@should:equal(
         gleam@iodata:split(gleam@iodata:new(<<"Gleam,Erlang,Elixir">>), <<",">>),
         [gleam@iodata:new(<<"Gleam">>),
          gleam@iodata:new(<<"Erlang">>),
          gleam@iodata:new(<<"Elixir">>)]
     ),
-    gleam@expect:equal(
+    gleam@should:equal(
         gleam@iodata:split(
             gleam@iodata:from_strings([<<"Gleam, Erl">>, <<"ang,Elixir">>]),
             <<", ">>
@@ -65,19 +65,19 @@ split_test() ->
     ).
 
 is_equal_test() ->
-    gleam@expect:true(
+    gleam@should:be_true(
         gleam@iodata:is_equal(
             gleam@iodata:new(<<"12">>),
             gleam@iodata:from_strings([<<"1">>, <<"2">>])
         )
     ),
-    gleam@expect:true(
+    gleam@should:be_true(
         gleam@iodata:is_equal(
             gleam@iodata:new(<<"12">>),
             gleam@iodata:new(<<"12">>)
         )
     ),
-    gleam@expect:false(
+    gleam@should:be_false(
         gleam@iodata:is_equal(
             gleam@iodata:new(<<"12">>),
             gleam@iodata:new(<<"2">>)
@@ -85,9 +85,9 @@ is_equal_test() ->
     ).
 
 is_empty_test() ->
-    gleam@expect:true(gleam@iodata:is_empty(gleam@iodata:new(<<"">>))),
-    gleam@expect:false(gleam@iodata:is_empty(gleam@iodata:new(<<"12">>))),
-    gleam@expect:true(gleam@iodata:is_empty(gleam@iodata:from_strings([]))),
-    gleam@expect:true(
+    gleam@should:be_true(gleam@iodata:is_empty(gleam@iodata:new(<<"">>))),
+    gleam@should:be_false(gleam@iodata:is_empty(gleam@iodata:new(<<"12">>))),
+    gleam@should:be_true(gleam@iodata:is_empty(gleam@iodata:from_strings([]))),
+    gleam@should:be_true(
         gleam@iodata:is_empty(gleam@iodata:from_strings([<<"">>, <<"">>]))
     ).

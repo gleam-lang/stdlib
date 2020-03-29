@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- The `expect` module has been renamed to `should`. Functions in the module
+  starting with `is_` have been changed to `be_`.
 - The `string.replace` and `iodata.replace` `all` arguement label has been
   changed to `each`.
 - The `string` module gains `is_empty`, `join` and `concat` functions.

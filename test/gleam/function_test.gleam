@@ -1,4 +1,4 @@
-import gleam/expect
+import gleam/should
 import gleam/function
 import gleam/int
 import gleam/list
@@ -13,7 +13,7 @@ pub fn compose_test() {
 
   1
   |> add_five
-  |> expect.equal(_, 6)
+  |> should.equal(_, 6)
 
   // Takes a list of ints and returns the head as a string (if there is one, or
   // else "0" if there is not)
@@ -24,11 +24,11 @@ pub fn compose_test() {
 
   [1]
   |> head_to_string
-  |> expect.equal(_, "1")
+  |> should.equal(_, "1")
 
   []
   |> head_to_string
-  |> expect.equal(_, "0")
+  |> should.equal(_, "0")
 }
 
 pub fn flip_test() {
@@ -43,26 +43,26 @@ pub fn flip_test() {
   let flipped_fun = function.flip(fun)
 
   fun("Bob", 1)
-  |> expect.equal(_, "String: 'Bob', Int: '1'")
+  |> should.equal(_, "String: 'Bob', Int: '1'")
 
   flipped_fun(2, "Alice")
-  |> expect.equal(_, "String: 'Alice', Int: '2'")
+  |> should.equal(_, "String: 'Alice', Int: '2'")
 }
 
 pub fn identity_test() {
   1
   |> function.identity
-  |> expect.equal(_, 1)
+  |> should.equal(_, 1)
 
   ""
   |> function.identity
-  |> expect.equal(_, "")
+  |> should.equal(_, "")
 
   []
   |> function.identity
-  |> expect.equal(_, [])
+  |> should.equal(_, [])
 
   tuple(1, 2.0)
   |> function.identity
-  |> expect.equal(_, tuple(1, 2.0))
+  |> should.equal(_, tuple(1, 2.0))
 }
