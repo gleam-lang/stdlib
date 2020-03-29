@@ -108,7 +108,7 @@ pub external fn round(Float) -> Int = "erlang" "round";
 ///
 /// ## Examples
 /// ```gleam
-/// truncate(2.4343434847383438) = 2
+/// truncate(2.4343434847383438) == 2
 /// ```
 ///
 pub external fn truncate(Float) -> Int = "erlang" "trunc";

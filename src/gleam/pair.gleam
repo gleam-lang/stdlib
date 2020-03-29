@@ -4,7 +4,7 @@
 ///
 /// ## Examples
 /// ```gleam
-/// first(tuple(1, 2)) = 1
+/// first(tuple(1, 2)) == 1
 /// ```
 ///
 pub fn first(pair: tuple(a, b)) -> a {
@@ -16,7 +16,7 @@ pub fn first(pair: tuple(a, b)) -> a {
 ///
 /// ## Examples
 /// ```gleam
-/// second(tuple(1, 2)) = 2
+/// second(tuple(1, 2)) == 2
 /// ```
 ///
 pub fn second(pair: tuple(a, b)) -> b {
@@ -28,7 +28,7 @@ pub fn second(pair: tuple(a, b)) -> b {
 ///
 /// ## Examples
 /// ```gleam
-/// swap(tuple(1, 2)) = tuple(2, 1)
+/// swap(tuple(1, 2)) == tuple(2, 1)
 /// ```
 ///
 pub fn swap(pair: tuple(a, b)) -> tuple(b, a) {
@@ -41,7 +41,7 @@ pub fn swap(pair: tuple(a, b)) -> tuple(b, a) {
 ///
 /// ## Examples
 /// ```gleam
-/// map_first(tuple(1, 2), fn(n) { n * 2 }) = 2
+/// tuple(1, 2) |> map_first(fn(n) { n * 2 }) == 2
 /// ```
 ///
 pub fn map_first(of pair: tuple(a, b), with fun: fn(a) -> c) -> tuple(c, b) {
@@ -54,7 +54,7 @@ pub fn map_first(of pair: tuple(a, b), with fun: fn(a) -> c) -> tuple(c, b) {
 ///
 /// ## Examples
 /// ```gleam
-/// map_second(tuple(1, 2), fn(n) { n * 2 }) = 4
+/// tuple(1, 2) |> map_second(fn(n) { n * 2 }) == 4
 /// ```
 ///
 pub fn map_second(of pair: tuple(a, b), with fun: fn(b) -> c) -> tuple(a, c) {

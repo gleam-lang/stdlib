@@ -11,7 +11,7 @@ pub fn to_string() {
   |> int.to_string
   |> should.equal(_, "-123")
 
-  0123
+  123
   |> int.to_string
   |> should.equal(_, "123")
 }
