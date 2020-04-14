@@ -6,6 +6,9 @@ import gleam/list
 import gleam/order
 import gleam/result.{Option}
 
+pub type String =
+  String
+
 /// ## Basics
 
 /// Determine if a string is empty.

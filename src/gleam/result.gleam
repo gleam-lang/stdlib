@@ -1,6 +1,12 @@
 /// Result represents the result of something that may succeed or fail.
 /// `Ok` means it was successful, `Error` means it failed.
 
+pub type Result(success, error) =
+  Result(success, error)
+
+pub type Nil =
+  Nil
+
 /// Returns whether the value is Ok
 ///
 pub fn is_ok(result: Result(a, e)) -> Bool {

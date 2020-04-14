@@ -2,6 +2,9 @@
 
 import gleam/order.{Order}
 
+pub type Bool =
+  Bool
+
 /// Returns the opposite Bool value
 ///
 /// ## Examples

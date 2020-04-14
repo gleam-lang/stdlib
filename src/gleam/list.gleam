@@ -3,6 +3,9 @@ import gleam/pair
 import gleam/order.{Order}
 import gleam/result.{Option}
 
+pub type List(elements) =
+  List(elements)
+
 pub type LengthMismatch {
   LengthMismatch
 }

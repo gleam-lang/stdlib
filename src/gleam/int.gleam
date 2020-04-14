@@ -3,6 +3,9 @@
 import gleam/order.{Order}
 import gleam/result.{Option}
 
+pub type Int =
+  Int
+
 /// Attempts to parse the String as an Int if possible
 ///
 /// ## Examples

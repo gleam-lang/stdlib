@@ -4,6 +4,9 @@ import gleam/iodata
 import gleam/order.{Order}
 import gleam/result.{Option}
 
+pub type Float =
+  Float
+
 /// Attempts to parse the String as a Float if possible
 ///
 /// ## Examples
