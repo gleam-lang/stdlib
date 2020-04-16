@@ -56,7 +56,7 @@ repeat_help(Chunk, Result, Repeats) ->
     end.
 
 repeat(String, Times) ->
-    repeat_help(String, [<<"">>], Times).
+    repeat_help(String, [], Times).
 
 join(Strings, Separator) ->
     gleam@iodata:to_string(

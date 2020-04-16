@@ -229,7 +229,7 @@ fn repeat_help(chunk: String, result: List(String), repeats: Int) -> String {
 }
 
 pub fn repeat(string: String, times times: Int) -> String {
-  repeat_help(string, [""], times)
+  repeat_help(string, [], times)
 }
 
 /// Join many strings together with a given separator.
