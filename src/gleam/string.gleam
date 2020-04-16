@@ -32,15 +32,6 @@ pub fn is_empty(str: String) -> Bool {
 ///
 pub external fn length(String) -> Int = "string" "length"
 
-/// Repeat a string `n` times.
-///
-/// ## Examples
-/// ```gleam
-/// repeat("ha", times: 3) == "hahaha"
-/// ```
-///
-// pub fn repeat(string: String, times n: Int) -> String {}
-
 /// Reverse a string.
 ///
 /// ## Examples
@@ -141,9 +132,7 @@ pub external fn compare(String, String) -> order.Order =
 
 /// ## Check for Substrings
 
-// TODO
-// TODO: Not sure about the name and labels here
-/// See if the second string contains the first one.
+/// Check if the first string contains the second.
 ///
 /// ## Examples
 /// ```gleam
@@ -152,7 +141,12 @@ pub external fn compare(String, String) -> order.Order =
 /// contains(does: "theory", contain: "THE") == False
 /// ```
 ///
-// pub fn contains(does haystack: String, contain needle: String) -> String {}
+external fn erl_contains(String, String) -> Bool =
+  "gleam_stdlib" "string_contains"
+
+pub fn contains(does haystack: String, contain needle: String) -> Bool {
+    erl_contains(haystack, needle)
+}
 
 // TODO
 // TODO: Not sure about the name and labels here
@@ -218,6 +212,24 @@ pub fn concat(strings: List(String)) -> String {
   strings
   |> iodata.from_strings
   |> iodata.to_string
+}
+
+/// Repeat a string `n` times.
+///
+/// ## Examples
+/// ```gleam
+/// repeat("ha", times: 3) == "hahaha"
+/// ```
+///
+fn repeat_help(chunk: String, result: List(String), repeats: Int) -> String {
+  case repeats <= 0 {
+     True -> concat(result)
+     False -> repeat_help(chunk, [chunk | result], repeats - 1)
+  }
+}
+
+pub fn repeat(string: String, times times: Int) -> String {
+  repeat_help(string, [""], times)
 }
 
 /// Join many strings together with a given separator.

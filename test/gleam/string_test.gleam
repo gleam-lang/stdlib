@@ -67,12 +67,39 @@ pub fn compare_test() {
   |> should.equal(_, order.Gt)
 }
 
+pub fn contains_test() {
+    "gleam"
+    |> string.contains(_, "ea")
+    |> should.equal(_, True)
+
+    "gleam"
+    |> string.contains(_, "x")
+    |> should.equal(_, False)
+
+    string.contains(does: "bellwether", contain: "bell")
+    |> should.equal(_, True)
+}
+
 pub fn concat_test() {
   [
     "Hello", ", ", "world!",
   ]
   |> string.concat
   |> should.equal(_, "Hello, world!")
+}
+
+pub fn repeat_test() {
+  "hi"
+  |> string.repeat(_, times: 3)
+  |> should.equal(_, "hihihi")
+
+  "hi"
+  |> string.repeat(_, 0)
+  |> should.equal(_, "")
+
+  "hi"
+  |> string.repeat(_, -1)
+  |> should.equal(_, "")
 }
 
 pub fn join_test() {
