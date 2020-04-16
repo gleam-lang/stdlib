@@ -1,27 +1,61 @@
-/// A datatype and related functions for working with Erlang atoms.
-
+/// Atom is a special string-like data-type that is most commonly used for
+/// interfacing with code written in other BEAM langauges such as Erlang and
+/// Elixir. It is preferable to define your own custom types to use instead of
+/// atoms where possible.
+///
+/// Atoms are not used much in typical Gleam code!
+///
+/// ## Creating atoms
+///
+/// We can create atoms with the the [`create_from_string`](#create_from_string)
+/// function, though we must be careful when doing so as atoms are never
+/// garbage collected. If we create too many atoms (for example, if we convert
+/// user input into atoms) we may hit the max limit of atoms and cause the
+/// virtual machine to crash.
+///
 pub external type Atom;
 
 /// Error returned when a given Atom does not currently exist
-pub type AtomNotLoaded {
+pub type FromStringError {
   AtomNotLoaded
 }
 
-/// Will return a value of type `Atom` that represents a specific Erlang
-/// atom from whom the string is its text representation if it exists.
+/// Find an existing Atom for the given String.
 ///
-pub external fn from_string(String) -> Result(Atom, AtomNotLoaded) =
+/// If no atom is found in the virtual machine's atom table for the String then
+/// an gaerror is returned.
+///
+/// ## Examples
+///
+/// ```
+/// from_string("ok") == Ok(create_from_string("ok"))
+/// from_string("some_new_atom") == Error(AtomNotLoaded)
+/// ```
+///
+pub external fn from_string(String) -> Result(Atom, FromStringError) =
   "gleam_stdlib" "atom_from_string";
 
-/// This function can create a new atom if one does not already exist for
-/// the given string. Atoms are not garbage collected so this can result
-/// in a memory leak if called over time on new values
+/// Create an atom from a string, inserting a new value into the virtual
+/// machine's atom table if an atom does not already exist for the given
+/// string.
+///
+/// We must be careful when using this function as there is a limit to the
+/// number of atom that can fit in the virtual machine's atom table. Never
+/// convert user input into atoms as filling the atom table will cause the
+/// virtual machine to crash!
 ///
 pub external fn create_from_string(String) -> Atom =
   "gleam_stdlib" "atom_create_from_string";
 
 /// Retuns a `String` corresponding to the text representation of the given
-/// `Atom`
+/// `Atom`.
+///
+/// ## Examples
+///
+/// ```
+/// let ok_atom = create_from_string("ok")
+/// to_string(ok_atom) == "ok"
+/// ```
 ///
 pub external fn to_string(Atom) -> String =
   "gleam_stdlib" "atom_to_string";
