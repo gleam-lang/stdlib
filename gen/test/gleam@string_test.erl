@@ -1,7 +1,7 @@
 -module(gleam@string_test).
 -compile(no_auto_import).
 
--export([length_test/0, lowercase_test/0, uppercase_test/0, reverse_test/0, split_test/0, replace_test/0, append_test/0, compare_test/0, concat_test/0, join_test/0]).
+-export([length_test/0, lowercase_test/0, uppercase_test/0, reverse_test/0, split_test/0, replace_test/0, append_test/0, repeat_test/0, compare_test/0, contains_test/0, concat_test/0, join_test/0]).
 
 length_test() ->
     gleam@should:equal(gleam@string:length(<<"ß↑e̊">>), 3),
@@ -39,12 +39,25 @@ append_test() ->
         <<"Test Me">>
     ).
 
+repeat_test() ->
+    gleam@should:equal(gleam@string:repeat(<<"hi">>, 3), <<"hihihi">>),
+    gleam@should:equal(gleam@string:repeat(<<"hi">>, 0), <<"">>),
+    gleam@should:equal(gleam@string:repeat(<<"hi">>, -1), <<"">>).
+
 compare_test() ->
     gleam@should:equal(gleam@string:compare(<<"">>, <<"">>), eq),
     gleam@should:equal(gleam@string:compare(<<"a">>, <<"">>), gt),
     gleam@should:equal(gleam@string:compare(<<"a">>, <<"A">>), gt),
     gleam@should:equal(gleam@string:compare(<<"A">>, <<"B">>), lt),
     gleam@should:equal(gleam@string:compare(<<"t">>, <<"ABC">>), gt).
+
+contains_test() ->
+    gleam@should:equal(gleam@string:contains(<<"gleam">>, <<"ea">>), true),
+    gleam@should:equal(gleam@string:contains(<<"gleam">>, <<"x">>), false),
+    gleam@should:equal(
+        gleam@string:contains(<<"bellwether">>, <<"bell">>),
+        true
+    ).
 
 concat_test() ->
     gleam@should:equal(
