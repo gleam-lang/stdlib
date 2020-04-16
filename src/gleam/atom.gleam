@@ -15,7 +15,8 @@
 ///
 pub external type Atom;
 
-/// Error returned when a given Atom does not currently exist
+/// An error returned when no atom is found in the virtual machine's atom table
+/// for a given string when calling the [`from_string`](#from_string) function.
 pub type FromStringError {
   AtomNotLoaded
 }
@@ -23,7 +24,7 @@ pub type FromStringError {
 /// Find an existing Atom for the given String.
 ///
 /// If no atom is found in the virtual machine's atom table for the String then
-/// an gaerror is returned.
+/// an error is returned.
 ///
 /// ## Examples
 ///
