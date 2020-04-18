@@ -10,6 +10,7 @@
   changed to `each`.
 - The `string` module gains `is_empty`, `join` and `concat` functions.
 - The `int` module gains `is_even` and `is_odd` functions.
+- The `list.length` function now accepts a labelled argument.
 
 ## v0.7.0 - 2020-03-03
 
