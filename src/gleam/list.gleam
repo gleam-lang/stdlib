@@ -12,7 +12,7 @@ pub type LengthMismatch {
 
 /// Using the Erlang C BIF implementation.
 ///
-pub external fn length(List(a)) -> Int = "erlang" "length"
+pub external fn length(of: List(a)) -> Int = "erlang" "length"
 
 /// Using the Erlang C BIF implementation.
 ///
@@ -230,7 +230,7 @@ pub fn zip(xs: List(a), ys: List(b)) -> List(tuple(a, b)) {
 }
 
 pub fn strict_zip(l1: List(a), l2: List(b)) -> Result(List(tuple(a, b)), LengthMismatch) {
-  case length(l1) == length(l2) {
+  case length(of: l1) == length(of: l2) {
     True -> Ok(zip(l1, l2))
     False -> Error(LengthMismatch)
   }
