@@ -7,7 +7,8 @@
          iodata_append/2, iodata_prepend/2, identity/1, decode_int/1,
          decode_string/1, decode_bool/1, decode_float/1, decode_thunk/1, decode_atom/1,
          decode_list/1, decode_field/2, decode_element/2, parse_int/1, parse_float/1, compare_strings/2,
-         string_contains/2]).
+         string_contains/2, string_starts_with/2, string_ends_with/2, string_to_graphemes/1,
+         string_next_grapheme/1]).
 
 should_equal(Actual, Expected) -> ?assertEqual(Expected, Actual).
 should_not_equal(Actual, Expected) -> ?assertNotEqual(Expected, Actual).
@@ -109,10 +110,62 @@ compare_strings(Lhs, Rhs) ->
      gt
   end.
 
+%% @doc Check if a string contains another string returning strictly a boolean
+%% we use the binary module here as it should be faster than comparing as strings
+-spec string_contains(binary(), binary()) -> boolean().
 string_contains(Haystack, Needle) ->
-  case string:find(Haystack, Needle) of
+  case binary:match(Haystack, Needle) of
     nomatch ->
       false;
     _ ->
       true
   end.
+
+%% @doc Check if a string ends with another string returning strictly a boolean
+%% we use the binary module here as it should be faster than comparing as strings
+-spec string_starts_with(binary(), binary()) -> boolean().
+string_starts_with(Haystack, Prefix) ->
+  case binary:longest_common_prefix([Haystack, Prefix]) of
+    N when N == byte_size(Prefix) ->
+      true;
+    _ ->
+      false
+   end.
+
+%% @doc Check if a string ends with another string returning strictly a boolean
+%% we use the binary module here as it should be faster than comparing as strings
+-spec string_ends_with(binary(), binary()) -> boolean().
+string_ends_with(Haystack, Suffix) ->
+  case binary:longest_common_suffix([Haystack, Suffix]) of
+    N when N == byte_size(Suffix) ->
+      true;
+    _ ->
+      false
+   end.
+
+%% @doc Convert a UTF-8 binary into a list of UTF-8 binary grapheme clusters.
+%% Erlang's string.to_graphemes returns [ char() or [ char() ]] meaning we'd
+%% have to scan the data twice to get back a list of UTF-8 binary graphemes.
+%% This function only scans the data once, but then reverses it. So is it
+%% actually more performant? 🤷
+-spec string_to_graphemes(binary()) -> [binary()].
+string_to_graphemes(Input) ->
+  string_to_graphemes_help(string:next_grapheme(Input), []).
+
+-spec string_to_graphemes_help(iolist(), [binary()]) -> [binary ()].
+string_to_graphemes_help([ Next | Rest ], Acc) ->
+  string_to_graphemes_help(string:next_grapheme(Rest), [unicode:characters_to_binary([Next])|Acc]);
+
+string_to_graphemes_help(_, Acc) ->
+  lists:reverse(Acc).
+
+%% @doc Pop the leading grapheme cluster off a UTF-8 binary if there is one
+-spec string_next_grapheme(binary()) -> {ok, {binary(), binary()}} | {error, nil}.
+string_next_grapheme(Input) ->
+  string_next_grapheme_help(string:next_grapheme(Input)).
+
+-spec string_next_grapheme_help(iolist()) -> {ok, {binary(), binary()}} | {error, nil}.
+string_next_grapheme_help([ Next | Rest ]) ->
+  {ok, {unicode:characters_to_binary([Next]), Rest}};
+string_next_grapheme_help(_) ->
+  {error, nil}.

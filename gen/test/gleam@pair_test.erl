@@ -5,14 +5,14 @@
 
 first_test() ->
     gleam@should:equal(gleam@pair:first({1, 2}), 1),
-    gleam@should:equal(gleam@pair:first({<<"abc">>, []}), <<"abc">>).
+    gleam@should:equal(gleam@pair:first({<<"abc"/utf8>>, []}), <<"abc"/utf8>>).
 
 second_test() ->
     gleam@should:equal(gleam@pair:second({1, 2}), 2),
-    gleam@should:equal(gleam@pair:second({<<"abc">>, []}), []).
+    gleam@should:equal(gleam@pair:second({<<"abc"/utf8>>, []}), []).
 
 swap_test() ->
-    gleam@should:equal(gleam@pair:swap({1, <<"2">>}), {<<"2">>, 1}).
+    gleam@should:equal(gleam@pair:swap({1, <<"2"/utf8>>}), {<<"2"/utf8>>, 1}).
 
 map_first_test() ->
     Inc = fun(A) -> A + 1 end,

@@ -15,31 +15,34 @@ compose_test() ->
         ),
         fun gleam@int:to_string/1
     ),
-    gleam@should:equal(HeadToString([1]), <<"1">>),
-    gleam@should:equal(HeadToString([]), <<"0">>).
+    gleam@should:equal(HeadToString([1]), <<"1"/utf8>>),
+    gleam@should:equal(HeadToString([]), <<"0"/utf8>>).
 
 flip_test() ->
     Fun = fun(S, I) ->
         gleam@string:append(
             gleam@string:append(
                 gleam@string:append(
-                    gleam@string:append(<<"String: '">>, S),
-                    <<"', Int: '">>
+                    gleam@string:append(<<"String: '"/utf8>>, S),
+                    <<"', Int: '"/utf8>>
                 ),
                 gleam@int:to_string(I)
             ),
-            <<"'">>
+            <<"'"/utf8>>
         )
     end,
     FlippedFun = gleam@function:flip(Fun),
-    gleam@should:equal(Fun(<<"Bob">>, 1), <<"String: 'Bob', Int: '1'">>),
     gleam@should:equal(
-        FlippedFun(2, <<"Alice">>),
-        <<"String: 'Alice', Int: '2'">>
+        Fun(<<"Bob"/utf8>>, 1),
+        <<"String: 'Bob', Int: '1'"/utf8>>
+    ),
+    gleam@should:equal(
+        FlippedFun(2, <<"Alice"/utf8>>),
+        <<"String: 'Alice', Int: '2'"/utf8>>
     ).
 
 identity_test() ->
     gleam@should:equal(gleam@function:identity(1), 1),
-    gleam@should:equal(gleam@function:identity(<<"">>), <<"">>),
+    gleam@should:equal(gleam@function:identity(<<""/utf8>>), <<""/utf8>>),
     gleam@should:equal(gleam@function:identity([]), []),
     gleam@should:equal(gleam@function:identity({1, 2.0}), {1, 2.0}).

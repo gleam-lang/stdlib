@@ -34,14 +34,16 @@ insert_test() ->
     gleam@should:equal(
         gleam@map:insert(
             gleam@map:insert(
-                gleam@map:insert(gleam@map:new(), <<"a">>, 0),
-                <<"b">>,
+                gleam@map:insert(gleam@map:new(), <<"a"/utf8>>, 0),
+                <<"b"/utf8>>,
                 1
             ),
-            <<"c">>,
+            <<"c"/utf8>>,
             2
         ),
-        gleam@map:from_list([{<<"a">>, 0}, {<<"b">>, 1}, {<<"c">>, 2}])
+        gleam@map:from_list(
+            [{<<"a"/utf8>>, 0}, {<<"b"/utf8>>, 1}, {<<"c"/utf8>>, 2}]
+        )
     ).
 
 map_values_test() ->
@@ -56,15 +58,19 @@ map_values_test() ->
 keys_test() ->
     gleam@should:equal(
         gleam@map:keys(
-            gleam@map:from_list([{<<"a">>, 0}, {<<"b">>, 1}, {<<"c">>, 2}])
+            gleam@map:from_list(
+                [{<<"a"/utf8>>, 0}, {<<"b"/utf8>>, 1}, {<<"c"/utf8>>, 2}]
+            )
         ),
-        [<<"a">>, <<"b">>, <<"c">>]
+        [<<"a"/utf8>>, <<"b"/utf8>>, <<"c"/utf8>>]
     ).
 
 values_test() ->
     gleam@should:equal(
         gleam@map:values(
-            gleam@map:from_list([{<<"a">>, 0}, {<<"b">>, 1}, {<<"c">>, 2}])
+            gleam@map:from_list(
+                [{<<"a"/utf8>>, 0}, {<<"b"/utf8>>, 1}, {<<"c"/utf8>>, 2}]
+            )
         ),
         [0, 1, 2]
     ).
@@ -72,34 +78,48 @@ values_test() ->
 take_test() ->
     gleam@should:equal(
         gleam@map:take(
-            gleam@map:from_list([{<<"a">>, 0}, {<<"b">>, 1}, {<<"c">>, 2}]),
-            [<<"a">>, <<"b">>, <<"d">>]
+            gleam@map:from_list(
+                [{<<"a"/utf8>>, 0}, {<<"b"/utf8>>, 1}, {<<"c"/utf8>>, 2}]
+            ),
+            [<<"a"/utf8>>, <<"b"/utf8>>, <<"d"/utf8>>]
         ),
-        gleam@map:from_list([{<<"a">>, 0}, {<<"b">>, 1}])
+        gleam@map:from_list([{<<"a"/utf8>>, 0}, {<<"b"/utf8>>, 1}])
     ).
 
 drop_test() ->
     gleam@should:equal(
         gleam@map:drop(
-            gleam@map:from_list([{<<"a">>, 0}, {<<"b">>, 1}, {<<"c">>, 2}]),
-            [<<"a">>, <<"b">>, <<"d">>]
+            gleam@map:from_list(
+                [{<<"a"/utf8>>, 0}, {<<"b"/utf8>>, 1}, {<<"c"/utf8>>, 2}]
+            ),
+            [<<"a"/utf8>>, <<"b"/utf8>>, <<"d"/utf8>>]
         ),
-        gleam@map:from_list([{<<"c">>, 2}])
+        gleam@map:from_list([{<<"c"/utf8>>, 2}])
     ).
 
 merge_test() ->
-    A = gleam@map:from_list([{<<"a">>, 2}, {<<"c">>, 4}, {<<"d">>, 3}]),
-    B = gleam@map:from_list([{<<"a">>, 0}, {<<"b">>, 1}, {<<"c">>, 2}]),
+    A = gleam@map:from_list(
+        [{<<"a"/utf8>>, 2}, {<<"c"/utf8>>, 4}, {<<"d"/utf8>>, 3}]
+    ),
+    B = gleam@map:from_list(
+        [{<<"a"/utf8>>, 0}, {<<"b"/utf8>>, 1}, {<<"c"/utf8>>, 2}]
+    ),
     gleam@should:equal(
         gleam@map:merge(A, B),
         gleam@map:from_list(
-            [{<<"a">>, 0}, {<<"b">>, 1}, {<<"c">>, 2}, {<<"d">>, 3}]
+            [{<<"a"/utf8>>, 0},
+             {<<"b"/utf8>>, 1},
+             {<<"c"/utf8>>, 2},
+             {<<"d"/utf8>>, 3}]
         )
     ),
     gleam@should:equal(
         gleam@map:merge(B, A),
         gleam@map:from_list(
-            [{<<"a">>, 2}, {<<"b">>, 1}, {<<"c">>, 4}, {<<"d">>, 3}]
+            [{<<"a"/utf8>>, 2},
+             {<<"b"/utf8>>, 1},
+             {<<"c"/utf8>>, 4},
+             {<<"d"/utf8>>, 3}]
         )
     ).
 
@@ -107,16 +127,20 @@ delete_test() ->
     gleam@should:equal(
         gleam@map:delete(
             gleam@map:delete(
-                gleam@map:from_list([{<<"a">>, 0}, {<<"b">>, 1}, {<<"c">>, 2}]),
-                <<"a">>
+                gleam@map:from_list(
+                    [{<<"a"/utf8>>, 0}, {<<"b"/utf8>>, 1}, {<<"c"/utf8>>, 2}]
+                ),
+                <<"a"/utf8>>
             ),
-            <<"d">>
+            <<"d"/utf8>>
         ),
-        gleam@map:from_list([{<<"b">>, 1}, {<<"c">>, 2}])
+        gleam@map:from_list([{<<"b"/utf8>>, 1}, {<<"c"/utf8>>, 2}])
     ).
 
 update_test() ->
-    Dict = gleam@map:from_list([{<<"a">>, 0}, {<<"b">>, 1}, {<<"c">>, 2}]),
+    Dict = gleam@map:from_list(
+        [{<<"a"/utf8>>, 0}, {<<"b"/utf8>>, 1}, {<<"c"/utf8>>, 2}]
+    ),
     IncOrZero = fun(X) -> case X of
             {ok, I} ->
                 I + 1;
@@ -125,26 +149,39 @@ update_test() ->
                 0
         end end,
     gleam@should:equal(
-        gleam@map:update(Dict, <<"a">>, IncOrZero),
-        gleam@map:from_list([{<<"a">>, 1}, {<<"b">>, 1}, {<<"c">>, 2}])
-    ),
-    gleam@should:equal(
-        gleam@map:update(Dict, <<"b">>, IncOrZero),
-        gleam@map:from_list([{<<"a">>, 0}, {<<"b">>, 2}, {<<"c">>, 2}])
-    ),
-    gleam@should:equal(
-        gleam@map:update(Dict, <<"z">>, IncOrZero),
+        gleam@map:update(Dict, <<"a"/utf8>>, IncOrZero),
         gleam@map:from_list(
-            [{<<"a">>, 0}, {<<"b">>, 1}, {<<"c">>, 2}, {<<"z">>, 0}]
+            [{<<"a"/utf8>>, 1}, {<<"b"/utf8>>, 1}, {<<"c"/utf8>>, 2}]
+        )
+    ),
+    gleam@should:equal(
+        gleam@map:update(Dict, <<"b"/utf8>>, IncOrZero),
+        gleam@map:from_list(
+            [{<<"a"/utf8>>, 0}, {<<"b"/utf8>>, 2}, {<<"c"/utf8>>, 2}]
+        )
+    ),
+    gleam@should:equal(
+        gleam@map:update(Dict, <<"z"/utf8>>, IncOrZero),
+        gleam@map:from_list(
+            [{<<"a"/utf8>>, 0},
+             {<<"b"/utf8>>, 1},
+             {<<"c"/utf8>>, 2},
+             {<<"z"/utf8>>, 0}]
         )
     ).
 
 fold_test() ->
     Dict = gleam@map:from_list(
-        [{<<"a">>, 0}, {<<"b">>, 1}, {<<"c">>, 2}, {<<"d">>, 3}]
+        [{<<"a"/utf8>>, 0},
+         {<<"b"/utf8>>, 1},
+         {<<"c"/utf8>>, 2},
+         {<<"d"/utf8>>, 3}]
     ),
     Add = fun(_, V, Acc) -> V + Acc end,
     gleam@should:equal(gleam@map:fold(Dict, 0, Add), 6),
     Concat = fun(K, _, Acc1) -> gleam@string:append(Acc1, K) end,
-    gleam@should:equal(gleam@map:fold(Dict, <<"">>, Concat), <<"abcd">>),
+    gleam@should:equal(
+        gleam@map:fold(Dict, <<""/utf8>>, Concat),
+        <<"abcd"/utf8>>
+    ),
     gleam@should:equal(gleam@map:fold(gleam@map:from_list([]), 0, Add), 0).

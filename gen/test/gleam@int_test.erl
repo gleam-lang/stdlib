@@ -4,21 +4,21 @@
 -export([to_string/0, parse/0, to_base_string/0, compare_test/0, min_test/0, max_test/0, is_even_test/0, is_odd_test/0]).
 
 to_string() ->
-    gleam@should:equal(gleam@int:to_string(123), <<"123">>),
-    gleam@should:equal(gleam@int:to_string(-123), <<"-123">>),
-    gleam@should:equal(gleam@int:to_string(123), <<"123">>).
+    gleam@should:equal(gleam@int:to_string(123), <<"123"/utf8>>),
+    gleam@should:equal(gleam@int:to_string(-123), <<"-123"/utf8>>),
+    gleam@should:equal(gleam@int:to_string(123), <<"123"/utf8>>).
 
 parse() ->
-    gleam@should:equal(gleam@int:parse(<<"123">>), {ok, 123}),
-    gleam@should:equal(gleam@int:parse(<<"-123">>), {ok, -123}),
-    gleam@should:equal(gleam@int:parse(<<"0123">>), {ok, 123}),
-    gleam@should:equal(gleam@int:parse(<<"">>), {error, nil}),
-    gleam@should:equal(gleam@int:parse(<<"what">>), {error, nil}),
-    gleam@should:equal(gleam@int:parse(<<"1.23">>), {error, nil}).
+    gleam@should:equal(gleam@int:parse(<<"123"/utf8>>), {ok, 123}),
+    gleam@should:equal(gleam@int:parse(<<"-123"/utf8>>), {ok, -123}),
+    gleam@should:equal(gleam@int:parse(<<"0123"/utf8>>), {ok, 123}),
+    gleam@should:equal(gleam@int:parse(<<""/utf8>>), {error, nil}),
+    gleam@should:equal(gleam@int:parse(<<"what"/utf8>>), {error, nil}),
+    gleam@should:equal(gleam@int:parse(<<"1.23"/utf8>>), {error, nil}).
 
 to_base_string() ->
-    gleam@should:equal(gleam@int:to_base_string(100, 16), <<"64">>),
-    gleam@should:equal(gleam@int:to_base_string(-100, 16), <<"-64">>).
+    gleam@should:equal(gleam@int:to_base_string(100, 16), <<"64"/utf8>>),
+    gleam@should:equal(gleam@int:to_base_string(-100, 16), <<"-64"/utf8>>).
 
 compare_test() ->
     gleam@should:equal(gleam@int:compare(0, 0), eq),

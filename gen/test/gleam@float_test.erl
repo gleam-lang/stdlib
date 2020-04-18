@@ -4,16 +4,19 @@
 -export([parse_test/0, to_string_test/0, compare_test/0, ceiling_test/0, floor_test/0, round_test/0, truncate_test/0, min_test/0, max_test/0]).
 
 parse_test() ->
-    gleam@should:equal(gleam@float:parse(<<"1.23">>), {ok, 1.23}),
-    gleam@should:equal(gleam@float:parse(<<"5.0">>), {ok, 5.0}),
-    gleam@should:equal(gleam@float:parse(<<"0.123456789">>), {ok, 0.123456789}),
-    gleam@should:equal(gleam@float:parse(<<"">>), {error, nil}),
-    gleam@should:equal(gleam@float:parse(<<"what">>), {error, nil}),
-    gleam@should:equal(gleam@float:parse(<<"1">>), {error, nil}).
+    gleam@should:equal(gleam@float:parse(<<"1.23"/utf8>>), {ok, 1.23}),
+    gleam@should:equal(gleam@float:parse(<<"5.0"/utf8>>), {ok, 5.0}),
+    gleam@should:equal(
+        gleam@float:parse(<<"0.123456789"/utf8>>),
+        {ok, 0.123456789}
+    ),
+    gleam@should:equal(gleam@float:parse(<<""/utf8>>), {error, nil}),
+    gleam@should:equal(gleam@float:parse(<<"what"/utf8>>), {error, nil}),
+    gleam@should:equal(gleam@float:parse(<<"1"/utf8>>), {error, nil}).
 
 to_string_test() ->
-    gleam@should:equal(gleam@float:to_string(123.0), <<"123.0">>),
-    gleam@should:equal(gleam@float:to_string(-8.1), <<"-8.1">>).
+    gleam@should:equal(gleam@float:to_string(123.0), <<"123.0"/utf8>>),
+    gleam@should:equal(gleam@float:to_string(-8.1), <<"-8.1"/utf8>>).
 
 compare_test() ->
     gleam@should:equal(gleam@float:compare(0.0, 0.0), eq),

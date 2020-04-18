@@ -95,40 +95,87 @@ pub external fn uppercase(String) -> String = "string" "uppercase"
 pub external fn compare(String, String) -> order.Order =
   "gleam_stdlib" "compare_strings"
 
-/// ## Get Substrings
+// slice helper
+external fn erl_string_slice(string, start, length) -> String =
+  "string" "slice"
 
-// TODO
-/// Take a substring given a start and end Grapheme indexes. Negative indexes
-/// are taken starting from the *end* of the list.
+/// ## Get Substrings
+///
+/// Take a substring given a starting index and length.
+/// A negative start or length will return an empty string.
+/// Works on Unicode Graphemes.
 ///
 /// ## Examples
 /// ```gleam
-/// slice("gleam", from: 1, to: 3) == "lea"
-/// slice("gleam", from: 1, to: 10) == "leam"
-/// slice("snakes on a plane!", from: -6, to: -1) == "plane"
+/// slice("gleam", start: 1, length: 3) == "lea"
+/// slice("gleam", start: 1, length: 10) == "leam"
+/// slice("snakes on a plane!", start: -6, to: -1) == ""
 /// ```
 ///
-// pub fn slice(out_of string: String, from start: Int, end: Int) -> String {}
+pub fn slice(string: String, start start: Int, length length: Int) -> String {
+  case start < 0 || length <= 0 {
+    True ->
+      ""
 
-// TODO
-/// Drop *n* Graphemes from the left side of a
+    False ->
+      erl_string_slice(string, start, length)
+  }
+
+}
+
+// drop helpers
+external fn erl_string_slice_to_infinity(string: String, start: Int) -> String =
+    "string" "slice"
+
+/// Drop *n* Graphemes from the start of a string
+///
+/// If `up_to` is <= 0 the input string will be returned unchanged.
+/// If `up_to` is >= the input strings length, "" will be returned.
+/// Works on Unicode Graphemes.
 ///
 /// ## Examples
 /// ```gleam
 /// drop_left(from: "The Lone Gunmen", up_to: 2) == "e Lone Gunmen"
 /// ```
 ///
-// pub fn drop_left(from string: String, up_to num_graphemes: Int) -> String {}
+pub fn drop_left(from from: String, up_to up_to: Int) -> String {
+  case up_to <= 0 {
+      True ->
+        from
 
-// TODO
-/// Drop *n* Graphemes from the right side of a
+      False ->
+        erl_string_slice_to_infinity(from, up_to)
+  }
+}
+
+/// Drop *n* Graphemes from the end of a string
+///
+/// If `drop` is <= 0 the input string will be returned unchanged.
+/// If `drop` is >= the input strings length, "" will be returned.
+/// Works on Unicode Graphemes.
+///
 ///
 /// ## Examples
 /// ```gleam
 /// drop_right(from: "Cigarette Smoking Man", up_to: 2) == "Cigarette Smoking M"
 /// ```
 ///
-// pub fn drop_right(from string: String, up_to num_graphemes: Int) -> String {}
+pub fn drop_right(from from: String, drop drop: Int) -> String {
+    case drop <= 0 {
+        True ->
+          from
+
+        False -> {
+          let start = length(from) - drop
+          case start <= 0 {
+             True ->
+               ""
+             False ->
+               erl_string_slice(from, 0, start)
+          }
+        }
+    }
+}
 
 /// ## Check for Substrings
 
@@ -141,15 +188,9 @@ pub external fn compare(String, String) -> order.Order =
 /// contains(does: "theory", contain: "THE") == False
 /// ```
 ///
-external fn erl_contains(String, String) -> Bool =
+pub external fn contains(does: String, contain: String) -> Bool =
   "gleam_stdlib" "string_contains"
 
-pub fn contains(does haystack: String, contain needle: String) -> Bool {
-    erl_contains(haystack, needle)
-}
-
-// TODO
-// TODO: Not sure about the name and labels here
 /// See if the second string starts with the first one.
 ///
 /// ## Examples
@@ -157,10 +198,9 @@ pub fn contains(does haystack: String, contain needle: String) -> Bool {
 /// starts_with(does: "theory", start_with: "ory") == False
 /// ```
 ///
-// pub fn starts_with(does string: String, start_with prefix: String) -> String {}
+pub external fn starts_with(does: String, start_with: String) -> Bool =
+  "gleam_stdlib" "string_starts_with"
 
-// TODO
-// TODO: Not sure about the name and labels here
 /// See if the second string ends with the first one.
 ///
 /// ## Examples
@@ -168,7 +208,8 @@ pub fn contains(does haystack: String, contain needle: String) -> Bool {
 /// ends_with(does: "theory", end_with: "ory") == True
 /// ```
 ///
-// pub fn ends_with(does string: String, end_with suffix: String) -> String {}
+pub external fn ends_with(does: String, end_with: String) -> Bool =
+  "gleam_stdlib" "string_ends_with"
 
 /// ## Building and Splitting
 
@@ -208,10 +249,15 @@ pub fn append(to first: String, suffix second: String) -> String {
 /// concat(["never", "the", "less"]) == "nevertheless"
 /// ```
 ///
-pub fn concat(strings: List(String)) -> String {
-  strings
-  |> iodata.from_strings
-  |> iodata.to_string
+pub external fn concat(strings: List(String)) -> String =
+  "unicode" "characters_to_binary"
+
+// repeat helper
+fn repeat_help(chunk: String, result: List(String), repeats: Int) -> String {
+  case repeats <= 0 {
+     True -> concat(result)
+     False -> repeat_help(chunk, [chunk | result], repeats - 1)
+  }
 }
 
 /// Repeat a string `n` times.
@@ -221,13 +267,6 @@ pub fn concat(strings: List(String)) -> String {
 /// repeat("ha", times: 3) == "hahaha"
 /// ```
 ///
-fn repeat_help(chunk: String, result: List(String), repeats: Int) -> String {
-  case repeats <= 0 {
-     True -> concat(result)
-     False -> repeat_help(chunk, [chunk | result], repeats - 1)
-  }
-}
-
 pub fn repeat(string: String, times times: Int) -> String {
   repeat_help(string, [], times)
 }
@@ -236,7 +275,7 @@ pub fn repeat(string: String, times times: Int) -> String {
 ///
 /// ## Examples
 /// ```gleam
-/// join(["home","evan","Desktop"], with: "/") == "home/evan/Desktop"
+/// join(["super", "mega", "hyper", "bon"], with: "-") == "super-mega-hyper-bon"
 /// ```
 ///
 pub fn join(strings: List(String), with separator: String) -> String {
@@ -248,7 +287,53 @@ pub fn join(strings: List(String), with separator: String) -> String {
 
 /// ## Formatting
 
-// TODO
+// pad helpers
+type PadSide {
+  Left
+  Right
+}
+
+fn pad_fill_help(result: List(String), chunk: String, chunk_length: Int, to_fill: Int) -> String {
+    let one = 1
+    case True {
+        True if one > to_fill->
+          result
+          |> concat
+
+        True if to_fill > chunk_length ->
+          pad_fill_help([chunk | result], chunk, chunk_length, to_fill - chunk_length)
+
+        True ->
+          [slice(chunk, 0, to_fill) | result ]
+          |> list.reverse
+          |> concat
+    }
+}
+
+fn pad_help(pad: String, to_length: Int, with: String, pad_side: PadSide) -> String {
+    let one = 1
+    let pad_len = length(pad)
+    let with_len = length(with)
+    case True {
+        True if pad_len > with_len ->
+          pad
+
+        True if one > with_len ->
+          pad
+
+        True ->
+          case pad_side {
+            Left ->
+              [ pad_fill_help([], with, with_len, to_length - pad_len), pad ]
+              |> concat
+
+            Right ->
+              [ pad, pad_fill_help([], with, with_len, to_length - pad_len) ]
+              |> concat
+          }
+    }
+}
+
 /// Pad a string on the left until it has at least given number of Graphemes.
 ///
 /// ## Examples
@@ -258,9 +343,10 @@ pub fn join(strings: List(String), with separator: String) -> String {
 /// pad_left("121", to: 2, with: ".") == "121"
 /// ```
 ///
-// pub fn pad_left(string: String, to size: Int, with: String) {}
+pub fn pad_left(pad pad: String, to_length to_length: Int, with with: String) {
+    pad_help(pad, to_length, with, Left)
+}
 
-// TODO
 /// Pad a string on the right until it has a given length.
 ///
 /// ## Examples
@@ -270,66 +356,72 @@ pub fn join(strings: List(String), with separator: String) -> String {
 /// pad_right("121", to: 2, with: ".") == "121"
 /// ```
 ///
-// pub fn pad_right(string: String, to size: Int, with: String) {}
+pub fn pad_right(pad pad: String, to_length to_length: Int, with with: String) {
+    pad_help(pad, to_length, with, Right)
+}
 
-// TODO
-/// Get rid of whitespace on both sides of a String.
+// trim helpers
+type TrimDirection {
+  Leading
+  Trailing
+  Both
+}
+
+external fn erl_string_trim(String, TrimDirection) -> String =
+  "string" "trim"
+
+/// Remove whitespace on both sides of a String.
+/// All breaking Unicode characters with the White Space property will be removed.
+/// See: https://en.wikipedia.org/wiki/Whitespace_character#Unicode
 ///
 /// ## Examples
 /// ```gleam
 /// trim("  hats  \n") == "hats"
 /// ```
 ///
-// pub fn trim(string: String) -> String {}
+pub fn trim(string: String) -> String {
+    erl_string_trim(string, Both)
+}
 
-// TODO
-/// Get rid of whitespace on the left of a String.
+/// Remove whitespace on the left of a String.
 ///
 /// ## Examples
 /// ```gleam
 /// trim_left("  hats  \n") == "hats  \n"
 /// ```
 ///
-// pub fn trim_left(string: String) -> String {}
+pub fn trim_left(string: String) -> String {
+    erl_string_trim(string, Leading)
+}
 
-// TODO
-/// Get rid of whitespace on the right of a String.
+/// Remove whitespace on the right of a String.
 ///
 /// ## Examples
 /// ```gleam
 /// trim_right("  hats  \n") == "  hats"
 /// ```
 ///
-// pub fn trim_right(string: String) -> String {}
+pub fn trim_right(string: String) -> String {
+    erl_string_trim(string, Trailing)
+}
 
 /// ## Grapheme Conversions
 
-// These functions convert to and from Grapheme, which currently
-// does not exist as a type in Gleam.
+/// Convert a string to a list of Graphemes.
+///
+/// to_graphemes("abc") == ["a","b","c"]
+///
+pub external fn to_graphemes(String) -> List(String) =
+  "gleam_stdlib" "string_to_graphemes"
 
-// TODO
-// /// Convert a string to a list of Graphemes.
-// ///
-// /// to_graphemes("abc") == ['a','b','c']
-// ///
-// pub fn to_graphemes(string: String) -> List(String) {}
-
-// TODO
-// /// Convert a list of characters into a String. Can be useful if you
-// /// want to create a string primarily by consing, perhaps for decoding
-// /// something.
-// ///
-// /// from_list(['a','b','c']) == "abc"
-// ///
-// // pub fn from_graphemes(graphemes: List(Grapheme)) -> String {}
-
-// TODO
 /// Split a non-empty string into its head and tail. This lets you
 /// pattern match on strings exactly as you would with lists.
 ///
 /// ## Examples
 /// ```gleam
+/// next_grapheme("ab") == Ok("a", "b")
 /// next_grapheme("") == Error(Nil)
 /// ```
 ///
-// pub fn next_grapheme(string: String) -> Option(tuple(Grapheme, String)) {}
+pub external fn next_grapheme(String) -> Option(tuple(String, String)) =
+  "gleam_stdlib" "string_next_grapheme"

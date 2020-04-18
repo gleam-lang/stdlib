@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- The `string` module gains `slice`, `drop_left`, `drop_right`, `starts_with`,
+  `ends_with`, `pad_left`, `pad_right`, `trim`, `trim_left`, `trim_right`,
+  `to_graphemes`, `from_graphemes`, `next_grapheme`.
 - The error type for `atom.from_string` has been renamed to `FromStringError`.
 - The `string` module gains `contains` and `repeat` functions.
 - The `expect` module has been renamed to `should`. Functions in the module
