@@ -16,7 +16,7 @@ pub fn from_list_test() {
     tuple(1, 1),
   ]
   |> map.from_list
-  |> should.equal(map.from_list([tuple(1, 1)]))
+  |> should.equal(_, map.from_list([tuple(1, 1)]))
 }
 
 pub fn has_key_test() {
