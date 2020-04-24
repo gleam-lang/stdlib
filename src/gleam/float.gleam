@@ -1,5 +1,3 @@
-/// A set of utility functions for working with `Float` values.
-
 import gleam/iodata
 import gleam/order.{Order}
 import gleam/result.{Option}

@@ -1,11 +1,20 @@
 /// Result represents the result of something that may succeed or fail.
 /// `Ok` means it was successful, `Error` means it failed.
-
 pub type Result(success, error) =
   Result(success, error)
 
+/// Nil is a type used to represent the absence of something, similar to null
+/// or undefined in other languages.
+///
+/// Unlike some other languages values cannot be implicitly nil, value that may
+/// be absent is typically represented using `Result(TheType, Nil)`. This is
+/// such a common type that offer the `Option(TheType)` alias.
 pub type Nil =
   Nil
+
+/// A value that is either there or not there.
+pub type Option(value) =
+  Result(value, Nil)
 
 /// Returns whether the value is Ok
 ///
@@ -81,10 +90,14 @@ pub fn unwrap(result: Result(a, e), or default: a) -> a {
   }
 }
 
-/// A value that is either there or not there
-pub type Option(value) =
-  Result(value, Nil)
-
+/// Another way of writing `Error(Nil)`.
+///
+/// ## Examples
+///
+/// ```
+/// none() == Error(Nil)
+/// ```
+///
 pub fn none() -> Option(a) {
   Error(Nil)
 }

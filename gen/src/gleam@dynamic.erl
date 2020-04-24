@@ -33,7 +33,9 @@ list_dynamic(A) ->
 list(Dynamic, DecoderType) ->
     gleam@result:then(
         list_dynamic(Dynamic),
-        fun(Capture1) -> gleam@list:traverse(Capture1, DecoderType) end
+        fun(GleamCaptureVariable) ->
+            gleam@list:traverse(GleamCaptureVariable, DecoderType)
+        end
     ).
 
 field(A, B) ->

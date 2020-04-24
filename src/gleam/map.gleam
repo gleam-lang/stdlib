@@ -2,15 +2,54 @@ import gleam/result
 import gleam/list
 import gleam/result.{Option}
 
-/// An Erlang map. See [the Erlang map module](https://erlang.org/doc/man/maps.html) for details
+/// A dictionary of keys and values.
+///
+/// Any type can be used for the keys and values of a map, but all the keys
+/// must be of the same type and all the values must be of the same type.
+///
+/// Each key can only be present in a map once.
+///
+/// Maps are not ordered in any way, and any unintentional ordering is not to
+/// be relied upon in your code.
+///
+/// See [the Erlang map module](https://erlang.org/doc/man/maps.html) for more
+/// information.
+///
 pub external type Map(key, value);
 
+/// Determine the number of key-value pairs in the map.
+/// This function runs in constant time and does not need to iterate the map.
+///
+/// ## Examples
+///
+/// ```
+/// new() |> size() == 0
+/// new() |> insert("key", "value") |> size() == 1
+/// ```
+///
 pub external fn size(Map(k, v)) -> Int
   = "maps" "size"
 
+/// Convert the map to a list of 2-element tuples `tuple(key, value)`, one for
+/// each key-value pair in the map.
+///
+/// The tuples in the list have no specific order.
+///
+/// ## Examples
+///
+/// ```
+/// new() |> to_list() == []
+/// new() |> insert("key", 0) |> to_list() == [tuple("key", 0)]
+/// ```
+///
 pub external fn to_list(Map(key, value)) -> List(tuple(key, value))
   = "maps" "to_list"
 
+/// Convert a list of 2-element tuples `tuple(key, value)` to a map.
+///
+/// If two tuples have the same key the last one in the list will be the one
+/// that is present in the map.
+///
 pub external fn from_list(List(tuple(key, value))) -> Map(key, value)
   = "maps" "from_list"
 

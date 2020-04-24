@@ -1,5 +1,3 @@
-// A set of utility functions for working with 2-tuples, or pairs.
-
 /// Returns the first element in a pair.
 ///
 /// ## Examples

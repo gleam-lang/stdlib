@@ -4,7 +4,7 @@
 -export([is_empty/1, length/1, reverse/1, replace/3, lowercase/1, uppercase/1, compare/2, contains/2, split/2, append/2, concat/1, repeat/2, join/2]).
 
 is_empty(Str) ->
-    Str =:= <<"">>.
+    Str =:= <<""/utf8>>.
 
 length(A) ->
     string:length(A).

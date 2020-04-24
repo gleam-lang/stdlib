@@ -218,8 +218,8 @@ index_map_test() ->
     ),
     F = fun(I1, X1) -> gleam@string:append(X1, gleam@int:to_string(I1)) end,
     gleam@should:equal(
-        gleam@list:index_map([<<"a">>, <<"b">>, <<"c">>], F),
-        [<<"a0">>, <<"b1">>, <<"c2">>]
+        gleam@list:index_map([<<"a"/utf8>>, <<"b"/utf8>>, <<"c"/utf8>>], F),
+        [<<"a0"/utf8>>, <<"b1"/utf8>>, <<"c2"/utf8>>]
     ).
 
 range_test() ->
@@ -235,8 +235,8 @@ repeat_test() ->
     gleam@should:equal(gleam@list:repeat(1, 0), []),
     gleam@should:equal(gleam@list:repeat(2, 3), [2, 2, 2]),
     gleam@should:equal(
-        gleam@list:repeat(<<"x">>, 5),
-        [<<"x">>, <<"x">>, <<"x">>, <<"x">>, <<"x">>]
+        gleam@list:repeat(<<"x"/utf8>>, 5),
+        [<<"x"/utf8>>, <<"x"/utf8>>, <<"x"/utf8>>, <<"x"/utf8>>, <<"x"/utf8>>]
     ).
 
 split_test() ->
@@ -285,7 +285,7 @@ split_while_test() ->
     ).
 
 key_find_test() ->
-    Proplist = [{0, <<"1">>}, {1, <<"2">>}],
-    gleam@should:equal(gleam@list:key_find(Proplist, 0), {ok, <<"1">>}),
-    gleam@should:equal(gleam@list:key_find(Proplist, 1), {ok, <<"2">>}),
+    Proplist = [{0, <<"1"/utf8>>}, {1, <<"2"/utf8>>}],
+    gleam@should:equal(gleam@list:key_find(Proplist, 0), {ok, <<"1"/utf8>>}),
+    gleam@should:equal(gleam@list:key_find(Proplist, 1), {ok, <<"2"/utf8>>}),
     gleam@should:equal(gleam@list:key_find(Proplist, 2), {error, nil}).

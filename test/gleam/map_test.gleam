@@ -10,6 +10,13 @@ pub fn from_list_test() {
   |> map.from_list
   |> map.size
   |> should.equal(_, 2)
+
+  [
+    tuple(1, 0),
+    tuple(1, 1),
+  ]
+  |> map.from_list
+  |> should.equal(map.from_list([tuple(1, 1)]))
 }
 
 pub fn has_key_test() {

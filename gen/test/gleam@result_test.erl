@@ -14,8 +14,8 @@ is_error_test() ->
 map_test() ->
     gleam@should:equal(gleam@result:map({ok, 1}, fun(X) -> X + 1 end), {ok, 2}),
     gleam@should:equal(
-        gleam@result:map({ok, 1}, fun(_) -> <<"2">> end),
-        {ok, <<"2">>}
+        gleam@result:map({ok, 1}, fun(_) -> <<"2"/utf8>> end),
+        {ok, <<"2"/utf8>>}
     ),
     gleam@should:equal(
         gleam@result:map({error, 1}, fun(X1) -> X1 + 1 end),
@@ -28,8 +28,11 @@ map_error_test() ->
         {ok, 1}
     ),
     gleam@should:equal(
-        gleam@result:map_error({error, 1}, fun(X1) -> {<<"ok">>, X1 + 1} end),
-        {error, {<<"ok">>, 2}}
+        gleam@result:map_error(
+            {error, 1},
+            fun(X1) -> {<<"ok"/utf8>>, X1 + 1} end
+        ),
+        {error, {<<"ok"/utf8>>, 2}}
     ).
 
 flatten_test() ->
@@ -51,8 +54,8 @@ then_test() ->
         {ok, 2}
     ),
     gleam@should:equal(
-        gleam@result:then({ok, 1}, fun(_) -> {ok, <<"type change">>} end),
-        {ok, <<"type change">>}
+        gleam@result:then({ok, 1}, fun(_) -> {ok, <<"type change"/utf8>>} end),
+        {ok, <<"type change"/utf8>>}
     ),
     gleam@should:equal(
         gleam@result:then({ok, 1}, fun(_) -> {error, 1} end),
@@ -61,4 +64,4 @@ then_test() ->
 
 unwrap_test() ->
     gleam@should:equal(gleam@result:unwrap({ok, 1}, 50), 1),
-    gleam@should:equal(gleam@result:unwrap({error, <<"nope">>}, 50), 50).
+    gleam@should:equal(gleam@result:unwrap({error, <<"nope"/utf8>>}, 50), 50).

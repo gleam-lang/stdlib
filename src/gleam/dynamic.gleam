@@ -1,11 +1,10 @@
-/// `Dynamic` data is data that we don"t know the type of yet.
-/// We likely get data like this from interop with Erlang, or from
-/// IO with the outside world.
-
 import gleam/list as list_mod
 import gleam/atom
 import gleam/result
 
+/// `Dynamic` data is data that we don"t know the type of yet.
+/// We likely get data like this from interop with Erlang, or from
+/// IO with the outside world.
 pub external type Dynamic;
 
 /// Convert any Gleam data into `Dynamic` data.
