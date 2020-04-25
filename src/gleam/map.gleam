@@ -56,19 +56,55 @@ pub external fn from_list(List(tuple(key, value))) -> Map(key, value)
 external fn is_key(key, Map(key, v)) -> Bool
   = "maps" "is_key"
 
+/// Determind whether or not a value present in the map for a given key.
+///
+/// ## Examples
+///
+/// ```
+/// new() |> insert("a", 0) |> has_key("a") == True
+/// new() |> insert("a", 0) |> has_key("b") == False
+/// ```
+///
 pub fn has_key(map: Map(k, v), key: k) -> Bool {
   is_key(key, map)
 }
 
+
+/// Create a new map that contains no values.
+///
 pub external fn new() -> Map(key, value)
   = "maps" "new"
 
+/// Fetch a value from a map for a given key.
+///
+/// The map may not have a value for the key, so the value is wrapped in a
+/// Result.
+///
+/// ## Examples
+///
+/// ```
+/// new() |> insert("a", 0) |> get("a") == Ok(0)
+/// new() |> insert("a", 0) |> get("b") == Error(Nil)
+/// ```
+///
 pub external fn get(from: Map(key, value), get: key) -> Option(value)
   = "gleam_stdlib" "map_get";
 
 external fn erl_insert(key, value, Map(key, value)) -> Map(key, value)
   = "maps" "put";
 
+/// Insert a value into the map with the given key.
+///
+/// If the map already has a value for the given key then the value is
+/// replaced with the new value.
+///
+/// ## Examples
+///
+/// ```
+/// new() |> insert("a", 0) |> to_list == [tuple("a", 0)]
+/// new() |> insert("a", 0) |> insert("a", 5) |> to_list == [tuple("a", 5)]
+/// ```
+///
 pub fn insert(into map: Map(k, v), for key: k, insert value: v) -> Map(k, v) {
   erl_insert(key, value, map)
 }
