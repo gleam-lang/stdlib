@@ -1,70 +1,95 @@
-/// Represents Erlang's `iodata` type and the associated functions
-/// to work with it.
-
+/// Iodata is a type used for efficiently building strings.
+///
+/// When we append one string to another the strings must be copied to a
+/// new location in memory so that they can sit together. This behaviour
+/// enables efficient reading of the string but copying can be expensive,
+/// especially if we want to join many strings together.
+///
+/// Iodata is different in that it can be joined together in constant time
+/// using minimal memory, and then can be efficiently converted to a string
+/// using the `to_string` function.
+///
 pub external type Iodata;
 
-/// Prepends the string `prefix` to `to`
+/// Prepend a String onto the start of some Iodata.
+///
+/// Runs in constant time.
 ///
 pub external fn prepend(to: Iodata, prefix: String) -> Iodata =
   "gleam_stdlib" "iodata_prepend";
 
-/// Appends the string `suffix` to `to`
+/// Append a String onto the end of some Iodata.
+///
+/// Runs in constant time.
 ///
 pub external fn append(to: Iodata, suffix: String) -> Iodata =
   "gleam_stdlib" "iodata_append";
 
-/// Prepends the Iodata `prefix` to `to`
+/// Prepend some Iodata onto the start of another.
+///
+/// Runs in constant time.
 ///
 pub external fn prepend_iodata(to: Iodata, prefix: Iodata) -> Iodata =
   "gleam_stdlib" "iodata_prepend";
 
-/// Prepends the Iodata `prefix` to `to`
+/// Append some Iodata onto the end of another.
+///
+/// Runs in constant time.
 ///
 pub external fn append_iodata(to: Iodata, suffix: Iodata) -> Iodata =
   "gleam_stdlib" "iodata_append";
 
-/// Builds an Iodata value from the supplied list of strings
+/// Convert a list of strings into iodata.
+///
+/// Runs in constant time.
 ///
 pub external fn from_strings(List(String)) -> Iodata =
   "gleam_stdlib" "identity";
 
-/// Builds a new Iodata out of a list of Iodata
+/// Joins a list of iodata into a single iodata.
+///
+/// Runs in constant time.
 ///
 pub external fn concat(List(Iodata)) -> Iodata =
   "gleam_stdlib" "identity";
 
-/// Turns a `String` into an `Iodata`
+/// Convert a string into iodata.
+///
+/// Runs in constant time.
 ///
 pub external fn new(String) -> Iodata =
   "gleam_stdlib" "identity";
 
 /// Turns an `Iodata` into a `String`
 ///
+/// This function is implemented natively by the virtual machine and is highly
+/// optimised.
+///
 pub external fn to_string(Iodata) -> String =
   "erlang" "iolist_to_binary";
 
-/// Returns the size of the Iodata in bytes
+/// Returns the size of the Iodata in bytes.
 ///
 pub external fn byte_size(Iodata) -> Int =
   "erlang" "iolist_size";
 
-/// Creates an `Iodata` value from a `Float` value.
+/// Creates textual representation of the given float as iodata.
 ///
 pub external fn from_float(Float) -> Iodata =
   "io_lib_format" "fwrite_g";
 
 /// Converts Iodata to a new Iodata where valid UTF-8 string data is
-/// lowercased 
+/// lowercased.
 ///
 pub external fn lowercase(Iodata) -> Iodata = "string" "lowercase"
 
 /// Converts Iodata to a new Iodata where valid UTF-8 string data is
-/// uppercased 
+/// uppercased.
 ///
 pub external fn uppercase(Iodata) -> Iodata = "string" "uppercase"
 
 /// Converts Iodata to a new Iodata where valid UTF-8 string data is
-/// reversed
+/// reversed.
 ///
 pub external fn reverse(Iodata) -> Iodata = "string" "reverse"
 
@@ -75,7 +100,7 @@ type Direction {
 external fn erl_split(Iodata, String, Direction) -> List(Iodata) =
   "string" "split"
 
-/// Splits the supplied Iodata by the pattern `on`
+/// Splits iodata on a given pattern into a list of iodata.
 ///
 pub fn split(iodata: Iodata, on pattern: String) -> List(Iodata) {
   erl_split(iodata, pattern, All)
@@ -84,7 +109,7 @@ pub fn split(iodata: Iodata, on pattern: String) -> List(Iodata) {
 external fn erl_replace(Iodata, String, String, Direction) -> Iodata =
   "string" "replace"
 
-/// Replaces all instances of `all` with the string `with`
+/// Replaces all instances of a pattern with a given string substitute.
 ///
 pub fn replace(
   in iodata: Iodata,
@@ -94,10 +119,30 @@ pub fn replace(
   erl_replace(iodata, pattern, substitute, All)
 }
 
-/// Prepends the string `prefix` to `to`
+/// Compare two pieces of iodata to determine if they have the same textual
+/// content.
+///
+/// Comparing two iodata using the `==` operator may return False even if they
+/// have the same content as they may have been build in different ways, so
+/// using this function is often preferred.
+///
+/// ## Examples
+///
+/// ```
+/// from_strings(["a", "b"]) == new("ab") == False
+/// is_equal(from_strings(["a", "b"]), new("ab")) == True
+/// ```
 ///
 pub external fn is_equal(Iodata, Iodata) -> Bool = "string" "equal"
 
-/// Prepends the string `prefix` to `to`
+/// Inspect some iodata to determine if it is equivalent to an empty string.
+///
+/// ## Examples
+///
+/// ```
+/// new("ok") |> is_empty == False
+/// new("") |> is_empty == True
+/// from_strings([]) |> is_empty == True
+/// ```
 ///
 pub external fn is_empty(Iodata) -> Bool = "string" "is_empty"

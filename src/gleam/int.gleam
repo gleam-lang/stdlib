@@ -1,5 +1,3 @@
-// A set of utility functions for working with `Int` values
-
 import gleam/order.{Order}
 import gleam/result.{Option}
 
