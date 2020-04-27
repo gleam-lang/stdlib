@@ -21,63 +21,75 @@ pub external fn unsafe_coerce(a) -> b = "gleam_stdlib" "identity";
 /// Safely cast a Dynamic value into a String.
 ///
 /// ## Examples
-/// ```gleam
-/// string(from("Hello")) == Ok("Hello")
-/// string(from(123)) == Error("Expected a String, got `123`")
-/// ```
+///    > string(from("Hello"))
+///    Ok("Hello")
+///
+///    > string(from(123))
+///    Error("Expected a String, got `123`")
+///
 pub external fn string(from: Dynamic) -> Result(String, String)
   = "gleam_stdlib" "decode_string"
 
 /// Safely cast a Dynamic value into a String.
 ///
 /// ## Examples
-/// ```gleam
-/// int(from(123)) == Ok(123)
-/// int(from("Hello")) == Error("Expected an Int, got `\"Hello World\"`")
-/// ```
+///    > int(from(123))
+///    Ok(123)
+///
+///    > int(from("Hello"))
+///    Error("Expected an Int, got `\"Hello World\"`")
+///
 pub external fn int(from: Dynamic) -> Result(Int, String)
   = "gleam_stdlib" "decode_int"
 
 /// Safely cast a Dynamic value into a Float.
 ///
 /// ## Examples
-/// ```gleam
-/// float(from(2.0)) == Ok(2.0)
-/// float(from(123)) == Error("Expected a Float, got `123`")
-/// ```
+///    > float(from(2.0))
+///    Ok(2.0)
+///
+///    > float(from(123))
+///    Error("Expected a Float, got `123`")
+///
 pub external fn float(from: Dynamic) -> Result(Float, String)
   = "gleam_stdlib" "decode_float"
 
 /// Safely cast a Dynamic value into an Atom.
 ///
 /// ## Examples
-/// ```gleam
 /// import gleam/atom
-/// atom(from(atom.create_from_string("hello"))) == OK("hello")
-/// atom(from(123)) == Error("Expected an Atom, got `123`")
-/// ```
+///    > atom(from(atom.create_from_string("hello")))
+///    OK("hello")
+///
+///    > atom(from(123))
+///    Error("Expected an Atom, got `123`")
+///
 pub external fn atom(from: Dynamic) -> Result(atom.Atom, String)
   = "gleam_stdlib" "decode_atom"
 
 /// Safely cast a Dynamic value into a Bool.
 ///
 /// ## Examples
-/// ```gleam
-/// bool(from(True)) == Ok(True)
-/// bool(from(123)) == Error("Expected a Bool, got `123`")
-/// ```
+///    > bool(from(True))
+///    Ok(True)
+///
+///    > bool(from(123))
+///    Error("Expected a Bool, got `123`")
+///
 pub external fn bool(from: Dynamic) -> Result(Bool, String)
   = "gleam_stdlib" "decode_bool"
 
 /// Safely cast a Dynamic value into a String.
 ///
 /// ## Examples
-/// ```gleam
 /// import gleam/result
 /// let f = fn() { 1 }
-/// thunk(from(f)) |> result.is_ok == True
-/// thunk(from(123)) == Error("Expected a zero arity function, got `123`")
-/// ```
+///    > thunk(from(f)) |> result.is_ok
+///    True
+///
+///    > thunk(from(123))
+///    Error("Expected a zero arity function, got `123`")
+///
 pub external fn thunk(from: Dynamic) -> Result(fn() -> Dynamic, String)
   = "gleam_stdlib" "decode_thunk"
 
@@ -87,10 +99,12 @@ external fn list_dynamic(from: Dynamic) -> Result(List(Dynamic), String)
 /// Safely cast a Dynamic value into a List of some type.
 ///
 /// ## Examples
-/// ```gleam
-/// list(from(["a", "b", "c"]), string) == Ok(["a", "b", "c"])
-/// list(from([1, 2, 3]), string) == Error("Expected a List, got `[1, 2, 3]`")
-/// ```
+///    > list(from(["a", "b", "c"]), string)
+///    Ok(["a", "b", "c"])
+///
+///    > list(from([1, 2, 3]), string)
+///    Error("Expected a List, got `[1, 2, 3]`")
+///
 pub fn list(
   from dynamic: Dynamic,
   containing decoder_type: fn(Dynamic) -> Result(inner, String),
@@ -104,20 +118,24 @@ pub fn list(
 /// This will not succeed on a record.
 ///
 /// ## Examples
-/// ```gleam
 /// import gleam/map
-/// field(from(map.new("Hello", "World")), "Hello") == Ok(Dynamic)
-/// field(from(123)) == Error("Expected a map with key `\"Hello\"`, got `123`")
-/// ```
+///    > field(from(map.new("Hello", "World")), "Hello")
+///    Ok(Dynamic)
+///
+///    > field(from(123))
+///    Error("Expected a map with key `\"Hello\"`, got `123`")
+///
 pub external fn field(from: Dynamic, named: a) -> Result(Dynamic, String)
   = "gleam_stdlib" "decode_field"
 
 /// Returns an element of a Dynamic value representing a tuple if it exists.
 ///
 /// ## Examples
-/// ```gleam
-/// element(from(tuple(1, 2)), 0) == Ok(Dynamic)
-/// element(from(tuple(1, 2)), 2) == Error("Element position is out-of-bounds")
-/// ```
+///    > element(from(tuple(1, 2)), 0)
+///    Ok(Dynamic)
+///
+///    > element(from(tuple(1, 2)), 2)
+///    Error("Element position is out-of-bounds")
+///
 pub external fn element(from: Dynamic, position: Int) -> Result(Dynamic, String)
   = "gleam_stdlib" "decode_element"

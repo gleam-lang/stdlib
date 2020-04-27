@@ -8,18 +8,15 @@
 ////
 //// There is a dedicated syntax for prefixing to a list:
 ////
-//// ```
-//// let new_list = [1, 2, ..existing_list]
-//// ```
+////    let new_list = [1, 2, ..existing_list]
 ////
 //// And a matching syntax for getting the first elements of a list:
 ////
-//// ```
-//// case list {
-////   [first_element, ..rest] -> first_element
-////   _ -> "this pattern matches when the list is empty"
-//// }
-//// ```
+////    case list {
+////      [first_element, ..rest] -> first_element
+////      _ -> "this pattern matches when the list is empty"
+////    }
+////
 
 import gleam/int
 import gleam/pair
@@ -45,11 +42,15 @@ pub type LengthMismatch {
 ///
 /// ## Examples
 ///
-/// ```
-/// length([]) == 0
-/// length([1]) == 1
-/// length([1, 2]) == 2
-/// ```
+///    > length([])
+///    0
+///
+///    > length([1])
+///    1
+///
+///    > length([1, 2])
+///    2
+///
 ///
 pub external fn length(of: List(a)) -> Int = "erlang" "length"
 
@@ -64,11 +65,15 @@ pub external fn length(of: List(a)) -> Int = "erlang" "length"
 ///
 /// ## Examples
 ///
-/// ```
-/// reverse([]) == []
-/// reverse([1]) == [1]
-/// reverse([1, 2]) == [2, 1]
-/// ```
+///    > reverse([])
+///    []
+///
+///    > reverse([1])
+///    [1]
+///
+///    > reverse([1, 2])
+///    [2, 1]
+///
 ///
 pub external fn reverse(List(a)) -> List(a) = "lists" "reverse"
 
@@ -78,11 +83,15 @@ pub external fn reverse(List(a)) -> List(a) = "lists" "reverse"
 ///
 /// ## Examples
 ///
-/// ```
-/// is_empty([]) == True
-/// is_empty([1]) == False
-/// is_empty([1, 1]) == False
-/// ```
+///    > is_empty([])
+///    True
+///
+///    > is_empty([1])
+///    False
+///
+///    > is_empty([1, 1])
+///    False
+///
 ///
 pub fn is_empty(list: List(a)) -> Bool {
   list == []
@@ -95,13 +104,21 @@ pub fn is_empty(list: List(a)) -> Bool {
 ///
 /// ## Examples
 ///
-/// ```
-/// contains([], 0) == True
-/// contains([0], 0) == True
-/// contains([1], 0) == False
-/// contains([1, 1], 0) == False
-/// contains([1, 0], 0) == True
-/// ```
+///    > contains([], 0)
+///    True
+///
+///    > contains([0], 0)
+///    True
+///
+///    > contains([1], 0)
+///    False
+///
+///    > contains([1, 1], 0)
+///    False
+///
+///    > contains([1, 0], 0)
+///    True
+///
 ///
 pub fn contains(list: List(a), has elem: a) -> Bool {
   case list {
@@ -114,11 +131,15 @@ pub fn contains(list: List(a), has elem: a) -> Bool {
 ///
 /// ## Examples
 ///
-/// ```
-/// head([]) == Error(Nil)
-/// head([0]) == Ok(0)
-/// head([1, 2]) == Ok(1)
-/// ```
+///    > head([])
+///    Error(Nil)
+///
+///    > head([0])
+///    Ok(0)
+///
+///    > head([1, 2])
+///    Ok(1)
+///
 ///
 pub fn head(list: List(a)) -> Option(a) {
   case list {
@@ -134,11 +155,15 @@ pub fn head(list: List(a)) -> Option(a) {
 ///
 /// ## Examples
 ///
-/// ```
-/// tail([]) == Error(Nil)
-/// tail([0]) == Ok([])
-/// tail([1, 2]) == Ok([2])
-/// ```
+///    > tail([])
+///    Error(Nil)
+///
+///    > tail([0])
+///    Ok([])
+///
+///    > tail([1, 2])
+///    Ok([2])
+///
 ///
 pub fn tail(list: List(a)) -> Option(List(a)) {
   case list {
@@ -160,6 +185,18 @@ fn do_filter(list: List(a), fun: fn(a) -> Bool, acc: List(a)) -> List(a) {
   }
 }
 
+/// Returns a new list containing only the elements from the first list for
+/// which the given functions returns `True`.
+///
+/// ## Examples
+///
+///    > filter([2, 4, 6, 1], fn(x) { x > 2 })
+///    [4, 6]
+///
+///    > filter([2, 4, 6, 1], fn(x) { x > 6 })
+///    []
+///
+///
 pub fn filter(list: List(a), for predicate: fn(a) -> Bool) -> List(a) {
   do_filter(list, predicate, [])
 }
@@ -171,6 +208,15 @@ fn do_map(list: List(a), fun: fn(a) -> b, acc: List(b)) -> List(b) {
   }
 }
 
+/// Returns a new list containing only the elements of the first list after the
+/// function has been applied to each one.
+///
+/// ## Examples
+///
+///    > map([2, 4, 6], fn(x) { x * 2 })
+///    [4, 8, 12]
+///
+///
 pub fn map(list: List(a), with fun: fn(a) -> b) -> List(b) {
   do_map(list, fun, [])
 }
@@ -187,9 +233,22 @@ fn do_index_map(
   }
 }
 
+/// Returns a new list containing only the elements of the first list after the
+/// function has been applied to each one and their index.
+///
+/// The index starts at 0, so the first element is 0, the second is 1, and so
+/// on.
+///
+/// ## Examples
+///
+///    > index_map(["a", "b"], fn(i, x) { tuple(i, x) })
+///    [tuple(0, "a"), tuple(1, "b")]
+///
+///
 pub fn index_map(list: List(a), with fun: fn(Int, a) -> b) -> List(b) {
   do_index_map(list, fun, 0, [])
 }
+
 
 fn do_traverse(
   list: List(a),
@@ -206,6 +265,31 @@ fn do_traverse(
   }
 }
 
+/// Takes a function that returns a Result applies it to each element in a
+/// given list in tern.
+///
+/// If the function returns `Ok(new_value)` for all elements in the list then a
+/// list of the new values is returned.
+///
+/// If the function returns `Error(reason)` for any of the elements then it is
+/// returned immediately. None of the elements in the list are processed after
+/// one returns an `Error`.
+///
+/// ## Examples
+///
+///    > traverse([1, 2, 3], fn(x) { Ok(x + 2) })
+///    Ok([3, 4, 5])
+///
+///    > traverse([1, 2, 3], fn(x) { Error(0) })
+///    Error(0)
+///
+///    > traverse([[1], [2, 3]], head)
+///    Ok([1, 2])
+///
+///    > traverse([[1], [], [2]], head)
+///    Error(Nil)
+///
+///
 pub fn traverse(
   list: List(a),
   with fun: fn(a) -> Result(b, e),
@@ -213,6 +297,23 @@ pub fn traverse(
   do_traverse(list, fun, [])
 }
 
+/// Returns a list that is the given list with up to the given number of
+/// elements removed from the front of the list.
+///
+/// If the element has less than the number of elements an empty list is
+/// returned.
+///
+/// This function runs in linear time but does not copy the list.
+///
+/// ## Examples
+///
+///    > drop([1, 2, 3, 4], 2)
+///    [3, 4]
+///
+///    > drop([1, 2, 3, 4], 9)
+///    []
+///
+///
 pub fn drop(from list: List(a), up_to n: Int) -> List(a) {
   case n <= 0 {
     True -> list
@@ -235,14 +336,50 @@ fn do_take(list: List(a), n: Int, acc: List(a)) -> List(a) {
   }
 }
 
+/// Returns a list containing the first given number of elements from the given
+/// list.
+///
+/// If the element has less than the number of elements then the full list is
+/// returned.
+///
+/// This function runs in linear time but does not copy the list.
+///
+/// ## Examples
+///
+///    > take([1, 2, 3, 4], 2)
+///    [1, 2]
+///
+///    > take([1, 2, 3, 4], 9)
+///    [1, 2, 3, 4]
+///
+///
 pub fn take(from list: List(a), up_to n: Int) -> List(a) {
   do_take(list, n, [])
 }
 
+/// Returns a new empty list.
+///
+/// ## Examples
+///
+///    > new()
+///    []
+///
+///
 pub fn new() -> List(a) {
   []
 }
 
+/// Join one list onto the end of another.
+///
+/// This function runs in linear time, and it traverses and copies the first
+/// list.
+///
+/// ## Examples
+///
+///    > append([1, 2], [3])
+///    [1, 2, 3]
+///
+///
 pub external fn append(List(a), List(a)) -> List(a)
   = "lists" "append";
 
@@ -253,10 +390,28 @@ fn do_flatten(lists: List(List(a)), acc: List(a)) -> List(a) {
   }
 }
 
+/// Flattens a list of lists into a single list.
+///
+/// This function runs in linear time, and it traverses and copies all the
+/// inner lists.
+///
+/// ## Examples
+///
+///    > flatten([[1], [2, 3], []])
+///    [1, 2, 3]
+///
+///
 pub fn flatten(lists: List(List(a))) -> List(a) {
   do_flatten(lists, [])
 }
 
+/// Reduce a list of elements into a single value by calling a given function
+/// on each element, going from left to right.
+///
+/// `fold([1, 2, 3], 0, add)` is the equivalent of `add(3, add(2, add(1, 0)))`.
+///
+/// This function runs in linear time.
+///
 pub fn fold(list: List(a), from initial: b, with fun: fn(a, b) -> b) -> b {
   case list {
     [] -> initial
@@ -264,6 +419,17 @@ pub fn fold(list: List(a), from initial: b, with fun: fn(a, b) -> b) -> b {
   }
 }
 
+/// Reduce a list of elements into a single value by calling a given function
+/// on each element, going from right to left.
+///
+/// `fold_right([1, 2, 3], 0, add)` is the equivalent of
+/// `add(1, add(2, add(3, 0)))`.
+///
+/// This function runs in linear time.
+///
+/// Unlike `fold` this function is not tail recursive. Where possible use
+/// `fold` instead as it will use less memory.
+///
 pub fn fold_right(
   list: List(a),
   from initial: b,
@@ -275,6 +441,24 @@ pub fn fold_right(
   }
 }
 
+/// Find the first element in a given list for which the given function returns
+/// True.
+///
+/// Returns `Error(Nil)` if no the function does not return True for any of the
+/// elements.
+///
+/// ## Examples
+///
+///    > find([1, 2, 3], fn(x) { x > 2 })
+///    Ok(3)
+///
+///    > find([1, 2, 3], fn(x) { x > 4 })
+///    Error(Nil)
+///
+///    > find([], fn(x) { True })
+///    Error(Nil)
+///
+///
 pub fn find(
   in haystack: List(a),
   one_that is_desired: fn(a) -> Bool,
@@ -289,6 +473,24 @@ pub fn find(
   }
 }
 
+/// Find the first element in a given list for which the given function returns
+/// `Ok(new_value)` and return the new value for that element.
+///
+/// Returns `Error(Nil)` if no the function does not return Ok for any of the
+/// elements.
+///
+/// ## Examples
+///
+///    > find_map([[], [2], [3]], head)
+///    Ok(2)
+///
+///    > find_map([[], []], head)
+///    Error(Nil)
+///
+///    > find_map([], head)
+///    Error(Nil)
+///
+///
 pub fn find_map(
   in haystack: List(a),
   with fun: fn(a) -> Option(b),
@@ -303,6 +505,22 @@ pub fn find_map(
   }
 }
 
+/// Returns True if the given function returns True for all the elements in
+/// the given list. If the function returns False for any of the elements it
+/// immediately returns False without checking the rest of the list.
+///
+/// ## Examples
+///
+///    > all([], fn(x) { x > 3 })
+///    True
+///
+///    > all([4, 5], fn(x) { x > 3 })
+///    True
+///
+///    > all([4, 3], fn(x) { x > 3 })
+///    False
+///
+///
 pub fn all(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
   case list {
     [] -> True
@@ -314,6 +532,25 @@ pub fn all(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
   }
 }
 
+/// Returns True if the given function returns True for any the elements in
+/// the given list. If the function returns True for any of the elements it
+/// immediately returns True without checking the rest of the list.
+///
+/// ## Examples
+///
+///    > any([], fn(x) { x > 3 })
+///    False
+///
+///    > any([4, 5], fn(x) { x > 3 })
+///    False
+///
+///    > any([4, 3], fn(x) { x > 3 })
+///    True
+///
+///    > any([3, 4], fn(x) { x > 3 })
+///    True
+///
+///
 pub fn any(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
   case list {
     [] -> False
@@ -325,6 +562,26 @@ pub fn any(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
   }
 }
 
+/// Takes two lists and returns a single list of 2 item tuples.
+///
+/// If one of the lists is longer than the other the remaining elements from
+/// the longer list are not used.
+///
+/// ## Examples
+///
+///    > zip([], [])
+///    []
+///
+///    > zip([1, 2], [3])
+///    [tuple(1, 3)]
+///
+///    > zip([1], [3, 4])
+///    [tuple(1, 3)]
+///
+///    > zip([1, 2], [3, 4])
+///    [tuple(1, 3), tuple(2, 4)]
+///
+///
 pub fn zip(xs: List(a), ys: List(b)) -> List(tuple(a, b)) {
   case xs, ys {
     [], _ -> []
@@ -333,6 +590,25 @@ pub fn zip(xs: List(a), ys: List(b)) -> List(tuple(a, b)) {
   }
 }
 
+/// Takes two lists and returns a single list of 2 item tuples.
+///
+/// If one of the lists is longer than the other an Error is returned.
+///
+/// ## Examples
+///
+///    > strict_zip([], [])
+///    Ok([])
+///
+///    > strict_zip([1, 2], [3])
+///    Error(LengthMismatch)
+///
+///    > strict_zip([1], [3, 4])
+///    Error(LengthMismatch)
+///
+///    > strict_zip([1, 2], [3, 4])
+///    Ok([tuple(1, 3), tuple(2, 4)])
+///
+///
 pub fn strict_zip(l1: List(a), l2: List(b)) -> Result(List(tuple(a, b)), LengthMismatch) {
   case length(of: l1) == length(of: l2) {
     True -> Ok(zip(l1, l2))
@@ -340,6 +616,19 @@ pub fn strict_zip(l1: List(a), l2: List(b)) -> Result(List(tuple(a, b)), LengthM
   }
 }
 
+/// Insert a given value between each existing element in a given list.
+///
+/// This function runs in linear time and copies the list.
+///
+/// ## Examples
+///
+///    > intersperse([1, 1, 1], 2)
+///    [1, 2, 1, 2, 1]
+///
+///    > intersperse([], 2)
+///    []
+///
+///
 pub fn intersperse(list: List(a), with elem: a) -> List(a) {
   case list {
     [] | [_] -> list
@@ -347,6 +636,20 @@ pub fn intersperse(list: List(a), with elem: a) -> List(a) {
   }
 }
 
+/// Return the element in the Nth position in the list, with 0 being the first
+/// position.
+///
+/// Error(Nil) is returned if the list is not long enough for the given index.
+///
+/// ## Examples
+///
+///    > at([1, 2, 3], 1)
+///    Ok(2)
+///
+///    > at([1, 2, 3], 5)
+///    Error(Nil)
+///
+///
 pub fn at(in list: List(a), get index: Int) -> Option(a) {
   case index < 0 {
     True -> result.none()
@@ -362,6 +665,16 @@ pub fn at(in list: List(a), get index: Int) -> Option(a) {
   }
 }
 
+/// Remove any duplicate elements from a given list.
+///
+/// This function returns in log-linear time (n log n).
+///
+/// ## Examples
+///
+///    > unique([1, 1, 1, 4, 7, 3, 3, 4])
+///    [1, 4, 7, 3]
+///
+///
 pub fn unique(list: List(a)) -> List(a) {
   case list {
     [] -> []
@@ -397,10 +710,27 @@ fn do_sort(list: List(a), compare: fn(a, a) -> Order, list_length: Int) -> List(
   }
 }
 
+/// Sort from smallest to largest based upon the ordering specified by a given
+/// function.
+///
 pub fn sort(list: List(a), sort_by compare: fn(a, a) -> Order) -> List(a) {
   do_sort(list, compare, length(list))
 }
 
+/// Create a list of ints ranging from a given start and finish.
+///
+/// ## Examples
+///
+///    > range(0, 0)
+///    []
+///
+///    > range(0, 5)
+///    [0, 1, 2, 3, 4]
+///
+///    > range(1, -5)
+///    [1, 0, -1, -2, -3, -4]
+///
+///
 pub fn range(from start: Int, to stop: Int) -> List(Int) {
   case int.compare(start, stop) {
     order.Eq -> []
@@ -416,6 +746,16 @@ fn do_repeat(a: a, times: Int, acc: List(a)) -> List(a) {
   }
 }
 
+/// Build a list of a given value a given number of times.
+///
+/// ## Examples
+///
+///    > repeat("a", times: 0)
+///    []
+///
+///    > repeat("a", times: 5)
+///    ["a", "a", "a", "a", "a"]
+///
 pub fn repeat(item a: a, times times: Int) -> List(a) {
   do_repeat(a, times, [])
 }

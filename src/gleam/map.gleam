@@ -22,10 +22,12 @@ pub external type Map(key, value);
 ///
 /// ## Examples
 ///
-/// ```
-/// new() |> size() == 0
-/// new() |> insert("key", "value") |> size() == 1
-/// ```
+///    > new() |> size()
+///    0
+///
+///    > new() |> insert("key", "value") |> size()
+///    1
+///
 ///
 pub external fn size(Map(k, v)) -> Int
   = "maps" "size"
@@ -37,10 +39,12 @@ pub external fn size(Map(k, v)) -> Int
 ///
 /// ## Examples
 ///
-/// ```
-/// new() |> to_list() == []
-/// new() |> insert("key", 0) |> to_list() == [tuple("key", 0)]
-/// ```
+///    > new() |> to_list()
+///    []
+///
+///    > new() |> insert("key", 0) |> to_list()
+///    [tuple("key", 0)]
+///
 ///
 pub external fn to_list(Map(key, value)) -> List(tuple(key, value))
   = "maps" "to_list"
@@ -60,10 +64,12 @@ external fn is_key(key, Map(key, v)) -> Bool
 ///
 /// ## Examples
 ///
-/// ```
-/// new() |> insert("a", 0) |> has_key("a") == True
-/// new() |> insert("a", 0) |> has_key("b") == False
-/// ```
+///    > new() |> insert("a", 0) |> has_key("a")
+///    True
+///
+///    > new() |> insert("a", 0) |> has_key("b")
+///    False
+///
 ///
 pub fn has_key(map: Map(k, v), key: k) -> Bool {
   is_key(key, map)
@@ -82,10 +88,12 @@ pub external fn new() -> Map(key, value)
 ///
 /// ## Examples
 ///
-/// ```
-/// new() |> insert("a", 0) |> get("a") == Ok(0)
-/// new() |> insert("a", 0) |> get("b") == Error(Nil)
-/// ```
+///    > new() |> insert("a", 0) |> get("a")
+///    Ok(0)
+///
+///    > new() |> insert("a", 0) |> get("b")
+///    Error(Nil)
+///
 ///
 pub external fn get(from: Map(key, value), get: key) -> Option(value)
   = "gleam_stdlib" "map_get";
@@ -100,10 +108,12 @@ external fn erl_insert(key, value, Map(key, value)) -> Map(key, value)
 ///
 /// ## Examples
 ///
-/// ```
-/// new() |> insert("a", 0) |> to_list == [tuple("a", 0)]
-/// new() |> insert("a", 0) |> insert("a", 5) |> to_list == [tuple("a", 5)]
-/// ```
+///    > new() |> insert("a", 0) |> to_list
+///    [tuple("a", 0)]
+///
+///    > new() |> insert("a", 0) |> insert("a", 5) |> to_list
+///    [tuple("a", 5)]
+///
 ///
 pub fn insert(into map: Map(k, v), for key: k, insert value: v) -> Map(k, v) {
   erl_insert(key, value, map)

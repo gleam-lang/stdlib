@@ -7,10 +7,12 @@ pub type Int =
 /// Attempts to parse the String as an Int if possible
 ///
 /// ## Examples
-/// ```gleam
-/// parse("2") == Some(2)
-/// parse("ABC") == None
-/// ```
+///    > parse("2")
+///    Some(2)
+///
+///    > parse("ABC")
+///    None
+///
 ///
 pub external fn parse(String) -> Option(Int) = "gleam_stdlib" "parse_int";
 
@@ -18,9 +20,9 @@ pub external fn parse(String) -> Option(Int) = "gleam_stdlib" "parse_int";
 /// `Int` value
 ///
 /// ## Examples
-/// ```gleam
-/// to_string(2) == "2"
-/// ```
+///    > to_string(2)
+///    "2"
+///
 ///
 pub external fn to_string(Int) -> String = "erlang" "integer_to_binary"
 
@@ -28,20 +30,24 @@ pub external fn to_string(Int) -> String = "erlang" "integer_to_binary"
 /// `Int` value in the base provided.
 ///
 /// ## Examples
-/// ```gleam
-/// to_base_string(2, 2) == "10"
-/// to_base_string(48, 16) == "30"
-/// to_base_string(48, 36) == "1C"
-/// ```
+///    > to_base_string(2, 2)
+///    "10"
+///
+///    > to_base_string(48, 16)
+///    "30"
+///
+///    > to_base_string(48, 36)
+///    "1C"
+///
 ///
 pub external fn to_base_string(Int, Int) -> String = "erlang" "integer_to_binary"
 
 /// Compares two `Int`, returning an `Order`
 ///
 /// ## Examples
-/// ```gleam
-/// compare(2, 3) == Lt
-/// ```
+///    > compare(2, 3)
+///    Lt
+///
 ///
 pub fn compare(a: Int, b: Int) -> Order {
   case a == b {
@@ -57,9 +63,9 @@ pub fn compare(a: Int, b: Int) -> Order {
 /// Compares two `Int`, returning the smaller of the two
 ///
 /// ## Examples
-/// ```gleam
-/// min(2, 3) == 2
-/// ```
+///    > min(2, 3)
+///    2
+///
 ///
 pub fn min(a: Int, b: Int) -> Int {
   case a < b {
@@ -71,9 +77,9 @@ pub fn min(a: Int, b: Int) -> Int {
 /// Compares two `Int`, returning the larger of the two
 ///
 /// ## Examples
-/// ```gleam
-/// max(2, 3) == 3
-/// ```
+///    > max(2, 3)
+///    3
+///
 ///
 pub fn max(a: Int, b: Int) -> Int {
   case a > b {
@@ -85,10 +91,12 @@ pub fn max(a: Int, b: Int) -> Int {
 /// Returns whether the value provided is even
 ///
 /// ## Examples
-/// ```gleam
-/// is_even(2) == True
-/// is_even(3) == False
-/// ```
+///    > is_even(2)
+///    True
+///
+///    > is_even(3)
+///    False
+///
 ///
 pub fn is_even(x: Int) -> Bool {
   x % 2 == 0
@@ -97,10 +105,12 @@ pub fn is_even(x: Int) -> Bool {
 /// Returns whether the value provided is odd
 ///
 /// ## Examples
-/// ```gleam
-/// is_odd(3) == True
-/// is_odd(2) == False
-/// ```
+///    > is_odd(3)
+///    True
+///
+///    > is_odd(2)
+///    False
+///
 ///
 pub fn is_odd(x: Int) -> Bool {
   x % 2 != 0

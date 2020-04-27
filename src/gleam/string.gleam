@@ -14,10 +14,12 @@ pub type String =
 /// Determine if a string is empty.
 ///
 /// ## Examples
-/// ```
-/// is_empty("") == True
-/// is_empty("the world") == False
-/// ```
+///    > is_empty("")
+///    True
+///
+///    > is_empty("the world")
+///    False
+///
 ///
 pub fn is_empty(str: String) -> Bool {
   str == ""
@@ -26,18 +28,18 @@ pub fn is_empty(str: String) -> Bool {
 /// Get the length of a
 ///
 /// ## Examples
-/// ```gleam
-/// length("") == 0
-/// ```
+///    > length("")
+///    0
+///
 ///
 pub external fn length(String) -> Int = "string" "length"
 
 /// Reverse a string.
 ///
 /// ## Examples
-/// ```gleam
-/// reverse("stressed") == "desserts"
-/// ```
+///    > reverse("stressed")
+///    "desserts"
+///
 ///
 pub fn reverse(string: String) -> String {
   string
@@ -49,10 +51,12 @@ pub fn reverse(string: String) -> String {
 /// Replace all occurrences of some substring.
 ///
 /// ## Examples
-/// ```gleam
-/// replace("Json.Decode.succeed", each: ".", with: "-") == "Json-Decode-succeed"
-/// replace("a,b,c,d,e", each: ",", with: "/")           == "a/b/c/d/e"
-/// ```
+///    > replace("Json.Decode.succeed", each: ".", with: "-")
+///    "Json-Decode-succeed"
+///
+///    > replace("a,b,c,d,e", each: ",", with: "/")
+///    "a/b/c/d/e"
+///
 ///
 pub fn replace(
   in string: String,
@@ -68,9 +72,9 @@ pub fn replace(
 /// Convert a string to all lower case. Useful for case-insensitive comparisons.
 ///
 /// ## Examples
-/// ```gleam
-/// lowercase("X-FILES") == "x-files"
-/// ```
+///    > lowercase("X-FILES")
+///    "x-files"
+///
 ///
 pub external fn lowercase(String) -> String = "string" "lowercase"
 
@@ -78,19 +82,21 @@ pub external fn lowercase(String) -> String = "string" "lowercase"
 /// and VIRTUAL YELLING.
 ///
 /// ## Examples
-/// ```gleam
-/// uppercase("skinner") == "SKINNER"
-/// ```
+///    > uppercase("skinner")
+///    "SKINNER"
+///
 ///
 pub external fn uppercase(String) -> String = "string" "uppercase"
 
 /// Determines the order of the two strings.
 ///
 /// ## Examples
-/// ```gleam
-/// compare("Anthony", "Anthony") == order.Eq
-/// compare("A", "B") == order.Gt
-/// ```
+///    > compare("Anthony", "Anthony")
+///    order.Eq
+///
+///    > compare("A", "B")
+///    order.Gt
+///
 ///
 pub external fn compare(String, String) -> order.Order =
   "gleam_stdlib" "compare_strings"
@@ -102,11 +108,15 @@ pub external fn compare(String, String) -> order.Order =
 /// are taken starting from the *end* of the list.
 ///
 /// ## Examples
-/// ```gleam
-/// slice("gleam", from: 1, to: 3) == "lea"
-/// slice("gleam", from: 1, to: 10) == "leam"
-/// slice("snakes on a plane!", from: -6, to: -1) == "plane"
-/// ```
+///    > slice("gleam", from: 1, to: 3)
+///    "lea"
+///
+///    > slice("gleam", from: 1, to: 10)
+///    "leam"
+///
+///    > slice("snakes on a plane!", from: -6, to: -1)
+///    "plane"
+///
 ///
 // pub fn slice(out_of string: String, from start: Int, end: Int) -> String {}
 
@@ -114,9 +124,9 @@ pub external fn compare(String, String) -> order.Order =
 /// Drop *n* Graphemes from the left side of a
 ///
 /// ## Examples
-/// ```gleam
-/// drop_left(from: "The Lone Gunmen", up_to: 2) == "e Lone Gunmen"
-/// ```
+///    > drop_left(from: "The Lone Gunmen", up_to: 2)
+///    "e Lone Gunmen"
+///
 ///
 // pub fn drop_left(from string: String, up_to num_graphemes: Int) -> String {}
 
@@ -124,9 +134,9 @@ pub external fn compare(String, String) -> order.Order =
 /// Drop *n* Graphemes from the right side of a
 ///
 /// ## Examples
-/// ```gleam
-/// drop_right(from: "Cigarette Smoking Man", up_to: 2) == "Cigarette Smoking M"
-/// ```
+///    > drop_right(from: "Cigarette Smoking Man", up_to: 2)
+///    "Cigarette Smoking M"
+///
 ///
 // pub fn drop_right(from string: String, up_to num_graphemes: Int) -> String {}
 
@@ -135,11 +145,15 @@ pub external fn compare(String, String) -> order.Order =
 /// Check if the first string contains the second.
 ///
 /// ## Examples
-/// ```gleam
-/// contains(does: "theory", contain: "ory") == True
-/// contains(does: "theory", contain: "the") == True
-/// contains(does: "theory", contain: "THE") == False
-/// ```
+///    > contains(does: "theory", contain: "ory")
+///    True
+///
+///    > contains(does: "theory", contain: "the")
+///    True
+///
+///    > contains(does: "theory", contain: "THE")
+///    False
+///
 ///
 external fn erl_contains(String, String) -> Bool =
   "gleam_stdlib" "string_contains"
@@ -153,9 +167,9 @@ pub fn contains(does haystack: String, contain needle: String) -> Bool {
 /// See if the second string starts with the first one.
 ///
 /// ## Examples
-/// ```gleam
-/// starts_with(does: "theory", start_with: "ory") == False
-/// ```
+///    > starts_with(does: "theory", start_with: "ory")
+///    False
+///
 ///
 // pub fn starts_with(does string: String, start_with prefix: String) -> String {}
 
@@ -164,9 +178,9 @@ pub fn contains(does haystack: String, contain needle: String) -> Bool {
 /// See if the second string ends with the first one.
 ///
 /// ## Examples
-/// ```gleam
-/// ends_with(does: "theory", end_with: "ory") == True
-/// ```
+///    > ends_with(does: "theory", end_with: "ory")
+///    True
+///
 ///
 // pub fn ends_with(does string: String, end_with suffix: String) -> String {}
 
@@ -175,9 +189,9 @@ pub fn contains(does haystack: String, contain needle: String) -> Bool {
 /// Split a string using a given separator.
 ///
 /// ## Examples
-/// ```gleam
-/// split("home/evan/Desktop/", on: "/") == ["home","evan","Desktop", ""]
-/// ```
+///    > split("home/evan/Desktop/", on: "/")
+///    ["home","evan","Desktop", ""]
+///
 ///
 pub fn split(x: String, on substring: String) -> List(String) {
   x
@@ -190,9 +204,9 @@ pub fn split(x: String, on substring: String) -> List(String) {
 /// Append two strings.
 ///
 /// ## Examples
-/// ```gleam
-/// append(to: "butter", suffix: "fly") == "butterfly"
-/// ```
+///    > append(to: "butter", suffix: "fly")
+///    "butterfly"
+///
 ///
 pub fn append(to first: String, suffix second: String) -> String {
   first
@@ -204,9 +218,9 @@ pub fn append(to first: String, suffix second: String) -> String {
 /// Concatenate many strings into one.
 ///
 /// ## Examples
-/// ```gleam
-/// concat(["never", "the", "less"]) == "nevertheless"
-/// ```
+///    > concat(["never", "the", "less"])
+///    "nevertheless"
+///
 ///
 pub fn concat(strings: List(String)) -> String {
   strings
@@ -217,9 +231,9 @@ pub fn concat(strings: List(String)) -> String {
 /// Repeat a string `n` times.
 ///
 /// ## Examples
-/// ```gleam
-/// repeat("ha", times: 3) == "hahaha"
-/// ```
+///    > repeat("ha", times: 3)
+///    "hahaha"
+///
 ///
 fn repeat_help(chunk: String, result: List(String), repeats: Int) -> String {
   case repeats <= 0 {
@@ -235,9 +249,9 @@ pub fn repeat(string: String, times times: Int) -> String {
 /// Join many strings together with a given separator.
 ///
 /// ## Examples
-/// ```gleam
-/// join(["home","evan","Desktop"], with: "/") == "home/evan/Desktop"
-/// ```
+///    > join(["home","evan","Desktop"], with: "/")
+///    "home/evan/Desktop"
+///
 ///
 pub fn join(strings: List(String), with separator: String) -> String {
   strings
@@ -252,11 +266,15 @@ pub fn join(strings: List(String), with separator: String) -> String {
 /// Pad a string on the left until it has at least given number of Graphemes.
 ///
 /// ## Examples
-/// ```gleam
-/// pad_left("121", to: 5, with: ".") == "..121"
-/// pad_left("121", to: 3, with: ".") == "121"
-/// pad_left("121", to: 2, with: ".") == "121"
-/// ```
+///    > pad_left("121", to: 5, with: ".")
+///    "..121"
+///
+///    > pad_left("121", to: 3, with: ".")
+///    "121"
+///
+///    > pad_left("121", to: 2, with: ".")
+///    "121"
+///
 ///
 // pub fn pad_left(string: String, to size: Int, with: String) {}
 
@@ -264,11 +282,15 @@ pub fn join(strings: List(String), with separator: String) -> String {
 /// Pad a string on the right until it has a given length.
 ///
 /// ## Examples
-/// ```gleam
-/// pad_right("121", to: 5, with: ".") == "121.."
-/// pad_right("121", to: 3, with: ".") == "121"
-/// pad_right("121", to: 2, with: ".") == "121"
-/// ```
+///    > pad_right("121", to: 5, with: ".")
+///    "121.."
+///
+///    > pad_right("121", to: 3, with: ".")
+///    "121"
+///
+///    > pad_right("121", to: 2, with: ".")
+///    "121"
+///
 ///
 // pub fn pad_right(string: String, to size: Int, with: String) {}
 
@@ -276,9 +298,9 @@ pub fn join(strings: List(String), with separator: String) -> String {
 /// Get rid of whitespace on both sides of a String.
 ///
 /// ## Examples
-/// ```gleam
-/// trim("  hats  \n") == "hats"
-/// ```
+///    > trim("  hats  \n")
+///    "hats"
+///
 ///
 // pub fn trim(string: String) -> String {}
 
@@ -286,9 +308,9 @@ pub fn join(strings: List(String), with separator: String) -> String {
 /// Get rid of whitespace on the left of a String.
 ///
 /// ## Examples
-/// ```gleam
-/// trim_left("  hats  \n") == "hats  \n"
-/// ```
+///    > trim_left("  hats  \n")
+///    "hats  \n"
+///
 ///
 // pub fn trim_left(string: String) -> String {}
 
@@ -296,9 +318,9 @@ pub fn join(strings: List(String), with separator: String) -> String {
 /// Get rid of whitespace on the right of a String.
 ///
 /// ## Examples
-/// ```gleam
-/// trim_right("  hats  \n") == "  hats"
-/// ```
+///    > trim_right("  hats  \n")
+///    "  hats"
+///
 ///
 // pub fn trim_right(string: String) -> String {}
 
@@ -310,7 +332,9 @@ pub fn join(strings: List(String), with separator: String) -> String {
 // TODO
 // /// Convert a string to a list of Graphemes.
 // ///
-// /// to_graphemes("abc") == ['a','b','c']
+// ///    > to_graphemes("abc")
+///    ['a','b','c']
+///
 // ///
 // pub fn to_graphemes(string: String) -> List(String) {}
 
@@ -319,7 +343,9 @@ pub fn join(strings: List(String), with separator: String) -> String {
 // /// want to create a string primarily by consing, perhaps for decoding
 // /// something.
 // ///
-// /// from_list(['a','b','c']) == "abc"
+// ///    > from_list(['a','b','c'])
+///    "abc"
+///
 // ///
 // // pub fn from_graphemes(graphemes: List(Grapheme)) -> String {}
 
@@ -328,8 +354,8 @@ pub fn join(strings: List(String), with separator: String) -> String {
 /// pattern match on strings exactly as you would with lists.
 ///
 /// ## Examples
-/// ```gleam
-/// next_grapheme("") == Error(Nil)
-/// ```
+///    > next_grapheme("")
+///    Error(Nil)
+///
 ///
 // pub fn next_grapheme(string: String) -> Option(tuple(Grapheme, String)) {}

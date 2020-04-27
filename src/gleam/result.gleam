@@ -94,9 +94,9 @@ pub fn unwrap(result: Result(a, e), or default: a) -> a {
 ///
 /// ## Examples
 ///
-/// ```
-/// none() == Error(Nil)
-/// ```
+///    > none()
+///    Error(Nil)
+///
 ///
 pub fn none() -> Option(a) {
   Error(Nil)

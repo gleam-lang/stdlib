@@ -128,10 +128,12 @@ pub fn replace(
 ///
 /// ## Examples
 ///
-/// ```
-/// from_strings(["a", "b"]) == new("ab") == False
-/// is_equal(from_strings(["a", "b"]), new("ab")) == True
-/// ```
+///    > from_strings(["a", "b"]) == new("ab")
+///    False
+///
+///    > is_equal(from_strings(["a", "b"]), new("ab"))
+///    True
+///
 ///
 pub external fn is_equal(Iodata, Iodata) -> Bool = "string" "equal"
 
@@ -139,10 +141,14 @@ pub external fn is_equal(Iodata, Iodata) -> Bool = "string" "equal"
 ///
 /// ## Examples
 ///
-/// ```
-/// new("ok") |> is_empty == False
-/// new("") |> is_empty == True
-/// from_strings([]) |> is_empty == True
-/// ```
+///    > new("ok") |> is_empty
+///    False
+///
+///    > new("") |> is_empty
+///    True
+///
+///    > from_strings([]) |> is_empty
+///    True
+///
 ///
 pub external fn is_empty(Iodata) -> Bool = "string" "is_empty"

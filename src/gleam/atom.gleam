@@ -28,10 +28,12 @@ pub type FromStringError {
 ///
 /// ## Examples
 ///
-/// ```
-/// from_string("ok") == Ok(create_from_string("ok"))
-/// from_string("some_new_atom") == Error(AtomNotLoaded)
-/// ```
+///    > from_string("ok")
+///    Ok(create_from_string("ok"))
+///
+///    > from_string("some_new_atom")
+///    Error(AtomNotLoaded)
+///
 ///
 pub external fn from_string(String) -> Result(Atom, FromStringError) =
   "gleam_stdlib" "atom_from_string";
@@ -53,10 +55,9 @@ pub external fn create_from_string(String) -> Atom =
 ///
 /// ## Examples
 ///
-/// ```
-/// let ok_atom = create_from_string("ok")
-/// to_string(ok_atom) == "ok"
-/// ```
+///    > let ok_atom = create_from_string("ok")
+///    > to_string(ok_atom)
+///    "ok"
 ///
 pub external fn to_string(Atom) -> String =
   "gleam_stdlib" "atom_to_string";
