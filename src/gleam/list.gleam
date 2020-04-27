@@ -1,3 +1,26 @@
+//// Lists are an ordered sequence of elements and are one of the most common
+//// data types in Gleam.
+////
+//// New elements can be added and removed from the front of a list in
+//// constant time, while adding and removing from the end requires traversing
+//// the copying the whole list, so keep this in mind when designing your
+//// programs.
+////
+//// There is a dedicated syntax for prefixing to a list:
+////
+//// ```
+//// let new_list = [1, 2, ..existing_list]
+//// ```
+////
+//// And a matching syntax for getting the first elements of a list:
+////
+//// ```
+//// case list {
+////   [first_element, ..rest] -> first_element
+////   _ -> "this pattern matches when the list is empty"
+//// }
+//// ```
+
 import gleam/int
 import gleam/pair
 import gleam/order.{Order}
@@ -6,22 +29,80 @@ import gleam/result.{Option}
 pub type List(elements) =
   List(elements)
 
+/// An error value returned by the `strict_zip` function.
+///
 pub type LengthMismatch {
   LengthMismatch
 }
 
-/// Using the Erlang C BIF implementation.
+/// Count the number of elements in a given list.
+///
+/// This function has to traverse the list to determine the number of elements,
+/// so it runs in linear time.
+///
+/// This function is natively implemented by the virtual machine and is highly
+/// optimised.
+///
+/// ## Examples
+///
+/// ```
+/// length([]) == 0
+/// length([1]) == 1
+/// length([1, 2]) == 2
+/// ```
 ///
 pub external fn length(of: List(a)) -> Int = "erlang" "length"
 
-/// Using the Erlang C BIF implementation.
+/// Create a new list from a given list containing the same elements but in the
+/// opposite order.
+///
+/// This function has to traverse the list to create the new reversed list, so
+/// it runs in linear time.
+///
+/// This function is natively implemented by the virtual machine and is highly
+/// optimised.
+///
+/// ## Examples
+///
+/// ```
+/// reverse([]) == []
+/// reverse([1]) == [1]
+/// reverse([1, 2]) == [2, 1]
+/// ```
 ///
 pub external fn reverse(List(a)) -> List(a) = "lists" "reverse"
 
+/// Determine whether or not the list is empty.
+///
+/// This function runs in constant time.
+///
+/// ## Examples
+///
+/// ```
+/// is_empty([]) == True
+/// is_empty([1]) == False
+/// is_empty([1, 1]) == False
+/// ```
+///
 pub fn is_empty(list: List(a)) -> Bool {
   list == []
 }
 
+/// Determine whether or not a given element exists within a given list.
+///
+/// This function traverses the list to find the element, so it runs in linear
+/// time.
+///
+/// ## Examples
+///
+/// ```
+/// contains([], 0) == True
+/// contains([0], 0) == True
+/// contains([1], 0) == False
+/// contains([1, 1], 0) == False
+/// contains([1, 0], 0) == True
+/// ```
+///
 pub fn contains(list: List(a), has elem: a) -> Bool {
   case list {
     [] -> False
@@ -29,6 +110,16 @@ pub fn contains(list: List(a), has elem: a) -> Bool {
   }
 }
 
+/// Get the first element from the start of the list, if there is one.
+///
+/// ## Examples
+///
+/// ```
+/// head([]) == Error(Nil)
+/// head([0]) == Ok(0)
+/// head([1, 2]) == Ok(1)
+/// ```
+///
 pub fn head(list: List(a)) -> Option(a) {
   case list {
     [] -> result.none()
@@ -36,6 +127,19 @@ pub fn head(list: List(a)) -> Option(a) {
   }
 }
 
+/// Get the list minus the first element. If the list is empty `Error(Nil)` is
+/// returned.
+///
+/// This function runs in constant time and does not make a copy of the list.
+///
+/// ## Examples
+///
+/// ```
+/// tail([]) == Error(Nil)
+/// tail([0]) == Ok([])
+/// tail([1, 2]) == Ok([2])
+/// ```
+///
 pub fn tail(list: List(a)) -> Option(List(a)) {
   case list {
     [] -> result.none()
