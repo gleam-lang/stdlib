@@ -12,34 +12,36 @@ pub fn from_string_test() {
 
   "this is not an atom we have seen before"
   |> atom.from_string
-  |> should.equal(_, Error(atom.AtomNotLoaded))
+  |> should.equal(Error(atom.AtomNotLoaded))
 }
 
 pub fn create_from_string_test() {
   "ok"
   |> atom.create_from_string
   |> Ok
-  |> should.equal(_, atom.from_string("ok"))
+  |> should.equal(atom.from_string("ok"))
 
   "expect"
   |> atom.create_from_string
   |> Ok
-  |> should.equal(_, atom.from_string("expect"))
+  |> should.equal(atom.from_string("expect"))
 
   "this is another atom we have not seen before"
   |> atom.create_from_string
   |> Ok
-  |> should.equal(_, atom.from_string("this is another atom we have not seen before"))
+  |> should.equal(
+    atom.from_string("this is another atom we have not seen before"),
+  )
 }
 
 pub fn to_string_test() {
   "ok"
   |> atom.create_from_string
   |> atom.to_string
-  |> should.equal(_, "ok")
+  |> should.equal("ok")
 
   "expect"
   |> atom.create_from_string
   |> atom.to_string
-  |> should.equal(_, "expect")
+  |> should.equal("expect")
 }

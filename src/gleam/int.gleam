@@ -14,7 +14,8 @@ pub type Int =
 ///    > parse("ABC")
 ///    Error(Nil)
 ///
-pub external fn parse(String) -> Option(Int) = "gleam_stdlib" "parse_int";
+pub external fn parse(String) -> Option(Int) =
+  "gleam_stdlib" "parse_int"
 
 /// Print a given int to a string.
 ///
@@ -23,7 +24,8 @@ pub external fn parse(String) -> Option(Int) = "gleam_stdlib" "parse_int";
 ///    > to_string(2)
 ///    "2"
 ///
-pub external fn to_string(Int) -> String = "erlang" "integer_to_binary"
+pub external fn to_string(Int) -> String =
+  "erlang" "integer_to_binary"
 
 /// Print a given int to a string using the base number provided.
 ///
@@ -38,7 +40,8 @@ pub external fn to_string(Int) -> String = "erlang" "integer_to_binary"
 ///    > to_base_string(48, 36)
 ///    "1C"
 ///
-pub external fn to_base_string(Int, Int) -> String = "erlang" "integer_to_binary"
+pub external fn to_base_string(Int, Int) -> String =
+  "erlang" "integer_to_binary"
 
 /// Compares two ints, returning an order.
 ///
@@ -56,11 +59,10 @@ pub external fn to_base_string(Int, Int) -> String = "erlang" "integer_to_binary
 pub fn compare(a: Int, with b: Int) -> Order {
   case a == b {
     True -> order.Eq
-    False ->
-      case a < b {
-        True -> order.Lt
-        False -> order.Gt
-      }
+    False -> case a < b {
+      True -> order.Lt
+      False -> order.Gt
+    }
   }
 }
 

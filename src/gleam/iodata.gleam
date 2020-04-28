@@ -9,56 +9,56 @@
 /// using minimal memory, and then can be efficiently converted to a string
 /// using the `to_string` function.
 ///
-pub external type Iodata;
+pub external type Iodata
 
 /// Prepend a String onto the start of some Iodata.
 ///
 /// Runs in constant time.
 ///
 pub external fn prepend(to: Iodata, prefix: String) -> Iodata =
-  "gleam_stdlib" "iodata_prepend";
+  "gleam_stdlib" "iodata_prepend"
 
 /// Append a String onto the end of some Iodata.
 ///
 /// Runs in constant time.
 ///
 pub external fn append(to: Iodata, suffix: String) -> Iodata =
-  "gleam_stdlib" "iodata_append";
+  "gleam_stdlib" "iodata_append"
 
 /// Prepend some Iodata onto the start of another.
 ///
 /// Runs in constant time.
 ///
 pub external fn prepend_iodata(to: Iodata, prefix: Iodata) -> Iodata =
-  "gleam_stdlib" "iodata_prepend";
+  "gleam_stdlib" "iodata_prepend"
 
 /// Append some Iodata onto the end of another.
 ///
 /// Runs in constant time.
 ///
 pub external fn append_iodata(to: Iodata, suffix: Iodata) -> Iodata =
-  "gleam_stdlib" "iodata_append";
+  "gleam_stdlib" "iodata_append"
 
 /// Convert a list of strings into iodata.
 ///
 /// Runs in constant time.
 ///
 pub external fn from_strings(List(String)) -> Iodata =
-  "gleam_stdlib" "identity";
+  "gleam_stdlib" "identity"
 
 /// Joins a list of iodata into a single iodata.
 ///
 /// Runs in constant time.
 ///
 pub external fn concat(List(Iodata)) -> Iodata =
-  "gleam_stdlib" "identity";
+  "gleam_stdlib" "identity"
 
 /// Convert a string into iodata.
 ///
 /// Runs in constant time.
 ///
 pub external fn new(String) -> Iodata =
-  "gleam_stdlib" "identity";
+  "gleam_stdlib" "identity"
 
 /// Turns an `Iodata` into a `String`
 ///
@@ -66,32 +66,35 @@ pub external fn new(String) -> Iodata =
 /// optimised.
 ///
 pub external fn to_string(Iodata) -> String =
-  "erlang" "iolist_to_binary";
+  "erlang" "iolist_to_binary"
 
 /// Returns the size of the Iodata in bytes.
 ///
 pub external fn byte_size(Iodata) -> Int =
-  "erlang" "iolist_size";
+  "erlang" "iolist_size"
 
 /// Creates textual representation of the given float as iodata.
 ///
 pub external fn from_float(Float) -> Iodata =
-  "io_lib_format" "fwrite_g";
+  "io_lib_format" "fwrite_g"
 
 /// Converts Iodata to a new Iodata where valid UTF-8 string data is
 /// lowercased.
 ///
-pub external fn lowercase(Iodata) -> Iodata = "string" "lowercase"
+pub external fn lowercase(Iodata) -> Iodata =
+  "string" "lowercase"
 
 /// Converts Iodata to a new Iodata where valid UTF-8 string data is
 /// uppercased.
 ///
-pub external fn uppercase(Iodata) -> Iodata = "string" "uppercase"
+pub external fn uppercase(Iodata) -> Iodata =
+  "string" "uppercase"
 
 /// Converts Iodata to a new Iodata where valid UTF-8 string data is
 /// reversed.
 ///
-pub external fn reverse(Iodata) -> Iodata = "string" "reverse"
+pub external fn reverse(Iodata) -> Iodata =
+  "string" "reverse"
 
 type Direction {
   All
@@ -135,7 +138,8 @@ pub fn replace(
 ///    True
 ///
 ///
-pub external fn is_equal(Iodata, Iodata) -> Bool = "string" "equal"
+pub external fn is_equal(Iodata, Iodata) -> Bool =
+  "string" "equal"
 
 /// Inspect some iodata to determine if it is equivalent to an empty string.
 ///
@@ -151,4 +155,5 @@ pub external fn is_equal(Iodata, Iodata) -> Bool = "string" "equal"
 ///    True
 ///
 ///
-pub external fn is_empty(Iodata) -> Bool = "string" "is_empty"
+pub external fn is_empty(Iodata) -> Bool =
+  "string" "is_empty"

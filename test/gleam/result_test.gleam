@@ -19,70 +19,70 @@ pub fn is_error_test() {
 
 pub fn map_test() {
   Ok(1)
-  |> result.map(_, fn(x) { x + 1 })
-  |> should.equal(_, Ok(2))
+  |> result.map(fn(x) { x + 1 })
+  |> should.equal(Ok(2))
 
   Ok(1)
-  |> result.map(_, fn(_) { "2" })
-  |> should.equal(_, Ok("2"))
+  |> result.map(fn(_) { "2" })
+  |> should.equal(Ok("2"))
 
   Error(1)
-  |> result.map(_, fn(x) { x + 1 })
-  |> should.equal(_, Error(1))
+  |> result.map(fn(x) { x + 1 })
+  |> should.equal(Error(1))
 }
 
 pub fn map_error_test() {
   Ok(1)
-  |> result.map_error(_, fn(x) { x + 1 })
-  |> should.equal(_, Ok(1))
+  |> result.map_error(fn(x) { x + 1 })
+  |> should.equal(Ok(1))
 
   Error(1)
-  |> result.map_error(_, fn(x) { tuple("ok", x + 1) })
-  |> should.equal(_, Error(tuple("ok", 2)))
+  |> result.map_error(fn(x) { tuple("ok", x + 1) })
+  |> should.equal(Error(tuple("ok", 2)))
 }
 
 pub fn flatten_test() {
   Ok(Ok(1))
   |> result.flatten
-  |> should.equal(_, Ok(1))
+  |> should.equal(Ok(1))
 
   Ok(Error(1))
   |> result.flatten
-  |> should.equal(_, Error(1))
+  |> should.equal(Error(1))
 
   Error(1)
   |> result.flatten
-  |> should.equal(_, Error(1))
+  |> should.equal(Error(1))
 
   Error(Error(1))
   |> result.flatten
-  |> should.equal(_, Error(Error(1)))
+  |> should.equal(Error(Error(1)))
 }
 
 pub fn then_test() {
   Error(1)
-  |> result.then(_, fn(x) { Ok(x + 1) })
-  |> should.equal(_, Error(1))
+  |> result.then(fn(x) { Ok(x + 1) })
+  |> should.equal(Error(1))
 
   Ok(1)
-  |> result.then(_, fn(x) { Ok(x + 1) })
-  |> should.equal(_, Ok(2))
+  |> result.then(fn(x) { Ok(x + 1) })
+  |> should.equal(Ok(2))
 
   Ok(1)
-  |> result.then(_, fn(_) { Ok("type change") })
-  |> should.equal(_, Ok("type change"))
+  |> result.then(fn(_) { Ok("type change") })
+  |> should.equal(Ok("type change"))
 
   Ok(1)
-  |> result.then(_, fn(_) { Error(1) })
-  |> should.equal(_, Error(1))
+  |> result.then(fn(_) { Error(1) })
+  |> should.equal(Error(1))
 }
 
 pub fn unwrap_test() {
   Ok(1)
-  |> result.unwrap(_, 50)
-  |> should.equal(_, 1)
+  |> result.unwrap(50)
+  |> should.equal(1)
 
   Error("nope")
-  |> result.unwrap(_, 50)
-  |> should.equal(_, 50)
+  |> result.unwrap(50)
+  |> should.equal(50)
 }

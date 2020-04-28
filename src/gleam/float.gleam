@@ -15,8 +15,8 @@ pub type Float =
 ///    > parse("ABC")
 ///    None
 ///
-pub external fn parse(String) -> Option(Float)
-  = "gleam_stdlib" "parse_float";
+pub external fn parse(String) -> Option(Float) =
+  "gleam_stdlib" "parse_float"
 
 /// Return the string representation of the provided float.
 ///
@@ -39,11 +39,10 @@ pub fn to_string(f: Float) -> String {
 pub fn compare(a: Float, with b: Float) -> Order {
   case a == b {
     True -> order.Eq
-    False ->
-      case a <. b {
-        True -> order.Lt
-        False -> order.Gt
-      }
+    False -> case a <. b {
+      True -> order.Lt
+      False -> order.Gt
+    }
   }
 }
 
@@ -82,7 +81,8 @@ pub fn max(a: Float, b: Float) -> Float {
 ///    > ceiling(2.3)
 ///    3.0
 ///
-pub external fn ceiling(Float) -> Float = "math" "ceil";
+pub external fn ceiling(Float) -> Float =
+  "math" "ceil"
 
 /// Rounds the value to the next lowest whole number as a float.
 ///
@@ -91,7 +91,8 @@ pub external fn ceiling(Float) -> Float = "math" "ceil";
 ///    > floor(2.3)
 ///    2.0
 ///
-pub external fn floor(Float) -> Float = "math" "floor";
+pub external fn floor(Float) -> Float =
+  "math" "floor"
 
 /// Rounds the value to the nearest whole number as an int.
 ///
@@ -103,7 +104,8 @@ pub external fn floor(Float) -> Float = "math" "floor";
 ///    > round(2.5)
 ///    3
 ///
-pub external fn round(Float) -> Int = "erlang" "round";
+pub external fn round(Float) -> Int =
+  "erlang" "round"
 
 /// Returns the value as an int, truncating all decimal digits.
 ///
@@ -112,4 +114,5 @@ pub external fn round(Float) -> Int = "erlang" "round";
 ///    > truncate(2.4343434847383438)
 ///    2
 ///
-pub external fn truncate(Float) -> Int = "erlang" "trunc";
+pub external fn truncate(Float) -> Int =
+  "erlang" "trunc"

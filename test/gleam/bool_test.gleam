@@ -12,50 +12,50 @@ pub fn negate_test() {
 
 pub fn compare_test() {
   bool.compare(True, True)
-  |> should.equal(_, order.Eq)
+  |> should.equal(order.Eq)
 
   bool.compare(True, False)
-  |> should.equal(_, order.Gt)
+  |> should.equal(order.Gt)
 
   bool.compare(False, False)
-  |> should.equal(_, order.Eq)
+  |> should.equal(order.Eq)
 
   bool.compare(False, True)
-  |> should.equal(_, order.Lt)
+  |> should.equal(order.Lt)
 }
 
 pub fn max_test() {
   bool.max(True, True)
-  |> should.equal(_, True)
+  |> should.equal(True)
 
   bool.max(True, False)
-  |> should.equal(_, True)
+  |> should.equal(True)
 
   bool.max(False, False)
-  |> should.equal(_, False)
+  |> should.equal(False)
 
   bool.max(False, True)
-  |> should.equal(_, True)
+  |> should.equal(True)
 }
 
 pub fn min_test() {
   bool.min(True, True)
-  |> should.equal(_, True)
+  |> should.equal(True)
 
   bool.min(True, False)
-  |> should.equal(_, False)
+  |> should.equal(False)
 
   bool.min(False, False)
-  |> should.equal(_, False)
+  |> should.equal(False)
 
   bool.min(False, True)
-  |> should.equal(_, False)
+  |> should.equal(False)
 }
 
 pub fn to_int_test() {
   bool.to_int(True)
-  |> should.equal(_, 1)
+  |> should.equal(1)
 
   bool.to_int(False)
-  |> should.equal(_, 0)
+  |> should.equal(0)
 }
