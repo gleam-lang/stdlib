@@ -156,6 +156,7 @@ pub fn merge_test() {
     tuple("c", 4),
     tuple("d", 3),
   ])
+
   let b = map.from_list([
     tuple("a", 0),
     tuple("b", 1),

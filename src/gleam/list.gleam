@@ -51,7 +51,6 @@ pub type LengthMismatch {
 ///    > length([1, 2])
 ///    2
 ///
-///
 pub external fn length(of: List(a)) -> Int = "erlang" "length"
 
 /// Create a new list from a given list containing the same elements but in the
@@ -74,7 +73,6 @@ pub external fn length(of: List(a)) -> Int = "erlang" "length"
 ///    > reverse([1, 2])
 ///    [2, 1]
 ///
-///
 pub external fn reverse(List(a)) -> List(a) = "lists" "reverse"
 
 /// Determine whether or not the list is empty.
@@ -91,7 +89,6 @@ pub external fn reverse(List(a)) -> List(a) = "lists" "reverse"
 ///
 ///    > is_empty([1, 1])
 ///    False
-///
 ///
 pub fn is_empty(list: List(a)) -> Bool {
   list == []
@@ -119,7 +116,6 @@ pub fn is_empty(list: List(a)) -> Bool {
 ///    > contains([1, 0], 0)
 ///    True
 ///
-///
 pub fn contains(list: List(a), has elem: a) -> Bool {
   case list {
     [] -> False
@@ -139,7 +135,6 @@ pub fn contains(list: List(a), has elem: a) -> Bool {
 ///
 ///    > head([1, 2])
 ///    Ok(1)
-///
 ///
 pub fn head(list: List(a)) -> Option(a) {
   case list {
@@ -163,7 +158,6 @@ pub fn head(list: List(a)) -> Option(a) {
 ///
 ///    > tail([1, 2])
 ///    Ok([2])
-///
 ///
 pub fn tail(list: List(a)) -> Option(List(a)) {
   case list {
@@ -196,7 +190,6 @@ fn do_filter(list: List(a), fun: fn(a) -> Bool, acc: List(a)) -> List(a) {
 ///    > filter([2, 4, 6, 1], fn(x) { x > 6 })
 ///    []
 ///
-///
 pub fn filter(list: List(a), for predicate: fn(a) -> Bool) -> List(a) {
   do_filter(list, predicate, [])
 }
@@ -215,7 +208,6 @@ fn do_map(list: List(a), fun: fn(a) -> b, acc: List(b)) -> List(b) {
 ///
 ///    > map([2, 4, 6], fn(x) { x * 2 })
 ///    [4, 8, 12]
-///
 ///
 pub fn map(list: List(a), with fun: fn(a) -> b) -> List(b) {
   do_map(list, fun, [])
@@ -243,7 +235,6 @@ fn do_index_map(
 ///
 ///    > index_map(["a", "b"], fn(i, x) { tuple(i, x) })
 ///    [tuple(0, "a"), tuple(1, "b")]
-///
 ///
 pub fn index_map(list: List(a), with fun: fn(Int, a) -> b) -> List(b) {
   do_index_map(list, fun, 0, [])
@@ -289,7 +280,6 @@ fn do_traverse(
 ///    > traverse([[1], [], [2]], head)
 ///    Error(Nil)
 ///
-///
 pub fn traverse(
   list: List(a),
   with fun: fn(a) -> Result(b, e),
@@ -312,7 +302,6 @@ pub fn traverse(
 ///
 ///    > drop([1, 2, 3, 4], 9)
 ///    []
-///
 ///
 pub fn drop(from list: List(a), up_to n: Int) -> List(a) {
   case n <= 0 {
@@ -352,7 +341,6 @@ fn do_take(list: List(a), n: Int, acc: List(a)) -> List(a) {
 ///    > take([1, 2, 3, 4], 9)
 ///    [1, 2, 3, 4]
 ///
-///
 pub fn take(from list: List(a), up_to n: Int) -> List(a) {
   do_take(list, n, [])
 }
@@ -363,7 +351,6 @@ pub fn take(from list: List(a), up_to n: Int) -> List(a) {
 ///
 ///    > new()
 ///    []
-///
 ///
 pub fn new() -> List(a) {
   []
@@ -378,7 +365,6 @@ pub fn new() -> List(a) {
 ///
 ///    > append([1, 2], [3])
 ///    [1, 2, 3]
-///
 ///
 pub external fn append(List(a), List(a)) -> List(a)
   = "lists" "append";
@@ -399,7 +385,6 @@ fn do_flatten(lists: List(List(a)), acc: List(a)) -> List(a) {
 ///
 ///    > flatten([[1], [2, 3], []])
 ///    [1, 2, 3]
-///
 ///
 pub fn flatten(lists: List(List(a))) -> List(a) {
   do_flatten(lists, [])
@@ -458,7 +443,6 @@ pub fn fold_right(
 ///    > find([], fn(x) { True })
 ///    Error(Nil)
 ///
-///
 pub fn find(
   in haystack: List(a),
   one_that is_desired: fn(a) -> Bool,
@@ -490,7 +474,6 @@ pub fn find(
 ///    > find_map([], head)
 ///    Error(Nil)
 ///
-///
 pub fn find_map(
   in haystack: List(a),
   with fun: fn(a) -> Option(b),
@@ -520,7 +503,6 @@ pub fn find_map(
 ///    > all([4, 3], fn(x) { x > 3 })
 ///    False
 ///
-///
 pub fn all(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
   case list {
     [] -> True
@@ -549,7 +531,6 @@ pub fn all(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
 ///
 ///    > any([3, 4], fn(x) { x > 3 })
 ///    True
-///
 ///
 pub fn any(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
   case list {
@@ -581,7 +562,6 @@ pub fn any(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
 ///    > zip([1, 2], [3, 4])
 ///    [tuple(1, 3), tuple(2, 4)]
 ///
-///
 pub fn zip(xs: List(a), ys: List(b)) -> List(tuple(a, b)) {
   case xs, ys {
     [], _ -> []
@@ -608,7 +588,6 @@ pub fn zip(xs: List(a), ys: List(b)) -> List(tuple(a, b)) {
 ///    > strict_zip([1, 2], [3, 4])
 ///    Ok([tuple(1, 3), tuple(2, 4)])
 ///
-///
 pub fn strict_zip(l1: List(a), l2: List(b)) -> Result(List(tuple(a, b)), LengthMismatch) {
   case length(of: l1) == length(of: l2) {
     True -> Ok(zip(l1, l2))
@@ -627,7 +606,6 @@ pub fn strict_zip(l1: List(a), l2: List(b)) -> Result(List(tuple(a, b)), LengthM
 ///
 ///    > intersperse([], 2)
 ///    []
-///
 ///
 pub fn intersperse(list: List(a), with elem: a) -> List(a) {
   case list {
@@ -648,7 +626,6 @@ pub fn intersperse(list: List(a), with elem: a) -> List(a) {
 ///
 ///    > at([1, 2, 3], 5)
 ///    Error(Nil)
-///
 ///
 pub fn at(in list: List(a), get index: Int) -> Option(a) {
   case index < 0 {
@@ -673,7 +650,6 @@ pub fn at(in list: List(a), get index: Int) -> Option(a) {
 ///
 ///    > unique([1, 1, 1, 4, 7, 3, 3, 4])
 ///    [1, 4, 7, 3]
-///
 ///
 pub fn unique(list: List(a)) -> List(a) {
   case list {
@@ -713,6 +689,12 @@ fn do_sort(list: List(a), compare: fn(a, a) -> Order, list_length: Int) -> List(
 /// Sort from smallest to largest based upon the ordering specified by a given
 /// function.
 ///
+/// ## Examples
+///
+///    > import gleam/int
+///    > list.sort([4, 3, 6, 5, 4, 1, 2], int.compare)
+///    [1, 2, 3, 4, 4, 5, 6]
+///
 pub fn sort(list: List(a), sort_by compare: fn(a, a) -> Order) -> List(a) {
   do_sort(list, compare, length(list))
 }
@@ -729,7 +711,6 @@ pub fn sort(list: List(a), sort_by compare: fn(a, a) -> Order) -> List(a) {
 ///
 ///    > range(1, -5)
 ///    [1, 0, -1, -2, -3, -4]
-///
 ///
 pub fn range(from start: Int, to stop: Int) -> List(Int) {
   case int.compare(start, stop) {
@@ -771,6 +752,22 @@ fn do_split(list: List(a), n: Int, taken: List(a)) -> tuple(List(a), List(a)) {
   }
 }
 
+/// Split a list in two before the given index.
+///
+/// If the list is not long enough to have the given index the before list will
+/// be the input list, and the after list will be empty.
+///
+/// ## Examples
+///
+///    > split([6, 7, 8, 9], 0)
+///    tuple([], [6, 7, 8, 9])
+///
+///    > split([6, 7, 8, 9], 2)
+///    tuple([6, 7], [8, 9])
+///
+///    > split([6, 7, 8, 9], 4)
+///    tuple([6, 7, 8, 9], [])
+///
 pub fn split(list list: List(a), at index: Int) -> tuple(List(a), List(a)) {
   do_split(list, index, [])
 }
@@ -790,6 +787,20 @@ fn do_split_while(
   }
 }
 
+/// Split a list in two before the first element that a given function returns
+/// False for.
+///
+/// If the function returns True for all elements the first list will be the
+/// input list, and the second list will be empty.
+///
+/// ## Examples
+///
+///    > split_while([1, 2, 3, 4, 5], fn(x) { x <= 3 })
+///    tuple([1, 2, 3], [4, 5])
+///
+///    > split_while([1, 2, 3, 4, 5], fn(x) { x <= 5 })
+///    tuple([1, 2, 3, 4, 5], [])
+///
 pub fn split_while(
   list list: List(a),
   while predicate: fn(a) -> Bool,
@@ -797,6 +808,26 @@ pub fn split_while(
   do_split_while(list, predicate, [])
 }
 
+
+/// Given a list of 2 element tuples, find the first tuple that has a given
+/// key as the first element and return the second element.
+///
+/// If no tuple is found with the given key then `Error(Nil)` is returned.
+///
+/// This function may be useful for interacting with Erlang code where lists of
+/// tuples are common.
+///
+/// ## Examples
+///
+///    > key_find([tuple("a", 0), tuple("b", 1)], "a")
+///    Ok(0)
+///
+///    > key_find([tuple("a", 0), tuple("b", 1)], "b")
+///    Ok(1)
+///
+///    > key_find([tuple("a", 0), tuple("b", 1)], "c")
+///    Error(Nil)
+///
 pub fn key_find(
   in keyword_list: List(tuple(k, v)),
   find desired_key: k,
