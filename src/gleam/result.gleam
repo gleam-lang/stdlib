@@ -70,7 +70,7 @@ pub fn flatten(result: Result(Result(a, e), e)) -> Result(a, e) {
 
 /// Executes the function `apply` on inner value when Result is Ok, will noop
 /// if it is Error
-/// Equivalent to `map` followed by `flatten.
+/// Equivalent to `map` followed by `flatten`.
 ///
 pub fn then(
   result: Result(a, e),
