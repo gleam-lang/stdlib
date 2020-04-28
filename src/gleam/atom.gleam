@@ -34,7 +34,6 @@ pub type FromStringError {
 ///    > from_string("some_new_atom")
 ///    Error(AtomNotLoaded)
 ///
-///
 pub external fn from_string(String) -> Result(Atom, FromStringError) =
   "gleam_stdlib" "atom_from_string";
 

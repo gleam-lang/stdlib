@@ -1,17 +1,30 @@
 /// Represents the result of a single comparison to determine the precise
 /// ordering of two values.
+///
 pub type Order {
+  /// Less-than
   Lt
+
+  /// Equal
   Eq
+
+  /// Greater than
   Gt
 }
 
-/// Switches the evaluated ordering from one direction to the other
+/// Inverts an order, so less-than becomes greater-than and greater-than
+/// becomes less-than.
 ///
 /// ## Examples
+///
 ///    > reverse(Lt)
 ///    Gt
 ///
+///    > reverse(Eq)
+///    Eq
+///
+///    > reverse(Lt)
+///    Gt
 ///
 pub fn reverse(order: Order) -> Order {
   case order {
@@ -21,12 +34,18 @@ pub fn reverse(order: Order) -> Order {
   }
 }
 
-/// Produces a numeric representation of the order
+/// Produces a numeric representation of the order.
 ///
 /// ## Examples
+///
 ///    > to_int(Lt)
 ///    -1
 ///
+///    > to_int(Eq)
+///    0
+///
+///    > to_int(Gt)
+///    1
 ///
 pub fn to_int(order: Order) -> Int {
   case order {
@@ -36,14 +55,14 @@ pub fn to_int(order: Order) -> Int {
   }
 }
 
-/// Compares two Order values to one another, producing a new Order
+/// Compares two Order values to one another, producing a new Order.
 ///
 /// ## Examples
-///    > compare(Eq, to: Lt)
+///
+///    > compare(Eq, with: Lt)
 ///    Gt
 ///
-///
-pub fn compare(a: Order, to b: Order) -> Order {
+pub fn compare(a: Order, with b: Order) -> Order {
   case a, b {
     x, y if x == y -> Eq
     Lt, _ | Eq, Gt -> Lt
@@ -51,12 +70,12 @@ pub fn compare(a: Order, to b: Order) -> Order {
   }
 }
 
-/// Returns the highest of two orders
+/// Returns the largest of two orders.
 ///
 /// ## Examples
+///
 ///    > max(Eq, Lt)
 ///    Eq
-///
 ///
 pub fn max(a: Order, b: Order) -> Order {
   case a, b {
@@ -66,12 +85,12 @@ pub fn max(a: Order, b: Order) -> Order {
   }
 }
 
-/// Returns the lowest of two orders
+/// Returns the smallest of two orders.
 ///
 /// ## Examples
+///
 ///    > min(Eq, Lt)
 ///    Lt
-///
 ///
 pub fn min(a: Order, b: Order) -> Order {
   case a, b {

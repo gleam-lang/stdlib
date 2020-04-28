@@ -19,12 +19,12 @@ pub fn string_test() {
   1
   |> dynamic.from
   |> dynamic.string
-  |> should.equal(_, Error("Expected a String, got `1`"))
+  |> should.equal(_, Error("Expected a string, got an int"))
 
   []
   |> dynamic.from
   |> dynamic.string
-  |> should.equal(_, Error("Expected a String, got `[]`"))
+  |> should.equal(_, Error("Expected a string, got a list"))
 }
 
 pub fn int_test() {
@@ -41,12 +41,12 @@ pub fn int_test() {
   1.0
   |> dynamic.from
   |> dynamic.int
-  |> should.equal(_, Error("Expected an Int, got `1.0`"))
+  |> should.equal(_, Error("Expected an int, got a float"))
 
   []
   |> dynamic.from
   |> dynamic.int
-  |> should.equal(_, Error("Expected an Int, got `[]`"))
+  |> should.equal(_, Error("Expected an int, got a list"))
 }
 
 pub fn float_test() {
@@ -63,12 +63,12 @@ pub fn float_test() {
   1
   |> dynamic.from
   |> dynamic.float
-  |> should.equal(_, Error("Expected a Float, got `1`"))
+  |> should.equal(_, Error("Expected a float, got an int"))
 
   []
   |> dynamic.from
   |> dynamic.float
-  |> should.equal(_, Error("Expected a Float, got `[]`"))
+  |> should.equal(_, Error("Expected a float, got a list"))
 }
 
 pub fn thunk_test() {
@@ -113,12 +113,12 @@ pub fn bool_test() {
   1
   |> dynamic.from
   |> dynamic.bool
-  |> should.equal(_, Error("Expected a Bool, got `1`"))
+  |> should.equal(_, Error("Expected a bool, got an int"))
 
   []
   |> dynamic.from
   |> dynamic.bool
-  |> should.equal(_, Error("Expected a Bool, got `[]`"))
+  |> should.equal(_, Error("Expected a bool, got a list"))
 }
 
 pub fn atom_test() {

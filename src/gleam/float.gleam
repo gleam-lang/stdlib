@@ -5,7 +5,8 @@ import gleam/result.{Option}
 pub type Float =
   Float
 
-/// Attempts to parse the String as a Float if possible
+/// Attempts to parse a string as a float, returning `Error(Nil)` if it was not
+/// possible.
 ///
 /// ## Examples
 ///    > parse("2.3")
@@ -14,17 +15,14 @@ pub type Float =
 ///    > parse("ABC")
 ///    None
 ///
-///
 pub external fn parse(String) -> Option(Float)
   = "gleam_stdlib" "parse_float";
 
-/// Returns the string representation of the provided
-/// `Float` value
+/// Return the string representation of the provided float.
 ///
 /// ## Examples
 ///    > to_string(2.3)
 ///    "2.3"
-///
 ///
 pub fn to_string(f: Float) -> String {
   f
@@ -32,15 +30,13 @@ pub fn to_string(f: Float) -> String {
   |> iodata.to_string
 }
 
-
-/// Compares two `Floats`, returning an `Order`
+/// Compares two floats, returning an order.
 ///
 /// ## Examples
 ///    > compare(2.0, 2.3)
 ///    Lt
 ///
-///
-pub fn compare(a: Float, b: Float) -> Order {
+pub fn compare(a: Float, with b: Float) -> Order {
   case a == b {
     True -> order.Eq
     False ->
@@ -51,12 +47,12 @@ pub fn compare(a: Float, b: Float) -> Order {
   }
 }
 
-/// Compares two `Floats`, returning the smaller of the two
+/// Compares two floats, returning the smaller of the two.
 ///
 /// ## Examples
+///
 ///    > min(2.0, 2.3)
 ///    2.0
-///
 ///
 pub fn min(a: Float, b: Float) -> Float {
   case a <. b {
@@ -65,12 +61,12 @@ pub fn min(a: Float, b: Float) -> Float {
   }
 }
 
-/// Compares two `Floats`, returning the larger of the two
+/// Compares two floats, returning the larger of the two.
 ///
 /// ## Examples
+///
 ///    > max(2.0, 2.3)
 ///    2.3
-///
 ///
 pub fn max(a: Float, b: Float) -> Float {
   case a >. b {
@@ -79,41 +75,41 @@ pub fn max(a: Float, b: Float) -> Float {
   }
 }
 
-/// Rounds the value to the next highest whole number as a Float
+/// Rounds the value to the next highest whole number as a float.
 ///
 /// ## Examples
+///
 ///    > ceiling(2.3)
 ///    3.0
 ///
-///
 pub external fn ceiling(Float) -> Float = "math" "ceil";
 
-/// Rounds the value to the next lowest whole number as a Float
+/// Rounds the value to the next lowest whole number as a float.
 ///
 /// ## Examples
+///
 ///    > floor(2.3)
 ///    2.0
 ///
-///
 pub external fn floor(Float) -> Float = "math" "floor";
 
-/// Rounds the value to the nearest whole number as an Int
+/// Rounds the value to the nearest whole number as an int.
 ///
 /// ## Examples
+///
 ///    > round(2.3)
 ///    2
 ///
 ///    > round(2.5)
 ///    3
 ///
-///
 pub external fn round(Float) -> Int = "erlang" "round";
 
-/// Returns the value as an Int, truncating all decimal digits.
+/// Returns the value as an int, truncating all decimal digits.
 ///
 /// ## Examples
+///
 ///    > truncate(2.4343434847383438)
 ///    2
-///
 ///
 pub external fn truncate(Float) -> Int = "erlang" "trunc";

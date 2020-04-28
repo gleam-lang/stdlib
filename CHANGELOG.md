@@ -11,6 +11,12 @@
 - The `string` module gains `is_empty`, `join` and `concat` functions.
 - The `int` module gains `is_even` and `is_odd` functions.
 - The `list.length` function now accepts a labelled argument.
+- The `list.length` function now accepts a labelled argument.
+- The the second argument of `bool.compare`, `float.compare`, `int.compare`,
+  and `order.compare` now have the label `with`.
+- The `dynamic.unsafe_coerce` function now only accepts Dynamic data.
+- The `dynamic` decoder functions no longer print the entire value in their
+  error messages, to avoid large errors.
 
 ## v0.7.0 - 2020-03-03
 

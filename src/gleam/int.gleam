@@ -4,32 +4,31 @@ import gleam/result.{Option}
 pub type Int =
   Int
 
-/// Attempts to parse the String as an Int if possible
+/// Parse a given string as an int if possible.
 ///
 /// ## Examples
+///
 ///    > parse("2")
-///    Some(2)
+///    Ok(2)
 ///
 ///    > parse("ABC")
-///    None
-///
+///    Error(Nil)
 ///
 pub external fn parse(String) -> Option(Int) = "gleam_stdlib" "parse_int";
 
-/// Returns the string representation of the provided
-/// `Int` value
+/// Print a given int to a string.
 ///
 /// ## Examples
+///
 ///    > to_string(2)
 ///    "2"
 ///
-///
 pub external fn to_string(Int) -> String = "erlang" "integer_to_binary"
 
-/// Returns the string representation of the provided
-/// `Int` value in the base provided.
+/// Print a given int to a string using the base number provided.
 ///
 /// ## Examples
+///
 ///    > to_base_string(2, 2)
 ///    "10"
 ///
@@ -39,17 +38,22 @@ pub external fn to_string(Int) -> String = "erlang" "integer_to_binary"
 ///    > to_base_string(48, 36)
 ///    "1C"
 ///
-///
 pub external fn to_base_string(Int, Int) -> String = "erlang" "integer_to_binary"
 
-/// Compares two `Int`, returning an `Order`
+/// Compares two ints, returning an order.
 ///
 /// ## Examples
+///
 ///    > compare(2, 3)
 ///    Lt
 ///
+///    > compare(4, 3)
+///    Gt
 ///
-pub fn compare(a: Int, b: Int) -> Order {
+///    > compare(3, 3)
+///    Eq
+///
+pub fn compare(a: Int, with b: Int) -> Order {
   case a == b {
     True -> order.Eq
     False ->
@@ -60,12 +64,12 @@ pub fn compare(a: Int, b: Int) -> Order {
   }
 }
 
-/// Compares two `Int`, returning the smaller of the two
+/// Compares two int, returning the smaller of the two.
 ///
 /// ## Examples
+///
 ///    > min(2, 3)
 ///    2
-///
 ///
 pub fn min(a: Int, b: Int) -> Int {
   case a < b {
@@ -74,12 +78,12 @@ pub fn min(a: Int, b: Int) -> Int {
   }
 }
 
-/// Compares two `Int`, returning the larger of the two
+/// Compares two int, returning the larger of the two.
 ///
 /// ## Examples
+///
 ///    > max(2, 3)
 ///    3
-///
 ///
 pub fn max(a: Int, b: Int) -> Int {
   case a > b {
@@ -88,29 +92,29 @@ pub fn max(a: Int, b: Int) -> Int {
   }
 }
 
-/// Returns whether the value provided is even
+/// Returns whether the value provided is even.
 ///
 /// ## Examples
+///
 ///    > is_even(2)
 ///    True
 ///
 ///    > is_even(3)
 ///    False
 ///
-///
 pub fn is_even(x: Int) -> Bool {
   x % 2 == 0
 }
 
-/// Returns whether the value provided is odd
+/// Returns whether the value provided is odd.
 ///
 /// ## Examples
+///
 ///    > is_odd(3)
 ///    True
 ///
 ///    > is_odd(2)
 ///    False
-///
 ///
 pub fn is_odd(x: Int) -> Bool {
   x % 2 != 0

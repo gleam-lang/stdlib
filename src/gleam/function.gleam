@@ -2,7 +2,7 @@
 /// the input from the first and returns the output of the second.
 ///
 pub fn compose(fun1: fn(a) -> b, fun2: fn(b) -> c) -> fn(a) -> c {
-  fn(a) { fun1(a) |> fun2 }
+  fn(a) { fun2(fun1(a)) }
 }
 
 /// Takes a function that takes two arguments and returns a new function that

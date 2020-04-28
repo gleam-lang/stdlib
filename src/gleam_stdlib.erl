@@ -39,28 +39,37 @@ iodata_prepend(Iodata, String) -> [String, Iodata].
 identity(X) -> X.
 
 decode_error_msg(Type, Data) ->
-  {error, iolist_to_binary(io_lib:format("Expected ~s, got `~p`", [Type, Data]))}.
+  {error, iolist_to_binary(io_lib:format("Expected ~s, got ~s", [Type, classify(Data)]))}.
+
+classify(X) when is_atom(X) -> "an atom";
+classify(X) when is_binary(X) -> "a binary";
+classify(X) when is_integer(X) -> "an int";
+classify(X) when is_float(X) -> "a float";
+classify(X) when is_list(X) -> "a list";
+classify(X) when is_boolean(X) -> "a bool";
+classify(X) when is_function(X, 0) -> "a zero arity function";
+classify(_) -> "some other type".
 
 decode_atom(Data) when is_atom(Data) -> {ok, Data};
-decode_atom(Data) -> decode_error_msg("an Atom", Data).
+decode_atom(Data) -> decode_error_msg("an atom", Data).
 
 decode_string(Data) when is_binary(Data) -> {ok, Data};
-decode_string(Data) -> decode_error_msg("a String", Data).
+decode_string(Data) -> decode_error_msg("a string", Data).
 
 decode_int(Data) when is_integer(Data) -> {ok, Data};
-decode_int(Data) -> decode_error_msg("an Int", Data).
+decode_int(Data) -> decode_error_msg("an int", Data).
 
 decode_float(Data) when is_float(Data) -> {ok, Data};
-decode_float(Data) -> decode_error_msg("a Float", Data).
+decode_float(Data) -> decode_error_msg("a float", Data).
 
 decode_bool(Data) when is_boolean(Data) -> {ok, Data};
-decode_bool(Data) -> decode_error_msg("a Bool", Data).
+decode_bool(Data) -> decode_error_msg("a bool", Data).
 
 decode_thunk(Data) when is_function(Data, 0) -> {ok, Data};
 decode_thunk(Data) -> decode_error_msg("a zero arity function", Data).
 
 decode_list(Data) when is_list(Data) -> {ok, Data};
-decode_list(Data) -> decode_error_msg("a List", Data).
+decode_list(Data) -> decode_error_msg("a list", Data).
 
 decode_field(Data, Key) ->
   case Data of
@@ -74,7 +83,9 @@ decode_field(Data, Key) ->
 decode_element(Data, Position) when is_tuple(Data) ->
   case catch element(Position + 1, Data) of
     {'EXIT', _Reason} ->
-      {error, "Element position is out-of-bounds"};
+      Reason = io_lib:format("Expected a tuple of at least ~w size, got a tuple of ~w sise",
+                             [Position + 1, tuple_size(Data)]),
+      {error, Reason};
 
     Value ->
       {ok, Value}

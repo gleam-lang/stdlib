@@ -14,13 +14,17 @@ pub external fn from(a) -> Dynamic = "gleam_stdlib" "identity";
 /// Unsafely cast a Dynamic value into any other type.
 ///
 /// This is an escape hatch for the type system that may be useful when wrapping
-/// native Erlang APIs. It is to be used as a last measure only.
+/// native Erlang APIs. It is to be used as a last measure only!
 ///
-pub external fn unsafe_coerce(a) -> b = "gleam_stdlib" "identity";
+/// If you can avoid using this function, do!
+///
+pub external fn unsafe_coerce(Dynamic) -> a = "gleam_stdlib" "identity";
 
-/// Safely cast a Dynamic value into a String.
+/// Check to see whether a Dynamic value is a string, and return the string if
+/// it is.
 ///
 /// ## Examples
+///
 ///    > string(from("Hello"))
 ///    Ok("Hello")
 ///
@@ -30,9 +34,11 @@ pub external fn unsafe_coerce(a) -> b = "gleam_stdlib" "identity";
 pub external fn string(from: Dynamic) -> Result(String, String)
   = "gleam_stdlib" "decode_string"
 
-/// Safely cast a Dynamic value into a String.
+/// Check to see whether a Dynamic value is an int, and return the int if it
+/// is.
 ///
 /// ## Examples
+///
 ///    > int(from(123))
 ///    Ok(123)
 ///
@@ -42,9 +48,11 @@ pub external fn string(from: Dynamic) -> Result(String, String)
 pub external fn int(from: Dynamic) -> Result(Int, String)
   = "gleam_stdlib" "decode_int"
 
-/// Safely cast a Dynamic value into a Float.
+/// Check to see whether a Dynamic value is an float, and return the float if
+/// it is.
 ///
 /// ## Examples
+///
 ///    > float(from(2.0))
 ///    Ok(2.0)
 ///
@@ -54,10 +62,12 @@ pub external fn int(from: Dynamic) -> Result(Int, String)
 pub external fn float(from: Dynamic) -> Result(Float, String)
   = "gleam_stdlib" "decode_float"
 
-/// Safely cast a Dynamic value into an Atom.
+/// Check to see whether a Dynamic value is an atom, and return the atom if
+/// it is.
 ///
 /// ## Examples
-/// import gleam/atom
+///
+///    > import gleam/atom
 ///    > atom(from(atom.create_from_string("hello")))
 ///    OK("hello")
 ///
@@ -67,9 +77,11 @@ pub external fn float(from: Dynamic) -> Result(Float, String)
 pub external fn atom(from: Dynamic) -> Result(atom.Atom, String)
   = "gleam_stdlib" "decode_atom"
 
-/// Safely cast a Dynamic value into a Bool.
+/// Check to see whether a Dynamic value is an bool, and return the bool if
+/// it is.
 ///
 /// ## Examples
+///
 ///    > bool(from(True))
 ///    Ok(True)
 ///
@@ -79,11 +91,13 @@ pub external fn atom(from: Dynamic) -> Result(atom.Atom, String)
 pub external fn bool(from: Dynamic) -> Result(Bool, String)
   = "gleam_stdlib" "decode_bool"
 
-/// Safely cast a Dynamic value into a String.
+/// Check to see whether a Dynamic value is a function that takes no arguments,
+/// and return the function if it is.
 ///
 /// ## Examples
-/// import gleam/result
-/// let f = fn() { 1 }
+///
+///    > import gleam/result
+///    > let f = fn() { 1 }
 ///    > thunk(from(f)) |> result.is_ok
 ///    True
 ///
@@ -96,14 +110,19 @@ pub external fn thunk(from: Dynamic) -> Result(fn() -> Dynamic, String)
 external fn list_dynamic(from: Dynamic) -> Result(List(Dynamic), String)
   = "gleam_stdlib" "decode_list"
 
-/// Safely cast a Dynamic value into a List of some type.
+/// Check to see whether a Dynamic value is a list, and return the list if it
+/// is.
 ///
 /// ## Examples
+///
 ///    > list(from(["a", "b", "c"]), string)
 ///    Ok(["a", "b", "c"])
 ///
 ///    > list(from([1, 2, 3]), string)
-///    Error("Expected a List, got `[1, 2, 3]`")
+///    Error("Expected an Int, got a binary")
+///
+///    > list(from("ok"), string)
+///    Error("Expected a List, got a binary")
 ///
 pub fn list(
   from dynamic: Dynamic,
@@ -114,28 +133,36 @@ pub fn list(
   |> result.then(_, list_mod.traverse(_, decoder_type))
 }
 
-/// Returns a field from a Dynamic value representing a map if it exists.
+/// Check to see if a Dynamic value is a map with a specific field, and return
+/// the value of the field if it is.
+///
 /// This will not succeed on a record.
 ///
 /// ## Examples
-/// import gleam/map
+///
+///    > import gleam/map
 ///    > field(from(map.new("Hello", "World")), "Hello")
 ///    Ok(Dynamic)
 ///
-///    > field(from(123))
-///    Error("Expected a map with key `\"Hello\"`, got `123`")
+///    > field(from(123), "Hello")
+///    Error("Expected a map with key `\"Hello\"`, got an Int")
 ///
 pub external fn field(from: Dynamic, named: a) -> Result(Dynamic, String)
   = "gleam_stdlib" "decode_field"
 
-/// Returns an element of a Dynamic value representing a tuple if it exists.
+/// Check to see if the Dynamic value is a tuple large enough to have a certain
+/// index, and return the value of that index if it is.
 ///
 /// ## Examples
+///
 ///    > element(from(tuple(1, 2)), 0)
 ///    Ok(Dynamic)
 ///
 ///    > element(from(tuple(1, 2)), 2)
-///    Error("Element position is out-of-bounds")
+///    Error("Expected a tuple of at least 3 size, got a tuple of 2 size")
+///
+///    > element(from(""), 2)
+///    Error("Expected a Tuple, got a binary")
 ///
 pub external fn element(from: Dynamic, position: Int) -> Result(Dynamic, String)
   = "gleam_stdlib" "decode_element"

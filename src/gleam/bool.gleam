@@ -11,12 +11,17 @@ import gleam/order.{Order}
 pub type Bool =
   Bool
 
-/// Returns the opposite Bool value
+/// Returns the opposite bool value.
+///
+/// This is the same as the `!` or `not` operators in some other languages.
 ///
 /// ## Examples
+///
 ///    > negate(True)
 ///    False
 ///
+///    > negate(False)
+///    True
 ///
 pub fn negate(bool: Bool) -> Bool {
   case bool {
@@ -28,12 +33,12 @@ pub fn negate(bool: Bool) -> Bool {
 /// Compares two bools and returns the first values Order to the second.
 ///
 /// ## Examples
-/// import gleam/order
+///
+///    > import gleam/order
 ///    > compare(True, False)
 ///    order.Gt
 ///
-///
-pub fn compare(a: Bool, b: Bool) -> Order {
+pub fn compare(a: Bool, with b: Bool) -> Order {
   case a, b {
     True, True -> order.Eq
     True, False -> order.Gt
@@ -42,9 +47,10 @@ pub fn compare(a: Bool, b: Bool) -> Order {
   }
 }
 
-/// Returns `True` if either Bool value is `True`.
+/// Returns True if either bool value is True.
 ///
 /// ## Examples
+///
 ///    > max(True, False)
 ///    True
 ///
@@ -53,7 +59,6 @@ pub fn compare(a: Bool, b: Bool) -> Order {
 ///
 ///    > max(False, False)
 ///    False
-///
 ///
 pub fn max(a: Bool, b: Bool) -> Bool {
   case a {
@@ -62,9 +67,10 @@ pub fn max(a: Bool, b: Bool) -> Bool {
   }
 }
 
-/// Returns `False` if either Bool value is `False`.
+/// Returns False if either bool value is False.
 ///
 /// ## Examples
+///
 ///    > max(True, False)
 ///    False
 ///
@@ -74,7 +80,6 @@ pub fn max(a: Bool, b: Bool) -> Bool {
 ///    > max(False, False)
 ///    False
 ///
-///
 pub fn min(a: Bool, b: Bool) -> Bool {
   case a {
     False -> False
@@ -82,15 +87,15 @@ pub fn min(a: Bool, b: Bool) -> Bool {
   }
 }
 
-/// Returns a numeric representation of the value:
+/// Returns a numeric representation of the given bool.
 ///
 /// ## Examples
+///
 ///    > to_int(True)
 ///    1
 ///
 ///    > to_int(False)
 ///    0
-///
 ///
 pub fn to_int(bool: Bool) -> Int {
   case bool {

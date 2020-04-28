@@ -1,5 +1,6 @@
-/// Result represents the result of something that may succeed or fail.
-/// `Ok` means it was successful, `Error` means it failed.
+/// Result represents the result of something that may succeed or not.
+/// `Ok` means it was successful, `Error` means it was not successful.
+///
 pub type Result(success, error) =
   Result(success, error)
 
@@ -9,14 +10,28 @@ pub type Result(success, error) =
 /// Unlike some other languages values cannot be implicitly nil, value that may
 /// be absent is typically represented using `Result(TheType, Nil)`. This is
 /// such a common type that offer the `Option(TheType)` alias.
+///
 pub type Nil =
   Nil
 
 /// A value that is either there or not there.
+///
+/// Some other languages have a dedicated Option type that is not related to
+/// Result for this, however this tends to have all the same functions as
+/// Result so in Gleam we combine the two.
+///
 pub type Option(value) =
   Result(value, Nil)
 
-/// Returns whether the value is Ok
+/// Check whether the result is an Ok value.
+///
+/// ## Examples
+///
+///    > is_ok(Ok(1))
+///    True
+///
+///    > is_ok(Error(Nil))
+///    False
 ///
 pub fn is_ok(result: Result(a, e)) -> Bool {
   case result {
@@ -25,7 +40,16 @@ pub fn is_ok(result: Result(a, e)) -> Bool {
   }
 }
 
-/// Returns whether the value is Error
+/// Check whether the result is an Error value.
+///
+/// ## Examples
+///
+///    > is_error(Ok(1))
+///    False
+///
+///    > is_error(Error(Nil))
+///    True
+///
 pub fn is_error(result: Result(a, e)) -> Bool {
   case result {
     Ok(_) -> False
@@ -33,8 +57,19 @@ pub fn is_error(result: Result(a, e)) -> Bool {
   }
 }
 
-/// Executes the function `with` on inner value when Result is Ok, will noop
-/// if it is Error
+/// Update a value held within the Ok of a result by calling a given function
+/// on it.
+///
+/// If the result is an Error rather than OK the function is not called and the
+/// result stays the same.
+///
+/// ## Examples
+///
+///    > map(over: Ok(1), with: fn(x) { x + 1 })
+///    Ok(2)
+///
+///    > map(over: Error(1), with: fn(x) { x + 1 })
+///    Error(1)
 ///
 pub fn map(
   over result: Result(a, e),
@@ -46,8 +81,19 @@ pub fn map(
   }
 }
 
-/// Will execute the function `with` on inner value  when Result is Err, will noop
-/// if it is Ok
+/// Update a value held within the Error of a result by calling a given function
+/// on it.
+///
+/// If the result is Ok rather than Error the function is not called and the
+/// result stays the same.
+///
+/// ## Examples
+///
+///    > map_error(over: Error(1), with: fn(x) { x + 1 })
+///    Error(2)
+///
+///    > map_error(over: Ok(1), with: fn(x) { x + 1 })
+///    Ok(1)
 ///
 pub fn map_error(
   over result: Result(a, e),
@@ -59,7 +105,18 @@ pub fn map_error(
   }
 }
 
-/// Will unnest the inner value of a result nested within another result
+/// Merge a nested Result into a single layer.
+///
+/// ## Examples
+///
+///    > flatten(Ok(Ok(1)))
+///    Ok(1)
+///
+///    > flatten(Ok(Error(""))
+///    Error("")
+///
+///    > flatten(Error(Nil))
+///    Error(Nil)
 ///
 pub fn flatten(result: Result(Result(a, e), e)) -> Result(a, e) {
   case result {
@@ -68,9 +125,29 @@ pub fn flatten(result: Result(Result(a, e), e)) -> Result(a, e) {
   }
 }
 
-/// Executes the function `apply` on inner value when Result is Ok, will noop
-/// if it is Error
-/// Equivalent to `map` followed by `flatten`.
+/// Update a value held within the Ok of a result by calling a given function
+/// on it, where the given function also returns a result. The two results are
+/// then merged together into one result.
+///
+/// If the result is an Error rather than OK the function is not called and the
+/// result stays the same.
+///
+/// This function is the equivalent of calling `map` followed by `flatten`, and
+/// it is useful for chaining together multiple functions that may fail.
+///
+/// ## Examples
+///
+///    > then(Ok(1), fn(x) { Ok(x + 1) })
+///    Ok(2)
+///
+///    > then(Ok(1), fn(x) { Ok(tuple("a", x)) })
+///    Ok(tuple("a", 1))
+///
+///    > then(Ok(1), fn(x) { Error("Oh no") })
+///    Error("Oh no")
+///
+///    > then(Error(Nil), fn(x) { Ok(x + 1) })
+///    Error(Nil)
 ///
 pub fn then(
   result: Result(a, e),
@@ -82,8 +159,16 @@ pub fn then(
   }
 }
 
-/// Will return the inner value of a Ok value.  If an error, will
-/// return the value provided as `or`
+/// Extract the Ok value from a result, returning a default value if the result
+/// is an Error.
+///
+/// ## Examples
+///
+///    > unwrap(Ok(1), 0)
+///    1
+///
+///    > unwrap(Error(""), 0)
+///    0
 ///
 pub fn unwrap(result: Result(a, e), or default: a) -> a {
   case result {
@@ -98,7 +183,6 @@ pub fn unwrap(result: Result(a, e), or default: a) -> a {
 ///
 ///    > none()
 ///    Error(Nil)
-///
 ///
 pub fn none() -> Option(a) {
   Error(Nil)

@@ -14,11 +14,11 @@ string_test() ->
     ),
     gleam@should:equal(
         gleam@dynamic:string(gleam@dynamic:from(1)),
-        {error, <<"Expected a String, got `1`"/utf8>>}
+        {error, <<"Expected a string, got an int"/utf8>>}
     ),
     gleam@should:equal(
         gleam@dynamic:string(gleam@dynamic:from([])),
-        {error, <<"Expected a String, got `[]`"/utf8>>}
+        {error, <<"Expected a string, got a list"/utf8>>}
     ).
 
 int_test() ->
@@ -26,11 +26,11 @@ int_test() ->
     gleam@should:equal(gleam@dynamic:int(gleam@dynamic:from(2)), {ok, 2}),
     gleam@should:equal(
         gleam@dynamic:int(gleam@dynamic:from(1.0)),
-        {error, <<"Expected an Int, got `1.0`"/utf8>>}
+        {error, <<"Expected an int, got a float"/utf8>>}
     ),
     gleam@should:equal(
         gleam@dynamic:int(gleam@dynamic:from([])),
-        {error, <<"Expected an Int, got `[]`"/utf8>>}
+        {error, <<"Expected an int, got a list"/utf8>>}
     ).
 
 float_test() ->
@@ -38,11 +38,11 @@ float_test() ->
     gleam@should:equal(gleam@dynamic:float(gleam@dynamic:from(2.2)), {ok, 2.2}),
     gleam@should:equal(
         gleam@dynamic:float(gleam@dynamic:from(1)),
-        {error, <<"Expected a Float, got `1`"/utf8>>}
+        {error, <<"Expected a float, got an int"/utf8>>}
     ),
     gleam@should:equal(
         gleam@dynamic:float(gleam@dynamic:from([])),
-        {error, <<"Expected a Float, got `[]`"/utf8>>}
+        {error, <<"Expected a float, got a list"/utf8>>}
     ).
 
 thunk_test() ->
@@ -71,11 +71,11 @@ bool_test() ->
     ),
     gleam@should:equal(
         gleam@dynamic:bool(gleam@dynamic:from(1)),
-        {error, <<"Expected a Bool, got `1`"/utf8>>}
+        {error, <<"Expected a bool, got an int"/utf8>>}
     ),
     gleam@should:equal(
         gleam@dynamic:bool(gleam@dynamic:from([])),
-        {error, <<"Expected a Bool, got `[]`"/utf8>>}
+        {error, <<"Expected a bool, got a list"/utf8>>}
     ).
 
 atom_test() ->
