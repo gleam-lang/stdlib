@@ -13,7 +13,7 @@
 /// user input into atoms) we may hit the max limit of atoms and cause the
 /// virtual machine to crash.
 ///
-pub external type Atom;
+pub external type Atom
 
 /// An error returned when no atom is found in the virtual machine's atom table
 /// for a given string when calling the [`from_string`](#from_string) function.
@@ -35,7 +35,7 @@ pub type FromStringError {
 ///    Error(AtomNotLoaded)
 ///
 pub external fn from_string(String) -> Result(Atom, FromStringError) =
-  "gleam_stdlib" "atom_from_string";
+  "gleam_stdlib" "atom_from_string"
 
 /// Create an atom from a string, inserting a new value into the virtual
 /// machine's atom table if an atom does not already exist for the given
@@ -47,7 +47,7 @@ pub external fn from_string(String) -> Result(Atom, FromStringError) =
 /// virtual machine to crash!
 ///
 pub external fn create_from_string(String) -> Atom =
-  "gleam_stdlib" "atom_create_from_string";
+  "gleam_stdlib" "atom_create_from_string"
 
 /// Retuns a `String` corresponding to the text representation of the given
 /// `Atom`.
@@ -59,4 +59,4 @@ pub external fn create_from_string(String) -> Atom =
 ///    "ok"
 ///
 pub external fn to_string(Atom) -> String =
-  "gleam_stdlib" "atom_to_string";
+  "gleam_stdlib" "atom_to_string"

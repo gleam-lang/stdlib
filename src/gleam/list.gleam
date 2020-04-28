@@ -51,7 +51,8 @@ pub type LengthMismatch {
 ///    > length([1, 2])
 ///    2
 ///
-pub external fn length(of: List(a)) -> Int = "erlang" "length"
+pub external fn length(of: List(a)) -> Int =
+  "erlang" "length"
 
 /// Create a new list from a given list containing the same elements but in the
 /// opposite order.
@@ -73,7 +74,8 @@ pub external fn length(of: List(a)) -> Int = "erlang" "length"
 ///    > reverse([1, 2])
 ///    [2, 1]
 ///
-pub external fn reverse(List(a)) -> List(a) = "lists" "reverse"
+pub external fn reverse(List(a)) -> List(a) =
+  "lists" "reverse"
 
 /// Determine whether or not the list is empty.
 ///
@@ -119,7 +121,7 @@ pub fn is_empty(list: List(a)) -> Bool {
 pub fn contains(list: List(a), has elem: a) -> Bool {
   case list {
     [] -> False
-    [head | rest] -> head == elem || contains(rest, elem)
+    [head, ..rest] -> head == elem || contains(rest, elem)
   }
 }
 
@@ -139,7 +141,7 @@ pub fn contains(list: List(a), has elem: a) -> Bool {
 pub fn head(list: List(a)) -> Option(a) {
   case list {
     [] -> result.none()
-    [x | _] -> Ok(x)
+    [x, ..] -> Ok(x)
   }
 }
 
@@ -162,16 +164,16 @@ pub fn head(list: List(a)) -> Option(a) {
 pub fn tail(list: List(a)) -> Option(List(a)) {
   case list {
     [] -> result.none()
-    [_ | xs] -> Ok(xs)
+    [_, ..xs] -> Ok(xs)
   }
 }
 
 fn do_filter(list: List(a), fun: fn(a) -> Bool, acc: List(a)) -> List(a) {
   case list {
     [] -> reverse(acc)
-    [x | xs] -> {
+    [x, ..xs] -> {
       let new_acc = case fun(x) {
-        True -> [x | acc]
+        True -> [x, ..acc]
         False -> acc
       }
       do_filter(xs, fun, new_acc)
@@ -197,7 +199,7 @@ pub fn filter(list: List(a), for predicate: fn(a) -> Bool) -> List(a) {
 fn do_map(list: List(a), fun: fn(a) -> b, acc: List(b)) -> List(b) {
   case list {
     [] -> reverse(acc)
-    [x | xs] -> do_map(xs, fun, [fun(x) | acc])
+    [x, ..xs] -> do_map(xs, fun, [fun(x), ..acc])
   }
 }
 
@@ -221,7 +223,7 @@ fn do_index_map(
 ) -> List(b) {
   case list {
     [] -> reverse(acc)
-    [x | xs] -> do_index_map(xs, fun, index + 1, [fun(index, x) | acc])
+    [x, ..xs] -> do_index_map(xs, fun, index + 1, [fun(index, x), ..acc])
   }
 }
 
@@ -240,7 +242,6 @@ pub fn index_map(list: List(a), with fun: fn(Int, a) -> b) -> List(b) {
   do_index_map(list, fun, 0, [])
 }
 
-
 fn do_traverse(
   list: List(a),
   fun: fn(a) -> Result(b, e),
@@ -248,11 +249,10 @@ fn do_traverse(
 ) -> Result(List(b), e) {
   case list {
     [] -> Ok(reverse(acc))
-    [x | xs] ->
-      case fun(x) {
-        Ok(y) -> do_traverse(xs, fun, [y | acc])
-        Error(error) -> Error(error)
-      }
+    [x, ..xs] -> case fun(x) {
+      Ok(y) -> do_traverse(xs, fun, [y, ..acc])
+      Error(error) -> Error(error)
+    }
   }
 }
 
@@ -306,22 +306,20 @@ pub fn traverse(
 pub fn drop(from list: List(a), up_to n: Int) -> List(a) {
   case n <= 0 {
     True -> list
-    False ->
-      case list {
-        [] -> []
-        [_ | xs] -> drop(xs, n - 1)
-      }
+    False -> case list {
+      [] -> []
+      [_, ..xs] -> drop(xs, n - 1)
+    }
   }
 }
 
 fn do_take(list: List(a), n: Int, acc: List(a)) -> List(a) {
   case n <= 0 {
     True -> reverse(acc)
-    False ->
-      case list {
-        [] -> reverse(acc)
-        [x | xs] -> do_take(xs, n - 1, [x | acc])
-      }
+    False -> case list {
+      [] -> reverse(acc)
+      [x, ..xs] -> do_take(xs, n - 1, [x, ..acc])
+    }
   }
 }
 
@@ -366,13 +364,13 @@ pub fn new() -> List(a) {
 ///    > append([1, 2], [3])
 ///    [1, 2, 3]
 ///
-pub external fn append(List(a), List(a)) -> List(a)
-  = "lists" "append";
+pub external fn append(List(a), List(a)) -> List(a) =
+  "lists" "append"
 
 fn do_flatten(lists: List(List(a)), acc: List(a)) -> List(a) {
   case lists {
     [] -> acc
-    [l | rest] -> do_flatten(rest, append(acc, l))
+    [l, ..rest] -> do_flatten(rest, append(acc, l))
   }
 }
 
@@ -400,7 +398,7 @@ pub fn flatten(lists: List(List(a))) -> List(a) {
 pub fn fold(list: List(a), from initial: b, with fun: fn(a, b) -> b) -> b {
   case list {
     [] -> initial
-    [x | rest] -> fold(rest, fun(x, initial), fun)
+    [x, ..rest] -> fold(rest, fun(x, initial), fun)
   }
 }
 
@@ -422,7 +420,7 @@ pub fn fold_right(
 ) -> b {
   case list {
     [] -> initial
-    [x | rest] -> fun(x, fold_right(rest, initial, fun))
+    [x, ..rest] -> fun(x, fold_right(rest, initial, fun))
   }
 }
 
@@ -449,11 +447,10 @@ pub fn find(
 ) -> Option(a) {
   case haystack {
     [] -> result.none()
-    [x | rest] ->
-      case is_desired(x) {
-        True -> Ok(x)
-        _ -> find(in: rest, one_that: is_desired)
-      }
+    [x, ..rest] -> case is_desired(x) {
+      True -> Ok(x)
+      _ -> find(in: rest, one_that: is_desired)
+    }
   }
 }
 
@@ -480,11 +477,10 @@ pub fn find_map(
 ) -> Option(b) {
   case haystack {
     [] -> result.none()
-    [x | rest] ->
-      case fun(x) {
-        Ok(x) -> Ok(x)
-        _ -> find_map(in: rest, with: fun)
-      }
+    [x, ..rest] -> case fun(x) {
+      Ok(x) -> Ok(x)
+      _ -> find_map(in: rest, with: fun)
+    }
   }
 }
 
@@ -506,8 +502,7 @@ pub fn find_map(
 pub fn all(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
   case list {
     [] -> True
-    [x | rest] ->
-    case predicate(x) {
+    [x, ..rest] -> case predicate(x) {
       True -> all(rest, predicate)
       _ -> False
     }
@@ -535,8 +530,7 @@ pub fn all(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
 pub fn any(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
   case list {
     [] -> False
-    [x | rest] ->
-    case predicate(x) {
+    [x, ..rest] -> case predicate(x) {
       False -> any(rest, predicate)
       _ -> True
     }
@@ -566,7 +560,7 @@ pub fn zip(xs: List(a), ys: List(b)) -> List(tuple(a, b)) {
   case xs, ys {
     [], _ -> []
     _, [] -> []
-    [x | xs], [y | ys] -> [tuple(x, y) | zip(xs, ys)]
+    [x, ..xs], [y, ..ys] -> [tuple(x, y), ..zip(xs, ys)]
   }
 }
 
@@ -588,7 +582,10 @@ pub fn zip(xs: List(a), ys: List(b)) -> List(tuple(a, b)) {
 ///    > strict_zip([1, 2], [3, 4])
 ///    Ok([tuple(1, 3), tuple(2, 4)])
 ///
-pub fn strict_zip(l1: List(a), l2: List(b)) -> Result(List(tuple(a, b)), LengthMismatch) {
+pub fn strict_zip(
+  l1: List(a),
+  l2: List(b),
+) -> Result(List(tuple(a, b)), LengthMismatch) {
   case length(of: l1) == length(of: l2) {
     True -> Ok(zip(l1, l2))
     False -> Error(LengthMismatch)
@@ -610,7 +607,7 @@ pub fn strict_zip(l1: List(a), l2: List(b)) -> Result(List(tuple(a, b)), LengthM
 pub fn intersperse(list: List(a), with elem: a) -> List(a) {
   case list {
     [] | [_] -> list
-    [x | rest] -> [x | [elem | intersperse(rest, elem)]]
+    [x, ..rest] -> [x, elem, ..intersperse(rest, elem)]
   }
 }
 
@@ -630,14 +627,12 @@ pub fn intersperse(list: List(a), with elem: a) -> List(a) {
 pub fn at(in list: List(a), get index: Int) -> Option(a) {
   case index < 0 {
     True -> result.none()
-    False ->
-    case list {
+    False -> case list {
       [] -> result.none()
-      [x | rest] ->
-        case index == 0 {
-          True -> Ok(x)
-          False -> at(rest, index - 1)
-        }
+      [x, ..rest] -> case index == 0 {
+        True -> Ok(x)
+        False -> at(rest, index - 1)
+      }
     }
   }
 }
@@ -654,7 +649,7 @@ pub fn at(in list: List(a), get index: Int) -> Option(a) {
 pub fn unique(list: List(a)) -> List(a) {
   case list {
     [] -> []
-    [x | rest] -> [x | unique(filter(rest, fn(y) { y != x }))]
+    [x, ..rest] -> [x, ..unique(filter(rest, fn(y) { y != x }))]
   }
 }
 
@@ -662,15 +657,18 @@ fn merge_sort(a: List(a), b: List(a), compare: fn(a, a) -> Order) -> List(a) {
   case a, b {
     [], _ -> b
     _, [] -> a
-    [ax | ar], [bx | br] ->
-      case compare(ax, bx) {
-        order.Lt -> [ax | merge_sort(ar, b, compare)]
-        _ -> [bx | merge_sort(a, br, compare)]
-      }
+    [ax, ..ar], [bx, ..br] -> case compare(ax, bx) {
+      order.Lt -> [ax, ..merge_sort(ar, b, compare)]
+      _ -> [bx, ..merge_sort(a, br, compare)]
+    }
   }
 }
 
-fn do_sort(list: List(a), compare: fn(a, a) -> Order, list_length: Int) -> List(a) {
+fn do_sort(
+  list: List(a),
+  compare: fn(a, a) -> Order,
+  list_length: Int,
+) -> List(a) {
   case list_length < 2 {
     True -> list
     False -> {
@@ -715,15 +713,15 @@ pub fn sort(list: List(a), sort_by compare: fn(a, a) -> Order) -> List(a) {
 pub fn range(from start: Int, to stop: Int) -> List(Int) {
   case int.compare(start, stop) {
     order.Eq -> []
-    order.Gt -> [start | range(start - 1, stop)]
-    order.Lt -> [start | range(start + 1, stop)]
+    order.Gt -> [start, ..range(start - 1, stop)]
+    order.Lt -> [start, ..range(start + 1, stop)]
   }
 }
 
 fn do_repeat(a: a, times: Int, acc: List(a)) -> List(a) {
   case times <= 0 {
     True -> acc
-    False -> do_repeat(a, times - 1, [a | acc])
+    False -> do_repeat(a, times - 1, [a, ..acc])
   }
 }
 
@@ -744,11 +742,10 @@ pub fn repeat(item a: a, times times: Int) -> List(a) {
 fn do_split(list: List(a), n: Int, taken: List(a)) -> tuple(List(a), List(a)) {
   case n <= 0 {
     True -> tuple(reverse(taken), list)
-    False ->
-      case list {
-        [] -> tuple(reverse(taken), [])
-        [x | xs] -> do_split(xs, n - 1, [x | taken])
-      }
+    False -> case list {
+      [] -> tuple(reverse(taken), [])
+      [x, ..xs] -> do_split(xs, n - 1, [x, ..taken])
+    }
   }
 }
 
@@ -779,11 +776,10 @@ fn do_split_while(
 ) -> tuple(List(a), List(a)) {
   case list {
     [] -> tuple(reverse(acc), [])
-    [x | xs] ->
-      case f(x) {
-        False -> tuple(reverse(acc), list)
-        _ -> do_split_while(xs, f, [x | acc])
-      }
+    [x, ..xs] -> case f(x) {
+      False -> tuple(reverse(acc), list)
+      _ -> do_split_while(xs, f, [x, ..acc])
+    }
   }
 }
 
@@ -808,7 +804,6 @@ pub fn split_while(
   do_split_while(list, predicate, [])
 }
 
-
 /// Given a list of 2 element tuples, find the first tuple that has a given
 /// key as the first element and return the second element.
 ///
@@ -832,11 +827,14 @@ pub fn key_find(
   in keyword_list: List(tuple(k, v)),
   find desired_key: k,
 ) -> Option(v) {
-  find_map(keyword_list, fn(keyword) {
-    let tuple(key, value) = keyword
-    case key == desired_key {
-      True -> Ok(value)
-      False -> result.none()
-    }
-  })
+  find_map(
+    keyword_list,
+    fn(keyword) {
+      let tuple(key, value) = keyword
+      case key == desired_key {
+        True -> Ok(value)
+        False -> result.none()
+      }
+    },
+  )
 }

@@ -71,10 +71,7 @@ pub fn is_error(result: Result(a, e)) -> Bool {
 ///    > map(over: Error(1), with: fn(x) { x + 1 })
 ///    Error(1)
 ///
-pub fn map(
-  over result: Result(a, e),
-  with fun: fn(a) -> b,
-) -> Result(b, e) {
+pub fn map(over result: Result(a, e), with fun: fn(a) -> b) -> Result(b, e) {
   case result {
     Ok(x) -> Ok(fun(x))
     Error(e) -> Error(e)

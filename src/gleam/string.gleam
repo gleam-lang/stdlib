@@ -39,9 +39,10 @@ pub fn is_empty(str: String) -> Bool {
 ///
 ///    > length("")
 ///    0
-///
-pub external fn length(String) -> Int = "string" "length"
+pub external fn length(String) -> Int =
+  "string" "length"
 
+///
 /// Reverse a string.
 ///
 /// This function has to iterate across the whole string so it runs in linear
@@ -51,7 +52,6 @@ pub external fn length(String) -> Int = "string" "length"
 ///
 ///    > reverse("stressed")
 ///    "desserts"
-///
 pub fn reverse(string: String) -> String {
   string
   |> iodata.new
@@ -59,6 +59,7 @@ pub fn reverse(string: String) -> String {
   |> iodata.to_string
 }
 
+///
 /// Create a new string by replacing all occurrences of a given substring.
 ///
 /// ## Examples
@@ -68,7 +69,6 @@ pub fn reverse(string: String) -> String {
 ///
 ///    > replace("a,b,c,d,e", each: ",", with: "/")
 ///    "a/b/c/d/e"
-///
 pub fn replace(
   in string: String,
   each pattern: String,
@@ -76,10 +76,11 @@ pub fn replace(
 ) -> String {
   string
   |> iodata.new
-  |> iodata.replace(_, each: pattern, with: substitute)
+  |> iodata.replace(each: pattern, with: substitute)
   |> iodata.to_string
 }
 
+///
 /// Create a new string with all the graphemes in the input string converted to
 /// lowercase.
 ///
@@ -89,9 +90,10 @@ pub fn replace(
 ///
 ///    > lowercase("X-FILES")
 ///    "x-files"
-///
-pub external fn lowercase(String) -> String = "string" "lowercase"
+pub external fn lowercase(String) -> String =
+  "string" "lowercase"
 
+///
 /// Create a new string with all the graphemes in the input string converted to
 /// uppercase.
 ///
@@ -101,9 +103,10 @@ pub external fn lowercase(String) -> String = "string" "lowercase"
 ///
 ///    > uppercase("skinner")
 ///    "SKINNER"
-///
-pub external fn uppercase(String) -> String = "string" "uppercase"
+pub external fn uppercase(String) -> String =
+  "string" "uppercase"
 
+///
 /// Compares two strings to see which is "larger" by comparing their graphemes.
 ///
 /// This does not compare the size or length of the given strings.
@@ -115,7 +118,6 @@ pub external fn uppercase(String) -> String = "string" "uppercase"
 ///
 ///    > compare("A", "B")
 ///    order.Gt
-///
 pub external fn compare(String, String) -> order.Order =
   "gleam_stdlib" "compare_strings"
 
@@ -135,17 +137,15 @@ pub external fn compare(String, String) -> order.Order =
 //
 //
 // pub fn slice(out_of string: String, from start: Int, end: Int) -> String {}
-
 // TODO
-/// Drop *n* Graphemes from the left side of a
-///
-/// ## Examples
-///    > drop_left(from: "The Lone Gunmen", up_to: 2)
-///    "e Lone Gunmen"
-///
-///
+// Drop *n* Graphemes from the left side of a
+//
+// ## Examples
+//    > drop_left(from: "The Lone Gunmen", up_to: 2)
+//    "e Lone Gunmen"
+//
+//
 // pub fn drop_left(from string: String, up_to num_graphemes: Int) -> String {}
-
 // TODO
 // Drop *n* Graphemes from the right side of a
 //
@@ -155,8 +155,7 @@ pub external fn compare(String, String) -> order.Order =
 //
 //
 // pub fn drop_right(from string: String, up_to num_graphemes: Int) -> String {}
-
-
+///
 /// Check if the first string contains the second.
 ///
 /// ## Examples
@@ -169,12 +168,12 @@ pub external fn compare(String, String) -> order.Order =
 ///
 ///    > contains(does: "theory", contain: "THE")
 ///    False
-///
 external fn erl_contains(String, String) -> Bool =
   "gleam_stdlib" "string_contains"
 
+///
 pub fn contains(does haystack: String, contain needle: String) -> Bool {
-    erl_contains(haystack, needle)
+  erl_contains(haystack, needle)
 }
 
 // TODO
@@ -187,7 +186,6 @@ pub fn contains(does haystack: String, contain needle: String) -> Bool {
 //
 //
 // pub fn starts_with(does string: String, start_with prefix: String) -> String {}
-
 // TODO
 // TODO: Not sure about the name and labels here
 // See if the second string ends with the first one.
@@ -198,22 +196,20 @@ pub fn contains(does haystack: String, contain needle: String) -> Bool {
 //
 //
 // pub fn ends_with(does string: String, end_with suffix: String) -> String {}
-
 /// Create a list of strings by splitting a given string on a given substring.
 ///
 /// ## Examples
 ///
 ///    > split("home/gleam/desktop/", on: "/")
 ///    ["home","gleam","desktop", ""]
-///
 pub fn split(x: String, on substring: String) -> List(String) {
   x
   |> iodata.new
-  |> iodata.split(_, on: substring)
-  |> list.map(_, with: iodata.to_string)
+  |> iodata.split(on: substring)
+  |> list.map(with: iodata.to_string)
 }
 
-
+///
 /// Create a new string by joining two strings together.
 ///
 /// This function copies both strings and runs in linear time. If you find
@@ -224,14 +220,14 @@ pub fn split(x: String, on substring: String) -> List(String) {
 ///
 ///    > append(to: "butter", suffix: "fly")
 ///    "butterfly"
-///
 pub fn append(to first: String, suffix second: String) -> String {
   first
   |> iodata.new
-  |> iodata.append(_, second)
+  |> iodata.append(second)
   |> iodata.to_string
 }
 
+///
 /// Create a new string by joining many strings together.
 ///
 /// This function copies both strings and runs in linear time. If you find
@@ -242,17 +238,17 @@ pub fn append(to first: String, suffix second: String) -> String {
 ///
 ///    > concat(["never", "the", "less"])
 ///    "nevertheless"
-///
 pub fn concat(strings: List(String)) -> String {
   strings
   |> iodata.from_strings
   |> iodata.to_string
 }
 
+///
 fn repeat_help(chunk: String, result: List(String), repeats: Int) -> String {
   case repeats <= 0 {
-     True -> concat(result)
-     False -> repeat_help(chunk, [chunk | result], repeats - 1)
+    True -> concat(result)
+    False -> repeat_help(chunk, [chunk, ..result], repeats - 1)
   }
 }
 
@@ -263,11 +259,11 @@ fn repeat_help(chunk: String, result: List(String), repeats: Int) -> String {
 /// ## Examples
 ///    > repeat("ha", times: 3)
 ///    "hahaha"
-///
 pub fn repeat(string: String, times times: Int) -> String {
   repeat_help(string, [], times)
 }
 
+///
 /// Join many strings together with a given separator.
 ///
 /// This function runs in linear time.
@@ -276,14 +272,13 @@ pub fn repeat(string: String, times times: Int) -> String {
 ///
 ///    > join(["home","evan","Desktop"], with: "/")
 ///    "home/evan/Desktop"
-///
 pub fn join(strings: List(String), with separator: String) -> String {
   strings
-  |> list.intersperse(_, with: separator)
+  |> list.intersperse(with: separator)
   |> iodata.from_strings
   |> iodata.to_string
 }
-
+///
 // TODO
 // Pad a string on the left until it has at least given number of Graphemes.
 //
@@ -299,7 +294,6 @@ pub fn join(strings: List(String), with separator: String) -> String {
 //
 //
 // pub fn pad_left(string: String, to size: Int, with: String) {}
-
 // TODO
 // Pad a string on the right until it has a given length.
 //
@@ -315,7 +309,6 @@ pub fn join(strings: List(String), with separator: String) -> String {
 //
 //
 // pub fn pad_right(string: String, to size: Int, with: String) {}
-
 // TODO
 // Get rid of whitespace on both sides of a String.
 //
@@ -325,7 +318,6 @@ pub fn join(strings: List(String), with separator: String) -> String {
 //
 //
 // pub fn trim(string: String) -> String {}
-
 // TODO
 // Get rid of whitespace on the left of a String.
 //
@@ -335,7 +327,6 @@ pub fn join(strings: List(String), with separator: String) -> String {
 //
 //
 // pub fn trim_left(string: String) -> String {}
-
 // TODO
 // Get rid of whitespace on the right of a String.
 //
@@ -345,7 +336,6 @@ pub fn join(strings: List(String), with separator: String) -> String {
 //
 //
 // pub fn trim_right(string: String) -> String {}
-
 // TODO
 // /// Convert a string to a list of Graphemes.
 // ///
@@ -354,7 +344,6 @@ pub fn join(strings: List(String), with separator: String) -> String {
 //
 // ///
 // pub fn to_graphemes(string: String) -> List(String) {}
-
 // TODO
 // Split a non-empty string into its head and tail. This lets you
 // pattern match on strings exactly as you would with lists.
