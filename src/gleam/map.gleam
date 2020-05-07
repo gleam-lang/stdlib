@@ -228,10 +228,10 @@ external fn erl_delete(k, Map(k, v)) -> Map(k, v) =
 /// ## Examples
 ///
 ///    > delete([tuple("a", 0), tuple("b", 1)], "a")
-///    from_list([tuple("b", 2)])
+///    from_list([tuple("b", 1)])
 ///
 ///    > delete([tuple("a", 0), tuple("b", 1)], "c")
-///    from_list([tple("a", 0), tuple("b", 2)])
+///    from_list([tuple("a", 0), tuple("b", 1)])
 ///
 pub fn delete(from map: Map(k, v), delete key: k) -> Map(k, v) {
   erl_delete(key, map)
@@ -246,7 +246,7 @@ pub fn delete(from map: Map(k, v), delete key: k) -> Map(k, v) {
 ///    from_list([tuple("b", 2)])
 ///
 ///    > delete([tuple("a", 0), tuple("b", 1)], ["c"])
-///    from_list([tple("a", 0), tuple("b", 2)])
+///    from_list([tuple("a", 0), tuple("b", 1)])
 ///
 ///    > drop([tuple("a", 0), tuple("b", 1)], ["a", "b", "c"])
 ///    from_list([])
