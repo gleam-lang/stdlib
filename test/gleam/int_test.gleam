@@ -2,7 +2,7 @@ import gleam/should
 import gleam/int
 import gleam/order
 
-pub fn to_string() {
+pub fn to_string_test() {
   123
   |> int.to_string
   |> should.equal("123")
@@ -16,7 +16,7 @@ pub fn to_string() {
   |> should.equal("123")
 }
 
-pub fn parse() {
+pub fn parse_test() {
   "123"
   |> int.parse
   |> should.equal(Ok(123))
@@ -42,7 +42,7 @@ pub fn parse() {
   |> should.equal(Error(Nil))
 }
 
-pub fn to_base_string() {
+pub fn to_base_string_test() {
   100
   |> int.to_base_string(16)
   |> should.equal("64")
