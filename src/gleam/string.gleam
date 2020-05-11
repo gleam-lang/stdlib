@@ -309,7 +309,7 @@ pub fn join(strings: List(String), with separator: String) -> String {
 //
 //
 // pub fn pad_right(string: String, to size: Int, with: String) {}
-// TODO
+
 // Get rid of whitespace on both sides of a String.
 //
 // ## Examples
@@ -317,7 +317,9 @@ pub fn join(strings: List(String), with separator: String) -> String {
 //    "hats"
 //
 //
-// pub fn trim(string: String) -> String {}
+pub external fn trim(String) -> String =
+  "gleam_stdlib" "string_trim"
+
 // TODO
 // Get rid of whitespace on the left of a String.
 //
