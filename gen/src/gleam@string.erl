@@ -1,7 +1,7 @@
 -module(gleam@string).
 -compile(no_auto_import).
 
--export([is_empty/1, length/1, reverse/1, replace/3, lowercase/1, uppercase/1, compare/2, contains/2, split/2, append/2, concat/1, repeat/2, join/2, erl_trim/1, trim/1]).
+-export([is_empty/1, length/1, reverse/1, replace/3, lowercase/1, uppercase/1, compare/2, contains/2, split/2, append/2, concat/1, repeat/2, join/2, trim/1]).
 
 is_empty(Str) ->
     Str =:= <<""/utf8>>.
@@ -63,8 +63,8 @@ join(Strings, Separator) ->
         gleam@iodata:from_strings(gleam@list:intersperse(Strings, Separator))
     ).
 
-erl_trim(A) ->
-    gleam_stdlib:string_trim(A).
+erl_trim(A, B) ->
+    string:trim(A, B).
 
 trim(String) ->
-    erl_trim(String).
+    erl_trim(String, both).

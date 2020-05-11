@@ -7,7 +7,7 @@
          iodata_append/2, iodata_prepend/2, identity/1, decode_int/1,
          decode_string/1, decode_bool/1, decode_float/1, decode_thunk/1, decode_atom/1,
          decode_list/1, decode_field/2, decode_element/2, parse_int/1, parse_float/1, compare_strings/2,
-         string_contains/2, string_trim/1]).
+         string_contains/2]).
 
 should_equal(Actual, Expected) -> ?assertEqual(Expected, Actual).
 should_not_equal(Actual, Expected) -> ?assertNotEqual(Expected, Actual).
@@ -127,5 +127,3 @@ string_contains(Haystack, Needle) ->
     _ ->
       true
   end.
-
-string_trim(String) -> string:trim(String, both).
