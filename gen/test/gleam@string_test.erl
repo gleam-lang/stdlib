@@ -1,7 +1,7 @@
 -module(gleam@string_test).
 -compile(no_auto_import).
 
--export([length_test/0, lowercase_test/0, uppercase_test/0, reverse_test/0, split_test/0, replace_test/0, append_test/0, compare_test/0, contains_test/0, concat_test/0, repeat_test/0, join_test/0]).
+-export([length_test/0, lowercase_test/0, uppercase_test/0, reverse_test/0, split_test/0, replace_test/0, append_test/0, compare_test/0, contains_test/0, concat_test/0, repeat_test/0, join_test/0, trim_test/0]).
 
 length_test() ->
     gleam@should:equal(gleam@string:length(<<"ß↑e̊"/utf8>>), 3),
@@ -97,4 +97,10 @@ join_test() ->
     gleam@should:equal(
         gleam@string:join([<<"Hello"/utf8>>, <<"world!"/utf8>>], <<"-"/utf8>>),
         <<"Hello-world!"/utf8>>
+    ).
+
+trim_test() ->
+    gleam@should:equal(
+        gleam@string:trim(<<"  hats  \n"/utf8>>),
+        <<"hats"/utf8>>
     ).

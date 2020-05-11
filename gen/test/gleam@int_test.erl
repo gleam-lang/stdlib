@@ -1,14 +1,14 @@
 -module(gleam@int_test).
 -compile(no_auto_import).
 
--export([to_string/0, parse/0, to_base_string/0, compare_test/0, min_test/0, max_test/0, is_even_test/0, is_odd_test/0]).
+-export([to_string_test/0, parse_test/0, to_base_string_test/0, compare_test/0, min_test/0, max_test/0, is_even_test/0, is_odd_test/0]).
 
-to_string() ->
+to_string_test() ->
     gleam@should:equal(gleam@int:to_string(123), <<"123"/utf8>>),
     gleam@should:equal(gleam@int:to_string(-123), <<"-123"/utf8>>),
     gleam@should:equal(gleam@int:to_string(123), <<"123"/utf8>>).
 
-parse() ->
+parse_test() ->
     gleam@should:equal(gleam@int:parse(<<"123"/utf8>>), {ok, 123}),
     gleam@should:equal(gleam@int:parse(<<"-123"/utf8>>), {ok, -123}),
     gleam@should:equal(gleam@int:parse(<<"0123"/utf8>>), {ok, 123}),
@@ -16,7 +16,7 @@ parse() ->
     gleam@should:equal(gleam@int:parse(<<"what"/utf8>>), {error, nil}),
     gleam@should:equal(gleam@int:parse(<<"1.23"/utf8>>), {error, nil}).
 
-to_base_string() ->
+to_base_string_test() ->
     gleam@should:equal(gleam@int:to_base_string(100, 16), <<"64"/utf8>>),
     gleam@should:equal(gleam@int:to_base_string(-100, 16), <<"-64"/utf8>>).
 

@@ -109,3 +109,9 @@ pub fn join_test() {
   |> string.join(with: "-")
   |> should.equal("Hello-world!")
 }
+
+pub fn trim_test() {
+  "  hats  \n"
+  |> string.trim()
+  |> should.equal("hats")
+}
