@@ -310,13 +310,13 @@ pub fn join(strings: List(String), with separator: String) -> String {
 //
 // pub fn pad_right(string: String, to size: Int, with: String) {}
 
-// Get rid of whitespace on both sides of a String.
-//
-// ## Examples
-//    > trim("  hats  \n")
-//    "hats"
-//
-//
+/// Get rid of whitespace on both sides of a String.
+///
+/// ## Examples
+///    > trim("  hats  \n")
+///    "hats"
+///
+///
 pub external fn trim(String) -> String =
   "gleam_stdlib" "string_trim"
 
