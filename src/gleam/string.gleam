@@ -311,6 +311,8 @@ pub fn join(strings: List(String), with separator: String) -> String {
 // pub fn pad_right(string: String, to size: Int, with: String) {}
 
 type Direction {
+  Leading
+  Trailing
   Both
 }
 
@@ -328,24 +330,28 @@ pub fn trim(string: String) -> String {
   erl_trim(string, Both)
 }
 
-// TODO
-// Get rid of whitespace on the left of a String.
-//
-// ## Examples
-//    > trim_left("  hats  \n")
-//    "hats  \n"
-//
-//
-// pub fn trim_left(string: String) -> String {}
-// TODO
-// Get rid of whitespace on the right of a String.
-//
-// ## Examples
-//    > trim_right("  hats  \n")
-//    "  hats"
-//
-//
-// pub fn trim_right(string: String) -> String {}
+/// Get rid of whitespace on the left of a String.
+///
+/// ## Examples
+///    > trim_left("  hats  \n")
+///    "hats  \n"
+///
+///
+pub fn trim_left(string: String) -> String {
+  erl_trim(string, Leading)
+}
+
+/// Get rid of whitespace on the right of a String.
+///
+/// ## Examples
+///    > trim_right("  hats  \n")
+///    "  hats"
+///
+///
+pub fn trim_right(string: String) -> String {
+  erl_trim(string, Trailing)
+}
+
 // TODO
 // /// Convert a string to a list of Graphemes.
 // ///

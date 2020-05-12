@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- The `string` module gains `trim_left` and `trim_right` functions.
 - The `string` module gains the `trim` function.
 
 ## v0.8.0 - 2020-04-28
