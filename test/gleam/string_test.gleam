@@ -115,3 +115,15 @@ pub fn trim_test() {
   |> string.trim()
   |> should.equal("hats")
 }
+
+pub fn trim_left_test() {
+  "  hats  \n"
+  |> string.trim_left()
+  |> should.equal("hats  \n")
+}
+
+pub fn trim_right_test() {
+  "  hats  \n"
+  |> string.trim_right()
+  |> should.equal("  hats")
+}

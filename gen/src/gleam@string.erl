@@ -1,7 +1,7 @@
 -module(gleam@string).
 -compile(no_auto_import).
 
--export([is_empty/1, length/1, reverse/1, replace/3, lowercase/1, uppercase/1, compare/2, contains/2, split/2, append/2, concat/1, repeat/2, join/2, trim/1]).
+-export([is_empty/1, length/1, reverse/1, replace/3, lowercase/1, uppercase/1, compare/2, contains/2, split/2, append/2, concat/1, repeat/2, join/2, trim/1, trim_left/1, trim_right/1]).
 
 is_empty(Str) ->
     Str =:= <<""/utf8>>.
@@ -68,3 +68,9 @@ erl_trim(A, B) ->
 
 trim(String) ->
     erl_trim(String, both).
+
+trim_left(String) ->
+    erl_trim(String, leading).
+
+trim_right(String) ->
+    erl_trim(String, trailing).
