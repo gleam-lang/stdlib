@@ -3,6 +3,9 @@
 ## Unreleased
 
 - The `string` module gains the `trim` function.
+
+## v0.8.0 - 2020-04-28
+
 - The error type for `atom.from_string` has been renamed to `FromStringError`.
 - The `string` module gains `contains` and `repeat` functions.
 - The `expect` module has been renamed to `should`. Functions in the module
