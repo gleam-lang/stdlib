@@ -127,3 +127,39 @@ pub fn trim_right_test() {
   |> string.trim_right()
   |> should.equal("  hats")
 }
+
+pub fn starts_with_test(){
+  "theory"
+  |> string.starts_with("")
+  |> should.equal(True)
+
+  "theory"
+  |> string.starts_with("the")
+  |> should.equal(True)
+
+  "theory"
+  |> string.starts_with("ory")
+  |> should.equal(False)
+
+  "theory"
+  |> string.starts_with("theory2")
+  |> should.equal(False)
+}
+
+pub fn ends_with_test() {
+  "theory"
+  |> string.ends_with("")
+  |> should.equal(True)
+
+  "theory"
+  |> string.ends_with("ory")
+  |> should.equal(True)
+
+  "theory"
+  |> string.ends_with("the")
+  |> should.equal(False)
+
+  "theory"
+  |> string.ends_with("theory2")
+  |> should.equal(False)
+}

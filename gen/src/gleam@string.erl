@@ -1,7 +1,7 @@
 -module(gleam@string).
 -compile(no_auto_import).
 
--export([is_empty/1, length/1, reverse/1, replace/3, lowercase/1, uppercase/1, compare/2, contains/2, split/2, append/2, concat/1, repeat/2, join/2, trim/1, trim_left/1, trim_right/1]).
+-export([is_empty/1, length/1, reverse/1, replace/3, lowercase/1, uppercase/1, compare/2, contains/2, starts_with/2, ends_with/2, split/2, append/2, concat/1, repeat/2, join/2, trim/1, trim_left/1, trim_right/1]).
 
 is_empty(Str) ->
     Str =:= <<""/utf8>>.
@@ -31,6 +31,12 @@ erl_contains(A, B) ->
 
 contains(Haystack, Needle) ->
     erl_contains(Haystack, Needle).
+
+starts_with(A, B) ->
+    gleam_stdlib:string_starts_with(A, B).
+
+ends_with(A, B) ->
+    gleam_stdlib:string_ends_with(A, B).
 
 split(X, Substring) ->
     gleam@list:map(

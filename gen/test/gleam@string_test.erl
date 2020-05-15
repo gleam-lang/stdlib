@@ -1,7 +1,7 @@
 -module(gleam@string_test).
 -compile(no_auto_import).
 
--export([length_test/0, lowercase_test/0, uppercase_test/0, reverse_test/0, split_test/0, replace_test/0, append_test/0, compare_test/0, contains_test/0, concat_test/0, repeat_test/0, join_test/0, trim_test/0, trim_left_test/0, trim_right_test/0]).
+-export([length_test/0, lowercase_test/0, uppercase_test/0, reverse_test/0, split_test/0, replace_test/0, append_test/0, compare_test/0, contains_test/0, concat_test/0, repeat_test/0, join_test/0, trim_test/0, trim_left_test/0, trim_right_test/0, starts_with_test/0, ends_with_test/0]).
 
 length_test() ->
     gleam@should:equal(gleam@string:length(<<"ß↑e̊"/utf8>>), 3),
@@ -115,4 +115,40 @@ trim_right_test() ->
     gleam@should:equal(
         gleam@string:trim_right(<<"  hats  \n"/utf8>>),
         <<"  hats"/utf8>>
+    ).
+
+starts_with_test() ->
+    gleam@should:equal(
+        gleam@string:starts_with(<<"theory"/utf8>>, <<""/utf8>>),
+        true
+    ),
+    gleam@should:equal(
+        gleam@string:starts_with(<<"theory"/utf8>>, <<"the"/utf8>>),
+        true
+    ),
+    gleam@should:equal(
+        gleam@string:starts_with(<<"theory"/utf8>>, <<"ory"/utf8>>),
+        false
+    ),
+    gleam@should:equal(
+        gleam@string:starts_with(<<"theory"/utf8>>, <<"theory2"/utf8>>),
+        false
+    ).
+
+ends_with_test() ->
+    gleam@should:equal(
+        gleam@string:ends_with(<<"theory"/utf8>>, <<""/utf8>>),
+        true
+    ),
+    gleam@should:equal(
+        gleam@string:ends_with(<<"theory"/utf8>>, <<"ory"/utf8>>),
+        true
+    ),
+    gleam@should:equal(
+        gleam@string:ends_with(<<"theory"/utf8>>, <<"the"/utf8>>),
+        false
+    ),
+    gleam@should:equal(
+        gleam@string:ends_with(<<"theory"/utf8>>, <<"theory2"/utf8>>),
+        false
     ).
