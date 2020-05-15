@@ -176,26 +176,26 @@ pub fn contains(does haystack: String, contain needle: String) -> Bool {
   erl_contains(haystack, needle)
 }
 
-// TODO
-// TODO: Not sure about the name and labels here
-// See if the second string starts with the first one.
-//
-// ## Examples
-//    > starts_with(does: "theory", start_with: "ory")
-//    False
-//
-//
-// pub fn starts_with(does string: String, start_with prefix: String) -> String {}
-// TODO
-// TODO: Not sure about the name and labels here
-// See if the second string ends with the first one.
-//
-// ## Examples
-//    > ends_with(does: "theory", end_with: "ory")
-//    True
-//
-//
-// pub fn ends_with(does string: String, end_with suffix: String) -> String {}
+/// See if the first string starts with the second one.
+///
+/// ## Examples
+///    > starts_with("theory", "ory")
+///    False
+///
+///
+pub external fn starts_with(String, String) -> Bool =
+  "gleam_stdlib" "string_starts_with"
+
+/// See if the first string ends with the second one.
+///
+/// ## Examples
+///    > ends_with("theory", "ory")
+///    True
+///
+///
+pub external fn ends_with(String, String) -> Bool =
+  "gleam_stdlib" "string_ends_with"
+
 /// Create a list of strings by splitting a given string on a given substring.
 ///
 /// ## Examples
