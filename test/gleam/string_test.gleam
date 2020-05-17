@@ -163,3 +163,25 @@ pub fn ends_with_test() {
   |> string.ends_with("theory2")
   |> should.equal(False)
 }
+
+pub fn slice_test() {
+  "gleam"
+  |> string.slice(at_index: 1, length: 2)
+  |> should.equal("le")
+
+  "gleam"
+  |> string.slice(at_index: 1, length: 10)
+  |> should.equal("leam")
+
+  "gleam"
+  |> string.slice(at_index: 10, length: 3)
+  |> should.equal("")
+
+  "gleam"
+  |> string.slice(at_index: -2, length: 2)
+  |> should.equal("am")
+
+  "gleam"
+  |> string.slice(at_index: -12, length: 2)
+  |> should.equal("")
+}

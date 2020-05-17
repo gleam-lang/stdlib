@@ -121,22 +121,42 @@ pub external fn uppercase(String) -> String =
 pub external fn compare(String, String) -> order.Order =
   "gleam_stdlib" "compare_strings"
 
-// TODO
-// Take a substring given a start and end Grapheme indexes. Negative indexes
-// are taken starting from the *end* of the list.
-//
-// ## Examples
-//    > slice("gleam", from: 1, to: 3)
-//    "lea"
-//
-//    > slice("gleam", from: 1, to: 10)
-//    "leam"
-//
-//    > slice("snakes on a plane!", from: -6, to: -1)
-//    "plane"
-//
-//
-// pub fn slice(out_of string: String, from start: Int, end: Int) -> String {}
+external fn erl_slice(String, Int, Int) -> String =
+  "string" "slice"
+
+/// Take a substring given a start and end Grapheme indexes. Negative indexes
+/// are taken starting from the *end* of the list.
+///
+/// ## Examples
+///    > slice(from: "gleam", at_index: 1, length: 2)
+///    "le"
+///
+///    > slice(from: "gleam", at_index: 1, length: 10)
+///    "leam"
+///
+///    > slice(from: "gleam", at_index: 10, length: 3)
+///    ""
+///
+///    > slice(from: "gleam", at_index: -2, length: 2)
+///    "am"
+///
+///    > slice(from: "gleam", at_index: -12, length: 2)
+///    ""
+///
+///
+pub fn slice(from string: String, at_index idx: Int, length len: Int) -> String {
+  case idx < 0 {
+    True -> {
+      let translated_idx = length(string) + idx
+      case translated_idx < 0 {
+        True -> ""
+        False -> erl_slice(string, translated_idx, len)
+      }
+    }
+    False -> erl_slice(string, idx, len)
+  }
+}
+
 // TODO
 // Drop *n* Graphemes from the left side of a
 //
