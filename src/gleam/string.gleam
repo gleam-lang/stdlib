@@ -150,36 +150,47 @@ pub fn slice(
   at_index idx: Int,
   length len: Int,
 ) -> String {
-  case idx < 0 {
-    True -> {
-      let translated_idx = length(string) + idx
-      case translated_idx < 0 {
-        True -> ""
-        False -> erl_slice(string, translated_idx, len)
+  case len < 0 {
+    True -> ""
+    False -> case idx < 0 {
+      True -> {
+        let translated_idx = length(string) + idx
+        case translated_idx < 0 {
+          True -> ""
+          False -> erl_slice(string, translated_idx, len)
+        }
       }
+      False -> erl_slice(string, idx, len)
     }
-    False -> erl_slice(string, idx, len)
   }
 }
 
-// TODO
-// Drop *n* Graphemes from the left side of a
-//
-// ## Examples
-//    > drop_left(from: "The Lone Gunmen", up_to: 2)
-//    "e Lone Gunmen"
-//
-//
-// pub fn drop_left(from string: String, up_to num_graphemes: Int) -> String {}
-// TODO
-// Drop *n* Graphemes from the right side of a
-//
-// ## Examples
-//    > drop_right(from: "Cigarette Smoking Man", up_to: 2)
-//    "Cigarette Smoking M"
-//
-//
-// pub fn drop_right(from string: String, up_to num_graphemes: Int) -> String {}
+/// Drop *n* Graphemes from the left side of a string.
+///
+/// ## Examples
+///    > drop_left(from: "The Lone Gunmen", up_to: 2)
+///    "e Lone Gunmen"
+///
+pub fn drop_left(from string: String, up_to num_graphemes: Int) -> String {
+  case num_graphemes < 0 {
+    True -> string
+    False -> slice(string, num_graphemes, length(string) - num_graphemes)
+  }
+}
+
+/// Drop *n* Graphemes from the right side of a string.
+///
+/// ## Examples
+///    > drop_right(from: "Cigarette Smoking Man", up_to: 2)
+///    "Cigarette Smoking M"
+///
+pub fn drop_right(from string: String, up_to num_graphemes: Int) -> String {
+  case num_graphemes < 0 {
+    True -> string
+    False -> slice(string, 0, length(string) - num_graphemes)
+  }
+}
+
 external fn erl_contains(String, String) -> Dynamic =
   "string" "find"
 

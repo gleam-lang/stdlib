@@ -4,8 +4,9 @@
 
 - Created the `io` module with `print` function.
 - The `result` module gains the `nil_error` function.
-- The `string` module gains the `trim`, `trim_left`, `trim_right`, `starts_with`,
-  `ends_with`, `slice`, `pad_left` and `pad_right` functions.
+- The `string` module gains `trim`, `trim_left`, `trim_right`, `starts_with`,
+  `ends_with`, `slice`, `pad_left`, `pad_right` `drop_left` and `drop_right`
+  functions.
 - `uri` module created with `parse`, `parse_query`, `path_segments`,
   `query_to_string` and `to_string`.
 - The `dynamic` module gains the `map`, `opaque_list`, `tuple2`, and `tuple2_of` functions.
@@ -53,7 +54,7 @@
 - The `pair.Pair` type has been replaced with a 2 element anonymous struct.
 - The `triple` module has been removed.
 - The `string` module gains the `compare` function.
-- The `float` module gains the `max`,  and `min` functions.
+- The `float` module gains the `max`, and `min` functions.
 - The `int` module gains the `max`, and `min` functions.
 - The `Any` type and module have been renamed to `Dynamic`.
 

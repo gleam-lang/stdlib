@@ -184,6 +184,38 @@ pub fn slice_test() {
   "gleam"
   |> string.slice(at_index: -12, length: 2)
   |> should.equal("")
+
+  "gleam"
+  |> string.slice(at_index: 2, length: -3)
+  |> should.equal("")
+}
+
+pub fn drop_left_test() {
+  "gleam"
+  |> string.drop_left(up_to: 2)
+  |> should.equal("eam")
+
+  "gleam"
+  |> string.drop_left(up_to: 6)
+  |> should.equal("")
+
+  "gleam"
+  |> string.drop_left(up_to: -2)
+  |> should.equal("gleam")
+}
+
+pub fn drop_right_test() {
+  "gleam"
+  |> string.drop_right(up_to: 2)
+  |> should.equal("gle")
+
+  "gleam"
+  |> string.drop_right(up_to: 5)
+  |> should.equal("")
+
+  "gleam"
+  |> string.drop_right(up_to: -2)
+  |> should.equal("gleam")
 }
 
 pub fn pad_left_test() {
