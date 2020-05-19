@@ -1,5 +1,6 @@
 import gleam/list as list_mod
 import gleam/atom
+import gleam/map.{Map}
 import gleam/result
 
 /// `Dynamic` data is data that we don"t know the type of yet.
@@ -167,7 +168,7 @@ pub external fn field(from: Dynamic, named: a) -> Result(Dynamic, String) =
 ///    Error("Expected a tuple of at least 3 size, got a tuple of 2 size")
 ///
 ///    > element(from(""), 2)
-///    Error("Expected a Tuple, got a binary")
+///    Error("Expected a tuple, got a binary")
 ///
 pub external fn element(
   from: Dynamic,
@@ -186,7 +187,7 @@ pub external fn element(
 ///    Error("Expected a 2 element tuple")
 ///
 ///    > tuple2(from(""))
-///    Error("Expected a Tuple, got a binary")
+///    Error("Expected a tuple, got a binary")
 ///
 pub external fn tuple2(
   from: Dynamic,
@@ -204,11 +205,11 @@ pub external fn tuple2(
 ///    > tuple2_of(from(tuple(1, 2.0)), int, float)
 ///    Ok(tuple(1, 2.0))
 ///
-///    > tuple2_of(from(tuple(1, 2)), int, float)
-///    Error("Expected a 2 element tuple")
+///    > tuple2_of(from(tuple(1, 2, 3)), int, float)
+///    Error("Expected a 2 element tuple, got a 3 element tuple")
 ///
 ///    > tuple2_of(from(""), int, float)
-///    Error("Expected a Tuple, got a binary")
+///    Error("Expected a tuple, got a binary")
 ///
 pub fn tuple2_of(
   from tup: Dynamic,
@@ -232,3 +233,20 @@ pub fn tuple2_of(
     },
   )
 }
+
+/// Check to see if the Dynamic value is map.
+///
+/// ## Examples
+///
+///    > import gleam/map as map_mod
+///    > map(from(map_mod.new()))
+///    Ok(map_mod.new())
+///
+///    > map(from(1))
+///    Error("Expected a 2 element tuple, got an int")
+///
+///    > map(from(""))
+///    Error("Expected a map, got a binary")
+///
+pub external fn map(from: Dynamic) -> Result(Map(Dynamic, Dynamic), String) =
+  "gleam_stdlib" "decode_map"
