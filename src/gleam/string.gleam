@@ -142,9 +142,11 @@ external fn erl_slice(String, Int, Int) -> String =
 ///
 ///    > slice(from: "gleam", at_index: -12, length: 2)
 ///    ""
-///
-///
-pub fn slice(from string: String, at_index idx: Int, length len: Int) -> String {
+pub fn slice(
+  from string: String,
+  at_index idx: Int,
+  length len: Int,
+) -> String {
   case idx < 0 {
     True -> {
       let translated_idx = length(string) + idx
@@ -176,6 +178,8 @@ pub fn slice(from string: String, at_index idx: Int, length len: Int) -> String 
 //
 // pub fn drop_right(from string: String, up_to num_graphemes: Int) -> String {}
 ///
+///
+///
 /// Check if the first string contains the second.
 ///
 /// ## Examples
@@ -191,31 +195,31 @@ pub fn slice(from string: String, at_index idx: Int, length len: Int) -> String 
 external fn erl_contains(String, String) -> Bool =
   "gleam_stdlib" "string_contains"
 
-///
 pub fn contains(does haystack: String, contain needle: String) -> Bool {
   erl_contains(haystack, needle)
 }
 
+///
 /// See if the first string starts with the second one.
 ///
 /// ## Examples
 ///    > starts_with("theory", "ory")
 ///    False
-///
-///
 pub external fn starts_with(String, String) -> Bool =
   "gleam_stdlib" "string_starts_with"
 
+///
+///
 /// See if the first string ends with the second one.
 ///
 /// ## Examples
 ///    > ends_with("theory", "ory")
 ///    True
-///
-///
 pub external fn ends_with(String, String) -> Bool =
   "gleam_stdlib" "string_ends_with"
 
+///
+///
 /// Create a list of strings by splitting a given string on a given substring.
 ///
 /// ## Examples
@@ -264,7 +268,6 @@ pub fn concat(strings: List(String)) -> String {
   |> iodata.to_string
 }
 
-///
 fn repeat_help(chunk: String, result: List(String), repeats: Int) -> String {
   case repeats <= 0 {
     True -> concat(result)
@@ -272,6 +275,7 @@ fn repeat_help(chunk: String, result: List(String), repeats: Int) -> String {
   }
 }
 
+///
 /// Create a new string by repeating a string a given number of times.
 ///
 /// This function runs in linear time.
@@ -300,7 +304,9 @@ pub fn join(strings: List(String), with separator: String) -> String {
 }
 
 type Direction {
+
   Leading
+
   Trailing
   Both
 }
@@ -319,12 +325,12 @@ external fn erl_pad(String, Int, Direction, String) -> String =
 ///
 ///    > pad_left("121", to: 2, with: ".")
 ///    "121"
-///
-///
 pub fn pad_left(string: String, to length: Int, with pad_string: String) {
   erl_pad(string, length, Leading, pad_string)
 }
 
+///
+///
 /// Pad a string on the right until it has a given length.
 ///
 /// ## Examples
@@ -336,48 +342,47 @@ pub fn pad_left(string: String, to length: Int, with pad_string: String) {
 ///
 ///    > pad_right("121", to: 2, with: ".")
 ///    "121"
-///
-///
 pub fn pad_right(string: String, to length: Int, with pad_string: String) {
   erl_pad(string, length, Trailing, pad_string)
 }
 
+///
 external fn erl_trim(String, Direction) -> String =
   "string" "trim"
 
+///
 /// Get rid of whitespace on both sides of a String.
 ///
 /// ## Examples
 ///    > trim("  hats  \n")
 ///    "hats"
-///
-///
 pub fn trim(string: String) -> String {
   erl_trim(string, Both)
 }
 
+///
+///
 /// Get rid of whitespace on the left of a String.
 ///
 /// ## Examples
 ///    > trim_left("  hats  \n")
 ///    "hats  \n"
-///
-///
 pub fn trim_left(string: String) -> String {
   erl_trim(string, Leading)
 }
 
+///
+///
 /// Get rid of whitespace on the right of a String.
 ///
 /// ## Examples
 ///    > trim_right("  hats  \n")
 ///    "  hats"
-///
-///
 pub fn trim_right(string: String) -> String {
   erl_trim(string, Trailing)
 }
-
+///
+///
 // TODO
 // /// Convert a string to a list of Graphemes.
 // ///
