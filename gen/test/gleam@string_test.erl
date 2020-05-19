@@ -1,7 +1,7 @@
 -module(gleam@string_test).
 -compile(no_auto_import).
 
--export([length_test/0, lowercase_test/0, uppercase_test/0, reverse_test/0, split_test/0, replace_test/0, append_test/0, compare_test/0, contains_test/0, concat_test/0, repeat_test/0, join_test/0, trim_test/0, trim_left_test/0, trim_right_test/0, starts_with_test/0, ends_with_test/0, slice_test/0]).
+-export([length_test/0, lowercase_test/0, uppercase_test/0, reverse_test/0, split_test/0, replace_test/0, append_test/0, compare_test/0, contains_test/0, concat_test/0, repeat_test/0, join_test/0, trim_test/0, trim_left_test/0, trim_right_test/0, starts_with_test/0, ends_with_test/0, slice_test/0, pad_left_test/0, pad_right_test/0]).
 
 length_test() ->
     gleam@should:equal(gleam@string:length(<<"ß↑e̊"/utf8>>), 3),
@@ -173,4 +173,40 @@ slice_test() ->
     gleam@should:equal(
         gleam@string:slice(<<"gleam"/utf8>>, -12, 2),
         <<""/utf8>>
+    ).
+
+pad_left_test() ->
+    gleam@should:equal(
+        gleam@string:pad_left(<<"121"/utf8>>, 5, <<"."/utf8>>),
+        <<"..121"/utf8>>
+    ),
+    gleam@should:equal(
+        gleam@string:pad_left(<<"121"/utf8>>, 3, <<"."/utf8>>),
+        <<"121"/utf8>>
+    ),
+    gleam@should:equal(
+        gleam@string:pad_left(<<"121"/utf8>>, 2, <<"."/utf8>>),
+        <<"121"/utf8>>
+    ),
+    gleam@should:equal(
+        gleam@string:pad_left(<<"121"/utf8>>, 5, <<"XY"/utf8>>),
+        <<"XYXY121"/utf8>>
+    ).
+
+pad_right_test() ->
+    gleam@should:equal(
+        gleam@string:pad_right(<<"121"/utf8>>, 5, <<"."/utf8>>),
+        <<"121.."/utf8>>
+    ),
+    gleam@should:equal(
+        gleam@string:pad_right(<<"121"/utf8>>, 3, <<"."/utf8>>),
+        <<"121"/utf8>>
+    ),
+    gleam@should:equal(
+        gleam@string:pad_right(<<"121"/utf8>>, 2, <<"."/utf8>>),
+        <<"121"/utf8>>
+    ),
+    gleam@should:equal(
+        gleam@string:pad_right(<<"121"/utf8>>, 5, <<"XY"/utf8>>),
+        <<"121XYXY"/utf8>>
     ).

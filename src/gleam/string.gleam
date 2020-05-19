@@ -298,42 +298,48 @@ pub fn join(strings: List(String), with separator: String) -> String {
   |> iodata.from_strings
   |> iodata.to_string
 }
-///
-// TODO
-// Pad a string on the left until it has at least given number of Graphemes.
-//
-// ## Examples
-//    > pad_left("121", to: 5, with: ".")
-//    "..121"
-//
-//    > pad_left("121", to: 3, with: ".")
-//    "121"
-//
-//    > pad_left("121", to: 2, with: ".")
-//    "121"
-//
-//
-// pub fn pad_left(string: String, to size: Int, with: String) {}
-// TODO
-// Pad a string on the right until it has a given length.
-//
-// ## Examples
-//    > pad_right("121", to: 5, with: ".")
-//    "121.."
-//
-//    > pad_right("121", to: 3, with: ".")
-//    "121"
-//
-//    > pad_right("121", to: 2, with: ".")
-//    "121"
-//
-//
-// pub fn pad_right(string: String, to size: Int, with: String) {}
 
 type Direction {
   Leading
   Trailing
   Both
+}
+
+external fn erl_pad(String, Int, Direction, String) -> String =
+  "gleam_stdlib" "string_pad"
+
+/// Pad a string on the left until it has at least given number of Graphemes.
+///
+/// ## Examples
+///    > pad_left("121", to: 5, with: ".")
+///    "..121"
+///
+///    > pad_left("121", to: 3, with: ".")
+///    "121"
+///
+///    > pad_left("121", to: 2, with: ".")
+///    "121"
+///
+///
+pub fn pad_left(string: String, to length: Int, with pad_string: String) {
+  erl_pad(string, length, Leading, pad_string)
+}
+
+/// Pad a string on the right until it has a given length.
+///
+/// ## Examples
+///    > pad_right("121", to: 5, with: ".")
+///    "121.."
+///
+///    > pad_right("121", to: 3, with: ".")
+///    "121"
+///
+///    > pad_right("121", to: 2, with: ".")
+///    "121"
+///
+///
+pub fn pad_right(string: String, to length: Int, with pad_string: String) {
+  erl_pad(string, length, Trailing, pad_string)
 }
 
 external fn erl_trim(String, Direction) -> String =
