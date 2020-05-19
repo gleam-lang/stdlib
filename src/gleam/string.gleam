@@ -308,6 +308,7 @@ type Direction {
   Leading
 
   Trailing
+
   Both
 }
 
@@ -346,10 +347,10 @@ pub fn pad_right(string: String, to length: Int, with pad_string: String) {
   erl_pad(string, length, Trailing, pad_string)
 }
 
-///
 external fn erl_trim(String, Direction) -> String =
   "string" "trim"
 
+///
 ///
 /// Get rid of whitespace on both sides of a String.
 ///
