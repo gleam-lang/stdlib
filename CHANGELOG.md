@@ -3,7 +3,7 @@
 ## Unreleased
 
 - The `string` module gains `trim`, `trim_left`, `trim_right`, `starts_with`,
-  `ends_with` and `slice` functions.
+  `ends_with`, `slice`, `pad_left` and `pad_right` functions.
 
 ## v0.8.0 - 2020-04-28
 

@@ -185,3 +185,39 @@ pub fn slice_test() {
   |> string.slice(at_index: -12, length: 2)
   |> should.equal("")
 }
+
+pub fn pad_left_test() {
+  "121"
+  |> string.pad_left(to: 5, with: ".")
+  |> should.equal("..121")
+
+  "121"
+  |> string.pad_left(to: 3, with: ".")
+  |> should.equal("121")
+
+  "121"
+  |> string.pad_left(to: 2, with: ".")
+  |> should.equal("121")
+
+  "121"
+  |> string.pad_left(to: 5, with: "XY")
+  |> should.equal("XYXY121")
+}
+
+pub fn pad_right_test() {
+  "121"
+  |> string.pad_right(to: 5, with: ".")
+  |> should.equal("121..")
+
+  "121"
+  |> string.pad_right(to: 3, with: ".")
+  |> should.equal("121")
+
+  "121"
+  |> string.pad_right(to: 2, with: ".")
+  |> should.equal("121")
+
+  "121"
+  |> string.pad_right(to: 5, with: "XY")
+  |> should.equal("121XYXY")
+}
