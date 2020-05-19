@@ -128,7 +128,7 @@ pub fn trim_right_test() {
   |> should.equal("  hats")
 }
 
-pub fn starts_with_test(){
+pub fn starts_with_test() {
   "theory"
   |> string.starts_with("")
   |> should.equal(True)
