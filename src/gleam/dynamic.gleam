@@ -7,6 +7,9 @@ import gleam/result
 /// IO with the outside world.
 pub external type Dynamic
 
+pub type Decoder(t) =
+  fn(Dynamic) -> Result(t, String)
+
 /// Convert any Gleam data into `Dynamic` data.
 ///
 pub external fn from(a) -> Dynamic =
@@ -158,7 +161,7 @@ pub external fn field(from: Dynamic, named: a) -> Result(Dynamic, String) =
 /// ## Examples
 ///
 ///    > element(from(tuple(1, 2)), 0)
-///    Ok(Dynamic)
+///    Ok(from(1))
 ///
 ///    > element(from(tuple(1, 2)), 2)
 ///    Error("Expected a tuple of at least 3 size, got a tuple of 2 size")
@@ -171,3 +174,61 @@ pub external fn element(
   position: Int,
 ) -> Result(Dynamic, String) =
   "gleam_stdlib" "decode_element"
+
+/// Check to see if the Dynamic value is a 2 element tuple.
+///
+/// ## Examples
+///
+///    > tuple2(from(tuple(1, 2)))
+///    Ok(tuple(from(1), from(2)))
+///
+///    > tuple2(from(tuple(1, 2)))
+///    Error("Expected a 2 element tuple")
+///
+///    > tuple2(from(""))
+///    Error("Expected a Tuple, got a binary")
+///
+pub external fn tuple2(
+  from: Dynamic,
+) -> Result(tuple(Dynamic, Dynamic), String) =
+  "gleam_stdlib" "decode_tuple2"
+
+/// Check to see if the Dynamic value is a 2 element tuple containing two
+/// specifically typed elements.
+///
+/// ## Examples
+///
+///    > tuple2_of(from(tuple(1, 2)), int, int)
+///    Ok(tuple(1, 2))
+///
+///    > tuple2_of(from(tuple(1, 2.0)), int, float)
+///    Ok(tuple(1, 2.0))
+///
+///    > tuple2_of(from(tuple(1, 2)), int, float)
+///    Error("Expected a 2 element tuple")
+///
+///    > tuple2_of(from(""), int, float)
+///    Error("Expected a Tuple, got a binary")
+///
+pub fn tuple2_of(
+  from tup: Dynamic,
+  first decode_first: Decoder(a),
+  second decode_second: Decoder(b),
+) -> Result(tuple(a, b), String) {
+  tup
+  |> tuple2
+  |> result.then(
+    fn(tup) {
+      let tuple(first, second) = tup
+      decode_first(first)
+      |> result.map(fn(first) { tuple(first, second) })
+    },
+  )
+  |> result.then(
+    fn(tup) {
+      let tuple(first, second) = tup
+      decode_second(second)
+      |> result.map(fn(second) { tuple(first, second) })
+    },
+  )
+}
