@@ -79,6 +79,16 @@ pub fn filter_test() {
   |> should.equal([0, 3])
 }
 
+pub fn filter_map_test() {
+  [2, 4, 6, 1]
+  |> list.filter_map(fn(x) { Ok(x + 1) })
+  |> should.equal([3, 5, 7, 2])
+
+  [2, 4, 6, 1]
+  |> list.filter_map(Error)
+  |> should.equal([])
+}
+
 pub fn map_test() {
   []
   |> list.map(fn(x) { x * 2 })

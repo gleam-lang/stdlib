@@ -196,6 +196,38 @@ pub fn filter(list: List(a), for predicate: fn(a) -> Bool) -> List(a) {
   do_filter(list, predicate, [])
 }
 
+fn do_filter_map(
+  list: List(a),
+  fun: fn(a) -> Result(b, e),
+  acc: List(b),
+) -> List(b) {
+  case list {
+    [] -> reverse(acc)
+    [x, ..xs] -> {
+      let new_acc = case fun(x) {
+        Ok(x) -> [x, ..acc]
+        Error(_) -> acc
+      }
+      do_filter_map(xs, fun, new_acc)
+    }
+  }
+}
+
+/// Returns a new list containing only the elements from the first list for
+/// which the given functions returns `True`.
+///
+/// ## Examples
+///
+///    > filter_map([2, 4, 6, 1], Error)
+///    []
+///
+///    > filter_map([2, 4, 6, 1], fn(x) { Ok(x + 1) })
+///    [3, 4, 6, 2]
+///
+pub fn filter_map(list: List(a), with fun: fn(a) -> Result(b, e)) -> List(b) {
+  do_filter_map(list, fun, [])
+}
+
 fn do_map(list: List(a), fun: fn(a) -> b, acc: List(b)) -> List(b) {
   case list {
     [] -> reverse(acc)
