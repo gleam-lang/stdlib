@@ -1,6 +1,5 @@
 //// Strings in Gleam are UTF-8 binaries. They can be written in your code a
 //// text surrounded by `"double quotes"`.
-////
 
 import gleam/iodata
 import gleam/list
@@ -39,6 +38,7 @@ pub fn is_empty(str: String) -> Bool {
 ///
 ///    > length("")
 ///    0
+///
 pub external fn length(String) -> Int =
   "string" "length"
 
@@ -52,6 +52,7 @@ pub external fn length(String) -> Int =
 ///
 ///    > reverse("stressed")
 ///    "desserts"
+///
 pub fn reverse(string: String) -> String {
   string
   |> iodata.new
@@ -59,7 +60,6 @@ pub fn reverse(string: String) -> String {
   |> iodata.to_string
 }
 
-///
 /// Create a new string by replacing all occurrences of a given substring.
 ///
 /// ## Examples
@@ -69,6 +69,7 @@ pub fn reverse(string: String) -> String {
 ///
 ///    > replace("a,b,c,d,e", each: ",", with: "/")
 ///    "a/b/c/d/e"
+///
 pub fn replace(
   in string: String,
   each pattern: String,
@@ -80,7 +81,6 @@ pub fn replace(
   |> iodata.to_string
 }
 
-///
 /// Create a new string with all the graphemes in the input string converted to
 /// lowercase.
 ///
@@ -90,10 +90,10 @@ pub fn replace(
 ///
 ///    > lowercase("X-FILES")
 ///    "x-files"
+///
 pub external fn lowercase(String) -> String =
   "string" "lowercase"
 
-///
 /// Create a new string with all the graphemes in the input string converted to
 /// uppercase.
 ///
@@ -103,10 +103,10 @@ pub external fn lowercase(String) -> String =
 ///
 ///    > uppercase("skinner")
 ///    "SKINNER"
+///
 pub external fn uppercase(String) -> String =
   "string" "uppercase"
 
-///
 /// Compares two strings to see which is "larger" by comparing their graphemes.
 ///
 /// This does not compare the size or length of the given strings.
@@ -118,6 +118,7 @@ pub external fn uppercase(String) -> String =
 ///
 ///    > compare("A", "B")
 ///    order.Gt
+///
 pub external fn compare(String, String) -> order.Order =
   "gleam_stdlib" "compare_strings"
 
@@ -142,6 +143,7 @@ external fn erl_slice(String, Int, Int) -> String =
 ///
 ///    > slice(from: "gleam", at_index: -12, length: 2)
 ///    ""
+///
 pub fn slice(
   from string: String,
   at_index idx: Int,
@@ -177,9 +179,9 @@ pub fn slice(
 //
 //
 // pub fn drop_right(from string: String, up_to num_graphemes: Int) -> String {}
-///
-///
-///
+external fn erl_contains(String, String) -> Bool =
+  "gleam_stdlib" "string_contains"
+
 /// Check if the first string contains the second.
 ///
 /// ## Examples
@@ -192,40 +194,38 @@ pub fn slice(
 ///
 ///    > contains(does: "theory", contain: "THE")
 ///    False
-external fn erl_contains(String, String) -> Bool =
-  "gleam_stdlib" "string_contains"
-
+///
 pub fn contains(does haystack: String, contain needle: String) -> Bool {
   erl_contains(haystack, needle)
 }
 
-///
 /// See if the first string starts with the second one.
 ///
 /// ## Examples
+///
 ///    > starts_with("theory", "ory")
 ///    False
+///
 pub external fn starts_with(String, String) -> Bool =
   "gleam_stdlib" "string_starts_with"
 
-///
-///
 /// See if the first string ends with the second one.
 ///
 /// ## Examples
+///
 ///    > ends_with("theory", "ory")
 ///    True
+///
 pub external fn ends_with(String, String) -> Bool =
   "gleam_stdlib" "string_ends_with"
 
-///
-///
 /// Create a list of strings by splitting a given string on a given substring.
 ///
 /// ## Examples
 ///
 ///    > split("home/gleam/desktop/", on: "/")
 ///    ["home","gleam","desktop", ""]
+///
 pub fn split(x: String, on substring: String) -> List(String) {
   x
   |> iodata.new
@@ -233,7 +233,6 @@ pub fn split(x: String, on substring: String) -> List(String) {
   |> list.map(with: iodata.to_string)
 }
 
-///
 /// Create a new string by joining two strings together.
 ///
 /// This function copies both strings and runs in linear time. If you find
@@ -244,6 +243,7 @@ pub fn split(x: String, on substring: String) -> List(String) {
 ///
 ///    > append(to: "butter", suffix: "fly")
 ///    "butterfly"
+///
 pub fn append(to first: String, suffix second: String) -> String {
   first
   |> iodata.new
@@ -251,7 +251,6 @@ pub fn append(to first: String, suffix second: String) -> String {
   |> iodata.to_string
 }
 
-///
 /// Create a new string by joining many strings together.
 ///
 /// This function copies both strings and runs in linear time. If you find
@@ -262,6 +261,7 @@ pub fn append(to first: String, suffix second: String) -> String {
 ///
 ///    > concat(["never", "the", "less"])
 ///    "nevertheless"
+///
 pub fn concat(strings: List(String)) -> String {
   strings
   |> iodata.from_strings
@@ -275,19 +275,19 @@ fn repeat_help(chunk: String, result: List(String), repeats: Int) -> String {
   }
 }
 
-///
 /// Create a new string by repeating a string a given number of times.
 ///
 /// This function runs in linear time.
 ///
 /// ## Examples
+///
 ///    > repeat("ha", times: 3)
 ///    "hahaha"
+///
 pub fn repeat(string: String, times times: Int) -> String {
   repeat_help(string, [], times)
 }
 
-///
 /// Join many strings together with a given separator.
 ///
 /// This function runs in linear time.
@@ -296,6 +296,7 @@ pub fn repeat(string: String, times times: Int) -> String {
 ///
 ///    > join(["home","evan","Desktop"], with: "/")
 ///    "home/evan/Desktop"
+///
 pub fn join(strings: List(String), with separator: String) -> String {
   strings
   |> list.intersperse(with: separator)
@@ -317,6 +318,7 @@ external fn erl_pad(String, Int, Direction, String) -> String =
 /// Pad a string on the left until it has at least given number of Graphemes.
 ///
 /// ## Examples
+///
 ///    > pad_left("121", to: 5, with: ".")
 ///    "..121"
 ///
@@ -325,15 +327,15 @@ external fn erl_pad(String, Int, Direction, String) -> String =
 ///
 ///    > pad_left("121", to: 2, with: ".")
 ///    "121"
+///
 pub fn pad_left(string: String, to length: Int, with pad_string: String) {
   erl_pad(string, length, Leading, pad_string)
 }
 
-///
-///
 /// Pad a string on the right until it has a given length.
 ///
 /// ## Examples
+///
 ///    > pad_right("121", to: 5, with: ".")
 ///    "121.."
 ///
@@ -342,47 +344,46 @@ pub fn pad_left(string: String, to length: Int, with pad_string: String) {
 ///
 ///    > pad_right("121", to: 2, with: ".")
 ///    "121"
+///
 pub fn pad_right(string: String, to length: Int, with pad_string: String) {
   erl_pad(string, length, Trailing, pad_string)
 }
 
-///
 external fn erl_trim(String, Direction) -> String =
   "string" "trim"
 
-///
 /// Get rid of whitespace on both sides of a String.
 ///
 /// ## Examples
+///
 ///    > trim("  hats  \n")
 ///    "hats"
+///
 pub fn trim(string: String) -> String {
   erl_trim(string, Both)
 }
 
-///
-///
 /// Get rid of whitespace on the left of a String.
 ///
 /// ## Examples
+///
 ///    > trim_left("  hats  \n")
 ///    "hats  \n"
+///
 pub fn trim_left(string: String) -> String {
   erl_trim(string, Leading)
 }
 
-///
-///
 /// Get rid of whitespace on the right of a String.
 ///
 /// ## Examples
+///
 ///    > trim_right("  hats  \n")
 ///    "  hats"
+///
 pub fn trim_right(string: String) -> String {
   erl_trim(string, Trailing)
 }
-///
-///
 // TODO
 // /// Convert a string to a list of Graphemes.
 // ///
