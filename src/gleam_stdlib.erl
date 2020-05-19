@@ -1,13 +1,15 @@
 -module(gleam_stdlib).
 -include_lib("eunit/include/eunit.hrl").
 
--export([should_equal/2, should_not_equal/2, should_be_true/1, should_be_false/1,
-         should_be_ok/1, should_be_error/1, atom_from_string/1,
-         atom_create_from_string/1, atom_to_string/1, map_get/2,
-         iodata_append/2, iodata_prepend/2, identity/1, decode_int/1,
-         decode_string/1, decode_bool/1, decode_float/1, decode_thunk/1, decode_atom/1,
-         decode_list/1, decode_field/2, decode_element/2, parse_int/1, parse_float/1, compare_strings/2,
-         string_contains/2, string_starts_with/2, string_ends_with/2, string_pad/4]).
+-export([should_equal/2, should_not_equal/2, should_be_true/1,
+         should_be_false/1, should_be_ok/1, should_be_error/1,
+         atom_from_string/1, atom_create_from_string/1, atom_to_string/1,
+         map_get/2, iodata_append/2, iodata_prepend/2, identity/1,
+         decode_int/1, decode_string/1, decode_bool/1, decode_float/1,
+         decode_thunk/1, decode_atom/1, decode_list/1, decode_field/2,
+         decode_element/2, parse_int/1, parse_float/1, compare_strings/2,
+         string_contains/2, string_starts_with/2, string_ends_with/2,
+         string_pad/4, decode_tuple2/1]).
 
 should_equal(Actual, Expected) -> ?assertEqual(Expected, Actual).
 should_not_equal(Actual, Expected) -> ?assertNotEqual(Expected, Actual).
@@ -48,7 +50,11 @@ classify(X) when is_float(X) -> "a float";
 classify(X) when is_list(X) -> "a list";
 classify(X) when is_boolean(X) -> "a bool";
 classify(X) when is_function(X, 0) -> "a zero arity function";
+classify(X) when is_tuple(X) -> ["a ", integer_to_list(tuple_size(X)), " element tuple"];
 classify(_) -> "some other type".
+
+decode_tuple2({_, _} = T) -> {ok, T};
+decode_tuple2(Data) -> decode_error_msg("a 2 element tuple", Data).
 
 decode_atom(Data) when is_atom(Data) -> {ok, Data};
 decode_atom(Data) -> decode_error_msg("an atom", Data).

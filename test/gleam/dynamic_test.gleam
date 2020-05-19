@@ -255,3 +255,52 @@ pub fn element_test() {
   |> dynamic.element(0)
   |> should.be_error
 }
+
+pub fn tuple2_test() {
+  tuple(1, 2)
+  |> dynamic.from
+  |> dynamic.tuple2
+  |> should.equal(Ok(tuple(dynamic.from(1), dynamic.from(2))))
+
+  tuple(1, "")
+  |> dynamic.from
+  |> dynamic.tuple2
+  |> should.equal(Ok(tuple(dynamic.from(1), dynamic.from(""))))
+
+  tuple(1, 2, 3)
+  |> dynamic.from
+  |> dynamic.tuple2
+  |> should.equal(Error("Expected a 2 element tuple, got a 3 element tuple"))
+
+  1
+  |> dynamic.from
+  |> dynamic.tuple2
+  |> should.equal(Error("Expected a 2 element tuple, got an int"))
+}
+
+pub fn tuple2_of_test() {
+  tuple(1, 2)
+  |> dynamic.from
+  |> dynamic.tuple2_of(dynamic.int, dynamic.int)
+  |> should.equal(Ok(tuple(1, 2)))
+
+  tuple(1, "")
+  |> dynamic.from
+  |> dynamic.tuple2_of(dynamic.int, dynamic.string)
+  |> should.equal(Ok(tuple(1, "")))
+
+  tuple(1, "")
+  |> dynamic.from
+  |> dynamic.tuple2_of(dynamic.int, dynamic.int)
+  |> should.equal(Error("Expected an int, got a binary"))
+
+  tuple(1, 2, 3)
+  |> dynamic.from
+  |> dynamic.tuple2
+  |> should.equal(Error("Expected a 2 element tuple, got a 3 element tuple"))
+
+  1
+  |> dynamic.from
+  |> dynamic.tuple2
+  |> should.equal(Error("Expected a 2 element tuple, got an int"))
+}

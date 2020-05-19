@@ -35,15 +35,20 @@ pub type Uri {
 pub external fn parse(String) -> Result(Uri, Nil) =
   "gleam_uri_native" "parse"
 
+external fn erl_parse_query(String) -> Dynamic =
+  "uri_string" "dissect_query"
+
 /// Parses an urlencoded query string into a list of key value pairs.
 /// Returns an error for invalid encoding.
 ///
 /// The opposite operation is `uri.query_to_string`.
 ///
-pub external fn parse_query(
-  String,
-) -> Result(List(tuple(String, String)), Nil) =
-  "gleam_uri_native" "parse_query"
+pub fn parse_query(query: String) -> Option(List(tuple(String, String))) {
+  query
+  |> erl_parse_query
+  |> dynamic.list(dynamic.tuple2_of(_, dynamic.string, dynamic.string))
+  |> result.map_error(fn(_) { Nil })
+}
 
 type Encoding {
   Utf8
