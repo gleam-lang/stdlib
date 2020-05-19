@@ -4,6 +4,8 @@
 
 - The `string` module gains `trim`, `trim_left`, `trim_right`, `starts_with`,
   `ends_with`, `slice`, `pad_left` and `pad_right` functions.
+- `uri` module created with `parse`, `parse_query`, `path_segments`,
+  `query_to_string` and `to_string`.
 
 ## v0.8.0 - 2020-04-28
 
