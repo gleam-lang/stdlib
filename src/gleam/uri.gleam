@@ -11,6 +11,7 @@ import gleam/list
 import gleam/result.{Option}
 import gleam/string
 import gleam/dynamic.{Dynamic}
+import gleam/map.{Map}
 
 /// Type representing holding the parsed components of an URI.
 /// All components of a URI are optional, except the path.
@@ -100,9 +101,40 @@ pub fn path_segments(path) {
   do_path_segments(string.split(path, "/"), [])
 }
 
+type UriKey {
+  Scheme
+  Userinfo
+  Host
+  Port
+  Path
+  Query
+  Fragment
+}
+
+external fn erl_to_string(Map(UriKey, Dynamic)) -> Dynamic =
+  "uri_string" "recompose"
+
 /// Encode a `Uri` value as a URI string.
 ///
 /// The opposite operation is `uri.parse`.
 ///
-pub external fn to_string(Uri) -> String =
-  "gleam_uri_native" "to_string"
+pub fn to_string(uri: Uri) -> String {
+  let field = fn(key: UriKey, value: Option(anything)) {
+    result.map(value, fn(value) { tuple(key, dynamic.from(value)) })
+  }
+
+  [
+    field(Scheme, uri.scheme),
+    field(Userinfo, uri.userinfo),
+    field(Host, uri.host),
+    field(Port, uri.port),
+    field(Path, Ok(uri.path)),
+    field(Query, uri.query),
+    field(Fragment, uri.fragment),
+  ]
+  |> list.filter_map(fn(x) { x })
+  |> map.from_list
+  |> erl_to_string
+  |> dynamic.string
+  |> result.unwrap("")
+}
