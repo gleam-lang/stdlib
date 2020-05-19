@@ -8,8 +8,8 @@
          decode_int/1, decode_string/1, decode_bool/1, decode_float/1,
          decode_thunk/1, decode_atom/1, decode_list/1, decode_field/2,
          decode_element/2, parse_int/1, parse_float/1, compare_strings/2,
-         string_contains/2, string_starts_with/2, string_ends_with/2,
-         string_pad/4, decode_tuple2/1, decode_map/1]).
+         string_starts_with/2, string_ends_with/2, string_pad/4,
+         decode_tuple2/1, decode_map/1]).
 
 should_equal(Actual, Expected) -> ?assertEqual(Expected, Actual).
 should_not_equal(Actual, Expected) -> ?assertNotEqual(Expected, Actual).
@@ -92,31 +92,23 @@ decode_field(Data, Key) ->
 decode_element(Data, Position) when is_tuple(Data) ->
   case catch element(Position + 1, Data) of
     {'EXIT', _Reason} ->
-      Reason = io_lib:format("Expected a tuple of at least ~w size, got a tuple of ~w sise",
-                             [Position + 1, tuple_size(Data)]),
-      {error, Reason};
+      decode_error_msg(["a tuple of at least ", integer_to_list(Position + 1), " size"], Data);
 
     Value ->
       {ok, Value}
   end;
-decode_element(Data, _Position) -> decode_error_msg("a Tuple", Data).
+decode_element(Data, _Position) -> decode_error_msg("a tuple", Data).
 
 parse_int(String) ->
-  case string:to_integer(binary:bin_to_list(String)) of
-    {Integer, []} ->
-      {ok, Integer};
-
-    _ ->
-      {error, nil}
+  case catch binary_to_integer(String) of
+    Int when is_integer(Int) -> {ok, Int};
+    _ -> {error, nil}
   end.
 
 parse_float(String) ->
-  case string:to_float(binary:bin_to_list(String)) of
-    {Float, []} ->
-      {ok, Float};
-
-    _ ->
-      {error, nil}
+  case catch binary_to_float(String) of
+    Float when is_float(Float) -> {ok, Float};
+    _ -> {error, nil}
   end.
 
 compare_strings(Lhs, Rhs) ->
@@ -127,14 +119,6 @@ compare_strings(Lhs, Rhs) ->
       lt;
     true ->
      gt
-  end.
-
-string_contains(Haystack, Needle) ->
-  case string:find(Haystack, Needle) of
-    nomatch ->
-      false;
-    _ ->
-      true
   end.
 
 string_starts_with(_, <<>>) -> true;

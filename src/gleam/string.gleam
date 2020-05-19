@@ -2,6 +2,7 @@
 //// text surrounded by `"double quotes"`.
 
 import gleam/iodata
+import gleam/dynamic.{Dynamic}
 import gleam/list
 import gleam/order
 import gleam/result.{Option}
@@ -179,8 +180,8 @@ pub fn slice(
 //
 //
 // pub fn drop_right(from string: String, up_to num_graphemes: Int) -> String {}
-external fn erl_contains(String, String) -> Bool =
-  "gleam_stdlib" "string_contains"
+external fn erl_contains(String, String) -> Dynamic =
+  "string" "find"
 
 /// Check if the first string contains the second.
 ///
@@ -196,7 +197,10 @@ external fn erl_contains(String, String) -> Bool =
 ///    False
 ///
 pub fn contains(does haystack: String, contain needle: String) -> Bool {
-  erl_contains(haystack, needle)
+  haystack
+  |> erl_contains(needle)
+  |> dynamic.atom
+  |> result.is_error
 }
 
 /// See if the first string starts with the second one.
