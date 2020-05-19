@@ -231,22 +231,10 @@ pub fn tuple2_of(
   first decode_first: Decoder(a),
   second decode_second: Decoder(b),
 ) -> Result(tuple(a, b), String) {
-  tup
-  |> tuple2
-  |> result.then(
-    fn(tup) {
-      let tuple(first, second) = tup
-      decode_first(first)
-      |> result.map(fn(first) { tuple(first, second) })
-    },
-  )
-  |> result.then(
-    fn(tup) {
-      let tuple(first, second) = tup
-      decode_second(second)
-      |> result.map(fn(second) { tuple(first, second) })
-    },
-  )
+  try tuple(first, second) = tuple2(tup)
+  try a = decode_first(first)
+  try b = decode_second(second)
+  Ok(tuple(a, b))
 }
 
 /// Check to see if the Dynamic value is map.
