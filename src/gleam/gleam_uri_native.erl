@@ -1,5 +1,5 @@
 -module (gleam_uri_native).
--export ([parse/1, to_string/1, parse_query/1, query_to_string/1]).
+-export ([parse/1, to_string/1, parse_query/1]).
 
 find_key(Key, Map) ->
   case maps:find(Key, Map) of
@@ -43,11 +43,3 @@ parse_query(String) ->
     Parts ->
       {ok, Parts}
     end.
-
-query_to_string(Parts) ->
-  case uri_string:compose_query(Parts, [{encoding, utf8}]) of
-    String when is_binary(String) ->
-      String;
-    % Return value when empty
-    [] -> <<"">>
-  end.
