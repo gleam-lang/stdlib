@@ -5,7 +5,7 @@
 ![CI](https://github.com/gleam-lang/stdlib/workflows/CI/badge.svg?branch=master)
 
 Gleam's standard library!
-Documentation available on [hex.pm](https://hexdocs.pm/gleam_stdlib/).
+Documentation available on [HexDocs](https://hexdocs.pm/gleam_stdlib/).
 
 ## Quick reference
 
