@@ -9,7 +9,7 @@
          decode_thunk/1, decode_atom/1, decode_list/1, decode_field/2,
          decode_element/2, parse_int/1, parse_float/1, compare_strings/2,
          string_contains/2, string_starts_with/2, string_ends_with/2,
-         string_pad/4, decode_tuple2/1]).
+         string_pad/4, decode_tuple2/1, decode_map/1]).
 
 should_equal(Actual, Expected) -> ?assertEqual(Expected, Actual).
 should_not_equal(Actual, Expected) -> ?assertNotEqual(Expected, Actual).
@@ -55,6 +55,9 @@ classify(_) -> "some other type".
 
 decode_tuple2({_, _} = T) -> {ok, T};
 decode_tuple2(Data) -> decode_error_msg("a 2 element tuple", Data).
+
+decode_map(Data) when is_map(Data) -> {ok, Data};
+decode_map(Data) -> decode_error_msg("a map", Data).
 
 decode_atom(Data) when is_atom(Data) -> {ok, Data};
 decode_atom(Data) -> decode_error_msg("an atom", Data).

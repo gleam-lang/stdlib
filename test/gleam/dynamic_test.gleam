@@ -304,3 +304,15 @@ pub fn tuple2_of_test() {
   |> dynamic.tuple2
   |> should.equal(Error("Expected a 2 element tuple, got an int"))
 }
+
+pub fn map_test() {
+  map.new()
+  |> dynamic.from
+  |> dynamic.map
+  |> should.equal(Ok(map.new()))
+
+  1
+  |> dynamic.from
+  |> dynamic.map
+  |> should.equal(Error("Expected a map, got an int"))
+}

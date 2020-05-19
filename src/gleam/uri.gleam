@@ -28,13 +28,47 @@ pub type Uri {
   )
 }
 
+pub external fn erl_parse(String) -> Dynamic =
+  "uri_string" "parse"
+
+type UriKey {
+  Scheme
+  Userinfo
+  Host
+  Port
+  Path
+  Query
+  Fragment
+}
+
 /// Parses a complient URI string into the `Uri` Type.
 /// If the string is not a valid URI string then an error is returned.
 ///
 /// The opposite operation is `uri.to_string`
 ///
-pub external fn parse(String) -> Result(Uri, Nil) =
-  "gleam_uri_native" "parse"
+pub fn parse(string: String) -> Result(Uri, Nil) {
+  case dynamic.map(erl_parse(string)) {
+    Error(_) -> Error(Nil)
+    Ok(uri_map) -> {
+      let get = fn(k, decoder: dynamic.Decoder(t)) {
+        uri_map
+        |> map.get(dynamic.from(k))
+        |> result.then(fn(x) { result.map_error(decoder(x), fn(_) { Nil }) })
+      }
+
+      let uri = Uri(
+        scheme: get(Scheme, dynamic.string),
+        userinfo: get(Userinfo, dynamic.string),
+        host: get(Host, dynamic.string),
+        port: get(Port, dynamic.int),
+        path: result.unwrap(get(Path, dynamic.string), ""),
+        query: get(Query, dynamic.string),
+        fragment: get(Fragment, dynamic.string),
+      )
+      Ok(uri)
+    }
+  }
+}
 
 external fn erl_parse_query(String) -> Dynamic =
   "uri_string" "dissect_query"
@@ -99,16 +133,6 @@ fn do_path_segments(input, accumulator) {
 ///
 pub fn path_segments(path) {
   do_path_segments(string.split(path, "/"), [])
-}
-
-type UriKey {
-  Scheme
-  Userinfo
-  Host
-  Port
-  Path
-  Query
-  Fragment
 }
 
 external fn erl_to_string(Map(UriKey, Dynamic)) -> Dynamic =

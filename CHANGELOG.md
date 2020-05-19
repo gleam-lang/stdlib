@@ -6,7 +6,7 @@
   `ends_with`, `slice`, `pad_left` and `pad_right` functions.
 - `uri` module created with `parse`, `parse_query`, `path_segments`,
   `query_to_string` and `to_string`.
-- The `dynamic` module gains the `tuple2`, and `tuple2_of` functions.
+- The `dynamic` module gains the `map`, `tuple2`, and `tuple2_of` functions.
 - The `list` module gains the `filter_map` function.
 
 ## v0.8.0 - 2020-04-28
