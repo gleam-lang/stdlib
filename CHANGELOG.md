@@ -5,8 +5,8 @@
 - Created the `io` module with `print` function.
 - The `result` module gains the `nil_error` function.
 - The `string` module gains `trim`, `trim_left`, `trim_right`, `starts_with`,
-  `ends_with`, `slice`, `pad_left`, `pad_right` `drop_left` and `drop_right`
-  functions.
+  `ends_with`, `slice`, `pad_left`, `pad_right` `drop_left`, `drop_right` and
+  `pop_grapheme` functions.
 - `uri` module created with `parse`, `parse_query`, `path_segments`,
   `query_to_string` and `to_string`.
 - The `dynamic` module gains the `map`, `opaque_list`, `tuple2`, and `tuple2_of` functions.
