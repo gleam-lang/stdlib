@@ -86,3 +86,17 @@ pub fn unwrap_test() {
   |> result.unwrap(50)
   |> should.equal(50)
 }
+
+pub fn nil_error_test() {
+  Error("error_string")
+  |> result.nil_error
+  |> should.equal(Error(Nil))
+
+  Error(123)
+  |> result.nil_error
+  |> should.equal(Error(Nil))
+
+  Ok(1)
+  |> result.nil_error
+  |> should.equal(Ok(1))
+}
