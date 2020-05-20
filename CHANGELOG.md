@@ -2,7 +2,8 @@
 
 ## Unreleased
 
-- The `string` module gains `trim`, `trim_left`, `trim_right`, `starts_with`,
+- The `result` module gains the `nil_error` function.
+- The `string` module gains the `trim`, `trim_left`, `trim_right`, `starts_with`,
   `ends_with`, `slice`, `pad_left` and `pad_right` functions.
 - `uri` module created with `parse`, `parse_query`, `path_segments`,
   `query_to_string` and `to_string`.
