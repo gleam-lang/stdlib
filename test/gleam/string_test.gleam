@@ -253,3 +253,17 @@ pub fn pad_right_test() {
   |> string.pad_right(to: 5, with: "XY")
   |> should.equal("121XYXY")
 }
+
+pub fn pop_grapheme_test() {
+  "gleam"
+  |> string.pop_grapheme()
+  |> should.equal(Ok(tuple("g", "leam")))
+
+  "g"
+  |> string.pop_grapheme()
+  |> should.equal(Ok(tuple("g", "")))
+
+  ""
+  |> string.pop_grapheme()
+  |> should.equal(Error(Nil))
+}

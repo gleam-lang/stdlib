@@ -8,8 +8,8 @@
          decode_int/1, decode_string/1, decode_bool/1, decode_float/1,
          decode_thunk/1, decode_atom/1, decode_list/1, decode_field/2,
          decode_element/2, parse_int/1, parse_float/1, compare_strings/2,
-         string_starts_with/2, string_ends_with/2, string_pad/4,
-         decode_tuple2/1, decode_map/1]).
+         string_pop_grapheme/1, string_starts_with/2, string_ends_with/2,
+         string_pad/4, decode_tuple2/1, decode_map/1]).
 
 should_equal(Actual, Expected) -> ?assertEqual(Expected, Actual).
 should_not_equal(Actual, Expected) -> ?assertNotEqual(Expected, Actual).
@@ -135,3 +135,10 @@ string_ends_with(String, Suffix) ->
 
 string_pad(String, Length, Dir, PadString) ->
     unicode:characters_to_binary(string:pad(String, Length, Dir, PadString)).
+
+string_pop_grapheme(String) ->
+    case string:next_grapheme(String) of
+        [ Next | Rest ] ->
+            {ok, {unicode:characters_to_binary([Next]), unicode:characters_to_binary(Rest)}};
+        _ -> {error, nil}
+    end.

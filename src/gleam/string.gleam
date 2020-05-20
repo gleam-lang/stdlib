@@ -399,6 +399,7 @@ pub fn trim_left(string: String) -> String {
 pub fn trim_right(string: String) -> String {
   erl_trim(string, Trailing)
 }
+
 // TODO
 // /// Convert a string to a list of Graphemes.
 // ///
@@ -407,13 +408,15 @@ pub fn trim_right(string: String) -> String {
 //
 // ///
 // pub fn to_graphemes(string: String) -> List(String) {}
-// TODO
-// Split a non-empty string into its head and tail. This lets you
-// pattern match on strings exactly as you would with lists.
-//
-// ## Examples
-//    > next_grapheme("")
-//    Error(Nil)
-//
-//
-// pub fn next_grapheme(string: String) -> Option(tuple(Grapheme, String)) {}
+/// Split a non-empty string into its head and tail. This lets you
+/// pattern match on strings exactly as you would with lists.
+///
+/// ## Examples
+///    > pop_grapheme("gleam")
+///    Ok(tuple("g", "leam"))
+///
+///    > pop_grapheme("")
+///    Error(Nil)
+///
+pub external fn pop_grapheme(string: String) -> Option(tuple(String, String)) =
+  "gleam_stdlib" "string_pop_grapheme"
