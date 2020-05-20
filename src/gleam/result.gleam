@@ -184,3 +184,17 @@ pub fn unwrap(result: Result(a, e), or default: a) -> a {
 pub fn none() -> Option(a) {
   Error(Nil)
 }
+
+/// Transforms any error into Error(Nil)
+///
+/// ## Examples
+///
+///    > nil_error(Error(1))
+///    Error(Nil)
+///
+///    > nil_error(Ok(1))
+///    Ok(1)
+///
+pub fn nil_error(result: Result(a, e)) -> Result(a, Nil) {
+  map_error(result, fn(_) { Nil })
+}
