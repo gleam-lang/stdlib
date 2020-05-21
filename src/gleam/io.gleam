@@ -3,7 +3,7 @@ external type DoNotLeak
 external fn erl_print(String) -> DoNotLeak =
   "io" "fwrite"
 
-/// Writes string to standard output
+/// Writes a string to standard output.
 ///
 /// ## Example
 ///
