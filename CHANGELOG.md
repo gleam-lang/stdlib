@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Created the `io` module with `print` function.
 - The `result` module gains the `nil_error` function.
 - The `string` module gains the `trim`, `trim_left`, `trim_right`, `starts_with`,
   `ends_with`, `slice`, `pad_left` and `pad_right` functions.
