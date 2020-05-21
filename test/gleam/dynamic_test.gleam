@@ -316,3 +316,25 @@ pub fn map_test() {
   |> dynamic.map
   |> should.equal(Error("Expected a map, got an int"))
 }
+
+pub fn opaque_list_test() {
+  []
+  |> dynamic.from
+  |> dynamic.opaque_list
+  |> should.equal(Ok([]))
+
+  [1, 2]
+  |> dynamic.from
+  |> dynamic.opaque_list
+  |> should.equal(Ok([dynamic.from(1), dynamic.from(2)]))
+
+  [dynamic.from(1), dynamic.from(2.0)]
+  |> dynamic.from
+  |> dynamic.opaque_list
+  |> should.equal(Ok([dynamic.from(1), dynamic.from(2.0)]))
+
+  1
+  |> dynamic.from
+  |> dynamic.opaque_list
+  |> should.equal(Error("Expected a list, got an int"))
+}

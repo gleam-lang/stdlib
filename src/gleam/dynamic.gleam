@@ -113,11 +113,26 @@ pub external fn bool(from: Dynamic) -> Result(Bool, String) =
 pub external fn thunk(from: Dynamic) -> Result(fn() -> Dynamic, String) =
   "gleam_stdlib" "decode_thunk"
 
-external fn list_dynamic(from: Dynamic) -> Result(List(Dynamic), String) =
-  "gleam_stdlib" "decode_list"
-
 /// Check to see whether a Dynamic value is a list, and return the list if it
 /// is.
+///
+/// ## Examples
+///
+///    > opaque_list(from(["a", "b", "c"]))
+///    Ok([from("a"), from("b"), from("c")])
+///
+///    > opaque_list(1)
+///    Error("Expected an Int, got a binary")
+///
+pub external fn opaque_list(from: Dynamic) -> Result(List(Dynamic), String) =
+  "gleam_stdlib" "decode_list"
+
+/// Check to see whether a Dynamic value is a list of a particular type, and
+/// return the list if it is.
+///
+/// The second argument is a decoder function used to decode the elements of
+/// the list. The list is only decoded if all elements in the list can be
+/// successfully decoded using this function.
 ///
 /// ## Examples
 ///
@@ -135,7 +150,7 @@ pub fn list(
   containing decoder_type: fn(Dynamic) -> Result(inner, String),
 ) -> Result(List(inner), String) {
   dynamic
-  |> list_dynamic
+  |> opaque_list
   |> result.then(list_mod.traverse(_, decoder_type))
 }
 
