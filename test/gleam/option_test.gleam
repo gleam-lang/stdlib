@@ -32,3 +32,11 @@ pub fn from_result_test() {
   option.from_result(Error("some_error"))
   |> should.equal(None)
 }
+
+pub fn unwrap_option_test() {
+  option.unwrap(Some(1), 0)
+  |> should.equal(1)
+
+  option.unwrap(None, 0)
+  |> should.equal(0)
+}
