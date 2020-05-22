@@ -5,7 +5,7 @@ import gleam/iodata
 import gleam/dynamic.{Dynamic}
 import gleam/list
 import gleam/order
-import gleam/result.{Option}
+import gleam/result
 
 pub type String =
   String
@@ -410,7 +410,9 @@ pub fn trim_right(string: String) -> String {
 ///    > pop_grapheme("")
 ///    Error(Nil)
 ///
-pub external fn pop_grapheme(string: String) -> Option(tuple(String, String)) =
+pub external fn pop_grapheme(
+  string: String,
+) -> Result(tuple(String, String), Nil) =
   "gleam_stdlib" "string_pop_grapheme"
 
 /// Convert a string to a list of Graphemes.

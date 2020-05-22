@@ -21,7 +21,6 @@
 import gleam/int
 import gleam/pair
 import gleam/order.{Order}
-import gleam/result.{Option}
 
 pub type List(elements) =
   List(elements)
@@ -138,9 +137,9 @@ pub fn contains(list: List(a), has elem: a) -> Bool {
 ///    > head([1, 2])
 ///    Ok(1)
 ///
-pub fn head(list: List(a)) -> Option(a) {
+pub fn head(list: List(a)) -> Result(a, Nil) {
   case list {
-    [] -> result.none()
+    [] -> Error(Nil)
     [x, ..] -> Ok(x)
   }
 }
@@ -161,9 +160,9 @@ pub fn head(list: List(a)) -> Option(a) {
 ///    > tail([1, 2])
 ///    Ok([2])
 ///
-pub fn tail(list: List(a)) -> Option(List(a)) {
+pub fn tail(list: List(a)) -> Result(List(a), Nil) {
   case list {
-    [] -> result.none()
+    [] -> Error(Nil)
     [_, ..xs] -> Ok(xs)
   }
 }
@@ -476,9 +475,9 @@ pub fn fold_right(
 pub fn find(
   in haystack: List(a),
   one_that is_desired: fn(a) -> Bool,
-) -> Option(a) {
+) -> Result(a, Nil) {
   case haystack {
-    [] -> result.none()
+    [] -> Error(Nil)
     [x, ..rest] -> case is_desired(x) {
       True -> Ok(x)
       _ -> find(in: rest, one_that: is_desired)
@@ -505,10 +504,10 @@ pub fn find(
 ///
 pub fn find_map(
   in haystack: List(a),
-  with fun: fn(a) -> Option(b),
-) -> Option(b) {
+  with fun: fn(a) -> Result(b, Nil),
+) -> Result(b, Nil) {
   case haystack {
-    [] -> result.none()
+    [] -> Error(Nil)
     [x, ..rest] -> case fun(x) {
       Ok(x) -> Ok(x)
       _ -> find_map(in: rest, with: fun)
@@ -656,11 +655,11 @@ pub fn intersperse(list: List(a), with elem: a) -> List(a) {
 ///    > at([1, 2, 3], 5)
 ///    Error(Nil)
 ///
-pub fn at(in list: List(a), get index: Int) -> Option(a) {
+pub fn at(in list: List(a), get index: Int) -> Result(a, Nil) {
   case index < 0 {
-    True -> result.none()
+    True -> Error(Nil)
     False -> case list {
-      [] -> result.none()
+      [] -> Error(Nil)
       [x, ..rest] -> case index == 0 {
         True -> Ok(x)
         False -> at(rest, index - 1)
@@ -858,14 +857,14 @@ pub fn split_while(
 pub fn key_find(
   in keyword_list: List(tuple(k, v)),
   find desired_key: k,
-) -> Option(v) {
+) -> Result(v, Nil) {
   find_map(
     keyword_list,
     fn(keyword) {
       let tuple(key, value) = keyword
       case key == desired_key {
         True -> Ok(value)
-        False -> result.none()
+        False -> Error(Nil)
       }
     },
   )

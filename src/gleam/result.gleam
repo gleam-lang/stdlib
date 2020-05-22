@@ -7,21 +7,10 @@ pub type Result(success, error) =
 /// Nil is a type used to represent the absence of something, similar to null
 /// or undefined in other languages.
 ///
-/// Unlike some other languages values cannot be implicitly nil, value that may
-/// be absent is typically represented using `Result(TheType, Nil)`. This is
-/// such a common type that offer the `Option(TheType)` alias.
+/// Unlike some other languages values cannot be implicitly nil.
 ///
 pub type Nil =
   Nil
-
-/// A value that is either there or not there.
-///
-/// Some other languages have a dedicated Option type that is not related to
-/// Result for this, however this tends to have all the same functions as
-/// Result so in Gleam we combine the two.
-///
-pub type Option(value) =
-  Result(value, Nil)
 
 /// Check whether the result is an Ok value.
 ///
@@ -172,17 +161,6 @@ pub fn unwrap(result: Result(a, e), or default: a) -> a {
     Ok(v) -> v
     Error(_) -> default
   }
-}
-
-/// Another way of writing `Error(Nil)`.
-///
-/// ## Examples
-///
-///    > none()
-///    Error(Nil)
-///
-pub fn none() -> Option(a) {
-  Error(Nil)
 }
 
 /// Transforms any error into Error(Nil)
