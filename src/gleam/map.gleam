@@ -1,6 +1,5 @@
 import gleam/result
 import gleam/list
-import gleam/result.{Option}
 
 /// A dictionary of keys and values.
 ///
@@ -92,7 +91,7 @@ pub external fn new() -> Map(key, value) =
 ///    > new() |> insert("a", 0) |> get("b")
 ///    Error(Nil)
 ///
-pub external fn get(from: Map(key, value), get: key) -> Option(value) =
+pub external fn get(from: Map(key, value), get: key) -> Result(value, Nil) =
   "gleam_stdlib" "map_get"
 
 external fn erl_insert(key, value, Map(key, value)) -> Map(key, value) =
@@ -279,7 +278,7 @@ pub fn drop(from map: Map(k, v), drop disallowed_keys: List(k)) -> Map(k, v) {
 pub fn update(
   in map: Map(k, v),
   update key: k,
-  with fun: fn(Option(v)) -> v,
+  with fun: fn(Result(v, Nil)) -> v,
 ) -> Map(k, v) {
   map
   |> get(key)

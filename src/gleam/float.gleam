@@ -1,6 +1,5 @@
 import gleam/iodata
 import gleam/order.{Order}
-import gleam/result.{Option}
 
 pub type Float =
   Float
@@ -15,7 +14,7 @@ pub type Float =
 ///    > parse("ABC")
 ///    None
 ///
-pub external fn parse(String) -> Option(Float) =
+pub external fn parse(String) -> Result(Float, Nil) =
   "gleam_stdlib" "parse_float"
 
 /// Return the string representation of the provided float.
