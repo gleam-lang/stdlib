@@ -14,11 +14,15 @@ pub external fn equal(a, a) -> Expectation =
 pub external fn not_equal(a, a) -> Expectation =
   "gleam_stdlib" "should_not_equal"
 
-pub external fn be_true(Bool) -> Expectation =
-  "gleam_stdlib" "should_be_true"
+pub fn be_true(actual: Bool) -> Expectation {
+  actual
+  |> equal(True)
+}
 
-pub external fn be_false(Bool) -> Expectation =
-  "gleam_stdlib" "should_be_false"
+pub fn be_false(actual: Bool) -> Expectation {
+  actual
+  |> equal(False)
+}
 
 pub external fn be_ok(Result(a, b)) -> Expectation =
   "gleam_stdlib" "should_be_ok"
