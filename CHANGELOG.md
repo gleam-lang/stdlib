@@ -2,8 +2,8 @@
 
 ## Unreleased
 
-- Created the `option` module containing the `Option` type and the `is_some`
-  and `is_none` functions.
+- Created the `option` module containing the `Option` type and the `is_some`,
+  `is_none`, `to_result` and `from_result` functions.
 - Removed the `Option` alias and the `none` function from the `result` module.
 - Created the `io` module with `print` function.
 - The `result` module gains the `nil_error` function.
