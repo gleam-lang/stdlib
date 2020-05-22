@@ -68,3 +68,20 @@ pub fn from_result(result: Result(a, e)) -> Option(a) {
     _ -> None
   }
 }
+
+/// Extract the value from an option, returning a default value if there is none.
+///
+/// ## Examples
+///
+///    > unwrap(Some(1), 0)
+///    1
+///
+///    > unwrap(None, 0)
+///    0
+///
+pub fn unwrap(option: Option(a), or default: a) -> a {
+  case option {
+    Some(x) -> x
+    None -> default
+  }
+}
