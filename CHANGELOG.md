@@ -2,8 +2,10 @@
 
 ## Unreleased
 
+- The `Uri` type's optional fields are now represented with Option rather
+  than Result.
 - Created the `option` module containing the `Option` type and the `is_some`,
-  `is_none`, `to_result` and `from_result` functions.
+  `is_none`, `to_result`, `from_result` and `unwrap` functions.
 - Removed the `Option` alias and the `none` function from the `result` module.
 - Created the `io` module with `print` function.
 - The `result` module gains the `nil_error` function.
