@@ -2,11 +2,13 @@
 
 ## Unreleased
 
-
 - Created the `io` module with the `print` function.
 - Created the `queue` module with the `new`, `from_list`, `to_list`,
   `is_empty`, `length`, `push_back`, `push_front`, `pop_back`, `pop_front`,
   `reverse`, `is_logically_equal`, and `is_equal` functions.
+- Created the `option` module containing the `Option` type and the `is_some`
+  and `is_none` functions.
+- Removed the `Option` alias and the `none` function from the `result` module.
 - The `result` module gains the `nil_error` function.
 - The `string` module gains `trim`, `trim_left`, `trim_right`, `starts_with`,
   `ends_with`, `slice`, `pad_left`, `pad_right` `drop_left`, `drop_right`,
