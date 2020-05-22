@@ -1,39 +1,40 @@
 import gleam/uri
 import gleam/should
+import gleam/option.{Option, Some, None}
 
 pub fn full_parse_test() {
   let Ok(
     parsed,
   ) = uri.parse("https://foo:bar@example.com:1234/path?query=true#fragment")
-  should.equal(parsed.scheme, Ok("https"))
-  should.equal(parsed.userinfo, Ok("foo:bar"))
-  should.equal(parsed.host, Ok("example.com"))
-  should.equal(parsed.port, Ok(1234))
+  should.equal(parsed.scheme, Some("https"))
+  should.equal(parsed.userinfo, Some("foo:bar"))
+  should.equal(parsed.host, Some("example.com"))
+  should.equal(parsed.port, Some(1234))
   should.equal(parsed.path, "/path")
-  should.equal(parsed.query, Ok("query=true"))
-  should.equal(parsed.fragment, Ok("fragment"))
+  should.equal(parsed.query, Some("query=true"))
+  should.equal(parsed.fragment, Some("fragment"))
 }
 
 pub fn parse_only_path_test() {
   let Ok(parsed) = uri.parse("")
-  should.equal(parsed.scheme, Error(Nil))
-  should.equal(parsed.userinfo, Error(Nil))
-  should.equal(parsed.host, Error(Nil))
-  should.equal(parsed.port, Error(Nil))
+  should.equal(parsed.scheme, None)
+  should.equal(parsed.userinfo, None)
+  should.equal(parsed.host, None)
+  should.equal(parsed.port, None)
   should.equal(parsed.path, "")
-  should.equal(parsed.query, Error(Nil))
-  should.equal(parsed.fragment, Error(Nil))
+  should.equal(parsed.query, None)
+  should.equal(parsed.fragment, None)
 }
 
 pub fn parse_only_host_test() {
   let Ok(parsed) = uri.parse("//")
-  should.equal(parsed.scheme, Error(Nil))
-  should.equal(parsed.userinfo, Error(Nil))
-  should.equal(parsed.host, Ok(""))
-  should.equal(parsed.port, Error(Nil))
+  should.equal(parsed.scheme, None)
+  should.equal(parsed.userinfo, None)
+  should.equal(parsed.host, Some(""))
+  should.equal(parsed.port, None)
   should.equal(parsed.path, "")
-  should.equal(parsed.query, Error(Nil))
-  should.equal(parsed.fragment, Error(Nil))
+  should.equal(parsed.query, None)
+  should.equal(parsed.fragment, None)
 }
 
 pub fn error_parsing_uri_test() {
@@ -42,13 +43,13 @@ pub fn error_parsing_uri_test() {
 
 pub fn full_uri_to_string_test() {
   let test_uri = uri.Uri(
-    Ok("https"),
-    Ok("foo:bar"),
-    Ok("example.com"),
-    Ok(1234),
+    Some("https"),
+    Some("foo:bar"),
+    Some("example.com"),
+    Some(1234),
     "/path",
-    Ok("query=true"),
-    Ok("fragment"),
+    Some("query=true"),
+    Some("fragment"),
   )
   should.equal(
     uri.to_string(test_uri),
@@ -57,15 +58,7 @@ pub fn full_uri_to_string_test() {
 }
 
 pub fn path_only_uri_to_string_test() {
-  let test_uri = uri.Uri(
-    Error(Nil),
-    Error(Nil),
-    Error(Nil),
-    Error(Nil),
-    "/",
-    Error(Nil),
-    Error(Nil),
-  )
+  let test_uri = uri.Uri(None, None, None, None, "/", None, None)
   should.equal(uri.to_string(test_uri), "/")
 }
 

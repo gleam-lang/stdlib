@@ -9,22 +9,24 @@
 
 import gleam/list
 import gleam/result
+import gleam/option.{Option}
 import gleam/string
 import gleam/dynamic.{Dynamic}
 import gleam/map.{Map}
+import gleam/function
 
 /// Type representing holding the parsed components of an URI.
 /// All components of a URI are optional, except the path.
 ///
 pub type Uri {
   Uri(
-    scheme: Result(String, Nil),
-    userinfo: Result(String, Nil),
-    host: Result(String, Nil),
-    port: Result(Int, Nil),
+    scheme: Option(String),
+    userinfo: Option(String),
+    host: Option(String),
+    port: Option(Int),
     path: String,
-    query: Result(String, Nil),
-    fragment: Result(String, Nil),
+    query: Option(String),
+    fragment: Option(String),
   )
 }
 
@@ -49,11 +51,11 @@ type UriKey {
 pub fn parse(string: String) -> Result(Uri, Nil) {
   try uri_map = dynamic.map(erl_parse(string))
     |> result.nil_error
-  let get = fn(k, decoder: dynamic.Decoder(t)) {
-    try value = map.get(uri_map, dynamic.from(k))
-    value
-    |> decoder
-    |> result.nil_error
+  let get = fn(k: UriKey, decode_type: dynamic.Decoder(t)) -> Option(t) {
+    uri_map
+    |> map.get(dynamic.from(k))
+    |> result.then(function.compose(decode_type, result.nil_error))
+    |> option.from_result
   }
 
   let uri = Uri(
@@ -61,7 +63,7 @@ pub fn parse(string: String) -> Result(Uri, Nil) {
     userinfo: get(Userinfo, dynamic.string),
     host: get(Host, dynamic.string),
     port: get(Port, dynamic.int),
-    path: result.unwrap(get(Path, dynamic.string), ""),
+    path: option.unwrap(get(Path, dynamic.string), ""),
     query: get(Query, dynamic.string),
     fragment: get(Fragment, dynamic.string),
   )
@@ -141,8 +143,10 @@ external fn erl_to_string(Map(UriKey, Dynamic)) -> Dynamic =
 /// The opposite operation is `uri.parse`.
 ///
 pub fn to_string(uri: Uri) -> String {
-  let field = fn(key: UriKey, value: Result(anything, Nil)) {
-    result.map(value, fn(value) { tuple(key, dynamic.from(value)) })
+  let field = fn(key: UriKey, value: Option(anything)) {
+    value
+    |> option.to_result(Nil)
+    |> result.map(fn(value) { tuple(key, dynamic.from(value)) })
   }
 
   [
@@ -150,7 +154,7 @@ pub fn to_string(uri: Uri) -> String {
     field(Userinfo, uri.userinfo),
     field(Host, uri.host),
     field(Port, uri.port),
-    field(Path, Ok(uri.path)),
+    field(Path, option.Some(uri.path)),
     field(Query, uri.query),
     field(Fragment, uri.fragment),
   ]
