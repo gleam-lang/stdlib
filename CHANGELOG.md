@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Created the `option` module containing the `Option` type and the `is_some`
+  and `is_none` functions.
+- Removed the `Option` alias and the `none` function from the `result` module.
 - Created the `io` module with `print` function.
 - The `result` module gains the `nil_error` function.
 - The `string` module gains `trim`, `trim_left`, `trim_right`, `starts_with`,
