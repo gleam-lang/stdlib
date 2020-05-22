@@ -400,14 +400,6 @@ pub fn trim_right(string: String) -> String {
   erl_trim(string, Trailing)
 }
 
-// TODO
-// /// Convert a string to a list of Graphemes.
-// ///
-// ///    > to_graphemes("abc")
-//    ['a','b','c']
-//
-// ///
-// pub fn to_graphemes(string: String) -> List(String) {}
 /// Split a non-empty string into its head and tail. This lets you
 /// pattern match on strings exactly as you would with lists.
 ///
@@ -420,3 +412,15 @@ pub fn trim_right(string: String) -> String {
 ///
 pub external fn pop_grapheme(string: String) -> Option(tuple(String, String)) =
   "gleam_stdlib" "string_pop_grapheme"
+
+/// Convert a string to a list of Graphemes.
+///
+///    > to_graphemes("abc")
+///    ["a", "b", "c"]
+///
+pub fn to_graphemes(string: String) -> List(String) {
+  case pop_grapheme(string) {
+    Ok(tuple(grapheme, rest)) -> [grapheme, ..to_graphemes(rest)]
+    _ -> []
+  }
+}

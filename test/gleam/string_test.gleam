@@ -267,3 +267,17 @@ pub fn pop_grapheme_test() {
   |> string.pop_grapheme()
   |> should.equal(Error(Nil))
 }
+
+pub fn to_graphemes_test() {
+  "abc"
+  |> string.to_graphemes()
+  |> should.equal(["a", "b", "c"])
+
+  "a"
+  |> string.to_graphemes()
+  |> should.equal(["a"])
+
+  ""
+  |> string.to_graphemes()
+  |> should.equal([])
+}
