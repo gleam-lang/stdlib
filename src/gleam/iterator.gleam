@@ -1,7 +1,6 @@
 import gleam/list
 
 // Internal private representation of an Iterator
-
 type Action(element) {
   // Improper dancing in the middle of the street
   // Improper dancing in the middle of the street
@@ -9,33 +8,25 @@ type Action(element) {
   // Somebody better notify the chief of police
   Stop
   Continue(element, fn() -> Action(element))
-  // Yes!
 }
 
+// Yes!
 // Wrapper to hide the internal representation
-
-pub external type Iterator(element);
-
-// TODO: remove once we have opaque type wrappers
-external fn opaque(fn() -> Action(element)) -> Iterator(element)
-  = "gleam@iterator" "identity"
-
-external fn unopaque(Iterator(element)) -> fn() -> Action(element)
-  = "gleam@iterator" "identity"
+pub opaque type Iterator(element) {
+  Iterator(thunk: fn() -> Action(element))
+}
 
 pub fn identity(x) {
   x
 }
 
 // Public API for iteration
-
 pub type Step(element, acc) {
   Next(element, acc)
   Done
 }
 
 // Creating Iterators
-
 fn do_unfold(initial, f) {
   fn() {
     case f(initial) {
@@ -46,10 +37,13 @@ fn do_unfold(initial, f) {
 }
 
 // TODO: document
-pub fn unfold(from initial: acc, with f: fn(acc) -> Step(element, acc)) -> Iterator(element) {
+pub fn unfold(
+  from initial: acc,
+  with f: fn(acc) -> Step(element, acc),
+) -> Iterator(element) {
   initial
-  |> do_unfold(_, f)
-  |> opaque
+  |> do_unfold(f)
+  |> Iterator
 }
 
 // TODO: test
@@ -65,16 +59,18 @@ pub fn repeat(x: element) -> Iterator(element) {
 
 // TODO: document
 pub fn from_list(list: List(element)) -> Iterator(element) {
-  unfold(list, fn(acc) {
-    case acc {
-      [] -> Done
-      [head | tail] -> Next(head, tail)
-    }
-  })
+  unfold(
+    list,
+    fn(acc) {
+      case acc {
+        [] -> Done
+        [head, ..tail] -> Next(head, tail)
+      }
+    },
+  )
 }
 
 // Consuming Iterators
-
 fn do_fold(iterator, initial, f) {
   case iterator() {
     Continue(element, iterator) -> do_fold(iterator, f(element, initial), f)
@@ -83,10 +79,13 @@ fn do_fold(iterator, initial, f) {
 }
 
 // TODO: document
-pub fn fold(over iterator: Iterator(e), from initial: acc, with f: fn(e, acc) -> acc) -> acc {
-  iterator
-  |> unopaque
-  |> do_fold(_, initial, f)
+pub fn fold(
+  over iterator: Iterator(e),
+  from initial: acc,
+  with f: fn(e, acc) -> acc,
+) -> acc {
+  iterator.thunk
+  |> do_fold(initial, f)
 }
 
 // TODO: test
@@ -99,14 +98,17 @@ pub fn run(iterator) -> Nil {
 // TODO: document
 pub fn to_list(iterator: Iterator(element)) -> List(element) {
   iterator
-  |> fold(_, [], fn(e, acc) { [e | acc] })
+  |> fold([], fn(e, acc) { [e, ..acc] })
   |> list.reverse
 }
 
 fn do_take(iterator, desired, acc) {
   case desired > 0 {
     True -> case iterator() {
-      Continue(element, iterator) -> do_take(iterator, desired - 1, [element | acc])
+      Continue(
+        element,
+        iterator,
+      ) -> do_take(iterator, desired - 1, [element, ..acc])
       Stop -> acc
     }
     False -> acc
@@ -115,9 +117,8 @@ fn do_take(iterator, desired, acc) {
 
 // TODO: document
 pub fn take(from iterator: Iterator(e), up_to desired: Int) -> List(e) {
-  iterator
-  |> unopaque
-  |> do_take(_, desired, [])
+  iterator.thunk
+  |> do_take(desired, [])
   |> list.reverse
 }
 
@@ -133,14 +134,12 @@ fn do_drop(iterator, desired) {
 
 // TODO: document
 pub fn drop(from iterator: Iterator(e), up_to desired: Int) -> Iterator(e) {
-  iterator
-  |> unopaque
-  |> do_drop(_, desired)
-  |> opaque
+  iterator.thunk
+  |> do_drop(desired)
+  |> Iterator
 }
 
 // Transforming Iterators
-
 fn do_map(iterator, f) {
   fn() {
     case iterator() {
@@ -152,10 +151,9 @@ fn do_map(iterator, f) {
 
 // TODO: document
 pub fn map(over iterator: Iterator(a), with f: fn(a) -> b) -> Iterator(b) {
-  iterator
-  |> unopaque
-  |> do_map(_, f)
-  |> opaque
+  iterator.thunk
+  |> do_map(f)
+  |> Iterator
 }
 
 fn do_filter(iterator, predicate) {
@@ -171,11 +169,13 @@ fn do_filter(iterator, predicate) {
 }
 
 // TODO: document
-pub fn filter(iterator: Iterator(a), for predicate: fn(a) -> Bool) -> Iterator(a) {
-  iterator
-  |> unopaque
-  |> do_filter(_, predicate)
-  |> opaque
+pub fn filter(
+  iterator: Iterator(a),
+  for predicate: fn(a) -> Bool,
+) -> Iterator(a) {
+  iterator.thunk
+  |> do_filter(predicate)
+  |> Iterator
 }
 
 fn do_cycle(next: fn() -> Action(a), reset: fn() -> Action(a)) {
@@ -189,10 +189,9 @@ fn do_cycle(next: fn() -> Action(a), reset: fn() -> Action(a)) {
 
 // TODO: document
 pub fn cycle(iterator: Iterator(a)) -> Iterator(a) {
-  let iterator = iterator |> unopaque
-  iterator
-  |> do_cycle(_, iterator)
-  |> opaque
+  iterator.thunk
+  |> do_cycle(iterator.thunk)
+  |> Iterator
 }
 
 fn do_range(current, limit, inc) -> fn() -> Action(Int) {
@@ -209,5 +208,5 @@ pub fn range(from start, to stop) -> Iterator(Int) {
     False -> -1
   }
   |> do_range(start, stop, _)
-  |> opaque
+  |> Iterator
 }
