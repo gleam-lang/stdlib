@@ -1,5 +1,4 @@
 import gleam/order.{Order}
-import gleam/result.{Option}
 
 pub type Int =
   Int
@@ -14,7 +13,7 @@ pub type Int =
 ///    > parse("ABC")
 ///    Error(Nil)
 ///
-pub external fn parse(String) -> Option(Int) =
+pub external fn parse(String) -> Result(Int, Nil) =
   "gleam_stdlib" "parse_int"
 
 /// Print a given int to a string.

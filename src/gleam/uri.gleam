@@ -8,7 +8,7 @@
 //// https://www.w3.org/TR/html52/sec-forms.html#urlencoded-form-data
 
 import gleam/list
-import gleam/result.{Option}
+import gleam/result
 import gleam/string
 import gleam/dynamic.{Dynamic}
 import gleam/map.{Map}
@@ -18,13 +18,13 @@ import gleam/map.{Map}
 ///
 pub type Uri {
   Uri(
-    scheme: Option(String),
-    userinfo: Option(String),
-    host: Option(String),
-    port: Option(Int),
+    scheme: Result(String, Nil),
+    userinfo: Result(String, Nil),
+    host: Result(String, Nil),
+    port: Result(Int, Nil),
     path: String,
-    query: Option(String),
-    fragment: Option(String),
+    query: Result(String, Nil),
+    fragment: Result(String, Nil),
   )
 }
 
@@ -47,27 +47,25 @@ type UriKey {
 /// The opposite operation is `uri.to_string`
 ///
 pub fn parse(string: String) -> Result(Uri, Nil) {
-  case dynamic.map(erl_parse(string)) {
-    Error(_) -> Error(Nil)
-    Ok(uri_map) -> {
-      let get = fn(k, decoder: dynamic.Decoder(t)) {
-        uri_map
-        |> map.get(dynamic.from(k))
-        |> result.then(fn(x) { result.map_error(decoder(x), fn(_) { Nil }) })
-      }
-
-      let uri = Uri(
-        scheme: get(Scheme, dynamic.string),
-        userinfo: get(Userinfo, dynamic.string),
-        host: get(Host, dynamic.string),
-        port: get(Port, dynamic.int),
-        path: result.unwrap(get(Path, dynamic.string), ""),
-        query: get(Query, dynamic.string),
-        fragment: get(Fragment, dynamic.string),
-      )
-      Ok(uri)
-    }
+  try uri_map = dynamic.map(erl_parse(string))
+    |> result.nil_error
+  let get = fn(k, decoder: dynamic.Decoder(t)) {
+    try value = map.get(uri_map, dynamic.from(k))
+    value
+    |> decoder
+    |> result.nil_error
   }
+
+  let uri = Uri(
+    scheme: get(Scheme, dynamic.string),
+    userinfo: get(Userinfo, dynamic.string),
+    host: get(Host, dynamic.string),
+    port: get(Port, dynamic.int),
+    path: result.unwrap(get(Path, dynamic.string), ""),
+    query: get(Query, dynamic.string),
+    fragment: get(Fragment, dynamic.string),
+  )
+  Ok(uri)
 }
 
 external fn erl_parse_query(String) -> Dynamic =
@@ -78,7 +76,7 @@ external fn erl_parse_query(String) -> Dynamic =
 ///
 /// The opposite operation is `uri.query_to_string`.
 ///
-pub fn parse_query(query: String) -> Option(List(tuple(String, String))) {
+pub fn parse_query(query: String) -> Result(List(tuple(String, String)), Nil) {
   query
   |> erl_parse_query
   |> dynamic.list(dynamic.tuple2_of(_, dynamic.string, dynamic.string))
@@ -143,7 +141,7 @@ external fn erl_to_string(Map(UriKey, Dynamic)) -> Dynamic =
 /// The opposite operation is `uri.parse`.
 ///
 pub fn to_string(uri: Uri) -> String {
-  let field = fn(key: UriKey, value: Option(anything)) {
+  let field = fn(key: UriKey, value: Result(anything, Nil)) {
     result.map(value, fn(value) { tuple(key, dynamic.from(value)) })
   }
 
