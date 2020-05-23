@@ -2,7 +2,6 @@ import gleam/should
 import gleam/iterator
 import gleam/list
 
-// TODO: Property tests
 // a |> from_list |> to_list == a
 pub fn to_from_list_test() {
   let test = fn(subject) {
