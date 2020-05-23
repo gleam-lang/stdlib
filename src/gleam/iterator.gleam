@@ -2,22 +2,23 @@ import gleam/list
 
 // Internal private representation of an Iterator
 type Action(element) {
-  // Improper dancing in the middle of the street
-  // Improper dancing in the middle of the street
-  // Improper dancing in the middle of the street
-  // Somebody better notify the chief of police
   Stop
   Continue(element, fn() -> Action(element))
 }
 
-// Yes!
-// Wrapper to hide the internal representation
+/// An iterator is a lazily evaluated sequence of element.
+///
+/// Iterators are useful when working with collections that are too large to
+/// fit in memory (or those that are infinite in size) as they only require the
+/// elements currently being processed to be in memory.
+///
+/// As a lazy data structure no work is done when an iterator is filters,
+/// mapped, etc, instead a new iterator is returned with these transformations
+/// applied to the stream. Once the stream has all the required transformations
+/// applied it can be evaluated using functions such as `fold` and `take`.
+///
 pub opaque type Iterator(element) {
   Iterator(thunk: fn() -> Action(element))
-}
-
-pub fn identity(x) {
-  x
 }
 
 // Public API for iteration
