@@ -102,22 +102,22 @@ pub fn is_empty(list: List(a)) -> Bool {
 ///
 /// ## Examples
 ///
-///    > contains([], 0)
+///    > [] |> contains(any: 0)
 ///    True
 ///
-///    > contains([0], 0)
+///    > [0] |> contains(any: 0)
 ///    True
 ///
-///    > contains([1], 0)
+///    > [1] |> contains(any: 0)
 ///    False
 ///
-///    > contains([1, 1], 0)
+///    > [1, 1] |> contains(any: 0)
 ///    False
 ///
-///    > contains([1, 0], 0)
+///    > [1, 0] |> contains(any: 0)
 ///    True
 ///
-pub fn contains(list: List(a), has elem: a) -> Bool {
+pub fn contains(list: List(a), any elem: a) -> Bool {
   case list {
     [] -> False
     [head, ..rest] -> head == elem || contains(rest, elem)

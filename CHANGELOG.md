@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Created the `set` module with the `new`, `insert`, and `contains` functions.
 - Created the `io` module with the `print` function.
 - Created the `queue` module with the `new`, `from_list`, `to_list`,
   `is_empty`, `length`, `push_back`, `push_front`, `pop_back`, `pop_front`,
@@ -19,6 +20,7 @@
   `query_to_string` and `to_string`.
 - The `dynamic` module gains the `map`, `opaque_list`, `tuple2`, and `tuple2_of` functions.
 - The `list` module gains the `filter_map` function.
+- The `list.contains` label `has` has been changed to `any`.
 
 ## v0.8.0 - 2020-04-28
 
