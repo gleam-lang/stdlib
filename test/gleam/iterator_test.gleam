@@ -114,6 +114,16 @@ pub fn unfold_test() {
   iterator.unfold(2, fn(_) { iterator.Done })
   |> iterator.take(5)
   |> should.equal([])
+
+  fn(n) {
+    case n {
+      0 -> iterator.Done
+      n -> iterator.Next(element: n, accumulator: n - 1)
+    }
+  }
+  |> iterator.unfold(from: 5)
+  |> iterator.to_list
+  |> should.equal([5, 4, 3, 2, 1])
 }
 
 pub fn range_test() {
