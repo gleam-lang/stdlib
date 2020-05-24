@@ -18,12 +18,12 @@ type Action(element) {
 /// applied it can be evaluated using functions such as `fold` and `take`.
 ///
 pub opaque type Iterator(element) {
-  Iterator(thunk: fn() -> Action(element))
+  Iterator(continuation: fn() -> Action(element))
 }
 
 // Public API for iteration
-pub type Step(element, acc) {
-  Next(element, acc)
+pub type Step(element, accumulator) {
+  Next(element: element, accumulator: accumulator)
   Done
 }
 
@@ -37,7 +37,25 @@ fn do_unfold(initial, f) {
   }
 }
 
-// TODO: document
+/// Create an iterator from a given function and accumulator.
+///
+/// The function is called on the accumulator and return either `Done`,
+/// indicating the iterator has no more elements, or `Next` which contains a
+/// new element and accumulator. The element is yielded by the iterator and the
+/// new accumulator is used with the function to compute the next element in
+/// the sequence.
+///
+/// ## Examples
+///
+///    > unfold(from: 5, with: fn(n) {
+///    >  case n {
+///    >    0 -> Done
+///    >    n -> Next(element: n, accumulator: n - 1)
+///    >  }
+///    > })
+///    > |> to_list
+///    [5, 4, 3, 2, 1]
+///
 pub fn unfold(
   from initial: acc,
   with f: fn(acc) -> Step(element, acc),
@@ -48,27 +66,41 @@ pub fn unfold(
 }
 
 // TODO: test
-// TODO: document
+/// Create an iterator that yields values created by calling a given function
+/// repeatedly.
+///
 pub fn repeatedly(f: fn() -> element) -> Iterator(element) {
   unfold(Nil, fn(acc) { Next(f(), acc) })
 }
 
-// TODO: document
+/// Create an iterator that returns the same value infinitely.
+///
+/// ## Examples
+///
+///    > repeat(10)
+///    > |> take(4)
+///    > |> to_list
+///    [10, 10, 10, 10]
+///
 pub fn repeat(x: element) -> Iterator(element) {
   repeatedly(fn() { x })
 }
 
-// TODO: document
+/// Create an iterator the yields each element in a given list.
+///
+/// ## Examples
+///
+///    > from_list([1, 2, 3, 4]) |> to_list
+///    [1, 2, 3, 4]
+///
 pub fn from_list(list: List(element)) -> Iterator(element) {
-  unfold(
-    list,
-    fn(acc) {
-      case acc {
-        [] -> Done
-        [head, ..tail] -> Next(head, tail)
-      }
-    },
-  )
+  let yield = fn(acc) {
+    case acc {
+      [] -> Done
+      [head, ..tail] -> Next(head, tail)
+    }
+  }
+  unfold(list, yield)
 }
 
 // Consuming Iterators
@@ -79,24 +111,50 @@ fn do_fold(iterator, initial, f) {
   }
 }
 
-// TODO: document
+/// Reduce an iterator of elements into a single value by calling a given
+/// function on each element in turn.
+///
+/// If called on an iterator of infinite length then this function will never
+/// return.
+///
+/// If you do not care about the end value and only wish to evaluate the
+/// iterator for side effects consider using the `run` function instead.
+///
+/// ## Examples
+///
+///    > [1, 2, 3, 4]
+///    > |> from_list
+///    > |> fold(from: 0, with: fn(element, acc) { element + acc })
+///    10
+///
 pub fn fold(
   over iterator: Iterator(e),
   from initial: acc,
   with f: fn(e, acc) -> acc,
 ) -> acc {
-  iterator.thunk
+  iterator.continuation
   |> do_fold(initial, f)
 }
 
 // TODO: test
-// TODO: document
-// For side effects
+/// Evaluate all elements in a given stream. This function is useful for when
+/// you wish to trigger any side effects that would occur when evaluating
+/// the iterator.
+///
 pub fn run(iterator) -> Nil {
   fold(iterator, Nil, fn(_, acc) { acc })
 }
 
-// TODO: document
+/// Evaluate an iterator and return all the elements as a list.
+///
+/// If called on an iterator of infinite length then this function will never
+/// return.
+///
+/// ## Examples
+///
+///   > [1, 2, 3] |> from_list |> map(fn(x) { x * 2 }) |> to_list
+///   [2, 4, 6]
+///
 pub fn to_list(iterator: Iterator(element)) -> List(element) {
   iterator
   |> fold([], fn(e, acc) { [e, ..acc] })
@@ -116,9 +174,21 @@ fn do_take(iterator, desired, acc) {
   }
 }
 
-// TODO: document
+/// Evaluate a desired number of elements from an iterator and return them in a
+/// list.
+///
+/// If the iterator does not have enough elements all of them are returned.
+///
+/// ## Examples
+///
+///    > [1, 2, 3, 4, 5] |> from_list |> take(up_to: 3)
+///    [1, 2, 3]
+///
+///    > [1, 2] |> from_list |> take(up_to: 3)
+///    [1, 2]
+///
 pub fn take(from iterator: Iterator(e), up_to desired: Int) -> List(e) {
-  iterator.thunk
+  iterator.continuation
   |> do_take(desired, [])
   |> list.reverse
 }
@@ -133,26 +203,53 @@ fn do_drop(iterator, desired) {
   }
 }
 
-// TODO: document
+/// Evaluate and discard the first N elements in an iterator, returning a new
+/// iterator.
+///
+/// If the iterator does not have enough elements an empty iterator is
+/// returned.
+///
+/// This function does not evaluate the elements of the iterator, the
+/// computation is performed when the iterator is later run.
+///
+/// ## Examples
+///
+///    > [1, 2, 3, 4, 5] |> from_list |> drop(up_to: 3) |> to_list
+///    [4, 5]
+///
+///    > [1, 2] |> from_list |> drop(up_to: 3) |> to_list
+///    []
+///
 pub fn drop(from iterator: Iterator(e), up_to desired: Int) -> Iterator(e) {
-  iterator.thunk
+  iterator.continuation
   |> do_drop(desired)
   |> Iterator
 }
 
-// Transforming Iterators
-fn do_map(iterator, f) {
+fn do_map(continuation, f) {
   fn() {
-    case iterator() {
-      Continue(e, iterator) -> Continue(f(e), do_map(iterator, f))
+    case continuation() {
+      Continue(e, continuation) -> Continue(f(e), do_map(continuation, f))
       Stop -> Stop
     }
   }
 }
 
-// TODO: document
+/// Create an iterator from an existing iterator and a transformation function.
+///
+/// Each element in the new iterator will be the result of calling the given
+/// function on the elements in the given iterator.
+///
+/// This function does not evaluate the elements of the iterator, the
+/// computation is performed when the iterator is later run.
+///
+/// ## Examples
+///
+///    > [1, 2, 3] |> from_list |> map(fn(x) { x * 2 }) |> to_list
+///    [2, 4, 6]
+///
 pub fn map(over iterator: Iterator(a), with f: fn(a) -> b) -> Iterator(b) {
-  iterator.thunk
+  iterator.continuation
   |> do_map(f)
   |> Iterator
 }
@@ -169,12 +266,25 @@ fn do_filter(iterator, predicate) {
   }
 }
 
-// TODO: document
+/// Create an iterator from an existing iterator and a predicate function.
+///
+/// The new iterator will contain elements from the first iterator for which
+/// the given function returns `True`.
+///
+/// This function does not evaluate the elements of the iterator, the
+/// computation is performed when the iterator is later run.
+///
+/// ## Examples
+///
+///    > import gleam/int
+///    > [1, 2, 3, 4] |> from_list |> filter(int.is_even) |> to_list
+///    [2, 4]
+///
 pub fn filter(
   iterator: Iterator(a),
   for predicate: fn(a) -> Bool,
 ) -> Iterator(a) {
-  iterator.thunk
+  iterator.continuation
   |> do_filter(predicate)
   |> Iterator
 }
@@ -188,10 +298,16 @@ fn do_cycle(next: fn() -> Action(a), reset: fn() -> Action(a)) {
   }
 }
 
-// TODO: document
+/// Create an iterator that repeats a given iterator infinitely.
+///
+/// ## Examples
+///
+///    > [1, 2] |> from_list |> cycle |> take(6)
+///    [1, 2, 1, 2, 1, 2]
+///
 pub fn cycle(iterator: Iterator(a)) -> Iterator(a) {
-  iterator.thunk
-  |> do_cycle(iterator.thunk)
+  iterator.continuation
+  |> do_cycle(iterator.continuation)
   |> Iterator
 }
 
@@ -202,8 +318,21 @@ fn do_range(current, limit, inc) -> fn() -> Action(Int) {
   }
 }
 
-// TODO: document
-pub fn range(from start, to stop) -> Iterator(Int) {
+/// Create an iterator of ints, starting at a given start int and stepping by
+/// one to a given end int.
+///
+/// ## Examples
+///
+///    > range(from: 1, to: 5) |> to_list
+///    [1, 2, 3, 4]
+///
+///    > range(from: 1, to: -2) |> to_list
+///    [1, 0, -1]
+///
+///    > range(from: 0, to: 0) |> to_list
+///    []
+///
+pub fn range(from start: Int, to stop: Int) -> Iterator(Int) {
   case start < stop {
     True -> 1
     False -> -1
