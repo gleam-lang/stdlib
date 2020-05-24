@@ -3,7 +3,7 @@
 ## Unreleased
 
 - Created the `set` module with the `new`, `insert`, and `contains` functions.
-- Created the `io` module with the `print` function.
+- Created the `io` module with the `print`, `println`, and `debug` functions.
 - Created the `queue` module with the `new`, `from_list`, `to_list`,
   `is_empty`, `length`, `push_back`, `push_front`, `pop_back`, `pop_front`,
   `reverse`, `is_logically_equal`, and `is_equal` functions.
@@ -18,7 +18,8 @@
   `pop_grapheme` and `to_graphemes' functions.
 - `uri` module created with `parse`, `parse_query`, `path_segments`,
   `query_to_string` and `to_string`.
-- The `dynamic` module gains the `map`, `opaque_list`, `tuple2`, and `tuple2_of` functions.
+- The `dynamic` module gains the `map`, `opaque_list`, `tuple2`, and
+  `tuple2_of` functions.
 - The `list` module gains the `filter_map` function.
 - The `list.contains` label `has` has been changed to `any`.
 
