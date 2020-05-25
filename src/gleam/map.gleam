@@ -315,7 +315,7 @@ fn do_fold(
 ///    "abc"
 ///
 pub fn fold(
-  map: Map(k, v),
+  over map: Map(k, v),
   from initial: acc,
   with fun: fn(k, v, acc) -> acc,
 ) -> acc {

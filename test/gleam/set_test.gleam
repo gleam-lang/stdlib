@@ -58,3 +58,9 @@ pub fn from_list_test() {
   |> list.sort(by: int.compare)
   |> should.equal([1, 3, 3, 4])
 }
+
+pub fn fold_test() {
+  [1, 3, 9]
+  |> set.from_list
+  |> set.fold(from: 0, with: fn(m, a) { m + a })
+}
