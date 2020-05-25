@@ -79,3 +79,15 @@ pub fn take_test() {
   |> set.take([1, 3, 5])
   |> should.equal(set.from_list([1, 3]))
 }
+
+pub fn union_test() {
+  set.union(set.from_list([1, 2]), set.from_list([2, 3]))
+  |> set.to_list
+  |> should.equal([1, 2, 3])
+}
+
+pub fn intersection_test() {
+  set.intersection(set.from_list([1, 2]), set.from_list([2, 3]))
+  |> set.to_list
+  |> should.equal([2])
+}
