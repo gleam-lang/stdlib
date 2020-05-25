@@ -30,3 +30,11 @@ pub fn contains_test() {
   |> set.contains(this: 1)
   |> should.be_false
 }
+
+pub fn delete_test() {
+  set.new()
+  |> set.insert(1)
+  |> set.delete(1)
+  |> set.contains(1)
+  |> should.be_false
+}
