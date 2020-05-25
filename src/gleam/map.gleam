@@ -179,8 +179,8 @@ external fn erl_filter(
 ///    > |> filter(fn(key, value) { True })
 ///    from_list([tuple("a", 0), tuple("b", 1)])
 ///
-pub fn filter(in map: Map(k, v), for predicate: fn(k, v) -> Bool) -> Map(k, v) {
-  erl_filter(predicate, map)
+pub fn filter(in map: Map(k, v), for property: fn(k, v) -> Bool) -> Map(k, v) {
+  erl_filter(property, map)
 }
 
 external fn erl_take(List(k), Map(k, v)) -> Map(k, v) =
@@ -199,7 +199,7 @@ external fn erl_take(List(k), Map(k, v)) -> Map(k, v) =
 ///    > |> take(["a", "b", "c"])
 ///    from_list([tuple("a", 0), tuple("b", 1)])
 ///
-pub fn take(from map: Map(k, v), drop desired_keys: List(k)) -> Map(k, v) {
+pub fn take(from map: Map(k, v), keeping desired_keys: List(k)) -> Map(k, v) {
   erl_take(desired_keys, map)
 }
 

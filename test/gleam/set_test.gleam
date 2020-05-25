@@ -56,11 +56,26 @@ pub fn from_list_test() {
   |> set.from_list
   |> set.to_list
   |> list.sort(by: int.compare)
-  |> should.equal([1, 3, 3, 4])
+  |> should.equal([1, 2, 3, 4])
 }
 
 pub fn fold_test() {
   [1, 3, 9]
   |> set.from_list
   |> set.fold(from: 0, with: fn(m, a) { m + a })
+}
+
+pub fn filter_test() {
+  [1, 4, 6, 3, 675, 44, 67]
+  |> set.from_list()
+  |> set.filter(for: int.is_even)
+  |> set.to_list
+  |> should.equal([4, 6, 44])
+}
+
+pub fn take_test() {
+  [1, 2, 3]
+  |> set.from_list
+  |> set.take([1, 3, 5])
+  |> should.equal(set.from_list([1, 3]))
 }
