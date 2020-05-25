@@ -169,3 +169,44 @@ pub fn take(
 ) -> Set(member) {
   Set(map.take(from: set.map, keeping: desired))
 }
+
+fn order(
+  first: Set(member),
+  second: Set(member),
+) -> tuple(Set(member), Set(member)) {
+  case map.size(first.map) > map.size(second.map) {
+    True -> tuple(first, second)
+    False -> tuple(second, first)
+  }
+}
+
+/// Create a new set that contains all members of both given sets.
+///
+/// This function runs in loglinear time.
+///
+/// ## Examples
+///
+///     > union(from_list([1, 2]), from_list([2, 3])) |> to_list
+///     [1, 2, 3]
+///
+pub fn union(of first: Set(member), and second: Set(member)) -> Set(member) {
+  let tuple(larger, smaller) = order(first, second)
+  fold(over: smaller, from: larger, with: fn(m, a) { insert(a, m) })
+}
+
+/// Create a new set that contains members that are present in both given sets.
+///
+/// This function runs in loglinear time.
+///
+/// ## Examples
+///
+///     > intersection(from_list([1, 2]), from_list([2, 3])) |> to_list
+///     [2]
+///
+pub fn intersection(
+  of first: Set(member),
+  and second: Set(member),
+) -> Set(member) {
+  let tuple(larger, smaller) = order(first, second)
+  take(from: larger, keeping: to_list(smaller))
+}
