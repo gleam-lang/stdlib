@@ -426,7 +426,7 @@ pub fn flatten(lists: List(List(a))) -> List(a) {
 ///
 /// This function runs in linear time.
 ///
-pub fn fold(list: List(a), from initial: b, with fun: fn(a, b) -> b) -> b {
+pub fn fold(over list: List(a), from initial: b, with fun: fn(a, b) -> b) -> b {
   case list {
     [] -> initial
     [x, ..rest] -> fold(rest, fun(x, initial), fun)

@@ -1,5 +1,6 @@
 import gleam/map.{Map}
 import gleam/result
+import gleam/list
 
 /// A set is a collection of unique elements of the same type.
 ///
@@ -65,6 +66,8 @@ pub fn contains(in set: Set(element), this member: element) -> Bool {
 /// Remove an element from a set. If the set does not contain the element then
 /// the set is returned unchanged.
 ///
+/// This function runs in logarithmic time.
+///
 /// ## Examples
 ///
 ///    > new() |> insert(2) |> delete(2) |> contains(1)
@@ -79,6 +82,8 @@ pub fn delete(from set: Set(element), this member: element) -> Set(element) {
 /// The list has no specific ordering, any unintentional ordering may change in
 /// future versions of Gleam or Erlang.
 ///
+/// This function runs in linear time.
+///
 /// ## Examples
 ///
 ///    > new() |> insert(2) |> to_list
@@ -86,4 +91,23 @@ pub fn delete(from set: Set(element), this member: element) -> Set(element) {
 ///
 pub fn to_list(set: Set(element)) -> List(element) {
   map.keys(set.map)
+}
+
+/// Create a new set of the elements in a given list.
+///
+/// This function runs in loglinear time.
+///
+/// ## Examples
+///
+///    > import gleam/list
+///    > [1, 1, 2, 4, 3, 2] |> from_list |> to_list |> list.sort
+///    [1, 3, 3, 4]
+///
+pub fn from_list(elements: List(element)) -> Set(element) {
+  let map = list.fold(
+    over: elements,
+    from: map.new(),
+    with: fn(k, m) { map.insert(m, k, []) },
+  )
+  Set(map)
 }
