@@ -50,3 +50,11 @@ pub fn to_list_test() {
   |> list.sort(by: int.compare)
   |> should.equal([2, 3, 4])
 }
+
+pub fn from_list_test() {
+  [1, 1, 2, 4, 3, 2]
+  |> set.from_list
+  |> set.to_list
+  |> list.sort(by: int.compare)
+  |> should.equal([1, 3, 3, 4])
+}
