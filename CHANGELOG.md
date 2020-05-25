@@ -6,7 +6,7 @@
   `from_list`, `fold`, `run`, `to_list`, `take`, `drop`, `map`, `filter`,
   `cycle`, and `range` functions.
 - Created the `set` module with the `new`, `insert`, `delete`, `to_list`,
-  `from_list`, `fold`, and `contains` functions.
+  `from_list`, `fold`, `take`, and `contains` functions.
 - Created the `io` module with the `print`, `println`, and `debug` functions.
 - Created the `queue` module with the `new`, `from_list`, `to_list`,
   `is_empty`, `length`, `push_back`, `push_front`, `pop_back`, `pop_front`,
@@ -29,6 +29,7 @@
 - The `list.sort` label `sort_by` has been changed to `by`.
 - The `list.fold`'s first argument gained the label `over`.
 - The `map.fold`'s first argument gained the label `over`.
+- The `map.take`'s `drop` arguement has been changed to `keeping`.
 
 ## v0.8.0 - 2020-04-28
 

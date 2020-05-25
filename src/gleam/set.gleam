@@ -132,3 +132,40 @@ pub fn fold(
 ) -> acc {
   map.fold(over: set.map, from: initial, with: fn(k, _, a) { reducer(k, a) })
 }
+
+/// Create a new set from an existing set, minus any members that a given
+/// function returns False for.
+///
+/// This function runs in loglinear time.
+///
+/// ## Examples
+///
+///    > import gleam/int
+///    > from_list([1, 4, 6, 3, 675, 44, 67])
+///    > |> filter(for: int.is_even)
+///    > |> to_list
+///    [4, 6, 44]
+///
+pub fn filter(
+  in set: Set(member),
+  for property: fn(member) -> Bool,
+) -> Set(member) {
+  Set(map.filter(in: set.map, for: fn(m, _) { property(m) }))
+}
+
+/// Create a new map from a given map, only including any members which are in
+/// a given list.
+///
+/// This function runs in loglinear time.
+///
+/// ## Examples
+///
+///    > from_list([1, 2, 3]) |> take([1, 3, 5]) |> to_list
+///    [1, 3]
+///
+pub fn take(
+  from set: Set(member),
+  keeping desired: List(member),
+) -> Set(member) {
+  Set(map.take(from: set.map, keeping: desired))
+}
