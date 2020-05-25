@@ -73,3 +73,17 @@ pub fn contains(in set: Set(element), this member: element) -> Bool {
 pub fn delete(from set: Set(element), this member: element) -> Set(element) {
   Set(map: map.delete(set.map, member))
 }
+
+/// Convert the set into a list of the contained elements.
+///
+/// The list has no specific ordering, any unintentional ordering may change in
+/// future versions of Gleam or Erlang.
+///
+/// ## Examples
+///
+///    > new() |> insert(2) |> to_list
+///    [2]
+///
+pub fn to_list(set: Set(element)) -> List(element) {
+  map.keys(set.map)
+}
