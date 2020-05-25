@@ -61,3 +61,15 @@ pub fn contains(in set: Set(element), this member: element) -> Bool {
   |> map.get(member)
   |> result.is_ok
 }
+
+/// Remove an element from a set. If the set does not contain the element then
+/// the set is returned unchanged.
+///
+/// ## Examples
+///
+///    > new() |> insert(2) |> delete(2) |> contains(1)
+///    False
+///
+pub fn delete(from set: Set(element), this member: element) -> Set(element) {
+  Set(map: map.delete(set.map, member))
+}

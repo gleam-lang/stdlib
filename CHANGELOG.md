@@ -5,7 +5,8 @@
 - Created the `iterator` module with the `unfold`, `repeatedly`, `repeat`,
   `from_list`, `fold`, `run`, `to_list`, `take`, `drop`, `map`, `filter`,
   `cycle`, and `range` functions.
-- Created the `set` module with the `new`, `insert`, and `contains` functions.
+- Created the `set` module with the `new`, `insert`, `delete`, and `contains`
+  functions.
 - Created the `io` module with the `print`, `println`, and `debug` functions.
 - Created the `queue` module with the `new`, `from_list`, `to_list`,
   `is_empty`, `length`, `push_back`, `push_front`, `pop_back`, `pop_front`,
