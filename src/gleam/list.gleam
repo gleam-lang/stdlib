@@ -721,10 +721,10 @@ fn do_sort(
 /// ## Examples
 ///
 ///    > import gleam/int
-///    > list.sort([4, 3, 6, 5, 4, 1, 2], int.compare)
+///    > list.sort([4, 3, 6, 5, 4, 1, 2], by: int.compare)
 ///    [1, 2, 3, 4, 4, 5, 6]
 ///
-pub fn sort(list: List(a), sort_by compare: fn(a, a) -> Order) -> List(a) {
+pub fn sort(list: List(a), by compare: fn(a, a) -> Order) -> List(a) {
   do_sort(list, compare, length(list))
 }
 

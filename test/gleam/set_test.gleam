@@ -1,5 +1,7 @@
 import gleam/should
 import gleam/set
+import gleam/list
+import gleam/int
 
 pub fn size_test() {
   set.new()
@@ -37,4 +39,14 @@ pub fn delete_test() {
   |> set.delete(1)
   |> set.contains(1)
   |> should.be_false
+}
+
+pub fn to_list_test() {
+  set.new()
+  |> set.insert(2)
+  |> set.insert(3)
+  |> set.insert(4)
+  |> set.to_list
+  |> list.sort(by: int.compare)
+  |> should.equal([2, 3, 4])
 }
