@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.8.0 - 2020-05-26
 
 - Created the `iterator` module with the `unfold`, `repeatedly`, `repeat`,
   `from_list`, `fold`, `run`, `to_list`, `take`, `drop`, `map`, `filter`,
