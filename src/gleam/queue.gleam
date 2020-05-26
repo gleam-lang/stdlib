@@ -30,8 +30,8 @@ pub fn new() -> Queue(a) {
 ///
 /// # Examples
 ///
-///   > [1, 2, 3] |> from_list |> length
-///   3
+///    > [1, 2, 3] |> from_list |> length
+///    3
 ///
 pub fn from_list(list: List(a)) -> Queue(a) {
   Queue(in: list, out: [])
@@ -44,8 +44,8 @@ pub fn from_list(list: List(a)) -> Queue(a) {
 ///
 /// # Examples
 ///
-///   > new() |> push_back(1) |> push_back(2) |> to_list
-///   [1, 2]
+///    > new() |> push_back(1) |> push_back(2) |> to_list
+///    [1, 2]
 ///
 pub fn to_list(queue: Queue(a)) -> List(a) {
   queue.out
@@ -95,8 +95,8 @@ pub fn length(queue: Queue(a)) -> Int {
 ///
 /// # Examples
 ///
-///   > [0, 0] |> from_list |> push_back(1) |> to_list
-///   [0, 0, 1]
+///    > [0, 0] |> from_list |> push_back(1) |> to_list
+///    [0, 0, 1]
 ///
 pub fn push_back(onto queue: Queue(a), this item: a) -> Queue(a) {
   Queue(in: [item, ..queue.in], out: queue.out)
@@ -106,8 +106,8 @@ pub fn push_back(onto queue: Queue(a), this item: a) -> Queue(a) {
 ///
 /// # Examples
 ///
-///   > [0, 0] |> from_list |> push_front(1) |> to_list
-///   [1, 0, 0]
+///    > [0, 0] |> from_list |> push_front(1) |> to_list
+///    [1, 0, 0]
 ///
 pub fn push_front(onto queue: Queue(a), this item: a) -> Queue(a) {
   Queue(in: queue.in, out: [item, ..queue.out])
