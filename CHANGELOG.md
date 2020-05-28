@@ -1,5 +1,8 @@
 # Changelog
 
+- `binary` module created with `from_string`, `byte_size`, `part`,
+  `int_to_u32` and `int_from_u32`.
+
 ## 0.9.0 - 2020-05-26
 
 - Created the `iterator` module with the `unfold`, `repeatedly`, `repeat`,
