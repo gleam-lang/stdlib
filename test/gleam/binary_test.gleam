@@ -12,19 +12,35 @@ pub fn length_test() {
 pub fn part_test() {
   binary.from_string("hello")
   |> binary.part(0, 5)
-  |> should.equal(binary.from_string("hello"))
+  |> should.equal(Ok(binary.from_string("hello")))
 
   binary.from_string("hello")
   |> binary.part(0, 0)
-  |> should.equal(binary.from_string(""))
+  |> should.equal(Ok(binary.from_string("")))
 
   binary.from_string("hello")
   |> binary.part(2, 2)
-  |> should.equal(binary.from_string("ll"))
+  |> should.equal(Ok(binary.from_string("ll")))
 
   binary.from_string("hello")
   |> binary.part(5, -2)
-  |> should.equal(binary.from_string("lo"))
+  |> should.equal(Ok(binary.from_string("lo")))
+
+  binary.from_string("")
+  |> binary.part(0, 0)
+  |> should.equal(Ok(binary.from_string("")))
+
+  binary.from_string("hello")
+  |> binary.part(6, 0)
+  |> should.equal(Error(Nil))
+
+  binary.from_string("hello")
+  |> binary.part(-1, 1)
+  |> should.equal(Error(Nil))
+
+  binary.from_string("hello")
+  |> binary.part(1, 6)
+  |> should.equal(Error(Nil))
 }
 
 pub fn u32_test() {
