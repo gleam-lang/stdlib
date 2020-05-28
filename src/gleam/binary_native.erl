@@ -1,5 +1,10 @@
 -module (binary_native).
--export ([int_to_u32/1, int_from_u32/1]).
+-export ([int_to_u32/1, int_from_u32/1, part/3]).
+
+part(Bin, Pos, Len) ->
+  try {ok, binary:part(Bin, Pos, Len)} catch
+    error:badarg -> {error, nil}
+  end.
 
 int_to_u32(I) when 0 =< I, I < 4294967296 ->
   {ok, <<I:32>>};
