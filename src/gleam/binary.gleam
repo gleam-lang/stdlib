@@ -9,14 +9,18 @@ pub external fn from_string(String) -> Binary =
 
 /// Returns an integer which is the number of bytes in the binary.
 pub external fn byte_size(Binary) -> Int =
-"erlang" "byte_size"
+  "erlang" "byte_size"
 
 /// Extracts the part of a binary.
 ///
 /// Binary part will start at given position and continue up to specified length.
 /// A negative length can be used to extract bytes at the end of a binary:
-pub external fn part(string: Binary, position: Int, length: Int) -> Result(Binary, Nil) =
-"binary_native" "part"
+pub external fn part(
+  string: Binary,
+  position: Int,
+  length: Int,
+) -> Result(Binary, Nil) =
+  "binary_native" "part"
 
 /// Convert integer to unsigned 32 bits.
 ///
