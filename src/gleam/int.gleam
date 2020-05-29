@@ -42,6 +42,23 @@ pub external fn to_string(Int) -> String =
 pub external fn to_base_string(Int, Int) -> String =
   "erlang" "integer_to_binary"
 
+/// Returns a boolean representation of the given number.
+///
+/// ## Examples
+///
+///    > to_bool(1)
+///    True
+///
+///    > to_bool(0)
+///    False
+///
+///    > to_bool(-2)
+///    True
+///
+pub fn to_bool(x: Int) -> Bool {
+  x != 0
+}
+
 /// Compares two ints, returning an order.
 ///
 /// ## Examples
