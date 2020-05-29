@@ -9,7 +9,9 @@
          decode_element/2, parse_int/1, parse_float/1, compare_strings/2,
          string_pop_grapheme/1, string_starts_with/2, string_ends_with/2,
          string_pad/4, decode_tuple2/1, decode_map/1, binary_int_to_u32/1,
-         binary_int_from_u32/1, binary_append/2, binary_part_/3]).
+         binary_int_from_u32/1, binary_append/2, binary_part_/3,
+         regex_from_string/1, regex_from_string_with/2, regex_match/2,
+         regex_split/2, regex_scan/2]).
 
 should_equal(Actual, Expected) -> ?assertEqual(Expected, Actual).
 should_not_equal(Actual, Expected) -> ?assertNotEqual(Expected, Actual).
@@ -158,3 +160,53 @@ binary_int_from_u32(<<I:32>>) ->
   {ok, I};
 binary_int_from_u32(_) ->
   {error, nil}.
+
+regex_from_string_with_opts(Options, String) ->
+    case re:compile(String, Options) of
+        {ok, MP} -> {ok, MP};
+        {error, {Str, Pos}} ->
+            {error, {from_string_error, unicode:characters_to_binary(Str), Pos}}
+    end.
+
+regex_from_string(String) ->
+    regex_from_string_with_opts([unicode], String).
+
+regex_from_string_with(Options, String) ->
+    OptList = case Options of
+        {options, true, _} -> [unicode, caseless];
+        _ -> [unicode]
+    end,
+    case Options of
+        {options, _, true} -> regex_from_string_with_opts([multiline | OptList], String);
+        _ -> regex_from_string_with_opts(OptList, String)
+    end.
+
+regex_match(Regex, String) ->
+    case re:run(String, Regex) of
+        {match, _} -> true;
+        _ -> false
+    end.
+
+regex_split(Regex, String) ->
+    re:split(String, Regex).
+
+regex_submatches(String, {S, L}) ->
+    SUBMATCH = string:slice(String, S, L),
+    case string:is_empty(SUBMATCH) of
+        true -> none;
+        false -> {some, SUBMATCH}
+    end.
+
+regex_matches(String, [{S, L} | Submatches], Number) ->
+    {match, string:slice(String, S, L), S, Number,
+     lists:map(fun(X) -> regex_submatches(String, X) end, Submatches)}.
+
+regex_captured(_, [], _) -> [];
+regex_captured(String, [ H | T ], Number) ->
+    [ regex_matches(String, H, Number) | regex_captured(String, T, Number + 1) ].
+
+regex_scan(Regex, String) ->
+    case re:run(String, Regex, [global]) of
+        {match, Captured} -> regex_captured(String, Captured, 1);
+        _ -> []
+    end.
