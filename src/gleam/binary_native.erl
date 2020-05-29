@@ -1,5 +1,8 @@
 -module (binary_native).
--export ([int_to_u32/1, int_from_u32/1, part/3]).
+-export ([int_to_u32/1, int_from_u32/1, append/2, part/3]).
+
+append(First, Second) ->
+  <<First/binary, Second/binary>>.
 
 part(Bin, Pos, Len) ->
   try {ok, binary:part(Bin, Pos, Len)} catch

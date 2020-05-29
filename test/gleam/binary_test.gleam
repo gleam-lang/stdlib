@@ -9,6 +9,17 @@ pub fn length_test() {
   |> should.equal(0)
 }
 
+pub fn append_test() {
+  binary.from_string("Test")
+  |> binary.append(binary.from_string(" Me"))
+  |> should.equal(binary.from_string("Test Me"))
+
+  let Ok(zero_32bit) = binary.int_to_u32(0)
+  zero_32bit
+  |> binary.append(binary.from_string(""))
+  |> should.equal(zero_32bit)
+}
+
 pub fn part_test() {
   binary.from_string("hello")
   |> binary.part(0, 5)
