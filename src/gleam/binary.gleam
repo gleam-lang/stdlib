@@ -19,7 +19,7 @@ pub external fn byte_size(Binary) -> Int =
 ///    "butterfly"
 ///
 pub external fn append(first: Binary, second: Binary) -> Binary =
-  "binary_native" "append"
+  "gleam_stdlib" "binary_append"
 
 /// Extracts part of a binary.
 ///
@@ -30,16 +30,16 @@ pub external fn part(
   position: Int,
   length: Int,
 ) -> Result(Binary, Nil) =
-  "binary_native" "part"
+  "gleam_stdlib" "binary_part_"
 
 /// Convert an integer to unsigned 32 bits.
 ///
 /// Returns an error if integer is less than zero or equal to or larger than 2^32.
 pub external fn int_to_u32(Int) -> Result(Binary, Nil) =
-  "binary_native" "int_to_u32"
+  "gleam_stdlib" "binary_int_to_u32"
 
 /// Convert unsigned 32 bits to an integer
 ///
 /// Returns an error if the binary is not 32 bits in length.
 pub external fn int_from_u32(Binary) -> Result(Int, Nil) =
-  "binary_native" "int_from_u32"
+  "gleam_stdlib" "binary_int_from_u32"
