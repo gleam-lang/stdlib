@@ -11,6 +11,15 @@ pub external fn from_string(String) -> Binary =
 pub external fn byte_size(Binary) -> Int =
   "erlang" "byte_size"
 
+/// Create a new binary by joining two binaries.
+///
+/// ## Examples
+///
+///    > append(to: "butter", suffix: "fly")
+///    "butterfly"
+///
+pub external fn append(first: Binary, second: Binary) -> Binary = "binary_native" "append"
+
 /// Extracts part of a binary.
 ///
 /// Binary part will start at given position and continue up to specified length.

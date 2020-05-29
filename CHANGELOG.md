@@ -1,6 +1,6 @@
 # Changelog
 
-- `binary` module created with `from_string`, `byte_size`, `part`,
+- `binary` module created with `from_string`, `byte_size`, `append`, `part`,
   `int_to_u32` and `int_from_u32`.
 
 ## 0.9.0 - 2020-05-26
