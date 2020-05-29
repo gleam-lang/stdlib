@@ -18,7 +18,8 @@ pub external fn byte_size(Binary) -> Int =
 ///    > append(to: "butter", suffix: "fly")
 ///    "butterfly"
 ///
-pub external fn append(first: Binary, second: Binary) -> Binary = "binary_native" "append"
+pub external fn append(first: Binary, second: Binary) -> Binary =
+  "binary_native" "append"
 
 /// Extracts part of a binary.
 ///
