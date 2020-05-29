@@ -234,7 +234,7 @@ fn do_map(list: List(a), fun: fn(a) -> b, acc: List(b)) -> List(b) {
   }
 }
 
-/// Returns a new list containing only the elements of the first list after the
+/// Returns a new list containing the elements of the first list after the
 /// function has been applied to each one.
 ///
 /// ## Examples
@@ -458,7 +458,7 @@ pub fn fold_right(
 /// Find the first element in a given list for which the given function returns
 /// True.
 ///
-/// Returns `Error(Nil)` if no the function does not return True for any of the
+/// Returns `Error(Nil)` if the function does not return True for any of the
 /// elements.
 ///
 /// ## Examples
@@ -488,7 +488,7 @@ pub fn find(
 /// Find the first element in a given list for which the given function returns
 /// `Ok(new_value)` and return the new value for that element.
 ///
-/// Returns `Error(Nil)` if no the function does not return Ok for any of the
+/// Returns `Error(Nil)` if the function does not return Ok for any of the
 /// elements.
 ///
 /// ## Examples
@@ -549,7 +549,7 @@ pub fn all(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
 ///    > any([], fn(x) { x > 3 })
 ///    False
 ///
-///    > any([4, 5], fn(x) { x > 3 })
+///    > any([2, 3], fn(x) { x > 3 })
 ///    False
 ///
 ///    > any([4, 3], fn(x) { x > 3 })
