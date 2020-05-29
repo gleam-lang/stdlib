@@ -52,6 +52,24 @@ pub fn to_base_string_test() {
   |> should.equal("-64")
 }
 
+pub fn to_bool_test() {
+  0
+  |> int.to_bool
+  |> should.be_false
+  
+  1
+  |> int.to_bool
+  |> should.be_true
+  
+  2
+  |> int.to_bool
+  |> should.be_true
+  
+  -2
+  |> int.to_bool
+  |> should.be_true
+}
+
 pub fn compare_test() {
   int.compare(0, 0)
   |> should.equal(order.Eq)
