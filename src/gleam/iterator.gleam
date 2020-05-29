@@ -86,7 +86,7 @@ pub fn repeat(x: element) -> Iterator(element) {
   repeatedly(fn() { x })
 }
 
-/// Create an iterator the yields each element in a given list.
+/// Create an iterator that yields each element in a given list.
 ///
 /// ## Examples
 ///
