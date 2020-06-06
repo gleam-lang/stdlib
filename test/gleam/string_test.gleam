@@ -38,7 +38,7 @@ pub fn split_test() {
   |> should.equal(["Gleam", "Erlang,Elixir"])
 }
 
-pub fn split_first_test() {
+pub fn split_once_test() {
   "Gleam,Erlang,Elixir"
   |> string.split_once(",")
   |> should.equal(Ok(tuple("Gleam", "Erlang,Elixir")))
