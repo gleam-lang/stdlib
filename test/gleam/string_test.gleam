@@ -38,6 +38,20 @@ pub fn split_test() {
   |> should.equal(["Gleam", "Erlang,Elixir"])
 }
 
+pub fn split_first_test() {
+  "Gleam,Erlang,Elixir"
+  |> string.split_once(",")
+  |> should.equal(Ok(tuple("Gleam", "Erlang,Elixir")))
+
+  "Gleam"
+  |> string.split_once(",")
+  |> should.equal(Error(Nil))
+
+  ""
+  |> string.split_once(",")
+  |> should.equal(Error(Nil))
+}
+
 pub fn replace_test() {
   "Gleam,Erlang,Elixir"
   |> string.replace(",", "++")
