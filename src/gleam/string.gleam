@@ -263,13 +263,15 @@ external fn erl_split(String, String) -> List(String) =
 ///    > split_once("home/gleam/desktop/", on: "?")
 ///    Error(Nil)
 ///
-pub fn split_once(x: String, on substring: String) -> Result(tuple(String, String), Nil) {
-    case erl_split(x, substring) {
-        [first, rest] -> Ok(tuple(first, rest))
-        _ -> Error(Nil)
-    }
+pub fn split_once(
+  x: String,
+  on substring: String,
+) -> Result(tuple(String, String), Nil) {
+  case erl_split(x, substring) {
+    [first, rest] -> Ok(tuple(first, rest))
+    _ -> Error(Nil)
+  }
 }
-
 
 /// Create a new string by joining two strings together.
 ///
