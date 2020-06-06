@@ -239,7 +239,7 @@ pub external fn ends_with(String, String) -> Bool =
 /// ## Examples
 ///
 ///    > split("home/gleam/desktop/", on: "/")
-///    ["home","gleam","desktop", ""]
+///    ["home", "gleam", "desktop", ""]
 ///
 pub fn split(x: String, on substring: String) -> List(String) {
   x
@@ -247,6 +247,29 @@ pub fn split(x: String, on substring: String) -> List(String) {
   |> iodata.split(on: substring)
   |> list.map(with: iodata.to_string)
 }
+
+external fn erl_split(String, String) -> List(String) =
+  "string" "split"
+
+/// Splits a string a single time on the given substring.
+///
+/// Returns an error if substring not present.
+///
+/// ## Examples
+///
+///    > split_once("home/gleam/desktop/", on: "/")
+///    Ok(tuple("home", "gleam/desktop/"))
+///
+///    > split_once("home/gleam/desktop/", on: "?")
+///    Error(Nil)
+///
+pub fn split_once(x: String, on substring: String) -> Result(tuple(String, String), Nil) {
+    case erl_split(x, substring) {
+        [first, rest] -> Ok(tuple(first, rest))
+        _ -> Error(Nil)
+    }
+}
+
 
 /// Create a new string by joining two strings together.
 ///
