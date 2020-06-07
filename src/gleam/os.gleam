@@ -34,12 +34,12 @@ pub fn get_env() -> List(tuple(String, String)) {
 
 /// Set an environment variable.
 pub fn insert_env(key: String, value: String) -> Nil {
-  let True = os_putenv(string_to_char_list(key), string_to_char_list(value))
+  os_putenv(string_to_char_list(key), string_to_char_list(value))
   Nil
 }
 
 /// Delete an environment variable.
 pub fn delete_env(key: String) -> Nil {
-  let True = os_unsetenv(string_to_char_list(key))
+  os_unsetenv(string_to_char_list(key))
   Nil
 }
