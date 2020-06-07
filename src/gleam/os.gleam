@@ -33,7 +33,7 @@ pub fn get_env() -> List(tuple(String, String)) {
 }
 
 /// Set an environment variable.
-pub fn put_env(key: String, value: String) -> Nil {
+pub fn insert_env(key: String, value: String) -> Nil {
   let True = os_putenv(string_to_char_list(key), string_to_char_list(value))
   Nil
 }

@@ -3,7 +3,7 @@ import gleam/os
 import gleam/should
 
 pub fn env_test() {
-  os.put_env("GLEAM_TEST", "hello")
+  os.insert_env("GLEAM_TEST", "hello")
   os.get_env()
   |> list.key_find("GLEAM_TEST")
   |> should.equal(Ok("hello"))
