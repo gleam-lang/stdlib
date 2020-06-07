@@ -213,7 +213,7 @@ fn do_filter_map(
 }
 
 /// Returns a new list containing only the elements from the first list for
-/// which the given functions returns `True`.
+/// which the given functions returns `Ok(_)`.
 ///
 /// ## Examples
 ///
