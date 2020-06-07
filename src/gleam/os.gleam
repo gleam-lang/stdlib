@@ -1,6 +1,7 @@
 //// Function to interact with the host operating system.
 
 import gleam/list
+import gleam/map.{Map}
 import gleam/string
 
 // Internal type for erlang interop.
@@ -22,7 +23,7 @@ external fn string_to_char_list(String) -> CharList =
   "erlang" "binary_to_list"
 
 /// Return all environment variables set on the system.
-pub fn get_env() -> List(tuple(String, String)) {
+pub fn get_env() -> Map(String, String) {
   list.map(
     os_getenv(),
     fn(char_list) {
@@ -30,6 +31,7 @@ pub fn get_env() -> List(tuple(String, String)) {
       value
     },
   )
+  |> map.from_list()
 }
 
 /// Set an environment variable.
