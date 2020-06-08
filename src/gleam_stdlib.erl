@@ -8,8 +8,8 @@
          decode_thunk/1, decode_atom/1, decode_list/1, decode_field/2,
          decode_element/2, parse_int/1, parse_float/1, compare_strings/2,
          string_pop_grapheme/1, string_starts_with/2, string_ends_with/2,
-         string_pad/4, decode_tuple2/1, decode_map/1, binary_int_to_u32/1,
-         binary_int_from_u32/1, binary_append/2, binary_part_/3]).
+         string_pad/4, decode_tuple2/1, decode_map/1, bit_string_int_to_u32/1,
+         bit_string_int_from_u32/1, bit_string_append/2, bit_string_part_/3]).
 
 should_equal(Actual, Expected) -> ?assertEqual(Expected, Actual).
 should_not_equal(Actual, Expected) -> ?assertNotEqual(Expected, Actual).
@@ -141,20 +141,20 @@ string_pop_grapheme(String) ->
         _ -> {error, nil}
     end.
 
-binary_append(First, Second) ->
-  <<First/binary, Second/binary>>.
+bit_string_append(First, Second) ->
+  <<First/bitstring, Second/bitstring>>.
 
-binary_part_(Bin, Pos, Len) ->
+bit_string_part_(Bin, Pos, Len) ->
   try {ok, binary:part(Bin, Pos, Len)} catch
     error:badarg -> {error, nil}
   end.
 
-binary_int_to_u32(I) when 0 =< I, I < 4294967296 ->
+bit_string_int_to_u32(I) when 0 =< I, I < 4294967296 ->
   {ok, <<I:32>>};
-binary_int_to_u32(_) ->
+bit_string_int_to_u32(_) ->
   {error, nil}.
 
-binary_int_from_u32(<<I:32>>) ->
+bit_string_int_from_u32(<<I:32>>) ->
   {ok, I};
-binary_int_from_u32(_) ->
+bit_string_int_from_u32(_) ->
   {error, nil}.

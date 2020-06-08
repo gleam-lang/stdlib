@@ -1,7 +1,7 @@
 # Changelog
 
-- `binary` module created with `from_string`, `byte_size`, `append`, `part`,
-  `int_to_u32` and `int_from_u32`.
+- `bit_string` module created with `from_string`, `byte_size`, `append`,
+  `part`, `int_to_u32` and `int_from_u32`.
 - `os` module created with `get_env`, `insert_env`, `delete_env`.
 - The `string` module gains the `split_once` function.
 
