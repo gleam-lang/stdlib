@@ -75,3 +75,20 @@ pub fn find_test() {
     ],
   )
 }
+
+pub fn replace_test() {
+  let Ok(re) = regex.from_string("e+")
+
+  regex.replace(re, "Gleeeeam", "e")
+  |> should.equal("Gleam")
+
+  let Ok(re) = regex.from_string("([aeiou])")
+
+  regex.replace(re, "hello", "<\\1>")
+  |> should.equal("h<e>ll<o>")
+
+  let Ok(re) = regex.from_string("\\.(\\d)$")
+
+  regex.replace(re, "500.5", ".\\g{1}0")
+  |> should.equal("500.50")
+}

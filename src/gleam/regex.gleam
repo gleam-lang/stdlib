@@ -126,3 +126,22 @@ pub external fn split(Regex, String) -> List(String) =
 ///
 pub external fn scan(Regex, String) -> List(Match) =
   "gleam_stdlib" "regex_scan"
+
+/// Replace matches.
+///
+/// ## Examples
+///
+///    > let Ok(re) = regex.from_string("e+")
+///    > regex.replace(re, "Gleeeeam", "e")
+///    "Gleam"
+///
+///    > let Ok(re) = regex.from_string("([aeiou])")
+///    > regex.replace(re, "hello", "<\\1>")
+///    "h<e>ll<o>"
+///
+///    > let Ok(re) = regex.from_string("\\.(\\d)$")
+///    > regex.replace(re, "500.5", ".\\g{1}0")
+///    "500.50"
+///
+pub external fn replace(Regex, String, String) -> String =
+  "gleam_stdlib" "regex_replace"

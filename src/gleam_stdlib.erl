@@ -11,7 +11,7 @@
          string_pad/4, decode_tuple2/1, decode_map/1, binary_int_to_u32/1,
          binary_int_from_u32/1, binary_append/2, binary_part_/3,
          regex_from_string/1, regex_from_string_with/2, regex_match/2,
-         regex_split/2, regex_scan/2]).
+         regex_split/2, regex_scan/2, regex_replace/3]).
 
 should_equal(Actual, Expected) -> ?assertEqual(Expected, Actual).
 should_not_equal(Actual, Expected) -> ?assertNotEqual(Expected, Actual).
@@ -210,3 +210,6 @@ regex_scan(Regex, String) ->
         {match, Captured} -> regex_captured(String, Captured, 1);
         _ -> []
     end.
+
+regex_replace(Regex, Subject, Replacement) ->
+    re:replace(Subject, Regex, Replacement, [global, {return, binary}]).
