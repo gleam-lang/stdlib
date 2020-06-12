@@ -4,6 +4,7 @@
   `part`, `int_to_u32` and `int_from_u32`.
 - `os` module created with `get_env`, `insert_env`, `delete_env`.
 - The `string` module gains the `split_once` function.
+- The `dynamic` module gains the `bit_string` function.
 
 ## 0.9.0 - 2020-05-26
 
