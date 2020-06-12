@@ -9,7 +9,8 @@
          decode_element/2, parse_int/1, parse_float/1, compare_strings/2,
          string_pop_grapheme/1, string_starts_with/2, string_ends_with/2,
          string_pad/4, decode_tuple2/1, decode_map/1, bit_string_int_to_u32/1,
-         bit_string_int_from_u32/1, bit_string_append/2, bit_string_part_/3]).
+         bit_string_int_from_u32/1, bit_string_append/2, bit_string_part_/3,
+         decode_bit_string/1]).
 
 should_equal(Actual, Expected) -> ?assertEqual(Expected, Actual).
 should_not_equal(Actual, Expected) -> ?assertNotEqual(Expected, Actual).
@@ -59,6 +60,9 @@ decode_map(Data) -> decode_error_msg("a map", Data).
 
 decode_atom(Data) when is_atom(Data) -> {ok, Data};
 decode_atom(Data) -> decode_error_msg("an atom", Data).
+
+decode_bit_string(Data) when is_binary(Data) -> {ok, Data};
+decode_bit_string(Data) -> decode_error_msg("a bit_string", Data).
 
 decode_string(Data) when is_binary(Data) -> {ok, Data};
 decode_string(Data) -> decode_error_msg("a string", Data).
