@@ -6,7 +6,6 @@ import gleam/should
 import gleam/result
 import gleam/map
 
-
 pub fn bit_string_test() {
   ""
   |> dynamic.from
