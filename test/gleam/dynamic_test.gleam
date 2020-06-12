@@ -1,9 +1,33 @@
+import gleam/bit_string
 import gleam/dynamic
 import gleam/atom
 import gleam/list
 import gleam/should
 import gleam/result
 import gleam/map
+
+
+pub fn bit_string_test() {
+  ""
+  |> dynamic.from
+  |> dynamic.bit_string
+  |> should.equal(Ok(bit_string.from_string("")))
+
+  "Hello"
+  |> dynamic.from
+  |> dynamic.bit_string
+  |> should.equal(Ok(bit_string.from_string("Hello")))
+
+  1
+  |> dynamic.from
+  |> dynamic.bit_string
+  |> should.equal(Error("Expected a bit_string, got an int"))
+
+  []
+  |> dynamic.from
+  |> dynamic.bit_string
+  |> should.equal(Error("Expected a bit_string, got a list"))
+}
 
 pub fn string_test() {
   ""
