@@ -1,3 +1,4 @@
+import gleam/bit_string.{BitString}
 import gleam/list as list_mod
 import gleam/atom
 import gleam/map.{Map}
@@ -25,6 +26,20 @@ pub external fn from(a) -> Dynamic =
 ///
 pub external fn unsafe_coerce(Dynamic) -> a =
   "gleam_stdlib" "identity"
+
+/// Check to see whether a Dynamic value is a bit_string, and return the bit_string if
+/// it is.
+///
+/// ## Examples
+///
+///    > bit_string(from("Hello")) == bit_string.from_string("Hello")
+///    True
+///
+///    > bit_string(from(123))
+///    Error("Expected a BitString, got `123`")
+///
+pub external fn bit_string(from: Dynamic) -> Result(BitString, String) =
+  "gleam_stdlib" "decode_bit_string"
 
 /// Check to see whether a Dynamic value is a string, and return the string if
 /// it is.
