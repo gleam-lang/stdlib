@@ -45,3 +45,16 @@ pub fn delete_env(key: String) -> Nil {
   os_unsetenv(string_to_char_list(key))
   Nil
 }
+
+pub type TimeUnit {
+  Second
+  Millisecond
+  Microsecond
+  Nanosecond
+}
+
+/// Return the current OS system time.
+///
+/// https://erlang.org/doc/apps/erts/time_correction.html#OS_System_Time
+pub external fn system_time(TimeUnit) -> Int =
+  "os" "system_time"
