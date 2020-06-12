@@ -2,7 +2,8 @@
 
 - `bit_string` module created with `from_string`, `byte_size`, `append`,
   `part`, `int_to_u32` and `int_from_u32`.
-- `os` module created with `get_env`, `insert_env`, `delete_env`.
+- `os` module created with `get_env`, `insert_env`, `delete_env` and
+  `system_time`.
 - The `string` module gains the `split_once` function.
 - The `dynamic` module gains the `bit_string` function.
 
