@@ -61,7 +61,7 @@ decode_map(Data) -> decode_error_msg("a map", Data).
 decode_atom(Data) when is_atom(Data) -> {ok, Data};
 decode_atom(Data) -> decode_error_msg("an atom", Data).
 
-decode_bit_string(Data) when is_binary(Data) -> {ok, Data};
+decode_bit_string(Data) when is_bitstring(Data) -> {ok, Data};
 decode_bit_string(Data) -> decode_error_msg("a bit_string", Data).
 
 decode_string(Data) when is_binary(Data) -> {ok, Data};
