@@ -6,6 +6,7 @@
   `system_time`.
 - The `string` module gains the `split_once` function.
 - The `dynamic` module gains the `bit_string` function.
+- The `uri` module gains the `origin` and `merge` function.
 
 ## 0.9.0 - 2020-05-26
 
