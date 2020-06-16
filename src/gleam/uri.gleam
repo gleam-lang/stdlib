@@ -9,7 +9,7 @@
 
 import gleam/list
 import gleam/result
-import gleam/option.{Option}
+import gleam/option.{Option, Some, None}
 import gleam/string
 import gleam/dynamic.{Dynamic}
 import gleam/map.{Map}
@@ -163,4 +163,22 @@ pub fn to_string(uri: Uri) -> String {
   |> erl_to_string
   |> dynamic.string
   |> result.unwrap("")
+}
+
+/// Fetch the origin of a url
+///
+/// Return the origin of a url as defined in
+/// https://tools.ietf.org/html/rfc6454
+///
+/// The supported url schemes are `http` and `https`
+/// Urls without a scheme will return Error
+pub fn origin(uri: Uri) -> Result(String, Nil) {
+  let Uri(scheme: scheme, host: host, port: port, ..) = uri
+  case scheme {
+    Some("https") | Some("http") -> {
+      let origin = Uri(scheme, None, host, port, "", None, None)
+      Ok(to_string(origin))
+    }
+    _ -> Error(Nil)
+  }
 }

@@ -101,3 +101,33 @@ pub fn parse_segments_test() {
   should.equal(uri.path_segments("../bar"), ["bar"])
   should.equal(uri.path_segments("/foo/../bar"), ["bar"])
 }
+
+pub fn origin_test() {
+  let Ok(parsed) = uri.parse("http://example.test/path?foo#bar")
+  uri.origin(parsed)
+  |> should.equal(Ok("http://example.test"))
+
+  let Ok(parsed) = uri.parse("http://example.test:8080")
+  uri.origin(parsed)
+  |> should.equal(Ok("http://example.test:8080"))
+
+  let Ok(parsed) = uri.parse("https://example.test")
+  uri.origin(parsed)
+  |> should.equal(Ok("https://example.test"))
+
+  let Ok(parsed) = uri.parse("http:///path")
+  uri.origin(parsed)
+  |> should.equal(Ok("http://"))
+
+  let Ok(parsed) = uri.parse("http://")
+  uri.origin(parsed)
+  |> should.equal(Ok("http://"))
+
+  let Ok(parsed) = uri.parse("/path")
+  uri.origin(parsed)
+  |> should.equal(Error(Nil))
+
+  let Ok(parsed) = uri.parse("file:///dev/null")
+  uri.origin(parsed)
+  |> should.equal(Error(Nil))
+}
