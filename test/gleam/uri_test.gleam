@@ -131,3 +131,80 @@ pub fn origin_test() {
   uri.origin(parsed)
   |> should.equal(Error(Nil))
 }
+
+pub fn merge_test() {
+  let Ok(a) = uri.parse("/relative")
+  let Ok(b) = uri.parse("")
+  uri.merge(a, b)
+  |> should.equal(Error(Nil))
+
+  let Ok(a) = uri.parse("http://google.com/foo")
+  let Ok(b) = uri.parse("http://example.com/baz")
+  uri.merge(a, b)
+  |> should.equal(uri.parse("http://example.com/baz"))
+
+  let Ok(a) = uri.parse("http://google.com/foo")
+  let Ok(b) = uri.parse("http://example.com/.././bar/../../baz")
+  uri.merge(a, b)
+  |> should.equal(uri.parse("http://example.com/baz"))
+
+  let Ok(a) = uri.parse("http://google.com/foo")
+  let Ok(b) = uri.parse("//example.com/baz")
+  uri.merge(a, b)
+  |> should.equal(uri.parse("http://example.com/baz"))
+
+  let Ok(a) = uri.parse("http://google.com/foo")
+  let Ok(b) = uri.parse("//example.com/.././bar/../../../baz")
+  uri.merge(a, b)
+  |> should.equal(uri.parse("http://example.com/baz"))
+
+  let Ok(a) = uri.parse("http://example.com/foo/bar")
+  let Ok(b) = uri.parse("/baz")
+  uri.merge(a, b)
+  |> should.equal(uri.parse("http://example.com/baz"))
+
+  let Ok(a) = uri.parse("http://example.com/foo/bar")
+  let Ok(b) = uri.parse("baz")
+  uri.merge(a, b)
+  |> should.equal(uri.parse("http://example.com/foo/baz"))
+
+  let Ok(a) = uri.parse("http://example.com/foo/")
+  let Ok(b) = uri.parse("baz")
+  uri.merge(a, b)
+  |> should.equal(uri.parse("http://example.com/foo/baz"))
+
+  let Ok(a) = uri.parse("http://example.com")
+  let Ok(b) = uri.parse("baz")
+  uri.merge(a, b)
+  |> should.equal(uri.parse("http://example.com/baz"))
+
+  let Ok(a) = uri.parse("http://example.com")
+  let Ok(b) = uri.parse("/.././bar/../../../baz")
+  uri.merge(a, b)
+  |> should.equal(uri.parse("http://example.com/baz"))
+
+  let Ok(a) = uri.parse("http://example.com/foo/bar")
+  let Ok(b) = uri.parse("")
+  uri.merge(a, b)
+  |> should.equal(uri.parse("http://example.com/foo/bar"))
+
+  let Ok(a) = uri.parse("http://example.com/foo/bar")
+  let Ok(b) = uri.parse("#fragment")
+  uri.merge(a, b)
+  |> should.equal(uri.parse("http://example.com/foo/bar#fragment"))
+
+  let Ok(a) = uri.parse("http://example.com/foo/bar")
+  let Ok(b) = uri.parse("?query")
+  uri.merge(a, b)
+  |> should.equal(uri.parse("http://example.com/foo/bar?query"))
+
+  let Ok(a) = uri.parse("http://example.com/foo/bar?query1")
+  let Ok(b) = uri.parse("?query2")
+  uri.merge(a, b)
+  |> should.equal(uri.parse("http://example.com/foo/bar?query2"))
+
+  let Ok(a) = uri.parse("http://example.com/foo/bar?query")
+  let Ok(b) = uri.parse("")
+  uri.merge(a, b)
+  |> should.equal(uri.parse("http://example.com/foo/bar?query"))
+}
