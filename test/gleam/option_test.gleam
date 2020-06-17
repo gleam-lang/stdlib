@@ -54,3 +54,17 @@ pub fn map_option_test() {
   |> option.map(fn(x) { x + 1 })
   |> should.equal(None)
 }
+
+pub fn flatten_option_test() {
+  Some(Some(1))
+  |> option.flatten()
+  |> should.equal(Some(1))
+
+  Some(None)
+  |> option.flatten()
+  |> should.equal(None)
+
+  None
+  |> option.flatten()
+  |> should.equal(None)
+}

@@ -8,7 +8,7 @@
 - The `dynamic` module gains the `bit_string` function.
 - The `uri` module gains the `origin` and `merge` function.
 - The `io.debug` function returns the printed term.
-- Added the `map` function to the the `option` module.
+- The `option` module gains the the `map` and `flatten` functions.
 
 ## 0.9.0 - 2020-05-26
 
