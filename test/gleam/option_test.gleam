@@ -40,3 +40,17 @@ pub fn unwrap_option_test() {
   option.unwrap(None, 0)
   |> should.equal(0)
 }
+
+pub fn map_option_test() {
+  Some(1)
+  |> option.map(fn(x) { x + 1 })
+  |> should.equal(Some(2))
+
+  Some(1)
+  |> option.map(fn(x) { "2" })
+  |> should.equal(Some("2"))
+
+  None
+  |> option.map(fn(x) { x + 1 })
+  |> should.equal(None)
+}
