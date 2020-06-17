@@ -106,3 +106,23 @@ pub fn map(over option: Option(a), with fun: fn(a) -> b) -> Option(b) {
     None -> None
   }
 }
+
+/// Merge a nested Option into a single layer.
+///
+/// ## Examples
+///
+///    > flatten(Some(Some(1)))
+///    Some(1)
+///
+///    > flatten(Some(None))
+///    None
+///
+///    > flatten(None)
+///    None
+///
+pub fn flatten(option: Option(Option(a))) -> Option(a) {
+  case option {
+    Some(x) -> x
+    None -> None
+  }
+}
