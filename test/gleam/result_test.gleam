@@ -17,7 +17,7 @@ pub fn is_error_test() {
   |> should.be_true
 }
 
-pub fn map_test() {
+pub fn map_result_test() {
   Ok(1)
   |> result.map(fn(x) { x + 1 })
   |> should.equal(Ok(2))
@@ -41,7 +41,7 @@ pub fn map_error_test() {
   |> should.equal(Error(tuple("ok", 2)))
 }
 
-pub fn flatten_test() {
+pub fn flatten_result_test() {
   Ok(Ok(1))
   |> result.flatten
   |> should.equal(Ok(1))
@@ -59,7 +59,7 @@ pub fn flatten_test() {
   |> should.equal(Error(Error(1)))
 }
 
-pub fn then_test() {
+pub fn then_result_test() {
   Error(1)
   |> result.then(fn(x) { Ok(x + 1) })
   |> should.equal(Error(1))
@@ -77,7 +77,7 @@ pub fn then_test() {
   |> should.equal(Error(1))
 }
 
-pub fn unwrap_test() {
+pub fn unwrap_result_test() {
   Ok(1)
   |> result.unwrap(50)
   |> should.equal(1)
