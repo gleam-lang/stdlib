@@ -7,6 +7,7 @@
 - The `string` module gains the `split_once` function.
 - The `dynamic` module gains the `bit_string` function.
 - The `uri` module gains the `origin` and `merge` function.
+- The `io.debug` function returns the printed term.
 
 ## 0.9.0 - 2020-05-26
 
