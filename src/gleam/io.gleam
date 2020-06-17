@@ -51,7 +51,7 @@ pub fn println(string: String) -> Nil {
 ///    // -> [2, 3]
 ///    [4, 6]
 ///
-pub fn debug(term: anything) -> Nil {
+pub fn debug(term: anything) -> anything {
   erl_print("~tp\n", [term])
-  Nil
+  term
 }
