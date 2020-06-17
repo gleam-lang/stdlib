@@ -126,3 +126,34 @@ pub fn flatten(option: Option(Option(a))) -> Option(a) {
     None -> None
   }
 }
+
+/// Update a value held within the Some of an Option by calling a given function
+/// on it, where the given function also returns an Option. The two Options are
+/// then merged together into one Option.
+///
+/// If the Option is a None rather than Some the function is not called and the
+/// Option stays the same.
+///
+/// This function is the equivalent of calling `map` followed by `flatten`, and
+/// it is useful for chaining together multiple functions that return Options.
+///
+/// ## Examples
+///
+///    > then(Some(1), fn(x) { Some(x + 1) })
+///    Some(2)
+///
+///    > then(Some(1), fn(x) { Some(tuple("a", x)) })
+///    Some(tuple("a", 1))
+///
+///    > then(Some(1), fn(x) { None })
+///    None)
+///
+///    > then(None, fn(x) { Some(x + 1) })
+///    None
+///
+pub fn then(option: Option(a), apply fun: fn(a) -> Option(b)) -> Option(b) {
+  case option {
+    Some(x) -> fun(x)
+    None -> None
+  }
+}
