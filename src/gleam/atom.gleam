@@ -1,5 +1,5 @@
 /// Atom is a special string-like data-type that is most commonly used for
-/// interfacing with code written in other BEAM langauges such as Erlang and
+/// interfacing with code written in other BEAM languages such as Erlang and
 /// Elixir. It is preferable to define your own custom types to use instead of
 /// atoms where possible.
 ///
