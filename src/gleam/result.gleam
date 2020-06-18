@@ -176,3 +176,26 @@ pub fn unwrap(result: Result(a, e), or default: a) -> a {
 pub fn nil_error(result: Result(a, e)) -> Result(a, Nil) {
   map_error(result, fn(_) { Nil })
 }
+
+/// Return the first value if it is Ok, otherwise return the second value.
+///
+/// ## Examples
+///
+///    > or(Ok(1), Ok(2))
+///    Ok(1)
+///
+///    > or(Ok(1), Error("Error 2"))
+///    Ok(1)
+///
+///    > or(Error("Error 1"), Ok(2))
+///    Ok(2)
+///
+///    > or(Error("Error 1"), Error("Error 2"))
+///    Error("Error 2")
+///
+pub fn or(first: Result(a, e), second: Result(a, e)) -> Result(a, e) {
+  case first {
+    Ok(_) -> first
+    Error(_) -> second
+  }
+}

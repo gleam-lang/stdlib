@@ -9,6 +9,7 @@
 - The `uri` module gains the `origin` and `merge` function.
 - The `io.debug` function returns the printed term.
 - The `option` module gains the the `map`, `flatten`, `then` and `or` functions.
+- The `result` module gains the the `or` function.
 
 ## 0.9.0 - 2020-05-26
 
