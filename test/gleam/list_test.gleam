@@ -99,7 +99,7 @@ pub fn map_test() {
   |> should.equal([0, 8, 10, 14, 6])
 }
 
-pub fn traverse_test() {
+pub fn try_map_test() {
   let fun = fn(x) {
     case x == 6 || x == 5 || x == 4 {
       True -> Ok(x * 2)
@@ -108,11 +108,11 @@ pub fn traverse_test() {
   }
 
   [5, 6, 5, 6]
-  |> list.traverse(fun)
+  |> list.try_map(fun)
   |> should.equal(Ok([10, 12, 10, 12]))
 
   [4, 6, 5, 7, 3]
-  |> list.traverse(fun)
+  |> list.try_map(fun)
   |> should.equal(Error(7))
 }
 

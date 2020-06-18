@@ -273,7 +273,7 @@ pub fn index_map(list: List(a), with fun: fn(Int, a) -> b) -> List(b) {
   do_index_map(list, fun, 0, [])
 }
 
-fn do_traverse(
+fn do_try_map(
   list: List(a),
   fun: fn(a) -> Result(b, e),
   acc: List(b),
@@ -281,7 +281,7 @@ fn do_traverse(
   case list {
     [] -> Ok(reverse(acc))
     [x, ..xs] -> case fun(x) {
-      Ok(y) -> do_traverse(xs, fun, [y, ..acc])
+      Ok(y) -> do_try_map(xs, fun, [y, ..acc])
       Error(error) -> Error(error)
     }
   }
@@ -299,23 +299,23 @@ fn do_traverse(
 ///
 /// ## Examples
 ///
-///    > traverse([1, 2, 3], fn(x) { Ok(x + 2) })
+///    > try_map([1, 2, 3], fn(x) { Ok(x + 2) })
 ///    Ok([3, 4, 5])
 ///
-///    > traverse([1, 2, 3], fn(x) { Error(0) })
+///    > try_map([1, 2, 3], fn(x) { Error(0) })
 ///    Error(0)
 ///
-///    > traverse([[1], [2, 3]], head)
+///    > try_map([[1], [2, 3]], head)
 ///    Ok([1, 2])
 ///
-///    > traverse([[1], [], [2]], head)
+///    > try_map([[1], [], [2]], head)
 ///    Error(Nil)
 ///
-pub fn traverse(
-  list: List(a),
+pub fn try_map(
+  over list: List(a),
   with fun: fn(a) -> Result(b, e),
 ) -> Result(List(b), e) {
-  do_traverse(list, fun, [])
+  do_try_map(list, fun, [])
 }
 
 /// Returns a list that is the given list with up to the given number of

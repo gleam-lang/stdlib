@@ -13,6 +13,8 @@
 - The `dynamic.list` function has been renamed to `dynamic.typed_list`.
 - The `dynamic.opaque_list` function has been renamed to `dynamic.list`.
 - The `dynamic.tuple2_of` function has been renamed to `dynamic.typed_tuple2`.
+- The `list.traverse` function has been renamed to `list.try_map`.
+- The `list.traverse` first argument gains the label `over`.
 
 ## 0.9.0 - 2020-05-26
 

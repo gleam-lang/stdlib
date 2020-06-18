@@ -172,7 +172,7 @@ pub fn typed_list(
 ) -> Result(List(inner), String) {
   dynamic
   |> list
-  |> result.then(list_mod.traverse(_, decoder_type))
+  |> result.then(list_mod.try_map(_, decoder_type))
 }
 
 /// Check to see if a Dynamic value is a map with a specific field, and return
