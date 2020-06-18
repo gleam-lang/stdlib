@@ -82,3 +82,21 @@ pub fn then_option_test() {
   |> option.then(fn(x) { Some(x + 1) })
   |> should.equal(None)
 }
+
+pub fn or_option_test() {
+  Some(1)
+  |> option.or(Some(2))
+  |> should.equal(Some(1))
+
+  Some(1)
+  |> option.or(None)
+  |> should.equal(Some(1))
+
+  None
+  |> option.or(Some(2))
+  |> should.equal(Some(2))
+
+  None
+  |> option.or(None)
+  |> should.equal(None)
+}
