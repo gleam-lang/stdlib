@@ -100,3 +100,21 @@ pub fn nil_error_test() {
   |> result.nil_error
   |> should.equal(Ok(1))
 }
+
+pub fn or_result_test() {
+  Ok(1)
+  |> result.or(Ok(2))
+  |> should.equal(Ok(1))
+
+  Ok(1)
+  |> result.or(Error("Error 2"))
+  |> should.equal(Ok(1))
+
+  Error("Error 1")
+  |> result.or(Ok(2))
+  |> should.equal(Ok(2))
+
+  Error("Error 1")
+  |> result.or(Error("Error 2"))
+  |> should.equal(Error("Error 2"))
+}

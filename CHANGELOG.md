@@ -17,6 +17,7 @@
 - The `list.traverse` first argument gains the label `over`.
 - The `option` module gains the the `map`, `flatten`, `then` and `or`
   functions.
+- The `result` module gains the the `or` function.
 
 ## 0.9.0 - 2020-05-26
 
