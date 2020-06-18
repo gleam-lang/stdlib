@@ -81,8 +81,8 @@ external fn erl_parse_query(String) -> Dynamic =
 pub fn parse_query(query: String) -> Result(List(tuple(String, String)), Nil) {
   query
   |> erl_parse_query
-  |> dynamic.list(dynamic.tuple2_of(_, dynamic.string, dynamic.string))
-  |> result.map_error(fn(_) { Nil })
+  |> dynamic.typed_list(dynamic.typed_tuple2(_, dynamic.string, dynamic.string))
+  |> result.nil_error
 }
 
 type Encoding {

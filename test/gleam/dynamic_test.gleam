@@ -168,45 +168,45 @@ pub fn atom_test() {
   |> should.be_error
 }
 
-pub fn list_test() {
+pub fn typed_list_test() {
   []
   |> dynamic.from
-  |> dynamic.list(dynamic.string)
+  |> dynamic.typed_list(dynamic.string)
   |> should.equal(Ok([]))
 
   []
   |> dynamic.from
-  |> dynamic.list(dynamic.int)
+  |> dynamic.typed_list(dynamic.int)
   |> should.equal(Ok([]))
 
   [1, 2, 3]
   |> dynamic.from
-  |> dynamic.list(dynamic.int)
+  |> dynamic.typed_list(dynamic.int)
   |> should.equal(Ok([1, 2, 3]))
 
   [[1], [2], [3]]
   |> dynamic.from
-  |> dynamic.list(dynamic.list(_, dynamic.int))
+  |> dynamic.typed_list(dynamic.typed_list(_, dynamic.int))
   |> should.equal(Ok([[1], [2], [3]]))
 
   1
   |> dynamic.from
-  |> dynamic.list(dynamic.string)
+  |> dynamic.typed_list(dynamic.string)
   |> should.be_error
 
   1.0
   |> dynamic.from
-  |> dynamic.list(dynamic.int)
+  |> dynamic.typed_list(dynamic.int)
   |> should.be_error
 
   [""]
   |> dynamic.from
-  |> dynamic.list(dynamic.int)
+  |> dynamic.typed_list(dynamic.int)
   |> should.be_error
 
   [dynamic.from(1), dynamic.from("not an int")]
   |> dynamic.from
-  |> dynamic.list(dynamic.int)
+  |> dynamic.typed_list(dynamic.int)
   |> should.be_error
 }
 
@@ -301,30 +301,30 @@ pub fn tuple2_test() {
   |> should.equal(Error("Expected a 2 element tuple, got an int"))
 }
 
-pub fn tuple2_of_test() {
+pub fn typed_tuple2_test() {
   tuple(1, 2)
   |> dynamic.from
-  |> dynamic.tuple2_of(dynamic.int, dynamic.int)
+  |> dynamic.typed_tuple2(dynamic.int, dynamic.int)
   |> should.equal(Ok(tuple(1, 2)))
 
   tuple(1, "")
   |> dynamic.from
-  |> dynamic.tuple2_of(dynamic.int, dynamic.string)
+  |> dynamic.typed_tuple2(dynamic.int, dynamic.string)
   |> should.equal(Ok(tuple(1, "")))
 
   tuple(1, "")
   |> dynamic.from
-  |> dynamic.tuple2_of(dynamic.int, dynamic.int)
+  |> dynamic.typed_tuple2(dynamic.int, dynamic.int)
   |> should.equal(Error("Expected an int, got a binary"))
 
   tuple(1, 2, 3)
   |> dynamic.from
-  |> dynamic.tuple2
+  |> dynamic.typed_tuple2(dynamic.int, dynamic.int)
   |> should.equal(Error("Expected a 2 element tuple, got a 3 element tuple"))
 
   1
   |> dynamic.from
-  |> dynamic.tuple2
+  |> dynamic.typed_tuple2(dynamic.int, dynamic.int)
   |> should.equal(Error("Expected a 2 element tuple, got an int"))
 }
 
@@ -340,24 +340,24 @@ pub fn map_test() {
   |> should.equal(Error("Expected a map, got an int"))
 }
 
-pub fn opaque_list_test() {
+pub fn list_test() {
   []
   |> dynamic.from
-  |> dynamic.opaque_list
+  |> dynamic.list
   |> should.equal(Ok([]))
 
   [1, 2]
   |> dynamic.from
-  |> dynamic.opaque_list
+  |> dynamic.list
   |> should.equal(Ok([dynamic.from(1), dynamic.from(2)]))
 
   [dynamic.from(1), dynamic.from(2.0)]
   |> dynamic.from
-  |> dynamic.opaque_list
+  |> dynamic.list
   |> should.equal(Ok([dynamic.from(1), dynamic.from(2.0)]))
 
   1
   |> dynamic.from
-  |> dynamic.opaque_list
+  |> dynamic.list
   |> should.equal(Error("Expected a list, got an int"))
 }

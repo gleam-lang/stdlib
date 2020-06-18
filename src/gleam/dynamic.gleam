@@ -131,15 +131,18 @@ pub external fn thunk(from: Dynamic) -> Result(fn() -> Dynamic, String) =
 /// Check to see whether a Dynamic value is a list, and return the list if it
 /// is.
 ///
+/// If you wish to decode all the elements in the list use the `typed_list`
+/// instead.
+///
 /// ## Examples
 ///
-///    > opaque_list(from(["a", "b", "c"]))
+///    > list(from(["a", "b", "c"]))
 ///    Ok([from("a"), from("b"), from("c")])
 ///
-///    > opaque_list(1)
+///    > list(1)
 ///    Error("Expected an Int, got a binary")
 ///
-pub external fn opaque_list(from: Dynamic) -> Result(List(Dynamic), String) =
+pub external fn list(from: Dynamic) -> Result(List(Dynamic), String) =
   "gleam_stdlib" "decode_list"
 
 /// Check to see whether a Dynamic value is a list of a particular type, and
@@ -149,23 +152,26 @@ pub external fn opaque_list(from: Dynamic) -> Result(List(Dynamic), String) =
 /// the list. The list is only decoded if all elements in the list can be
 /// successfully decoded using this function.
 ///
+/// If you do not wish to decode all the elements in the list use the `list`
+/// function instead.
+///
 /// ## Examples
 ///
-///    > list(from(["a", "b", "c"]), string)
+///    > typed_list(from(["a", "b", "c"]), containing: string)
 ///    Ok(["a", "b", "c"])
 ///
-///    > list(from([1, 2, 3]), string)
+///    > typed_list(from([1, 2, 3]), containing: string)
 ///    Error("Expected an Int, got a binary")
 ///
-///    > list(from("ok"), string)
+///    > typed_list(from("ok"), containing: string)
 ///    Error("Expected a List, got a binary")
 ///
-pub fn list(
+pub fn typed_list(
   from dynamic: Dynamic,
   containing decoder_type: fn(Dynamic) -> Result(inner, String),
 ) -> Result(List(inner), String) {
   dynamic
-  |> opaque_list
+  |> list
   |> result.then(list_mod.traverse(_, decoder_type))
 }
 
@@ -208,6 +214,9 @@ pub external fn element(
 
 /// Check to see if the Dynamic value is a 2 element tuple.
 ///
+/// If you do not wish to decode all the elements in the tuple use the
+/// `typed_tuple2` function instead.
+///
 /// ## Examples
 ///
 ///    > tuple2(from(tuple(1, 2)))
@@ -227,21 +236,24 @@ pub external fn tuple2(
 /// Check to see if the Dynamic value is a 2 element tuple containing two
 /// specifically typed elements.
 ///
+/// If you wish to decode all the elements in the list use the `typed_tuple2`
+/// instead.
+///
 /// ## Examples
 ///
-///    > tuple2_of(from(tuple(1, 2)), int, int)
+///    > typed_tuple2(from(tuple(1, 2)), int, int)
 ///    Ok(tuple(1, 2))
 ///
-///    > tuple2_of(from(tuple(1, 2.0)), int, float)
+///    > typed_tuple2(from(tuple(1, 2.0)), int, float)
 ///    Ok(tuple(1, 2.0))
 ///
-///    > tuple2_of(from(tuple(1, 2, 3)), int, float)
+///    > typed_tuple2(from(tuple(1, 2, 3)), int, float)
 ///    Error("Expected a 2 element tuple, got a 3 element tuple")
 ///
-///    > tuple2_of(from(""), int, float)
+///    > typed_tuple2(from(""), int, float)
 ///    Error("Expected a tuple, got a binary")
 ///
-pub fn tuple2_of(
+pub fn typed_tuple2(
   from tup: Dynamic,
   first decode_first: Decoder(a),
   second decode_second: Decoder(b),

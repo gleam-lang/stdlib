@@ -1,5 +1,7 @@
 # Changelog
 
+## Unreleased
+
 - `bit_string` module created with `from_string`, `byte_size`, `append`,
   `part`, `int_to_u32` and `int_from_u32`.
 - `os` module created with `get_env`, `insert_env`, `delete_env` and
@@ -8,6 +10,9 @@
 - The `dynamic` module gains the `bit_string` function.
 - The `uri` module gains the `origin` and `merge` function.
 - The `io.debug` function returns the printed term.
+- The `dynamic.list` function has been renamed to `dynamic.typed_list`.
+- The `dynamic.opaque_list` function has been renamed to `dynamic.list`.
+- The `dynamic.tuple2_of` function has been renamed to `dynamic.typed_tuple2`.
 
 ## 0.9.0 - 2020-05-26
 
