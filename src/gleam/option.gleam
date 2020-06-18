@@ -157,3 +157,26 @@ pub fn then(option: Option(a), apply fun: fn(a) -> Option(b)) -> Option(b) {
     None -> None
   }
 }
+
+/// Return the first value if it is Some, otherwise return the second value.
+///
+/// ## Examples
+///
+///    > or(Some(1), Some(2))
+///    Some(1)
+///
+///    > or(Some(1), None)
+///    Some(1)
+///
+///    > or(None, Some(2))
+///    Some(2)
+///
+///    > or(None, None)
+///    None
+///
+pub fn or(first: Option(a), second: Option(a)) -> Option(a) {
+  case first {
+    Some(_) -> first
+    None -> second
+  }
+}

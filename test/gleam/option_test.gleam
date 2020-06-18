@@ -47,7 +47,7 @@ pub fn map_option_test() {
   |> should.equal(Some(2))
 
   Some(1)
-  |> option.map(fn(x) { "2" })
+  |> option.map(fn(_) { "2" })
   |> should.equal(Some("2"))
 
   None
@@ -75,10 +75,28 @@ pub fn then_option_test() {
   |> should.equal(Some(2))
 
   Some(1)
-  |> option.then(fn(x) { Some("2") })
+  |> option.then(fn(_) { Some("2") })
   |> should.equal(Some("2"))
 
   None
   |> option.then(fn(x) { Some(x + 1) })
+  |> should.equal(None)
+}
+
+pub fn or_option_test() {
+  Some(1)
+  |> option.or(Some(2))
+  |> should.equal(Some(1))
+
+  Some(1)
+  |> option.or(None)
+  |> should.equal(Some(1))
+
+  None
+  |> option.or(Some(2))
+  |> should.equal(Some(2))
+
+  None
+  |> option.or(None)
   |> should.equal(None)
 }

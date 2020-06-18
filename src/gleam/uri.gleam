@@ -187,13 +187,6 @@ pub fn origin(uri: Uri) -> Result(String, Nil) {
   }
 }
 
-fn option_or(first: Option(a), second: Option(a)) -> Option(a) {
-  case first {
-    Some(_) -> first
-    None -> second
-  }
-}
-
 fn drop_last(elements) {
   let tuple(keep, _last) = list.split(elements, list.length(elements) - 1)
   keep
@@ -250,7 +243,7 @@ pub fn merge(base: Uri, relative: Uri) -> Result(Uri, Nil) {
           base.host,
           base.port,
           base.path,
-          option_or(relative.query, base.query),
+          option.or(relative.query, base.query),
           relative.fragment,
         )
         Ok(resolved)

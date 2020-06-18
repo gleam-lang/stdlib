@@ -15,7 +15,8 @@
 - The `dynamic.tuple2_of` function has been renamed to `dynamic.typed_tuple2`.
 - The `list.traverse` function has been renamed to `list.try_map`.
 - The `list.traverse` first argument gains the label `over`.
-- The `option` module gains the the `map`, `flatten` and `then` functions.
+- The `option` module gains the the `map`, `flatten`, `then` and `or`
+  functions.
 
 ## 0.9.0 - 2020-05-26
 
