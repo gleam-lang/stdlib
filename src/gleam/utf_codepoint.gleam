@@ -1,7 +1,8 @@
 import gleam/result
 
 /// A UtfCodepoint is the integer representation of a valid UTF codepoint
-pub type UtfCodepoint = UtfCodepoint
+pub type UtfCodepoint =
+  UtfCodepoint
 
 external fn int_to_utf8_codepoint(Int) -> UtfCodepoint =
   "gleam_stdlib" "identity"
