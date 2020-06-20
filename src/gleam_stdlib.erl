@@ -10,7 +10,8 @@
          string_pop_grapheme/1, string_starts_with/2, string_ends_with/2,
          string_pad/4, decode_tuple2/1, decode_map/1, bit_string_int_to_u32/1,
          bit_string_int_from_u32/1, bit_string_append/2, bit_string_part_/3,
-         decode_bit_string/1]).
+         decode_bit_string/1, regex_from_string/1, regex_from_string_with/2,
+         regex_match/2]).
 
 should_equal(Actual, Expected) -> ?assertEqual(Expected, Actual).
 should_not_equal(Actual, Expected) -> ?assertNotEqual(Expected, Actual).
@@ -162,3 +163,29 @@ bit_string_int_from_u32(<<I:32>>) ->
   {ok, I};
 bit_string_int_from_u32(_) ->
   {error, nil}.
+
+regex_from_string_with_opts(Options, String) ->
+    case re:compile(String, Options) of
+        {ok, MP} -> {ok, MP};
+        {error, {Str, Pos}} ->
+            {error, {from_string_error, unicode:characters_to_binary(Str), Pos}}
+    end.
+
+regex_from_string(String) ->
+    regex_from_string_with_opts([unicode], String).
+
+regex_from_string_with(Options, String) ->
+    OptList = case Options of
+        {options, true, _} -> [unicode, caseless];
+        _ -> [unicode]
+    end,
+    case Options of
+        {options, _, true} -> regex_from_string_with_opts([multiline | OptList], String);
+        _ -> regex_from_string_with_opts(OptList, String)
+    end.
+
+regex_match(Regex, String) ->
+    case re:run(String, Regex) of
+        {match, _} -> true;
+        _ -> false
+    end.

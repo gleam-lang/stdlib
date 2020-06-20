@@ -18,6 +18,8 @@
 - The `option` module gains the the `map`, `flatten`, `then` and `or`
   functions.
 - The `result` module gains the the `or` function.
+- Created the `regex` module with the `from_string`, `from_string_with`, and
+  `match` functions.
 
 ## 0.9.0 - 2020-05-26
 
