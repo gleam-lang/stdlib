@@ -869,3 +869,100 @@ pub fn key_find(
     },
   )
 }
+
+fn do_pop(haystack, predicate, checked) {
+  case haystack {
+    [] -> Error(Nil)
+    [x, ..rest] -> case predicate(x) {
+      True -> Ok(tuple(x, append(reverse(checked), rest)))
+      False -> do_pop(rest, predicate, [x, ..checked])
+    }
+  }
+}
+
+/// Remove the first element in a given list for which the predicate funtion returns `True`.
+///
+/// Returns `Error(Nil)` if no the function does not return True for any of the
+/// elements.
+///
+/// ## Examples
+///
+///    > pop([1, 2, 3], fn(x) { x > 2 })
+///    Ok(tuple(3, [1, 2]))
+///
+///    > pop([1, 2, 3], fn(x) { x > 4 })
+///    Error(Nil)
+///
+///    > pop([], fn(x) { True })
+///    Error(Nil)
+///
+pub fn pop(
+  in haystack: List(a),
+  one_that is_desired: fn(a) -> Bool,
+) -> Result(tuple(a, List(a)), Nil) {
+  do_pop(haystack, is_desired, [])
+}
+
+fn do_pop_map(haystack, mapper, checked) {
+  case haystack {
+    [] -> Error(Nil)
+    [x, ..rest] -> case mapper(x) {
+      Ok(y) -> Ok(tuple(y, append(reverse(checked), rest)))
+      Error(_) -> do_pop_map(rest, mapper, [x, ..checked])
+    }
+  }
+}
+
+/// Removes the first element in a given list for which the given function returns
+/// `Ok(new_value)` and return the new value as well as list with the value removed.
+///
+/// Returns `Error(Nil)` if no the function does not return Ok for any of the
+/// elements.
+///
+/// ## Examples
+///
+///    > pop_map([[], [2], [3]], head)
+///    Ok(tuple(2, [[], [3]]))
+///
+///    > pop_map([[], []], head)
+///    Error(Nil)
+///
+///    > pop_map([], head)
+///    Error(Nil)
+///
+pub fn pop_map(
+  in haystack: List(a),
+  one_that is_desired: fn(a) -> Result(b, c),
+) -> Result(tuple(b, List(a)), Nil) {
+  do_pop_map(haystack, is_desired, [])
+}
+
+/// Given a list of 2 element tuples, find the first tuple that has a given
+/// key as the first element. This function will return the second element
+/// of the found tuple and list with tuple removed.
+///
+/// If no tuple is found with the given key then `Error(Nil)` is returned.
+///
+/// ## Examples
+///
+///    > key_pop([tuple("a", 0), tuple("b", 1)], "a")
+///    Ok(tuple(0, [tuple("b", 1))
+///
+///    > key_pop([tuple("a", 0), tuple("b", 1)], "b")
+///    Ok(tuple(1, [tuple("a", 0))
+///
+///    > key_pop([tuple("a", 0), tuple("b", 1)], "c")
+///    Error(Nil)
+///
+pub fn key_pop(haystack, key) {
+  pop_map(
+    haystack,
+    fn(entry) {
+      let tuple(k, v) = entry
+      case k {
+        k if k == key -> Ok(v)
+        _ -> Error(Nil)
+      }
+    },
+  )
+}
