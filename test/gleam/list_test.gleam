@@ -424,3 +424,36 @@ pub fn key_find_test() {
   |> list.key_find(2)
   |> should.equal(Error(Nil))
 }
+
+pub fn pop_test() {
+  list.pop([1, 2, 3], fn(x) { x > 2 })
+  |> should.equal(Ok(tuple(3, [1, 2])))
+
+  list.pop([1, 2, 3], fn(x) { x > 4 })
+  |> should.equal(Error(Nil))
+
+  list.pop([], fn(_x) { True })
+  |> should.equal(Error(Nil))
+}
+
+pub fn pop_map_test() {
+  list.pop_map(["foo", "2", "3"], int.parse)
+  |> should.equal(Ok(tuple(2, ["foo", "3"])))
+
+  list.pop_map(["foo", "bar"], int.parse)
+  |> should.equal(Error(Nil))
+
+  list.pop_map([], int.parse)
+  |> should.equal(Error(Nil))
+}
+
+pub fn key_pop_test() {
+  list.key_pop([tuple("a", 0), tuple("b", 1)], "a")
+  |> should.equal(Ok(tuple(0, [tuple("b", 1)])))
+
+  list.key_pop([tuple("a", 0), tuple("b", 1)], "b")
+  |> should.equal(Ok(tuple(1, [tuple("a", 0)])))
+
+  list.key_pop([tuple("a", 0), tuple("b", 1)], "c")
+  |> should.equal(Error(Nil))
+}
