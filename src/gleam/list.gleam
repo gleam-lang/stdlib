@@ -946,10 +946,10 @@ pub fn pop_map(
 /// ## Examples
 ///
 ///    > key_pop([tuple("a", 0), tuple("b", 1)], "a")
-///    Ok(tuple(0, [tuple("b", 1))
+///    Ok(tuple(0, [tuple("b", 1)])
 ///
 ///    > key_pop([tuple("a", 0), tuple("b", 1)], "b")
-///    Ok(tuple(1, [tuple("a", 0))
+///    Ok(tuple(1, [tuple("a", 0)])
 ///
 ///    > key_pop([tuple("a", 0), tuple("b", 1)], "c")
 ///    Error(Nil)
