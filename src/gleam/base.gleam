@@ -22,3 +22,16 @@ pub fn decode64(encoded: String) -> Result(BitString, Nil) {
   }
   erl_decode64(padded)
 }
+
+pub fn url_encode64(input: BitString, padding: Bool) -> String {
+  encode64(input, padding)
+  |> string.replace("+", "-")
+  |> string.replace("/", "_")
+}
+
+pub fn url_decode64(encoded: String) -> Result(BitString, Nil) {
+  encoded
+  |> string.replace("-", "+")
+  |> string.replace("_", "/")
+  |> decode64()
+}

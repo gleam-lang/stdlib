@@ -50,3 +50,47 @@ pub fn decode64_test() {
   |> base.decode64()
   |> should.equal(Error(Nil))
 }
+
+pub fn url_encode64_test() {
+  [255, 127, 254, 252]
+  |> list_to_binary()
+  |> base.url_encode64(True)
+  |> should.equal("_3_-_A==")
+
+  [255, 127, 254, 252]
+  |> list_to_binary()
+  |> base.url_encode64(False)
+  |> should.equal("_3_-_A")
+
+  [0, 0, 0]
+  |> list_to_binary()
+  |> base.url_encode64(True)
+  |> should.equal("AAAA")
+
+  []
+  |> list_to_binary()
+  |> base.url_encode64(True)
+  |> should.equal("")
+}
+
+pub fn url_decode64_test() {
+  "_3_-_A=="
+  |> base.url_decode64()
+  |> should.equal(Ok(list_to_binary([255, 127, 254, 252])))
+
+  "_3_-_A"
+  |> base.url_decode64()
+  |> should.equal(Ok(list_to_binary([255, 127, 254, 252])))
+
+  "AAAA"
+  |> base.url_decode64()
+  |> should.equal(Ok(list_to_binary([0, 0, 0])))
+
+  ""
+  |> base.url_decode64()
+  |> should.equal(Ok(list_to_binary([])))
+
+  ")!"
+  |> base.url_decode64()
+  |> should.equal(Error(Nil))
+}
