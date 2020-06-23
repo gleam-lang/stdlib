@@ -1,4 +1,5 @@
-import gleam/regex.{FromStringError, Options}
+import gleam/option.{Some, None}
+import gleam/regex.{FromStringError, Match, Options}
 import gleam/should
 
 pub fn from_string_test() {
@@ -43,4 +44,33 @@ pub fn match_test() {
 
   regex.match(re, "boo")
   |> should.equal(False)
+}
+
+pub fn split_test() {
+  assert Ok(re) = regex.from_string(" *, *")
+
+  regex.split(re, "foo,32, 4, 9  ,0")
+  |> should.equal(["foo", "32", "4", "9", "0"])
+}
+
+pub fn scan_test() {
+  assert Ok(re) = regex.from_string("[oi]n a(.?) (\\w+)")
+
+  regex.scan(re, "I am on a boat in a lake.")
+  |> should.equal(
+    [
+      Match(
+        match: "on a boat",
+        index: 5,
+        number: 1,
+        submatches: [None, Some("boat")],
+      ),
+      Match(
+        match: "in a lake",
+        index: 15,
+        number: 2,
+        submatches: [None, Some("lake")],
+      ),
+    ],
+  )
 }

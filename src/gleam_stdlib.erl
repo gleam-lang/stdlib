@@ -11,7 +11,7 @@
          string_pad/4, decode_tuple2/1, decode_map/1, bit_string_int_to_u32/1,
          bit_string_int_from_u32/1, bit_string_append/2, bit_string_part_/3,
          decode_bit_string/1, regex_from_string/1, regex_from_string_with/2,
-         regex_match/2, base_decoded4/1]).
+         regex_match/2, regex_split/2, regex_scan/2, base_decoded4/1]).
 
 should_equal(Actual, Expected) -> ?assertEqual(Expected, Actual).
 should_not_equal(Actual, Expected) -> ?assertNotEqual(Expected, Actual).
@@ -188,6 +188,30 @@ regex_match(Regex, String) ->
     case re:run(String, Regex) of
         {match, _} -> true;
         _ -> false
+    end.
+
+regex_split(Regex, String) ->
+    re:split(String, Regex).
+
+regex_submatches(String, {S, L}) ->
+    SubMatch = string:slice(String, S, L),
+    case string:is_empty(SubMatch) of
+        true -> none;
+        false -> {some, SubMatch}
+    end.
+
+regex_matches(String, [{S, L} | Submatches], Number) ->
+    {match, string:slice(String, S, L), S, Number,
+     lists:map(fun(X) -> regex_submatches(String, X) end, Submatches)}.
+
+regex_captured(_, [], _) -> [];
+regex_captured(String, [ H | T ], Number) ->
+    [ regex_matches(String, H, Number) | regex_captured(String, T, Number + 1) ].
+
+regex_scan(Regex, String) ->
+    case re:run(String, Regex, [global]) of
+        {match, Captured} -> regex_captured(String, Captured, 1);
+        _ -> []
     end.
 
 base_decoded4(S) ->
