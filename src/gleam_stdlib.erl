@@ -11,7 +11,7 @@
          string_pad/4, decode_tuple2/1, decode_map/1, bit_string_int_to_u32/1,
          bit_string_int_from_u32/1, bit_string_append/2, bit_string_part_/3,
          decode_bit_string/1, regex_from_string/1, regex_from_string_with/2,
-         regex_match/2]).
+         regex_match/2, base_decoded4/1]).
 
 should_equal(Actual, Expected) -> ?assertEqual(Expected, Actual).
 should_not_equal(Actual, Expected) -> ?assertNotEqual(Expected, Actual).
@@ -189,3 +189,8 @@ regex_match(Regex, String) ->
         {match, _} -> true;
         _ -> false
     end.
+
+base_decoded4(S) ->
+  try {ok, base64:decode(S)} catch
+    error:badarith -> {error, nil}
+  end.
