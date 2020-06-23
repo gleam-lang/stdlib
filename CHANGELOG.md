@@ -20,7 +20,7 @@
 - The `result` module gains the the `or` function.
 - Created the `regex` module with the `from_string`, `from_string_with`, and
   `match` functions.
-  - The `list` module gains the the `pop`, `pop_map` and `key_pop` functions.
+- The `list` module gains the the `pop`, `pop_map` and `key_pop` functions.
 
 ## 0.9.0 - 2020-05-26
 
