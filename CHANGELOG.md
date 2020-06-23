@@ -21,6 +21,8 @@
 - Created the `regex` module with the `from_string`, `from_string_with`, and
   `match` functions.
 - The `list` module gains the the `pop`, `pop_map` and `key_pop` functions.
+- `base` module created with `encode64`, `decode64`, `url_encode64` and
+  `url_decode64`.
 
 ## 0.9.0 - 2020-05-26
 
