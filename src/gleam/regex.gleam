@@ -3,7 +3,25 @@
 //// all of the PCRE library is interfaced and some parts of the library go beyond
 //// what PCRE offers. Currently PCRE version 8.40 (release date 2017-01-11) is used.
 
+import gleam/option.{Option}
+
 pub external type Regex
+
+/// The details about a particular match:
+///
+/// - match — the full string of the match.
+/// - index — the index of the match in the original string.
+/// - number — each match is numbered, starting from 1
+/// - submatches — a Regex can have subpatterns, sup-parts that are in parentheses.
+///
+pub type Match {
+  Match(
+    match: String,
+    index: Int,
+    number: Int,
+    submatches: List(Option(String)),
+  )
+}
 
 /// When a regular expression fails to compile:
 ///
@@ -73,3 +91,38 @@ pub external fn from_string_with(
 ///
 pub external fn match(Regex, String) -> Bool =
   "gleam_stdlib" "regex_match"
+
+/// Split a string
+///
+/// ## Examples
+///
+///    > let Ok(re) = from_string(" *, *")
+///    > match(re, "foo,32, 4, 9  ,0")
+///    ["foo", "32", "4", "9", "0"]
+///
+pub external fn split(Regex, String) -> List(String) =
+  "gleam_stdlib" "regex_split"
+
+/// Collects all matches of the regular expression.
+///
+/// ## Examples
+///
+///    > let Ok(re) = regex.from_string("[oi]n a (\\w+)")
+///    > regex.scan(re, "I am on a boat in a lake.")
+///    [
+///      Match(
+///        match: "on a boat",
+///        index: 5,
+///        number: 1,
+///        submatches: [Some("boat")]
+///      ),
+///      Match(
+///        match: "in a lake",
+///        index: 15,
+///        number: 2,
+///        submatches: [Some("lake")]
+///      )
+///    ]
+///
+pub external fn scan(Regex, String) -> List(Match) =
+  "gleam_stdlib" "regex_scan"
