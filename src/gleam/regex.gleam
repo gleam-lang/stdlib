@@ -97,7 +97,7 @@ pub external fn match(Regex, String) -> Bool =
 /// ## Examples
 ///
 ///    > let Ok(re) = from_string(" *, *")
-///    > match(re, "foo,32, 4, 9  ,0")
+///    > split(re, "foo,32, 4, 9  ,0")
 ///    ["foo", "32", "4", "9", "0"]
 ///
 pub external fn split(Regex, String) -> List(String) =
