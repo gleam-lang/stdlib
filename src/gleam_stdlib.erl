@@ -200,17 +200,13 @@ regex_submatches(String, {S, L}) ->
         false -> {some, SubMatch}
     end.
 
-regex_matches(String, [{S, L} | Submatches], Number) ->
-    {match, binary:part(String, S, L), S, Number,
+regex_matches(String, [{S, L} | Submatches]) ->
+    {match, binary:part(String, S, L), S,
      lists:map(fun(X) -> regex_submatches(String, X) end, Submatches)}.
-
-regex_captured(_, [], _) -> [];
-regex_captured(String, [ H | T ], Number) ->
-    [ regex_matches(String, H, Number) | regex_captured(String, T, Number + 1) ].
 
 regex_scan(Regex, String) ->
     case re:run(String, Regex, [global]) of
-        {match, Captured} -> regex_captured(String, Captured, 1);
+        {match, Captured} -> lists:map(fun(X) -> regex_matches(String, X) end, Captured);
         _ -> []
     end.
 
