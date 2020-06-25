@@ -295,3 +295,17 @@ pub fn to_graphemes_test() {
   |> string.to_graphemes()
   |> should.equal([])
 }
+
+pub fn utf_codepoint_test() {
+  string.utf_codepoint(1114444)
+  |> should.be_error
+
+  string.utf_codepoint(65534)
+  |> should.be_error
+
+  string.utf_codepoint(55296)
+  |> should.be_error
+
+  assert Ok(snake) = string.utf_codepoint(128013)
+  should.equal(<<snake:utf8_codepoint>>, <<"🐍":utf8>>)
+}
