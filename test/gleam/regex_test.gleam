@@ -54,6 +54,17 @@ pub fn split_test() {
 }
 
 pub fn scan_test() {
+  assert Ok(re) = regex.from_string("Gl\\w+")
+
+  regex.scan(re, "!Gleam")
+  |> should.equal([Match(match: "Gleam", index: 1, number: 1, submatches: [])])
+
+  regex.scan(re, "हGleam")
+  |> should.equal([Match(match: "Gleam", index: 3, number: 1, submatches: [])])
+
+  regex.scan(re, "𐍈Gleam")
+  |> should.equal([Match(match: "Gleam", index: 4, number: 1, submatches: [])])
+
   assert Ok(re) = regex.from_string("[oi]n a(.?) (\\w+)")
 
   regex.scan(re, "I am on a boat in a lake.")

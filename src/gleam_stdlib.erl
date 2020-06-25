@@ -201,7 +201,7 @@ regex_submatches(String, {S, L}) ->
     end.
 
 regex_matches(String, [{S, L} | Submatches], Number) ->
-    {match, string:slice(String, S, L), S, Number,
+    {match, binary:part(String, S, L), S, Number,
      lists:map(fun(X) -> regex_submatches(String, X) end, Submatches)}.
 
 regex_captured(_, [], _) -> [];
