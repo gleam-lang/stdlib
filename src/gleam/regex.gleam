@@ -10,7 +10,7 @@ pub external type Regex
 /// The details about a particular match:
 ///
 /// - match — the full string of the match.
-/// - index — the index of the match in the original string.
+/// - index — the byte index of the match in the original string.
 /// - submatches — a Regex can have subpatterns, sup-parts that are in parentheses.
 ///
 pub type Match {
@@ -20,7 +20,7 @@ pub type Match {
 /// When a regular expression fails to compile:
 ///
 /// - error — a descriptive error message
-/// - index — the index of the cause in the regex string
+/// - index — the byte index of the cause in the regex string
 ///
 pub type FromStringError {
   FromStringError(error: String, index: Int)
