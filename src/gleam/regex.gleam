@@ -36,7 +36,7 @@ pub type FromStringError {
 ///
 /// ## Examples
 ///
-///    > let Ok(re) = from_string("[0-9]")
+///    > assert Ok(re) = from_string("[0-9]")
 ///    > match(re, "abc123")
 ///    True
 ///
@@ -63,12 +63,12 @@ pub type Options {
 /// ## Examples
 ///
 ///    > let options = Options(case_insensitive: False, multi_line: True)
-///    > let Ok(re) = from_string_with(options, "^[0-9]")
+///    > assert Ok(re) = from_string_with(options, "^[0-9]")
 ///    > match(re, "abc\n123")
 ///    True
 ///
 ///    > let options = Options(case_insensitive: True, multi_line: False)
-///    > let Ok(re) = from_string_with(options, "[A-Z]")
+///    > assert Ok(re) = from_string_with(options, "[A-Z]")
 ///    > match(re, "abc123")
 ///    True
 ///
@@ -82,7 +82,7 @@ pub external fn from_string_with(
 ///
 /// ## Examples
 ///
-///    > let Ok(re) = from_string("^f.o.?")
+///    > assert Ok(re) = from_string("^f.o.?")
 ///    > match(re, "foo")
 ///    True
 ///
@@ -96,7 +96,7 @@ pub external fn match(Regex, String) -> Bool =
 ///
 /// ## Examples
 ///
-///    > let Ok(re) = from_string(" *, *")
+///    > assert Ok(re) = from_string(" *, *")
 ///    > split(re, "foo,32, 4, 9  ,0")
 ///    ["foo", "32", "4", "9", "0"]
 ///
@@ -107,7 +107,7 @@ pub external fn split(Regex, String) -> List(String) =
 ///
 /// ## Examples
 ///
-///    > let Ok(re) = regex.from_string("[oi]n a (\\w+)")
+///    > assert Ok(re) = regex.from_string("[oi]n a (\\w+)")
 ///    > regex.scan(re, "I am on a boat in a lake.")
 ///    [
 ///      Match(
