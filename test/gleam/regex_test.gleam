@@ -57,31 +57,21 @@ pub fn scan_test() {
   assert Ok(re) = regex.from_string("Gl\\w+")
 
   regex.scan(re, "!Gleam")
-  |> should.equal([Match(match: "Gleam", index: 1, number: 1, submatches: [])])
+  |> should.equal([Match(match: "Gleam", index: 1, submatches: [])])
 
   regex.scan(re, "हGleam")
-  |> should.equal([Match(match: "Gleam", index: 3, number: 1, submatches: [])])
+  |> should.equal([Match(match: "Gleam", index: 3, submatches: [])])
 
   regex.scan(re, "𐍈Gleam")
-  |> should.equal([Match(match: "Gleam", index: 4, number: 1, submatches: [])])
+  |> should.equal([Match(match: "Gleam", index: 4, submatches: [])])
 
   assert Ok(re) = regex.from_string("[oi]n a(.?) (\\w+)")
 
   regex.scan(re, "I am on a boat in a lake.")
   |> should.equal(
     [
-      Match(
-        match: "on a boat",
-        index: 5,
-        number: 1,
-        submatches: [None, Some("boat")],
-      ),
-      Match(
-        match: "in a lake",
-        index: 15,
-        number: 2,
-        submatches: [None, Some("lake")],
-      ),
+      Match(match: "on a boat", index: 5, submatches: [None, Some("boat")]),
+      Match(match: "in a lake", index: 15, submatches: [None, Some("lake")]),
     ],
   )
 }
