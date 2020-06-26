@@ -1,4 +1,4 @@
-import gleam/iodata
+import gleam/string_builder
 import gleam/order.{Order}
 
 pub type Float =
@@ -25,8 +25,8 @@ pub external fn parse(String) -> Result(Float, Nil) =
 ///
 pub fn to_string(f: Float) -> String {
   f
-  |> iodata.from_float
-  |> iodata.to_string
+  |> string_builder.from_float
+  |> string_builder.to_string
 }
 
 /// Compares two floats, returning an order.
