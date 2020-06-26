@@ -1,7 +1,7 @@
 //// Strings in Gleam are UTF-8 binaries. They can be written in your code a
 //// text surrounded by `"double quotes"`.
 
-import gleam/iodata
+import gleam/string_builder
 import gleam/dynamic.{Dynamic}
 import gleam/list
 import gleam/order
@@ -56,9 +56,9 @@ pub external fn length(String) -> Int =
 ///
 pub fn reverse(string: String) -> String {
   string
-  |> iodata.new
-  |> iodata.reverse
-  |> iodata.to_string
+  |> string_builder.from_string
+  |> string_builder.reverse
+  |> string_builder.to_string
 }
 
 /// Create a new string by replacing all occurrences of a given substring.
@@ -77,9 +77,9 @@ pub fn replace(
   with substitute: String,
 ) -> String {
   string
-  |> iodata.new
-  |> iodata.replace(each: pattern, with: substitute)
-  |> iodata.to_string
+  |> string_builder.from_string
+  |> string_builder.replace(each: pattern, with: substitute)
+  |> string_builder.to_string
 }
 
 /// Create a new string with all the graphemes in the input string converted to
@@ -243,9 +243,9 @@ pub external fn ends_with(String, String) -> Bool =
 ///
 pub fn split(x: String, on substring: String) -> List(String) {
   x
-  |> iodata.new
-  |> iodata.split(on: substring)
-  |> list.map(with: iodata.to_string)
+  |> string_builder.from_string
+  |> string_builder.split(on: substring)
+  |> list.map(with: string_builder.to_string)
 }
 
 external fn erl_split(String, String) -> List(String) =
@@ -276,7 +276,7 @@ pub fn split_once(
 /// Create a new string by joining two strings together.
 ///
 /// This function copies both strings and runs in linear time. If you find
-/// yourself joining strings frequently consider using the [iodata](../iodata)
+/// yourself joining strings frequently consider using the [string_builder](../iodata)
 /// module as it can append strings much faster!
 ///
 /// ## Examples
@@ -286,15 +286,15 @@ pub fn split_once(
 ///
 pub fn append(to first: String, suffix second: String) -> String {
   first
-  |> iodata.new
-  |> iodata.append(second)
-  |> iodata.to_string
+  |> string_builder.from_string
+  |> string_builder.append(second)
+  |> string_builder.to_string
 }
 
 /// Create a new string by joining many strings together.
 ///
 /// This function copies both strings and runs in linear time. If you find
-/// yourself joining strings frequently consider using the [iodata](../iodata)
+/// yourself joining strings frequently consider using the [string_builder](../iodata)
 /// module as it can append strings much faster!
 ///
 /// ## Examples
@@ -304,8 +304,8 @@ pub fn append(to first: String, suffix second: String) -> String {
 ///
 pub fn concat(strings: List(String)) -> String {
   strings
-  |> iodata.from_strings
-  |> iodata.to_string
+  |> string_builder.from_strings
+  |> string_builder.to_string
 }
 
 fn repeat_help(chunk: String, result: List(String), repeats: Int) -> String {
@@ -340,8 +340,8 @@ pub fn repeat(string: String, times times: Int) -> String {
 pub fn join(strings: List(String), with separator: String) -> String {
   strings
   |> list.intersperse(with: separator)
-  |> iodata.from_strings
-  |> iodata.to_string
+  |> string_builder.from_strings
+  |> string_builder.to_string
 }
 
 type Direction {
