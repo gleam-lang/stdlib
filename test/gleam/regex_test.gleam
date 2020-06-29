@@ -1,48 +1,49 @@
-import gleam/option.{Some, None}
-import gleam/regex.{FromStringError, Match, Options}
+import gleam/io
+import gleam/option.{None, Some}
+import gleam/regex.{CompileError, Match, Options}
 import gleam/should
 
 pub fn from_string_test() {
   assert Ok(re) = regex.from_string("[0-9]")
 
-  regex.match(re, "abc123")
+  regex.check(re, "abc123")
   |> should.equal(True)
 
-  regex.match(re, "abcxyz")
+  regex.check(re, "abcxyz")
   |> should.equal(False)
 
   assert Error(from_string_err) = regex.from_string("[0-9")
 
   from_string_err
   |> should.equal(
-    FromStringError(
+    CompileError(
       error: "missing terminating ] for character class",
-      index: 4,
+      byte_index: 4,
     ),
   )
 }
 
-pub fn from_string_with_test() {
+pub fn compile_test() {
   let options = Options(case_insensitive: True, multi_line: False)
-  assert Ok(re) = regex.from_string_with(options, "[A-B]")
+  assert Ok(re) = regex.compile("[A-B]", options)
 
-  regex.match(re, "abc123")
+  regex.check(re, "abc123")
   |> should.equal(True)
 
   let options = Options(case_insensitive: False, multi_line: True)
-  assert Ok(re) = regex.from_string_with(options, "^[0-9]")
+  assert Ok(re) = regex.compile("^[0-9]", options)
 
-  regex.match(re, "abc\n123")
+  regex.check(re, "abc\n123")
   |> should.equal(True)
 }
 
-pub fn match_test() {
+pub fn check_test() {
   assert Ok(re) = regex.from_string("^f.o.?")
 
-  regex.match(re, "foo")
+  regex.check(re, "foo")
   |> should.equal(True)
 
-  regex.match(re, "boo")
+  regex.check(re, "boo")
   |> should.equal(False)
 }
 
@@ -57,21 +58,29 @@ pub fn scan_test() {
   assert Ok(re) = regex.from_string("Gl\\w+")
 
   regex.scan(re, "!Gleam")
-  |> should.equal([Match(match: "Gleam", index: 1, submatches: [])])
+  |> should.equal([Match(content: "Gleam", byte_index: 1, submatches: [])])
 
   regex.scan(re, "हGleam")
-  |> should.equal([Match(match: "Gleam", index: 3, submatches: [])])
+  |> should.equal([Match(content: "Gleam", byte_index: 3, submatches: [])])
 
   regex.scan(re, "𐍈Gleam")
-  |> should.equal([Match(match: "Gleam", index: 4, submatches: [])])
+  |> should.equal([Match(content: "Gleam", byte_index: 4, submatches: [])])
 
   assert Ok(re) = regex.from_string("[oi]n a(.?) (\\w+)")
 
   regex.scan(re, "I am on a boat in a lake.")
   |> should.equal(
     [
-      Match(match: "on a boat", index: 5, submatches: [None, Some("boat")]),
-      Match(match: "in a lake", index: 15, submatches: [None, Some("lake")]),
+      Match(
+        content: "on a boat",
+        byte_index: 5,
+        submatches: [None, Some("boat")],
+      ),
+      Match(
+        content: "in a lake",
+        byte_index: 15,
+        submatches: [None, Some("lake")],
+      ),
     ],
   )
 }

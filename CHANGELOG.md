@@ -22,8 +22,8 @@
 - The `option` module gains the the `map`, `flatten`, `then` and `or`
   functions.
 - The `result` module gains the the `or` function.
-- Created the `regex` module with the `from_string`, `from_string_with`,
-  `match`, `split` and `scan` functions.
+- Created the `regex` module with the `from_string`, `compile`, `check`,
+  `split` and `scan` functions.
 - The `list` module gains the the `pop`, `pop_map` and `key_pop` functions.
 - `base` module created with `encode64`, `decode64`, `url_encode64` and
   `url_decode64`.

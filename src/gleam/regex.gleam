@@ -9,22 +9,48 @@ pub external type Regex
 
 /// The details about a particular match:
 ///
-/// - match — the full string of the match.
-/// - index — the byte index of the match in the original string.
-/// - submatches — a Regex can have subpatterns, sup-parts that are in parentheses.
-///
 pub type Match {
-  Match(match: String, index: Int, submatches: List(Option(String)))
+  Match(
+    /// The full string of the match.
+    content: String,
+    /// The byte index of the match in the original string.
+    byte_index: Int,
+    /// A Regex can have subpatterns, sup-parts that are in parentheses.
+    submatches: List(Option(String)),
+  )
 }
 
 /// When a regular expression fails to compile:
 ///
-/// - error — a descriptive error message
-/// - index — the byte index of the cause in the regex string
-///
-pub type FromStringError {
-  FromStringError(error: String, index: Int)
+pub type CompileError {
+  CompileError(
+    /// The problem encountered that caused the compilation to fail
+    error: String,
+    /// The byte index into the string to where the problem was found
+    byte_index: Int,
+  )
 }
+
+pub type Options {
+  Options(case_insensitive: Bool, multi_line: Bool)
+}
+
+/// Create a Regex with some additional options.
+///
+/// ## Examples
+///
+///    > let options = Options(case_insensitive: False, multi_line: True)
+///    > assert Ok(re) = compile("^[0-9]", with: options)
+///    > match(re, "abc\n123")
+///    True
+///
+///    > let options = Options(case_insensitive: True, multi_line: False)
+///    > assert Ok(re) = compile("[A-Z]", with: options)
+///    > match(re, "abc123")
+///    True
+///
+pub external fn compile(String, with: Options) -> Result(Regex, CompileError) =
+  "gleam_stdlib" "compile_regex"
 
 /// Create a new Regex.
 ///
@@ -39,51 +65,28 @@ pub type FromStringError {
 ///
 ///    > from_string("[0-9")
 ///    Error(
-///      FromStringError(
+///      CompileError(
 ///        error: "missing terminating ] for character class",
-///        index: 4
+///        byte_index: 4
 ///      )
 ///    )
 ///
-pub external fn from_string(String) -> Result(Regex, FromStringError) =
-  "gleam_stdlib" "regex_from_string"
-
-pub type Options {
-  Options(case_insensitive: Bool, multi_line: Bool)
+pub fn from_string(pattern: String) -> Result(Regex, CompileError) {
+  compile(pattern, Options(case_insensitive: False, multi_line: False))
 }
-
-/// Create a Regex with some additional options.
-///
-/// ## Examples
-///
-///    > let options = Options(case_insensitive: False, multi_line: True)
-///    > assert Ok(re) = from_string_with(options, "^[0-9]")
-///    > match(re, "abc\n123")
-///    True
-///
-///    > let options = Options(case_insensitive: True, multi_line: False)
-///    > assert Ok(re) = from_string_with(options, "[A-Z]")
-///    > match(re, "abc123")
-///    True
-///
-pub external fn from_string_with(
-  Options,
-  String,
-) -> Result(Regex, FromStringError) =
-  "gleam_stdlib" "regex_from_string_with"
 
 /// Returns a boolean indicating whether there was a match or not.
 ///
 /// ## Examples
 ///
 ///    > assert Ok(re) = from_string("^f.o.?")
-///    > match(re, "foo")
+///    > check(with: re, content: "foo")
 ///    True
 ///
-///    > match(re, "boo")
+///    > check(with: re, content: "boo")
 ///    False
 ///
-pub external fn match(Regex, String) -> Bool =
+pub external fn check(with: Regex, content: String) -> Bool =
   "gleam_stdlib" "regex_match"
 
 /// Split a string
@@ -91,10 +94,10 @@ pub external fn match(Regex, String) -> Bool =
 /// ## Examples
 ///
 ///    > assert Ok(re) = from_string(" *, *")
-///    > split(re, "foo,32, 4, 9  ,0")
+///    > split(with: re, content: "foo,32, 4, 9  ,0")
 ///    ["foo", "32", "4", "9", "0"]
 ///
-pub external fn split(Regex, String) -> List(String) =
+pub external fn split(with: Regex, content: String) -> List(String) =
   "gleam_stdlib" "regex_split"
 
 /// Collects all matches of the regular expression.
@@ -102,19 +105,19 @@ pub external fn split(Regex, String) -> List(String) =
 /// ## Examples
 ///
 ///    > assert Ok(re) = regex.from_string("[oi]n a (\\w+)")
-///    > regex.scan(re, "I am on a boat in a lake.")
+///    > regex.scan(with: re, content: "I am on a boat in a lake.")
 ///    [
 ///      Match(
-///        match: "on a boat",
-///        index: 5,
+///        content: "on a boat",
+///        byte_index: 5,
 ///        submatches: [Some("boat")]
 ///      ),
 ///      Match(
-///        match: "in a lake",
-///        index: 15,
+///        content: "in a lake",
+///        byte_index: 15,
 ///        submatches: [Some("lake")]
 ///      )
 ///    ]
 ///
-pub external fn scan(Regex, String) -> List(Match) =
+pub external fn scan(with: Regex, content: String) -> List(Match) =
   "gleam_stdlib" "regex_scan"
