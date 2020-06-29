@@ -10,8 +10,8 @@
          string_pop_grapheme/1, string_starts_with/2, string_ends_with/2,
          string_pad/4, decode_tuple2/1, decode_map/1, bit_string_int_to_u32/1,
          bit_string_int_from_u32/1, bit_string_append/2, bit_string_part_/3,
-         decode_bit_string/1, regex_from_string/1, regex_from_string_with/2,
-         regex_match/2, regex_split/2, regex_scan/2, base_decoded4/1]).
+         decode_bit_string/1, compile_regex/2, regex_match/2, regex_split/2,
+         regex_scan/2, base_decoded4/1]).
 
 should_equal(Actual, Expected) -> ?assertEqual(Expected, Actual).
 should_not_equal(Actual, Expected) -> ?assertNotEqual(Expected, Actual).
@@ -155,40 +155,31 @@ bit_string_part_(Bin, Pos, Len) ->
   end.
 
 bit_string_int_to_u32(I) when 0 =< I, I < 4294967296 ->
-  {ok, <<I:32>>};
+    {ok, <<I:32>>};
 bit_string_int_to_u32(_) ->
-  {error, nil}.
+    {error, nil}.
 
 bit_string_int_from_u32(<<I:32>>) ->
-  {ok, I};
+    {ok, I};
 bit_string_int_from_u32(_) ->
-  {error, nil}.
+    {error, nil}.
 
-regex_from_string_with_opts(Options, String) ->
-    case re:compile(String, Options) of
+compile_regex(String, Options) ->
+    {options, Caseless, Multiline} = Options,
+    OptionsList = [
+        unicode,
+        Caseless andalso caseless,
+        Multiline andalso multiline
+    ],
+    FilteredOptions = [Option || Option <- OptionsList, Option /= false],
+    case re:compile(String, FilteredOptions) of
         {ok, MP} -> {ok, MP};
         {error, {Str, Pos}} ->
-            {error, {from_string_error, unicode:characters_to_binary(Str), Pos}}
-    end.
-
-regex_from_string(String) ->
-    regex_from_string_with_opts([unicode], String).
-
-regex_from_string_with(Options, String) ->
-    OptList = case Options of
-        {options, true, _} -> [unicode, caseless];
-        _ -> [unicode]
-    end,
-    case Options of
-        {options, _, true} -> regex_from_string_with_opts([multiline | OptList], String);
-        _ -> regex_from_string_with_opts(OptList, String)
+            {error, {compile_error, unicode:characters_to_binary(Str), Pos}}
     end.
 
 regex_match(Regex, String) ->
-    case re:run(String, Regex) of
-        {match, _} -> true;
-        _ -> false
-    end.
+    re:run(String, Regex) /= nomatch.
 
 regex_split(Regex, String) ->
     re:split(String, Regex).
@@ -207,7 +198,7 @@ regex_matches(String, [{S, L} | Submatches]) ->
 regex_scan(Regex, String) ->
     case re:run(String, Regex, [global]) of
         {match, Captured} -> lists:map(fun(X) -> regex_matches(String, X) end, Captured);
-        _ -> []
+        nomatch -> []
     end.
 
 base_decoded4(S) ->
