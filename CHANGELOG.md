@@ -10,7 +10,7 @@
 - The `iodata` module has been renamed to `string_builder`.
 - `os` module created with `get_env`, `insert_env`, `delete_env` and
   `system_time`.
-- The `string` module gains the `split_once` function.
+- The `string` module gains the `split_once` and `utf_codepoint` functions.
 - The `dynamic` module gains the `bit_string` function.
 - The `uri` module gains the `origin` and `merge` function.
 - The `io.debug` function returns the printed term.
