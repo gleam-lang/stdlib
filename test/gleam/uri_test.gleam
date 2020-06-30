@@ -1,6 +1,6 @@
 import gleam/uri
 import gleam/should
-import gleam/option.{Option, Some, None}
+import gleam/option.{None, Option, Some}
 
 pub fn full_parse_test() {
   assert Ok(
