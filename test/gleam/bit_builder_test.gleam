@@ -56,3 +56,10 @@ pub fn concat_test() {
   |> bit_builder.to_bit_string
   |> should.equal(<<1, 2, 3, 4, 5, 6>>)
 }
+
+pub fn from_string_test() {
+  // Regression test: no additional modification of the builder
+  bit_builder.from_bit_string(<<>>)
+  |> bit_builder.to_bit_string
+  |> should.equal(<<>>)
+}

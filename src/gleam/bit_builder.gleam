@@ -74,7 +74,7 @@ pub external fn concat(List(BitBuilder)) -> BitBuilder =
 /// Runs in constant time.
 ///
 pub external fn from_bit_string(BitString) -> BitBuilder =
-  "gleam_stdlib" "identity"
+  "gleam_stdlib" "wrap_list"
 
 /// Turns an builder into a bit string.
 ///
