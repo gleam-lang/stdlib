@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.10.0 - 2020-06-30
 
 - `bit_string` module created with `from_string`, `byte_size`, `append`,
   `part`, `to_string`, `is_utf8`, `int_to_u32` and `int_from_u32` functions.
