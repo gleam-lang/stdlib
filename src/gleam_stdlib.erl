@@ -202,6 +202,6 @@ regex_scan(Regex, String) ->
     end.
 
 base_decoded4(S) ->
-  try {ok, base64:decode(S)} catch
-    error:badarith -> {error, nil}
+  try {ok, base64:decode(S)}
+  catch error:badarith -> {error, nil}
   end.

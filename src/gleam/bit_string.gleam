@@ -5,7 +5,7 @@
 pub type BitString =
   BitString
 
-/// Convert a utf8 String type into a raw BitString type.
+/// Convert a UTF-8 String type into a raw BitString type.
 ///
 pub external fn from_string(String) -> BitString =
   "gleam_stdlib" "identity"
@@ -52,3 +52,31 @@ pub external fn int_to_u32(Int) -> Result(BitString, Nil) =
 ///
 pub external fn int_from_u32(BitString) -> Result(Int, Nil) =
   "gleam_stdlib" "bit_string_int_from_u32"
+
+/// Test to see whether a bit string is valid UTF-8.
+///
+pub fn is_utf8(bits: BitString) -> Bool {
+  case bits {
+    <<>> -> True
+    <<c:utf8, rest:binary>> -> {
+      // TODO: https://github.com/gleam-lang/gleam/issues/704
+      let _ = c
+      is_utf8(rest)
+    }
+    _ -> False
+  }
+}
+
+external fn unsafe_to_string(BitString) -> String =
+  "gleam_stdlib" "identity"
+
+/// Convert a bit string to a string.
+///
+/// Returns an error if the bit string is valid UTF-8 data.
+///
+pub fn to_string(bits: BitString) -> Result(String, Nil) {
+  case is_utf8(bits) {
+    True -> Ok(unsafe_to_string(bits))
+    False -> Error(Nil)
+  }
+}

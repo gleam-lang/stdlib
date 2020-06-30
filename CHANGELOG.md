@@ -3,7 +3,7 @@
 ## Unreleased
 
 - `bit_string` module created with `from_string`, `byte_size`, `append`,
-  `part`, `int_to_u32` and `int_from_u32`.
+  `part`, `to_string`, `is_utf8`, `int_to_u32` and `int_from_u32` functions.
 - The `bit_builder` module has been introduced with `prepend`, `append`,
   `prepend_builder`, `append_builder`, `prepend_string`, `append_string`,
   `concat`, `from_bit_string`, `to_bit_string`, and `byte_size` functions.

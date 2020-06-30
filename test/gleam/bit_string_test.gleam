@@ -69,3 +69,25 @@ pub fn u32_test() {
     bit_string.int_from_u32(bit_string.from_string("12345")),
   )
 }
+
+pub fn to_string_test() {
+  <<>>
+  |> bit_string.to_string
+  |> should.equal(Ok(""))
+
+  <<"":utf8>>
+  |> bit_string.to_string
+  |> should.equal(Ok(""))
+
+  <<"Hello":utf8>>
+  |> bit_string.to_string
+  |> should.equal(Ok("Hello"))
+
+  <<"ø":utf8>>
+  |> bit_string.to_string
+  |> should.equal(Ok("ø"))
+
+  <<65535:16>>
+  |> bit_string.to_string
+  |> should.equal(Error(Nil))
+}
