@@ -9,7 +9,7 @@
 
 import gleam/list
 import gleam/result
-import gleam/option.{Option, Some, None}
+import gleam/option.{None, Option, Some}
 import gleam/string
 import gleam/dynamic.{Dynamic}
 import gleam/map.{Map}

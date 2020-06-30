@@ -1,5 +1,5 @@
 import gleam/should
-import gleam/order.{Lt, Eq, Gt}
+import gleam/order.{Eq, Gt, Lt}
 
 pub fn reverse_test() {
   order.reverse(Lt)

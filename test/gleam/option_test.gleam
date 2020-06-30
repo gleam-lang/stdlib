@@ -1,5 +1,5 @@
 import gleam/should
-import gleam/option.{Some, None}
+import gleam/option.{None, Some}
 
 pub fn is_some_test() {
   option.is_some(Some(1))

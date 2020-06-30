@@ -2,7 +2,8 @@
 //// The BitString type should be used instead of a String type when not utf8
 //// encoded.
 
-pub type BitString = BitString
+pub type BitString =
+  BitString
 
 /// Convert a utf8 String type into a raw BitString type.
 ///
