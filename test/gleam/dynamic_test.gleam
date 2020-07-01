@@ -52,12 +52,12 @@ pub fn string_test() {
   1
   |> dynamic.from
   |> dynamic.string
-  |> should.equal(Error("Expected a string, got an int"))
+  |> should.equal(Error("Expected a bit_string, got an int"))
 
   []
   |> dynamic.from
   |> dynamic.string
-  |> should.equal(Error("Expected a string, got a list"))
+  |> should.equal(Error("Expected a bit_string, got a list"))
 }
 
 pub fn int_test() {

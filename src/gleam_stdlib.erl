@@ -4,7 +4,7 @@
 -export([should_equal/2, should_not_equal/2, should_be_ok/1, should_be_error/1,
          atom_from_string/1, atom_create_from_string/1, atom_to_string/1,
          map_get/2, iodata_append/2, iodata_prepend/2, identity/1,
-         decode_int/1, decode_string/1, decode_bool/1, decode_float/1,
+         decode_int/1, decode_bool/1, decode_float/1,
          decode_thunk/1, decode_atom/1, decode_list/1, decode_field/2,
          decode_element/2, parse_int/1, parse_float/1, compare_strings/2,
          string_pop_grapheme/1, string_starts_with/2, string_ends_with/2,
@@ -64,9 +64,6 @@ decode_atom(Data) -> decode_error_msg("an atom", Data).
 
 decode_bit_string(Data) when is_bitstring(Data) -> {ok, Data};
 decode_bit_string(Data) -> decode_error_msg("a bit_string", Data).
-
-decode_string(Data) when is_binary(Data) -> {ok, Data};
-decode_string(Data) -> decode_error_msg("a string", Data).
 
 decode_int(Data) when is_integer(Data) -> {ok, Data};
 decode_int(Data) -> decode_error_msg("an int", Data).
