@@ -1,5 +1,7 @@
 # Changelog
 
+- Fix `dynamic.string` to check that binary contains only utf8 characters.
+
 ## 0.10.0 - 2020-06-30
 
 - `bit_string` module created with `from_string`, `byte_size`, `append`,
