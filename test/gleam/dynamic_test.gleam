@@ -10,12 +10,17 @@ pub fn bit_string_test() {
   ""
   |> dynamic.from
   |> dynamic.bit_string
-  |> should.equal(Ok(bit_string.from_string("")))
+  |> should.equal(Ok(<<"":utf8>>))
 
   "Hello"
   |> dynamic.from
   |> dynamic.bit_string
-  |> should.equal(Ok(bit_string.from_string("Hello")))
+  |> should.equal(Ok(<<"Hello":utf8>>))
+
+  <<0, 2>>
+  |> dynamic.from
+  |> dynamic.bit_string
+  |> should.equal(Ok(<<0, 2>>))
 
   1
   |> dynamic.from
@@ -38,6 +43,11 @@ pub fn string_test() {
   |> dynamic.from
   |> dynamic.string
   |> should.equal(Ok("Hello"))
+
+  <<0, 2>>
+  |> dynamic.from
+  |> dynamic.string
+  |> should.equal(Error("Expected a string, got a bit_string"))
 
   1
   |> dynamic.from
