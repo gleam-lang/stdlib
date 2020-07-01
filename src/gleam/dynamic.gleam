@@ -27,6 +27,32 @@ pub external fn from(a) -> Dynamic =
 pub external fn unsafe_coerce(Dynamic) -> a =
   "gleam_stdlib" "identity"
 
+external fn erl_string(from: Dynamic) -> Result(BitString, String) =
+  "gleam_stdlib" "decode_string"
+
+/// Check to see whether a Dynamic value is a string, and return the string if
+/// it is.
+///
+/// ## Examples
+///
+///    > string(from("Hello"))
+///    Ok("Hello")
+///
+///    > string(from(123))
+///    Error("Expected a String, got `123`")
+///
+pub fn string(from: Dynamic) -> Result(String, String) {
+  erl_string(from)
+  |> result.then(
+    fn(raw) {
+      case bit_string.is_utf8(raw) {
+        True -> Ok(raw)
+        False -> Error("Expected a string, got a bit_string")
+      }
+    },
+  )
+}
+
 /// Check to see whether a Dynamic value is a bit_string, and return the bit_string if
 /// it is.
 ///
@@ -40,20 +66,6 @@ pub external fn unsafe_coerce(Dynamic) -> a =
 ///
 pub external fn bit_string(from: Dynamic) -> Result(BitString, String) =
   "gleam_stdlib" "decode_bit_string"
-
-/// Check to see whether a Dynamic value is a string, and return the string if
-/// it is.
-///
-/// ## Examples
-///
-///    > string(from("Hello"))
-///    Ok("Hello")
-///
-///    > string(from(123))
-///    Error("Expected a String, got `123`")
-///
-pub external fn string(from: Dynamic) -> Result(String, String) =
-  "gleam_stdlib" "decode_string"
 
 /// Check to see whether a Dynamic value is an int, and return the int if it
 /// is.
