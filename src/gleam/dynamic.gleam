@@ -45,9 +45,9 @@ pub fn string(from: Dynamic) -> Result(String, String) {
   erl_string(from)
   |> result.then(
     fn(raw) {
-      case bit_string.is_utf8(raw) {
-        True -> Ok(raw)
-        False -> Error("Expected a string, got a bit_string")
+      case bit_string.to_string(raw) {
+        Ok(string) -> Ok(string)
+        Error(Nil) -> Error("Expected a string, got a bit_string")
       }
     },
   )
