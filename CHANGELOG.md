@@ -1,8 +1,10 @@
 # Changelog
 
+## v0.10.1 - 2020-07-01
+
 - Fix `dynamic.string` to check that binary contains only utf8 characters.
 
-## 0.10.0 - 2020-06-30
+## v0.10.0 - 2020-06-30
 
 - `bit_string` module created with `from_string`, `byte_size`, `append`,
   `part`, `to_string`, `is_utf8`, `int_to_u32` and `int_from_u32` functions.
@@ -30,7 +32,7 @@
 - `base` module created with `encode64`, `decode64`, `url_encode64` and
   `url_decode64`.
 
-## 0.9.0 - 2020-05-26
+## v0.9.0 - 2020-05-26
 
 - Created the `iterator` module with the `unfold`, `repeatedly`, `repeat`,
   `from_list`, `fold`, `run`, `to_list`, `take`, `drop`, `map`, `filter`,
