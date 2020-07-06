@@ -72,6 +72,11 @@ pub fn parse_empty_query_string_test() {
   should.equal(parsed, [])
 }
 
+pub fn parse_query_string_with_empty_test() {
+  uri.parse_query("present")
+  |> should.equal(Ok([tuple("present", "")]))
+}
+
 pub fn error_parsing_query_test() {
   should.equal(uri.parse_query("%C2"), Error(Nil))
 }
