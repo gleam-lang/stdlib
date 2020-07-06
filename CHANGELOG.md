@@ -1,5 +1,8 @@
 # Changelog
 
+- Fix `uri.parse_query` to handle the case where query parameters are present
+  without a value.
+
 ## v0.10.1 - 2020-07-01
 
 - Fix `dynamic.string` to check that binary contains only utf8 characters.
