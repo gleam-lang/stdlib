@@ -81,7 +81,22 @@ external fn erl_parse_query(String) -> Dynamic =
 pub fn parse_query(query: String) -> Result(List(tuple(String, String)), Nil) {
   query
   |> erl_parse_query
-  |> dynamic.typed_list(dynamic.typed_tuple2(_, dynamic.string, dynamic.string))
+  |> dynamic.typed_list(
+    dynamic.typed_tuple2(
+      _,
+      dynamic.string,
+      fn(raw) {
+        case dynamic.string(raw) {
+          Ok(value) -> Ok(value)
+          Error(_reason) -> case dynamic.bool(raw) {
+            Ok(True) -> Ok("")
+            // Note this error message will be niled at the end of this function.
+            _ -> Error("expected a boolean or string, got neither")
+          }
+        }
+      },
+    ),
+  )
   |> result.nil_error
 }
 
