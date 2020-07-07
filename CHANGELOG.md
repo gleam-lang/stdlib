@@ -1,7 +1,13 @@
 # Changelog
 
+## Unreleased
+
 - Fix `uri.parse_query` to handle the case where query parameters are present
   without a value.
+- The types for `list.find_map` have been relaxed.
+- The `dynamic.typed_list` argument label has changed from `containing` to
+  `of`.
+- The `dynamic` module gains the `any` function.
 
 ## v0.10.1 - 2020-07-01
 

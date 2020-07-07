@@ -504,7 +504,7 @@ pub fn find(
 ///
 pub fn find_map(
   in haystack: List(a),
-  with fun: fn(a) -> Result(b, Nil),
+  with fun: fn(a) -> Result(b, c),
 ) -> Result(b, Nil) {
   case haystack {
     [] -> Error(Nil)

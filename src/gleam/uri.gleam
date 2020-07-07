@@ -79,24 +79,16 @@ external fn erl_parse_query(String) -> Dynamic =
 /// The opposite operation is `uri.query_to_string`.
 ///
 pub fn parse_query(query: String) -> Result(List(tuple(String, String)), Nil) {
+  let bool_value = fn(x) { result.map(dynamic.bool(x), fn(_) { "" }) }
+  let query_param = dynamic.typed_tuple2(
+    _,
+    dynamic.string,
+    dynamic.any(_, of: [dynamic.string, bool_value]),
+  )
+
   query
   |> erl_parse_query
-  |> dynamic.typed_list(
-    dynamic.typed_tuple2(
-      _,
-      dynamic.string,
-      fn(raw) {
-        case dynamic.string(raw) {
-          Ok(value) -> Ok(value)
-          Error(_reason) -> case dynamic.bool(raw) {
-            Ok(True) -> Ok("")
-            // Note this error message will be niled at the end of this function.
-            _ -> Error("expected a boolean or string, got neither")
-          }
-        }
-      },
-    ),
-  )
+  |> dynamic.typed_list(of: query_param)
   |> result.nil_error
 }
 

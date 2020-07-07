@@ -166,18 +166,18 @@ pub external fn list(from: Dynamic) -> Result(List(Dynamic), String) =
 ///
 /// ## Examples
 ///
-///    > typed_list(from(["a", "b", "c"]), containing: string)
+///    > typed_list(from(["a", "b", "c"]), of: string)
 ///    Ok(["a", "b", "c"])
 ///
-///    > typed_list(from([1, 2, 3]), containing: string)
+///    > typed_list(from([1, 2, 3]), of: string)
 ///    Error("Expected an Int, got a binary")
 ///
-///    > typed_list(from("ok"), containing: string)
+///    > typed_list(from("ok"), of: string)
 ///    Error("Expected a List, got a binary")
 ///
 pub fn typed_list(
   from dynamic: Dynamic,
-  containing decoder_type: fn(Dynamic) -> Result(inner, String),
+  of decoder_type: fn(Dynamic) -> Result(inner, String),
 ) -> Result(List(inner), String) {
   dynamic
   |> list
@@ -289,3 +289,31 @@ pub fn typed_tuple2(
 ///
 pub external fn map(from: Dynamic) -> Result(Map(Dynamic, Dynamic), String) =
   "gleam_stdlib" "decode_map"
+
+/// Join multiple decoders into one. When run they will each be tried in turn
+/// until one succeeds, or they all fail.
+///
+/// ## Examples
+///
+///    > import gleam/result
+///    > let bool_or_string = any(_, of: [
+///    >   string,
+///    >   fn(x) { result.map(bool(x), fn(_) { "a bool" }) }
+///    > ])
+///    > bool_or_string(from("ok"))
+///    Ok("ok")
+///
+///    > bool_or_string(from(True))
+///    Ok("a bool")
+///
+///    > bool_or_string(from(1))
+///    Error("Unexpected value")
+///
+pub fn any(
+  from data: Dynamic,
+  of decoders: List(Decoder(t)),
+) -> Result(t, String) {
+  decoders
+  |> list_mod.find_map(fn(decoder) { decoder(data) })
+  |> result.map_error(fn(_) { "Unexpected value" })
+}
