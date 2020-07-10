@@ -69,6 +69,13 @@ pub external fn append_string(to: BitBuilder, suffix: String) -> BitBuilder =
 pub external fn concat(List(BitBuilder)) -> BitBuilder =
   "gleam_stdlib" "identity"
 
+/// Create a new builder from a string.
+///
+/// Runs in constant time.
+///
+pub external fn from_string(String) -> BitBuilder =
+  "gleam_stdlib" "wrap_list"
+
 /// Create a new builder from a bit string.
 ///
 /// Runs in constant time.
