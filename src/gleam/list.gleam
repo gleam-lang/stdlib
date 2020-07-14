@@ -954,7 +954,10 @@ pub fn pop_map(
 ///    > key_pop([tuple("a", 0), tuple("b", 1)], "c")
 ///    Error(Nil)
 ///
-pub fn key_pop(haystack, key) {
+pub fn key_pop(
+  haystack: List(tuple(k, v)),
+  key: k,
+) -> Result(tuple(v, List(tuple(k, v))), Nil) {
   pop_map(
     haystack,
     fn(entry) {
@@ -965,4 +968,26 @@ pub fn key_pop(haystack, key) {
       }
     },
   )
+}
+
+/// Given a list of 2 element tuples, insert a key and value into the list.
+///
+/// If there was already a tuple with the key then it is replaced, otherwise it
+/// is added to the end of the list.
+///
+///
+/// ## Examples
+///
+///    > key_set([tuple(5, 0), tuple(4, 1)], 4, 100)
+///    [tuple(5, 0), tuple(4, 100)]
+///
+///    > key_set([tuple(5, 0), tuple(4, 1)], 1, 100)
+///    [tuple(5, 0), tuple(4, 1), tuple(1, 100)]
+///
+pub fn key_set(list: List(tuple(a, b)), key: a, value: b) -> List(tuple(a, b)) {
+  case list {
+    [] -> [tuple(key, value)]
+    [tuple(k, _), ..rest] if k == key -> [tuple(key, value), ..rest]
+    [first, ..rest] -> [first, ..key_set(rest, key, value)]
+  }
 }

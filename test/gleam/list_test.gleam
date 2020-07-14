@@ -457,3 +457,13 @@ pub fn key_pop_test() {
   list.key_pop([tuple("a", 0), tuple("b", 1)], "c")
   |> should.equal(Error(Nil))
 }
+
+pub fn key_set_test() {
+  [tuple(5, 0), tuple(4, 1)]
+  |> list.key_set(4, 100)
+  |> should.equal([tuple(5, 0), tuple(4, 100)])
+
+  [tuple(5, 0), tuple(4, 1)]
+  |> list.key_set(1, 100)
+  |> should.equal([tuple(5, 0), tuple(4, 1), tuple(1, 100)])
+}
