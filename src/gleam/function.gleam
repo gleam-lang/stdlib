@@ -1,3 +1,5 @@
+import gleam/dynamic.{Dynamic}
+
 /// Takes two functions and chains them together to form one function that takes
 /// the input from the first and returns the output of the second.
 ///
@@ -17,3 +19,19 @@ pub fn flip(fun: fn(a, b) -> c) -> fn(b, a) -> c {
 pub fn identity(x: a) -> a {
   x
 }
+
+pub type Exception {
+  Exited(Dynamic)
+  Thrown(Dynamic)
+  Errored(Dynamic)
+}
+
+/// Gleam doesn't offer any way to raise exceptions, but they may still occur
+/// due to bugs when working with unsafe code, such as when calling Erlang
+/// function.
+///
+/// This function will catch any error thrown and convert it into a result
+/// rather than crashing the process.
+///
+pub external fn rescue(fn() -> a) -> Result(a, Exception) =
+  "gleam_stdlib" "rescue"

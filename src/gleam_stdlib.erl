@@ -11,7 +11,7 @@
          string_pad/4, decode_tuple2/1, decode_map/1, bit_string_int_to_u32/1,
          bit_string_int_from_u32/1, bit_string_append/2, bit_string_part_/3,
          decode_bit_string/1, compile_regex/2, regex_match/2, regex_split/2,
-         regex_scan/2, base_decoded4/1, wrap_list/1]).
+         regex_scan/2, base_decoded4/1, wrap_list/1, rescue/1]).
 
 should_equal(Actual, Expected) -> ?assertEqual(Expected, Actual).
 should_not_equal(Actual, Expected) -> ?assertNotEqual(Expected, Actual).
@@ -19,21 +19,21 @@ should_be_ok(A) -> ?assertMatch({ok, _}, A).
 should_be_error(A) -> ?assertMatch({error, _}, A).
 
 map_get(Map, Key) ->
-  case maps:find(Key, Map) of
-    error -> {error, nil};
-    OkFound -> OkFound
-  end.
+    case maps:find(Key, Map) of
+        error -> {error, nil};
+        OkFound -> OkFound
+    end.
 
 atom_create_from_string(S) ->
-  binary_to_atom(S, utf8).
+    binary_to_atom(S, utf8).
 
 atom_to_string(S) ->
-  atom_to_binary(S, utf8).
+    atom_to_binary(S, utf8).
 
 atom_from_string(S) ->
-  try {ok, binary_to_existing_atom(S, utf8)} catch
-    error:badarg -> {error, atom_not_loaded}
-  end.
+    try {ok, binary_to_existing_atom(S, utf8)}
+    catch error:badarg -> {error, atom_not_loaded}
+    end.
 
 iodata_append(Iodata, String) -> [Iodata, String].
 iodata_prepend(Iodata, String) -> [String, Iodata].
@@ -41,7 +41,7 @@ iodata_prepend(Iodata, String) -> [String, Iodata].
 identity(X) -> X.
 
 decode_error_msg(Type, Data) ->
-  {error, iolist_to_binary(io_lib:format("Expected ~s, got ~s", [Type, classify(Data)]))}.
+    {error, iolist_to_binary(io_lib:format("Expected ~s, got ~s", [Type, classify(Data)]))}.
 
 classify(X) when is_atom(X) -> "an atom";
 classify(X) when is_binary(X) -> "a binary";
@@ -81,45 +81,42 @@ decode_list(Data) when is_list(Data) -> {ok, Data};
 decode_list(Data) -> decode_error_msg("a list", Data).
 
 decode_field(Data, Key) ->
-  case Data of
-    #{Key := Value} ->
-      {ok, Value};
+    case Data of
+        #{Key := Value} ->
+            {ok, Value};
 
-    _ ->
-      decode_error_msg(io_lib:format("a map with key `~p`", [Key]), Data)
-  end.
+        _ ->
+            decode_error_msg(io_lib:format("a map with key `~p`", [Key]), Data)
+    end.
 
 decode_element(Data, Position) when is_tuple(Data) ->
-  case catch element(Position + 1, Data) of
-    {'EXIT', _Reason} ->
-      decode_error_msg(["a tuple of at least ", integer_to_list(Position + 1), " size"], Data);
+    case catch element(Position + 1, Data) of
+        {'EXIT', _Reason} ->
+            decode_error_msg(["a tuple of at least ", integer_to_list(Position + 1), " size"], Data);
 
-    Value ->
-      {ok, Value}
-  end;
+        Value ->
+            {ok, Value}
+    end;
 decode_element(Data, _Position) -> decode_error_msg("a tuple", Data).
 
 parse_int(String) ->
-  case catch binary_to_integer(String) of
-    Int when is_integer(Int) -> {ok, Int};
-    _ -> {error, nil}
-  end.
+    case catch binary_to_integer(String) of
+        Int when is_integer(Int) -> {ok, Int};
+        _ -> {error, nil}
+    end.
 
 parse_float(String) ->
-  case catch binary_to_float(String) of
-    Float when is_float(Float) -> {ok, Float};
-    _ -> {error, nil}
-  end.
+    case catch binary_to_float(String) of
+        Float when is_float(Float) -> {ok, Float};
+        _ -> {error, nil}
+    end.
 
 compare_strings(Lhs, Rhs) ->
-  if
-    Lhs == Rhs ->
-      eq;
-    Lhs < Rhs ->
-      lt;
-    true ->
-     gt
-  end.
+    if
+        Lhs == Rhs -> eq;
+        Lhs < Rhs -> lt;
+        true -> gt
+    end.
 
 string_starts_with(_, <<>>) -> true;
 string_starts_with(String, Prefix) when byte_size(Prefix) > byte_size(String) -> false;
@@ -144,12 +141,12 @@ string_pop_grapheme(String) ->
     end.
 
 bit_string_append(First, Second) ->
-  <<First/bitstring, Second/bitstring>>.
+    <<First/bitstring, Second/bitstring>>.
 
 bit_string_part_(Bin, Pos, Len) ->
-  try {ok, binary:part(Bin, Pos, Len)} catch
-    error:badarg -> {error, nil}
-  end.
+    try {ok, binary:part(Bin, Pos, Len)}
+    catch error:badarg -> {error, nil}
+    end.
 
 bit_string_int_to_u32(I) when 0 =< I, I < 4294967296 ->
     {ok, <<I:32>>};
@@ -199,9 +196,17 @@ regex_scan(Regex, String) ->
     end.
 
 base_decoded4(S) ->
-  try {ok, base64:decode(S)}
-  catch error:badarith -> {error, nil}
-  end.
+    try {ok, base64:decode(S)}
+    catch error:badarith -> {error, nil}
+    end.
 
 wrap_list(X) when is_list(X) -> X;
 wrap_list(X) -> [X].
+
+rescue(F) ->
+    try {ok, F()}
+    catch
+        throw:X -> {error, {thrown, X}};
+        error:X -> {error, {errored, X}};
+        exit:X -> {error, {exited, X}}
+    end.

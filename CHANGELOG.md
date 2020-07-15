@@ -10,6 +10,7 @@
 - The `dynamic` module gains the `any` function.
 - The `bit_builder` module gains the `from_string` function.
 - The `list` module gains the `key_set` function.
+- The `function` module gains the `rescue` function.
 
 ## v0.10.1 - 2020-07-01
 
