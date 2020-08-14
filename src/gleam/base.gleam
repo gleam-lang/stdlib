@@ -5,7 +5,7 @@ external fn erl_encode64(BitString) -> String =
   "base64" "encode"
 
 external fn erl_decode64(String) -> Result(BitString, Nil) =
-  "gleam_stdlib" "base_decoded4"
+  "gleam_stdlib" "base_decode64"
 
 /// Encodes a BitString into a base 64 encoded string.
 pub fn encode64(input: BitString, padding: Bool) -> String {
