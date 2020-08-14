@@ -168,7 +168,11 @@ pub fn to_list(iterator: Iterator(element)) -> List(element) {
   |> list.reverse
 }
 
-fn do_take(continuation: fn() -> Action(e), desired: Int, acc: List(e)) -> List(e) {
+fn do_take(
+  continuation: fn() -> Action(e),
+  desired: Int,
+  acc: List(e),
+) -> List(e) {
   case desired > 0 {
     True -> case continuation() {
       Continue(
@@ -262,7 +266,10 @@ pub fn map(over iterator: Iterator(a), with f: fn(a) -> b) -> Iterator(b) {
   |> Iterator
 }
 
-fn do_filter(continuation: fn() -> Action(e), predicate: fn(e) -> Bool) -> fn() -> Action(e) {
+fn do_filter(
+  continuation: fn() -> Action(e),
+  predicate: fn(e) -> Bool,
+) -> fn() -> Action(e) {
   fn() {
     case continuation() {
       Continue(e, iterator) -> case predicate(e) {
