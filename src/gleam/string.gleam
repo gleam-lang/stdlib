@@ -3,6 +3,7 @@
 
 import gleam/string_builder
 import gleam/dynamic.{Dynamic}
+import gleam/iterator
 import gleam/list
 import gleam/order
 import gleam/result
@@ -312,13 +313,6 @@ pub fn concat(strings: List(String)) -> String {
   |> string_builder.to_string
 }
 
-fn repeat_help(chunk: String, result: List(String), repeats: Int) -> String {
-  case repeats <= 0 {
-    True -> concat(result)
-    False -> repeat_help(chunk, [chunk, ..result], repeats - 1)
-  }
-}
-
 /// Create a new string by repeating a string a given number of times.
 ///
 /// This function runs in linear time.
@@ -329,7 +323,9 @@ fn repeat_help(chunk: String, result: List(String), repeats: Int) -> String {
 ///    "hahaha"
 ///
 pub fn repeat(string: String, times times: Int) -> String {
-  repeat_help(string, [], times)
+  iterator.repeat(string)
+  |> iterator.take(times)
+  |> concat
 }
 
 /// Join many strings together with a given separator.
@@ -344,14 +340,11 @@ pub fn repeat(string: String, times times: Int) -> String {
 pub fn join(strings: List(String), with separator: String) -> String {
   strings
   |> list.intersperse(with: separator)
-  |> string_builder.from_strings
-  |> string_builder.to_string
+  |> concat
 }
 
 type Direction {
-
   Leading
-
   Trailing
   Both
 }
@@ -466,8 +459,7 @@ external fn int_to_utf_codepoint(Int) -> UtfCodepoint =
 pub fn utf_codepoint(value: Int) -> Result(UtfCodepoint, Nil) {
   case value {
     i if i > 1114111 -> Error(Nil)
-    i if i == 65534 -> Error(Nil)
-    i if i == 65535 -> Error(Nil)
+    65534 | 65535 -> Error(Nil)
     i if i >= 55296 && i <= 57343 -> Error(Nil)
     i -> Ok(int_to_utf_codepoint(i))
   }
