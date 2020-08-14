@@ -28,7 +28,10 @@ pub type Step(element, accumulator) {
 }
 
 // Creating Iterators
-fn do_unfold(initial, f) {
+fn do_unfold(
+  initial: acc,
+  f: fn(acc) -> Step(element, acc),
+) -> fn() -> Action(element) {
   fn() {
     case f(initial) {
       Next(x, acc) -> Continue(x, do_unfold(acc, f))
@@ -70,7 +73,7 @@ pub fn unfold(
 /// repeatedly.
 ///
 pub fn repeatedly(f: fn() -> element) -> Iterator(element) {
-  unfold(Nil, fn(acc) { Next(f(), acc) })
+  unfold(Nil, fn(_) { Next(f(), Nil) })
 }
 
 /// Create an iterator that returns the same value infinitely.
@@ -104,7 +107,11 @@ pub fn from_list(list: List(element)) -> Iterator(element) {
 }
 
 // Consuming Iterators
-fn do_fold(iterator, initial, f) {
+fn do_fold(
+  iterator: fn() -> Action(e),
+  initial: acc,
+  f: fn(e, acc) -> acc,
+) -> acc {
   case iterator() {
     Continue(element, iterator) -> do_fold(iterator, f(element, initial), f)
     Stop -> initial
@@ -141,8 +148,8 @@ pub fn fold(
 /// you wish to trigger any side effects that would occur when evaluating
 /// the iterator.
 ///
-pub fn run(iterator) -> Nil {
-  fold(iterator, Nil, fn(_, acc) { acc })
+pub fn run(iterator: Iterator(e)) -> Nil {
+  fold(iterator, Nil, fn(_, _) { Nil })
 }
 
 /// Evaluate an iterator and return all the elements as a list.
@@ -161,7 +168,7 @@ pub fn to_list(iterator: Iterator(element)) -> List(element) {
   |> list.reverse
 }
 
-fn do_take(iterator, desired, acc) {
+fn do_take(iterator: fn() -> Action(e), desired: Int, acc: List(e)) -> List(e) {
   case desired > 0 {
     True -> case iterator() {
       Continue(
@@ -169,8 +176,10 @@ fn do_take(iterator, desired, acc) {
         iterator,
       ) -> do_take(iterator, desired - 1, [element, ..acc])
       Stop -> acc
+        |> list.reverse
     }
     False -> acc
+      |> list.reverse
   }
 }
 
@@ -190,10 +199,9 @@ fn do_take(iterator, desired, acc) {
 pub fn take(from iterator: Iterator(e), up_to desired: Int) -> List(e) {
   iterator.continuation
   |> do_take(desired, [])
-  |> list.reverse
 }
 
-fn do_drop(iterator, desired) {
+fn do_drop(iterator: fn() -> Action(e), desired: Int) -> fn() -> Action(e) {
   case desired > 0 {
     True -> case iterator() {
       Continue(_, iterator) -> do_drop(iterator, desired - 1)
@@ -226,7 +234,7 @@ pub fn drop(from iterator: Iterator(e), up_to desired: Int) -> Iterator(e) {
   |> Iterator
 }
 
-fn do_map(continuation, f) {
+fn do_map(continuation: fn() -> Action(a), f: fn(a) -> b) -> fn() -> Action(b) {
   fn() {
     case continuation() {
       Continue(e, continuation) -> Continue(f(e), do_map(continuation, f))
@@ -254,7 +262,7 @@ pub fn map(over iterator: Iterator(a), with f: fn(a) -> b) -> Iterator(b) {
   |> Iterator
 }
 
-fn do_filter(iterator, predicate) {
+fn do_filter(iterator: fn() -> Action(e), predicate: fn(e) -> Bool) -> fn() -> Action(e) {
   fn() {
     case iterator() {
       Continue(e, iterator) -> case predicate(e) {
