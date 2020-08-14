@@ -108,11 +108,11 @@ pub fn from_list(list: List(element)) -> Iterator(element) {
 
 // Consuming Iterators
 fn do_fold(
-  iterator: fn() -> Action(e),
+  continuation: fn() -> Action(e),
   initial: acc,
   f: fn(e, acc) -> acc,
 ) -> acc {
-  case iterator() {
+  case continuation() {
     Continue(element, iterator) -> do_fold(iterator, f(element, initial), f)
     Stop -> initial
   }
@@ -168,9 +168,9 @@ pub fn to_list(iterator: Iterator(element)) -> List(element) {
   |> list.reverse
 }
 
-fn do_take(iterator: fn() -> Action(e), desired: Int, acc: List(e)) -> List(e) {
+fn do_take(continuation: fn() -> Action(e), desired: Int, acc: List(e)) -> List(e) {
   case desired > 0 {
-    True -> case iterator() {
+    True -> case continuation() {
       Continue(
         element,
         iterator,
@@ -201,13 +201,13 @@ pub fn take(from iterator: Iterator(e), up_to desired: Int) -> List(e) {
   |> do_take(desired, [])
 }
 
-fn do_drop(iterator: fn() -> Action(e), desired: Int) -> fn() -> Action(e) {
+fn do_drop(continuation: fn() -> Action(e), desired: Int) -> fn() -> Action(e) {
   case desired > 0 {
-    True -> case iterator() {
+    True -> case continuation() {
       Continue(_, iterator) -> do_drop(iterator, desired - 1)
       Stop -> fn() { Stop }
     }
-    False -> iterator
+    False -> continuation
   }
 }
 
@@ -262,9 +262,9 @@ pub fn map(over iterator: Iterator(a), with f: fn(a) -> b) -> Iterator(b) {
   |> Iterator
 }
 
-fn do_filter(iterator: fn() -> Action(e), predicate: fn(e) -> Bool) -> fn() -> Action(e) {
+fn do_filter(continuation: fn() -> Action(e), predicate: fn(e) -> Bool) -> fn() -> Action(e) {
   fn() {
-    case iterator() {
+    case continuation() {
       Continue(e, iterator) -> case predicate(e) {
         True -> Continue(e, do_filter(iterator, predicate))
         False -> do_filter(iterator, predicate)()
