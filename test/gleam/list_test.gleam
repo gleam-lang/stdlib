@@ -264,6 +264,14 @@ pub fn strict_zip_test() {
   |> should.equal(Error(list.LengthMismatch))
 }
 
+pub fn unzip_test() {
+  list.unzip([tuple(1, 2), tuple(3, 4)])
+  |> should.equal(tuple([1, 3], [2, 4]))
+
+  list.unzip([])
+  |> should.equal(tuple([], []))
+}
+
 pub fn intersperse_test() {
   list.intersperse([1, 2, 3], 4)
   |> should.equal([1, 4, 2, 4, 3])
