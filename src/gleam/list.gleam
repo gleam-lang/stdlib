@@ -630,6 +630,16 @@ fn do_unzip(input, xs, ys) {
   }
 }
 
+/// Takes a single list of 2 item tuples and returns two lists.
+///
+/// ## Examples
+///
+///    > unzip([tuple(1, 2), tuple(3, 4)])
+///    tuple([1, 3], [2, 4])
+///
+///    > unzip([])
+///    tuple([], [])
+///
 pub fn unzip(input: List(tuple(a, b))) -> tuple(List(a), List(b)) {
   do_unzip(input, [], [])
 }
