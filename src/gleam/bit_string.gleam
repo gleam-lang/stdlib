@@ -58,7 +58,11 @@ pub external fn int_from_u32(BitString) -> Result(Int, Nil) =
 pub fn is_utf8(bits: BitString) -> Bool {
   case bits {
     <<>> -> True
-    <<_:utf8, rest:binary>> -> is_utf8(rest)
+    <<c:utf8, rest:binary>> -> {
+      // TODO: https://github.com/gleam-lang/gleam/issues/704
+      let _ = c
+      is_utf8(rest)
+    }
     _ -> False
   }
 }
