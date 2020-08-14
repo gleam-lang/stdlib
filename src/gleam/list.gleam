@@ -623,6 +623,17 @@ pub fn strict_zip(
   }
 }
 
+fn do_unzip(input, xs, ys) {
+  case input {
+    [] -> tuple(reverse(xs), reverse(ys))
+    [tuple(x, y), ..rest] -> do_unzip(rest, [x, ..xs], [y, ..ys])
+  }
+}
+
+pub fn unzip(input: List(tuple(a, b))) -> tuple(List(a), List(b)) {
+  do_unzip(input, [], [])
+}
+
 /// Insert a given value between each existing element in a given list.
 ///
 /// This function runs in linear time and copies the list.
