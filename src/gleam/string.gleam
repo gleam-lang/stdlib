@@ -280,7 +280,7 @@ pub fn split_once(
 /// Create a new string by joining two strings together.
 ///
 /// This function copies both strings and runs in linear time. If you find
-/// yourself joining strings frequently consider using the [string_builder](../iodata)
+/// yourself joining strings frequently consider using the [string_builder](../string_builder)
 /// module as it can append strings much faster!
 ///
 /// ## Examples
