@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.11.0 - 2020-08-22
 
 - Fix `uri.parse_query` to handle the case where query parameters are present
   without a value.
