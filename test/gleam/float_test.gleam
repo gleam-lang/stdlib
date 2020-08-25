@@ -183,3 +183,20 @@ pub fn max_test() {
   float.max(-1.1, -1.)
   |> should.equal(-1.)
 }
+
+pub fn absolute_value_test() {
+  float.absolute_value(-1.0)
+  |> should.equal(1.0)
+
+  float.absolute_value(-20.6)
+  |> should.equal(20.6)
+
+  float.absolute_value(0.0)
+  |> should.equal(0.0)
+
+  float.absolute_value(1.0)
+  |> should.equal(1.0)
+
+  float.absolute_value(25.2)
+  |> should.equal(25.2)
+}
