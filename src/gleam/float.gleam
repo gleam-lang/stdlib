@@ -115,3 +115,16 @@ pub external fn round(Float) -> Int =
 ///
 pub external fn truncate(Float) -> Int =
   "erlang" "trunc"
+
+/// Returns the absolute value of the input as a float.
+///
+/// ## Examples
+///
+///    > absolute_value(-12.5)
+///    12.5
+///
+///    > absolute_value(10.2)
+///    10.2
+///
+pub external fn absolute_value(Float) -> Float =
+  "erlang" "abs"
