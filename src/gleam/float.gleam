@@ -142,3 +142,20 @@ pub external fn absolute_value(Float) -> Float =
 ///
 pub external fn power(base: Float, exponent: Float) -> Float =
   "math" "pow"
+
+/// Returns the square root of the input as a float.
+///
+/// ## Examples
+///
+///    > square_root(4.0)
+///    2.0
+///
+///    > square_root(-16.0)
+///    Error(Nil)
+///
+pub fn square_root(number: Float) -> Result(Float, Nil) {
+  case number <. 0.0 {
+    True -> Error(Nil)
+    False -> Ok(power(number, 0.5))
+  }
+}
