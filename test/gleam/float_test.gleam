@@ -200,3 +200,20 @@ pub fn absolute_value_test() {
   float.absolute_value(25.2)
   |> should.equal(25.2)
 }
+
+pub fn power_test() {
+  float.power(2.0, 2.0)
+  |> should.equal(4.0)
+
+  float.power(-5.0, 3.0)
+  |> should.equal(-125.0)
+
+  float.power(10.5, 0.0)
+  |> should.equal(1.0)
+
+  float.power(16.0, 0.5)
+  |> should.equal(4.0)
+
+  float.power(2.0, -1.0)
+  |> should.equal(0.5)
+}
