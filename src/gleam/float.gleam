@@ -128,3 +128,17 @@ pub external fn truncate(Float) -> Int =
 ///
 pub external fn absolute_value(Float) -> Float =
   "erlang" "abs"
+
+/// Returns the results of the base being raised to the power of the
+/// exponent, as a float.
+///
+/// ## Examples
+///
+///    > power(2.0, 2.0)
+///    4.0
+///
+///    > power(8.0, 1.5)
+///    64.0
+///
+pub external fn power(base: Float, exponent: Float) -> Float =
+  "math" "pow"
