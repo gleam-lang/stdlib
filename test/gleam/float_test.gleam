@@ -217,3 +217,17 @@ pub fn power_test() {
   float.power(2.0, -1.0)
   |> should.equal(0.5)
 }
+
+pub fn square_root_test() {
+  float.square_root(4.0)
+  |> should.equal(Ok(2.0))
+
+  float.square_root(16.0)
+  |> should.equal(Ok(4.0))
+
+  float.square_root(0.0)
+  |> should.equal(Ok(0.0))
+
+  float.square_root(-4.0)
+  |> should.equal(Error(Nil))
+}
