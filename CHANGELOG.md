@@ -11,6 +11,8 @@
 - The `bit_builder` module gains the `from_string` function.
 - The `list` module gains the `key_set` and `unzip` function.
 - The `function` module gains the `rescue` function.
+- The `float` module gains the `power`, `square_root`, and `absolute_value`
+  functions.
 
 ## v0.10.1 - 2020-07-01
 
