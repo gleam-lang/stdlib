@@ -475,3 +475,9 @@ pub fn key_set_test() {
   |> list.key_set(1, 100)
   |> should.equal([tuple(5, 0), tuple(4, 1), tuple(1, 100)])
 }
+
+pub fn partition_test() {
+  [1, 2, 3, 4, 5, 6, 7]
+  |> list.partition(int.is_odd)
+  |> should.equal(tuple([1, 3, 5, 7], [2, 4, 6]))
+}
