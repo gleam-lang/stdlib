@@ -280,10 +280,11 @@ fn do_try_map(
 ) -> Result(List(b), e) {
   case list {
     [] -> Ok(reverse(acc))
-    [x, ..xs] -> case fun(x) {
-      Ok(y) -> do_try_map(xs, fun, [y, ..acc])
-      Error(error) -> Error(error)
-    }
+    [x, ..xs] ->
+      case fun(x) {
+        Ok(y) -> do_try_map(xs, fun, [y, ..acc])
+        Error(error) -> Error(error)
+      }
   }
 }
 
@@ -337,20 +338,22 @@ pub fn try_map(
 pub fn drop(from list: List(a), up_to n: Int) -> List(a) {
   case n <= 0 {
     True -> list
-    False -> case list {
-      [] -> []
-      [_, ..xs] -> drop(xs, n - 1)
-    }
+    False ->
+      case list {
+        [] -> []
+        [_, ..xs] -> drop(xs, n - 1)
+      }
   }
 }
 
 fn do_take(list: List(a), n: Int, acc: List(a)) -> List(a) {
   case n <= 0 {
     True -> reverse(acc)
-    False -> case list {
-      [] -> reverse(acc)
-      [x, ..xs] -> do_take(xs, n - 1, [x, ..acc])
-    }
+    False ->
+      case list {
+        [] -> reverse(acc)
+        [x, ..xs] -> do_take(xs, n - 1, [x, ..acc])
+      }
   }
 }
 
@@ -444,11 +447,7 @@ pub fn fold(over list: List(a), from initial: b, with fun: fn(a, b) -> b) -> b {
 /// Unlike `fold` this function is not tail recursive. Where possible use
 /// `fold` instead as it will use less memory.
 ///
-pub fn fold_right(
-  list: List(a),
-  from initial: b,
-  with fun: fn(a, b) -> b,
-) -> b {
+pub fn fold_right(list: List(a), from initial: b, with fun: fn(a, b) -> b) -> b {
   case list {
     [] -> initial
     [x, ..rest] -> fun(x, fold_right(rest, initial, fun))
@@ -478,10 +477,11 @@ pub fn find(
 ) -> Result(a, Nil) {
   case haystack {
     [] -> Error(Nil)
-    [x, ..rest] -> case is_desired(x) {
-      True -> Ok(x)
-      _ -> find(in: rest, one_that: is_desired)
-    }
+    [x, ..rest] ->
+      case is_desired(x) {
+        True -> Ok(x)
+        _ -> find(in: rest, one_that: is_desired)
+      }
   }
 }
 
@@ -508,10 +508,11 @@ pub fn find_map(
 ) -> Result(b, Nil) {
   case haystack {
     [] -> Error(Nil)
-    [x, ..rest] -> case fun(x) {
-      Ok(x) -> Ok(x)
-      _ -> find_map(in: rest, with: fun)
-    }
+    [x, ..rest] ->
+      case fun(x) {
+        Ok(x) -> Ok(x)
+        _ -> find_map(in: rest, with: fun)
+      }
   }
 }
 
@@ -533,10 +534,11 @@ pub fn find_map(
 pub fn all(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
   case list {
     [] -> True
-    [x, ..rest] -> case predicate(x) {
-      True -> all(rest, predicate)
-      _ -> False
-    }
+    [x, ..rest] ->
+      case predicate(x) {
+        True -> all(rest, predicate)
+        _ -> False
+      }
   }
 }
 
@@ -561,10 +563,11 @@ pub fn all(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
 pub fn any(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
   case list {
     [] -> False
-    [x, ..rest] -> case predicate(x) {
-      False -> any(rest, predicate)
-      _ -> True
-    }
+    [x, ..rest] ->
+      case predicate(x) {
+        False -> any(rest, predicate)
+        _ -> True
+      }
   }
 }
 
@@ -679,13 +682,15 @@ pub fn intersperse(list: List(a), with elem: a) -> List(a) {
 pub fn at(in list: List(a), get index: Int) -> Result(a, Nil) {
   case index < 0 {
     True -> Error(Nil)
-    False -> case list {
-      [] -> Error(Nil)
-      [x, ..rest] -> case index == 0 {
-        True -> Ok(x)
-        False -> at(rest, index - 1)
+    False ->
+      case list {
+        [] -> Error(Nil)
+        [x, ..rest] ->
+          case index == 0 {
+            True -> Ok(x)
+            False -> at(rest, index - 1)
+          }
       }
-    }
   }
 }
 
@@ -709,10 +714,11 @@ fn merge_sort(a: List(a), b: List(a), compare: fn(a, a) -> Order) -> List(a) {
   case a, b {
     [], _ -> b
     _, [] -> a
-    [ax, ..ar], [bx, ..br] -> case compare(ax, bx) {
-      order.Lt -> [ax, ..merge_sort(ar, b, compare)]
-      _ -> [bx, ..merge_sort(a, br, compare)]
-    }
+    [ax, ..ar], [bx, ..br] ->
+      case compare(ax, bx) {
+        order.Lt -> [ax, ..merge_sort(ar, b, compare)]
+        _ -> [bx, ..merge_sort(a, br, compare)]
+      }
   }
 }
 
@@ -794,10 +800,11 @@ pub fn repeat(item a: a, times times: Int) -> List(a) {
 fn do_split(list: List(a), n: Int, taken: List(a)) -> tuple(List(a), List(a)) {
   case n <= 0 {
     True -> tuple(reverse(taken), list)
-    False -> case list {
-      [] -> tuple(reverse(taken), [])
-      [x, ..xs] -> do_split(xs, n - 1, [x, ..taken])
-    }
+    False ->
+      case list {
+        [] -> tuple(reverse(taken), [])
+        [x, ..xs] -> do_split(xs, n - 1, [x, ..taken])
+      }
   }
 }
 
@@ -828,10 +835,11 @@ fn do_split_while(
 ) -> tuple(List(a), List(a)) {
   case list {
     [] -> tuple(reverse(acc), [])
-    [x, ..xs] -> case f(x) {
-      False -> tuple(reverse(acc), list)
-      _ -> do_split_while(xs, f, [x, ..acc])
-    }
+    [x, ..xs] ->
+      case f(x) {
+        False -> tuple(reverse(acc), list)
+        _ -> do_split_while(xs, f, [x, ..acc])
+      }
   }
 }
 
@@ -894,10 +902,11 @@ pub fn key_find(
 fn do_pop(haystack, predicate, checked) {
   case haystack {
     [] -> Error(Nil)
-    [x, ..rest] -> case predicate(x) {
-      True -> Ok(tuple(x, append(reverse(checked), rest)))
-      False -> do_pop(rest, predicate, [x, ..checked])
-    }
+    [x, ..rest] ->
+      case predicate(x) {
+        True -> Ok(tuple(x, append(reverse(checked), rest)))
+        False -> do_pop(rest, predicate, [x, ..checked])
+      }
   }
 }
 
@@ -927,10 +936,11 @@ pub fn pop(
 fn do_pop_map(haystack, mapper, checked) {
   case haystack {
     [] -> Error(Nil)
-    [x, ..rest] -> case mapper(x) {
-      Ok(y) -> Ok(tuple(y, append(reverse(checked), rest)))
-      Error(_) -> do_pop_map(rest, mapper, [x, ..checked])
-    }
+    [x, ..rest] ->
+      case mapper(x) {
+        Ok(y) -> Ok(tuple(y, append(reverse(checked), rest)))
+        Error(_) -> do_pop_map(rest, mapper, [x, ..checked])
+      }
   }
 }
 
@@ -1010,5 +1020,17 @@ pub fn key_set(list: List(tuple(a, b)), key: a, value: b) -> List(tuple(a, b)) {
     [] -> [tuple(key, value)]
     [tuple(k, _), ..rest] if k == key -> [tuple(key, value), ..rest]
     [first, ..rest] -> [first, ..key_set(rest, key, value)]
+  }
+}
+
+/// Call a function for each element in a list, discarding the results.
+///
+pub fn each(list: List(a), f: fn(a) -> b) -> Nil {
+  case list {
+    [] -> Nil
+    [x, ..xs] -> {
+      f(x)
+      each(xs, f)
+    }
   }
 }
