@@ -1035,13 +1035,6 @@ pub fn each(list: List(a), f: fn(a) -> b) -> Nil {
   }
 }
 
-pub fn partition(
-  list: List(a),
-  with categorise: fn(a) -> Bool,
-) -> tuple(List(a), List(a)) {
-  do_partition(list, categorise, [], [])
-}
-
 fn do_partition(list, categorise, trues, falses) {
   case list {
     [] -> tuple(reverse(trues), reverse(falses))
@@ -1051,4 +1044,11 @@ fn do_partition(list, categorise, trues, falses) {
         False -> do_partition(xs, categorise, trues, [x, ..falses])
       }
   }
+}
+
+pub fn partition(
+  list: List(a),
+  with categorise: fn(a) -> Bool,
+) -> tuple(List(a), List(a)) {
+  do_partition(list, categorise, [], [])
 }
