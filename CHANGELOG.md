@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- The `list` module gains the `each` function.
+- The `list` module gains the `each`, and `partition` functions.
 
 ## v0.11.0 - 2020-08-22
 
