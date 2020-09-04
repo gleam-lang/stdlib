@@ -42,10 +42,7 @@ pub external fn prepend_builder(
 ///
 /// Runs in constant time.
 ///
-pub external fn append_builder(
-  to: BitBuilder,
-  suffix: BitBuilder,
-) -> BitBuilder =
+pub external fn append_builder(to: BitBuilder, suffix: BitBuilder) -> BitBuilder =
   "gleam_stdlib" "iodata_append"
 
 /// Prepend a string onto the start of a builder.

@@ -174,15 +174,16 @@ fn do_take(
   acc: List(e),
 ) -> List(e) {
   case desired > 0 {
-    True -> case continuation() {
-      Continue(
-        element,
-        iterator,
-      ) -> do_take(iterator, desired - 1, [element, ..acc])
-      Stop -> acc
-        |> list.reverse
-    }
-    False -> acc
+    True ->
+      case continuation() {
+        Continue(element, iterator) ->
+          do_take(iterator, desired - 1, [element, ..acc])
+        Stop ->
+          acc
+          |> list.reverse
+      }
+    False ->
+      acc
       |> list.reverse
   }
 }
@@ -207,10 +208,11 @@ pub fn take(from iterator: Iterator(e), up_to desired: Int) -> List(e) {
 
 fn do_drop(continuation: fn() -> Action(e), desired: Int) -> fn() -> Action(e) {
   case desired > 0 {
-    True -> case continuation() {
-      Continue(_, iterator) -> do_drop(iterator, desired - 1)
-      Stop -> fn() { Stop }
-    }
+    True ->
+      case continuation() {
+        Continue(_, iterator) -> do_drop(iterator, desired - 1)
+        Stop -> fn() { Stop }
+      }
     False -> continuation
   }
 }
@@ -272,10 +274,11 @@ fn do_filter(
 ) -> fn() -> Action(e) {
   fn() {
     case continuation() {
-      Continue(e, iterator) -> case predicate(e) {
-        True -> Continue(e, do_filter(iterator, predicate))
-        False -> do_filter(iterator, predicate)()
-      }
+      Continue(e, iterator) ->
+        case predicate(e) {
+          True -> Continue(e, do_filter(iterator, predicate))
+          False -> do_filter(iterator, predicate)()
+        }
       Stop -> Stop
     }
   }

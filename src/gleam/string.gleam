@@ -150,23 +150,20 @@ external fn erl_slice(String, Int, Int) -> String =
 ///    > slice(from: "gleam", at_index: -12, length: 2)
 ///    ""
 ///
-pub fn slice(
-  from string: String,
-  at_index idx: Int,
-  length len: Int,
-) -> String {
+pub fn slice(from string: String, at_index idx: Int, length len: Int) -> String {
   case len < 0 {
     True -> ""
-    False -> case idx < 0 {
-      True -> {
-        let translated_idx = length(string) + idx
-        case translated_idx < 0 {
-          True -> ""
-          False -> erl_slice(string, translated_idx, len)
+    False ->
+      case idx < 0 {
+        True -> {
+          let translated_idx = length(string) + idx
+          case translated_idx < 0 {
+            True -> ""
+            False -> erl_slice(string, translated_idx, len)
+          }
         }
+        False -> erl_slice(string, idx, len)
       }
-      False -> erl_slice(string, idx, len)
-    }
   }
 }
 

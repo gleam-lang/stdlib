@@ -58,10 +58,11 @@ pub external fn to_base_string(Int, Int) -> String =
 pub fn compare(a: Int, with b: Int) -> Order {
   case a == b {
     True -> order.Eq
-    False -> case a < b {
-      True -> order.Lt
-      False -> order.Gt
-    }
+    False ->
+      case a < b {
+        True -> order.Lt
+        False -> order.Gt
+      }
   }
 }
 

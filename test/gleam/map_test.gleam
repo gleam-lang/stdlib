@@ -111,14 +111,20 @@ pub fn merge_test() {
   let b = map.from_list([tuple("a", 0), tuple("b", 1), tuple("c", 2)])
 
   map.merge(a, b)
-  |> should.equal(
-    map.from_list([tuple("a", 0), tuple("b", 1), tuple("c", 2), tuple("d", 3)]),
-  )
+  |> should.equal(map.from_list([
+    tuple("a", 0),
+    tuple("b", 1),
+    tuple("c", 2),
+    tuple("d", 3),
+  ]))
 
   map.merge(b, a)
-  |> should.equal(
-    map.from_list([tuple("a", 2), tuple("b", 1), tuple("c", 4), tuple("d", 3)]),
-  )
+  |> should.equal(map.from_list([
+    tuple("a", 2),
+    tuple("b", 1),
+    tuple("c", 4),
+    tuple("d", 3),
+  ]))
 }
 
 pub fn delete_test() {
@@ -149,15 +155,17 @@ pub fn update_test() {
 
   dict
   |> map.update("z", inc_or_zero)
-  |> should.equal(
-    map.from_list([tuple("a", 0), tuple("b", 1), tuple("c", 2), tuple("z", 0)]),
-  )
+  |> should.equal(map.from_list([
+    tuple("a", 0),
+    tuple("b", 1),
+    tuple("c", 2),
+    tuple("z", 0),
+  ]))
 }
 
 pub fn fold_test() {
-  let dict = map.from_list(
-    [tuple("a", 0), tuple("b", 1), tuple("c", 2), tuple("d", 3)],
-  )
+  let dict =
+    map.from_list([tuple("a", 0), tuple("b", 1), tuple("c", 2), tuple("d", 3)])
 
   let add = fn(_, v, acc) { v + acc }
 

@@ -104,11 +104,12 @@ pub fn to_list(set: Set(member)) -> List(member) {
 ///    [1, 3, 3, 4]
 ///
 pub fn from_list(members: List(member)) -> Set(member) {
-  let map = list.fold(
-    over: members,
-    from: map.new(),
-    with: fn(k, m) { map.insert(m, k, []) },
-  )
+  let map =
+    list.fold(
+      over: members,
+      from: map.new(),
+      with: fn(k, m) { map.insert(m, k, []) },
+    )
   Set(map)
 }
 
@@ -163,10 +164,7 @@ pub fn filter(
 ///    > from_list([1, 2, 3]) |> take([1, 3, 5]) |> to_list
 ///    [1, 3]
 ///
-pub fn take(
-  from set: Set(member),
-  keeping desired: List(member),
-) -> Set(member) {
+pub fn take(from set: Set(member), keeping desired: List(member)) -> Set(member) {
   Set(map.take(from: set.map, keeping: desired))
 }
 

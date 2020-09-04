@@ -88,7 +88,8 @@ pub fn push_front_test() {
 pub fn pop_back_test() {
   // We cannot construct the expected remainaing queue with from_list because
   // it has different internal representation.
-  let expected_rest = queue.new()
+  let expected_rest =
+    queue.new()
     |> queue.push_front(1)
     |> queue.push_front(2)
   queue.from_list([1, 2, 3])
