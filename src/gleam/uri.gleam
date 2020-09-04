@@ -49,7 +49,8 @@ type UriKey {
 /// The opposite operation is `uri.to_string`
 ///
 pub fn parse(string: String) -> Result(Uri, Nil) {
-  try uri_map = dynamic.map(erl_parse(string))
+  try uri_map =
+    dynamic.map(erl_parse(string))
     |> result.nil_error
   let get = fn(k: UriKey, decode_type: dynamic.Decoder(t)) -> Option(t) {
     uri_map
@@ -58,15 +59,16 @@ pub fn parse(string: String) -> Result(Uri, Nil) {
     |> option.from_result
   }
 
-  let uri = Uri(
-    scheme: get(Scheme, dynamic.string),
-    userinfo: get(Userinfo, dynamic.string),
-    host: get(Host, dynamic.string),
-    port: get(Port, dynamic.int),
-    path: option.unwrap(get(Path, dynamic.string), ""),
-    query: get(Query, dynamic.string),
-    fragment: get(Fragment, dynamic.string),
-  )
+  let uri =
+    Uri(
+      scheme: get(Scheme, dynamic.string),
+      userinfo: get(Userinfo, dynamic.string),
+      host: get(Host, dynamic.string),
+      port: get(Port, dynamic.int),
+      path: option.unwrap(get(Path, dynamic.string), ""),
+      query: get(Query, dynamic.string),
+      fragment: get(Fragment, dynamic.string),
+    )
   Ok(uri)
 }
 
@@ -157,10 +159,10 @@ external fn erl_to_string(Map(UriKey, Dynamic)) -> Dynamic =
 /// The opposite operation is `uri.parse`.
 ///
 pub fn to_string(uri: Uri) -> String {
-  let field = fn(
-    key: UriKey,
-    value: Option(anything),
-  ) -> Result(tuple(UriKey, Dynamic), Nil) {
+  let field = fn(key: UriKey, value: Option(anything)) -> Result(
+    tuple(UriKey, Dynamic),
+    Nil,
+  ) {
     case value {
       Some(v) -> Ok(tuple(key, dynamic.from(v)))
       None -> Error(Nil)
@@ -215,50 +217,56 @@ fn join_segments(segments: List(String)) -> String {
 /// The algorithm for merging uris is described in [RFC 3986](https://tools.ietf.org/html/rfc3986#section-5.2)
 pub fn merge(base: Uri, relative: Uri) -> Result(Uri, Nil) {
   case base {
-    Uri(scheme: Some(_), host: Some(_), ..) -> case relative {
-      Uri(host: Some(_), ..) -> {
-        let path = string.split(relative.path, "/")
-          |> remove_dot_segments()
-          |> join_segments()
-        let resolved = Uri(
-          option.or(relative.scheme, base.scheme),
-          None,
-          relative.host,
-          relative.port,
-          path,
-          relative.query,
-          relative.fragment,
-        )
-        Ok(resolved)
-      }
-      Uri(scheme: None, host: None, ..) -> {
-        let tuple(new_path, new_query) = case relative.path {
-          "" -> tuple(base.path, option.or(relative.query, base.query))
-          _ -> {
-            let path_segments = case string.starts_with(relative.path, "/") {
-              True -> string.split(relative.path, "/")
-              False -> string.split(base.path, "/")
-                |> drop_last()
-                |> list.append(string.split(relative.path, "/"))
-            }
-            let path = path_segments
-              |> remove_dot_segments()
-              |> join_segments()
-            tuple(path, relative.query)
-          }
+    Uri(scheme: Some(_), host: Some(_), ..) ->
+      case relative {
+        Uri(host: Some(_), ..) -> {
+          let path =
+            string.split(relative.path, "/")
+            |> remove_dot_segments()
+            |> join_segments()
+          let resolved =
+            Uri(
+              option.or(relative.scheme, base.scheme),
+              None,
+              relative.host,
+              relative.port,
+              path,
+              relative.query,
+              relative.fragment,
+            )
+          Ok(resolved)
         }
-        let resolved = Uri(
-          base.scheme,
-          None,
-          base.host,
-          base.port,
-          new_path,
-          new_query,
-          relative.fragment,
-        )
-        Ok(resolved)
+        Uri(scheme: None, host: None, ..) -> {
+          let tuple(new_path, new_query) = case relative.path {
+            "" -> tuple(base.path, option.or(relative.query, base.query))
+            _ -> {
+              let path_segments = case string.starts_with(relative.path, "/") {
+                True -> string.split(relative.path, "/")
+                False ->
+                  string.split(base.path, "/")
+                  |> drop_last()
+                  |> list.append(string.split(relative.path, "/"))
+              }
+              let path =
+                path_segments
+                |> remove_dot_segments()
+                |> join_segments()
+              tuple(path, relative.query)
+            }
+          }
+          let resolved =
+            Uri(
+              base.scheme,
+              None,
+              base.host,
+              base.port,
+              new_path,
+              new_query,
+              relative.fragment,
+            )
+          Ok(resolved)
+        }
       }
-    }
     _ -> Error(Nil)
   }
 }

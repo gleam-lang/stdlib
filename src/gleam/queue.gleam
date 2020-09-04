@@ -210,10 +210,11 @@ fn check_equal(
 ) -> Bool {
   case xs, x_tail, ys, y_tail {
     [], [], [], [] -> True
-    [x, ..xs], _, [y, ..ys], _ -> case eq(x, y) {
-      False -> False
-      True -> check_equal(xs, x_tail, ys, y_tail, eq)
-    }
+    [x, ..xs], _, [y, ..ys], _ ->
+      case eq(x, y) {
+        False -> False
+        True -> check_equal(xs, x_tail, ys, y_tail, eq)
+      }
     [], [_, ..], _, _ -> check_equal(list.reverse(x_tail), [], ys, y_tail, eq)
     _, _, [], [_, ..] -> check_equal(xs, x_tail, list.reverse(y_tail), [], eq)
     _, _, _, _ -> False

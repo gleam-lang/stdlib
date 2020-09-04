@@ -3,9 +3,8 @@ import gleam/should
 import gleam/option.{None, Some}
 
 pub fn full_parse_test() {
-  assert Ok(
-    parsed,
-  ) = uri.parse("https://foo:bar@example.com:1234/path?query=true#fragment")
+  assert Ok(parsed) =
+    uri.parse("https://foo:bar@example.com:1234/path?query=true#fragment")
   should.equal(parsed.scheme, Some("https"))
   should.equal(parsed.userinfo, Some("foo:bar"))
   should.equal(parsed.host, Some("example.com"))
@@ -42,15 +41,16 @@ pub fn error_parsing_uri_test() {
 }
 
 pub fn full_uri_to_string_test() {
-  assert test_uri = uri.Uri(
-    Some("https"),
-    Some("foo:bar"),
-    Some("example.com"),
-    Some(1234),
-    "/path",
-    Some("query=true"),
-    Some("fragment"),
-  )
+  assert test_uri =
+    uri.Uri(
+      Some("https"),
+      Some("foo:bar"),
+      Some("example.com"),
+      Some(1234),
+      "/path",
+      Some("query=true"),
+      Some("fragment"),
+    )
   should.equal(
     uri.to_string(test_uri),
     "https://foo:bar@example.com:1234/path?query=true#fragment",
@@ -82,9 +82,8 @@ pub fn error_parsing_query_test() {
 }
 
 pub fn query_to_string_test() {
-  assert query_string = uri.query_to_string(
-    [tuple("foo bar", "1"), tuple("city", "örebro")],
-  )
+  assert query_string =
+    uri.query_to_string([tuple("foo bar", "1"), tuple("city", "örebro")])
   should.equal(query_string, "foo+bar=1&city=%C3%B6rebro")
 }
 

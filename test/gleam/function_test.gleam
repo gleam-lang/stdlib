@@ -18,7 +18,8 @@ pub fn compose_test() {
 
   // Takes a list of ints and returns the head as a string (if there is one, or
   // else "0" if there is not)
-  let head_to_string = list.head
+  let head_to_string =
+    list.head
     |> function.compose(result.unwrap(_, 0))
     |> function.compose(int.to_string)
 

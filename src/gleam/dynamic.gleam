@@ -54,14 +54,12 @@ pub external fn bit_string(from: Dynamic) -> Result(BitString, String) =
 ///
 pub fn string(from: Dynamic) -> Result(String, String) {
   bit_string(from)
-  |> result.then(
-    fn(raw) {
-      case bit_string_mod.to_string(raw) {
-        Ok(string) -> Ok(string)
-        Error(Nil) -> Error("Expected a string, got a bit_string")
-      }
-    },
-  )
+  |> result.then(fn(raw) {
+    case bit_string_mod.to_string(raw) {
+      Ok(string) -> Ok(string)
+      Error(Nil) -> Error("Expected a string, got a bit_string")
+    }
+  })
 }
 
 /// Check to see whether a Dynamic value is an int, and return the int if it
@@ -215,10 +213,7 @@ pub external fn field(from: Dynamic, named: a) -> Result(Dynamic, String) =
 ///    > element(from(""), 2)
 ///    Error("Expected a tuple, got a binary")
 ///
-pub external fn element(
-  from: Dynamic,
-  position: Int,
-) -> Result(Dynamic, String) =
+pub external fn element(from: Dynamic, position: Int) -> Result(Dynamic, String) =
   "gleam_stdlib" "decode_element"
 
 /// Check to see if the Dynamic value is a 2 element tuple.
@@ -237,9 +232,7 @@ pub external fn element(
 ///    > tuple2(from(""))
 ///    Error("Expected a tuple, got a binary")
 ///
-pub external fn tuple2(
-  from: Dynamic,
-) -> Result(tuple(Dynamic, Dynamic), String) =
+pub external fn tuple2(from: Dynamic) -> Result(tuple(Dynamic, Dynamic), String) =
   "gleam_stdlib" "decode_tuple2"
 
 /// Check to see if the Dynamic value is a 2 element tuple containing two

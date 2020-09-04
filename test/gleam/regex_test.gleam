@@ -15,12 +15,10 @@ pub fn from_string_test() {
   assert Error(from_string_err) = regex.from_string("[0-9")
 
   from_string_err
-  |> should.equal(
-    CompileError(
-      error: "missing terminating ] for character class",
-      byte_index: 4,
-    ),
-  )
+  |> should.equal(CompileError(
+    error: "missing terminating ] for character class",
+    byte_index: 4,
+  ))
 }
 
 pub fn compile_test() {
@@ -69,18 +67,12 @@ pub fn scan_test() {
   assert Ok(re) = regex.from_string("[oi]n a(.?) (\\w+)")
 
   regex.scan(re, "I am on a boat in a lake.")
-  |> should.equal(
-    [
-      Match(
-        content: "on a boat",
-        byte_index: 5,
-        submatches: [None, Some("boat")],
-      ),
-      Match(
-        content: "in a lake",
-        byte_index: 15,
-        submatches: [None, Some("lake")],
-      ),
-    ],
-  )
+  |> should.equal([
+    Match(content: "on a boat", byte_index: 5, submatches: [None, Some("boat")]),
+    Match(
+      content: "in a lake",
+      byte_index: 15,
+      submatches: [None, Some("lake")],
+    ),
+  ])
 }

@@ -38,10 +38,11 @@ pub fn to_string(f: Float) -> String {
 pub fn compare(a: Float, with b: Float) -> Order {
   case a == b {
     True -> order.Eq
-    False -> case a <. b {
-      True -> order.Lt
-      False -> order.Gt
-    }
+    False ->
+      case a <. b {
+        True -> order.Lt
+        False -> order.Gt
+      }
   }
 }
 

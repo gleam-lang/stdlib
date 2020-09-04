@@ -2,7 +2,8 @@ import gleam/should
 import gleam/bit_builder
 
 pub fn builder_test() {
-  let data = bit_builder.from_bit_string(<<1>>)
+  let data =
+    bit_builder.from_bit_string(<<1>>)
     |> bit_builder.append(<<2>>)
     |> bit_builder.append(<<3>>)
     |> bit_builder.prepend(<<0>>)
@@ -17,7 +18,8 @@ pub fn builder_test() {
 }
 
 pub fn builder_with_strings_test() {
-  let data = bit_builder.from_bit_string(<<1>>)
+  let data =
+    bit_builder.from_bit_string(<<1>>)
     |> bit_builder.append_string("2")
     |> bit_builder.append_string("3")
     |> bit_builder.prepend_string("0")
@@ -32,7 +34,8 @@ pub fn builder_with_strings_test() {
 }
 
 pub fn builder_with_builders_test() {
-  let data = bit_builder.from_bit_string(<<1>>)
+  let data =
+    bit_builder.from_bit_string(<<1>>)
     |> bit_builder.append_builder(bit_builder.from_bit_string(<<2>>))
     |> bit_builder.append_builder(bit_builder.from_bit_string(<<3>>))
     |> bit_builder.prepend_builder(bit_builder.from_bit_string(<<0>>))

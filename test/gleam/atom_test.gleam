@@ -29,9 +29,9 @@ pub fn create_from_string_test() {
   "this is another atom we have not seen before"
   |> atom.create_from_string
   |> Ok
-  |> should.equal(
-    atom.from_string("this is another atom we have not seen before"),
-  )
+  |> should.equal(atom.from_string(
+    "this is another atom we have not seen before",
+  ))
 }
 
 pub fn to_string_test() {
