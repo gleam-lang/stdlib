@@ -148,7 +148,7 @@ pub external fn power(base: Float, exponent: Float) -> Float =
 /// ## Examples
 ///
 ///    > square_root(4.0)
-///    2.0
+///    Ok(2.0)
 ///
 ///    > square_root(-16.0)
 ///    Error(Nil)
