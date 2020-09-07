@@ -68,7 +68,7 @@ external fn unsafe_to_string(BitString) -> String =
 
 /// Convert a bit string to a string.
 ///
-/// Returns an error if the bit string is valid UTF-8 data.
+/// Returns an error if the bit string is invalid UTF-8 data.
 ///
 pub fn to_string(bits: BitString) -> Result(String, Nil) {
   case is_utf8(bits) {
