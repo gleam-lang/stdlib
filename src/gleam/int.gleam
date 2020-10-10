@@ -121,3 +121,14 @@ pub fn is_even(x: Int) -> Bool {
 pub fn is_odd(x: Int) -> Bool {
   x % 2 != 0
 }
+
+/// Returns the negative of the value provided
+///
+/// ## Examples
+///
+///    > negate(1)
+///    -1
+///
+pub fn negate(x: Int) -> Int {
+  -1 * x
+}

@@ -157,3 +157,14 @@ pub fn is_odd_test() {
   int.is_odd(10005)
   |> should.be_true
 }
+
+pub fn negate_test() {
+  int.negate(-1)
+  |> should.equal(1)
+
+  int.negate(2)
+  |> should.equal(-2)
+
+  int.negate(0)
+  |> should.equal(0)
+}
