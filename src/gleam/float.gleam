@@ -160,3 +160,14 @@ pub fn square_root(number: Float) -> Result(Float, Nil) {
     False -> Ok(power(number, 0.5))
   }
 }
+
+/// Returns the negative of the value provided
+///
+/// ## Examples
+///
+///    > negate(1.)
+///    -1.
+///
+pub fn negate(x: Float) -> Float {
+  -1. *. x
+}

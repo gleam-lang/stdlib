@@ -231,3 +231,14 @@ pub fn square_root_test() {
   float.square_root(-4.0)
   |> should.equal(Error(Nil))
 }
+
+pub fn negate_test() {
+  float.negate(-1.)
+  |> should.equal(1.)
+
+  float.negate(2.)
+  |> should.equal(-2.)
+
+  float.negate(0.)
+  |> should.equal(0.)
+}
