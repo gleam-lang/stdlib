@@ -1,3 +1,5 @@
+import gleam/list
+
 /// Result represents the result of something that may succeed or not.
 /// `Ok` means it was successful, `Error` means it was not successful.
 ///
@@ -198,4 +200,18 @@ pub fn or(first: Result(a, e), second: Result(a, e)) -> Result(a, e) {
     Ok(_) -> first
     Error(_) -> second
   }
+}
+
+/// Combine a list of results into a single result.
+/// If all elements in the list are Ok then returns an Ok holding the list of values.
+/// If any element is Error then returns the first error.
+///
+/// ## Examples
+///    > all([Ok(1), Ok(2)])
+///    Ok([1, 2])
+///
+///    > all([Ok(1), Error("e")])
+///    Error("e")
+pub fn all(results: List(Result(a, e))) -> Result(List(a), e) {
+  list.try_map(results, fn(x) { x })
 }

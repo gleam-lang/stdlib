@@ -118,3 +118,13 @@ pub fn or_test() {
   |> result.or(Error("Error 2"))
   |> should.equal(Error("Error 2"))
 }
+
+pub fn all_test() {
+  [Ok(1), Ok(2), Ok(3)]
+  |> result.all
+  |> should.equal(Ok([1, 2, 3]))
+
+  [Ok(1), Error("a"), Error("b"), Ok(3)]
+  |> result.all
+  |> should.equal(Error("a"))
+}
