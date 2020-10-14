@@ -4,6 +4,7 @@
 
 - The `list` module gains the `each`, and `partition` functions.
 - The `int` and `float` modules gain the `negate` function.
+- The `result` module gains the `all` function.
 
 ## v0.11.0 - 2020-08-22
 
