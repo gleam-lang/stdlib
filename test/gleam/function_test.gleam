@@ -32,6 +32,46 @@ pub fn compose_test() {
   |> should.equal("0")
 }
 
+pub fn curry2_test() {
+  let fun = fn(a, b) { a + b }
+  let curried = function.curry2(fun)
+
+  curried(1)(2)
+  |> should.equal(3)
+}
+
+pub fn curry3_test() {
+  let fun = fn(a, b, c) { a + b + c }
+  let curried = function.curry3(fun)
+
+  curried(1)(2)(4)
+  |> should.equal(7)
+}
+
+pub fn curry4_test() {
+  let fun = fn(a, b, c, d) { a + b + c + d }
+  let curried = function.curry4(fun)
+
+  curried(1)(2)(4)(8)
+  |> should.equal(15)
+}
+
+pub fn curry5_test() {
+  let fun = fn(a, b, c, d, e) { a + b + c + d + e }
+  let curried = function.curry5(fun)
+
+  curried(1)(2)(4)(8)(16)
+  |> should.equal(31)
+}
+
+pub fn curry6_test() {
+  let fun = fn(a, b, c, d, e, f) { a + b + c + d + e + f }
+  let curried = function.curry6(fun)
+
+  curried(1)(2)(4)(8)(16)(32)
+  |> should.equal(63)
+}
+
 pub fn flip_test() {
   let fun = fn(s: String, i: Int) {
     s
