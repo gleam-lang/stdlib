@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- The `function` module gains `curry2` to `curry6`.
 - The `list` module gains the `each`, and `partition` functions.
 - The `int` and `float` modules gain the `negate` function.
 - The `result` module gains the `all` function.
