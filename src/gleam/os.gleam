@@ -58,3 +58,16 @@ pub type TimeUnit {
 /// https://erlang.org/doc/apps/erts/time_correction.html#OS_System_Time
 pub external fn system_time(TimeUnit) -> Int =
   "os" "system_time"
+
+pub type Timestamp {
+  Timestamp(mega_seconds: Int, seconds: Int, micro_seconds: Int)
+}
+
+external fn os_timestamp() -> tuple(Int, Int, Int) =
+  "os" "timestamp"
+
+pub fn timestamp() -> Timestamp {
+  let tuple(mega_seconds, seconds, micro_seconds) = os_timestamp()
+
+  Timestamp(mega_seconds, seconds, micro_seconds)
+}

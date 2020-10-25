@@ -26,3 +26,13 @@ pub fn system_time_test() {
   { os.system_time(os.Millisecond) < june_12_2020 * 1000000 }
   |> should.equal(True)
 }
+
+pub fn timestamp_test() {
+  let stamp = os.timestamp()
+  { stamp.seconds >= 0 }
+  |> should.be_true()
+  { stamp.micro_seconds >= 0 }
+  |> should.be_true()
+  { stamp.mega_seconds >= 0 }
+  |> should.be_true()
+}
