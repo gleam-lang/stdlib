@@ -28,11 +28,13 @@ pub fn system_time_test() {
 }
 
 pub fn timestamp_test() {
+  // in microseconds
+  let june_12_2020 = 1591966971000000
   let stamp = os.timestamp()
-  { stamp.seconds >= 0 }
-  |> should.be_true()
-  { stamp.micro_seconds >= 0 }
-  |> should.be_true()
-  { stamp.mega_seconds >= 0 }
+
+  let stamp_as_micro =
+    { stamp.mega_seconds * 1_000_000 + stamp.seconds } * 1_000_000 + stamp.micro_seconds
+
+  { stamp_as_micro > june_12_2020 }
   |> should.be_true()
 }
