@@ -66,6 +66,9 @@ pub type Timestamp {
 external fn os_timestamp() -> tuple(Int, Int, Int) =
   "os" "timestamp"
 
+/// Return the current OS system time as a Timestamp record
+///
+/// http://erlang.org/doc/man/os.html#system_time-0
 pub fn timestamp() -> Timestamp {
   let tuple(mega_seconds, seconds, micro_seconds) = os_timestamp()
 
