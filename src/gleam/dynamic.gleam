@@ -1,8 +1,9 @@
 import gleam/bit_string.{BitString} as bit_string_mod
 import gleam/list as list_mod
-import gleam/atom
+import gleam/atom as atom_mod
 import gleam/map.{Map}
 import gleam/result
+import gleam/option.{None, Option, Some}
 
 /// `Dynamic` data is data that we don"t know the type of yet.
 /// We likely get data like this from interop with Erlang, or from
@@ -102,7 +103,7 @@ pub external fn float(from: Dynamic) -> Result(Float, String) =
 ///    > atom(from(123))
 ///    Error("Expected an Atom, got `123`")
 ///
-pub external fn atom(from: Dynamic) -> Result(atom.Atom, String) =
+pub external fn atom(from: Dynamic) -> Result(atom_mod.Atom, String) =
   "gleam_stdlib" "decode_atom"
 
 /// Check to see whether a Dynamic value is an bool, and return the bool if
@@ -180,6 +181,36 @@ pub fn typed_list(
   dynamic
   |> list
   |> result.then(list_mod.try_map(_, decoder_type))
+}
+
+/// Check to see if a Dynamic value is an Option of a particular type, and return
+/// the Option if it is.
+///
+/// The second argument is a decoder function used to decode the elements of
+/// the list. The list is only decoded if all elements in the list can be
+/// successfully decoded using this function.
+///
+/// ## Examples
+///
+///    > option(from("Hello"), string)
+///    Ok(Some("Hello"))
+///
+///    > option(from(atom.from_string("null")), string)
+///    Ok(None)
+///
+///    > option(from(123), string)
+///    Error("Expected a bit_string, got an int")
+///
+pub fn option(
+  from dynamic: Dynamic,
+  of decoder: Decoder(inner),
+) -> Result(Option(inner), String) {
+  let Ok(null) = atom_mod.from_string("null")
+  case atom(dynamic), decoder(dynamic) {
+    Ok(atom), _ if atom == null -> Ok(None)
+    _, Ok(result) -> Ok(Some(result))
+    _, Error(msg) -> Error(msg)
+  }
 }
 
 /// Check to see if a Dynamic value is a map with a specific field, and return

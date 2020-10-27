@@ -5,6 +5,7 @@ import gleam/list
 import gleam/should
 import gleam/result
 import gleam/map
+import gleam/option.{None, Some}
 
 pub fn bit_string_test() {
   ""
@@ -217,6 +218,23 @@ pub fn typed_list_test() {
   [dynamic.from(1), dynamic.from("not an int")]
   |> dynamic.from
   |> dynamic.typed_list(dynamic.int)
+  |> should.be_error
+}
+
+pub fn option_test() {
+  let Ok(null) = atom.from_string("null")
+
+  1
+  |> dynamic.from
+  |> dynamic.option(dynamic.int)
+  |> should.equal(Ok(Some(1)))
+  null
+  |> dynamic.from
+  |> dynamic.option(dynamic.int)
+  |> should.equal(Ok(None))
+  1
+  |> dynamic.from
+  |> dynamic.option(dynamic.string)
   |> should.be_error
 }
 
