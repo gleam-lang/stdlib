@@ -52,6 +52,20 @@ pub fn to_base_string_test() {
   |> should.equal("-64")
 }
 
+pub fn to_float_test() {
+  int.to_float(1)
+  |> should.equal(1.)
+
+  int.to_float(5)
+  |> should.equal(5.)
+
+  int.to_float(0)
+  |> should.equal(0.)
+
+  int.to_float(-5)
+  |> should.equal(-5.)
+}
+
 pub fn compare_test() {
   int.compare(0, 0)
   |> should.equal(order.Eq)
