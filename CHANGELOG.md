@@ -7,6 +7,7 @@
 - The `int` and `float` modules gain the `negate` function.
 - The `result` module gains the `all` function.
 - The `dynamic` module gains the `option` function.
+- The `int` module gains the `to_float` function.
 
 ## v0.11.0 - 2020-08-22
 
