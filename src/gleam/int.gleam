@@ -42,6 +42,22 @@ pub external fn to_string(Int) -> String =
 pub external fn to_base_string(Int, Int) -> String =
   "erlang" "integer_to_binary"
 
+/// Takes an int and returns its value as a float
+///
+/// ## Examples
+///
+///   > to_float(5)
+///   5.
+///
+///   > to_float(0)
+///   0.
+///
+///   > to_float(-3)
+///   -3.
+///
+pub external fn to_float(a: Int) -> Float =
+  "erlang" "float"
+
 /// Compares two ints, returning an order.
 ///
 /// ## Examples
