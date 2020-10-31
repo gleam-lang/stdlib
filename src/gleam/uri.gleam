@@ -14,6 +14,7 @@ import gleam/string
 import gleam/dynamic.{Dynamic}
 import gleam/map.{Map}
 import gleam/function
+import gleam/pair
 
 /// Type representing holding the parsed components of an URI.
 /// All components of a URI are optional, except the path.
@@ -117,6 +118,33 @@ pub fn query_to_string(query: List(tuple(String, String))) -> String {
   |> erl_query_to_string([Encoding(Utf8)])
   |> dynamic.string
   |> result.unwrap("")
+}
+
+/// Encode a string into a percent encoded representation.
+/// Note that this encodes space as +.
+///
+/// ## Example
+///
+/// percent_encode("100% great")
+/// > "100%25+great"
+///
+pub fn percent_encode(value: String) -> String {
+  query_to_string([tuple("k", value)])
+  |> string.replace(each: "k=", with: "")
+}
+
+/// Decode a percent encoded string.
+///
+/// ## Example
+///
+/// percent_decode("100%25+great")
+/// > Ok("100% great")
+///
+pub fn percent_decode(value: String) -> Result(String, Nil) {
+  string.concat(["k=", value])
+  |> parse_query
+  |> result.then(list.head)
+  |> result.map(pair.second)
 }
 
 fn do_remove_dot_segments(

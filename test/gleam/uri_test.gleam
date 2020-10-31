@@ -1,5 +1,7 @@
 import gleam/uri
 import gleam/should
+import gleam/string
+import gleam/list
 import gleam/option.{None, Some}
 
 pub fn full_parse_test() {
@@ -90,6 +92,78 @@ pub fn query_to_string_test() {
 pub fn empty_query_to_string_test() {
   assert query_string = uri.query_to_string([])
   should.equal(query_string, "")
+}
+
+fn percent_codec_fixtures() {
+  [
+    tuple(" ", "+"),
+    tuple(",", "%2C"),
+    tuple(";", "%3B"),
+    tuple(":", "%3A"),
+    tuple("!", "%21"),
+    tuple("?", "%3F"),
+    tuple("'", "%27"),
+    tuple("(", "%28"),
+    tuple(")", "%29"),
+    tuple("[", "%5B"),
+    tuple("@", "%40"),
+    tuple("/", "%2F"),
+    tuple("\\", "%5C"),
+    tuple("&", "%26"),
+    tuple("#", "%23"),
+    tuple("=", "%3D"),
+    tuple("~", "%7E"),
+    tuple("ñ", "%C3%B1"),
+    // Allowed chars
+    tuple("-", "-"),
+    tuple("_", "_"),
+    tuple(".", "."),
+    tuple("*", "*"),
+    tuple("100% great", "100%25+great"),
+  ]
+}
+
+pub fn percent_encode_test() {
+  percent_codec_fixtures()
+  |> list.map(fn(t) {
+    let tuple(a, b) = t
+    uri.percent_encode(a)
+    |> should.equal(b)
+  })
+}
+
+pub fn percent_encode_consistency_test() {
+  let k = "foo bar[]"
+  let v = "ñaña (,:*~)"
+
+  assert query_string = uri.query_to_string([tuple(k, v)])
+
+  let encoded_key = uri.percent_encode(k)
+  let encoded_value = uri.percent_encode(v)
+  let manual_query_string = string.concat([encoded_key, "=", encoded_value])
+
+  should.equal(query_string, manual_query_string)
+}
+
+pub fn percent_decode_test() {
+  percent_codec_fixtures()
+  |> list.map(fn(t) {
+    let tuple(a, b) = t
+    uri.percent_decode(b)
+    |> should.equal(Ok(a))
+  })
+}
+
+pub fn percent_decode_consistency_test() {
+  let k = "foo+bar[]"
+  let v = "%C3%B6rebro"
+  let query = string.concat([k, "=", v])
+  assert Ok(parsed) = uri.parse_query(query)
+
+  assert Ok(decoded_key) = uri.percent_decode(k)
+  assert Ok(decoded_value) = uri.percent_decode(v)
+
+  should.equal(parsed, [tuple(decoded_key, decoded_value)])
 }
 
 pub fn parse_segments_test() {

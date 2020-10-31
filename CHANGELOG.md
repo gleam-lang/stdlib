@@ -5,9 +5,10 @@
 - The `function` module gains `curry2` to `curry6`.
 - The `list` module gains the `each`, and `partition` functions.
 - The `int` and `float` modules gain the `negate` function.
+- The `int` module gains the `to_float` function.
 - The `result` module gains the `all` function.
 - The `dynamic` module gains the `option` function.
-- The `int` module gains the `to_float` function.
+- The `uri` module gains the `percent_encode` and `percent_decode` functions.
 
 ## v0.11.0 - 2020-08-22
 
