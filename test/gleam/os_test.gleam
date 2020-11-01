@@ -27,13 +27,13 @@ pub fn system_time_test() {
   |> should.equal(True)
 }
 
-pub fn timestamp_test() {
+pub fn erlang_timestamp_test() {
   // in microseconds
   let june_12_2020 = 1591966971000000
-  let stamp = os.timestamp()
+  let tuple(mega_seconds, seconds, micro_seconds) = os.erlang_timestamp()
 
   let stamp_as_micro =
-    { stamp.mega_seconds * 1_000_000 + stamp.seconds } * 1_000_000 + stamp.micro_seconds
+    { mega_seconds * 1_000_000 + seconds } * 1_000_000 + micro_seconds
 
   { stamp_as_micro > june_12_2020 }
   |> should.be_true()
