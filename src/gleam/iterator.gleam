@@ -463,3 +463,34 @@ pub fn range(from start: Int, to stop: Int) -> Iterator(Int) {
   |> do_range(start, stop, _)
   |> Iterator
 }
+
+/// Find the first element in a given iterator for which the given function returns
+/// True.
+///
+/// Returns `Error(Nil)` if the function does not return True for any of the
+/// elements.
+///
+/// ## Examples
+///
+///    > find(from_list([1, 2, 3]), fn(x) { x > 2 })
+///    Ok(3)
+///
+///    > find(from_list([1, 2, 3]), fn(x) { x > 4 })
+///    Error(Nil)
+///
+///    > find(from_list([]), fn(x) { True })
+///    Error(Nil)
+///
+pub fn find(
+  in haystack: Iterator(a),
+  one_that is_desired: fn(a) -> Bool,
+) -> Result(a, Nil) {
+  case haystack.continuation() {
+    Continue(element, continuation) ->
+      case is_desired(element) {
+        True -> Ok(element)
+        False -> find(Iterator(continuation), is_desired)
+      }
+    Stop -> Error(Nil)
+  }
+}

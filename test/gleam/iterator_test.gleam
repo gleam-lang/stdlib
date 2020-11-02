@@ -225,3 +225,28 @@ pub fn drop_test() {
   |> iterator.to_list
   |> should.equal([5, 6, 7, 8, 9])
 }
+
+type Cat {
+  Cat(id: Int)
+}
+
+pub fn find_test() {
+  iterator.range(0, 10)
+  |> iterator.find(fn(e) { e == 5 })
+  |> should.equal(Ok(5))
+
+  iterator.range(0, 10)
+  |> iterator.find(fn(e) { e > 10 })
+  |> should.equal(Error(Nil))
+
+  iterator.from_list([])
+  |> iterator.find(fn(_x) { True })
+  |> should.equal(Error(Nil))
+
+  iterator.unfold(
+    Cat(id: 1),
+    fn(cat: Cat) { iterator.Next(cat, Cat(id: cat.id + 1)) },
+  )
+  |> iterator.find(fn(cat: Cat) { cat.id == 10 })
+  |> should.equal(Ok(Cat(id: 10)))
+}
