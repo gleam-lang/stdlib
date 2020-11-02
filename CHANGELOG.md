@@ -10,8 +10,8 @@
 - The `dynamic` module gains the `option` function.
 - The `uri` module gains the `percent_encode` and `percent_decode` functions.
 - The `os` module gains the `erlang_timestamp` function.
-- The `iterator` module gains the `append`, `flatten`, `flat_map` and `step`
-  functions.
+- The `iterator` module gains the `append`, `flatten`, `flat_map`, `step`,
+  and `find` functions.
 
 ## v0.11.0 - 2020-08-22
 
