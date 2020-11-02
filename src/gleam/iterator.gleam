@@ -268,6 +268,83 @@ pub fn map(over iterator: Iterator(a), with f: fn(a) -> b) -> Iterator(b) {
   |> Iterator
 }
 
+fn do_append(
+  first: fn() -> Action(a),
+  second: fn() -> Action(a),
+) -> fn() -> Action(a) {
+  fn() {
+    case first() {
+      Continue(e, first) -> Continue(e, do_append(first, second))
+      Stop -> second()
+    }
+  }
+}
+
+/// Append two iterators, producing a new iterator.
+///
+/// This function does not evaluate the elements of the iterators, the
+/// computation is performed when the resulting iterator is later run.
+///
+/// ## Examples
+///
+///    > [1, 2] |> from_list |> append([3, 4] |> from_list) |> to_list
+///    [1, 2, 3, 4]
+///
+pub fn append(to first: Iterator(a), suffix second: Iterator(a)) -> Iterator(a) {
+  first.continuation
+  |> do_append(second.continuation)
+  |> Iterator
+}
+
+fn do_flatten(continuation: fn() -> Action(Iterator(a))) -> fn() -> Action(a) {
+  fn() {
+    case continuation() {
+      Continue(e, continuation) ->
+        do_append(e.continuation, do_flatten(continuation))()
+      Stop -> Stop
+    }
+  }
+}
+
+/// Flatten an iterator of iterator of iterators, creating a new iterator.
+///
+/// This function does not evaluate the elements of the iterator, the
+/// computation is performed when the iterator is later run.
+///
+/// ## Examples
+///
+///    > [[1, 2], [3, 4]] |> list.map(from_list) |> flatten |> to_list
+///    [1, 2, 3, 4]
+///
+pub fn flatten(iterator: Iterator(Iterator(a))) -> Iterator(a) {
+  iterator.continuation
+  |> do_flatten
+  |> Iterator
+}
+
+/// Create an iterator from an existing iterator and a transformation function.
+///
+/// Each element in the new iterator will be the result of calling the given
+/// function on the elements in the given iterator and then flattening the
+/// results.
+///
+/// This function does not evaluate the elements of the iterator, the
+/// computation is performed when the iterator is later run.
+///
+/// ## Examples
+///
+///    > [1, 2] |> from_list |> flat_map(fn(x) { from_list([x, x + 1]) }) |> to_list
+///    [1, 2, 2, 3]
+///
+pub fn flat_map(
+  over iterator: Iterator(a),
+  with f: fn(a) -> Iterator(b),
+) -> Iterator(b) {
+  iterator
+  |> map(f)
+  |> flatten
+}
+
 fn do_filter(
   continuation: fn() -> Action(e),
   predicate: fn(e) -> Bool,

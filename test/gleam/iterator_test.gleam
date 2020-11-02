@@ -71,6 +71,60 @@ pub fn map_test() {
   test([1, 2, 3, 4, 5, 6, 7, 8], f)
 }
 
+// a |> from_list |> flat_map(f) |> to_list ==
+//   a |> list.map(f) |> list.map(to_list) |> list.flatten
+pub fn flat_map_test() {
+  let test = fn(subject, f) {
+    subject
+    |> iterator.from_list
+    |> iterator.flat_map(f)
+    |> iterator.to_list
+    |> should.equal(
+      subject
+      |> list.map(f)
+      |> list.map(iterator.to_list)
+      |> list.flatten,
+    )
+  }
+
+  let f = fn(i) { iterator.range(i, i + 2) }
+
+  test([], f)
+  test([1], f)
+  test([1, 2], f)
+}
+
+// a |> from_list |> append(from_list(b)) |> to_list == list.flatten([a, b])
+pub fn append_test() {
+  let test = fn(left, right) {
+    left
+    |> iterator.from_list
+    |> iterator.append(iterator.from_list(right))
+    |> iterator.to_list
+    |> should.equal(list.flatten([left, right]))
+  }
+
+  test([], [])
+  test([1], [2])
+  test([1, 2], [3, 4])
+}
+
+// a |> list.map(from_list) |> flatten |> to_list == list.flatten(a)
+pub fn flatten_test() {
+  let test = fn(lists) {
+    lists
+    |> list.map(iterator.from_list)
+    |> iterator.from_list
+    |> iterator.flatten
+    |> iterator.to_list
+    |> should.equal(list.flatten(lists))
+  }
+
+  test([[], []])
+  test([[1], [2]])
+  test([[1, 2], [3, 4]])
+}
+
 // a |> from_list |> filter(f) |> to_list == a |> list.filter(_, f)
 pub fn filter_test() {
   let test = fn(subject, f) {
