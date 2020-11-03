@@ -12,7 +12,8 @@
 - The `int` and `float` modules gain the `negate` function.
 - The `int` module gains the `to_float` function.
 - The `result` module gains the `all` function.
-- The `dynamic` module gains the `option` function.
+- The `dynamic` module gains the `option`, `result` and `typed_result`
+  functions.
 - The `uri` module gains the `percent_encode` and `percent_decode` functions.
 - The `os` module gains the `erlang_timestamp` function.
 - The `iterator` module gains the `append`, `flatten`, `flat_map`, `step`,

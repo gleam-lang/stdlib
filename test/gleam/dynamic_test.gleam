@@ -389,3 +389,54 @@ pub fn list_test() {
   |> dynamic.list
   |> should.equal(Error("Expected a list, got an int"))
 }
+
+pub fn result_test() {
+  Ok(1)
+  |> dynamic.from
+  |> dynamic.result
+  |> should.equal(Ok(Ok(dynamic.from(1))))
+
+  Error("error")
+  |> dynamic.from
+  |> dynamic.result
+  |> should.equal(Ok(Error(dynamic.from("error"))))
+
+  1
+  |> dynamic.from
+  |> dynamic.result
+  |> should.equal(Error("Expected a 2 element tuple, got an int"))
+
+  let tag = atom.create_from_string("bad")
+
+  tuple(tag, "value")
+  |> dynamic.from
+  |> dynamic.result
+  |> should.equal(Error("Expected a tag of \"ok\" or \"error\", got \"bad\""))
+}
+
+pub fn typed_result_test() {
+  Ok(1)
+  |> dynamic.from
+  |> dynamic.typed_result(ok: dynamic.int, error: dynamic.string)
+  |> should.equal(Ok(Ok(1)))
+
+  Error("error")
+  |> dynamic.from
+  |> dynamic.typed_result(ok: dynamic.int, error: dynamic.string)
+  |> should.equal(Ok(Error("error")))
+
+  Ok("1")
+  |> dynamic.from
+  |> dynamic.typed_result(ok: dynamic.int, error: dynamic.string)
+  |> should.equal(Error("Expected an int, got a binary"))
+
+  Error(1)
+  |> dynamic.from
+  |> dynamic.typed_result(ok: dynamic.int, error: dynamic.string)
+  |> should.equal(Error("Expected a bit_string, got an int"))
+
+  1
+  |> dynamic.from
+  |> dynamic.typed_result(ok: dynamic.int, error: dynamic.string)
+  |> should.equal(Error("Expected a 2 element tuple, got an int"))
+}

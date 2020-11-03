@@ -1,9 +1,10 @@
+import gleam/atom as atom_mod
 import gleam/bit_string.{BitString} as bit_string_mod
 import gleam/list as list_mod
-import gleam/atom as atom_mod
 import gleam/map.{Map}
-import gleam/result
 import gleam/option.{None, Option, Some}
+import gleam/result as result_mod
+import gleam/string_builder
 
 /// `Dynamic` data is data that we don"t know the type of yet.
 /// We likely get data like this from interop with Erlang, or from
@@ -55,7 +56,7 @@ pub external fn bit_string(from: Dynamic) -> Result(BitString, String) =
 ///
 pub fn string(from: Dynamic) -> Result(String, String) {
   bit_string(from)
-  |> result.then(fn(raw) {
+  |> result_mod.then(fn(raw) {
     case bit_string_mod.to_string(raw) {
       Ok(string) -> Ok(string)
       Error(Nil) -> Error("Expected a string, got a bit_string")
@@ -153,6 +154,76 @@ pub external fn thunk(from: Dynamic) -> Result(fn() -> Dynamic, String) =
 pub external fn list(from: Dynamic) -> Result(List(Dynamic), String) =
   "gleam_stdlib" "decode_list"
 
+/// Check to see whether a Dynamic value is a result, and return the result if
+/// it is
+///
+/// ## Examples
+///
+///    > result(from(Ok(1)))
+///    Ok(Ok(from(1)))
+///
+///    > result(from(Error("boom")))
+///    Ok(Error(from("boom")))
+///
+///    > result(from(123))
+///    Error("Expected a 2 element tuple, got an int")
+///
+pub fn result(from: Dynamic) -> Result(Result(Dynamic, Dynamic), String) {
+  try tuple(key, val) = tuple2(from)
+  try tag = atom(key)
+
+  let ok_atom = atom_mod.create_from_string("ok")
+  let error_atom = atom_mod.create_from_string("error")
+
+  case tag {
+    tag if tag == ok_atom -> Ok(Ok(val))
+    tag if tag == error_atom -> Ok(Error(val))
+    tag ->
+      "Expected a tag of \"ok\" or \"error\", got \""
+      |> string_builder.from_string
+      |> string_builder.append(atom_mod.to_string(tag))
+      |> string_builder.append("\"")
+      |> string_builder.to_string
+      |> Error
+  }
+}
+
+/// Check to see whether a Dynamic value is a result of a particular type, and
+/// return the result if it is
+///
+/// The `ok` and `error` arguments are decoders for decoding the `Ok` and
+/// `Error` values of the result.
+///
+/// ## Examples
+///
+///    > typed_result(of: from(Ok(1)), ok: int, error: string)
+///    Ok(Ok(1))
+///
+///    > typed_result(of: from(Error("boom")), ok: int, error: string)
+///    Ok(Error("boom"))
+///
+///    > typed_result(of: from(123), ok: int, error: string)
+///    Error("Expected a 2 element tuple, got an int")
+///
+pub fn typed_result(
+  of dynamic: Dynamic,
+  ok decode_ok: Decoder(a),
+  error decode_error: Decoder(e),
+) -> Result(Result(a, e), String) {
+  try inner_result = result(dynamic)
+
+  case inner_result {
+    Ok(raw) ->
+      raw
+      |> decode_ok
+      |> result_mod.map(Ok)
+    Error(raw) ->
+      raw
+      |> decode_error
+      |> result_mod.map(Error)
+  }
+}
+
 /// Check to see whether a Dynamic value is a list of a particular type, and
 /// return the list if it is.
 ///
@@ -180,7 +251,7 @@ pub fn typed_list(
 ) -> Result(List(inner), String) {
   dynamic
   |> list
-  |> result.then(list_mod.try_map(_, decoder_type))
+  |> result_mod.then(list_mod.try_map(_, decoder_type))
 }
 
 /// Check to see if a Dynamic value is an Option of a particular type, and return
@@ -339,5 +410,5 @@ pub fn any(
 ) -> Result(t, String) {
   decoders
   |> list_mod.find_map(fn(decoder) { decoder(data) })
-  |> result.map_error(fn(_) { "Unexpected value" })
+  |> result_mod.map_error(fn(_) { "Unexpected value" })
 }
