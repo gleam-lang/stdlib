@@ -168,6 +168,34 @@ pub fn to_list(iterator: Iterator(element)) -> List(element) {
   |> list.reverse
 }
 
+/// Eagerly access the first value of an interator, returning a `Next`
+/// that contains the first value and the rest of the iterator.
+///
+/// If called on an empty iterator, `Done` is returned.
+///
+/// ## Examples
+///
+///    > assert Next(head, tail) =
+///    >   [1, 2, 3, 4]
+///    >   |> from_list
+///    >   |> step
+///    > head
+///    1
+///    > tail |> to_list
+///    [2, 3, 4]
+///
+///    > []
+///    > |> from_list
+///    > |> step
+///    Done
+///
+pub fn step(iterator: Iterator(e)) -> Step(e, Iterator(e)) {
+  case iterator.continuation() {
+    Stop -> Done
+    Continue(e, a) -> Next(e, Iterator(a))
+  }
+}
+
 fn do_take(
   continuation: fn() -> Action(e),
   desired: Int,

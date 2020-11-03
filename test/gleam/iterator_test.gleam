@@ -1,5 +1,5 @@
 import gleam/should
-import gleam/iterator
+import gleam/iterator.{Done, Next}
 import gleam/list
 
 // a |> from_list |> to_list == a
@@ -15,6 +15,30 @@ pub fn to_from_list_test() {
   test([1])
   test([1, 2])
   test([1, 2, 4, 8])
+}
+
+pub fn step_test() {
+  let test = fn(subject) {
+    let step =
+      subject
+      |> iterator.from_list
+      |> iterator.step
+
+    case subject {
+      [] ->
+        step
+        |> should.equal(Done)
+
+      [h, ..t] ->
+        step
+        |> should.equal(Next(h, iterator.from_list(t)))
+    }
+  }
+
+  test([])
+  test([1])
+  test([1, 2])
+  test([1, 2, 3])
 }
 
 // a |> from_list |> take(n) == a |> list.take(_, n)
