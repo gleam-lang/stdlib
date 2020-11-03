@@ -58,3 +58,9 @@ pub type TimeUnit {
 /// https://erlang.org/doc/apps/erts/time_correction.html#OS_System_Time
 pub external fn system_time(TimeUnit) -> Int =
   "os" "system_time"
+
+/// Return the current OS system time as a tuple of Ints
+///
+/// http://erlang.org/doc/man/os.html#timestamp-0
+pub external fn erlang_timestamp() -> tuple(Int, Int, Int) =
+  "os" "timestamp"
