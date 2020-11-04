@@ -182,3 +182,11 @@ pub fn negate_test() {
   int.negate(0)
   |> should.equal(0)
 }
+
+pub fn sum_test() {
+  int.sum([])
+  |> should.equal(0)
+
+  int.sum([1, 2, 3])
+  |> should.equal(6)
+}
