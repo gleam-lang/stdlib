@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.12.0 - 2020-11-04
 
 - The `function` module gains `curry2` to `curry6`.
 - The `list` module gains the `each`, and `partition` functions.
