@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- The `int` module gains the `sum` function.
+- The `float` module gains the `sum` function.
+
 ## v0.12.0 - 2020-11-04
 
 - The `function` module gains `curry2` to `curry6`.
