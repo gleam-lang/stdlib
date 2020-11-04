@@ -242,3 +242,11 @@ pub fn negate_test() {
   float.negate(0.)
   |> should.equal(0.)
 }
+
+pub fn sum_test() {
+  float.sum([])
+  |> should.equal(0.0)
+
+  float.sum([1.0, 2.2, 3.3])
+  |> should.equal(6.5)
+}

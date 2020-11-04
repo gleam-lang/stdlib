@@ -171,3 +171,22 @@ pub fn square_root(number: Float) -> Result(Float, Nil) {
 pub fn negate(x: Float) -> Float {
   -1. *. x
 }
+
+/// Sums a list of Floats.
+///
+/// ## Example
+///
+///    > sum([1.0, 2.2, 3.3])
+///    6.5
+///
+pub fn sum(numbers: List(Float)) -> Float {
+  numbers
+  |> do_sum(0.0)
+}
+
+fn do_sum(numbers: List(Float), initial: Float) -> Float {
+  case numbers {
+    [] -> initial
+    [x, ..rest] -> do_sum(rest, x +. initial)
+  }
+}
