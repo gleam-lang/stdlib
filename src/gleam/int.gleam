@@ -148,3 +148,22 @@ pub fn is_odd(x: Int) -> Bool {
 pub fn negate(x: Int) -> Int {
   -1 * x
 }
+
+/// Sums a list of Ints.
+///
+/// ## Example
+///
+///    > sum([1, 2, 3])
+///    6
+///
+pub fn sum(numbers: List(Int)) -> Int {
+  numbers
+  |> do_sum(0)
+}
+
+fn do_sum(numbers: List(Int), initial: Int) -> Int {
+  case numbers {
+    [] -> initial
+    [x, ..rest] -> do_sum(rest, x + initial)
+  }
+}
