@@ -167,3 +167,24 @@ fn do_sum(numbers: List(Int), initial: Int) -> Int {
     [x, ..rest] -> do_sum(rest, x + initial)
   }
 }
+
+/// Multiplies a list of Ints and returns the product.
+///
+/// ## Example
+///
+///    > product([2, 3, 4])
+///    24
+///
+pub fn product(numbers: List(Int)) -> Int {
+  case numbers {
+    [] -> 0
+    _ -> do_product(numbers, 1)
+  }
+}
+
+fn do_product(numbers: List(Int), initial: Int) -> Int {
+  case numbers {
+    [] -> initial
+    [x, ..rest] -> do_product(rest, x * initial)
+  }
+}
