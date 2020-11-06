@@ -2,8 +2,8 @@
 
 ## Unreleased
 
-- The `int` module gains the `sum` function.
-- The `float` module gains the `sum` function.
+- The `int` module gains the `sum` and `product` functions.
+- The `float` module gains the `sum` and `product` functions.
 
 ## v0.12.0 - 2020-11-04
 

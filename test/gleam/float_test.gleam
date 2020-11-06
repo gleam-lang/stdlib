@@ -250,3 +250,14 @@ pub fn sum_test() {
   float.sum([1.0, 2.2, 3.3])
   |> should.equal(6.5)
 }
+
+pub fn product_test() {
+  float.product([])
+  |> should.equal(0.)
+
+  float.product([4.])
+  |> should.equal(4.)
+
+  float.product([2.5, 3.2, 4.2])
+  |> should.equal(33.6)
+}

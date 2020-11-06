@@ -190,3 +190,14 @@ pub fn sum_test() {
   int.sum([1, 2, 3])
   |> should.equal(6)
 }
+
+pub fn product_test() {
+  int.product([])
+  |> should.equal(0)
+
+  int.product([4])
+  |> should.equal(4)
+
+  int.product([1, 2, 3])
+  |> should.equal(6)
+}
