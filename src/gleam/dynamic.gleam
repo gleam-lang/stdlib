@@ -1,9 +1,9 @@
-import gleam/atom as atom_mod
-import gleam/bit_string.{BitString} as bit_string_mod
-import gleam/list as list_mod
+import gleam/atom 
+import gleam/bit_string.{BitString} 
+import gleam/list 
 import gleam/map.{Map}
 import gleam/option.{None, Option, Some}
-import gleam/result as result_mod
+import gleam/result 
 import gleam/string_builder
 
 /// `Dynamic` data is data that we don"t know the type of yet.
@@ -56,8 +56,8 @@ pub external fn bit_string(from: Dynamic) -> Result(BitString, String) =
 ///
 pub fn string(from: Dynamic) -> Result(String, String) {
   bit_string(from)
-  |> result_mod.then(fn(raw) {
-    case bit_string_mod.to_string(raw) {
+  |> result.then(fn(raw) {
+    case bit_string.to_string(raw) {
       Ok(string) -> Ok(string)
       Error(Nil) -> Error("Expected a string, got a bit_string")
     }
@@ -104,7 +104,7 @@ pub external fn float(from: Dynamic) -> Result(Float, String) =
 ///    > atom(from(123))
 ///    Error("Expected an Atom, got `123`")
 ///
-pub external fn atom(from: Dynamic) -> Result(atom_mod.Atom, String) =
+pub external fn atom(from: Dynamic) -> Result(atom.Atom, String) =
   "gleam_stdlib" "decode_atom"
 
 /// Check to see whether a Dynamic value is an bool, and return the bool if
@@ -172,8 +172,8 @@ pub fn result(from: Dynamic) -> Result(Result(Dynamic, Dynamic), String) {
   try tuple(key, val) = tuple2(from)
   try tag = atom(key)
 
-  let ok_atom = atom_mod.create_from_string("ok")
-  let error_atom = atom_mod.create_from_string("error")
+  let ok_atom = atom.create_from_string("ok")
+  let error_atom = atom.create_from_string("error")
 
   case tag {
     tag if tag == ok_atom -> Ok(Ok(val))
@@ -181,7 +181,7 @@ pub fn result(from: Dynamic) -> Result(Result(Dynamic, Dynamic), String) {
     tag ->
       "Expected a tag of \"ok\" or \"error\", got \""
       |> string_builder.from_string
-      |> string_builder.append(atom_mod.to_string(tag))
+      |> string_builder.append(atom.to_string(tag))
       |> string_builder.append("\"")
       |> string_builder.to_string
       |> Error
@@ -216,11 +216,11 @@ pub fn typed_result(
     Ok(raw) ->
       raw
       |> decode_ok
-      |> result_mod.map(Ok)
+      |> result.map(Ok)
     Error(raw) ->
       raw
       |> decode_error
-      |> result_mod.map(Error)
+      |> result.map(Error)
   }
 }
 
@@ -251,7 +251,7 @@ pub fn typed_list(
 ) -> Result(List(inner), String) {
   dynamic
   |> list
-  |> result_mod.then(list_mod.try_map(_, decoder_type))
+  |> result.then(list.try_map(_, decoder_type))
 }
 
 /// Check to see if a Dynamic value is an Option of a particular type, and return
@@ -276,7 +276,7 @@ pub fn option(
   from dynamic: Dynamic,
   of decoder: Decoder(inner),
 ) -> Result(Option(inner), String) {
-  let Ok(null) = atom_mod.from_string("null")
+  let Ok(null) = atom.from_string("null")
   case atom(dynamic), decoder(dynamic) {
     Ok(atom), _ if atom == null -> Ok(None)
     _, Ok(result) -> Ok(Some(result))
@@ -372,9 +372,9 @@ pub fn typed_tuple2(
 ///
 /// ## Examples
 ///
-///    > import gleam/map as map_mod
-///    > map(from(map_mod.new()))
-///    Ok(map_mod.new())
+///    > import gleam/map 
+///    > map(from(map.new()))
+///    Ok(map.new())
 ///
 ///    > map(from(1))
 ///    Error("Expected a 2 element tuple, got an int")
@@ -409,6 +409,6 @@ pub fn any(
   of decoders: List(Decoder(t)),
 ) -> Result(t, String) {
   decoders
-  |> list_mod.find_map(fn(decoder) { decoder(data) })
-  |> result_mod.map_error(fn(_) { "Unexpected value" })
+  |> list.find_map(fn(decoder) { decoder(data) })
+  |> result.map_error(fn(_) { "Unexpected value" })
 }
