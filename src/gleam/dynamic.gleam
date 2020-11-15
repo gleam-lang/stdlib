@@ -1,9 +1,9 @@
-import gleam/atom 
-import gleam/bit_string.{BitString} 
-import gleam/list 
+import gleam/atom
+import gleam/bit_string.{BitString}
+import gleam/list
 import gleam/map.{Map}
 import gleam/option.{None, Option, Some}
-import gleam/result 
+import gleam/result
 import gleam/string_builder
 
 /// `Dynamic` data is data that we don"t know the type of yet.
