@@ -2,7 +2,7 @@
 //// compatible with the Erlang eunit test framework.
 ////
 //// More information on running eunit can be found in [the rebar3
-//// documentation](https://www.rebar3.org/docs/running-tests).
+//// documentation](https://rebar3.org/docs/testing/eunit/).
 
 // TODO: Move this module into another package so it can be used as a
 // dep only in test.
