@@ -123,7 +123,7 @@ pub external fn uppercase(String) -> String =
 ///    order.Eq
 ///
 ///    > compare("A", "B")
-///    order.Gt
+///    order.Lt
 ///
 pub external fn compare(String, String) -> order.Order =
   "gleam_stdlib" "compare_strings"
