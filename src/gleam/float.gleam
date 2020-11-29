@@ -9,10 +9,10 @@ pub type Float =
 ///
 /// ## Examples
 ///    > parse("2.3")
-///    Some(2.3)
+///    Ok(2.3)
 ///
 ///    > parse("ABC")
-///    None
+///    Error(Nil)
 ///
 pub external fn parse(String) -> Result(Float, Nil) =
   "gleam_stdlib" "parse_float"
