@@ -9,7 +9,7 @@ pub type Float =
 ///
 /// ## Examples
 ///    > parse("2.3")
-///    Some(2.3)
+///    Error(2.3, Nil)
 ///
 ///    > parse("ABC")
 ///    None
