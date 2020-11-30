@@ -1,1 +1,7 @@
 name = "gleam_stdlib"
+version = "0.12.0"
+
+[repository]
+type = "github"
+user = "gleam-lang"
+repo = "stdlib"
