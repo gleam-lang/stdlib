@@ -59,16 +59,16 @@ pub fn nor(a: Bool, b: Bool) -> Bool {
 ///
 /// ## Examples
 ///
-///    > nor(False, False)
+///    > nand(False, False)
 ///    True
 ///
-///    > nor(False, True)
+///    > nand(False, True)
 ///    True
 ///
-///    > nor(True, False)
+///    > nand(True, False)
 ///    True
 ///
-///    > nor(True, True)
+///    > nand(True, True)
 ///    False
 ///
 pub fn nand(a: Bool, b: Bool) -> Bool {
