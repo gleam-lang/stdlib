@@ -24,6 +24,20 @@ pub fn nor_test() {
   |> should.be_false
 }
 
+pub fn nand_test() {
+  bool.nand(False, False)
+  |> should.be_true
+
+  bool.nand(False, True)
+  |> should.be_true
+
+  bool.nand(True, False)
+  |> should.be_true
+
+  bool.nand(True, True)
+  |> should.be_false
+}
+
 pub fn exclusive_or_test() {
   bool.exclusive_or(True, True)
   |> should.be_false

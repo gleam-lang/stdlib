@@ -55,6 +55,31 @@ pub fn nor(a: Bool, b: Bool) -> Bool {
   }
 }
 
+/// Returns the nand of two bools
+///
+/// ## Examples
+///
+///    > nor(False, False)
+///    True
+///
+///    > nor(False, True)
+///    True
+///
+///    > nor(True, False)
+///    True
+///
+///    > nor(True, True)
+///    False
+///
+pub fn nand(a: Bool, b: Bool) -> Bool {
+  case a, b {
+    False, False -> True
+    False, True -> True
+    True, False -> True
+    True, True -> False
+  }
+}
+
 /// Returns the exclusive or of two bools
 ///
 /// ## Examples
