@@ -4,7 +4,7 @@
 
 - The `int` module gains the `sum` and `product` functions.
 - The `float` module gains the `sum` and `product` functions.
-- The `result` module gains the `lazy_or` function.
+- The `result` module gains the `lazy_or` and `lazy_unwrap` functions.
 
 ## v0.12.0 - 2020-11-04
 

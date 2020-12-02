@@ -87,6 +87,16 @@ pub fn unwrap_test() {
   |> should.equal(50)
 }
 
+pub fn lazy_unwrap_test() {
+  Ok(1)
+  |> result.lazy_unwrap(fn() { 50 })
+  |> should.equal(1)
+
+  Error("nope")
+  |> result.lazy_unwrap(fn() { 50 })
+  |> should.equal(50)
+}
+
 pub fn nil_error_test() {
   Error("error_string")
   |> result.nil_error
