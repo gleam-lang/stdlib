@@ -10,6 +10,20 @@ pub fn negate_test() {
   |> should.be_true
 }
 
+pub fn nor_test() {
+  bool.nor(False, False)
+  |> should.be_true
+
+  bool.nor(False, True)
+  |> should.be_false
+
+  bool.nor(True, False)
+  |> should.be_false
+
+  bool.nor(True, True)
+  |> should.be_false
+}
+
 pub fn exclusive_or_test() {
   bool.exclusive_or(True, True)
   |> should.be_false

@@ -30,6 +30,31 @@ pub fn negate(bool: Bool) -> Bool {
   }
 }
 
+/// Returns the nor of two bools
+///
+/// ## Examples
+///
+///    > nor(False, False)
+///    True
+///
+///    > nor(False, True)
+///    False
+///
+///    > nor(True, False)
+///    False
+///
+///    > nor(True, True)
+///    False
+///
+pub fn nor(a: Bool, b: Bool) -> Bool {
+  case a, b {
+    False, False -> True
+    False, True -> False
+    True, False -> False
+    True, True -> False
+  }
+}
+
 /// Returns the exclusive or of two bools
 ///
 /// ## Examples
