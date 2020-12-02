@@ -119,6 +119,24 @@ pub fn or_test() {
   |> should.equal(Error("Error 2"))
 }
 
+pub fn lazy_or_test() {
+  Ok(1)
+  |> result.lazy_or(fn() { Ok(2)} )
+  |> should.equal(Ok(1))
+
+  Ok(1)
+  |> result.lazy_or(fn() { Error("Error 2")} )
+  |> should.equal(Ok(1))
+
+  Error("Error 1")
+  |> result.lazy_or(fn() { Ok(2)} )
+  |> should.equal(Ok(2))
+
+  Error("Error 1")
+  |> result.lazy_or(fn() { Error("Error 2")} )
+  |> should.equal(Error("Error 2"))
+}
+
 pub fn all_test() {
   [Ok(1), Ok(2), Ok(3)]
   |> result.all
