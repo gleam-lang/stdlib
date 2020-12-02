@@ -202,6 +202,29 @@ pub fn or(first: Result(a, e), second: Result(a, e)) -> Result(a, e) {
   }
 }
 
+/// Return the first value if it is Ok, otherwise evaluates the given function for a fallback value.
+///
+/// ## Examples
+///
+///    > or(Ok(1), Ok(2))
+///    Ok(1)
+///
+///    > or(Ok(1), Error("Error 2"))
+///    Ok(1)
+///
+///    > or(Error("Error 1"), Ok(2))
+///    Ok(2)
+///
+///    > or(Error("Error 1"), Error("Error 2"))
+///    Error("Error 2")
+///
+pub fn lazy_or(first: Result(a, e), second: fn() -> Result(a, e)) -> Result(a, e) {
+  case first {
+    Ok(_) -> first
+    Error(_) -> second()
+  }
+}
+
 /// Combine a list of results into a single result.
 /// If all elements in the list are Ok then returns an Ok holding the list of values.
 /// If any element is Error then returns the first error.
