@@ -30,6 +30,31 @@ pub fn negate(bool: Bool) -> Bool {
   }
 }
 
+/// Returns the exclusive or of two bools
+///
+/// ## Examples
+///
+///    > exclusive_or(False, False)
+///    False
+///
+///    > exclusive_or(False, True)
+///    True
+///
+///    > exclusive_or(True, False)
+///    True
+///
+///    > exclusive_or(True, True)
+///    False
+///
+pub fn exclusive_or(a: Bool, b: Bool) -> Bool {
+  case a, b {
+    False, False -> False
+    False, True -> True
+    True, False -> True
+    True, True -> False
+  }
+}
+
 /// Compares two bools and returns the first values Order to the second.
 ///
 /// ## Examples

@@ -10,6 +10,20 @@ pub fn negate_test() {
   |> should.be_true
 }
 
+pub fn exclusive_or_test() {
+  bool.exclusive_or(True, True)
+  |> should.be_false
+
+  bool.exclusive_or(False, False)
+  |> should.be_false
+
+  bool.exclusive_or(True, False)
+  |> should.be_true
+
+  bool.exclusive_or(False, True)
+  |> should.be_true
+}
+
 pub fn compare_test() {
   bool.compare(True, True)
   |> should.equal(order.Eq)
