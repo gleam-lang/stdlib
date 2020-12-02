@@ -236,7 +236,10 @@ pub fn or(first: Result(a, e), second: Result(a, e)) -> Result(a, e) {
 ///    > or(Error("Error 1"), Error("Error 2"))
 ///    Error("Error 2")
 ///
-pub fn lazy_or(first: Result(a, e), second: fn() -> Result(a, e)) -> Result(a, e) {
+pub fn lazy_or(
+  first: Result(a, e),
+  second: fn() -> Result(a, e),
+) -> Result(a, e) {
   case first {
     Ok(_) -> first
     Error(_) -> second()
