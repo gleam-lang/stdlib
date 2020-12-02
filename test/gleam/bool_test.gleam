@@ -24,6 +24,20 @@ pub fn exclusive_or_test() {
   |> should.be_true
 }
 
+pub fn exclusive_nor_test() {
+  bool.exclusive_nor(False, False)
+  |> should.be_true
+
+  bool.exclusive_nor(False, True)
+  |> should.be_false
+
+  bool.exclusive_nor(True, False)
+  |> should.be_false
+
+  bool.exclusive_nor(True, True)
+  |> should.be_true
+}
+
 pub fn compare_test() {
   bool.compare(True, True)
   |> should.equal(order.Eq)
