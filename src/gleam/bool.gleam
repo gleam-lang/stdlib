@@ -55,6 +55,31 @@ pub fn exclusive_or(a: Bool, b: Bool) -> Bool {
   }
 }
 
+/// Returns the exclusive nor of two bools
+///
+/// ## Examples
+///
+///    > exclusive_nor(False, False)
+///    True
+///
+///    > exclusive_nor(False, True)
+///    False
+///
+///    > exclusive_nor(True, False)
+///    False
+///
+///    > exclusive_nor(True, True)
+///    True
+///
+pub fn exclusive_nor(a: Bool, b: Bool) -> Bool {
+  case a, b {
+    False, False -> True
+    False, True -> False
+    True, False -> False
+    True, True -> True
+  }
+}
+
 /// Compares two bools and returns the first values Order to the second.
 ///
 /// ## Examples
