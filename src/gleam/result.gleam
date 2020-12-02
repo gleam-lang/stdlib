@@ -165,6 +165,24 @@ pub fn unwrap(result: Result(a, e), or default: a) -> a {
   }
 }
 
+/// Extract the Ok value from a result, evaluating the default function if the result
+/// is an Error.
+///
+/// ## Examples
+///
+///    > unwrap(Ok(1), fn() { 0 })
+///    1
+///
+///    > unwrap(Error(""), fn() { 0 })
+///    0
+///
+pub fn lazy_unwrap(result: Result(a, e), or default: fn() -> a) -> a {
+  case result {
+    Ok(v) -> v
+    Error(_) -> default()
+  }
+}
+
 /// Transforms any error into Error(Nil)
 ///
 /// ## Examples
