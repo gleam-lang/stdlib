@@ -131,19 +131,19 @@ pub fn or_test() {
 
 pub fn lazy_or_test() {
   Ok(1)
-  |> result.lazy_or(fn() { Ok(2)} )
+  |> result.lazy_or(fn() { Ok(2) })
   |> should.equal(Ok(1))
 
   Ok(1)
-  |> result.lazy_or(fn() { Error("Error 2")} )
+  |> result.lazy_or(fn() { Error("Error 2") })
   |> should.equal(Ok(1))
 
   Error("Error 1")
-  |> result.lazy_or(fn() { Ok(2)} )
+  |> result.lazy_or(fn() { Ok(2) })
   |> should.equal(Ok(2))
 
   Error("Error 1")
-  |> result.lazy_or(fn() { Error("Error 2")} )
+  |> result.lazy_or(fn() { Error("Error 2") })
   |> should.equal(Error("Error 2"))
 }
 
