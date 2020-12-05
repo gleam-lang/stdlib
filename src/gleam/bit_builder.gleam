@@ -1,4 +1,5 @@
 import gleam/bit_string.{BitString}
+import gleam/string_builder.{StringBuilder}
 
 /// BitBuilder is a type used for efficiently concatenating bits to create bit
 /// strings.
@@ -72,6 +73,13 @@ pub external fn concat(List(BitBuilder)) -> BitBuilder =
 ///
 pub external fn from_string(String) -> BitBuilder =
   "gleam_stdlib" "wrap_list"
+
+/// Create a new builder from a string builder.
+///
+/// Runs in constant time.
+///
+pub external fn from_string_builder(StringBuilder) -> BitBuilder =
+  "gleam_stdlib" "identity"
 
 /// Create a new builder from a bit string.
 ///
