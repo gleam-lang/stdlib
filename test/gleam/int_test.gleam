@@ -2,6 +2,16 @@ import gleam/should
 import gleam/int
 import gleam/order
 
+pub fn absolute_value_test() {
+  123
+  |> int.absolute_value
+  |> should.equal(123)
+
+  -123
+  |> int.absolute_value
+  |> should.equal(123)
+}
+
 pub fn to_string_test() {
   123
   |> int.to_string

@@ -3,6 +3,23 @@ import gleam/order.{Order}
 pub type Int =
   Int
 
+/// Returns the absolute value of the input.
+///
+/// ## Examples
+///
+///    > absolute_value(-12)
+///    12
+///
+///    > absolute_value(10)
+///    10
+///
+pub fn absolute_value(num: Int) -> Int {
+  case num >= 0 {
+    True -> num
+    False -> num * -1
+  }
+}
+
 /// Parse a given string as an int if possible.
 ///
 /// ## Examples
