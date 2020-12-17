@@ -1052,3 +1052,27 @@ pub fn partition(
 ) -> tuple(List(a), List(a)) {
   do_partition(list, categorise, [], [])
 }
+
+/// Return all the permutations of a list
+/// All values must be unique
+///
+/// ## Examples
+///
+///    > permutations([1, 2])
+///    [[1, 2], [2, 1]]
+///
+pub fn permutations(l: List(a)) -> List(List(a)) {
+  case l {
+    [] -> [[]]
+    _ ->
+      map(
+        l,
+        fn(x) {
+          filter(l, fn(y) { y != x })
+          |> permutations
+          |> map(append([x], _))
+        },
+      )
+      |> flatten
+  }
+}

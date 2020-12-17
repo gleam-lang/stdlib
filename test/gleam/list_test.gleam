@@ -481,3 +481,26 @@ pub fn partition_test() {
   |> list.partition(int.is_odd)
   |> should.equal(tuple([1, 3, 5, 7], [2, 4, 6]))
 }
+
+pub fn permutations_test() {
+  [1, 2]
+  |> list.permutations
+  |> should.equal([[1, 2], [2, 1]])
+
+  let expected = [
+    [1, 2, 3],
+    [1, 3, 2],
+    [2, 1, 3],
+    [2, 3, 1],
+    [3, 1, 2],
+    [3, 2, 1],
+  ]
+
+  [1, 2, 3]
+  |> list.permutations
+  |> should.equal(expected)
+
+  ["a", "b"]
+  |> list.permutations
+  |> should.equal([["a", "b"], ["b", "a"]])
+}
