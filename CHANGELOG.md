@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- The `int` module gains the `sum` and `product` functions.
+- The `int` module gains the `absolute_value`, `sum` and `product` functions.
 - The `float` module gains the `sum` and `product` functions.
 - The `result` module gains the `lazy_or` and `lazy_unwrap` functions.
 - The `bool` module gains the `nand`, `nor`, `exclusive_nor`, and `exclusive_or` functions.
