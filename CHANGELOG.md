@@ -8,6 +8,8 @@
 - The `bool` module gains the `nand`, `nor`, `exclusive_nor`, and `exclusive_or` functions.
 - The `bit_builder` module gains the `from_string_builder` function.
 - The `list` modules gains the `permutations` function.
+- Breaking change in `queue.from_list`. The head element in the list becomes the first element in the queue.
+- Fix `queue.pop_back` and `queue.pop_front`
 
 ## v0.12.0 - 2020-11-04
 

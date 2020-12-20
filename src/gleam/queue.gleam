@@ -24,7 +24,7 @@ pub fn new() -> Queue(a) {
 }
 
 /// Convert a list of elements into a queue of the same elements in the same
-/// order.
+/// order. The head element in the list becomes the front element in the queue.
 ///
 /// This function runs in constant time.
 ///
@@ -34,11 +34,11 @@ pub fn new() -> Queue(a) {
 ///    3
 ///
 pub fn from_list(list: List(a)) -> Queue(a) {
-  Queue(in: list, out: [])
+  Queue(in: [], out: list)
 }
 
 /// Convert a queue of elements into a list of the same elements in the same
-/// order.
+/// order. The front element in the queue becomes the head element in the list.
 ///
 /// This function runs in linear time.
 ///
@@ -95,8 +95,8 @@ pub fn length(queue: Queue(a)) -> Int {
 ///
 /// # Examples
 ///
-///    > [0, 0] |> from_list |> push_back(1) |> to_list
-///    [0, 0, 1]
+///    > [1, 2] |> from_list |> push_back(3) |> to_list
+///    [1, 2, 3]
 ///
 pub fn push_back(onto queue: Queue(a), this item: a) -> Queue(a) {
   Queue(in: [item, ..queue.in], out: queue.out)
@@ -113,7 +113,7 @@ pub fn push_front(onto queue: Queue(a), this item: a) -> Queue(a) {
   Queue(in: queue.in, out: [item, ..queue.out])
 }
 
-/// Get the first element from the back of the of the queue, returning the
+/// Get the last element from the queue, returning the
 /// element and a new queue without that element.
 ///
 /// This function typically runs in constant time, but will occasionally run in
@@ -122,7 +122,7 @@ pub fn push_front(onto queue: Queue(a), this item: a) -> Queue(a) {
 /// # Examples
 ///
 ///    > queue.new()
-///    > |> queue.push_front(0)
+///    > |> queue.push_back(0)
 ///    > |> queue.push_back(1)
 ///    > |> queue.pop_back()
 ///    Ok(tuple(1, queue.push_front(queue.new(), 0)))
@@ -139,15 +139,15 @@ pub fn push_front(onto queue: Queue(a), this item: a) -> Queue(a) {
 pub fn pop_back(from queue: Queue(a)) -> Result(tuple(a, Queue(a)), Nil) {
   case queue {
     Queue(in: [], out: []) -> Error(Nil)
-    Queue(in: in, out: []) -> pop_back(Queue(in: [], out: list.reverse(in)))
-    Queue(in: in, out: [first, ..rest]) -> {
-      let queue = Queue(in: in, out: rest)
+    Queue(in: [], out: out) -> pop_back(Queue(in: list.reverse(out), out: []))
+    Queue(in: [first, ..rest], out: out) -> {
+      let queue = Queue(in: rest, out: out)
       Ok(tuple(first, queue))
     }
   }
 }
 
-/// Get the first element from the front of the of the queue, returning the
+/// Get the first element from the queue, returning the
 /// element and a new queue without that element.
 ///
 /// This function typically runs in constant time, but will occasionally run in
@@ -156,8 +156,8 @@ pub fn pop_back(from queue: Queue(a)) -> Result(tuple(a, Queue(a)), Nil) {
 /// # Examples
 ///
 ///    > queue.new()
+///    > |> queue.push_front(1)
 ///    > |> queue.push_front(0)
-///    > |> queue.push_back(1)
 ///    > |> queue.pop_front()
 ///    Ok(tuple(0, queue.push_back(queue.new(), 1)))
 ///
@@ -173,9 +173,9 @@ pub fn pop_back(from queue: Queue(a)) -> Result(tuple(a, Queue(a)), Nil) {
 pub fn pop_front(from queue: Queue(a)) -> Result(tuple(a, Queue(a)), Nil) {
   case queue {
     Queue(in: [], out: []) -> Error(Nil)
-    Queue(in: [], out: out) -> pop_front(Queue(in: list.reverse(out), out: []))
-    Queue(in: [first, ..rest], out: out) -> {
-      let queue = Queue(in: rest, out: out)
+    Queue(in: in, out: []) -> pop_front(Queue(in: [], out: list.reverse(in)))
+    Queue(in: in, out: [first, ..rest]) -> {
+      let queue = Queue(in: in, out: rest)
       Ok(tuple(first, queue))
     }
   }
