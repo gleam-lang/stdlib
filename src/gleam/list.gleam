@@ -479,6 +479,24 @@ pub fn index_fold(
   )
 }
 
+/// A variant of fold that allows to stop folding earlier.
+///
+/// The folding function should return `Result(accumulator, accumulator)
+/// If the returned value is `Ok(accumulator)` try_fold will try the next value in the list.
+/// If the returned value is `Error(accumulator)` try_fold will stop and return that accumulator.
+///
+/// ## Examples
+///
+/// ```
+/// [1, 2, 3, 4]
+/// |> try_fold(0, fn(i, acc) {
+///   case i < 3 {
+///     True -> Ok(acc + i)
+///     False -> Error(acc)
+///   }
+/// })
+/// ```
+///
 pub fn try_fold(
   over collection: List(a),
   from accumulator: b,
