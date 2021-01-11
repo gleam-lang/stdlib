@@ -454,6 +454,46 @@ pub fn fold_right(list: List(a), from initial: b, with fun: fn(a, b) -> b) -> b 
   }
 }
 
+/// Like fold but the folding function also receives the index of the current element.
+///
+/// ## Examples
+///
+/// ```
+/// ["a", "b", "c"]
+/// |> list.index_fold([], fn(index, item, acc) { ... })
+/// ```
+///
+pub fn index_fold(
+  over over: List(a),
+  from initial: b,
+  with fun: fn(Int, a, b) -> b,
+) -> b {
+  over
+  |> index_map(fn(ix, value) { tuple(ix, value) })
+  |> fold(
+    from: initial,
+    with: fn(t, acc) {
+      let tuple(ix, val) = t
+      fun(ix, val, acc)
+    },
+  )
+}
+
+pub fn try_fold(
+  over collection: List(a),
+  from accumulator: b,
+  with fun: fn(a, b) -> Result(b, b),
+) -> b {
+  case collection {
+    [] -> accumulator
+    [first, ..rest] ->
+      case fun(first, accumulator) {
+        Ok(next_accumulator) -> try_fold(rest, next_accumulator, fun)
+        Error(b) -> b
+      }
+  }
+}
+
 /// Find the first element in a given list for which the given function returns
 /// True.
 ///

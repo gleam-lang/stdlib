@@ -7,7 +7,7 @@
 - The `result` module gains the `lazy_or`, `lazy_unwrap`, and `replace_error` functions.
 - The `bool` module gains the `nand`, `nor`, `exclusive_nor`, and `exclusive_or` functions.
 - The `bit_builder` module gains the `from_string_builder` function.
-- The `list` modules gains the `permutations` function.
+- The `list` modules gains the `index_fold`, and `permutations` functions.
 - Breaking change in `queue.from_list`. The head element in the list becomes the first element in the queue.
 - Fix `queue.pop_back` and `queue.pop_front`
 
