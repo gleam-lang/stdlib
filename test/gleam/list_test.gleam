@@ -177,6 +177,20 @@ pub fn index_fold_test() {
   |> should.equal([tuple(2, "c"), tuple(1, "b"), tuple(0, "a")])
 }
 
+pub fn try_fold_test() {
+  [1, 2, 3]
+  |> list.try_fold(
+    [],
+    fn(i, acc) {
+      case i < 3 {
+        True -> Ok([i, ..acc])
+        False -> Error(acc)
+      }
+    },
+  )
+  |> should.equal([2, 1])
+}
+
 pub fn find_map_test() {
   let f = fn(x) {
     case x {
