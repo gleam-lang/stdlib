@@ -479,11 +479,11 @@ pub fn index_fold(
   )
 }
 
-/// A variant of fold that allows to stop folding earlier.
+/// A variant of fold that might fail.
 ///
-/// The folding function should return `Result(accumulator, accumulator)
+/// The folding function should return `Result(accumulator, error)
 /// If the returned value is `Ok(accumulator)` try_fold will try the next value in the list.
-/// If the returned value is `Error(accumulator)` try_fold will stop and return that accumulator.
+/// If the returned value is `Error(error)` try_fold will stop and return that error.
 ///
 /// ## Examples
 ///
@@ -492,7 +492,7 @@ pub fn index_fold(
 /// |> try_fold(0, fn(i, acc) {
 ///   case i < 3 {
 ///     True -> Ok(acc + i)
-///     False -> Error(acc)
+///     False -> Error(Nil)
 ///   }
 /// })
 /// ```
@@ -500,14 +500,14 @@ pub fn index_fold(
 pub fn try_fold(
   over collection: List(a),
   from accumulator: b,
-  with fun: fn(a, b) -> Result(b, b),
-) -> b {
+  with fun: fn(a, b) -> Result(b, e),
+) -> Result(b, e) {
   case collection {
-    [] -> accumulator
+    [] -> Ok(accumulator)
     [first, ..rest] ->
       case fun(first, accumulator) {
         Ok(next_accumulator) -> try_fold(rest, next_accumulator, fun)
-        Error(b) -> b
+        Error(err) -> Error(err)
       }
   }
 }
