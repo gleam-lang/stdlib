@@ -4,7 +4,7 @@
 
 - The `int` module gains the `absolute_value`, `sum` and `product` functions.
 - The `float` module gains the `sum` and `product` functions.
-- The `result` module gains the `lazy_or` and `lazy_unwrap` functions.
+- The `result` module gains the `lazy_or`, `lazy_unwrap`, and `replace_error` functions.
 - The `bool` module gains the `nand`, `nor`, `exclusive_nor`, and `exclusive_or` functions.
 - The `bit_builder` module gains the `from_string_builder` function.
 - The `list` modules gains the `permutations` function.

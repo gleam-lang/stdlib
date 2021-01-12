@@ -156,3 +156,9 @@ pub fn all_test() {
   |> result.all
   |> should.equal(Error("a"))
 }
+
+pub fn replace_error_test() {
+  Error(Nil)
+  |> result.replace_error("Invalid")
+  |> should.equal(Error("Invalid"))
+}
