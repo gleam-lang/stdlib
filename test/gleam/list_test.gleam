@@ -180,15 +180,27 @@ pub fn index_fold_test() {
 pub fn try_fold_test() {
   [1, 2, 3]
   |> list.try_fold(
-    [],
+    0,
     fn(i, acc) {
-      case i < 3 {
-        True -> Ok([i, ..acc])
-        False -> Error(acc)
+      case i < 4 {
+        True -> Ok(acc + i)
+        False -> Error(Nil)
       }
     },
   )
-  |> should.equal([2, 1])
+  |> should.equal(Ok(6))
+
+  [1, 2, 3]
+  |> list.try_fold(
+    0,
+    fn(i, acc) {
+      case i < 3 {
+        True -> Ok(acc + i)
+        False -> Error(Nil)
+      }
+    },
+  )
+  |> should.equal(Error(Nil))
 }
 
 pub fn find_map_test() {
