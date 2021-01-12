@@ -259,3 +259,8 @@ pub fn lazy_or(
 pub fn all(results: List(Result(a, e))) -> Result(List(a), e) {
   list.try_map(results, fn(x) { x })
 }
+
+pub fn replace_error(result: Result(a, e1), error: e2) -> Result(a, e2) {
+  result
+  |> map_error(fn(_) { error })
+}
