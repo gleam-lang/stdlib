@@ -454,11 +454,11 @@ pub fn fold_right(list: List(a), from initial: b, with fun: fn(a, b) -> b) -> b 
   }
 }
 
-fn index_fold_(over: List(a), acc: b, with: fn(Int, a, b) -> b, index: Int) -> b {
+fn do_index_fold(over: List(a), acc: b, with: fn(Int, a, b) -> b, index: Int) -> b {
   case over {
     [] -> acc
     [first, ..rest] ->
-      index_fold_(rest, with(index, first, acc), with, index + 1)
+      do_index_fold(rest, with(index, first, acc), with, index + 1)
   }
 }
 
@@ -476,7 +476,7 @@ pub fn index_fold(
   from initial: b,
   with fun: fn(Int, a, b) -> b,
 ) -> b {
-  index_fold_(over, initial, fun, 0)
+  do_index_fold(over, initial, fun, 0)
 }
 
 /// A variant of fold that might fail.
