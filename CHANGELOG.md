@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.13.0 - 2021-01-13
 
 - The `int` module gains the `absolute_value`, `sum` and `product` functions.
 - The `float` module gains the `sum` and `product` functions.
