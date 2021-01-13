@@ -140,7 +140,7 @@ pub fn contains(list: List(a), any elem: a) -> Bool {
 pub fn head(list: List(a)) -> Result(a, Nil) {
   case list {
     [] -> Error(Nil)
-    [x, ..] -> Ok(x)
+    [x, .._] -> Ok(x)
   }
 }
 
@@ -454,7 +454,12 @@ pub fn fold_right(list: List(a), from initial: b, with fun: fn(a, b) -> b) -> b 
   }
 }
 
-fn do_index_fold(over: List(a), acc: b, with: fn(Int, a, b) -> b, index: Int) -> b {
+fn do_index_fold(
+  over: List(a),
+  acc: b,
+  with: fn(Int, a, b) -> b,
+  index: Int,
+) -> b {
   case over {
     [] -> acc
     [first, ..rest] ->
