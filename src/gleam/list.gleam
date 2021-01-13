@@ -454,6 +454,14 @@ pub fn fold_right(list: List(a), from initial: b, with fun: fn(a, b) -> b) -> b 
   }
 }
 
+fn index_fold_(over: List(a), acc: b, with: fn(Int, a, b) -> b, index: Int) -> b {
+  case over {
+    [] -> acc
+    [first, ..rest] ->
+      index_fold_(rest, with(index, first, acc), with, index + 1)
+  }
+}
+
 /// Like fold but the folding function also receives the index of the current element.
 ///
 /// ## Examples
@@ -468,15 +476,7 @@ pub fn index_fold(
   from initial: b,
   with fun: fn(Int, a, b) -> b,
 ) -> b {
-  over
-  |> index_map(fn(ix, value) { tuple(ix, value) })
-  |> fold(
-    from: initial,
-    with: fn(t, acc) {
-      let tuple(ix, val) = t
-      fun(ix, val, acc)
-    },
-  )
+  index_fold_(over, initial, fun, 0)
 }
 
 /// A variant of fold that might fail.
