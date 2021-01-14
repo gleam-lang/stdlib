@@ -1139,3 +1139,45 @@ pub fn permutations(l: List(a)) -> List(List(a)) {
       |> flatten
   }
 }
+
+fn do_window(acc: List(List(a)), l: List(a), n: Int) -> List(List(a)) {
+  let window = take(l, n)
+
+  case length(window) == n {
+    True -> do_window([window, ..acc], drop(l, 1), n)
+    False -> acc
+  }
+}
+
+/// Return a list of sliding window
+///
+/// ## Examples
+///
+/// ```
+/// > window([1,2,3,4,5], 3)
+/// [[1, 2, 3], [2, 3, 4], [3, 4, 5]]
+///
+/// > window([1, 2], 4)
+/// []
+/// ```
+///
+pub fn window(l: List(a), by n: Int) -> List(List(a)) {
+  do_window([], l, n)
+  |> reverse
+}
+
+/// Return a list of tuples containing two contiguous elements
+///
+/// ## Examples
+///
+/// ```
+/// > window_by_2([1,2,3,4])
+/// [tuple(1, 2), tuple(2, 3), tuple(3, 4)]
+///
+/// > window_by_2([1])
+/// []
+/// ```
+///
+pub fn window_by_2(l: List(a)) -> List(tuple(a, a)) {
+  zip(l, drop(l, 1))
+}
