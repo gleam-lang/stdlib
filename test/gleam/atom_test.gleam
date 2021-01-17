@@ -2,11 +2,9 @@ import gleam/atom
 import gleam/should
 
 pub fn from_string_test() {
-  "ok"
-  |> atom.from_string
-  |> should.be_ok
+  atom.create_from_string("this is an existing atom")
 
-  "expect"
+  "this is an existing atom"
   |> atom.from_string
   |> should.be_ok
 
