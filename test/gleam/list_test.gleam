@@ -536,3 +536,31 @@ pub fn permutations_test() {
   |> list.permutations
   |> should.equal([["a", "b"], ["b", "a"]])
 }
+
+pub fn window_test() {
+  [1, 2, 3]
+  |> list.window(by: 2)
+  |> should.equal([[1, 2], [2, 3]])
+
+  [1, 2, 3]
+  |> list.window(3)
+  |> should.equal([[1, 2, 3]])
+
+  [1, 2, 3]
+  |> list.window(4)
+  |> should.equal([])
+
+  [1, 2, 3, 4, 5]
+  |> list.window(3)
+  |> should.equal([[1, 2, 3], [2, 3, 4], [3, 4, 5]])
+}
+
+pub fn window_by_2_test() {
+  [1, 2, 3, 4]
+  |> list.window_by_2
+  |> should.equal([tuple(1, 2), tuple(2, 3), tuple(3, 4)])
+
+  [1]
+  |> list.window_by_2
+  |> should.equal([])
+}

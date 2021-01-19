@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- The `list` modules gains the `window`, and `window_by_2` functions.
 - The `int` module gains the `clamp` function.
 - The `float` module gains the `clamp` function.
 
