@@ -29,6 +29,21 @@ pub fn to_string(f: Float) -> String {
   |> string_builder.to_string
 }
 
+/// Restrict a Float between a lower and upper bound
+///
+/// ## Examples
+///
+/// ```
+/// > clamp(1.2, min: 1.4, max: 1.6)
+/// 1.4
+/// ```
+///
+pub fn clamp(n: Float, min min_bound: Float, max max_bound: Float) -> Float {
+  n
+  |> min(max_bound)
+  |> max(min_bound)
+}
+
 /// Compares two floats, returning an order.
 ///
 /// ## Examples

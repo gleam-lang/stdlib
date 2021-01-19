@@ -12,6 +12,21 @@ pub fn absolute_value_test() {
   |> should.equal(123)
 }
 
+pub fn clamp_test() {
+  int.clamp(40, min: 30, max: 50)
+  |> should.equal(40)
+
+  int.clamp(20, min: 30, max: 50)
+  |> should.equal(30)
+
+  int.clamp(60, min: 30, max: 50)
+  |> should.equal(50)
+
+  // If the bounds are reversed we return the min
+  int.clamp(100, min: 50, max: 30)
+  |> should.equal(50)
+}
+
 pub fn to_string_test() {
   123
   |> int.to_string

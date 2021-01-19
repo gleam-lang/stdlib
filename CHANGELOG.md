@@ -3,6 +3,8 @@
 ## Unreleased
 
 - The `list` modules gains the `window`, and `window_by_2` functions.
+- The `int` module gains the `clamp` function.
+- The `float` module gains the `clamp` function.
 
 ## v0.13.0 - 2021-01-13
 
@@ -95,7 +97,7 @@
 - The `result` module gains the `nil_error` function.
 - The `string` module gains `trim`, `trim_left`, `trim_right`, `starts_with`,
   `ends_with`, `slice`, `pad_left`, `pad_right` `drop_left`, `drop_right`,
-  `pop_grapheme` and `to_graphemes' functions.
+  `pop_grapheme` and `to_graphemes` functions.
 - `uri` module created with `parse`, `parse_query`, `path_segments`,
   `query_to_string` and `to_string`.
 - The `dynamic` module gains the `map`, `opaque_list`, `tuple2`, and
