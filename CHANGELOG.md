@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- The `int` module gains the `clamp` function.
+- The `float` module gains the `clamp` function.
+
 ## v0.13.0 - 2021-01-13
 
 - The `int` module gains the `absolute_value`, `sum` and `product` functions.

@@ -75,6 +75,21 @@ pub external fn to_base_string(Int, Int) -> String =
 pub external fn to_float(a: Int) -> Float =
   "erlang" "float"
 
+/// Restrict an Int between a lower and upper bound
+///
+/// ## Examples
+///
+/// ```
+/// > clamp(40, min: 50, max: 60)
+/// 50
+/// ```
+///
+pub fn clamp(n: Int, min min_bound: Int, max max_bound: Int) -> Int {
+  n
+  |> min(max_bound)
+  |> max(min_bound)
+}
+
 /// Compares two ints, returning an order.
 ///
 /// ## Examples

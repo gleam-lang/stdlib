@@ -38,6 +38,17 @@ pub fn to_string_test() {
   |> should.equal("-8.1")
 }
 
+pub fn clamp_test() {
+  float.clamp(1.4, min: 1.3, max: 1.5)
+  |> should.equal(1.4)
+
+  float.clamp(1.2, min: 1.3, max: 1.5)
+  |> should.equal(1.3)
+
+  float.clamp(1.6, min: 1.3, max: 1.5)
+  |> should.equal(1.5)
+}
+
 pub fn compare_test() {
   float.compare(0., 0.)
   |> should.equal(order.Eq)
