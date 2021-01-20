@@ -517,6 +517,44 @@ pub fn try_fold(
   }
 }
 
+pub type ContinueOrStop(a) {
+  Continue(a)
+  Stop(a)
+}
+
+/// A variant of fold that allows to stop folding earlier.
+///
+/// The folding function should return `ContinueOrStop(accumulator)
+/// If the returned value is `Continue(accumulator)` fold_until will try the next value in the list.
+/// If the returned value is `Stop(accumulator)` fold_until will stop and return that accumulator.
+///
+/// ## Examples
+///
+/// ```
+/// [1, 2, 3, 4]
+/// |> fold_until(0, fn(i, acc) {
+///   case i < 3 {
+///     True -> Continue(acc + i)
+///     False -> Stop(acc)
+///   }
+/// })
+/// ```
+///
+pub fn fold_until(
+  over collection: List(a),
+  from accumulator: b,
+  with fun: fn(a, b) -> ContinueOrStop(b),
+) -> b {
+  case collection {
+    [] -> accumulator
+    [first, ..rest] ->
+      case fun(first, accumulator) {
+        Continue(next_accumulator) -> fold_until(rest, next_accumulator, fun)
+        Stop(b) -> b
+      }
+  }
+}
+
 /// Find the first element in a given list for which the given function returns
 /// True.
 ///
