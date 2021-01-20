@@ -177,6 +177,20 @@ pub fn index_fold_test() {
   |> should.equal([tuple(2, "c"), tuple(1, "b"), tuple(0, "a")])
 }
 
+pub fn fold_until_test() {
+  [1, 2, 3, 4]
+  |> list.fold_until(
+    from: 0,
+    with: fn(n, acc) {
+      case n < 4 {
+        True -> list.Continue(acc + n)
+        False -> list.Stop(acc)
+      }
+    },
+  )
+  |> should.equal(6)
+}
+
 pub fn try_fold_test() {
   [1, 2, 3]
   |> list.try_fold(
