@@ -5,6 +5,7 @@
 - The `list` modules gains the `fold_until`, `window`, and `window_by_2` functions.
 - The `int` module gains the `clamp` function.
 - The `float` module gains the `clamp` function.
+- The `io` module gains the `get_line` function.
 
 ## v0.13.0 - 2021-01-13
 
