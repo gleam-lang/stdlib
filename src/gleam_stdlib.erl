@@ -131,7 +131,11 @@ string_ends_with(String, Suffix) ->
     Suffix == binary_part(String, byte_size(String) - SuffixSize, SuffixSize).
 
 string_pad(String, Length, Dir, PadString) ->
-    unicode:characters_to_binary(string:pad(String, Length, Dir, PadString)).
+    Chars = string:pad(String, Length, Dir, binary_to_list(PadString)),
+    case unicode:characters_to_binary(Chars) of
+        Bin when is_binary(Bin) -> Bin;
+        Error -> erlang:error({gleam_error, {string_invalid_utf8, Error}})
+    end.
 
 string_pop_grapheme(String) ->
     case string:next_grapheme(String) of
