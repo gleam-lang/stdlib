@@ -17,7 +17,7 @@ import gleam/list
 ///
 pub external type Map(key, value)
 
-/// Determine the number of key-value pairs in the map.
+/// Determines the number of key-value pairs in the map.
 /// This function runs in constant time and does not need to iterate the map.
 ///
 /// ## Examples
@@ -32,7 +32,7 @@ pub external type Map(key, value)
 pub external fn size(Map(k, v)) -> Int =
   "maps" "size"
 
-/// Convert the map to a list of 2-element tuples `tuple(key, value)`, one for
+/// Converts the map to a list of 2-element tuples `tuple(key, value)`, one for
 /// each key-value pair in the map.
 ///
 /// The tuples in the list have no specific order.
@@ -48,7 +48,7 @@ pub external fn size(Map(k, v)) -> Int =
 pub external fn to_list(Map(key, value)) -> List(tuple(key, value)) =
   "maps" "to_list"
 
-/// Convert a list of 2-element tuples `tuple(key, value)` to a map.
+/// Converts a list of 2-element tuples `tuple(key, value)` to a map.
 ///
 /// If two tuples have the same key the last one in the list will be the one
 /// that is present in the map.
@@ -59,7 +59,7 @@ pub external fn from_list(List(tuple(key, value))) -> Map(key, value) =
 external fn is_key(key, Map(key, v)) -> Bool =
   "maps" "is_key"
 
-/// Determind whether or not a value present in the map for a given key.
+/// Determines whether or not a value present in the map for a given key.
 ///
 /// ## Examples
 ///
@@ -73,12 +73,12 @@ pub fn has_key(map: Map(k, v), key: k) -> Bool {
   is_key(key, map)
 }
 
-/// Create a fresh map that contains no values.
+/// Creates a fresh map that contains no values.
 ///
 pub external fn new() -> Map(key, value) =
   "maps" "new"
 
-/// Fetch a value from a map for a given key.
+/// Fetches a value from a map for a given key.
 ///
 /// The map may not have a value for the key, so the value is wrapped in a
 /// Result.
@@ -97,7 +97,7 @@ pub external fn get(from: Map(key, value), get: key) -> Result(value, Nil) =
 external fn erl_insert(key, value, Map(key, value)) -> Map(key, value) =
   "maps" "put"
 
-/// Insert a value into the map with the given key.
+/// Inserts a value into the map with the given key.
 ///
 /// If the map already has a value for the given key then the value is
 /// replaced with the new value.
@@ -117,7 +117,7 @@ pub fn insert(into map: Map(k, v), for key: k, insert value: v) -> Map(k, v) {
 external fn erl_map_values(fn(key, a) -> b, Map(key, value)) -> Map(key, b) =
   "maps" "map"
 
-/// Update all values in a given map by calling a given function on each key
+/// Updates all values in a given map by calling a given function on each key
 /// and value.
 ///
 /// ## Examples
@@ -132,7 +132,7 @@ pub fn map_values(in map: Map(k, v), with fun: fn(k, v) -> w) -> Map(k, w) {
   erl_map_values(fun, map)
 }
 
-/// Get a list of all keys in a given map.
+/// Gets a list of all keys in a given map.
 ///
 /// Maps are not ordered so the keys are not returned in any specific order. Do
 /// not write code that relies on the order keys are returned by this function
@@ -146,7 +146,7 @@ pub fn map_values(in map: Map(k, v), with fun: fn(k, v) -> w) -> Map(k, w) {
 pub external fn keys(Map(keys, v)) -> List(keys) =
   "maps" "keys"
 
-/// Get a list of all values in a given map.
+/// Gets a list of all values in a given map.
 ///
 /// Maps are not ordered so the values are not returned in any specific order. Do
 /// not write code that relies on the order values are returned by this function
@@ -166,7 +166,7 @@ external fn erl_filter(
 ) -> Map(key, value) =
   "maps" "filter"
 
-/// Create a new map from a given map, minus any entries that a given function
+/// Creates a new map from a given map, minus any entries that a given function
 /// returns False for.
 ///
 /// ## Examples
@@ -186,7 +186,7 @@ pub fn filter(in map: Map(k, v), for property: fn(k, v) -> Bool) -> Map(k, v) {
 external fn erl_take(List(k), Map(k, v)) -> Map(k, v) =
   "maps" "with"
 
-/// Create a new map from a given map, only including any entries for which the
+/// Creates a new map from a given map, only including any entries for which the
 /// keys are in a given list.
 ///
 /// ## Examples
@@ -203,7 +203,7 @@ pub fn take(from map: Map(k, v), keeping desired_keys: List(k)) -> Map(k, v) {
   erl_take(desired_keys, map)
 }
 
-/// Create a new map from a pair of given maps by combining their entries.
+/// Creates a new map from a pair of given maps by combining their entries.
 ///
 /// If there are entries with the same keys in both maps the entry from the
 /// second map takes precedence.
@@ -221,7 +221,7 @@ pub external fn merge(into: Map(k, v), merge: Map(k, v)) -> Map(k, v) =
 external fn erl_delete(k, Map(k, v)) -> Map(k, v) =
   "maps" "remove"
 
-/// Create a new map from a given map with all the same entries except for the
+/// Creates a new map from a given map with all the same entries except for the
 /// one with a given key, if it exists.
 ///
 /// ## Examples
@@ -236,7 +236,7 @@ pub fn delete(from map: Map(k, v), delete key: k) -> Map(k, v) {
   erl_delete(key, map)
 }
 
-/// Create a new map from a given map with all the same entries except any with
+/// Creates a new map from a given map with all the same entries except any with
 /// keys found in a given list.
 ///
 /// ## Examples
@@ -254,7 +254,7 @@ pub fn drop(from map: Map(k, v), drop disallowed_keys: List(k)) -> Map(k, v) {
   list.fold(disallowed_keys, map, fn(key, acc) { delete(acc, key) })
 }
 
-/// Create a new map with one entry updated using a given function.
+/// Creates a new map with one entry updated using a given function.
 ///
 /// If there was not an entry in the map for the given key then the function
 /// gets `Error(Nil)` as its argument, otherwise it gets `Ok(value)`.
@@ -297,7 +297,7 @@ fn do_fold(
   }
 }
 
-/// Combine all entries into a single value by calling a given function on each
+/// Combines all entries into a single value by calling a given function on each
 /// one.
 ///
 /// Maps are not ordered so the values are not returned in any specific order. Do

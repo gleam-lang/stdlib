@@ -17,7 +17,7 @@ pub type Float =
 pub external fn parse(String) -> Result(Float, Nil) =
   "gleam_stdlib" "parse_float"
 
-/// Return the string representation of the provided float.
+/// Returns the string representation of the provided float.
 ///
 /// ## Examples
 ///    > to_string(2.3)
@@ -29,7 +29,7 @@ pub fn to_string(f: Float) -> String {
   |> string_builder.to_string
 }
 
-/// Restrict a Float between a lower and upper bound
+/// Restricts a Float between a lower and upper bound
 ///
 /// ## Examples
 ///

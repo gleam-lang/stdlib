@@ -21,7 +21,7 @@ pub type FromStringError {
   AtomNotLoaded
 }
 
-/// Find an existing Atom for the given String.
+/// Finds an existing Atom for the given String.
 ///
 /// If no atom is found in the virtual machine's atom table for the String then
 /// an error is returned.
@@ -37,7 +37,7 @@ pub type FromStringError {
 pub external fn from_string(String) -> Result(Atom, FromStringError) =
   "gleam_stdlib" "atom_from_string"
 
-/// Create an atom from a string, inserting a new value into the virtual
+/// Creates an atom from a string, inserting a new value into the virtual
 /// machine's atom table if an atom does not already exist for the given
 /// string.
 ///

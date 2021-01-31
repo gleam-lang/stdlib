@@ -29,7 +29,7 @@ pub fn println(string: String) -> Nil {
   Nil
 }
 
-/// Print a value to standard output using Erlang syntax.
+/// Prints a value to standard output using Erlang syntax.
 ///
 /// The value is returned after being printed so it can be used in pipelines.
 ///
@@ -68,7 +68,7 @@ pub type GetLineError {
 /// # Example
 ///
 ///    > io.get_line("Language: ")
-///    // -> Language: <- gleam 
+///    // -> Language: <- gleam
 ///    Ok("gleam\n")
 ///
 pub external fn get_line(prompt: String) -> Result(String, GetLineError) =

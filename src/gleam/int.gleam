@@ -20,7 +20,7 @@ pub fn absolute_value(num: Int) -> Int {
   }
 }
 
-/// Parse a given string as an int if possible.
+/// Parses a given string as an int if possible.
 ///
 /// ## Examples
 ///
@@ -33,7 +33,7 @@ pub fn absolute_value(num: Int) -> Int {
 pub external fn parse(String) -> Result(Int, Nil) =
   "gleam_stdlib" "parse_int"
 
-/// Print a given int to a string.
+/// Prints a given int to a string.
 ///
 /// ## Examples
 ///
@@ -43,7 +43,7 @@ pub external fn parse(String) -> Result(Int, Nil) =
 pub external fn to_string(Int) -> String =
   "erlang" "integer_to_binary"
 
-/// Print a given int to a string using the base number provided.
+/// Prints a given int to a string using the base number provided.
 ///
 /// ## Examples
 ///
@@ -75,7 +75,7 @@ pub external fn to_base_string(Int, Int) -> String =
 pub external fn to_float(a: Int) -> Float =
   "erlang" "float"
 
-/// Restrict an Int between a lower and upper bound
+/// Restricts an Int between a lower and upper bound
 ///
 /// ## Examples
 ///

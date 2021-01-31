@@ -31,7 +31,7 @@ pub type LengthMismatch {
   LengthMismatch
 }
 
-/// Count the number of elements in a given list.
+/// Counts the number of elements in a given list.
 ///
 /// This function has to traverse the list to determine the number of elements,
 /// so it runs in linear time.
@@ -53,7 +53,7 @@ pub type LengthMismatch {
 pub external fn length(of: List(a)) -> Int =
   "erlang" "length"
 
-/// Create a new list from a given list containing the same elements but in the
+/// Creates a new list from a given list containing the same elements but in the
 /// opposite order.
 ///
 /// This function has to traverse the list to create the new reversed list, so
@@ -76,7 +76,7 @@ pub external fn length(of: List(a)) -> Int =
 pub external fn reverse(List(a)) -> List(a) =
   "lists" "reverse"
 
-/// Determine whether or not the list is empty.
+/// Determines whether or not the list is empty.
 ///
 /// This function runs in constant time.
 ///
@@ -95,7 +95,7 @@ pub fn is_empty(list: List(a)) -> Bool {
   list == []
 }
 
-/// Determine whether or not a given element exists within a given list.
+/// Determines whether or not a given element exists within a given list.
 ///
 /// This function traverses the list to find the element, so it runs in linear
 /// time.
@@ -124,7 +124,7 @@ pub fn contains(list: List(a), any elem: a) -> Bool {
   }
 }
 
-/// Get the first element from the start of the list, if there is one.
+/// Gets the first element from the start of the list, if there is one.
 ///
 /// ## Examples
 ///
@@ -144,7 +144,7 @@ pub fn head(list: List(a)) -> Result(a, Nil) {
   }
 }
 
-/// Get the list minus the first element. If the list is empty `Error(Nil)` is
+/// Gets the list minus the first element. If the list is empty `Error(Nil)` is
 /// returned.
 ///
 /// This function runs in constant time and does not make a copy of the list.
@@ -388,7 +388,7 @@ pub fn new() -> List(a) {
   []
 }
 
-/// Join one list onto the end of another.
+/// Joins one list onto the end of another.
 ///
 /// This function runs in linear time, and it traverses and copies the first
 /// list.
@@ -422,7 +422,7 @@ pub fn flatten(lists: List(List(a))) -> List(a) {
   do_flatten(lists, [])
 }
 
-/// Reduce a list of elements into a single value by calling a given function
+/// Reduces a list of elements into a single value by calling a given function
 /// on each element, going from left to right.
 ///
 /// `fold([1, 2, 3], 0, add)` is the equivalent of `add(3, add(2, add(1, 0)))`.
@@ -436,7 +436,7 @@ pub fn fold(over list: List(a), from initial: b, with fun: fn(a, b) -> b) -> b {
   }
 }
 
-/// Reduce a list of elements into a single value by calling a given function
+/// Reduces a list of elements into a single value by calling a given function
 /// on each element, going from right to left.
 ///
 /// `fold_right([1, 2, 3], 0, add)` is the equivalent of
@@ -555,7 +555,7 @@ pub fn fold_until(
   }
 }
 
-/// Find the first element in a given list for which the given function returns
+/// Finds the first element in a given list for which the given function returns
 /// True.
 ///
 /// Returns `Error(Nil)` if no the function does not return True for any of the
@@ -586,7 +586,7 @@ pub fn find(
   }
 }
 
-/// Find the first element in a given list for which the given function returns
+/// Finds the first element in a given list for which the given function returns
 /// `Ok(new_value)` and return the new value for that element.
 ///
 /// Returns `Error(Nil)` if no the function does not return Ok for any of the
@@ -748,7 +748,7 @@ pub fn unzip(input: List(tuple(a, b))) -> tuple(List(a), List(b)) {
   do_unzip(input, [], [])
 }
 
-/// Insert a given value between each existing element in a given list.
+/// Inserts a given value between each existing element in a given list.
 ///
 /// This function runs in linear time and copies the list.
 ///
@@ -767,7 +767,7 @@ pub fn intersperse(list: List(a), with elem: a) -> List(a) {
   }
 }
 
-/// Return the element in the Nth position in the list, with 0 being the first
+/// Returns the element in the Nth position in the list, with 0 being the first
 /// position.
 ///
 /// Error(Nil) is returned if the list is not long enough for the given index.
@@ -795,7 +795,7 @@ pub fn at(in list: List(a), get index: Int) -> Result(a, Nil) {
   }
 }
 
-/// Remove any duplicate elements from a given list.
+/// Removes any duplicate elements from a given list.
 ///
 /// This function returns in log-linear time (n log n).
 ///
@@ -843,7 +843,7 @@ fn do_sort(
   }
 }
 
-/// Sort from smallest to largest based upon the ordering specified by a given
+/// Sorts from smallest to largest based upon the ordering specified by a given
 /// function.
 ///
 /// ## Examples
@@ -856,7 +856,7 @@ pub fn sort(list: List(a), by compare: fn(a, a) -> Order) -> List(a) {
   do_sort(list, compare, length(list))
 }
 
-/// Create a list of ints ranging from a given start and finish.
+/// Creates a list of ints ranging from a given start and finish.
 ///
 /// ## Examples
 ///
@@ -884,7 +884,7 @@ fn do_repeat(a: a, times: Int, acc: List(a)) -> List(a) {
   }
 }
 
-/// Build a list of a given value a given number of times.
+/// Builds a list of a given value a given number of times.
 ///
 /// ## Examples
 ///
@@ -909,7 +909,7 @@ fn do_split(list: List(a), n: Int, taken: List(a)) -> tuple(List(a), List(a)) {
   }
 }
 
-/// Split a list in two before the given index.
+/// Splits a list in two before the given index.
 ///
 /// If the list is not long enough to have the given index the before list will
 /// be the input list, and the after list will be empty.
@@ -944,7 +944,7 @@ fn do_split_while(
   }
 }
 
-/// Split a list in two before the first element that a given function returns
+/// Splits a list in two before the first element that a given function returns
 /// False for.
 ///
 /// If the function returns True for all elements the first list will be the
@@ -965,8 +965,8 @@ pub fn split_while(
   do_split_while(list, predicate, [])
 }
 
-/// Given a list of 2 element tuples, find the first tuple that has a given
-/// key as the first element and return the second element.
+/// Given a list of 2 element tuples, finds the first tuple that has a given
+/// key as the first element and returns the second element.
 ///
 /// If no tuple is found with the given key then `Error(Nil)` is returned.
 ///
@@ -1011,7 +1011,7 @@ fn do_pop(haystack, predicate, checked) {
   }
 }
 
-/// Remove the first element in a given list for which the predicate funtion returns `True`.
+/// Removes the first element in a given list for which the predicate funtion returns `True`.
 ///
 /// Returns `Error(Nil)` if no the function does not return True for any of the
 /// elements.
@@ -1069,7 +1069,7 @@ pub fn pop_map(
   do_pop_map(haystack, is_desired, [])
 }
 
-/// Given a list of 2 element tuples, find the first tuple that has a given
+/// Given a list of 2 element tuples, finds the first tuple that has a given
 /// key as the first element. This function will return the second element
 /// of the found tuple and list with tuple removed.
 ///
@@ -1102,7 +1102,7 @@ pub fn key_pop(
   )
 }
 
-/// Given a list of 2 element tuples, insert a key and value into the list.
+/// Given a list of 2 element tuples, inserts a key and value into the list.
 ///
 /// If there was already a tuple with the key then it is replaced, otherwise it
 /// is added to the end of the list.
@@ -1124,7 +1124,7 @@ pub fn key_set(list: List(tuple(a, b)), key: a, value: b) -> List(tuple(a, b)) {
   }
 }
 
-/// Call a function for each element in a list, discarding the results.
+/// Calls a function for each element in a list, discarding the results.
 ///
 pub fn each(list: List(a), f: fn(a) -> b) -> Nil {
   case list {
@@ -1154,7 +1154,7 @@ pub fn partition(
   do_partition(list, categorise, [], [])
 }
 
-/// Return all the permutations of a list
+/// Returns all the permutations of a list
 /// All values must be unique
 ///
 /// ## Examples
@@ -1187,7 +1187,7 @@ fn do_window(acc: List(List(a)), l: List(a), n: Int) -> List(List(a)) {
   }
 }
 
-/// Return a list of sliding window
+/// Returns a list of sliding window
 ///
 /// ## Examples
 ///
@@ -1204,7 +1204,7 @@ pub fn window(l: List(a), by n: Int) -> List(List(a)) {
   |> reverse
 }
 
-/// Return a list of tuples containing two contiguous elements
+/// Returns a list of tuples containing two contiguous elements
 ///
 /// ## Examples
 ///

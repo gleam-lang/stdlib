@@ -109,7 +109,7 @@ external fn erl_query_to_string(
 ) -> Dynamic =
   "uri_string" "compose_query"
 
-/// Encode a list of key value pairs as a URI query string.
+/// Encodes a list of key value pairs as a URI query string.
 ///
 /// The opposite operation is `uri.parse_query`.
 ///
@@ -120,7 +120,7 @@ pub fn query_to_string(query: List(tuple(String, String))) -> String {
   |> result.unwrap("")
 }
 
-/// Encode a string into a percent encoded representation.
+/// Encodes a string into a percent encoded representation.
 /// Note that this encodes space as +.
 ///
 /// ## Example
@@ -133,7 +133,7 @@ pub fn percent_encode(value: String) -> String {
   |> string.replace(each: "k=", with: "")
 }
 
-/// Decode a percent encoded string.
+/// Decodes a percent encoded string.
 ///
 /// ## Example
 ///
@@ -170,7 +170,7 @@ fn remove_dot_segments(input: List(String)) -> List(String) {
   do_remove_dot_segments(input, [])
 }
 
-/// Split the path section of a URI into it's constituent segments.
+/// Splits the path section of a URI into it's constituent segments.
 ///
 /// Removes empty segments and resolves dot-segments as specified in
 /// [section 5.2](https://www.ietf.org/rfc/rfc3986.html#section-5.2) of the RFC.
@@ -182,7 +182,7 @@ pub fn path_segments(path: String) -> List(String) {
 external fn erl_to_string(Map(UriKey, Dynamic)) -> Dynamic =
   "uri_string" "recompose"
 
-/// Encode a `Uri` value as a URI string.
+/// Encodes a `Uri` value as a URI string.
 ///
 /// The opposite operation is `uri.parse`.
 ///
@@ -213,7 +213,7 @@ pub fn to_string(uri: Uri) -> String {
   |> result.unwrap("")
 }
 
-/// Fetch the origin of a uri
+/// Fetches the origin of a uri
 ///
 /// Return the origin of a uri as defined in
 /// https://tools.ietf.org/html/rfc6454
@@ -239,7 +239,7 @@ fn join_segments(segments: List(String)) -> String {
   string.join(["", ..segments], "/")
 }
 
-/// Resolve a uri with respect to the given base uri
+/// Resolves a uri with respect to the given base uri
 ///
 /// The base uri must be an absolute uri or this function will return an error.
 /// The algorithm for merging uris is described in [RFC 3986](https://tools.ietf.org/html/rfc3986#section-5.2)

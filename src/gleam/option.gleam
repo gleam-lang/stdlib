@@ -9,7 +9,7 @@ pub type Option(a) {
   None
 }
 
-/// Check whether the option is a Some value.
+/// Checks whether the option is a Some value.
 ///
 /// ## Examples
 ///
@@ -23,7 +23,7 @@ pub fn is_some(option: Option(a)) -> Bool {
   option != None
 }
 
-/// Check whether the option is a None value.
+/// Checks whether the option is a None value.
 ///
 /// ## Examples
 ///
@@ -69,7 +69,7 @@ pub fn from_result(result: Result(a, e)) -> Option(a) {
   }
 }
 
-/// Extract the value from an option, returning a default value if there is none.
+/// Extracts the value from an option, returning a default value if there is none.
 ///
 /// ## Examples
 ///
@@ -86,7 +86,7 @@ pub fn unwrap(option: Option(a), or default: a) -> a {
   }
 }
 
-/// Update a value held within the Some of an Option by calling a given function
+/// Updates a value held within the Some of an Option by calling a given function
 /// on it.
 ///
 /// If the option is a None rather than Some the function is not called and the
@@ -107,7 +107,7 @@ pub fn map(over option: Option(a), with fun: fn(a) -> b) -> Option(b) {
   }
 }
 
-/// Merge a nested Option into a single layer.
+/// Merges a nested Option into a single layer.
 ///
 /// ## Examples
 ///
@@ -127,7 +127,7 @@ pub fn flatten(option: Option(Option(a))) -> Option(a) {
   }
 }
 
-/// Update a value held within the Some of an Option by calling a given function
+/// Updates a value held within the Some of an Option by calling a given function
 /// on it, where the given function also returns an Option. The two Options are
 /// then merged together into one Option.
 ///
@@ -158,7 +158,7 @@ pub fn then(option: Option(a), apply fun: fn(a) -> Option(b)) -> Option(b) {
   }
 }
 
-/// Return the first value if it is Some, otherwise return the second value.
+/// Returns the first value if it is Some, otherwise return the second value.
 ///
 /// ## Examples
 ///

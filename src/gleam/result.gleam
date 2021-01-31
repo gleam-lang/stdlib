@@ -14,7 +14,7 @@ pub type Result(success, error) =
 pub type Nil =
   Nil
 
-/// Check whether the result is an Ok value.
+/// Checks whether the result is an Ok value.
 ///
 /// ## Examples
 ///
@@ -31,7 +31,7 @@ pub fn is_ok(result: Result(a, e)) -> Bool {
   }
 }
 
-/// Check whether the result is an Error value.
+/// Checks whether the result is an Error value.
 ///
 /// ## Examples
 ///
@@ -48,7 +48,7 @@ pub fn is_error(result: Result(a, e)) -> Bool {
   }
 }
 
-/// Update a value held within the Ok of a result by calling a given function
+/// Updates a value held within the Ok of a result by calling a given function
 /// on it.
 ///
 /// If the result is an Error rather than OK the function is not called and the
@@ -69,7 +69,7 @@ pub fn map(over result: Result(a, e), with fun: fn(a) -> b) -> Result(b, e) {
   }
 }
 
-/// Update a value held within the Error of a result by calling a given function
+/// Updates a value held within the Error of a result by calling a given function
 /// on it.
 ///
 /// If the result is Ok rather than Error the function is not called and the
@@ -93,7 +93,7 @@ pub fn map_error(
   }
 }
 
-/// Merge a nested Result into a single layer.
+/// Merges a nested Result into a single layer.
 ///
 /// ## Examples
 ///
@@ -113,7 +113,7 @@ pub fn flatten(result: Result(Result(a, e), e)) -> Result(a, e) {
   }
 }
 
-/// Update a value held within the Ok of a result by calling a given function
+/// Updates a value held within the Ok of a result by calling a given function
 /// on it, where the given function also returns a result. The two results are
 /// then merged together into one result.
 ///
@@ -147,7 +147,7 @@ pub fn then(
   }
 }
 
-/// Extract the Ok value from a result, returning a default value if the result
+/// Extracts the Ok value from a result, returning a default value if the result
 /// is an Error.
 ///
 /// ## Examples
@@ -165,7 +165,7 @@ pub fn unwrap(result: Result(a, e), or default: a) -> a {
   }
 }
 
-/// Extract the Ok value from a result, evaluating the default function if the result
+/// Extracts the Ok value from a result, evaluating the default function if the result
 /// is an Error.
 ///
 /// ## Examples
@@ -197,7 +197,7 @@ pub fn nil_error(result: Result(a, e)) -> Result(a, Nil) {
   map_error(result, fn(_) { Nil })
 }
 
-/// Return the first value if it is Ok, otherwise return the second value.
+/// Returns the first value if it is Ok, otherwise return the second value.
 ///
 /// ## Examples
 ///
@@ -220,7 +220,7 @@ pub fn or(first: Result(a, e), second: Result(a, e)) -> Result(a, e) {
   }
 }
 
-/// Return the first value if it is Ok, otherwise evaluates the given function for a fallback value.
+/// Returns the first value if it is Ok, otherwise evaluates the given function for a fallback value.
 ///
 /// ## Examples
 ///
@@ -246,7 +246,7 @@ pub fn lazy_or(
   }
 }
 
-/// Combine a list of results into a single result.
+/// Combines a list of results into a single result.
 /// If all elements in the list are Ok then returns an Ok holding the list of values.
 /// If any element is Error then returns the first error.
 ///

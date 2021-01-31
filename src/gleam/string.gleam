@@ -15,7 +15,7 @@ pub type String =
 pub type UtfCodepoint =
   UtfCodepoint
 
-/// Determine if a string is empty.
+/// Determines if a string is empty.
 ///
 /// ## Examples
 ///
@@ -29,7 +29,7 @@ pub fn is_empty(str: String) -> Bool {
   str == ""
 }
 
-/// Get the number of grapheme clusters in a given string.
+/// Gets the number of grapheme clusters in a given string.
 ///
 /// This function has to iterate across the whole string to count the number of
 /// graphemes, so it runs in linear time.
@@ -49,7 +49,7 @@ pub external fn length(String) -> Int =
   "string" "length"
 
 ///
-/// Reverse a string.
+/// Reverses a string.
 ///
 /// This function has to iterate across the whole string so it runs in linear
 /// time.
@@ -66,7 +66,7 @@ pub fn reverse(string: String) -> String {
   |> string_builder.to_string
 }
 
-/// Create a new string by replacing all occurrences of a given substring.
+/// Creates a new string by replacing all occurrences of a given substring.
 ///
 /// ## Examples
 ///
@@ -87,7 +87,7 @@ pub fn replace(
   |> string_builder.to_string
 }
 
-/// Create a new string with all the graphemes in the input string converted to
+/// Creates a new string with all the graphemes in the input string converted to
 /// lowercase.
 ///
 /// Useful for case-insensitive comparisons.
@@ -100,7 +100,7 @@ pub fn replace(
 pub external fn lowercase(String) -> String =
   "string" "lowercase"
 
-/// Create a new string with all the graphemes in the input string converted to
+/// Creates a new string with all the graphemes in the input string converted to
 /// uppercase.
 ///
 /// Useful for case-insensitive comparisons and VIRTUAL YELLING.
@@ -131,7 +131,7 @@ pub external fn compare(String, String) -> order.Order =
 external fn erl_slice(String, Int, Int) -> String =
   "string" "slice"
 
-/// Take a substring given a start and end Grapheme indexes. Negative indexes
+/// Takes a substring given a start and end Grapheme indexes. Negative indexes
 /// are taken starting from the *end* of the list.
 ///
 /// ## Examples
@@ -167,7 +167,7 @@ pub fn slice(from string: String, at_index idx: Int, length len: Int) -> String 
   }
 }
 
-/// Drop *n* Graphemes from the left side of a string.
+/// Drops *n* Graphemes from the left side of a string.
 ///
 /// ## Examples
 ///    > drop_left(from: "The Lone Gunmen", up_to: 2)
@@ -180,7 +180,7 @@ pub fn drop_left(from string: String, up_to num_graphemes: Int) -> String {
   }
 }
 
-/// Drop *n* Graphemes from the right side of a string.
+/// Drops *n* Graphemes from the right side of a string.
 ///
 /// ## Examples
 ///    > drop_right(from: "Cigarette Smoking Man", up_to: 2)
@@ -196,7 +196,7 @@ pub fn drop_right(from string: String, up_to num_graphemes: Int) -> String {
 external fn erl_contains(String, String) -> Dynamic =
   "string" "find"
 
-/// Check if the first string contains the second.
+/// Checks if the first string contains the second.
 ///
 /// ## Examples
 ///
@@ -216,7 +216,7 @@ pub fn contains(does haystack: String, contain needle: String) -> Bool {
   |> result.is_error
 }
 
-/// See if the first string starts with the second one.
+/// Checks whether the first string starts with the second one.
 ///
 /// ## Examples
 ///
@@ -226,7 +226,7 @@ pub fn contains(does haystack: String, contain needle: String) -> Bool {
 pub external fn starts_with(String, String) -> Bool =
   "gleam_stdlib" "string_starts_with"
 
-/// See if the first string ends with the second one.
+/// Checks whether the first string ends with the second one.
 ///
 /// ## Examples
 ///
@@ -236,7 +236,7 @@ pub external fn starts_with(String, String) -> Bool =
 pub external fn ends_with(String, String) -> Bool =
   "gleam_stdlib" "string_ends_with"
 
-/// Create a list of strings by splitting a given string on a given substring.
+/// Creates a list of strings by splitting a given string on a given substring.
 ///
 /// ## Examples
 ///
@@ -275,7 +275,7 @@ pub fn split_once(
   }
 }
 
-/// Create a new string by joining two strings together.
+/// Creates a new string by joining two strings together.
 ///
 /// This function copies both strings and runs in linear time. If you find
 /// yourself joining strings frequently consider using the [string_builder](../string_builder)
@@ -293,7 +293,7 @@ pub fn append(to first: String, suffix second: String) -> String {
   |> string_builder.to_string
 }
 
-/// Create a new string by joining many strings together.
+/// Creates a new string by joining many strings together.
 ///
 /// This function copies both strings and runs in linear time. If you find
 /// yourself joining strings frequently consider using the [string_builder](../string_builder)
@@ -310,7 +310,7 @@ pub fn concat(strings: List(String)) -> String {
   |> string_builder.to_string
 }
 
-/// Create a new string by repeating a string a given number of times.
+/// Creates a new string by repeating a string a given number of times.
 ///
 /// This function runs in linear time.
 ///
@@ -325,7 +325,7 @@ pub fn repeat(string: String, times times: Int) -> String {
   |> concat
 }
 
-/// Join many strings together with a given separator.
+/// Joins many strings together with a given separator.
 ///
 /// This function runs in linear time.
 ///
@@ -349,7 +349,7 @@ type Direction {
 external fn erl_pad(String, Int, Direction, String) -> String =
   "gleam_stdlib" "string_pad"
 
-/// Pad a string on the left until it has at least given number of Graphemes.
+/// Pads a string on the left until it has at least given number of Graphemes.
 ///
 /// ## Examples
 ///
@@ -366,7 +366,7 @@ pub fn pad_left(string: String, to length: Int, with pad_string: String) {
   erl_pad(string, length, Leading, pad_string)
 }
 
-/// Pad a string on the right until it has a given length.
+/// Pads a string on the right until it has a given length.
 ///
 /// ## Examples
 ///
@@ -386,7 +386,7 @@ pub fn pad_right(string: String, to length: Int, with pad_string: String) {
 external fn erl_trim(String, Direction) -> String =
   "string" "trim"
 
-/// Get rid of whitespace on both sides of a String.
+/// Removes whitespace on both sides of a String.
 ///
 /// ## Examples
 ///
@@ -397,7 +397,7 @@ pub fn trim(string: String) -> String {
   erl_trim(string, Both)
 }
 
-/// Get rid of whitespace on the left of a String.
+/// Removes whitespace on the left of a String.
 ///
 /// ## Examples
 ///
@@ -408,7 +408,7 @@ pub fn trim_left(string: String) -> String {
   erl_trim(string, Leading)
 }
 
-/// Get rid of whitespace on the right of a String.
+/// Removes whitespace on the right of a String.
 ///
 /// ## Examples
 ///
@@ -419,7 +419,7 @@ pub fn trim_right(string: String) -> String {
   erl_trim(string, Trailing)
 }
 
-/// Split a non-empty string into its head and tail. This lets you
+/// Splits a non-empty string into its head and tail. This lets you
 /// pattern match on strings exactly as you would with lists.
 ///
 /// ## Examples
@@ -434,7 +434,7 @@ pub external fn pop_grapheme(
 ) -> Result(tuple(String, String), Nil) =
   "gleam_stdlib" "string_pop_grapheme"
 
-/// Convert a string to a list of Graphemes.
+/// Converts a string to a list of Graphemes.
 ///
 ///    > to_graphemes("abc")
 ///    ["a", "b", "c"]
@@ -449,7 +449,7 @@ pub fn to_graphemes(string: String) -> List(String) {
 external fn int_to_utf_codepoint(Int) -> UtfCodepoint =
   "gleam_stdlib" "identity"
 
-/// Convert an integer to a UtfCodepoint
+/// Converts an integer to a UtfCodepoint
 ///
 /// Returns an error if the integer does not represent a valid UTF codepoint.
 ///

@@ -11,21 +11,21 @@
 ///
 pub external type StringBuilder
 
-/// Prepend a String onto the start of some StringBuilder.
+/// Prepends a String onto the start of some StringBuilder.
 ///
 /// Runs in constant time.
 ///
 pub external fn prepend(to: StringBuilder, prefix: String) -> StringBuilder =
   "gleam_stdlib" "iodata_prepend"
 
-/// Append a String onto the end of some StringBuilder.
+/// Appends a String onto the end of some StringBuilder.
 ///
 /// Runs in constant time.
 ///
 pub external fn append(to: StringBuilder, suffix: String) -> StringBuilder =
   "gleam_stdlib" "iodata_append"
 
-/// Prepend some StringBuilder onto the start of another.
+/// Prepends some StringBuilder onto the start of another.
 ///
 /// Runs in constant time.
 ///
@@ -35,7 +35,7 @@ pub external fn prepend_builder(
 ) -> StringBuilder =
   "gleam_stdlib" "iodata_prepend"
 
-/// Append some StringBuilder onto the end of another.
+/// Appends some StringBuilder onto the end of another.
 ///
 /// Runs in constant time.
 ///
@@ -45,7 +45,7 @@ pub external fn append_builder(
 ) -> StringBuilder =
   "gleam_stdlib" "iodata_append"
 
-/// Convert a list of strings into a builder.
+/// Converts a list of strings into a builder.
 ///
 /// Runs in constant time.
 ///
@@ -59,7 +59,7 @@ pub external fn from_strings(List(String)) -> StringBuilder =
 pub external fn concat(List(StringBuilder)) -> StringBuilder =
   "gleam_stdlib" "identity"
 
-/// Convert a string into a builder.
+/// Converts a string into a builder.
 ///
 /// Runs in constant time.
 ///
@@ -132,7 +132,7 @@ pub fn replace(
   erl_replace(iodata, pattern, substitute, All)
 }
 
-/// Compare two builders to determine if they have the same textual content.
+/// Compares two builders to determine if they have the same textual content.
 ///
 /// Comparing two iodata using the `==` operator may return False even if they
 /// have the same content as they may have been build in different ways, so
@@ -150,7 +150,7 @@ pub fn replace(
 pub external fn is_equal(StringBuilder, StringBuilder) -> Bool =
   "string" "equal"
 
-/// Inspect a builder to determine if it is equivalent to an empty string.
+/// Inspects a builder to determine if it is equivalent to an empty string.
 ///
 /// ## Examples
 ///

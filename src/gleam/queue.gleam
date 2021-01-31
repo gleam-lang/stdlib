@@ -17,13 +17,13 @@ pub opaque type Queue(element) {
   Queue(in: List(element), out: List(element))
 }
 
-/// Create a fresh queue that contains no values.
+/// Creates a fresh queue that contains no values.
 ///
 pub fn new() -> Queue(a) {
   Queue(in: [], out: [])
 }
 
-/// Convert a list of elements into a queue of the same elements in the same
+/// Converts a list of elements into a queue of the same elements in the same
 /// order. The head element in the list becomes the front element in the queue.
 ///
 /// This function runs in constant time.
@@ -37,7 +37,7 @@ pub fn from_list(list: List(a)) -> Queue(a) {
   Queue(in: [], out: list)
 }
 
-/// Convert a queue of elements into a list of the same elements in the same
+/// Converts a queue of elements into a list of the same elements in the same
 /// order. The front element in the queue becomes the head element in the list.
 ///
 /// This function runs in linear time.
@@ -52,7 +52,7 @@ pub fn to_list(queue: Queue(a)) -> List(a) {
   |> list.append(list.reverse(queue.in))
 }
 
-/// Determine whether or not the queue is empty.
+/// Determines whether or not the queue is empty.
 ///
 /// This function runs in constant time.
 ///
@@ -71,7 +71,7 @@ pub fn is_empty(queue: Queue(a)) -> Bool {
   queue.in == [] && queue.out == []
 }
 
-/// Count the number of elements in a given queue.
+/// Counts the number of elements in a given queue.
 ///
 /// This function has to traverse the queue to determine the number of elements,
 /// so it runs in linear time.
@@ -91,7 +91,7 @@ pub fn length(queue: Queue(a)) -> Int {
   list.length(queue.in) + list.length(queue.out)
 }
 
-/// Push an element onto the back of the queue.
+/// Pushes an element onto the back of the queue.
 ///
 /// # Examples
 ///
@@ -102,7 +102,7 @@ pub fn push_back(onto queue: Queue(a), this item: a) -> Queue(a) {
   Queue(in: [item, ..queue.in], out: queue.out)
 }
 
-/// Push an element onto the front of the queue.
+/// Pushes an element onto the front of the queue.
 ///
 /// # Examples
 ///
@@ -113,7 +113,7 @@ pub fn push_front(onto queue: Queue(a), this item: a) -> Queue(a) {
   Queue(in: queue.in, out: [item, ..queue.out])
 }
 
-/// Get the last element from the queue, returning the
+/// Gets the last element from the queue, returning the
 /// element and a new queue without that element.
 ///
 /// This function typically runs in constant time, but will occasionally run in
@@ -147,7 +147,7 @@ pub fn pop_back(from queue: Queue(a)) -> Result(tuple(a, Queue(a)), Nil) {
   }
 }
 
-/// Get the first element from the queue, returning the
+/// Gets the first element from the queue, returning the
 /// element and a new queue without that element.
 ///
 /// This function typically runs in constant time, but will occasionally run in
@@ -181,7 +181,7 @@ pub fn pop_front(from queue: Queue(a)) -> Result(tuple(a, Queue(a)), Nil) {
   }
 }
 
-/// Create a new queue from a given queue containing the same elements, but in
+/// Creates a new queue from a given queue containing the same elements, but in
 /// the opposite order.
 ///
 /// This function runs in constant time.
@@ -221,7 +221,7 @@ fn check_equal(
   }
 }
 
-/// Check whether two queues have equal elements in the same order, where the
+/// Checks whether two queues have equal elements in the same order, where the
 /// equality of elements is determined by a given equality checking function.
 ///
 /// This function is useful as the internal representation may be different for
@@ -240,7 +240,7 @@ pub fn is_logically_equal(
   check_equal(a.out, a.in, b.out, b.in, element_is_equal)
 }
 
-/// Check whether two queues have the same elements in the same order.
+/// Checks whether two queues have the same elements in the same order.
 ///
 /// This function is useful as the internal representation may be different for
 /// two queues with the same elements in the same order depending on how they
