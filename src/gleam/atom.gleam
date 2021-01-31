@@ -7,7 +7,7 @@
 ///
 /// ## Creating atoms
 ///
-/// We can create atoms with the the [`create_from_string`](#create_from_string)
+/// We can create atoms with the [`create_from_string`](#create_from_string)
 /// function, though we must be careful when doing so as atoms are never
 /// garbage collected. If we create too many atoms (for example, if we convert
 /// user input into atoms) we may hit the max limit of atoms and cause the
@@ -42,7 +42,7 @@ pub external fn from_string(String) -> Result(Atom, FromStringError) =
 /// string.
 ///
 /// We must be careful when using this function as there is a limit to the
-/// number of atom that can fit in the virtual machine's atom table. Never
+/// number of atoms that can fit in the virtual machine's atom table. Never
 /// convert user input into atoms as filling the atom table will cause the
 /// virtual machine to crash!
 ///
