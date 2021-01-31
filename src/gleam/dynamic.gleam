@@ -6,7 +6,7 @@ import gleam/option.{None, Option, Some}
 import gleam/result
 import gleam/string_builder
 
-/// `Dynamic` data is data that we don"t know the type of yet.
+/// `Dynamic` data is data that we don't know the type of yet.
 /// We likely get data like this from interop with Erlang, or from
 /// IO with the outside world.
 pub external type Dynamic
