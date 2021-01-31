@@ -4,7 +4,7 @@ import gleam/order.{Order}
 pub type Float =
   Float
 
-/// Attempts to parse a string as a float, returning `Error(Nil)` if it was not
+/// Attempt to parse a string as a float, returning `Error(Nil)` if it was not
 /// possible.
 ///
 /// ## Examples
@@ -44,7 +44,7 @@ pub fn clamp(n: Float, min min_bound: Float, max max_bound: Float) -> Float {
   |> max(min_bound)
 }
 
-/// Compares two floats, returning an order.
+/// Compare two floats, returning an order.
 ///
 /// ## Examples
 ///    > compare(2.0, 2.3)
@@ -61,7 +61,7 @@ pub fn compare(a: Float, with b: Float) -> Order {
   }
 }
 
-/// Compares two floats, returning the smaller of the two.
+/// Compare two floats, returning the smaller of the two.
 ///
 /// ## Examples
 ///
@@ -75,7 +75,7 @@ pub fn min(a: Float, b: Float) -> Float {
   }
 }
 
-/// Compares two floats, returning the larger of the two.
+/// Compare two floats, returning the larger of the two.
 ///
 /// ## Examples
 ///
@@ -89,7 +89,7 @@ pub fn max(a: Float, b: Float) -> Float {
   }
 }
 
-/// Rounds the value to the next highest whole number as a float.
+/// Round the value to the next highest whole number as a float.
 ///
 /// ## Examples
 ///
@@ -99,7 +99,7 @@ pub fn max(a: Float, b: Float) -> Float {
 pub external fn ceiling(Float) -> Float =
   "math" "ceil"
 
-/// Rounds the value to the next lowest whole number as a float.
+/// Round the value to the next lowest whole number as a float.
 ///
 /// ## Examples
 ///
@@ -109,7 +109,7 @@ pub external fn ceiling(Float) -> Float =
 pub external fn floor(Float) -> Float =
   "math" "floor"
 
-/// Rounds the value to the nearest whole number as an int.
+/// Round the value to the nearest whole number as an int.
 ///
 /// ## Examples
 ///
@@ -122,7 +122,7 @@ pub external fn floor(Float) -> Float =
 pub external fn round(Float) -> Int =
   "erlang" "round"
 
-/// Returns the value as an int, truncating all decimal digits.
+/// Return the value as an int, truncating all decimal digits.
 ///
 /// ## Examples
 ///
@@ -132,7 +132,7 @@ pub external fn round(Float) -> Int =
 pub external fn truncate(Float) -> Int =
   "erlang" "trunc"
 
-/// Returns the absolute value of the input as a float.
+/// Return the absolute value of the input as a float.
 ///
 /// ## Examples
 ///
@@ -145,7 +145,7 @@ pub external fn truncate(Float) -> Int =
 pub external fn absolute_value(Float) -> Float =
   "erlang" "abs"
 
-/// Returns the results of the base being raised to the power of the
+/// Return the results of the base being raised to the power of the
 /// exponent, as a float.
 ///
 /// ## Examples
@@ -159,7 +159,7 @@ pub external fn absolute_value(Float) -> Float =
 pub external fn power(base: Float, exponent: Float) -> Float =
   "math" "pow"
 
-/// Returns the square root of the input as a float.
+/// Return the square root of the input as a float.
 ///
 /// ## Examples
 ///
@@ -176,7 +176,7 @@ pub fn square_root(number: Float) -> Result(Float, Nil) {
   }
 }
 
-/// Returns the negative of the value provided
+/// Return the negative of the value provided
 ///
 /// ## Examples
 ///
@@ -187,7 +187,7 @@ pub fn negate(x: Float) -> Float {
   -1. *. x
 }
 
-/// Sums a list of Floats.
+/// Sum a list of Floats.
 ///
 /// ## Example
 ///
@@ -206,7 +206,7 @@ fn do_sum(numbers: List(Float), initial: Float) -> Float {
   }
 }
 
-/// Multiplies a list of Floats and returns the product.
+/// Multiply a list of Floats and returns the product.
 ///
 /// ## Example
 ///
