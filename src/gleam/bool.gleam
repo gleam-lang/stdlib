@@ -11,7 +11,7 @@ import gleam/order.{Order}
 pub type Bool =
   Bool
 
-/// Returns the opposite bool value.
+/// Return the opposite bool value.
 ///
 /// This is the same as the `!` or `not` operators in some other languages.
 ///
@@ -30,7 +30,7 @@ pub fn negate(bool: Bool) -> Bool {
   }
 }
 
-/// Returns the nor of two bools
+/// Return the nor of two bools
 ///
 /// ## Examples
 ///
@@ -55,7 +55,7 @@ pub fn nor(a: Bool, b: Bool) -> Bool {
   }
 }
 
-/// Returns the nand of two bools
+/// Return the nand of two bools
 ///
 /// ## Examples
 ///
@@ -80,7 +80,7 @@ pub fn nand(a: Bool, b: Bool) -> Bool {
   }
 }
 
-/// Returns the exclusive or of two bools
+/// Return the exclusive or of two bools
 ///
 /// ## Examples
 ///
@@ -105,7 +105,7 @@ pub fn exclusive_or(a: Bool, b: Bool) -> Bool {
   }
 }
 
-/// Returns the exclusive nor of two bools
+/// Return the exclusive nor of two bools
 ///
 /// ## Examples
 ///
@@ -130,7 +130,7 @@ pub fn exclusive_nor(a: Bool, b: Bool) -> Bool {
   }
 }
 
-/// Compares two bools and returns the first values Order to the second.
+/// Compare two bools and returns the first values Order to the second.
 ///
 /// ## Examples
 ///
@@ -147,7 +147,7 @@ pub fn compare(a: Bool, with b: Bool) -> Order {
   }
 }
 
-/// Returns True if either bool value is True.
+/// Return True if either bool value is True.
 ///
 /// ## Examples
 ///
@@ -167,7 +167,7 @@ pub fn max(a: Bool, b: Bool) -> Bool {
   }
 }
 
-/// Returns False if either bool value is False.
+/// Return False if either bool value is False.
 ///
 /// ## Examples
 ///
@@ -187,7 +187,7 @@ pub fn min(a: Bool, b: Bool) -> Bool {
   }
 }
 
-/// Returns a numeric representation of the given bool.
+/// Return a numeric representation of the given bool.
 ///
 /// ## Examples
 ///
