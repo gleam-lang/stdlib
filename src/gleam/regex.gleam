@@ -35,7 +35,7 @@ pub type Options {
   Options(case_insensitive: Bool, multi_line: Bool)
 }
 
-/// Create a Regex with some additional options.
+/// Creates a Regex with some additional options.
 ///
 /// ## Examples
 ///
@@ -52,7 +52,7 @@ pub type Options {
 pub external fn compile(String, with: Options) -> Result(Regex, CompileError) =
   "gleam_stdlib" "compile_regex"
 
-/// Create a new Regex.
+/// Creates a new Regex.
 ///
 /// ## Examples
 ///
@@ -89,7 +89,7 @@ pub fn from_string(pattern: String) -> Result(Regex, CompileError) {
 pub external fn check(with: Regex, content: String) -> Bool =
   "gleam_stdlib" "regex_match"
 
-/// Split a string
+/// Splits a string
 ///
 /// ## Examples
 ///

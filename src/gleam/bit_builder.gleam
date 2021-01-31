@@ -15,21 +15,21 @@ import gleam/string_builder.{StringBuilder}
 ///
 pub external type BitBuilder
 
-/// Prepend a bit string to the start of a builder.
+/// Prepends a bit string to the start of a builder.
 ///
 /// Runs in constant time.
 ///
 pub external fn prepend(to: BitBuilder, prefix: BitString) -> BitBuilder =
   "gleam_stdlib" "iodata_prepend"
 
-/// Append a bit string to the end of a builder.
+/// Appends a bit string to the end of a builder.
 ///
 /// Runs in constant time.
 ///
 pub external fn append(to: BitBuilder, suffix: BitString) -> BitBuilder =
   "gleam_stdlib" "iodata_append"
 
-/// Prepend a builder onto the start of another.
+/// Prepends a builder onto the start of another.
 ///
 /// Runs in constant time.
 ///
@@ -39,21 +39,21 @@ pub external fn prepend_builder(
 ) -> BitBuilder =
   "gleam_stdlib" "iodata_prepend"
 
-/// Append a builder onto the end of another.
+/// Appends a builder onto the end of another.
 ///
 /// Runs in constant time.
 ///
 pub external fn append_builder(to: BitBuilder, suffix: BitBuilder) -> BitBuilder =
   "gleam_stdlib" "iodata_append"
 
-/// Prepend a string onto the start of a builder.
+/// Prepends a string onto the start of a builder.
 ///
 /// Runs in constant time.
 ///
 pub external fn prepend_string(to: BitBuilder, prefix: String) -> BitBuilder =
   "gleam_stdlib" "iodata_prepend"
 
-/// Append a string onto the end of a builder.
+/// Appends a string onto the end of a builder.
 ///
 /// Runs in constant time.
 ///
@@ -67,21 +67,21 @@ pub external fn append_string(to: BitBuilder, suffix: String) -> BitBuilder =
 pub external fn concat(List(BitBuilder)) -> BitBuilder =
   "gleam_stdlib" "identity"
 
-/// Create a new builder from a string.
+/// Creates a new builder from a string.
 ///
 /// Runs in constant time.
 ///
 pub external fn from_string(String) -> BitBuilder =
   "gleam_stdlib" "wrap_list"
 
-/// Create a new builder from a string builder.
+/// Creates a new builder from a string builder.
 ///
 /// Runs in constant time.
 ///
 pub external fn from_string_builder(StringBuilder) -> BitBuilder =
   "gleam_stdlib" "identity"
 
-/// Create a new builder from a bit string.
+/// Creates a new builder from a bit string.
 ///
 /// Runs in constant time.
 ///

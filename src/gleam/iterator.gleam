@@ -40,7 +40,7 @@ fn do_unfold(
   }
 }
 
-/// Create an iterator from a given function and accumulator.
+/// Creates an iterator from a given function and accumulator.
 ///
 /// The function is called on the accumulator and return either `Done`,
 /// indicating the iterator has no more elements, or `Next` which contains a
@@ -69,14 +69,14 @@ pub fn unfold(
 }
 
 // TODO: test
-/// Create an iterator that yields values created by calling a given function
+/// Creates an iterator that yields values created by calling a given function
 /// repeatedly.
 ///
 pub fn repeatedly(f: fn() -> element) -> Iterator(element) {
   unfold(Nil, fn(_) { Next(f(), Nil) })
 }
 
-/// Create an iterator that returns the same value infinitely.
+/// Creates an iterator that returns the same value infinitely.
 ///
 /// ## Examples
 ///
@@ -89,7 +89,7 @@ pub fn repeat(x: element) -> Iterator(element) {
   repeatedly(fn() { x })
 }
 
-/// Create an iterator the yields each element in a given list.
+/// Creates an iterator the yields each element in a given list.
 ///
 /// ## Examples
 ///
@@ -118,7 +118,7 @@ fn do_fold(
   }
 }
 
-/// Reduce an iterator of elements into a single value by calling a given
+/// Reduces an iterator of elements into a single value by calling a given
 /// function on each element in turn.
 ///
 /// If called on an iterator of infinite length then this function will never
@@ -144,7 +144,7 @@ pub fn fold(
 }
 
 // TODO: test
-/// Evaluate all elements in a given stream. This function is useful for when
+/// Evaluates all elements in a given stream. This function is useful for when
 /// you wish to trigger any side effects that would occur when evaluating
 /// the iterator.
 ///
@@ -152,7 +152,7 @@ pub fn run(iterator: Iterator(e)) -> Nil {
   fold(iterator, Nil, fn(_, _) { Nil })
 }
 
-/// Evaluate an iterator and return all the elements as a list.
+/// Evaluates an iterator and return all the elements as a list.
 ///
 /// If called on an iterator of infinite length then this function will never
 /// return.
@@ -168,7 +168,7 @@ pub fn to_list(iterator: Iterator(element)) -> List(element) {
   |> list.reverse
 }
 
-/// Eagerly access the first value of an interator, returning a `Next`
+/// Eagerly accesses the first value of an interator, returning a `Next`
 /// that contains the first value and the rest of the iterator.
 ///
 /// If called on an empty iterator, `Done` is returned.
@@ -216,7 +216,7 @@ fn do_take(
   }
 }
 
-/// Evaluate a desired number of elements from an iterator and return them in a
+/// Evaluates a desired number of elements from an iterator and return them in a
 /// list.
 ///
 /// If the iterator does not have enough elements all of them are returned.
@@ -245,7 +245,7 @@ fn do_drop(continuation: fn() -> Action(e), desired: Int) -> fn() -> Action(e) {
   }
 }
 
-/// Evaluate and discard the first N elements in an iterator, returning a new
+/// Evaluates and discards the first N elements in an iterator, returning a new
 /// iterator.
 ///
 /// If the iterator does not have enough elements an empty iterator is
@@ -277,7 +277,7 @@ fn do_map(continuation: fn() -> Action(a), f: fn(a) -> b) -> fn() -> Action(b) {
   }
 }
 
-/// Create an iterator from an existing iterator and a transformation function.
+/// Creates an iterator from an existing iterator and a transformation function.
 ///
 /// Each element in the new iterator will be the result of calling the given
 /// function on the elements in the given iterator.
@@ -308,7 +308,7 @@ fn do_append(
   }
 }
 
-/// Append two iterators, producing a new iterator.
+/// Appends two iterators, producing a new iterator.
 ///
 /// This function does not evaluate the elements of the iterators, the
 /// computation is performed when the resulting iterator is later run.
@@ -334,7 +334,7 @@ fn do_flatten(continuation: fn() -> Action(Iterator(a))) -> fn() -> Action(a) {
   }
 }
 
-/// Flatten an iterator of iterator of iterators, creating a new iterator.
+/// Flattens an iterator of iterator of iterators, creating a new iterator.
 ///
 /// This function does not evaluate the elements of the iterator, the
 /// computation is performed when the iterator is later run.
@@ -350,7 +350,7 @@ pub fn flatten(iterator: Iterator(Iterator(a))) -> Iterator(a) {
   |> Iterator
 }
 
-/// Create an iterator from an existing iterator and a transformation function.
+/// Creates an iterator from an existing iterator and a transformation function.
 ///
 /// Each element in the new iterator will be the result of calling the given
 /// function on the elements in the given iterator and then flattening the
@@ -389,7 +389,7 @@ fn do_filter(
   }
 }
 
-/// Create an iterator from an existing iterator and a predicate function.
+/// Creates an iterator from an existing iterator and a predicate function.
 ///
 /// The new iterator will contain elements from the first iterator for which
 /// the given function returns `True`.
@@ -421,7 +421,7 @@ fn do_cycle(next: fn() -> Action(a), reset: fn() -> Action(a)) {
   }
 }
 
-/// Create an iterator that repeats a given iterator infinitely.
+/// Creates an iterator that repeats a given iterator infinitely.
 ///
 /// ## Examples
 ///
@@ -441,7 +441,7 @@ fn do_range(current, limit, inc) -> fn() -> Action(Int) {
   }
 }
 
-/// Create an iterator of ints, starting at a given start int and stepping by
+/// Creates an iterator of ints, starting at a given start int and stepping by
 /// one to a given end int.
 ///
 /// ## Examples
@@ -464,7 +464,7 @@ pub fn range(from start: Int, to stop: Int) -> Iterator(Int) {
   |> Iterator
 }
 
-/// Find the first element in a given iterator for which the given function returns
+/// Finds the first element in a given iterator for which the given function returns
 /// True.
 ///
 /// Returns `Error(Nil)` if the function does not return True for any of the

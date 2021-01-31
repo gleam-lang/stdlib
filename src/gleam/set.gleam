@@ -13,13 +13,13 @@ pub opaque type Set(member) {
   Set(map: Map(member, List(Nil)))
 }
 
-/// Create a new empty set.
+/// Creates a new empty set.
 ///
 pub fn new() -> Set(member) {
   Set(map.new())
 }
 
-/// Get the number of members in a set.
+/// Gets the number of members in a set.
 ///
 /// This function runs in constant time.
 ///
@@ -32,7 +32,7 @@ pub fn size(set: Set(member)) -> Int {
   map.size(set.map)
 }
 
-/// Insert an member into the set.
+/// Inserts an member into the set.
 ///
 /// This function runs in logarithmic time.
 ///
@@ -45,7 +45,7 @@ pub fn insert(into set: Set(member), this member: member) -> Set(member) {
   Set(map: map.insert(set.map, member, []))
 }
 
-/// Check whether a set contains a given member.
+/// Checks whether a set contains a given member.
 ///
 /// This function runs in logarithmic time.
 ///
@@ -63,7 +63,7 @@ pub fn contains(in set: Set(member), this member: member) -> Bool {
   |> result.is_ok
 }
 
-/// Remove an member from a set. If the set does not contain the member then
+/// Removes an member from a set. If the set does not contain the member then
 /// the set is returned unchanged.
 ///
 /// This function runs in logarithmic time.
@@ -77,7 +77,7 @@ pub fn delete(from set: Set(member), this member: member) -> Set(member) {
   Set(map: map.delete(set.map, member))
 }
 
-/// Convert the set into a list of the contained members.
+/// Converts the set into a list of the contained members.
 ///
 /// The list has no specific ordering, any unintentional ordering may change in
 /// future versions of Gleam or Erlang.
@@ -93,7 +93,7 @@ pub fn to_list(set: Set(member)) -> List(member) {
   map.keys(set.map)
 }
 
-/// Create a new set of the members in a given list.
+/// Creates a new set of the members in a given list.
 ///
 /// This function runs in loglinear time.
 ///
@@ -113,7 +113,7 @@ pub fn from_list(members: List(member)) -> Set(member) {
   Set(map)
 }
 
-/// Combine all entries into a single value by calling a given function on each
+/// Combines all entries into a single value by calling a given function on each
 /// one.
 ///
 /// Sets are not ordered so the values are not returned in any specific order.
@@ -134,7 +134,7 @@ pub fn fold(
   map.fold(over: set.map, from: initial, with: fn(k, _, a) { reducer(k, a) })
 }
 
-/// Create a new set from an existing set, minus any members that a given
+/// Creates a new set from an existing set, minus any members that a given
 /// function returns False for.
 ///
 /// This function runs in loglinear time.
@@ -154,7 +154,7 @@ pub fn filter(
   Set(map.filter(in: set.map, for: fn(m, _) { property(m) }))
 }
 
-/// Create a new map from a given map, only including any members which are in
+/// Creates a new map from a given map, only including any members which are in
 /// a given list.
 ///
 /// This function runs in loglinear time.
@@ -178,7 +178,7 @@ fn order(
   }
 }
 
-/// Create a new set that contains all members of both given sets.
+/// Creates a new set that contains all members of both given sets.
 ///
 /// This function runs in loglinear time.
 ///
@@ -192,7 +192,7 @@ pub fn union(of first: Set(member), and second: Set(member)) -> Set(member) {
   fold(over: smaller, from: larger, with: fn(m, a) { insert(a, m) })
 }
 
-/// Create a new set that contains members that are present in both given sets.
+/// Creates a new set that contains members that are present in both given sets.
 ///
 /// This function runs in loglinear time.
 ///

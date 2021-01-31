@@ -14,12 +14,12 @@ pub external type Dynamic
 pub type Decoder(t) =
   fn(Dynamic) -> Result(t, String)
 
-/// Convert any Gleam data into `Dynamic` data.
+/// Converts any Gleam data into `Dynamic` data.
 ///
 pub external fn from(a) -> Dynamic =
   "gleam_stdlib" "identity"
 
-/// Unsafely cast a Dynamic value into any other type.
+/// Unsafely casts a Dynamic value into any other type.
 ///
 /// This is an escape hatch for the type system that may be useful when wrapping
 /// native Erlang APIs. It is to be used as a last measure only!
@@ -29,7 +29,7 @@ pub external fn from(a) -> Dynamic =
 pub external fn unsafe_coerce(Dynamic) -> a =
   "gleam_stdlib" "identity"
 
-/// Check to see whether a Dynamic value is a bit_string, and return the bit_string if
+/// Checks to see whether a Dynamic value is a bit_string, and return the bit_string if
 /// it is.
 ///
 /// ## Examples
@@ -43,7 +43,7 @@ pub external fn unsafe_coerce(Dynamic) -> a =
 pub external fn bit_string(from: Dynamic) -> Result(BitString, String) =
   "gleam_stdlib" "decode_bit_string"
 
-/// Check to see whether a Dynamic value is a string, and return the string if
+/// Checks to see whether a Dynamic value is a string, and return the string if
 /// it is.
 ///
 /// ## Examples
@@ -64,7 +64,7 @@ pub fn string(from: Dynamic) -> Result(String, String) {
   })
 }
 
-/// Check to see whether a Dynamic value is an int, and return the int if it
+/// Checks to see whether a Dynamic value is an int, and return the int if it
 /// is.
 ///
 /// ## Examples
@@ -78,7 +78,7 @@ pub fn string(from: Dynamic) -> Result(String, String) {
 pub external fn int(from: Dynamic) -> Result(Int, String) =
   "gleam_stdlib" "decode_int"
 
-/// Check to see whether a Dynamic value is an float, and return the float if
+/// Checks to see whether a Dynamic value is an float, and return the float if
 /// it is.
 ///
 /// ## Examples
@@ -92,7 +92,7 @@ pub external fn int(from: Dynamic) -> Result(Int, String) =
 pub external fn float(from: Dynamic) -> Result(Float, String) =
   "gleam_stdlib" "decode_float"
 
-/// Check to see whether a Dynamic value is an atom, and return the atom if
+/// Checks to see whether a Dynamic value is an atom, and return the atom if
 /// it is.
 ///
 /// ## Examples
@@ -107,7 +107,7 @@ pub external fn float(from: Dynamic) -> Result(Float, String) =
 pub external fn atom(from: Dynamic) -> Result(atom.Atom, String) =
   "gleam_stdlib" "decode_atom"
 
-/// Check to see whether a Dynamic value is an bool, and return the bool if
+/// Checks to see whether a Dynamic value is an bool, and return the bool if
 /// it is.
 ///
 /// ## Examples
@@ -121,7 +121,7 @@ pub external fn atom(from: Dynamic) -> Result(atom.Atom, String) =
 pub external fn bool(from: Dynamic) -> Result(Bool, String) =
   "gleam_stdlib" "decode_bool"
 
-/// Check to see whether a Dynamic value is a function that takes no arguments,
+/// Checks to see whether a Dynamic value is a function that takes no arguments,
 /// and return the function if it is.
 ///
 /// ## Examples
@@ -137,7 +137,7 @@ pub external fn bool(from: Dynamic) -> Result(Bool, String) =
 pub external fn thunk(from: Dynamic) -> Result(fn() -> Dynamic, String) =
   "gleam_stdlib" "decode_thunk"
 
-/// Check to see whether a Dynamic value is a list, and return the list if it
+/// Checks to see whether a Dynamic value is a list, and return the list if it
 /// is.
 ///
 /// If you wish to decode all the elements in the list use the `typed_list`
@@ -154,7 +154,7 @@ pub external fn thunk(from: Dynamic) -> Result(fn() -> Dynamic, String) =
 pub external fn list(from: Dynamic) -> Result(List(Dynamic), String) =
   "gleam_stdlib" "decode_list"
 
-/// Check to see whether a Dynamic value is a result, and return the result if
+/// Checks to see whether a Dynamic value is a result, and return the result if
 /// it is
 ///
 /// ## Examples
@@ -188,7 +188,7 @@ pub fn result(from: Dynamic) -> Result(Result(Dynamic, Dynamic), String) {
   }
 }
 
-/// Check to see whether a Dynamic value is a result of a particular type, and
+/// Checks to see whether a Dynamic value is a result of a particular type, and
 /// return the result if it is
 ///
 /// The `ok` and `error` arguments are decoders for decoding the `Ok` and
@@ -224,7 +224,7 @@ pub fn typed_result(
   }
 }
 
-/// Check to see whether a Dynamic value is a list of a particular type, and
+/// Checks to see whether a Dynamic value is a list of a particular type, and
 /// return the list if it is.
 ///
 /// The second argument is a decoder function used to decode the elements of
@@ -254,7 +254,7 @@ pub fn typed_list(
   |> result.then(list.try_map(_, decoder_type))
 }
 
-/// Check to see if a Dynamic value is an Option of a particular type, and return
+/// Checks to see if a Dynamic value is an Option of a particular type, and return
 /// the Option if it is.
 ///
 /// The second argument is a decoder function used to decode the elements of
@@ -284,7 +284,7 @@ pub fn option(
   }
 }
 
-/// Check to see if a Dynamic value is a map with a specific field, and return
+/// Checks to see if a Dynamic value is a map with a specific field, and return
 /// the value of the field if it is.
 ///
 /// This will not succeed on a record.
@@ -301,7 +301,7 @@ pub fn option(
 pub external fn field(from: Dynamic, named: a) -> Result(Dynamic, String) =
   "gleam_stdlib" "decode_field"
 
-/// Check to see if the Dynamic value is a tuple large enough to have a certain
+/// Checks to see if the Dynamic value is a tuple large enough to have a certain
 /// index, and return the value of that index if it is.
 ///
 /// ## Examples
@@ -318,7 +318,7 @@ pub external fn field(from: Dynamic, named: a) -> Result(Dynamic, String) =
 pub external fn element(from: Dynamic, position: Int) -> Result(Dynamic, String) =
   "gleam_stdlib" "decode_element"
 
-/// Check to see if the Dynamic value is a 2 element tuple.
+/// Checks to see if the Dynamic value is a 2 element tuple.
 ///
 /// If you do not wish to decode all the elements in the tuple use the
 /// `typed_tuple2` function instead.
@@ -337,7 +337,7 @@ pub external fn element(from: Dynamic, position: Int) -> Result(Dynamic, String)
 pub external fn tuple2(from: Dynamic) -> Result(tuple(Dynamic, Dynamic), String) =
   "gleam_stdlib" "decode_tuple2"
 
-/// Check to see if the Dynamic value is a 2 element tuple containing two
+/// Checks to see if the Dynamic value is a 2 element tuple containing two
 /// specifically typed elements.
 ///
 /// If you wish to decode all the elements in the list use the `typed_tuple2`
@@ -368,11 +368,11 @@ pub fn typed_tuple2(
   Ok(tuple(a, b))
 }
 
-/// Check to see if the Dynamic value is map.
+/// Checks to see if the Dynamic value is map.
 ///
 /// ## Examples
 ///
-///    > import gleam/map 
+///    > import gleam/map
 ///    > map(from(map.new()))
 ///    Ok(map.new())
 ///
@@ -385,7 +385,7 @@ pub fn typed_tuple2(
 pub external fn map(from: Dynamic) -> Result(Map(Dynamic, Dynamic), String) =
   "gleam_stdlib" "decode_map"
 
-/// Join multiple decoders into one. When run they will each be tried in turn
+/// Joins multiple decoders into one. When run they will each be tried in turn
 /// until one succeeds, or they all fail.
 ///
 /// ## Examples

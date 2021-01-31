@@ -5,7 +5,7 @@
 pub type BitString =
   BitString
 
-/// Convert a UTF-8 String type into a raw BitString type.
+/// Converts a UTF-8 String type into a raw BitString type.
 ///
 pub external fn from_string(String) -> BitString =
   "gleam_stdlib" "identity"
@@ -15,7 +15,7 @@ pub external fn from_string(String) -> BitString =
 pub external fn byte_size(BitString) -> Int =
   "erlang" "byte_size"
 
-/// Create a new bit string by joining two binaries.
+/// Creates a new bit string by joining two binaries.
 ///
 /// ## Examples
 ///
@@ -38,7 +38,7 @@ pub external fn part(
 ) -> Result(BitString, Nil) =
   "gleam_stdlib" "bit_string_part_"
 
-/// Convert an integer to unsigned 32 bits.
+/// Converts an integer to unsigned 32 bits.
 ///
 /// Returns an error if integer is less than zero or equal to or larger than
 /// 2^32.
@@ -46,14 +46,14 @@ pub external fn part(
 pub external fn int_to_u32(Int) -> Result(BitString, Nil) =
   "gleam_stdlib" "bit_string_int_to_u32"
 
-/// Convert unsigned 32 bits to an integer.
+/// Converts unsigned 32 bits to an integer.
 ///
 /// Returns an error if the bit string is not 32 bits in length.
 ///
 pub external fn int_from_u32(BitString) -> Result(Int, Nil) =
   "gleam_stdlib" "bit_string_int_from_u32"
 
-/// Test to see whether a bit string is valid UTF-8.
+/// Tests to see whether a bit string is valid UTF-8.
 ///
 pub fn is_utf8(bits: BitString) -> Bool {
   case bits {
@@ -66,7 +66,7 @@ pub fn is_utf8(bits: BitString) -> Bool {
 external fn unsafe_to_string(BitString) -> String =
   "gleam_stdlib" "identity"
 
-/// Convert a bit string to a string.
+/// Converts a bit string to a string.
 ///
 /// Returns an error if the bit string is invalid UTF-8 data.
 ///
