@@ -60,7 +60,7 @@ pub external fn prepend_string(to: BitBuilder, prefix: String) -> BitBuilder =
 pub external fn append_string(to: BitBuilder, suffix: String) -> BitBuilder =
   "gleam_stdlib" "iodata_append"
 
-/// Joins a list of builders into a single builders.
+/// Join a list of builders into a single builders.
 ///
 /// Runs in constant time.
 ///
@@ -88,7 +88,7 @@ pub external fn from_string_builder(StringBuilder) -> BitBuilder =
 pub external fn from_bit_string(BitString) -> BitBuilder =
   "gleam_stdlib" "wrap_list"
 
-/// Turns an builder into a bit string.
+/// Turn an builder into a bit string.
 ///
 /// This function is implemented natively by the virtual machine and is highly
 /// optimised.
@@ -96,7 +96,7 @@ pub external fn from_bit_string(BitString) -> BitBuilder =
 pub external fn to_bit_string(BitBuilder) -> BitString =
   "erlang" "list_to_bitstring"
 
-/// Returns the size of the builder's content in bytes.
+/// Return the size of the builder's content in bytes.
 ///
 pub external fn byte_size(BitBuilder) -> Int =
   "erlang" "iolist_size"
