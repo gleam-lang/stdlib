@@ -3,7 +3,7 @@ import gleam/order.{Order}
 pub type Int =
   Int
 
-/// Returns the absolute value of the input.
+/// Return the absolute value of the input.
 ///
 /// ## Examples
 ///
@@ -59,7 +59,7 @@ pub external fn to_string(Int) -> String =
 pub external fn to_base_string(Int, Int) -> String =
   "erlang" "integer_to_binary"
 
-/// Takes an int and returns its value as a float
+/// Take an int and returns its value as a float
 ///
 /// ## Examples
 ///
@@ -90,7 +90,7 @@ pub fn clamp(n: Int, min min_bound: Int, max max_bound: Int) -> Int {
   |> max(min_bound)
 }
 
-/// Compares two ints, returning an order.
+/// Compare two ints, returning an order.
 ///
 /// ## Examples
 ///
@@ -114,7 +114,7 @@ pub fn compare(a: Int, with b: Int) -> Order {
   }
 }
 
-/// Compares two int, returning the smaller of the two.
+/// Compare two int, returning the smaller of the two.
 ///
 /// ## Examples
 ///
@@ -128,7 +128,7 @@ pub fn min(a: Int, b: Int) -> Int {
   }
 }
 
-/// Compares two int, returning the larger of the two.
+/// Compare two int, returning the larger of the two.
 ///
 /// ## Examples
 ///
@@ -142,7 +142,7 @@ pub fn max(a: Int, b: Int) -> Int {
   }
 }
 
-/// Returns whether the value provided is even.
+/// Return whether the value provided is even.
 ///
 /// ## Examples
 ///
@@ -156,7 +156,7 @@ pub fn is_even(x: Int) -> Bool {
   x % 2 == 0
 }
 
-/// Returns whether the value provided is odd.
+/// Return whether the value provided is odd.
 ///
 /// ## Examples
 ///
@@ -170,7 +170,7 @@ pub fn is_odd(x: Int) -> Bool {
   x % 2 != 0
 }
 
-/// Returns the negative of the value provided
+/// Return the negative of the value provided
 ///
 /// ## Examples
 ///
@@ -181,7 +181,7 @@ pub fn negate(x: Int) -> Int {
   -1 * x
 }
 
-/// Sums a list of Ints.
+/// Sum a list of Ints.
 ///
 /// ## Example
 ///
@@ -200,7 +200,7 @@ fn do_sum(numbers: List(Int), initial: Int) -> Int {
   }
 }
 
-/// Multiplies a list of Ints and returns the product.
+/// Multiply a list of Ints and returns the product.
 ///
 /// ## Example
 ///
