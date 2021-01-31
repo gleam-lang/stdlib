@@ -10,7 +10,7 @@ pub type BitString =
 pub external fn from_string(String) -> BitString =
   "gleam_stdlib" "identity"
 
-/// Returns an integer which is the number of bytes in the bit string.
+/// Return an integer which is the number of bytes in the bit string.
 ///
 pub external fn byte_size(BitString) -> Int =
   "erlang" "byte_size"
@@ -25,7 +25,7 @@ pub external fn byte_size(BitString) -> Int =
 pub external fn append(first: BitString, second: BitString) -> BitString =
   "gleam_stdlib" "bit_string_append"
 
-/// Extracts part of a bit string.
+/// Extract part of a bit string.
 ///
 /// BitString part will start at given position and continue up to specified
 /// length.
