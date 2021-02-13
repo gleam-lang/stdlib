@@ -43,7 +43,7 @@ pub fn error_parsing_uri_test() {
 }
 
 pub fn full_uri_to_string_test() {
-  assert test_uri =
+  let test_uri =
     uri.Uri(
       Some("https"),
       Some("foo:bar"),
@@ -60,7 +60,7 @@ pub fn full_uri_to_string_test() {
 }
 
 pub fn path_only_uri_to_string_test() {
-  assert test_uri = uri.Uri(None, None, None, None, "/", None, None)
+  let test_uri = uri.Uri(None, None, None, None, "/", None, None)
   should.equal(uri.to_string(test_uri), "/")
 }
 
@@ -84,13 +84,13 @@ pub fn error_parsing_query_test() {
 }
 
 pub fn query_to_string_test() {
-  assert query_string =
+  let query_string =
     uri.query_to_string([tuple("foo bar", "1"), tuple("city", "örebro")])
   should.equal(query_string, "foo+bar=1&city=%C3%B6rebro")
 }
 
 pub fn empty_query_to_string_test() {
-  assert query_string = uri.query_to_string([])
+  let query_string = uri.query_to_string([])
   should.equal(query_string, "")
 }
 
@@ -136,7 +136,7 @@ pub fn percent_encode_consistency_test() {
   let k = "foo bar[]"
   let v = "ñaña (,:*~)"
 
-  assert query_string = uri.query_to_string([tuple(k, v)])
+  let query_string = uri.query_to_string([tuple(k, v)])
 
   let encoded_key = uri.percent_encode(k)
   let encoded_value = uri.percent_encode(v)
