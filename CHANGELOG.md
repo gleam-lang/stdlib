@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- The `list` modules gains the `drop_while` and `take_while` functions.
+
 ## v0.14.0 - 2021-02-18
 
 - The `list` modules gains the `fold_until`, `window`, and `window_by_2` functions.
