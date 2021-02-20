@@ -328,7 +328,7 @@ pub external fn element(from: Dynamic, position: Int) -> Result(Dynamic, String)
 ///    > tuple2(from(tuple(1, 2)))
 ///    Ok(tuple(from(1), from(2)))
 ///
-///    > tuple2(from(tuple(1, 2)))
+///    > tuple2(from(tuple(1, 2, 3)))
 ///    Error("Expected a 2 element tuple")
 ///
 ///    > tuple2(from(""))
@@ -366,6 +366,234 @@ pub fn typed_tuple2(
   try a = decode_first(first)
   try b = decode_second(second)
   Ok(tuple(a, b))
+}
+
+/// Checks to see if the Dynamic value is a 3 element tuple.
+///
+/// If you do not wish to decode all the elements in the tuple use the
+/// `typed_tuple3` function instead.
+///
+/// ## Examples
+///
+///    > tuple3(from(tuple(1, 2, 3)))
+///    Ok(tuple(from(1), from(2), from(3)))
+///
+///    > tuple3(from(tuple(1, 2)))
+///    Error("Expected a 3 element tuple")
+///
+///    > tuple3(from(""))
+///    Error("Expected a tuple, got a binary")
+///
+pub external fn tuple3(
+  from: Dynamic,
+) -> Result(tuple(Dynamic, Dynamic, Dynamic), String) =
+  "gleam_stdlib" "decode_tuple3"
+
+/// Checks to see if the Dynamic value is a 3 element tuple containing two
+/// specifically typed elements.
+///
+/// If you wish to decode all the elements in the list use the `typed_tuple3`
+/// instead.
+///
+/// ## Examples
+///
+///    > typed_tuple3(from(tuple(1, 2, 3)), int, int, int)
+///    Ok(tuple(1, 2, 3))
+///
+///    > typed_tuple3(from(tuple(1, 2.0, "3")), int, float, string)
+///    Ok(tuple(1, 2.0, "3"))
+///
+///    > typed_tuple3(from(tuple(1, 2)), int, float, string)
+///    Error("Expected a 3 element tuple, got a 2 element tuple")
+///
+///    > typed_tuple3(from(""), int, float, string)
+///    Error("Expected a tuple, got a binary")
+///
+pub fn typed_tuple3(
+  from tup: Dynamic,
+  first decode_first: Decoder(a),
+  second decode_second: Decoder(b),
+  third decode_third: Decoder(c),
+) -> Result(tuple(a, b, c), String) {
+  try tuple(first, second, third) = tuple3(tup)
+  try a = decode_first(first)
+  try b = decode_second(second)
+  try c = decode_third(third)
+  Ok(tuple(a, b, c))
+}
+
+/// Checks to see if the Dynamic value is a 4 element tuple.
+///
+/// If you do not wish to decode all the elements in the tuple use the
+/// `typed_tuple4` function instead.
+///
+/// ## Examples
+///
+///    > tuple4(from(tuple(1, 2, 3, 4)))
+///    Ok(tuple(from(1), from(2), from(3), from(4)))
+///
+///    > tuple4(from(tuple(1, 2)))
+///    Error("Expected a 4 element tuple")
+///
+///    > tuple4(from(""))
+///    Error("Expected a tuple, got a binary")
+///
+pub external fn tuple4(
+  from: Dynamic,
+) -> Result(tuple(Dynamic, Dynamic, Dynamic, Dynamic), String) =
+  "gleam_stdlib" "decode_tuple4"
+
+/// Checks to see if the Dynamic value is a 4 element tuple containing two
+/// specifically typed elements.
+///
+/// If you wish to decode all the elements in the list use the `typed_tuple4`
+/// instead.
+///
+/// ## Examples
+///
+///    > typed_tuple4(from(tuple(1, 2, 3, 4)), int, int, int, int)
+///    Ok(tuple(1, 2, 3, 4))
+///
+///    > typed_tuple4(from(tuple(1, 2.0, "3", 4)), int, float, string, int)
+///    Ok(tuple(1, 2.0, "3", 4))
+///
+///    > typed_tuple4(from(tuple(1, 2)), int, float, string, int)
+///    Error("Expected a 4 element tuple, got a 2 element tuple")
+///
+///    > typed_tuple4(from(""), int, float, string, int)
+///    Error("Expected a tuple, got a binary")
+///
+pub fn typed_tuple4(
+  from tup: Dynamic,
+  first decode_first: Decoder(a),
+  second decode_second: Decoder(b),
+  third decode_third: Decoder(c),
+  fourth decode_fourth: Decoder(d),
+) -> Result(tuple(a, b, c, d), String) {
+  try tuple(first, second, third, fourth) = tuple4(tup)
+  try a = decode_first(first)
+  try b = decode_second(second)
+  try c = decode_third(third)
+  try d = decode_fourth(fourth)
+  Ok(tuple(a, b, c, d))
+}
+
+/// Checks to see if the Dynamic value is a 5 element tuple.
+///
+/// If you do not wish to decode all the elements in the tuple use the
+/// `typed_tuple5` function instead.
+///
+/// ## Examples
+///
+///    > tuple5(from(tuple(1, 2, 3, 4, 5)))
+///    Ok(tuple(from(1), from(2), from(3), from(4), from(5)))
+///
+///    > tuple5(from(tuple(1, 2)))
+///    Error("Expected a 5 element tuple")
+///
+///    > tuple5(from(""))
+///    Error("Expected a tuple, got a binary")
+///
+pub external fn tuple5(
+  from: Dynamic,
+) -> Result(tuple(Dynamic, Dynamic, Dynamic, Dynamic, Dynamic), String) =
+  "gleam_stdlib" "decode_tuple5"
+
+/// Checks to see if the Dynamic value is a 5 element tuple containing two
+/// specifically typed elements.
+///
+/// If you wish to decode all the elements in the list use the `typed_tuple5`
+/// instead.
+///
+/// ## Examples
+///
+///    > typed_tuple5(from(tuple(1, 2, 3, 4, 5)), int, int, int, int, int)
+///    Ok(tuple(1, 2, 3, 4, 5))
+///
+///    > typed_tuple5(from(tuple(1, 2.0, "3", 4, 5)), int, float, string, int, int)
+///    Ok(tuple(1, 2.0, "3", 4, 5))
+///
+///    > typed_tuple5(from(tuple(1, 2)), int, float, string, int, int)
+///    Error("Expected a 5 element tuple, got a 2 element tuple")
+///
+///    > typed_tuple5(from(""), int, float, string, int, int)
+///    Error("Expected a tuple, got a binary")
+///
+pub fn typed_tuple5(
+  from tup: Dynamic,
+  first decode_first: Decoder(a),
+  second decode_second: Decoder(b),
+  third decode_third: Decoder(c),
+  fourth decode_fourth: Decoder(d),
+  fifth decode_fifth: Decoder(e),
+) -> Result(tuple(a, b, c, d, e), String) {
+  try tuple(first, second, third, fourth, fifth) = tuple5(tup)
+  try a = decode_first(first)
+  try b = decode_second(second)
+  try c = decode_third(third)
+  try d = decode_fourth(fourth)
+  try e = decode_fifth(fifth)
+  Ok(tuple(a, b, c, d, e))
+}
+
+/// Checks to see if the Dynamic value is a 6 element tuple.
+///
+/// If you do not wish to decode all the elements in the tuple use the
+/// `typed_tuple6` function instead.
+///
+/// ## Examples
+///
+///    > tuple6(from(tuple(1, 2, 3, 4, 5, 6)))
+///    Ok(tuple(from(1), from(2), from(3), from(4), from(5), from(6)))
+///
+///    > tuple6(from(tuple(1, 2)))
+///    Error("Expected a 6 element tuple")
+///
+///    > tuple6(from(""))
+///    Error("Expected a tuple, got a binary")
+///
+pub external fn tuple6(
+  from: Dynamic,
+) -> Result(tuple(Dynamic, Dynamic, Dynamic, Dynamic, Dynamic, Dynamic), String) =
+  "gleam_stdlib" "decode_tuple6"
+
+/// Checks to see if the Dynamic value is a 6 element tuple containing two
+/// specifically typed elements.
+///
+/// If you wish to decode all the elements in the list use the `typed_tuple6`
+/// instead.
+///
+/// ## Examples
+///
+///    > typed_tuple6(from(tuple(1, 2, 3, 4, 5, 6)), int, int, int, int, int, int)
+///    Ok(tuple(1, 2, 3, 4, 5, 6))
+///
+///    > typed_tuple6(from(tuple(1, 2.0, "3", 4, 5, 6)), int, float, string, int, int)
+///    Ok(tuple(1, 2.0, "3", 4, 5, 6))
+///
+///    > typed_tuple6(from(tuple(1, 2)), int, float, string, int, int, int)
+///    Error("Expected a 6 element tuple, got a 2 element tuple")
+///
+///    > typed_tuple6(from(""), int, float, string, int, int, int)
+///    Error("Expected a tuple, got a binary")
+///
+pub fn typed_tuple6(
+  from tup: Dynamic,
+  first decode_first: Decoder(a),
+  second decode_second: Decoder(b),
+  third decode_third: Decoder(c),
+  fourth decode_fourth: Decoder(d),
+  fifth decode_fifth: Decoder(e),
+  sixth decode_sixth: Decoder(f),
+) -> Result(tuple(a, b, c, d, e, f), String) {
+  try tuple(first, second, third, fourth, fifth, sixth) = tuple6(tup)
+  try a = decode_first(first)
+  try b = decode_second(second)
+  try c = decode_third(third)
+  try d = decode_fourth(fourth)
+  try e = decode_fifth(fifth)
+  try f = decode_sixth(sixth)
+  Ok(tuple(a, b, c, d, e, f))
 }
 
 /// Checks to see if the Dynamic value is map.

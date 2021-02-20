@@ -356,6 +356,308 @@ pub fn typed_tuple2_test() {
   |> should.equal(Error("Expected a 2 element tuple, got an int"))
 }
 
+pub fn tuple3_test() {
+  tuple(1, 2, 3)
+  |> dynamic.from
+  |> dynamic.tuple3
+  |> should.equal(Ok(tuple(dynamic.from(1), dynamic.from(2), dynamic.from(3))))
+
+  tuple(1, "", 3.0)
+  |> dynamic.from
+  |> dynamic.tuple3
+  |> should.equal(Ok(tuple(dynamic.from(1), dynamic.from(""), dynamic.from(3.0))))
+
+  tuple(1, 2)
+  |> dynamic.from
+  |> dynamic.tuple3
+  |> should.equal(Error("Expected a 3 element tuple, got a 2 element tuple"))
+
+  1
+  |> dynamic.from
+  |> dynamic.tuple3
+  |> should.equal(Error("Expected a 3 element tuple, got an int"))
+}
+
+pub fn typed_tuple3_test() {
+  tuple(1, 2, 3)
+  |> dynamic.from
+  |> dynamic.typed_tuple3(dynamic.int, dynamic.int, dynamic.int)
+  |> should.equal(Ok(tuple(1, 2, 3)))
+
+  tuple(1, "", 3.0)
+  |> dynamic.from
+  |> dynamic.typed_tuple3(dynamic.int, dynamic.string, dynamic.float)
+  |> should.equal(Ok(tuple(1, "", 3.0)))
+
+  tuple(1, 2, "")
+  |> dynamic.from
+  |> dynamic.typed_tuple3(dynamic.int, dynamic.int, dynamic.int)
+  |> should.equal(Error("Expected an int, got a binary"))
+
+  tuple(1, 2)
+  |> dynamic.from
+  |> dynamic.typed_tuple3(dynamic.int, dynamic.int, dynamic.int)
+  |> should.equal(Error("Expected a 3 element tuple, got a 2 element tuple"))
+
+  1
+  |> dynamic.from
+  |> dynamic.typed_tuple3(dynamic.int, dynamic.int, dynamic.int)
+  |> should.equal(Error("Expected a 3 element tuple, got an int"))
+}
+
+pub fn tuple4_test() {
+  tuple(1, 2, 3, 4)
+  |> dynamic.from
+  |> dynamic.tuple4
+  |> should.equal(Ok(tuple(
+    dynamic.from(1),
+    dynamic.from(2),
+    dynamic.from(3),
+    dynamic.from(4),
+  )))
+
+  tuple(1, "", 3.0, 4)
+  |> dynamic.from
+  |> dynamic.tuple4
+  |> should.equal(Ok(tuple(
+    dynamic.from(1),
+    dynamic.from(""),
+    dynamic.from(3.0),
+    dynamic.from(4),
+  )))
+
+  tuple(1, 2)
+  |> dynamic.from
+  |> dynamic.tuple4
+  |> should.equal(Error("Expected a 4 element tuple, got a 2 element tuple"))
+
+  1
+  |> dynamic.from
+  |> dynamic.tuple4
+  |> should.equal(Error("Expected a 4 element tuple, got an int"))
+}
+
+pub fn typed_tuple4_test() {
+  tuple(1, 2, 3, 4)
+  |> dynamic.from
+  |> dynamic.typed_tuple4(dynamic.int, dynamic.int, dynamic.int, dynamic.int)
+  |> should.equal(Ok(tuple(1, 2, 3, 4)))
+
+  tuple(1, "", 3.0, 4)
+  |> dynamic.from
+  |> dynamic.typed_tuple4(
+    dynamic.int,
+    dynamic.string,
+    dynamic.float,
+    dynamic.int,
+  )
+  |> should.equal(Ok(tuple(1, "", 3.0, 4)))
+
+  tuple(1, 2, 3, "")
+  |> dynamic.from
+  |> dynamic.typed_tuple4(dynamic.int, dynamic.int, dynamic.int, dynamic.int)
+  |> should.equal(Error("Expected an int, got a binary"))
+
+  tuple(1, 2)
+  |> dynamic.from
+  |> dynamic.typed_tuple4(dynamic.int, dynamic.int, dynamic.int, dynamic.int)
+  |> should.equal(Error("Expected a 4 element tuple, got a 2 element tuple"))
+
+  1
+  |> dynamic.from
+  |> dynamic.typed_tuple4(dynamic.int, dynamic.int, dynamic.int, dynamic.int)
+  |> should.equal(Error("Expected a 4 element tuple, got an int"))
+}
+
+pub fn tuple5_test() {
+  tuple(1, 2, 3, 4, 5)
+  |> dynamic.from
+  |> dynamic.tuple5
+  |> should.equal(Ok(tuple(
+    dynamic.from(1),
+    dynamic.from(2),
+    dynamic.from(3),
+    dynamic.from(4),
+    dynamic.from(5),
+  )))
+
+  tuple(1, "", 3.0, 4, 5)
+  |> dynamic.from
+  |> dynamic.tuple5
+  |> should.equal(Ok(tuple(
+    dynamic.from(1),
+    dynamic.from(""),
+    dynamic.from(3.0),
+    dynamic.from(4),
+    dynamic.from(5),
+  )))
+
+  tuple(1, 2)
+  |> dynamic.from
+  |> dynamic.tuple5
+  |> should.equal(Error("Expected a 5 element tuple, got a 2 element tuple"))
+
+  1
+  |> dynamic.from
+  |> dynamic.tuple5
+  |> should.equal(Error("Expected a 5 element tuple, got an int"))
+}
+
+pub fn typed_tuple5_test() {
+  tuple(1, 2, 3, 4, 5)
+  |> dynamic.from
+  |> dynamic.typed_tuple5(
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+  )
+  |> should.equal(Ok(tuple(1, 2, 3, 4, 5)))
+
+  tuple(1, "", 3.0, 4, 5)
+  |> dynamic.from
+  |> dynamic.typed_tuple5(
+    dynamic.int,
+    dynamic.string,
+    dynamic.float,
+    dynamic.int,
+    dynamic.int,
+  )
+  |> should.equal(Ok(tuple(1, "", 3.0, 4, 5)))
+
+  tuple(1, 2, 3, 4, "")
+  |> dynamic.from
+  |> dynamic.typed_tuple5(
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+  )
+  |> should.equal(Error("Expected an int, got a binary"))
+
+  tuple(1, 2)
+  |> dynamic.from
+  |> dynamic.typed_tuple5(
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+  )
+  |> should.equal(Error("Expected a 5 element tuple, got a 2 element tuple"))
+
+  1
+  |> dynamic.from
+  |> dynamic.typed_tuple5(
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+  )
+  |> should.equal(Error("Expected a 5 element tuple, got an int"))
+}
+
+pub fn tuple6_test() {
+  tuple(1, 2, 3, 4, 5, 6)
+  |> dynamic.from
+  |> dynamic.tuple6
+  |> should.equal(Ok(tuple(
+    dynamic.from(1),
+    dynamic.from(2),
+    dynamic.from(3),
+    dynamic.from(4),
+    dynamic.from(5),
+    dynamic.from(6),
+  )))
+
+  tuple(1, "", 3.0, 4, 5, 6)
+  |> dynamic.from
+  |> dynamic.tuple6
+  |> should.equal(Ok(tuple(
+    dynamic.from(1),
+    dynamic.from(""),
+    dynamic.from(3.0),
+    dynamic.from(4),
+    dynamic.from(5),
+    dynamic.from(6),
+  )))
+
+  tuple(1, 2)
+  |> dynamic.from
+  |> dynamic.tuple6
+  |> should.equal(Error("Expected a 6 element tuple, got a 2 element tuple"))
+
+  1
+  |> dynamic.from
+  |> dynamic.tuple6
+  |> should.equal(Error("Expected a 6 element tuple, got an int"))
+}
+
+pub fn typed_tuple6_test() {
+  tuple(1, 2, 3, 4, 5, 6)
+  |> dynamic.from
+  |> dynamic.typed_tuple6(
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+  )
+  |> should.equal(Ok(tuple(1, 2, 3, 4, 5, 6)))
+
+  tuple(1, "", 3.0, 4, 5, 6)
+  |> dynamic.from
+  |> dynamic.typed_tuple6(
+    dynamic.int,
+    dynamic.string,
+    dynamic.float,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+  )
+  |> should.equal(Ok(tuple(1, "", 3.0, 4, 5, 6)))
+
+  tuple(1, 2, 3, 4, 5, "")
+  |> dynamic.from
+  |> dynamic.typed_tuple6(
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+  )
+  |> should.equal(Error("Expected an int, got a binary"))
+
+  tuple(1, 2)
+  |> dynamic.from
+  |> dynamic.typed_tuple6(
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+  )
+  |> should.equal(Error("Expected a 6 element tuple, got a 2 element tuple"))
+
+  1
+  |> dynamic.from
+  |> dynamic.typed_tuple6(
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+  )
+  |> should.equal(Error("Expected a 6 element tuple, got an int"))
+}
+
 pub fn map_test() {
   map.new()
   |> dynamic.from
