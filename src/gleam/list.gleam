@@ -1220,9 +1220,6 @@ pub fn window_by_2(l: List(a)) -> List(tuple(a, a)) {
   zip(l, drop(l, 1))
 }
 
-external fn erl_drop_while(fn(a) -> Bool, List(a)) -> List(a) =
-  "lists" "dropwhile"
-
 /// Drops the first elements in a given list for which the predicate funtion returns `True`.
 ///
 /// ## Examples
@@ -1234,11 +1231,15 @@ pub fn drop_while(
   in list: List(a),
   satisfying predicate: fn(a) -> Bool,
 ) -> List(a) {
-  erl_drop_while(predicate, list)
+  case list {
+    [] -> []
+    [x, ..xs] ->
+      case predicate(x) {
+        True -> drop_while(xs, predicate)
+        False -> [x, ..xs]
+      }
+  }
 }
-
-external fn erl_take_while(fn(a) -> Bool, List(a)) -> List(a) =
-  "lists" "takewhile"
 
 /// Takes the first elements in a given list for which the predicate funtion returns `True`.
 ///
@@ -1251,5 +1252,12 @@ pub fn take_while(
   in list: List(a),
   satisfying predicate: fn(a) -> Bool,
 ) -> List(a) {
-  erl_take_while(predicate, list)
+  case list {
+    [] -> []
+    [x, ..xs] ->
+      case predicate(x) {
+        True -> [x, ..take_while(xs, predicate)]
+        False -> []
+      }
+  }
 }
