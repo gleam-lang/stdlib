@@ -1219,3 +1219,45 @@ pub fn window(l: List(a), by n: Int) -> List(List(a)) {
 pub fn window_by_2(l: List(a)) -> List(tuple(a, a)) {
   zip(l, drop(l, 1))
 }
+
+/// Drops the first elements in a given list for which the predicate funtion returns `True`.
+///
+/// ## Examples
+///
+///    > drop_while([1, 2, 3, 4], fun (x) { x < 3 })
+///    [3, 4]
+///
+pub fn drop_while(
+  in list: List(a),
+  satisfying predicate: fn(a) -> Bool,
+) -> List(a) {
+  case list {
+    [] -> []
+    [x, ..xs] ->
+      case predicate(x) {
+        True -> drop_while(xs, predicate)
+        False -> [x, ..xs]
+      }
+  }
+}
+
+/// Takes the first elements in a given list for which the predicate funtion returns `True`.
+///
+/// ## Examples
+///
+///    > take_while([1, 2, 3, 4], fun (x) { x < 3 })
+///    [1, 2]
+///
+pub fn take_while(
+  in list: List(a),
+  satisfying predicate: fn(a) -> Bool,
+) -> List(a) {
+  case list {
+    [] -> []
+    [x, ..xs] ->
+      case predicate(x) {
+        True -> [x, ..take_while(xs, predicate)]
+        False -> []
+      }
+  }
+}

@@ -578,3 +578,15 @@ pub fn window_by_2_test() {
   |> list.window_by_2
   |> should.equal([])
 }
+
+pub fn drop_while_test() {
+  [1, 2, 3, 4]
+  |> list.drop_while(fn(x) { x < 3 })
+  |> should.equal([3, 4])
+}
+
+pub fn take_while_test() {
+  [1, 2, 3, 4]
+  |> list.take_while(fn(x) { x < 3 })
+  |> should.equal([1, 2])
+}
