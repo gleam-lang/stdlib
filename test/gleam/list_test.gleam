@@ -586,7 +586,7 @@ pub fn drop_while_test() {
 }
 
 pub fn take_while_test() {
-  [1, 2, 3, 4]
+  [1, 2, 3, 2, 4]
   |> list.take_while(fn(x) { x < 3 })
   |> should.equal([1, 2])
 }
