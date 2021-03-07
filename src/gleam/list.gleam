@@ -1247,11 +1247,11 @@ fn do_take_while(
   acc: List(a),
 ) -> List(a) {
   case list {
-    [] -> acc
+    [] -> reverse(acc)
     [head, ..tail] ->
       case predicate(head) {
         True -> do_take_while(tail, predicate, [head, ..acc])
-        False -> acc
+        False -> reverse(acc)
       }
   }
 }
@@ -1268,5 +1268,4 @@ pub fn take_while(
   satisfying predicate: fn(a) -> Bool,
 ) -> List(a) {
   do_take_while(list, predicate, [])
-  |> reverse
 }
