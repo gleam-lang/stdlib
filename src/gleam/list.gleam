@@ -1260,7 +1260,7 @@ fn do_take_while(
 ///
 /// ## Examples
 ///
-///    > take_while([1, 2, 3, 4], fun (x) { x < 3 })
+///    > take_while([1, 2, 3, 2, 4], fun (x) { x < 3 })
 ///    [1, 2]
 ///
 pub fn take_while(
