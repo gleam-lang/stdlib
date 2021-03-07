@@ -1241,6 +1241,21 @@ pub fn drop_while(
   }
 }
 
+fn do_take_while(
+  list: List(a),
+  predicate: fn(a) -> Bool,
+  acc: List(a),
+) -> List(a) {
+  case list {
+    [] -> acc
+    [head, ..tail] ->
+      case predicate(head) {
+        True -> do_take_while(tail, predicate, [head, ..acc])
+        False -> acc
+      }
+  }
+}
+
 /// Takes the first elements in a given list for which the predicate funtion returns `True`.
 ///
 /// ## Examples
@@ -1252,12 +1267,6 @@ pub fn take_while(
   in list: List(a),
   satisfying predicate: fn(a) -> Bool,
 ) -> List(a) {
-  case list {
-    [] -> []
-    [x, ..xs] ->
-      case predicate(x) {
-        True -> [x, ..take_while(xs, predicate)]
-        False -> []
-      }
-  }
+  do_take_while(list, predicate, [])
+  |> reverse
 }
