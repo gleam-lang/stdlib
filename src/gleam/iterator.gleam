@@ -495,6 +495,32 @@ pub fn find(
   }
 }
 
+fn do_index(
+  continuation: fn() -> Action(element),
+  next: Int,
+) -> fn() -> Action(tuple(Int, element)) {
+  fn() {
+    case continuation() {
+      Continue(e, continuation) ->
+        Continue(tuple(next, e), do_index(continuation, next + 1))
+      Stop -> Stop
+    }
+  }
+}
+
+/// Wraps values yielded from an iterator with indices, starting from 0.
+///
+/// ## Examples
+///
+///    > from_list(["a", "b", "c"]) |> index |> to_list
+///    [tuple(0, "a"), tuple(1, "b"), tuple(2, "c")]
+///
+pub fn index(over iterator: Iterator(element)) -> Iterator(tuple(Int, element)) {
+  iterator.continuation
+  |> do_index(0)
+  |> Iterator
+}
+
 /// Creates an iterator that inifinitely applies a function to a value.
 ///
 /// ## Examples
