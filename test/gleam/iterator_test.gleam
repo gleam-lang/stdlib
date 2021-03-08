@@ -257,3 +257,10 @@ pub fn index_test() {
   |> iterator.to_list
   |> should.equal([tuple(0, "a"), tuple(1, "b"), tuple(2, "c")])
 }
+
+pub fn iterate_test() {
+  fn(x) { x * 3 }
+  |> iterator.iterate(from: 1)
+  |> iterator.take(5)
+  |> should.equal([1, 3, 9, 27, 81])
+}

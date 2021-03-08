@@ -520,3 +520,17 @@ pub fn index(over iterator: Iterator(element)) -> Iterator(tuple(Int, element)) 
   |> do_index(0)
   |> Iterator
 }
+
+/// Creates an iterator that inifinitely applies a function to a value.
+///
+/// ## Examples
+///
+///    > iterate(1, fn(n) { n * 3 }) |> take(5)
+///    [1, 3, 9, 27, 81]
+///
+pub fn iterate(
+  from initial: element,
+  with f: fn(element) -> element,
+) -> Iterator(element) {
+  unfold(initial, fn(element) { Next(element, f(element)) })
+}
