@@ -250,3 +250,10 @@ pub fn find_test() {
   |> iterator.find(fn(cat: Cat) { cat.id == 10 })
   |> should.equal(Ok(Cat(id: 10)))
 }
+
+pub fn iterate_test() {
+  fn(x) { x * 3 }
+  |> iterator.iterate(from: 1)
+  |> iterator.take(5)
+  |> should.equal([1, 3, 9, 27, 81])
+}
