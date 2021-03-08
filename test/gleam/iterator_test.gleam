@@ -250,3 +250,10 @@ pub fn find_test() {
   |> iterator.find(fn(cat: Cat) { cat.id == 10 })
   |> should.equal(Ok(Cat(id: 10)))
 }
+
+pub fn index_test() {
+  iterator.from_list(["a", "b", "c"])
+  |> iterator.index
+  |> iterator.to_list
+  |> should.equal([tuple(0, "a"), tuple(1, "b"), tuple(2, "c")])
+}
