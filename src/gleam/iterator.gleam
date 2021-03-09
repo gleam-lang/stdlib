@@ -534,3 +534,78 @@ pub fn iterate(
 ) -> Iterator(element) {
   unfold(initial, fn(element) { Next(element, f(element)) })
 }
+
+fn do_take_while(
+  continuation: fn() -> Action(element),
+  predicate: fn(element) -> Bool,
+) -> fn() -> Action(element) {
+  fn() {
+    case continuation() {
+      Stop -> Stop
+      Continue(e, next) ->
+        case predicate(e) {
+          False -> Stop
+          True -> Continue(e, do_take_while(next, predicate))
+        }
+    }
+  }
+}
+
+/// Creates an iterator that yields elements while the predicate returns `True`.
+///
+/// ## Examples
+///
+///    > from_list([1, 2, 3, 2, 4]) |> take_while(satisfying: fn(x) { x < 3 }) |> to_list
+///    [1, 2]
+///
+pub fn take_while(
+  in iterator: Iterator(element),
+  satisfying predicate: fn(element) -> Bool,
+) -> Iterator(element) {
+  iterator.continuation
+  |> do_take_while(predicate)
+  |> Iterator
+}
+
+// Internal state of drop_while
+type DropWhile(element) {
+  MaybeDrop(fn(element) -> Bool)
+  Yield
+}
+
+fn do_drop_while(
+  continuation: fn() -> Action(element),
+  drop: DropWhile(element),
+) -> fn() -> Action(element) {
+  fn() {
+    case drop {
+      Yield -> continuation()
+      MaybeDrop(predicate) ->
+        case continuation() {
+          Stop -> Stop
+          Continue(e, next) ->
+            case predicate(e) {
+              False -> Continue(e, do_drop_while(next, Yield))
+              True -> do_drop_while(next, MaybeDrop(predicate))()
+            }
+        }
+    }
+  }
+}
+
+/// Creates an iterator that drops elements while the predicate returns `True`,
+/// and then yields the remaining elements.
+///
+/// ## Examples
+///
+///    > from_list([1, 2, 3, 4, 2, 5]) |> drop_while(satisfying: fn(x) { x < 4 }) |> to_list
+///    [4, 2, 5]
+///
+pub fn drop_while(
+  in iterator: Iterator(element),
+  satisfying predicate: fn(element) -> Bool,
+) -> Iterator(element) {
+  iterator.continuation
+  |> do_drop_while(MaybeDrop(predicate))
+  |> Iterator
+}
