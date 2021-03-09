@@ -264,3 +264,10 @@ pub fn iterate_test() {
   |> iterator.take(5)
   |> should.equal([1, 3, 9, 27, 81])
 }
+
+pub fn zip_test() {
+  iterator.from_list(["a", "b", "c"])
+  |> iterator.zip(iterator.range(20, 30))
+  |> iterator.to_list
+  |> should.equal([tuple("a", 20), tuple("b", 21), tuple("c", 22)])
+}
