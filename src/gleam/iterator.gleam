@@ -567,29 +567,17 @@ pub fn take_while(
   |> Iterator
 }
 
-// Internal state of drop_while
-type DropWhile(element) {
-  MaybeDrop(fn(element) -> Bool)
-  Yield
-}
-
 fn do_drop_while(
   continuation: fn() -> Action(element),
-  drop: DropWhile(element),
-) -> fn() -> Action(element) {
-  fn() {
-    case drop {
-      Yield -> continuation()
-      MaybeDrop(predicate) ->
-        case continuation() {
-          Stop -> Stop
-          Continue(e, next) ->
-            case predicate(e) {
-              False -> Continue(e, do_drop_while(next, Yield))
-              True -> do_drop_while(next, MaybeDrop(predicate))()
-            }
-        }
-    }
+  predicate: fn(element) -> Bool,
+) -> Action(element) {
+  case continuation() {
+    Stop -> Stop
+    Continue(e, next) ->
+      case predicate(e) {
+        False -> Continue(e, next)
+        True -> do_drop_while(next, predicate)
+      }
   }
 }
 
@@ -605,7 +593,6 @@ pub fn drop_while(
   in iterator: Iterator(element),
   satisfying predicate: fn(element) -> Bool,
 ) -> Iterator(element) {
-  iterator.continuation
-  |> do_drop_while(MaybeDrop(predicate))
+  fn() { do_drop_while(iterator.continuation, predicate) }
   |> Iterator
 }
