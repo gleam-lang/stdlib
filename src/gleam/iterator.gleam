@@ -534,3 +534,39 @@ pub fn iterate(
 ) -> Iterator(element) {
   unfold(initial, fn(element) { Next(element, f(element)) })
 }
+
+fn do_scan(
+  continuation: fn() -> Action(element),
+  accumulator: acc,
+  f: fn(element, acc) -> acc,
+) -> fn() -> Action(acc) {
+  fn() {
+    case continuation() {
+      Continue(el, next) -> {
+        let accumulated = f(el, accumulator)
+        Continue(accumulated, do_scan(next, accumulated, f))
+      }
+      Stop -> Stop
+    }
+  }
+}
+
+/// Creates an iterator from an existing iterator and a stateful function.
+///
+/// Specifically, this behaves like `fold`, but yields intermediate results.
+///
+/// ## Examples
+///
+///    Generate a sequence of partial sums:
+///    > from_list([1, 2, 3, 4, 5]) |> scan(from: 0, with: fn(el, acc) { acc + el }) |> to_list
+///    [1, 3, 6, 10, 15]
+///
+pub fn scan(
+  over iterator: Iterator(element),
+  from initial: acc,
+  with f: fn(element, acc) -> acc,
+) -> Iterator(acc) {
+  iterator.continuation
+  |> do_scan(initial, f)
+  |> Iterator
+}

@@ -264,3 +264,10 @@ pub fn iterate_test() {
   |> iterator.take(5)
   |> should.equal([1, 3, 9, 27, 81])
 }
+
+pub fn scan_test() {
+  iterator.from_list([1, 2, 3, 4, 5])
+  |> iterator.scan(from: 0, with: fn(el, acc) { acc + el })
+  |> iterator.to_list
+  |> should.equal([1, 3, 6, 10, 15])
+}
