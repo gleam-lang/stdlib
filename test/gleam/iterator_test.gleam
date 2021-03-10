@@ -305,3 +305,15 @@ pub fn chunk_test() {
   |> iterator.to_list
   |> should.equal([[1], [2, 2], [3], [4, 4, 6], [7, 7]])
 }
+
+pub fn sized_chunk_test() {
+  iterator.from_list([1, 2, 3, 4, 5, 6])
+  |> iterator.sized_chunk(into: 2)
+  |> iterator.to_list
+  |> should.equal([[1, 2], [3, 4], [5, 6]])
+
+  iterator.from_list([1, 2, 3, 4, 5, 6, 7, 8])
+  |> iterator.sized_chunk(into: 3)
+  |> iterator.to_list
+  |> should.equal([[1, 2, 3], [4, 5, 6], [7, 8]])
+}

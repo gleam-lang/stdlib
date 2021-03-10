@@ -596,3 +596,13 @@ pub fn chunk_test() {
   |> list.chunk(by: fn(n) { n % 2 })
   |> should.equal([[1], [2, 2], [3], [4, 4, 6], [7, 7]])
 }
+
+pub fn sized_chunk_test() {
+  [1, 2, 3, 4, 5, 6]
+  |> list.sized_chunk(into: 2)
+  |> should.equal([[1, 2], [3, 4], [5, 6]])
+
+  [1, 2, 3, 4, 5, 6, 7, 8]
+  |> list.sized_chunk(into: 3)
+  |> should.equal([[1, 2, 3], [4, 5, 6], [7, 8]])
+}

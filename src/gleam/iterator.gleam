@@ -6,11 +6,6 @@ type Action(element) {
   Continue(element, fn() -> Action(element))
 }
 
-// Shortcut for an empty iterator
-fn stop() -> Action(element) {
-  Stop
-}
-
 /// An iterator is a lazily evaluated sequence of element.
 ///
 /// Iterators are useful when working with collections that are too large to
@@ -30,6 +25,11 @@ pub opaque type Iterator(element) {
 pub type Step(element, accumulator) {
   Next(element: element, accumulator: accumulator)
   Done
+}
+
+// Shortcut for an empty iterator.
+fn stop() -> Action(element) {
+  Stop
 }
 
 // Creating Iterators
@@ -661,6 +661,7 @@ pub fn zip(left: Iterator(a), right: Iterator(b)) -> Iterator(tuple(a, b)) {
   |> Iterator
 }
 
+// Result of collecting a single chunk by key
 type Chunk(element, key) {
   AnotherBy(List(element), key, element, fn() -> Action(element))
   LastBy(List(element))
@@ -715,5 +716,71 @@ pub fn chunk(
       Continue(e, next) -> do_chunk(next, f, f(e), e)
     }
   }
+  |> Iterator
+}
+
+// Result of collecting a single sized chunk
+type SizedChunk(element) {
+  Another(List(element), fn() -> Action(element))
+  Last(List(element))
+  None
+}
+
+fn next_sized_chunk(
+  continuation: fn() -> Action(element),
+  left: Int,
+  current_chunk: List(element),
+) -> SizedChunk(element) {
+  case continuation() {
+    Stop ->
+      case current_chunk {
+        [] -> None
+        remaining -> Last(list.reverse(remaining))
+      }
+    Continue(e, next) -> {
+      let chunk = [e, ..current_chunk]
+      case left > 1 {
+        False -> Another(list.reverse(chunk), next)
+        True -> next_sized_chunk(next, left - 1, chunk)
+      }
+    }
+  }
+}
+
+fn do_sized_chunk(
+  continuation: fn() -> Action(element),
+  count: Int,
+) -> fn() -> Action(List(element)) {
+  fn() {
+    case next_sized_chunk(continuation, count, []) {
+      None -> Stop
+      Last(chunk) -> Continue(chunk, stop)
+      Another(chunk, next_element) ->
+        Continue(chunk, do_sized_chunk(next_element, count))
+    }
+  }
+}
+
+/// Creates an iterator that emits chunks of given size.
+///
+/// If the last chunk does not have `count` elements, it is yielded
+/// as a partial chunk, with less than `count` elements.
+///
+/// For any `count` less than 1 this function behaves as if it was set to 1.
+///
+/// ## Examples
+///
+///    > from_list([1, 2, 3, 4, 5, 6]) |> chunk(into: 2) |> to_list
+///    [[1, 2], [3, 4], [5, 6]]
+///
+///    > from_list([1, 2, 3, 4, 5, 6, 7, 8]) |> chunk(into: 3) |> to_list
+///    [[1, 2, 3], [4, 5, 6], [7, 8]]
+///
+pub fn sized_chunk(
+  over iterator: Iterator(element),
+  into count: Int,
+) -> Iterator(List(element)) {
+  iterator.continuation
+  |> do_sized_chunk(count)
   |> Iterator
 }
