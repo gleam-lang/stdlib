@@ -265,6 +265,13 @@ pub fn iterate_test() {
   |> should.equal([1, 3, 9, 27, 81])
 }
 
+pub fn scan_test() {
+  iterator.from_list([1, 2, 3, 4, 5])
+  |> iterator.scan(from: 0, with: fn(el, acc) { acc + el })
+  |> iterator.to_list
+  |> should.equal([1, 3, 6, 10, 15])
+}
+
 pub fn zip_test() {
   iterator.from_list(["a", "b", "c"])
   |> iterator.zip(iterator.range(20, 30))
