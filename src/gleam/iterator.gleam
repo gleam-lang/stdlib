@@ -551,6 +551,39 @@ fn do_take_while(
   }
 }
 
+fn do_scan(
+  continuation: fn() -> Action(element),
+  accumulator: acc,
+  f: fn(element, acc) -> acc,
+) -> fn() -> Action(acc) {
+  fn() {
+    case continuation() {
+      Continue(el, next) -> {
+        let accumulated = f(el, accumulator)
+        Continue(accumulated, do_scan(next, accumulated, f))
+      }
+      Stop -> Stop
+    }
+  }
+}
+
+fn do_zip(
+  left: fn() -> Action(a),
+  right: fn() -> Action(b),
+) -> fn() -> Action(tuple(a, b)) {
+  fn() {
+    case left() {
+      Stop -> Stop
+      Continue(el_left, next_left) ->
+        case right() {
+          Stop -> Stop
+          Continue(el_right, next_right) ->
+            Continue(tuple(el_left, el_right), do_zip(next_left, next_right))
+        }
+    }
+  }
+}
+
 /// Creates an iterator that yields elements while the predicate returns `True`.
 ///
 /// ## Examples
@@ -594,5 +627,38 @@ pub fn drop_while(
   satisfying predicate: fn(element) -> Bool,
 ) -> Iterator(element) {
   fn() { do_drop_while(iterator.continuation, predicate) }
+  |> Iterator
+}
+
+/// Creates an iterator from an existing iterator and a stateful function.
+///
+/// Specifically, this behaves like `fold`, but yields intermediate results.
+///
+/// ## Examples
+///
+///    Generate a sequence of partial sums:
+///    > from_list([1, 2, 3, 4, 5]) |> scan(from: 0, with: fn(el, acc) { acc + el }) |> to_list
+///    [1, 3, 6, 10, 15]
+///
+pub fn scan(
+  over iterator: Iterator(element),
+  from initial: acc,
+  with f: fn(element, acc) -> acc,
+) -> Iterator(acc) {
+  iterator.continuation
+  |> do_scan(initial, f)
+  |> Iterator
+}
+
+/// Zips two iterators together, emitting values from both
+/// until the shorter one runs out.
+///
+/// ## Examples
+///
+///    > from_list(["a", "b", "c"]) |> zip(range(20, 30)) |> to_list
+///    [tuple("a", 20), tuple("b", 21), tuple("c", 22)]
+///
+pub fn zip(left: Iterator(a), right: Iterator(b)) -> Iterator(tuple(a, b)) {
+  do_zip(left.continuation, right.continuation)
   |> Iterator
 }

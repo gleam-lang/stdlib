@@ -278,3 +278,17 @@ pub fn drop_while_test() {
   |> iterator.to_list
   |> should.equal([4, 2, 5])
 }
+
+pub fn scan_test() {
+  iterator.from_list([1, 2, 3, 4, 5])
+  |> iterator.scan(from: 0, with: fn(el, acc) { acc + el })
+  |> iterator.to_list
+  |> should.equal([1, 3, 6, 10, 15])
+}
+
+pub fn zip_test() {
+  iterator.from_list(["a", "b", "c"])
+  |> iterator.zip(iterator.range(20, 30))
+  |> iterator.to_list
+  |> should.equal([tuple("a", 20), tuple("b", 21), tuple("c", 22)])
+}
