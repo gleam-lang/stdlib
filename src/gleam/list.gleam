@@ -1303,3 +1303,45 @@ pub fn chunk(in list: List(a), by f: fn(a) -> key) -> List(List(a)) {
     [head, ..tail] -> do_chunk(tail, f, f(head), [head], [])
   }
 }
+
+fn do_sized_chunk(
+  list: List(a),
+  count: Int,
+  left: Int,
+  current_chunk: List(a),
+  acc: List(List(a)),
+) -> List(List(a)) {
+  case list {
+    [] ->
+      case current_chunk {
+        [] -> reverse(acc)
+        remaining -> reverse([reverse(remaining), ..acc])
+      }
+    [head, ..tail] -> {
+      let chunk = [head, ..current_chunk]
+      case left > 1 {
+        False -> do_sized_chunk(tail, count, count, [], [reverse(chunk), ..acc])
+        True -> do_sized_chunk(tail, count, left - 1, chunk, acc)
+      }
+    }
+  }
+}
+
+/// Returns a list of chunks containing `count` elements each.
+///
+/// If the last chunk does not have `count` elements, it is instead
+/// a partial chunk, with less than `count` elements.
+///
+/// For any `count` less than 1 this function behaves as if it was set to 1.
+///
+/// ## Examples
+///
+///    > [1, 2, 3, 4, 5, 6] |> chunk(into: 2)
+///    [[1, 2], [3, 4], [5, 6]]
+///
+///    > [1, 2, 3, 4, 5, 6, 7, 8] |> chunk(into: 3)
+///    [[1, 2, 3], [4, 5, 6], [7, 8]]
+///
+pub fn sized_chunk(in list: List(a), into count: Int) -> List(List(a)) {
+  do_sized_chunk(list, count, count, [], [])
+}
