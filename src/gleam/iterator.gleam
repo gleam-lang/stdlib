@@ -551,6 +551,23 @@ fn do_scan(
   }
 }
 
+fn do_zip(
+  left: fn() -> Action(a),
+  right: fn() -> Action(b),
+) -> fn() -> Action(tuple(a, b)) {
+  fn() {
+    case left() {
+      Stop -> Stop
+      Continue(el_left, next_left) ->
+        case right() {
+          Stop -> Stop
+          Continue(el_right, next_right) ->
+            Continue(tuple(el_left, el_right), do_zip(next_left, next_right))
+        }
+    }
+  }
+}
+
 /// Creates an iterator from an existing iterator and a stateful function.
 ///
 /// Specifically, this behaves like `fold`, but yields intermediate results.
@@ -568,5 +585,18 @@ pub fn scan(
 ) -> Iterator(acc) {
   iterator.continuation
   |> do_scan(initial, f)
+  |> Iterator
+}
+
+/// Zips two iterators together, emitting values from both
+/// until the shorter one runs out.
+///
+/// ## Examples
+///
+///    > from_list(["a", "b", "c"]) |> zip(range(20, 30)) |> to_list
+///    [tuple("a", 20), tuple("b", 21), tuple("c", 22)]
+///
+pub fn zip(left: Iterator(a), right: Iterator(b)) -> Iterator(tuple(a, b)) {
+  do_zip(left.continuation, right.continuation)
   |> Iterator
 }

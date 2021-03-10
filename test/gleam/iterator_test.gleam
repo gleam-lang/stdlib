@@ -271,3 +271,10 @@ pub fn scan_test() {
   |> iterator.to_list
   |> should.equal([1, 3, 6, 10, 15])
 }
+
+pub fn zip_test() {
+  iterator.from_list(["a", "b", "c"])
+  |> iterator.zip(iterator.range(20, 30))
+  |> iterator.to_list
+  |> should.equal([tuple("a", 20), tuple("b", 21), tuple("c", 22)])
+}
