@@ -535,6 +535,22 @@ pub fn iterate(
   unfold(initial, fn(element) { Next(element, f(element)) })
 }
 
+fn do_take_while(
+  continuation: fn() -> Action(element),
+  predicate: fn(element) -> Bool,
+) -> fn() -> Action(element) {
+  fn() {
+    case continuation() {
+      Stop -> Stop
+      Continue(e, next) ->
+        case predicate(e) {
+          False -> Stop
+          True -> Continue(e, do_take_while(next, predicate))
+        }
+    }
+  }
+}
+
 fn do_scan(
   continuation: fn() -> Action(element),
   accumulator: acc,
@@ -566,6 +582,52 @@ fn do_zip(
         }
     }
   }
+}
+
+/// Creates an iterator that yields elements while the predicate returns `True`.
+///
+/// ## Examples
+///
+///    > from_list([1, 2, 3, 2, 4]) |> take_while(satisfying: fn(x) { x < 3 }) |> to_list
+///    [1, 2]
+///
+pub fn take_while(
+  in iterator: Iterator(element),
+  satisfying predicate: fn(element) -> Bool,
+) -> Iterator(element) {
+  iterator.continuation
+  |> do_take_while(predicate)
+  |> Iterator
+}
+
+fn do_drop_while(
+  continuation: fn() -> Action(element),
+  predicate: fn(element) -> Bool,
+) -> Action(element) {
+  case continuation() {
+    Stop -> Stop
+    Continue(e, next) ->
+      case predicate(e) {
+        False -> Continue(e, next)
+        True -> do_drop_while(next, predicate)
+      }
+  }
+}
+
+/// Creates an iterator that drops elements while the predicate returns `True`,
+/// and then yields the remaining elements.
+///
+/// ## Examples
+///
+///    > from_list([1, 2, 3, 4, 2, 5]) |> drop_while(satisfying: fn(x) { x < 4 }) |> to_list
+///    [4, 2, 5]
+///
+pub fn drop_while(
+  in iterator: Iterator(element),
+  satisfying predicate: fn(element) -> Bool,
+) -> Iterator(element) {
+  fn() { do_drop_while(iterator.continuation, predicate) }
+  |> Iterator
 }
 
 /// Creates an iterator from an existing iterator and a stateful function.

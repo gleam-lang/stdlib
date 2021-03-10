@@ -265,6 +265,20 @@ pub fn iterate_test() {
   |> should.equal([1, 3, 9, 27, 81])
 }
 
+pub fn take_while_test() {
+  iterator.from_list([1, 2, 3, 2, 4])
+  |> iterator.take_while(satisfying: fn(x) { x < 3 })
+  |> iterator.to_list
+  |> should.equal([1, 2])
+}
+
+pub fn drop_while_test() {
+  iterator.from_list([1, 2, 3, 4, 2, 5])
+  |> iterator.drop_while(satisfying: fn(x) { x < 4 })
+  |> iterator.to_list
+  |> should.equal([4, 2, 5])
+}
+
 pub fn scan_test() {
   iterator.from_list([1, 2, 3, 4, 5])
   |> iterator.scan(from: 0, with: fn(el, acc) { acc + el })
