@@ -767,3 +767,53 @@ pub fn sized_chunk(
   |> do_sized_chunk(count)
   |> Iterator
 }
+
+fn do_dedup_by(
+  continuation: fn() -> Action(element),
+  f: fn(element) -> key,
+  previous_key: key,
+) -> Action(element) {
+  case continuation() {
+    Stop -> Stop
+    Continue(e, next) -> {
+      let key = f(e)
+      case key == previous_key {
+        False -> Continue(e, fn() { do_dedup_by(next, f, key) })
+        True -> do_dedup_by(next, f, key)
+      }
+    }
+  }
+}
+
+/// Creates an iterator that yields a given element only if the result of calling `f` on it
+/// is different from the result of calling `f` on the previously emitted element.
+///
+/// ## Examples
+///
+///    > from_list([tuple(1, "a"), tuple(2, "b"), tuple(2, "c"), tuple(1, "a")]) |> dedup_by(pair.first) |> to_list
+///    [tuple(1, "a"), tuple(2, "b"), tuple(1, "a")]
+///
+pub fn dedup_by(
+  over iterator: Iterator(element),
+  with f: fn(element) -> key,
+) -> Iterator(element) {
+  fn() {
+    case iterator.continuation() {
+      Stop -> Stop
+      Continue(e, next) -> Continue(e, fn() { do_dedup_by(next, f, f(e)) })
+    }
+  }
+  |> Iterator
+}
+
+/// Creates an iterator that yields a given element
+/// only if it is different from the previously emitted element.
+///
+/// ## Examples
+///
+///    > from_list([1, 2, 3, 3, 2, 1, 1, 2]) |> dedup |> to_list
+///    [1, 2, 3, 2, 1, 2]
+///
+pub fn dedup(over iterator: Iterator(element)) -> Iterator(element) {
+  dedup_by(iterator, fn(x) { x })
+}

@@ -1,6 +1,7 @@
 import gleam/should
 import gleam/iterator.{Done, Next}
 import gleam/list
+import gleam/pair
 
 // a |> from_list |> to_list == a
 pub fn to_from_list_test() {
@@ -316,4 +317,23 @@ pub fn sized_chunk_test() {
   |> iterator.sized_chunk(into: 3)
   |> iterator.to_list
   |> should.equal([[1, 2, 3], [4, 5, 6], [7, 8]])
+}
+
+pub fn dedup_by_test() {
+  iterator.from_list([
+    tuple(1, "a"),
+    tuple(2, "b"),
+    tuple(2, "c"),
+    tuple(1, "a"),
+  ])
+  |> iterator.dedup_by(pair.first)
+  |> iterator.to_list
+  |> should.equal([tuple(1, "a"), tuple(2, "b"), tuple(1, "a")])
+}
+
+pub fn dedup_test() {
+  iterator.from_list([1, 2, 3, 3, 2, 1, 1, 2])
+  |> iterator.dedup
+  |> iterator.to_list
+  |> should.equal([1, 2, 3, 2, 1, 2])
 }
