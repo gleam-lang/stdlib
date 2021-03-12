@@ -298,3 +298,10 @@ pub fn zip_test() {
   |> iterator.to_list
   |> should.equal([tuple("a", 20), tuple("b", 21), tuple("c", 22)])
 }
+
+pub fn chunk_by_test() {
+  iterator.from_list([1, 2, 2, 3, 4, 4, 6, 7, 7])
+  |> iterator.chunk_by(fn(n) { n % 2 })
+  |> iterator.to_list
+  |> should.equal([[1], [2, 2], [3], [4, 4, 6], [7, 7]])
+}
