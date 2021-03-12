@@ -1345,3 +1345,48 @@ fn do_sized_chunk(
 pub fn sized_chunk(in list: List(a), into count: Int) -> List(List(a)) {
   do_sized_chunk(list, count, count, [], [])
 }
+
+fn do_dedup_by(
+  list: List(a),
+  f: fn(a) -> key,
+  previous_key: key,
+  acc: List(a),
+) -> List(a) {
+  case list {
+    [] -> reverse(acc)
+    [head, ..tail] -> {
+      let key = f(head)
+      case key == previous_key {
+        False -> do_dedup_by(tail, f, key, [head, ..acc])
+        True -> do_dedup_by(tail, f, key, acc)
+      }
+    }
+  }
+}
+
+/// Returns a new list where a given element is dropped
+/// if the result of calling `f` on it and the previous element is the same.
+///
+/// ## Examples
+///
+///    > [tuple(1, "a"), tuple(2, "b"), tuple(2, "c"), tuple(1, "a")] |> dedup_by(pair.first)
+///    [tuple(1, "a"), tuple(2, "b"), tuple(1, "a")]
+///
+pub fn dedup_by(list: List(a), f: fn(a) -> key) -> List(a) {
+  case list {
+    [] -> []
+    [head, ..tail] -> do_dedup_by(tail, f, f(head), [head])
+  }
+}
+
+/// Returns a new list where a given element is dropped
+/// if it is the same as the previous element.
+///
+/// ## Examples
+///
+///    > dedup([1, 2, 3, 3, 2, 1, 1, 2])
+///    [1, 2, 3, 2, 1, 2]
+///
+pub fn dedup(list: List(a)) -> List(a) {
+  dedup_by(list, fn(x) { x })
+}
