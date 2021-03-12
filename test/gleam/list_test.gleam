@@ -590,3 +590,9 @@ pub fn take_while_test() {
   |> list.take_while(fn(x) { x < 3 })
   |> should.equal([1, 2])
 }
+
+pub fn chunk_by_test() {
+  [1, 2, 2, 3, 4, 4, 6, 7, 7]
+  |> list.chunk_by(fn(n) { n % 2 })
+  |> should.equal([[1], [2, 2], [3], [4, 4, 6], [7, 7]])
+}
