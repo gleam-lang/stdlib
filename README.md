@@ -7,6 +7,41 @@
 Gleam's standard library!
 Documentation available on [HexDocs](https://hexdocs.pm/gleam_stdlib/).
 
+## Installation
+
+Add `gleam_stdlib` to the deps section of your `rebar.config` or `mix.exs`
+
+```erlang
+{deps, [
+    {gleam_stdlib, "0.14.0"}
+]}
+```
+
+```elixir
+defp deps do
+  [
+    {:gleam_stdlib, "~> 0.14.0"},
+  ]
+end
+```
+
+## Usage
+
+Import the modules you want to use first
+
+```rust
+import gleam/string
+import gleam/list.{contains}
+
+fn usage() {
+  string.append("str", "ing")
+}
+
+fn more_usage() {
+  contains([1, 2, 3], any: 2)
+}
+```
+
 ## Quick reference
 
 ```sh
