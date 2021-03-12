@@ -6,6 +6,11 @@ type Action(element) {
   Continue(element, fn() -> Action(element))
 }
 
+// Shortcut for an empty iterator
+fn stop() -> Action(element) {
+  Stop
+}
+
 /// An iterator is a lazily evaluated sequence of element.
 ///
 /// Iterators are useful when working with collections that are too large to
@@ -653,5 +658,68 @@ pub fn scan(
 ///
 pub fn zip(left: Iterator(a), right: Iterator(b)) -> Iterator(tuple(a, b)) {
   do_zip(left.continuation, right.continuation)
+  |> Iterator
+}
+
+type ChunkBy(element, key) {
+  AnotherBy(List(element), key, element, fn() -> Action(element))
+  LastBy(List(element))
+  NoneBy
+}
+
+fn next_chunk_by(
+  continuation: fn() -> Action(element),
+  f: fn(element) -> key,
+  previous_key: key,
+  current_chunk: List(element),
+) -> ChunkBy(element, key) {
+  case continuation() {
+    Stop ->
+      case current_chunk {
+        [] -> NoneBy
+        remaining -> LastBy(list.reverse(remaining))
+      }
+    Continue(e, next) -> {
+      let key = f(e)
+      case key == previous_key {
+        True -> next_chunk_by(next, f, key, [e, ..current_chunk])
+        False -> AnotherBy(list.reverse(current_chunk), key, e, next)
+      }
+    }
+  }
+}
+
+fn do_chunk_by(
+  continuation: fn() -> Action(element),
+  f: fn(element) -> key,
+  previous_key: key,
+  previous_element: element,
+) -> Action(List(element)) {
+  case next_chunk_by(continuation, f, previous_key, [previous_element]) {
+    NoneBy -> Stop
+    LastBy(chunk) -> Continue(chunk, stop)
+    AnotherBy(chunk, key, el, next) ->
+      Continue(chunk, fn() { do_chunk_by(next, f, key, el) })
+  }
+}
+
+/// Creates an iterator that emits chunks of elements
+/// for which `f` returns the same value.
+///
+/// ## Examples
+///
+///    > from_list([1, 2, 2, 3, 4, 4, 6, 7, 7]) |> chunk_by(fn(n) { n % 2 }) |> to_list
+///    [[1], [2, 2], [3], [4, 4, 6], [7, 7]]
+///
+pub fn chunk_by(
+  over iterator: Iterator(element),
+  with f: fn(element) -> key,
+) -> Iterator(List(element)) {
+  fn() {
+    case iterator.continuation() {
+      Stop -> Stop
+      Continue(e, next) -> do_chunk_by(next, f, f(e), e)
+    }
+  }
   |> Iterator
 }
