@@ -67,6 +67,12 @@ pub fn path_only_uri_to_string_test() {
 pub fn parse_query_string_test() {
   assert Ok(parsed) = uri.parse_query("foo+bar=1&city=%C3%B6rebro")
   should.equal(parsed, [tuple("foo bar", "1"), tuple("city", "örebro")])
+
+  // Duplicates keys not overridden
+  assert Ok(parsed) = uri.parse_query("a[]=1&a[]=2")
+
+  parsed
+  |> should.equal([tuple("a[]", "1"), tuple("a[]", "2")])
 }
 
 pub fn parse_empty_query_string_test() {

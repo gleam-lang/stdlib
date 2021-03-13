@@ -49,6 +49,14 @@ type UriKey {
 ///
 /// The opposite operation is `uri.to_string`
 ///
+/// ## Examples
+///
+/// ```
+/// > parse("https://example.com:1234/a/b?query=true#fragment")
+///
+/// Ok(Uri(scheme: Some("https"), ...))
+/// ```
+///
 pub fn parse(string: String) -> Result(Uri, Nil) {
   try uri_map =
     dynamic.map(erl_parse(string))
@@ -80,6 +88,14 @@ external fn erl_parse_query(String) -> Dynamic =
 /// Returns an error for invalid encoding.
 ///
 /// The opposite operation is `uri.query_to_string`.
+///
+/// ## Examples
+///
+/// ```
+/// > parse_query("a=1&b=2")
+///
+/// Ok([tuple("a", "1"), tuple("b", "2")])
+/// ```
 ///
 pub fn parse_query(query: String) -> Result(List(tuple(String, String)), Nil) {
   let bool_value = fn(x) { result.map(dynamic.bool(x), fn(_) { "" }) }
@@ -113,6 +129,14 @@ external fn erl_query_to_string(
 ///
 /// The opposite operation is `uri.parse_query`.
 ///
+/// ## Examples
+///
+/// ```
+/// > query_to_string([tuple("a", "1"), tuple("b", "2")])
+///
+/// "a=1&b=2"
+/// ```
+///
 pub fn query_to_string(query: List(tuple(String, String))) -> String {
   query
   |> erl_query_to_string([Encoding(Utf8)])
@@ -123,10 +147,13 @@ pub fn query_to_string(query: List(tuple(String, String))) -> String {
 /// Encodes a string into a percent encoded representation.
 /// Note that this encodes space as +.
 ///
-/// ## Example
+/// ## Examples
 ///
-/// percent_encode("100% great")
-/// > "100%25+great"
+/// ```
+/// > percent_encode("100% great")
+///
+/// "100%25+great"
+/// ```
 ///
 pub fn percent_encode(value: String) -> String {
   query_to_string([tuple("k", value)])
@@ -135,10 +162,13 @@ pub fn percent_encode(value: String) -> String {
 
 /// Decodes a percent encoded string.
 ///
-/// ## Example
+/// ## Examples
 ///
-/// percent_decode("100%25+great")
-/// > Ok("100% great")
+/// ```
+/// > percent_decode("100%25+great")
+///
+/// Ok("100% great")
+/// ```
 ///
 pub fn percent_decode(value: String) -> Result(String, Nil) {
   string.concat(["k=", value])
@@ -175,6 +205,14 @@ fn remove_dot_segments(input: List(String)) -> List(String) {
 /// Removes empty segments and resolves dot-segments as specified in
 /// [section 5.2](https://www.ietf.org/rfc/rfc3986.html#section-5.2) of the RFC.
 ///
+/// ## Examples
+///
+/// ```
+/// > path_segments("/users/1")
+///
+/// ["users" ,"1"]
+/// ```
+///
 pub fn path_segments(path: String) -> List(String) {
   remove_dot_segments(string.split(path, "/"))
 }
@@ -185,6 +223,15 @@ external fn erl_to_string(Map(UriKey, Dynamic)) -> Dynamic =
 /// Encodes a `Uri` value as a URI string.
 ///
 /// The opposite operation is `uri.parse`.
+///
+/// ## Examples
+///
+/// ```
+/// > let uri = Uri(Some("http"), None, Some("example.com"), ...)
+/// > to_string(uri)
+///
+/// "https://example.com"
+/// ```
 ///
 pub fn to_string(uri: Uri) -> String {
   let field = fn(key: UriKey, value: Option(anything)) -> Result(
@@ -220,6 +267,16 @@ pub fn to_string(uri: Uri) -> String {
 ///
 /// The supported uri schemes are `http` and `https`
 /// Urls without a scheme will return Error
+///
+/// ## Examples
+///
+/// ```
+/// > assert Ok(uri) = parse("http://example.com/path?foo#bar")
+/// > origin(uri)
+///
+/// Ok("http://example.com")
+/// ```
+///
 pub fn origin(uri: Uri) -> Result(String, Nil) {
   let Uri(scheme: scheme, host: host, port: port, ..) = uri
   case scheme {
