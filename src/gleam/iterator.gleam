@@ -550,39 +550,6 @@ fn do_take_while(
   }
 }
 
-fn do_scan(
-  continuation: fn() -> Action(element),
-  f: fn(element, acc) -> acc,
-  accumulator: acc,
-) -> fn() -> Action(acc) {
-  fn() {
-    case continuation() {
-      Stop -> Stop
-      Continue(el, next) -> {
-        let accumulated = f(el, accumulator)
-        Continue(accumulated, do_scan(next, f, accumulated))
-      }
-    }
-  }
-}
-
-fn do_zip(
-  left: fn() -> Action(a),
-  right: fn() -> Action(b),
-) -> fn() -> Action(tuple(a, b)) {
-  fn() {
-    case left() {
-      Stop -> Stop
-      Continue(el_left, next_left) ->
-        case right() {
-          Stop -> Stop
-          Continue(el_right, next_right) ->
-            Continue(tuple(el_left, el_right), do_zip(next_left, next_right))
-        }
-    }
-  }
-}
-
 /// Creates an iterator that yields elements while the predicate returns `True`.
 ///
 /// ## Examples
@@ -629,6 +596,22 @@ pub fn drop_while(
   |> Iterator
 }
 
+fn do_scan(
+  continuation: fn() -> Action(element),
+  f: fn(element, acc) -> acc,
+  accumulator: acc,
+) -> fn() -> Action(acc) {
+  fn() {
+    case continuation() {
+      Stop -> Stop
+      Continue(el, next) -> {
+        let accumulated = f(el, accumulator)
+        Continue(accumulated, do_scan(next, f, accumulated))
+      }
+    }
+  }
+}
+
 /// Creates an iterator from an existing iterator and a stateful function.
 ///
 /// Specifically, this behaves like `fold`, but yields intermediate results.
@@ -647,6 +630,23 @@ pub fn scan(
   iterator.continuation
   |> do_scan(f, initial)
   |> Iterator
+}
+
+fn do_zip(
+  left: fn() -> Action(a),
+  right: fn() -> Action(b),
+) -> fn() -> Action(tuple(a, b)) {
+  fn() {
+    case left() {
+      Stop -> Stop
+      Continue(el_left, next_left) ->
+        case right() {
+          Stop -> Stop
+          Continue(el_right, next_right) ->
+            Continue(tuple(el_left, el_right), do_zip(next_left, next_right))
+        }
+    }
+  }
 }
 
 /// Zips two iterators together, emitting values from both
