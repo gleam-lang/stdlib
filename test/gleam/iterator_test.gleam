@@ -383,3 +383,13 @@ pub fn reduce_test() {
   |> iterator.reduce(with: fn(x, y) { x + y })
   |> should.equal(Ok(15))
 }
+
+pub fn last_test() {
+  iterator.from_list([])
+  |> iterator.last
+  |> should.equal(Error(Nil))
+
+  iterator.range(1, 10)
+  |> iterator.last
+  |> should.equal(Ok(9))
+}
