@@ -1,6 +1,7 @@
 import gleam/should
 import gleam/iterator.{Done, Next}
 import gleam/list
+import gleam/map
 
 // a |> from_list |> to_list == a
 pub fn to_from_list_test() {
@@ -361,4 +362,14 @@ pub fn all_test() {
   iterator.from_list([2, 4, 5, 8])
   |> iterator.all(satisfying: fn(n) { n % 2 == 0 })
   |> should.be_false
+}
+
+pub fn group_test() {
+  iterator.from_list([1, 2, 3, 4, 5, 6])
+  |> iterator.group(by: fn(n) { n % 3 })
+  |> should.equal(map.from_list([
+    tuple(0, [3, 6]),
+    tuple(1, [1, 4]),
+    tuple(2, [2, 5]),
+  ]))
 }
