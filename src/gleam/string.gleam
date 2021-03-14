@@ -322,6 +322,7 @@ pub fn concat(strings: List(String)) -> String {
 pub fn repeat(string: String, times times: Int) -> String {
   iterator.repeat(string)
   |> iterator.take(times)
+  |> iterator.to_list
   |> concat
 }
 

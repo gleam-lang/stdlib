@@ -15,7 +15,7 @@ type Action(element) {
 /// As a lazy data structure no work is done when an iterator is filters,
 /// mapped, etc, instead a new iterator is returned with these transformations
 /// applied to the stream. Once the stream has all the required transformations
-/// applied it can be evaluated using functions such as `fold` and `take`.
+/// applied it can be evaluated using functions such as `fold` and `to_list`.
 ///
 pub opaque type Iterator(element) {
   Iterator(continuation: fn() -> Action(element))
@@ -196,42 +196,35 @@ pub fn step(iterator: Iterator(e)) -> Step(e, Iterator(e)) {
   }
 }
 
-fn do_take(
-  continuation: fn() -> Action(e),
-  desired: Int,
-  acc: List(e),
-) -> List(e) {
-  case desired > 0 {
-    True ->
-      case continuation() {
-        Continue(element, iterator) ->
-          do_take(iterator, desired - 1, [element, ..acc])
-        Stop ->
-          acc
-          |> list.reverse
-      }
-    False ->
-      acc
-      |> list.reverse
+fn do_take(continuation: fn() -> Action(e), desired: Int) -> fn() -> Action(e) {
+  fn() {
+    case desired > 0 {
+      False -> Stop
+      True ->
+        case continuation() {
+          Stop -> Stop
+          Continue(e, next) -> Continue(e, do_take(next, desired - 1))
+        }
+    }
   }
 }
 
-/// Evaluates a desired number of elements from an iterator and return them in a
-/// list.
+/// Creates an iterator that only yields the first `desired` elements.
 ///
-/// If the iterator does not have enough elements all of them are returned.
+/// If the iterator does not have enough elements all of them are yielded.
 ///
 /// ## Examples
 ///
-///    > [1, 2, 3, 4, 5] |> from_list |> take(up_to: 3)
+///    > [1, 2, 3, 4, 5] |> from_list |> take(up_to: 3) |> to_list
 ///    [1, 2, 3]
 ///
-///    > [1, 2] |> from_list |> take(up_to: 3)
+///    > [1, 2] |> from_list |> take(up_to: 3) |> to_list
 ///    [1, 2]
 ///
-pub fn take(from iterator: Iterator(e), up_to desired: Int) -> List(e) {
+pub fn take(from iterator: Iterator(e), up_to desired: Int) -> Iterator(e) {
   iterator.continuation
-  |> do_take(desired, [])
+  |> do_take(desired)
+  |> Iterator
 }
 
 fn do_drop(continuation: fn() -> Action(e), desired: Int) -> fn() -> Action(e) {

@@ -47,6 +47,7 @@ pub fn take_test() {
     subject
     |> iterator.from_list
     |> iterator.take(n)
+    |> iterator.to_list
     |> should.equal(list.take(subject, n))
   }
 
@@ -173,6 +174,7 @@ pub fn repeat_test() {
   1
   |> iterator.repeat
   |> iterator.take(5)
+  |> iterator.to_list
   |> should.equal([1, 1, 1, 1, 1])
 }
 
@@ -181,16 +183,19 @@ pub fn cycle_test() {
   |> iterator.from_list
   |> iterator.cycle
   |> iterator.take(9)
+  |> iterator.to_list
   |> should.equal([1, 2, 3, 1, 2, 3, 1, 2, 3])
 }
 
 pub fn unfold_test() {
   iterator.unfold(2, fn(acc) { iterator.Next(acc, acc * 2) })
   |> iterator.take(5)
+  |> iterator.to_list
   |> should.equal([2, 4, 8, 16, 32])
 
   iterator.unfold(2, fn(_) { iterator.Done })
   |> iterator.take(5)
+  |> iterator.to_list
   |> should.equal([])
 
   fn(n) {
@@ -262,6 +267,7 @@ pub fn iterate_test() {
   fn(x) { x * 3 }
   |> iterator.iterate(from: 1)
   |> iterator.take(5)
+  |> iterator.to_list
   |> should.equal([1, 3, 9, 27, 81])
 }
 
