@@ -807,3 +807,75 @@ pub fn intersperse(
   }
   |> Iterator
 }
+
+fn do_any(
+  continuation: fn() -> Action(element),
+  predicate: fn(element) -> Bool,
+) -> Bool {
+  case continuation() {
+    Stop -> False
+    Continue(e, next) -> predicate(e) || do_any(next, predicate)
+  }
+}
+
+/// Returns `True` if any element emitted by the iterator satisfies the given predicate,
+/// `False` otherwise.
+///
+/// This function short-circuits once it finds a satisfying element.
+///
+/// An empty iterator results in `False`.
+///
+/// ## Examples
+///
+///    > from_list([]) |> any(fn(n) { n % 2 == 0 })
+///    False
+///
+///    > from_list([1, 2, 5, 7, 9]) |> any(fn(n) { n % 2 == 0 })
+///    True
+///
+///    > from_list([1, 3, 5, 7, 9]) |> any(fn(n) { n % 2 == 0 })
+///    False
+///
+pub fn any(
+  in iterator: Iterator(element),
+  satisfying predicate: fn(element) -> Bool,
+) -> Bool {
+  iterator.continuation
+  |> do_any(predicate)
+}
+
+fn do_all(
+  continuation: fn() -> Action(element),
+  predicate: fn(element) -> Bool,
+) -> Bool {
+  case continuation() {
+    Stop -> True
+    Continue(e, next) -> predicate(e) && do_all(next, predicate)
+  }
+}
+
+/// Returns `True` if all elements emitted by the iterator satisfy the given predicate,
+/// `False` otherwise.
+///
+/// This function short-circuits once it finds a non-satisfying element.
+///
+/// An empty iterator results in `True`.
+///
+/// ## Examples
+///
+///    > from_list([]) |> all(fn(n) { n % 2 == 0 })
+///    True
+///
+///    > from_list([2, 4, 6, 8]) |> all(fn(n) { n % 2 == 0 })
+///    True
+///
+///    > from_list([2, 4, 5, 8]) |> all(fn(n) { n % 2 == 0 })
+///    False
+///
+pub fn all(
+  in iterator: Iterator(element),
+  satisfying predicate: fn(element) -> Bool,
+) -> Bool {
+  iterator.continuation
+  |> do_all(predicate)
+}
