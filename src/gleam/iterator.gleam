@@ -232,14 +232,14 @@ pub fn take(from iterator: Iterator(e), up_to desired: Int) -> Iterator(e) {
   |> Iterator
 }
 
-fn do_drop(continuation: fn() -> Action(e), desired: Int) -> fn() -> Action(e) {
-  case desired > 0 {
-    True ->
-      case continuation() {
-        Continue(_, iterator) -> do_drop(iterator, desired - 1)
-        Stop -> fn() { Stop }
+fn do_drop(continuation: fn() -> Action(e), desired: Int) -> Action(e) {
+  case continuation() {
+    Stop -> Stop
+    Continue(e, next) ->
+      case desired > 0 {
+        True -> do_drop(next, desired - 1)
+        False -> Continue(e, next)
       }
-    False -> continuation
   }
 }
 
@@ -261,16 +261,15 @@ fn do_drop(continuation: fn() -> Action(e), desired: Int) -> fn() -> Action(e) {
 ///    []
 ///
 pub fn drop(from iterator: Iterator(e), up_to desired: Int) -> Iterator(e) {
-  iterator.continuation
-  |> do_drop(desired)
+  fn() { do_drop(iterator.continuation, desired) }
   |> Iterator
 }
 
 fn do_map(continuation: fn() -> Action(a), f: fn(a) -> b) -> fn() -> Action(b) {
   fn() {
     case continuation() {
-      Continue(e, continuation) -> Continue(f(e), do_map(continuation, f))
       Stop -> Stop
+      Continue(e, continuation) -> Continue(f(e), do_map(continuation, f))
     }
   }
 }
@@ -322,13 +321,19 @@ pub fn append(to first: Iterator(a), suffix second: Iterator(a)) -> Iterator(a) 
   |> Iterator
 }
 
-fn do_flatten(continuation: fn() -> Action(Iterator(a))) -> fn() -> Action(a) {
-  fn() {
-    case continuation() {
-      Continue(e, continuation) ->
-        do_append(e.continuation, do_flatten(continuation))()
-      Stop -> Stop
-    }
+fn do_flatten(
+  flattened: fn() -> Action(Iterator(a)),
+  next: fn() -> Action(a),
+) -> Action(a) {
+  case next() {
+    Stop ->
+      case flattened() {
+        Stop -> Stop
+        Continue(it, next_iterator) ->
+          do_flatten(next_iterator, it.continuation)
+      }
+    Continue(e, next_elem) ->
+      Continue(e, fn() { do_flatten(flattened, next_elem) })
   }
 }
 
@@ -343,8 +348,12 @@ fn do_flatten(continuation: fn() -> Action(Iterator(a))) -> fn() -> Action(a) {
 ///    [1, 2, 3, 4]
 ///
 pub fn flatten(iterator: Iterator(Iterator(a))) -> Iterator(a) {
-  iterator.continuation
-  |> do_flatten
+  fn() {
+    case iterator.continuation() {
+      Stop -> Stop
+      Continue(it, next_iterator) -> do_flatten(next_iterator, it.continuation)
+    }
+  }
   |> Iterator
 }
 
@@ -374,16 +383,14 @@ pub fn flat_map(
 fn do_filter(
   continuation: fn() -> Action(e),
   predicate: fn(e) -> Bool,
-) -> fn() -> Action(e) {
-  fn() {
-    case continuation() {
-      Continue(e, iterator) ->
-        case predicate(e) {
-          True -> Continue(e, do_filter(iterator, predicate))
-          False -> do_filter(iterator, predicate)()
-        }
-      Stop -> Stop
-    }
+) -> Action(e) {
+  case continuation() {
+    Stop -> Stop
+    Continue(e, iterator) ->
+      case predicate(e) {
+        True -> Continue(e, fn() { do_filter(iterator, predicate) })
+        False -> do_filter(iterator, predicate)
+      }
   }
 }
 
@@ -405,18 +412,8 @@ pub fn filter(
   iterator: Iterator(a),
   for predicate: fn(a) -> Bool,
 ) -> Iterator(a) {
-  iterator.continuation
-  |> do_filter(predicate)
+  fn() { do_filter(iterator.continuation, predicate) }
   |> Iterator
-}
-
-fn do_cycle(next: fn() -> Action(a), reset: fn() -> Action(a)) {
-  fn() {
-    case next() {
-      Continue(e, iterator) -> Continue(e, do_cycle(iterator, reset))
-      Stop -> do_cycle(reset, reset)()
-    }
-  }
 }
 
 /// Creates an iterator that repeats a given iterator infinitely.
@@ -427,16 +424,8 @@ fn do_cycle(next: fn() -> Action(a), reset: fn() -> Action(a)) {
 ///    [1, 2, 1, 2, 1, 2]
 ///
 pub fn cycle(iterator: Iterator(a)) -> Iterator(a) {
-  iterator.continuation
-  |> do_cycle(iterator.continuation)
-  |> Iterator
-}
-
-fn do_range(current, limit, inc) -> fn() -> Action(Int) {
-  case current == limit {
-    True -> fn() { Stop }
-    False -> fn() { Continue(current, do_range(current + inc, limit, inc)) }
-  }
+  repeat(iterator)
+  |> flatten
 }
 
 /// Creates an iterator of ints, starting at a given start int and stepping by
@@ -454,12 +443,30 @@ fn do_range(current, limit, inc) -> fn() -> Action(Int) {
 ///    []
 ///
 pub fn range(from start: Int, to stop: Int) -> Iterator(Int) {
-  case start < stop {
+  let increment = case start < stop {
     True -> 1
     False -> -1
   }
-  |> do_range(start, stop, _)
-  |> Iterator
+
+  let next_step = fn(current) {
+    case current == stop {
+      True -> Done
+      False -> Next(current, current + increment)
+    }
+  }
+
+  unfold(start, next_step)
+}
+
+fn do_find(continuation: fn() -> Action(a), f: fn(a) -> Bool) -> Result(a, Nil) {
+  case continuation() {
+    Stop -> Error(Nil)
+    Continue(e, next) ->
+      case f(e) {
+        True -> Ok(e)
+        False -> do_find(next, f)
+      }
+  }
 }
 
 /// Finds the first element in a given iterator for which the given function returns
@@ -483,14 +490,8 @@ pub fn find(
   in haystack: Iterator(a),
   one_that is_desired: fn(a) -> Bool,
 ) -> Result(a, Nil) {
-  case haystack.continuation() {
-    Continue(element, continuation) ->
-      case is_desired(element) {
-        True -> Ok(element)
-        False -> find(Iterator(continuation), is_desired)
-      }
-    Stop -> Error(Nil)
-  }
+  haystack.continuation
+  |> do_find(is_desired)
 }
 
 fn do_index(
@@ -499,9 +500,9 @@ fn do_index(
 ) -> fn() -> Action(tuple(Int, element)) {
   fn() {
     case continuation() {
+      Stop -> Stop
       Continue(e, continuation) ->
         Continue(tuple(next, e), do_index(continuation, next + 1))
-      Stop -> Stop
     }
   }
 }
@@ -551,16 +552,16 @@ fn do_take_while(
 
 fn do_scan(
   continuation: fn() -> Action(element),
-  accumulator: acc,
   f: fn(element, acc) -> acc,
+  accumulator: acc,
 ) -> fn() -> Action(acc) {
   fn() {
     case continuation() {
+      Stop -> Stop
       Continue(el, next) -> {
         let accumulated = f(el, accumulator)
-        Continue(accumulated, do_scan(next, accumulated, f))
+        Continue(accumulated, do_scan(next, f, accumulated))
       }
-      Stop -> Stop
     }
   }
 }
@@ -644,7 +645,7 @@ pub fn scan(
   with f: fn(element, acc) -> acc,
 ) -> Iterator(acc) {
   iterator.continuation
-  |> do_scan(initial, f)
+  |> do_scan(f, initial)
   |> Iterator
 }
 
