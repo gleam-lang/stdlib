@@ -2,10 +2,14 @@
 
 ## Unreleased
 
-- The `dynamic` module gains the `tuple3`, `tuple4`, `tuple5`, `tuple6` functions and
-  their typed equivalents `typed_tuple3`, `typed_tuple4`, `typed_tuple5`, `typed_tuple6`.
+- The `list.split_while` function's second argument now has the label
+`satisfying` to match the other `_while` functions in `list` and `iterator`.
+- The `dynamic` module gains the `tuple3`, `tuple4`, `tuple5`, `tuple6`
+  functions and their typed equivalents `typed_tuple3`, `typed_tuple4`,
+  `typed_tuple5`, `typed_tuple6`.
 - The `list` modules gains the `drop_while` and `take_while` functions.
-- The `iterator` module gains the `index`, `iterate`, `zip`, `scan`, `take_while` and `drop_while` functions.
+- The `iterator` module gains the `index`, `iterate`, `zip`, `scan`,
+  `take_while` and `drop_while` functions.
 
 ## v0.14.0 - 2021-02-18
 

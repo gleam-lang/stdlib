@@ -960,7 +960,7 @@ fn do_split_while(
 ///
 pub fn split_while(
   list list: List(a),
-  while predicate: fn(a) -> Bool,
+  satisfying predicate: fn(a) -> Bool,
 ) -> tuple(List(a), List(a)) {
   do_split_while(list, predicate, [])
 }
