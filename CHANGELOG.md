@@ -10,6 +10,7 @@
 - The `list` modules gains the `drop_while` and `take_while` functions.
 - The `iterator` module gains the `index`, `iterate`, `zip`, `scan`,
   `take_while` and `drop_while` functions.
+- Breaking change in `iterator.take`. Now it returns an iterator instead of a list.
 
 ## v0.14.0 - 2021-02-18
 
