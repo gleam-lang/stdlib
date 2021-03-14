@@ -334,3 +334,31 @@ pub fn intersperse_test() {
   |> iterator.to_list
   |> should.equal([1, 0, 2, 0, 3, 0, 4, 0, 5])
 }
+
+pub fn any_test() {
+  iterator.from_list([])
+  |> iterator.any(satisfying: fn(n) { n % 2 == 0 })
+  |> should.be_false
+
+  iterator.from_list([1, 2, 5, 7, 9])
+  |> iterator.any(satisfying: fn(n) { n % 2 == 0 })
+  |> should.be_true
+
+  iterator.from_list([1, 3, 5, 7, 9])
+  |> iterator.any(satisfying: fn(n) { n % 2 == 0 })
+  |> should.be_false
+}
+
+pub fn all_test() {
+  iterator.from_list([])
+  |> iterator.all(satisfying: fn(n) { n % 2 == 0 })
+  |> should.be_true
+
+  iterator.from_list([2, 4, 6, 8])
+  |> iterator.all(satisfying: fn(n) { n % 2 == 0 })
+  |> should.be_true
+
+  iterator.from_list([2, 4, 5, 8])
+  |> iterator.all(satisfying: fn(n) { n % 2 == 0 })
+  |> should.be_false
+}
