@@ -1,4 +1,5 @@
 import gleam/list
+import gleam/map.{Map}
 
 // Internal private representation of an Iterator
 type Action(element) {
@@ -878,4 +879,43 @@ pub fn all(
 ) -> Bool {
   iterator.continuation
   |> do_all(predicate)
+}
+
+fn update_group_with(
+  el: element,
+) -> fn(Result(List(element), Nil)) -> List(element) {
+  fn(maybe_group) {
+    case maybe_group {
+      Ok(group) -> [el, ..group]
+      Error(Nil) -> [el]
+    }
+  }
+}
+
+fn group_updater(
+  f: fn(element) -> key,
+) -> fn(element, Map(key, List(element))) -> Map(key, List(element)) {
+  fn(elem, groups) {
+    groups
+    |> map.update(f(elem), update_group_with(elem))
+  }
+}
+
+/// Returns a `Map(k, List(element))` of elements from the given iterator
+/// grouped with the given key function.
+///
+/// The order within each group is preserved from the iterator.
+///
+/// ## Examples
+///
+///    > from_list([1, 2, 3, 4, 5, 6]) |> group(by: fn(n) { n % 3 })
+///    map.from_list([tuple(0, [3, 6]), tuple(1, [1, 4]), tuple(2, [2, 5])])
+///
+pub fn group(
+  in iterator: Iterator(element),
+  by key: fn(element) -> key,
+) -> Map(key, List(element)) {
+  iterator
+  |> fold(map.new(), group_updater(key))
+  |> map.map_values(fn(_, group) { list.reverse(group) })
 }
