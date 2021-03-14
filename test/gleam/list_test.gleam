@@ -645,3 +645,11 @@ pub fn scan_test() {
   )
   |> should.equal(["Odd", "OddEven", "OddEvenOdd", "OddEvenOddEven"])
 }
+
+pub fn last_test() {
+  list.last([])
+  |> should.equal(Error(Nil))
+
+  list.last([1, 2, 3, 4, 5])
+  |> should.equal(Ok(5))
+}

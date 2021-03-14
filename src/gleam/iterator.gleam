@@ -946,3 +946,20 @@ pub fn reduce(
       |> Ok
   }
 }
+
+/// Returns the last element in the given iterator.
+///
+/// Returns `Error(Nil)` if the iterator is empty.
+///
+/// ## Examples
+///
+///    > from_list([]) |> last
+///    Error(Nil)
+///
+///    > range(1, 10) |> last
+///    Ok(9)
+///
+pub fn last(iterator: Iterator(element)) -> Result(element, Nil) {
+  iterator
+  |> reduce(fn(elem, _) { elem })
+}

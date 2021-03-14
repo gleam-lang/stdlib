@@ -1431,3 +1431,20 @@ pub fn scan(
 ) -> List(b) {
   do_scan(list, initial, [], fun)
 }
+
+/// Returns the last element in the given list.
+///
+/// Returns `Error(Nil)` if the list is empty.
+///
+/// ## Examples
+///
+///    > last([])
+///    Error(Nil)
+///
+///    > last([1, 2, 3, 4, 5])
+///    Ok(5)
+///
+pub fn last(list: List(a)) -> Result(a, Nil) {
+  list
+  |> reduce(fn(elem, _) { elem })
+}
