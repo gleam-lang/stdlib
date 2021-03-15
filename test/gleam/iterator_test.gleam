@@ -411,3 +411,15 @@ pub fn single_test() {
   |> iterator.to_list
   |> should.equal([1])
 }
+
+pub fn interleave_test() {
+  iterator.from_list([1, 2, 3, 4])
+  |> iterator.interleave(with: iterator.from_list([11, 12, 13, 14]))
+  |> iterator.to_list
+  |> should.equal([1, 11, 2, 12, 3, 13, 4, 14])
+
+  iterator.from_list([1, 2, 3, 4])
+  |> iterator.interleave(with: iterator.from_list([100]))
+  |> iterator.to_list
+  |> should.equal([1, 100, 2, 3, 4])
+}

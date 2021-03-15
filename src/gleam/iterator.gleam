@@ -997,3 +997,33 @@ pub fn once(f: fn() -> element) -> Iterator(element) {
 pub fn single(elem: element) -> Iterator(element) {
   once(fn() { elem })
 }
+
+fn do_interleave(
+  current: fn() -> Action(element),
+  next: fn() -> Action(element),
+) -> Action(element) {
+  case current() {
+    Stop -> next()
+    Continue(e, next_other) ->
+      Continue(e, fn() { do_interleave(next, next_other) })
+  }
+}
+
+/// Creates an iterator that alternates between the two given iterators
+/// until both have run out.
+///
+/// ## Examples
+///
+///    > from_list([1, 2, 3, 4]) |> interleave(from_list([11, 12, 13, 14])) |> to_list
+///    [1, 11, 2, 12, 3, 13, 4, 14]
+///
+///    > from_list([1, 2, 3, 4]) |> interleave(from_list([100])) |> to_list
+///    [1, 100, 2, 3, 4]
+///
+pub fn interleave(
+  left: Iterator(element),
+  with right: Iterator(element),
+) -> Iterator(element) {
+  fn() { do_interleave(left.continuation, right.continuation) }
+  |> Iterator
+}
