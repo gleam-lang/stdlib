@@ -317,3 +317,20 @@ pub fn sized_chunk_test() {
   |> iterator.to_list
   |> should.equal([[1, 2, 3], [4, 5, 6], [7, 8]])
 }
+
+pub fn intersperse_test() {
+  iterator.from_list([])
+  |> iterator.intersperse(with: 0)
+  |> iterator.to_list
+  |> should.equal([])
+
+  iterator.from_list([1])
+  |> iterator.intersperse(with: 0)
+  |> iterator.to_list
+  |> should.equal([1])
+
+  iterator.from_list([1, 2, 3, 4, 5])
+  |> iterator.intersperse(with: 0)
+  |> iterator.to_list
+  |> should.equal([1, 0, 2, 0, 3, 0, 4, 0, 5])
+}
