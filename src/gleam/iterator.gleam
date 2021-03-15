@@ -767,3 +767,43 @@ pub fn sized_chunk(
   |> do_sized_chunk(count)
   |> Iterator
 }
+
+fn do_intersperse(
+  continuation: fn() -> Action(element),
+  separator: element,
+) -> Action(element) {
+  case continuation() {
+    Stop -> Stop
+    Continue(e, next) -> {
+      let next_interspersed = fn() { do_intersperse(next, separator) }
+      Continue(separator, fn() { Continue(e, next_interspersed) })
+    }
+  }
+}
+
+/// Creates an iterator that yields the given element
+/// between elements emitted by the underlying iterator.
+///
+/// ## Examples
+///
+///    > from_list([]) |> intersperse(with: 0) |> to_list
+///    []
+///
+///    > from_list([1]) |> intersperse(with: 0) |> to_list
+///    [1]
+///
+///    > from_list([1, 2, 3, 4, 5]) |> intersperse(with: 0) |> to_list
+///    [1, 0, 2, 0, 3, 0, 4, 0, 5]
+///
+pub fn intersperse(
+  over iterator: Iterator(element),
+  with elem: element,
+) -> Iterator(element) {
+  fn() {
+    case iterator.continuation() {
+      Stop -> Stop
+      Continue(e, next) -> Continue(e, fn() { do_intersperse(next, elem) })
+    }
+  }
+  |> Iterator
+}
