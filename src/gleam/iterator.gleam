@@ -47,7 +47,7 @@ fn do_unfold(
 
 /// Creates an iterator from a given function and accumulator.
 ///
-/// The function is called on the accumulator and return either `Done`,
+/// The function is called on the accumulator and returns either `Done`,
 /// indicating the iterator has no more elements, or `Next` which contains a
 /// new element and accumulator. The element is yielded by the iterator and the
 /// new accumulator is used with the function to compute the next element in
@@ -94,7 +94,7 @@ pub fn repeat(x: element) -> Iterator(element) {
   repeatedly(fn() { x })
 }
 
-/// Creates an iterator the yields each element in a given list.
+/// Creates an iterator that yields each element from the given list.
 ///
 /// ## Examples
 ///
@@ -149,7 +149,7 @@ pub fn fold(
 }
 
 // TODO: test
-/// Evaluates all elements in a given stream. This function is useful for when
+/// Evaluates all elements emitted by the given iterator. This function is useful for when
 /// you wish to trigger any side effects that would occur when evaluating
 /// the iterator.
 ///
@@ -157,7 +157,7 @@ pub fn run(iterator: Iterator(e)) -> Nil {
   fold(iterator, Nil, fn(_, _) { Nil })
 }
 
-/// Evaluates an iterator and return all the elements as a list.
+/// Evaluates an iterator and returns all the elements as a list.
 ///
 /// If called on an iterator of infinite length then this function will never
 /// return.
@@ -186,6 +186,7 @@ pub fn to_list(iterator: Iterator(element)) -> List(element) {
 ///    >   |> step
 ///    > head
 ///    1
+///
 ///    > tail |> to_list
 ///    [2, 3, 4]
 ///
@@ -337,7 +338,7 @@ fn do_flatten(
   }
 }
 
-/// Flattens an iterator of iterator of iterators, creating a new iterator.
+/// Flattens an iterator of iterators, creating a new iterator.
 ///
 /// This function does not evaluate the elements of the iterator, the
 /// computation is performed when the iterator is later run.
