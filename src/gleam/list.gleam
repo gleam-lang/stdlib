@@ -1270,7 +1270,7 @@ pub fn take_while(
   do_take_while(list, predicate, [])
 }
 
-fn do_chunk_by(
+fn do_chunk(
   list: List(a),
   f: fn(a) -> key,
   previous_key: key,
@@ -1282,9 +1282,8 @@ fn do_chunk_by(
     [head, ..tail] -> {
       let key = f(head)
       case key == previous_key {
-        False ->
-          do_chunk_by(tail, f, key, [head], [reverse(current_chunk), ..acc])
-        True -> do_chunk_by(tail, f, key, [head, ..current_chunk], acc)
+        False -> do_chunk(tail, f, key, [head], [reverse(current_chunk), ..acc])
+        True -> do_chunk(tail, f, key, [head, ..current_chunk], acc)
       }
     }
   }
@@ -1295,12 +1294,12 @@ fn do_chunk_by(
 ///
 /// ## Examples
 ///
-///    > [1, 2, 2, 3, 4, 4, 6, 7, 7] |> chunk_by(fn(n) { n % 2 })
+///    > [1, 2, 2, 3, 4, 4, 6, 7, 7] |> chunk(by: fn(n) { n % 2 })
 ///    [[1], [2, 2], [3], [4, 4, 6], [7, 7]]
 ///
-pub fn chunk_by(in list: List(a), with f: fn(a) -> key) -> List(List(a)) {
+pub fn chunk(in list: List(a), by f: fn(a) -> key) -> List(List(a)) {
   case list {
     [] -> []
-    [head, ..tail] -> do_chunk_by(tail, f, f(head), [head], [])
+    [head, ..tail] -> do_chunk(tail, f, f(head), [head], [])
   }
 }
