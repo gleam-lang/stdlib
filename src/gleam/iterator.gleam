@@ -664,7 +664,6 @@ pub fn zip(left: Iterator(a), right: Iterator(b)) -> Iterator(tuple(a, b)) {
 type ChunkBy(element, key) {
   AnotherBy(List(element), key, element, fn() -> Action(element))
   LastBy(List(element))
-  NoneBy
 }
 
 fn next_chunk_by(
@@ -674,11 +673,7 @@ fn next_chunk_by(
   current_chunk: List(element),
 ) -> ChunkBy(element, key) {
   case continuation() {
-    Stop ->
-      case current_chunk {
-        [] -> NoneBy
-        remaining -> LastBy(list.reverse(remaining))
-      }
+    Stop -> LastBy(list.reverse(current_chunk))
     Continue(e, next) -> {
       let key = f(e)
       case key == previous_key {
@@ -696,7 +691,6 @@ fn do_chunk_by(
   previous_element: element,
 ) -> Action(List(element)) {
   case next_chunk_by(continuation, f, previous_key, [previous_element]) {
-    NoneBy -> Stop
     LastBy(chunk) -> Continue(chunk, stop)
     AnotherBy(chunk, key, el, next) ->
       Continue(chunk, fn() { do_chunk_by(next, f, key, el) })

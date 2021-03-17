@@ -1278,11 +1278,7 @@ fn do_chunk_by(
   acc: List(List(a)),
 ) -> List(List(a)) {
   case list {
-    [] ->
-      case current_chunk {
-        [] -> reverse(acc)
-        remaining -> reverse([reverse(remaining), ..acc])
-      }
+    [] -> reverse([reverse(current_chunk), ..acc])
     [head, ..tail] -> {
       let key = f(head)
       case key == previous_key {
