@@ -661,39 +661,39 @@ pub fn zip(left: Iterator(a), right: Iterator(b)) -> Iterator(tuple(a, b)) {
   |> Iterator
 }
 
-type ChunkBy(element, key) {
+type Chunk(element, key) {
   AnotherBy(List(element), key, element, fn() -> Action(element))
   LastBy(List(element))
 }
 
-fn next_chunk_by(
+fn next_chunk(
   continuation: fn() -> Action(element),
   f: fn(element) -> key,
   previous_key: key,
   current_chunk: List(element),
-) -> ChunkBy(element, key) {
+) -> Chunk(element, key) {
   case continuation() {
     Stop -> LastBy(list.reverse(current_chunk))
     Continue(e, next) -> {
       let key = f(e)
       case key == previous_key {
-        True -> next_chunk_by(next, f, key, [e, ..current_chunk])
+        True -> next_chunk(next, f, key, [e, ..current_chunk])
         False -> AnotherBy(list.reverse(current_chunk), key, e, next)
       }
     }
   }
 }
 
-fn do_chunk_by(
+fn do_chunk(
   continuation: fn() -> Action(element),
   f: fn(element) -> key,
   previous_key: key,
   previous_element: element,
 ) -> Action(List(element)) {
-  case next_chunk_by(continuation, f, previous_key, [previous_element]) {
+  case next_chunk(continuation, f, previous_key, [previous_element]) {
     LastBy(chunk) -> Continue(chunk, stop)
     AnotherBy(chunk, key, el, next) ->
-      Continue(chunk, fn() { do_chunk_by(next, f, key, el) })
+      Continue(chunk, fn() { do_chunk(next, f, key, el) })
   }
 }
 
@@ -702,17 +702,17 @@ fn do_chunk_by(
 ///
 /// ## Examples
 ///
-///    > from_list([1, 2, 2, 3, 4, 4, 6, 7, 7]) |> chunk_by(fn(n) { n % 2 }) |> to_list
+///    > from_list([1, 2, 2, 3, 4, 4, 6, 7, 7]) |> chunk(by: fn(n) { n % 2 }) |> to_list
 ///    [[1], [2, 2], [3], [4, 4, 6], [7, 7]]
 ///
-pub fn chunk_by(
+pub fn chunk(
   over iterator: Iterator(element),
-  with f: fn(element) -> key,
+  by f: fn(element) -> key,
 ) -> Iterator(List(element)) {
   fn() {
     case iterator.continuation() {
       Stop -> Stop
-      Continue(e, next) -> do_chunk_by(next, f, f(e), e)
+      Continue(e, next) -> do_chunk(next, f, f(e), e)
     }
   }
   |> Iterator
