@@ -768,7 +768,7 @@ pub fn sized_chunk(
   |> Iterator
 }
 
-fn do_dedup_by(
+fn do_dedup(
   continuation: fn() -> Action(element),
   f: fn(element) -> key,
   previous_key: key,
@@ -778,8 +778,8 @@ fn do_dedup_by(
     Continue(e, next) -> {
       let key = f(e)
       case key == previous_key {
-        False -> Continue(e, fn() { do_dedup_by(next, f, key) })
-        True -> do_dedup_by(next, f, key)
+        False -> Continue(e, fn() { do_dedup(next, f, key) })
+        True -> do_dedup(next, f, key)
       }
     }
   }
@@ -790,17 +790,17 @@ fn do_dedup_by(
 ///
 /// ## Examples
 ///
-///    > from_list([tuple(1, "a"), tuple(2, "b"), tuple(2, "c"), tuple(1, "a")]) |> dedup_by(pair.first) |> to_list
+///    > from_list([tuple(1, "a"), tuple(2, "b"), tuple(2, "c"), tuple(1, "a")]) |> dedup(by: pair.first) |> to_list
 ///    [tuple(1, "a"), tuple(2, "b"), tuple(1, "a")]
 ///
-pub fn dedup_by(
+pub fn dedup(
   over iterator: Iterator(element),
-  with f: fn(element) -> key,
+  by key: fn(element) -> key,
 ) -> Iterator(element) {
   fn() {
     case iterator.continuation() {
       Stop -> Stop
-      Continue(e, next) -> Continue(e, fn() { do_dedup_by(next, f, f(e)) })
+      Continue(e, next) -> Continue(e, fn() { do_dedup(next, key, key(e)) })
     }
   }
   |> Iterator
@@ -811,9 +811,9 @@ pub fn dedup_by(
 ///
 /// ## Examples
 ///
-///    > from_list([1, 2, 3, 3, 2, 1, 1, 2]) |> dedup |> to_list
+///    > from_list([1, 2, 3, 3, 2, 1, 1, 2]) |> dedup_identical |> to_list
 ///    [1, 2, 3, 2, 1, 2]
 ///
-pub fn dedup(over iterator: Iterator(element)) -> Iterator(element) {
-  dedup_by(iterator, fn(x) { x })
+pub fn dedup_identical(iterator: Iterator(element)) -> Iterator(element) {
+  dedup(iterator, fn(x) { x })
 }

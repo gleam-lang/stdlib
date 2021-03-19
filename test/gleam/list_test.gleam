@@ -607,13 +607,13 @@ pub fn sized_chunk_test() {
   |> should.equal([[1, 2, 3], [4, 5, 6], [7, 8]])
 }
 
-pub fn dedup_by_test() {
+pub fn dedup_test() {
   [tuple(1, "a"), tuple(2, "b"), tuple(2, "c"), tuple(1, "a")]
-  |> list.dedup_by(pair.first)
+  |> list.dedup(by: pair.first)
   |> should.equal([tuple(1, "a"), tuple(2, "b"), tuple(1, "a")])
 }
 
-pub fn dedup_test() {
-  list.dedup([1, 2, 3, 3, 2, 1, 1, 2])
+pub fn dedup_identical_test() {
+  list.dedup_identical([1, 2, 3, 3, 2, 1, 1, 2])
   |> should.equal([1, 2, 3, 2, 1, 2])
 }

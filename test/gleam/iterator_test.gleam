@@ -319,21 +319,21 @@ pub fn sized_chunk_test() {
   |> should.equal([[1, 2, 3], [4, 5, 6], [7, 8]])
 }
 
-pub fn dedup_by_test() {
+pub fn dedup_test() {
   iterator.from_list([
     tuple(1, "a"),
     tuple(2, "b"),
     tuple(2, "c"),
     tuple(1, "a"),
   ])
-  |> iterator.dedup_by(pair.first)
+  |> iterator.dedup(by: pair.first)
   |> iterator.to_list
   |> should.equal([tuple(1, "a"), tuple(2, "b"), tuple(1, "a")])
 }
 
-pub fn dedup_test() {
+pub fn dedup_identical_test() {
   iterator.from_list([1, 2, 3, 3, 2, 1, 1, 2])
-  |> iterator.dedup
+  |> iterator.dedup_identical
   |> iterator.to_list
   |> should.equal([1, 2, 3, 2, 1, 2])
 }

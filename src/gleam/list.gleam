@@ -1346,7 +1346,7 @@ pub fn sized_chunk(in list: List(a), into count: Int) -> List(List(a)) {
   do_sized_chunk(list, count, count, [], [])
 }
 
-fn do_dedup_by(
+fn do_dedup(
   list: List(a),
   f: fn(a) -> key,
   previous_key: key,
@@ -1357,8 +1357,8 @@ fn do_dedup_by(
     [head, ..tail] -> {
       let key = f(head)
       case key == previous_key {
-        False -> do_dedup_by(tail, f, key, [head, ..acc])
-        True -> do_dedup_by(tail, f, key, acc)
+        False -> do_dedup(tail, f, key, [head, ..acc])
+        True -> do_dedup(tail, f, key, acc)
       }
     }
   }
@@ -1369,13 +1369,13 @@ fn do_dedup_by(
 ///
 /// ## Examples
 ///
-///    > [tuple(1, "a"), tuple(2, "b"), tuple(2, "c"), tuple(1, "a")] |> dedup_by(pair.first)
+///    > [tuple(1, "a"), tuple(2, "b"), tuple(2, "c"), tuple(1, "a")] |> dedup(by: pair.first)
 ///    [tuple(1, "a"), tuple(2, "b"), tuple(1, "a")]
 ///
-pub fn dedup_by(list: List(a), f: fn(a) -> key) -> List(a) {
+pub fn dedup(in list: List(a), by key: fn(a) -> key) -> List(a) {
   case list {
     [] -> []
-    [head, ..tail] -> do_dedup_by(tail, f, f(head), [head])
+    [head, ..tail] -> do_dedup(tail, key, key(head), [head])
   }
 }
 
@@ -1384,9 +1384,9 @@ pub fn dedup_by(list: List(a), f: fn(a) -> key) -> List(a) {
 ///
 /// ## Examples
 ///
-///    > dedup([1, 2, 3, 3, 2, 1, 1, 2])
+///    > dedup_identical([1, 2, 3, 3, 2, 1, 1, 2])
 ///    [1, 2, 3, 2, 1, 2]
 ///
-pub fn dedup(list: List(a)) -> List(a) {
-  dedup_by(list, fn(x) { x })
+pub fn dedup_identical(list: List(a)) -> List(a) {
+  dedup(list, fn(x) { x })
 }
