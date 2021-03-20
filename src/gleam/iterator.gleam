@@ -294,15 +294,10 @@ pub fn map(over iterator: Iterator(a), with f: fn(a) -> b) -> Iterator(b) {
   |> Iterator
 }
 
-fn do_append(
-  first: fn() -> Action(a),
-  second: fn() -> Action(a),
-) -> fn() -> Action(a) {
-  fn() {
-    case first() {
-      Continue(e, first) -> Continue(e, do_append(first, second))
-      Stop -> second()
-    }
+fn do_append(first: fn() -> Action(a), second: fn() -> Action(a)) -> Action(a) {
+  case first() {
+    Continue(e, first) -> Continue(e, fn() { do_append(first, second) })
+    Stop -> second()
   }
 }
 
@@ -317,24 +312,15 @@ fn do_append(
 ///    [1, 2, 3, 4]
 ///
 pub fn append(to first: Iterator(a), suffix second: Iterator(a)) -> Iterator(a) {
-  first.continuation
-  |> do_append(second.continuation)
+  fn() { do_append(first.continuation, second.continuation) }
   |> Iterator
 }
 
-fn do_flatten(
-  flattened: fn() -> Action(Iterator(a)),
-  next: fn() -> Action(a),
-) -> Action(a) {
-  case next() {
-    Stop ->
-      case flattened() {
-        Stop -> Stop
-        Continue(it, next_iterator) ->
-          do_flatten(next_iterator, it.continuation)
-      }
-    Continue(e, next_elem) ->
-      Continue(e, fn() { do_flatten(flattened, next_elem) })
+fn do_flatten(flattened: fn() -> Action(Iterator(a))) -> Action(a) {
+  case flattened() {
+    Stop -> Stop
+    Continue(it, next_iterator) ->
+      do_append(it.continuation, fn() { do_flatten(next_iterator) })
   }
 }
 
@@ -349,12 +335,7 @@ fn do_flatten(
 ///    [1, 2, 3, 4]
 ///
 pub fn flatten(iterator: Iterator(Iterator(a))) -> Iterator(a) {
-  fn() {
-    case iterator.continuation() {
-      Stop -> Stop
-      Continue(it, next_iterator) -> do_flatten(next_iterator, it.continuation)
-    }
-  }
+  fn() { do_flatten(iterator.continuation) }
   |> Iterator
 }
 
