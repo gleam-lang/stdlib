@@ -1377,3 +1377,27 @@ fn do_sized_chunk(
 pub fn sized_chunk(in list: List(a), into count: Int) -> List(List(a)) {
   do_sized_chunk(list, count, count, [], [])
 }
+
+/// This function acts similar to fold, but does not take an initial state.
+/// Instead, it starts from the first element in the list
+/// and combines it with each subsequent element in turn using the given function.
+/// The function is called as fun(current_element, accumulator).
+///
+/// Returns `Ok` to indicate a successful run, and `Error` if called on an empty list.
+///
+/// ## Examples
+///
+///    > [] |> reduce(fn(x, y) { x + y })
+///    Error(Nil)
+///
+///    > [1, 2, 3, 4, 5] |> reduce(fn(x, y) { x + y })
+///    Ok(15)
+///
+pub fn reduce(over list: List(a), with fun: fn(a, a) -> a) -> Result(a, Nil) {
+  case list {
+    [] -> Error(Nil)
+    [head, ..tail] ->
+      fold(tail, head, fun)
+      |> Ok
+  }
+}

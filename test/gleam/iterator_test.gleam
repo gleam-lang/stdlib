@@ -373,3 +373,13 @@ pub fn group_test() {
     tuple(2, [2, 5]),
   ]))
 }
+
+pub fn reduce_test() {
+  iterator.from_list([])
+  |> iterator.reduce(with: fn(x, y) { x + y })
+  |> should.equal(Error(Nil))
+
+  iterator.from_list([1, 2, 3, 4, 5])
+  |> iterator.reduce(with: fn(x, y) { x + y })
+  |> should.equal(Ok(15))
+}

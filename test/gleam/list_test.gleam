@@ -612,3 +612,13 @@ pub fn sized_chunk_test() {
   |> list.sized_chunk(into: 3)
   |> should.equal([[1, 2, 3], [4, 5, 6], [7, 8]])
 }
+
+pub fn reduce_test() {
+  []
+  |> list.reduce(with: fn(x, y) { x + y })
+  |> should.equal(Error(Nil))
+
+  [1, 2, 3, 4, 5]
+  |> list.reduce(with: fn(x, y) { x + y })
+  |> should.equal(Ok(15))
+}

@@ -115,12 +115,12 @@ pub fn from_list(list: List(element)) -> Iterator(element) {
 // Consuming Iterators
 fn do_fold(
   continuation: fn() -> Action(e),
-  initial: acc,
   f: fn(e, acc) -> acc,
+  accumulator: acc,
 ) -> acc {
   case continuation() {
-    Continue(element, iterator) -> do_fold(iterator, f(element, initial), f)
-    Stop -> initial
+    Continue(elem, next) -> do_fold(next, f, f(elem, accumulator))
+    Stop -> accumulator
   }
 }
 
@@ -146,7 +146,7 @@ pub fn fold(
   with f: fn(e, acc) -> acc,
 ) -> acc {
   iterator.continuation
-  |> do_fold(initial, f)
+  |> do_fold(f, initial)
 }
 
 // TODO: test
@@ -918,4 +918,31 @@ pub fn group(
   iterator
   |> fold(map.new(), group_updater(key))
   |> map.map_values(fn(_, group) { list.reverse(group) })
+}
+
+/// This function acts similar to fold, but does not take an initial state.
+/// Instead, it starts from the first yielded element
+/// and combines it with each subsequent element in turn using the given function.
+/// The function is called as f(current_element, accumulator).
+///
+/// Returns `Ok` to indicate a successful run, and `Error` if called on an empty iterator.
+///
+/// ## Examples
+///
+///    > from_list([]) |> reduce(fn(x, y) { x + y })
+///    Error(Nil)
+///
+///    > from_list([1, 2, 3, 4, 5]) |> reduce(fn(x, y) { x + y })
+///    Ok(15)
+///
+pub fn reduce(
+  over iterator: Iterator(e),
+  with f: fn(e, e) -> e,
+) -> Result(e, Nil) {
+  case iterator.continuation() {
+    Stop -> Error(Nil)
+    Continue(e, next) ->
+      do_fold(next, f, e)
+      |> Ok
+  }
 }
