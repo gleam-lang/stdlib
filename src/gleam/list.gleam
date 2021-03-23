@@ -748,6 +748,13 @@ pub fn unzip(input: List(tuple(a, b))) -> tuple(List(a), List(b)) {
   do_unzip(input, [], [])
 }
 
+fn do_intersperse(list: List(a), separator: a, acc: List(a)) -> List(a) {
+  case list {
+    [] -> reverse(acc)
+    [x, ..rest] -> do_intersperse(rest, separator, [x, separator, ..acc])
+  }
+}
+
 /// Inserts a given value between each existing element in a given list.
 ///
 /// This function runs in linear time and copies the list.
@@ -763,7 +770,7 @@ pub fn unzip(input: List(tuple(a, b))) -> tuple(List(a), List(b)) {
 pub fn intersperse(list: List(a), with elem: a) -> List(a) {
   case list {
     [] | [_] -> list
-    [x, ..rest] -> [x, elem, ..intersperse(rest, elem)]
+    [x, ..rest] -> do_intersperse(rest, elem, [x])
   }
 }
 
