@@ -672,6 +672,13 @@ pub fn any(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
   }
 }
 
+fn do_zip(xs: List(a), ys: List(b), acc: List(tuple(a, b))) -> List(tuple(a, b)) {
+  case xs, ys {
+    [x, ..xs], [y, ..ys] -> do_zip(xs, ys, [tuple(x, y), ..acc])
+    _, _ -> reverse(acc)
+  }
+}
+
 /// Takes two lists and returns a single list of 2 item tuples.
 ///
 /// If one of the lists is longer than the other the remaining elements from
@@ -692,11 +699,7 @@ pub fn any(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
 ///    [tuple(1, 3), tuple(2, 4)]
 ///
 pub fn zip(xs: List(a), ys: List(b)) -> List(tuple(a, b)) {
-  case xs, ys {
-    [], _ -> []
-    _, [] -> []
-    [x, ..xs], [y, ..ys] -> [tuple(x, y), ..zip(xs, ys)]
-  }
+  do_zip(xs, ys, [])
 }
 
 /// Takes two lists and returns a single list of 2 item tuples.
