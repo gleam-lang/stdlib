@@ -635,11 +635,7 @@ pub fn find_map(
 pub fn all(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
   case list {
     [] -> True
-    [x, ..rest] ->
-      case predicate(x) {
-        True -> all(rest, predicate)
-        _ -> False
-      }
+    [x, ..rest] -> predicate(x) && all(rest, predicate)
   }
 }
 
@@ -664,11 +660,7 @@ pub fn all(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
 pub fn any(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
   case list {
     [] -> False
-    [x, ..rest] ->
-      case predicate(x) {
-        False -> any(rest, predicate)
-        _ -> True
-      }
+    [x, ..rest] -> predicate(x) || any(rest, predicate)
   }
 }
 
