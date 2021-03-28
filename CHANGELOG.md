@@ -10,7 +10,7 @@
 - The `list` module gains the `drop_while`, `take_while`,
   `chunk` and `sized_chunk` functions.
 - The `iterator` module gains the `index`, `iterate`, `zip`, `scan`,
-  `take_while`, `drop_while`, `chunk`, `sized_chunk` and `intersperse` functions.
+  `take_while`, `drop_while`, `chunk`, `sized_chunk`, `intersperse`, `any` and `all` functions.
 - Breaking change in `iterator.take`. Now it returns an iterator instead of a list.
 
 ## v0.14.0 - 2021-02-18
