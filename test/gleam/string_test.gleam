@@ -204,24 +204,24 @@ pub fn slice_test() {
   |> should.equal("")
 }
 
-pub fn drop_before_test() {
+pub fn crop_test() {
   "gleam"
-  |> string.drop_before("gl")
+  |> string.crop("gl")
   |> should.equal("gleam")
 
   "gleam"
-  |> string.drop_before("le")
+  |> string.crop("le")
   |> should.equal("leam")
 
-  string.drop_before(from: "gleam", before: "ea")
+  string.crop(from: "gleam", before: "ea")
   |> should.equal("eam")
 
   "gleam"
-  |> string.drop_before("")
+  |> string.crop("")
   |> should.equal("gleam")
 
   "gleam"
-  |> string.drop_before("!")
+  |> string.crop("!")
   |> should.equal("gleam")
 }
 
