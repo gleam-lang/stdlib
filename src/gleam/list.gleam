@@ -246,6 +246,36 @@ pub fn map(list: List(a), with fun: fn(a) -> b) -> List(b) {
   do_map(list, fun, [])
 }
 
+/// Similar to map but also lets you pass around an accumulated value.
+///
+/// ## Examples
+///
+/// ```
+/// > map_reduce(
+///     over: [1, 2, 3],
+///     from: 100,
+///     with: fn(memo, i) { tuple(memo + i, i * 2) }
+///  )
+///  tuple(106, [2, 4, 6])
+/// ```
+///
+pub fn map_reduce(
+  over list: List(a),
+  from memo: memo,
+  with fun: fn(memo, a) -> tuple(memo, b),
+) -> tuple(memo, List(b)) {
+  fold(
+    over: list,
+    from: tuple(memo, []),
+    with: fn(item, acc) {
+      let tuple(current_memo, items) = acc
+      let tuple(next_memo, next_item) = fun(current_memo, item)
+      tuple(next_memo, [next_item, ..items])
+    },
+  )
+  |> pair.map_second(reverse)
+}
+
 fn do_index_map(
   list: List(a),
   fun: fn(Int, a) -> b,
