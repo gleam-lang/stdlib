@@ -204,6 +204,27 @@ pub fn slice_test() {
   |> should.equal("")
 }
 
+pub fn drop_before_test() {
+  "gleam"
+  |> string.drop_before("gl")
+  |> should.equal("gleam")
+
+  "gleam"
+  |> string.drop_before("le")
+  |> should.equal("leam")
+
+  string.drop_before(from: "gleam", before: "ea")
+  |> should.equal("eam")
+
+  "gleam"
+  |> string.drop_before("")
+  |> should.equal("gleam")
+
+  "gleam"
+  |> string.drop_before("!")
+  |> should.equal("gleam")
+}
+
 pub fn drop_left_test() {
   "gleam"
   |> string.drop_left(up_to: 2)

@@ -167,6 +167,20 @@ pub fn slice(from string: String, at_index idx: Int, length len: Int) -> String 
   }
 }
 
+/// Drops contents of the first string that occur before the second string.
+/// If the first string does not contain the second string, the first string is returned.
+///
+/// ## Examples
+///    > drop_before(from: "The Lone Gunmen", before: "Lone")
+///    "Lone Gunmen"
+///
+pub fn drop_before(from string: String, before substring: String) -> String {
+  case split_once(string, substring) {
+    Ok(tuple(_, rest)) -> concat([substring, rest])
+    Error(Nil) -> string
+  }
+}
+
 /// Drops *n* Graphemes from the left side of a string.
 ///
 /// ## Examples
