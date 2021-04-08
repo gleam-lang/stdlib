@@ -12,6 +12,7 @@
 - The `iterator` module gains the `index`, `iterate`, `zip`, `scan`,
   `take_while`, `drop_while`, `chunk`, `sized_chunk`, `intersperse`, `any` and `all` functions.
 - Breaking change in `iterator.take`. Now it returns an iterator instead of a list.
+- The `string` module gains the `drop_before` function.
 
 ## v0.14.0 - 2021-02-18
 
