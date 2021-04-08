@@ -99,6 +99,12 @@ pub fn map_test() {
   |> should.equal([0, 8, 10, 14, 6])
 }
 
+pub fn map_reduce_test() {
+  [1, 2, 3, 4]
+  |> list.map_reduce(from: 0, with: fn(acc, i) { tuple(acc + i, i * 2) })
+  |> should.equal(tuple(10, [2, 4, 6, 8]))
+}
+
 pub fn try_map_test() {
   let fun = fn(x) {
     case x == 6 || x == 5 || x == 4 {
