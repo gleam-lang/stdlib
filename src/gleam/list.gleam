@@ -254,9 +254,9 @@ pub fn map(list: List(a), with fun: fn(a) -> b) -> List(b) {
 /// > map_reduce(
 ///     over: [1, 2, 3],
 ///     from: 100,
-///     with: fn(memo, i) { tuple(memo + i, i * 2) }
+///     with: fn(i, memo) { tuple(i * 2, memo + i) }
 ///  )
-///  tuple(106, [2, 4, 6])
+///  tuple([2, 4, 6], 106)
 /// ```
 ///
 pub fn map_reduce(
