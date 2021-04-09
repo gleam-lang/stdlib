@@ -101,8 +101,8 @@ pub fn map_test() {
 
 pub fn map_reduce_test() {
   [1, 2, 3, 4]
-  |> list.map_reduce(from: 0, with: fn(acc, i) { tuple(acc + i, i * 2) })
-  |> should.equal(tuple(10, [2, 4, 6, 8]))
+  |> list.map_reduce(from: 0, with: fn(i, acc) { tuple(i * 2, acc + i) })
+  |> should.equal(tuple([2, 4, 6, 8], 10))
 }
 
 pub fn try_map_test() {

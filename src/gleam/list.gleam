@@ -262,18 +262,18 @@ pub fn map(list: List(a), with fun: fn(a) -> b) -> List(b) {
 pub fn map_reduce(
   over list: List(a),
   from memo: memo,
-  with fun: fn(memo, a) -> tuple(memo, b),
-) -> tuple(memo, List(b)) {
+  with fun: fn(a, memo) -> tuple(b, memo),
+) -> tuple(List(b), memo) {
   fold(
     over: list,
-    from: tuple(memo, []),
+    from: tuple([], memo),
     with: fn(item, acc) {
-      let tuple(current_memo, items) = acc
-      let tuple(next_memo, next_item) = fun(current_memo, item)
-      tuple(next_memo, [next_item, ..items])
+      let tuple(items, current_memo) = acc
+      let tuple(next_item, next_memo) = fun(item, current_memo)
+      tuple([next_item, ..items], next_memo)
     },
   )
-  |> pair.map_second(reverse)
+  |> pair.map_first(reverse)
 }
 
 fn do_index_map(
