@@ -251,7 +251,7 @@ pub fn map(list: List(a), with fun: fn(a) -> b) -> List(b) {
 /// ## Examples
 ///
 /// ```
-/// > map_reduce(
+/// > map_fold(
 ///     over: [1, 2, 3],
 ///     from: 100,
 ///     with: fn(i, memo) { tuple(i * 2, memo + i) }
@@ -259,7 +259,7 @@ pub fn map(list: List(a), with fun: fn(a) -> b) -> List(b) {
 ///  tuple([2, 4, 6], 106)
 /// ```
 ///
-pub fn map_reduce(
+pub fn map_fold(
   over list: List(a),
   from memo: memo,
   with fun: fn(a, memo) -> tuple(b, memo),
