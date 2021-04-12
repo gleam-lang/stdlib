@@ -99,9 +99,9 @@ pub fn map_test() {
   |> should.equal([0, 8, 10, 14, 6])
 }
 
-pub fn map_reduce_test() {
+pub fn map_fold_test() {
   [1, 2, 3, 4]
-  |> list.map_reduce(from: 0, with: fn(i, acc) { tuple(i * 2, acc + i) })
+  |> list.map_fold(from: 0, with: fn(i, acc) { tuple(i * 2, acc + i) })
   |> should.equal(tuple([2, 4, 6, 8], 10))
 }
 
