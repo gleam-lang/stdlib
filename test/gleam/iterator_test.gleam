@@ -245,7 +245,7 @@ pub fn find_test() {
   |> iterator.find(fn(e) { e > 10 })
   |> should.equal(Error(Nil))
 
-  iterator.from_list([])
+  iterator.empty()
   |> iterator.find(fn(_x) { True })
   |> should.equal(Error(Nil))
 
@@ -320,7 +320,7 @@ pub fn sized_chunk_test() {
 }
 
 pub fn intersperse_test() {
-  iterator.from_list([])
+  iterator.empty()
   |> iterator.intersperse(with: 0)
   |> iterator.to_list
   |> should.equal([])
@@ -337,7 +337,7 @@ pub fn intersperse_test() {
 }
 
 pub fn any_test() {
-  iterator.from_list([])
+  iterator.empty()
   |> iterator.any(satisfying: fn(n) { n % 2 == 0 })
   |> should.be_false
 
@@ -351,7 +351,7 @@ pub fn any_test() {
 }
 
 pub fn all_test() {
-  iterator.from_list([])
+  iterator.empty()
   |> iterator.all(satisfying: fn(n) { n % 2 == 0 })
   |> should.be_true
 
@@ -375,7 +375,7 @@ pub fn group_test() {
 }
 
 pub fn reduce_test() {
-  iterator.from_list([])
+  iterator.empty()
   |> iterator.reduce(with: fn(x, y) { x + y })
   |> should.equal(Error(Nil))
 
@@ -385,7 +385,7 @@ pub fn reduce_test() {
 }
 
 pub fn last_test() {
-  iterator.from_list([])
+  iterator.empty()
   |> iterator.last
   |> should.equal(Error(Nil))
 

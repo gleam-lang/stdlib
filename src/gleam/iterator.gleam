@@ -191,9 +191,7 @@ pub fn to_list(iterator: Iterator(element)) -> List(element) {
 ///    > tail |> to_list
 ///    [2, 3, 4]
 ///
-///    > []
-///    > |> from_list
-///    > |> step
+///    > empty() |> step
 ///    Done
 ///
 pub fn step(iterator: Iterator(e)) -> Step(e, Iterator(e)) {
@@ -466,7 +464,7 @@ fn do_find(continuation: fn() -> Action(a), f: fn(a) -> Bool) -> Result(a, Nil) 
 ///    > find(from_list([1, 2, 3]), fn(x) { x > 4 })
 ///    Error(Nil)
 ///
-///    > find(from_list([]), fn(x) { True })
+///    > find(empty(), fn(x) { True })
 ///    Error(Nil)
 ///
 pub fn find(
@@ -787,7 +785,7 @@ fn do_intersperse(
 ///
 /// ## Examples
 ///
-///    > from_list([]) |> intersperse(with: 0) |> to_list
+///    > empty() |> intersperse(with: 0) |> to_list
 ///    []
 ///
 ///    > from_list([1]) |> intersperse(with: 0) |> to_list
@@ -828,7 +826,7 @@ fn do_any(
 ///
 /// ## Examples
 ///
-///    > from_list([]) |> any(fn(n) { n % 2 == 0 })
+///    > empty() |> any(fn(n) { n % 2 == 0 })
 ///    False
 ///
 ///    > from_list([1, 2, 5, 7, 9]) |> any(fn(n) { n % 2 == 0 })
@@ -864,7 +862,7 @@ fn do_all(
 ///
 /// ## Examples
 ///
-///    > from_list([]) |> all(fn(n) { n % 2 == 0 })
+///    > empty() |> all(fn(n) { n % 2 == 0 })
 ///    True
 ///
 ///    > from_list([2, 4, 6, 8]) |> all(fn(n) { n % 2 == 0 })
@@ -955,7 +953,7 @@ pub fn reduce(
 ///
 /// ## Examples
 ///
-///    > from_list([]) |> last
+///    > empty() |> last
 ///    Error(Nil)
 ///
 ///    > range(1, 10) |> last
