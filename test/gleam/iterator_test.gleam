@@ -393,3 +393,21 @@ pub fn last_test() {
   |> iterator.last
   |> should.equal(Ok(9))
 }
+
+pub fn empty_test() {
+  iterator.empty()
+  |> iterator.to_list
+  |> should.equal([])
+}
+
+pub fn once_test() {
+  iterator.once(fn() { 1 })
+  |> iterator.to_list
+  |> should.equal([1])
+}
+
+pub fn single_test() {
+  iterator.single(1)
+  |> iterator.to_list
+  |> should.equal([1])
+}
