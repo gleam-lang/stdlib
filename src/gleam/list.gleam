@@ -1401,3 +1401,33 @@ pub fn reduce(over list: List(a), with fun: fn(a, a) -> a) -> Result(a, Nil) {
       |> Ok
   }
 }
+
+fn do_scan(
+  list: List(a),
+  accumulator: b,
+  accumulated: List(b),
+  fun: fn(a, b) -> b,
+) -> List(b) {
+  case list {
+    [] -> reverse(accumulated)
+    [x, ..xs] -> {
+      let next = fun(x, accumulator)
+      do_scan(xs, next, [next, ..accumulated], fun)
+    }
+  }
+}
+
+/// Similar to `fold`, but yields the state of the accumulator at each stage.
+///
+/// ## Examples
+///
+///    > scan(over: [1, 2, 3], from: 100, with: fn(i, acc) { acc + i })
+///    [101, 103, 106]
+///
+pub fn scan(
+  over list: List(a),
+  from initial: b,
+  with fun: fn(a, b) -> b,
+) -> List(b) {
+  do_scan(list, initial, [], fun)
+}
