@@ -622,3 +622,26 @@ pub fn reduce_test() {
   |> list.reduce(with: fn(x, y) { x + y })
   |> should.equal(Ok(15))
 }
+
+pub fn scan_test() {
+  []
+  |> list.scan(from: 0, with: fn(i, acc) { i + acc })
+  |> should.equal([])
+
+  [1, 2, 3, 4]
+  |> list.scan(from: 0, with: fn(i, acc) { 2 * i + acc })
+  |> should.equal([2, 6, 12, 20])
+
+  [1, 2, 3, 4]
+  |> list.scan(
+    from: "",
+    with: fn(i, acc) {
+      case int.is_even(i) {
+        True -> "Even"
+        False -> "Odd"
+      }
+      |> string.append(acc, _)
+    },
+  )
+  |> should.equal(["Odd", "OddEven", "OddEvenOdd", "OddEvenOddEven"])
+}
