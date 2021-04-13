@@ -965,3 +965,37 @@ pub fn last(iterator: Iterator(element)) -> Result(element, Nil) {
   iterator
   |> reduce(fn(elem, _) { elem })
 }
+
+/// Creates an iterator that yields no elements.
+///
+/// ## Examples
+///
+///    > empty() |> to_list
+///    []
+///
+pub fn empty() -> Iterator(element) {
+  Iterator(stop)
+}
+
+/// Creates an iterator that yields exactly one element provided by calling the given function.
+///
+/// ## Examples
+///
+///    > once(fn() { 1 }) |> to_list
+///    [1]
+///
+pub fn once(f: fn() -> element) -> Iterator(element) {
+  fn() { Continue(f(), stop) }
+  |> Iterator
+}
+
+/// Creates an iterator that yields the given element exactly once.
+///
+/// ## Examples
+///
+///    > single(1) |> to_list
+///    [1]
+///
+pub fn single(elem: element) -> Iterator(element) {
+  once(fn() { elem })
+}
