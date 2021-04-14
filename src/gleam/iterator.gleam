@@ -951,6 +951,8 @@ pub fn reduce(
 ///
 /// Returns `Error(Nil)` if the iterator is empty.
 ///
+/// This function runs in linear time.
+///
 /// ## Examples
 ///
 ///    > from_list([]) |> last
