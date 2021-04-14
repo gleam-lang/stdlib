@@ -1436,6 +1436,10 @@ pub fn scan(
 ///
 /// Returns `Error(Nil)` if the list is empty.
 ///
+/// This function runs in linear time.
+/// For a collection oriented around performant access at either end,
+/// see `gleam/queue.Queue`.
+///
 /// ## Examples
 ///
 ///    > last([])
