@@ -8,8 +8,8 @@
   functions and their typed equivalents `typed_tuple3`, `typed_tuple4`,
   `typed_tuple5`, `typed_tuple6`.
 - The `list` module gains the `drop_while`, `map_fold`, `take_while`, `reduce`,
-  `chunk`, `sized_chunk` and `scan` functions.
-- The `iterator` module gains the `index`, `iterate`, `zip`, `scan`,
+  `chunk`, `sized_chunk`, `last` and `scan` functions.
+- The `iterator` module gains the `index`, `iterate`, `zip`, `scan`, `last`,
   `take_while`, `drop_while`, `chunk`, `sized_chunk`, `intersperse`, `reduce`, `any` and `all` functions.
 - Breaking change in `iterator.take`. Now it returns an iterator instead of a list.
 - The `string` module gains the `crop` function.
