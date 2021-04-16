@@ -10,7 +10,8 @@
 - The `list` module gains the `drop_while`, `map_fold`, `take_while`, `reduce`,
   `chunk`, `sized_chunk`, `last` and `scan` functions.
 - The `iterator` module gains the `index`, `iterate`, `zip`, `scan`, `last`,
-  `take_while`, `drop_while`, `chunk`, `sized_chunk`, `intersperse`, `reduce`, `any` and `all` functions.
+  `take_while`, `drop_while`, `chunk`, `sized_chunk`, `intersperse`, `reduce`,
+  `any`, `all`, `empty`, `once` and `single` functions.
 - Breaking change in `iterator.take`. Now it returns an iterator instead of a list.
 - The `string` module gains the `crop` function.
 
