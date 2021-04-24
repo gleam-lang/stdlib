@@ -1452,3 +1452,49 @@ pub fn last(list: List(a)) -> Result(a, Nil) {
   list
   |> reduce(fn(elem, _) { elem })
 }
+
+/// Return unique combinations of elements in the list
+///
+/// ## Examples
+///
+/// ```
+/// > combinations_by([1, 2, 3], 2)
+/// [[1, 2], [1, 3], [2, 3]]
+///
+///  > combinations_by([1, 2, 3, 4], 3)
+///  [[1, 2, 3], [1, 2, 4], [1, 3, 4], [2, 3, 4]]
+/// ```
+///
+pub fn combinations_by(items: List(a), n: Int) -> List(List(a)) {
+  case n {
+    0 -> [[]]
+    _ ->
+      case items {
+        [] -> []
+        [x, ..xs] -> {
+          let first_combinations =
+            map(combinations_by(xs, n - 1), with: fn(com) { [x, ..com] })
+          append(first_combinations, combinations_by(xs, n))
+        }
+      }
+  }
+}
+
+/// Return unique pair combinations of elements in the list
+///
+/// ## Examples
+///
+/// ```
+/// > combinations_by_2([1, 2, 3])
+/// [tuple(1, 2), tuple(1, 3), tuple(2, 3)]
+/// ```
+///
+pub fn combinations_by_2(items: List(a)) -> List(tuple(a, a)) {
+  case items {
+    [] -> []
+    [x, ..xs] -> {
+      let first_combinations = map(xs, with: fn(other) { tuple(x, other) })
+      append(first_combinations, combinations_by_2(xs))
+    }
+  }
+}
