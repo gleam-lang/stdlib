@@ -1480,6 +1480,16 @@ pub fn combinations(items: List(a), by n: Int) -> List(List(a)) {
   }
 }
 
+fn do_combinations_by_2(items: List(a)) -> List(List(tuple(a, a))) {
+  case items {
+    [] -> []
+    [x, ..xs] -> {
+      let first_combinations = map(xs, with: fn(other) { tuple(x, other) })
+      [first_combinations, combinations_by_2(xs)]
+    }
+  }
+}
+
 /// Return unique pair combinations of elements in the list
 ///
 /// ## Examples
@@ -1490,11 +1500,6 @@ pub fn combinations(items: List(a), by n: Int) -> List(List(a)) {
 /// ```
 ///
 pub fn combinations_by_2(items: List(a)) -> List(tuple(a, a)) {
-  case items {
-    [] -> []
-    [x, ..xs] -> {
-      let first_combinations = map(xs, with: fn(other) { tuple(x, other) })
-      append(first_combinations, combinations_by_2(xs))
-    }
-  }
+  do_combinations_by_2(items)
+  |> flatten
 }
