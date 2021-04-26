@@ -654,23 +654,23 @@ pub fn last_test() {
   |> should.equal(Ok(5))
 }
 
-pub fn combinations_by_test() {
-  list.combinations_by([1, 2, 3], 0)
+pub fn combinations_test() {
+  list.combinations([1, 2, 3], by: 0)
   |> should.equal([[]])
 
-  list.combinations_by([1, 2, 3], 1)
+  list.combinations([1, 2, 3], by: 1)
   |> should.equal([[1], [2], [3]])
 
-  list.combinations_by([1, 2, 3], 2)
+  list.combinations([1, 2, 3], by: 2)
   |> should.equal([[1, 2], [1, 3], [2, 3]])
 
-  list.combinations_by([1, 2, 3], 3)
+  list.combinations([1, 2, 3], by: 3)
   |> should.equal([[1, 2, 3]])
 
-  list.combinations_by([1, 2, 3], 4)
+  list.combinations([1, 2, 3], by: 4)
   |> should.equal([])
 
-  list.combinations_by([1, 2, 3, 4], 3)
+  list.combinations([1, 2, 3, 4], 3)
   |> should.equal([[1, 2, 3], [1, 2, 4], [1, 3, 4], [2, 3, 4]])
 }
 
