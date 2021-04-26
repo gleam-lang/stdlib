@@ -1458,14 +1458,14 @@ pub fn last(list: List(a)) -> Result(a, Nil) {
 /// ## Examples
 ///
 /// ```
-/// > combinations_by([1, 2, 3], 2)
+/// > combinations([1, 2, 3], 2)
 /// [[1, 2], [1, 3], [2, 3]]
 ///
-///  > combinations_by([1, 2, 3, 4], 3)
+///  > combinations([1, 2, 3, 4], 3)
 ///  [[1, 2, 3], [1, 2, 4], [1, 3, 4], [2, 3, 4]]
 /// ```
 ///
-pub fn combinations_by(items: List(a), n: Int) -> List(List(a)) {
+pub fn combinations(items: List(a), by n: Int) -> List(List(a)) {
   case n {
     0 -> [[]]
     _ ->
@@ -1473,8 +1473,8 @@ pub fn combinations_by(items: List(a), n: Int) -> List(List(a)) {
         [] -> []
         [x, ..xs] -> {
           let first_combinations =
-            map(combinations_by(xs, n - 1), with: fn(com) { [x, ..com] })
-          append(first_combinations, combinations_by(xs, n))
+            map(combinations(xs, n - 1), with: fn(com) { [x, ..com] })
+          append(first_combinations, combinations(xs, n))
         }
       }
   }
