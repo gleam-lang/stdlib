@@ -1485,7 +1485,7 @@ fn do_combination_pairs(items: List(a)) -> List(List(tuple(a, a))) {
     [] -> []
     [x, ..xs] -> {
       let first_combinations = map(xs, with: fn(other) { tuple(x, other) })
-      [first_combinations, combination_pairs(xs)]
+      [first_combinations, ..do_combination_pairs(xs)]
     }
   }
 }
