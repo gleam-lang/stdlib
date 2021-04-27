@@ -7,7 +7,7 @@
 - The `dynamic` module gains the `tuple3`, `tuple4`, `tuple5`, `tuple6`
   functions and their typed equivalents `typed_tuple3`, `typed_tuple4`,
   `typed_tuple5`, `typed_tuple6`.
-- The `list` module gains the `combinations`, `combinations_by_2`, `drop_while`, `map_fold`, `take_while`, `reduce`,
+- The `list` module gains the `combinations`, `combination_pairs`, `drop_while`, `map_fold`, `take_while`, `reduce`,
   `chunk`, `sized_chunk`, `last` and `scan` functions.
 - The `iterator` module gains the `index`, `iterate`, `zip`, `scan`, `last`,
   `take_while`, `drop_while`, `chunk`, `sized_chunk`, `intersperse`, `interleave`, `reduce`,
