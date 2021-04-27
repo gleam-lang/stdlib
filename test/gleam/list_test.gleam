@@ -674,17 +674,17 @@ pub fn combinations_test() {
   |> should.equal([[1, 2, 3], [1, 2, 4], [1, 3, 4], [2, 3, 4]])
 }
 
-pub fn combinations_by_2_test() {
-  list.combinations_by_2([1])
+pub fn combination_pairs_test() {
+  list.combination_pairs([1])
   |> should.equal([])
 
-  list.combinations_by_2([1, 2])
+  list.combination_pairs([1, 2])
   |> should.equal([tuple(1, 2)])
 
-  list.combinations_by_2([1, 2, 3])
+  list.combination_pairs([1, 2, 3])
   |> should.equal([tuple(1, 2), tuple(1, 3), tuple(2, 3)])
 
-  list.combinations_by_2([1, 2, 3, 4])
+  list.combination_pairs([1, 2, 3, 4])
   |> should.equal([
     tuple(1, 2),
     tuple(1, 3),
