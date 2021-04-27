@@ -1474,7 +1474,12 @@ pub fn combinations(items: List(a), by n: Int) -> List(List(a)) {
         [x, ..xs] -> {
           let first_combinations =
             map(combinations(xs, n - 1), with: fn(com) { [x, ..com] })
-          append(first_combinations, combinations(xs, n))
+            |> reverse
+          fold(
+            first_combinations,
+            combinations(xs, n),
+            fn(c, acc) { [c, ..acc] },
+          )
         }
       }
   }
