@@ -170,10 +170,10 @@ pub fn unwrap(result: Result(a, e), or default: a) -> a {
 ///
 /// ## Examples
 ///
-///    > unwrap(Ok(1), fn() { 0 })
+///    > lazy_unwrap(Ok(1), fn() { 0 })
 ///    1
 ///
-///    > unwrap(Error(""), fn() { 0 })
+///    > lazy_unwrap(Error(""), fn() { 0 })
 ///    0
 ///
 pub fn lazy_unwrap(result: Result(a, e), or default: fn() -> a) -> a {
