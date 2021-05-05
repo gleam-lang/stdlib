@@ -11,6 +11,33 @@ pub type Option(a) {
   None
 }
 
+/// Combines a list of options into a single option.
+/// If all elements in the list are Some then returns a Some holding the list of values.
+/// If any element is None then returns None.
+///
+/// ## Examples
+///
+/// ```
+///    > all([Some(1), Some(2)])
+///    Some([1, 2])
+///
+///    > all([Some(1), None])
+///    None
+/// ```
+///
+pub fn all(list: List(Option(a))) -> Option(List(a)) {
+  list.fold_right(
+    list,
+    from: Some([]),
+    with: fn(item, acc) {
+      case acc, item {
+        Some(values), Some(value) -> Some([value, ..values])
+        _, _ -> None
+      }
+    },
+  )
+}
+
 /// Checks whether the option is a Some value.
 ///
 /// ## Examples
