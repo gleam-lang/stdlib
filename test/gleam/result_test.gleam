@@ -162,3 +162,8 @@ pub fn replace_error_test() {
   |> result.replace_error("Invalid")
   |> should.equal(Error("Invalid"))
 }
+
+pub fn values_test() {
+  result.values([Ok(1), Error(""), Ok(3)])
+  |> should.equal([1, 3])
+}

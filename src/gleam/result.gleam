@@ -264,3 +264,17 @@ pub fn replace_error(result: Result(a, e1), error: e2) -> Result(a, e2) {
   result
   |> map_error(fn(_) { error })
 }
+
+/// Given a list of results
+/// Return only the values inside Ok
+///
+/// ## Examples
+///
+/// ```
+/// > values([Ok(1), None, Ok(3)])
+/// [1, 3]
+/// ```
+///
+pub fn values(results: List(Result(a, e))) -> List(a) {
+  list.filter_map(results, fn(r) { r })
+}
