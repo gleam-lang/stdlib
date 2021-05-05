@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- The `list` module gains the `flat_map` function.
+
 ## v0.15.0 - 2021-05-05
 
 - The `list.split_while` function's second argument now has the label

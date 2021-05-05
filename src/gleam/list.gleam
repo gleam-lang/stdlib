@@ -452,6 +452,20 @@ pub fn flatten(lists: List(List(a))) -> List(a) {
   do_flatten(lists, [])
 }
 
+/// Map and flatten the result
+///
+/// ## Examples
+///
+/// ```
+/// > flat_map([2, 4, 6], fn(x) { [x, x + 1] })
+/// [2, 3, 4, 5, 6, 7]
+/// ```
+///
+pub fn flat_map(over list: List(a), with fun: fn(a) -> List(b)) -> List(b) {
+  map(list, fun)
+  |> flatten
+}
+
 /// Reduces a list of elements into a single value by calling a given function
 /// on each element, going from left to right.
 ///
