@@ -491,7 +491,11 @@ pub fn fold(over list: List(a), from initial: b, with fun: fn(a, b) -> b) -> b {
 /// Unlike `fold` this function is not tail recursive. Where possible use
 /// `fold` instead as it will use less memory.
 ///
-pub fn fold_right(list: List(a), from initial: b, with fun: fn(a, b) -> b) -> b {
+pub fn fold_right(
+  over list: List(a),
+  from initial: b,
+  with fun: fn(a, b) -> b,
+) -> b {
   case list {
     [] -> initial
     [x, ..rest] -> fun(x, fold_right(rest, initial, fun))
