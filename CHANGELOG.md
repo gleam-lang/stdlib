@@ -3,7 +3,7 @@
 ## Unreleased
 
 - The `list` module gains the `flat_map` function.
-- The `option` module gains the `values` function.
+- The `option` module gains the `all` and `values` functions.
 - The `result` module gains the `values` function.
 - All modules now use the new `#(a, b, ...)` tuple syntax.
 
