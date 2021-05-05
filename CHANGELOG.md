@@ -1,14 +1,15 @@
 # Changelog
 
-## Unreleased
+## v0.15.0 - 2021-05-05
 
 - The `list.split_while` function's second argument now has the label
-`satisfying` to match the other `_while` functions in `list` and `iterator`.
+  `satisfying` to match the other `_while` functions in `list` and `iterator`.
 - The `dynamic` module gains the `tuple3`, `tuple4`, `tuple5`, `tuple6`
   functions and their typed equivalents `typed_tuple3`, `typed_tuple4`,
   `typed_tuple5`, `typed_tuple6`.
-- The `list` module gains the `combinations`, `combination_pairs`, `drop_while`, `map_fold`, `take_while`, `reduce`,
-  `chunk`, `sized_chunk`, `last` and `scan` functions.
+- The `list` module gains the `combinations`, `combination_pairs`, `drop_while`,
+  `map_fold`, `take_while`, `reduce`, `chunk`, `sized_chunk`, `last` and `scan`
+  functions.
 - The `iterator` module gains the `index`, `iterate`, `zip`, `scan`, `last`,
   `take_while`, `drop_while`, `chunk`, `sized_chunk`, `intersperse`, `interleave`, `reduce`,
   `any`, `all`, `empty`, `once` and `single` functions.

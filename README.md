@@ -13,21 +13,21 @@ Add `gleam_stdlib` to the deps section of your `rebar.config` or `mix.exs`
 
 ```erlang
 {deps, [
-    {gleam_stdlib, "0.14.0"}
+    {gleam_stdlib, "~> 0.15.0"}
 ]}
 ```
 
 ```elixir
 defp deps do
   [
-    {:gleam_stdlib, "~> 0.14.0"},
+    {:gleam_stdlib, "~> 0.15.0"},
   ]
 end
 ```
 
 ## Usage
 
-Import the modules you want to use first
+Import the modules you want to use and write some code!
 
 ```rust
 import gleam/string
@@ -40,11 +40,4 @@ fn usage() {
 fn more_usage() {
   contains([1, 2, 3], any: 2)
 }
-```
-
-## Quick reference
-
-```sh
-# Run the unit tests
-rebar3 eunit
 ```
