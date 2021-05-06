@@ -1522,3 +1522,48 @@ pub fn combination_pairs(items: List(a)) -> List(#(a, a)) {
   do_combination_pairs(items)
   |> flatten
 }
+
+/// Make a list alternating the elements from the given lists
+///
+/// ## Examples
+///
+/// ```
+/// > list.interleave([[1, 2], [101, 102], [201, 202]])
+/// [1, 101, 201, 2, 102, 202]
+/// ```
+///
+pub fn interleave(list: List(List(a))) -> List(a) {
+  transpose(list)
+  |> flatten
+}
+
+/// Transpose rows and columns of the list of lists.
+///
+/// ## Examples
+///
+/// ```
+/// > transpose([[1, 2, 3], [101, 102, 103]])
+/// [[1, 101], [2, 102], [3, 103]]
+/// ```
+pub fn transpose(list_of_list: List(List(a))) -> List(List(a)) {
+  let take_first = fn(list) {
+    case list {
+      [] -> []
+      [f] -> [f]
+      [f, .._rest] -> [f]
+    }
+  }
+
+  case list_of_list {
+    [] -> []
+    [[], ..xss] -> transpose(xss)
+    rows -> {
+      let firsts =
+        rows
+        |> map(take_first)
+        |> flatten
+      let rest = transpose(map(rows, drop(_, 1)))
+      [firsts, ..rest]
+    }
+  }
+}
