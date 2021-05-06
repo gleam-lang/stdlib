@@ -692,3 +692,33 @@ pub fn combination_pairs_test() {
   list.combination_pairs([1, 2, 3, 4])
   |> should.equal([#(1, 2), #(1, 3), #(1, 4), #(2, 3), #(2, 4), #(3, 4)])
 }
+
+pub fn interleave_test() {
+  list.interleave([[1, 2], [101, 102]])
+  |> should.equal([1, 101, 2, 102])
+
+  list.interleave([[1, 2], [101, 102], [201, 202]])
+  |> should.equal([1, 101, 201, 2, 102, 202])
+
+  // Left over elements are added at the end
+  list.interleave([[1, 2, 3], [101, 102]])
+  |> should.equal([1, 101, 2, 102, 3])
+
+  list.interleave([[1, 2], [101, 102, 103]])
+  |> should.equal([1, 101, 2, 102, 103])
+}
+
+pub fn transpose_test() {
+  list.transpose([[1, 2, 3], [101, 102, 103]])
+  |> should.equal([[1, 101], [2, 102], [3, 103]])
+
+  list.transpose([[1, 2, 3], [101, 102, 103], [201, 202, 203]])
+  |> should.equal([[1, 101, 201], [2, 102, 202], [3, 103, 203]])
+
+  // Left over elements are still returned
+  list.transpose([[1, 2], [101, 102, 103]])
+  |> should.equal([[1, 101], [2, 102], [103]])
+
+  list.transpose([[1, 2, 3], [101, 102], [201, 202, 203]])
+  |> should.equal([[1, 101, 201], [2, 102, 202], [3, 203]])
+}
