@@ -45,7 +45,7 @@ pub external fn size(Map(k, v)) -> Int =
 ///    > new() |> insert("key", 0) |> to_list()
 ///    [tuple("key", 0)]
 ///
-pub external fn to_list(Map(key, value)) -> List(tuple(key, value)) =
+pub external fn to_list(Map(key, value)) -> List(#(key, value)) =
   "maps" "to_list"
 
 /// Converts a list of 2-element tuples `tuple(key, value)` to a map.
@@ -53,7 +53,7 @@ pub external fn to_list(Map(key, value)) -> List(tuple(key, value)) =
 /// If two tuples have the same key the last one in the list will be the one
 /// that is present in the map.
 ///
-pub external fn from_list(List(tuple(key, value))) -> Map(key, value) =
+pub external fn from_list(List(#(key, value))) -> Map(key, value) =
   "maps" "from_list"
 
 external fn is_key(key, Map(key, v)) -> Bool =
@@ -286,14 +286,10 @@ pub fn update(
   |> insert(map, key, _)
 }
 
-fn do_fold(
-  list: List(tuple(k, v)),
-  initial: acc,
-  fun: fn(k, v, acc) -> acc,
-) -> acc {
+fn do_fold(list: List(#(k, v)), initial: acc, fun: fn(k, v, acc) -> acc) -> acc {
   case list {
     [] -> initial
-    [tuple(k, v), ..tail] -> do_fold(tail, fun(k, v, initial), fun)
+    [#(k, v), ..tail] -> do_fold(tail, fun(k, v, initial), fun)
   }
 }
 

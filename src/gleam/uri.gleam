@@ -97,7 +97,7 @@ external fn erl_parse_query(String) -> Dynamic =
 /// Ok([tuple("a", "1"), tuple("b", "2")])
 /// ```
 ///
-pub fn parse_query(query: String) -> Result(List(tuple(String, String)), Nil) {
+pub fn parse_query(query: String) -> Result(List(#(String, String)), Nil) {
   let bool_value = fn(x) { result.map(dynamic.bool(x), fn(_) { "" }) }
   let query_param = dynamic.typed_tuple2(
     _,
@@ -120,7 +120,7 @@ type ErlQueryToStringOption {
 }
 
 external fn erl_query_to_string(
-  List(tuple(String, String)),
+  List(#(String, String)),
   List(ErlQueryToStringOption),
 ) -> Dynamic =
   "uri_string" "compose_query"
@@ -137,7 +137,7 @@ external fn erl_query_to_string(
 /// "a=1&b=2"
 /// ```
 ///
-pub fn query_to_string(query: List(tuple(String, String))) -> String {
+pub fn query_to_string(query: List(#(String, String))) -> String {
   query
   |> erl_query_to_string([Encoding(Utf8)])
   |> dynamic.string
@@ -156,7 +156,7 @@ pub fn query_to_string(query: List(tuple(String, String))) -> String {
 /// ```
 ///
 pub fn percent_encode(value: String) -> String {
-  query_to_string([tuple("k", value)])
+  query_to_string([#("k", value)])
   |> string.replace(each: "k=", with: "")
 }
 
@@ -235,11 +235,11 @@ external fn erl_to_string(Map(UriKey, Dynamic)) -> Dynamic =
 ///
 pub fn to_string(uri: Uri) -> String {
   let field = fn(key: UriKey, value: Option(anything)) -> Result(
-    tuple(UriKey, Dynamic),
+    #(UriKey, Dynamic),
     Nil,
   ) {
     case value {
-      Some(v) -> Ok(tuple(key, dynamic.from(v)))
+      Some(v) -> Ok(#(key, dynamic.from(v)))
       None -> Error(Nil)
     }
   }
@@ -322,8 +322,8 @@ pub fn merge(base: Uri, relative: Uri) -> Result(Uri, Nil) {
           Ok(resolved)
         }
         Uri(scheme: None, host: None, ..) -> {
-          let tuple(new_path, new_query) = case relative.path {
-            "" -> tuple(base.path, option.or(relative.query, base.query))
+          let #(new_path, new_query) = case relative.path {
+            "" -> #(base.path, option.or(relative.query, base.query))
             _ -> {
               let path_segments = case string.starts_with(relative.path, "/") {
                 True -> string.split(relative.path, "/")
@@ -336,7 +336,7 @@ pub fn merge(base: Uri, relative: Uri) -> Result(Uri, Nil) {
                 path_segments
                 |> remove_dot_segments()
                 |> join_segments()
-              tuple(path, relative.query)
+              #(path, relative.query)
             }
           }
           let resolved =
