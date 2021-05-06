@@ -254,9 +254,9 @@ pub fn map(list: List(a), with fun: fn(a) -> b) -> List(b) {
 /// > map_fold(
 ///     over: [1, 2, 3],
 ///     from: 100,
-///     with: fn(i, memo) { tuple(i * 2, memo + i) }
+///     with: fn(i, memo) { #(i * 2, memo + i) }
 ///  )
-///  tuple([2, 4, 6], 106)
+///  #([2, 4, 6], 106)
 /// ```
 ///
 pub fn map_fold(
@@ -296,8 +296,8 @@ fn do_index_map(
 ///
 /// ## Examples
 ///
-///    > index_map(["a", "b"], fn(i, x) { tuple(i, x) })
-///    [tuple(0, "a"), tuple(1, "b")]
+///    > index_map(["a", "b"], fn(i, x) { #(i, x) })
+///    [#(0, "a"), #(1, "b")]
 ///
 pub fn index_map(list: List(a), with fun: fn(Int, a) -> b) -> List(b) {
   do_index_map(list, fun, 0, [])
@@ -712,13 +712,13 @@ fn do_zip(xs: List(a), ys: List(b), acc: List(#(a, b))) -> List(#(a, b)) {
 ///    []
 ///
 ///    > zip([1, 2], [3])
-///    [tuple(1, 3)]
+///    [#(1, 3)]
 ///
 ///    > zip([1], [3, 4])
-///    [tuple(1, 3)]
+///    [#(1, 3)]
 ///
 ///    > zip([1, 2], [3, 4])
-///    [tuple(1, 3), tuple(2, 4)]
+///    [#(1, 3), #(2, 4)]
 ///
 pub fn zip(xs: List(a), ys: List(b)) -> List(#(a, b)) {
   do_zip(xs, ys, [])
@@ -740,7 +740,7 @@ pub fn zip(xs: List(a), ys: List(b)) -> List(#(a, b)) {
 ///    Error(LengthMismatch)
 ///
 ///    > strict_zip([1, 2], [3, 4])
-///    Ok([tuple(1, 3), tuple(2, 4)])
+///    Ok([#(1, 3), #(2, 4)])
 ///
 pub fn strict_zip(
   l1: List(a),
@@ -763,11 +763,11 @@ fn do_unzip(input, xs, ys) {
 ///
 /// ## Examples
 ///
-///    > unzip([tuple(1, 2), tuple(3, 4)])
-///    tuple([1, 3], [2, 4])
+///    > unzip([#(1, 2), #(3, 4)])
+///    #([1, 3], [2, 4])
 ///
 ///    > unzip([])
-///    tuple([], [])
+///    #([], [])
 ///
 pub fn unzip(input: List(#(a, b))) -> #(List(a), List(b)) {
   do_unzip(input, [], [])
@@ -949,13 +949,13 @@ fn do_split(list: List(a), n: Int, taken: List(a)) -> #(List(a), List(a)) {
 /// ## Examples
 ///
 ///    > split([6, 7, 8, 9], 0)
-///    tuple([], [6, 7, 8, 9])
+///    #([], [6, 7, 8, 9])
 ///
 ///    > split([6, 7, 8, 9], 2)
-///    tuple([6, 7], [8, 9])
+///    #([6, 7], [8, 9])
 ///
 ///    > split([6, 7, 8, 9], 4)
-///    tuple([6, 7, 8, 9], [])
+///    #([6, 7, 8, 9], [])
 ///
 pub fn split(list list: List(a), at index: Int) -> #(List(a), List(a)) {
   do_split(list, index, [])
@@ -985,10 +985,10 @@ fn do_split_while(
 /// ## Examples
 ///
 ///    > split_while([1, 2, 3, 4, 5], fn(x) { x <= 3 })
-///    tuple([1, 2, 3], [4, 5])
+///    #([1, 2, 3], [4, 5])
 ///
 ///    > split_while([1, 2, 3, 4, 5], fn(x) { x <= 5 })
-///    tuple([1, 2, 3, 4, 5], [])
+///    #([1, 2, 3, 4, 5], [])
 ///
 pub fn split_while(
   list list: List(a),
@@ -1007,13 +1007,13 @@ pub fn split_while(
 ///
 /// ## Examples
 ///
-///    > key_find([tuple("a", 0), tuple("b", 1)], "a")
+///    > key_find([#("a", 0), #("b", 1)], "a")
 ///    Ok(0)
 ///
-///    > key_find([tuple("a", 0), tuple("b", 1)], "b")
+///    > key_find([#("a", 0), #("b", 1)], "b")
 ///    Ok(1)
 ///
-///    > key_find([tuple("a", 0), tuple("b", 1)], "c")
+///    > key_find([#("a", 0), #("b", 1)], "c")
 ///    Error(Nil)
 ///
 pub fn key_find(
@@ -1051,7 +1051,7 @@ fn do_pop(haystack, predicate, checked) {
 /// ## Examples
 ///
 ///    > pop([1, 2, 3], fn(x) { x > 2 })
-///    Ok(tuple(3, [1, 2]))
+///    Ok(#(3, [1, 2]))
 ///
 ///    > pop([1, 2, 3], fn(x) { x > 4 })
 ///    Error(Nil)
@@ -1086,7 +1086,7 @@ fn do_pop_map(haystack, mapper, checked) {
 /// ## Examples
 ///
 ///    > pop_map([[], [2], [3]], head)
-///    Ok(tuple(2, [[], [3]]))
+///    Ok(#(2, [[], [3]]))
 ///
 ///    > pop_map([[], []], head)
 ///    Error(Nil)
@@ -1109,13 +1109,13 @@ pub fn pop_map(
 ///
 /// ## Examples
 ///
-///    > key_pop([tuple("a", 0), tuple("b", 1)], "a")
-///    Ok(tuple(0, [tuple("b", 1)])
+///    > key_pop([#("a", 0), #("b", 1)], "a")
+///    Ok(#(0, [#("b", 1)])
 ///
-///    > key_pop([tuple("a", 0), tuple("b", 1)], "b")
-///    Ok(tuple(1, [tuple("a", 0)])
+///    > key_pop([#("a", 0), #("b", 1)], "b")
+///    Ok(#(1, [#("a", 0)])
 ///
-///    > key_pop([tuple("a", 0), tuple("b", 1)], "c")
+///    > key_pop([#("a", 0), #("b", 1)], "c")
 ///    Error(Nil)
 ///
 pub fn key_pop(
@@ -1142,11 +1142,11 @@ pub fn key_pop(
 ///
 /// ## Examples
 ///
-///    > key_set([tuple(5, 0), tuple(4, 1)], 4, 100)
-///    [tuple(5, 0), tuple(4, 100)]
+///    > key_set([#(5, 0), #(4, 1)], 4, 100)
+///    [#(5, 0), #(4, 100)]
 ///
-///    > key_set([tuple(5, 0), tuple(4, 1)], 1, 100)
-///    [tuple(5, 0), tuple(4, 1), tuple(1, 100)]
+///    > key_set([#(5, 0), #(4, 1)], 1, 100)
+///    [#(5, 0), #(4, 1), #(1, 100)]
 ///
 pub fn key_set(list: List(#(a, b)), key: a, value: b) -> List(#(a, b)) {
   case list {
@@ -1242,7 +1242,7 @@ pub fn window(l: List(a), by n: Int) -> List(List(a)) {
 ///
 /// ```
 /// > window_by_2([1,2,3,4])
-/// [tuple(1, 2), tuple(2, 3), tuple(3, 4)]
+/// [#(1, 2), #(2, 3), #(3, 4)]
 ///
 /// > window_by_2([1])
 /// []
@@ -1501,7 +1501,7 @@ fn do_combination_pairs(items: List(a)) -> List(List(#(a, a))) {
 ///
 /// ```
 /// > combination_pairs([1, 2, 3])
-/// [tuple(1, 2), tuple(1, 3), tuple(2, 3)]
+/// [#(1, 2), #(1, 3), #(2, 3)]
 /// ```
 ///
 pub fn combination_pairs(items: List(a)) -> List(#(a, a)) {

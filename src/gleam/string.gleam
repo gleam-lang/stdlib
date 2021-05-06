@@ -274,7 +274,7 @@ external fn erl_split(String, String) -> List(String) =
 /// ## Examples
 ///
 ///    > split_once("home/gleam/desktop/", on: "/")
-///    Ok(tuple("home", "gleam/desktop/"))
+///    Ok(#("home", "gleam/desktop/"))
 ///
 ///    > split_once("home/gleam/desktop/", on: "?")
 ///    Error(Nil)
@@ -439,7 +439,7 @@ pub fn trim_right(string: String) -> String {
 ///
 /// ## Examples
 ///    > pop_grapheme("gleam")
-///    Ok(tuple("g", "leam"))
+///    Ok(#("g", "leam"))
 ///
 ///    > pop_grapheme("")
 ///    Error(Nil)
