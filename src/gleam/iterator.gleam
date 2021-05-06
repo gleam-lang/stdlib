@@ -493,7 +493,7 @@ fn do_index(
 /// ## Examples
 ///
 ///    > from_list(["a", "b", "c"]) |> index |> to_list
-///    [tuple(0, "a"), tuple(1, "b"), tuple(2, "c")]
+///    [#(0, "a"), #(1, "b"), #(2, "c")]
 ///
 pub fn index(over iterator: Iterator(element)) -> Iterator(#(Int, element)) {
   iterator.continuation
@@ -636,7 +636,7 @@ fn do_zip(
 /// ## Examples
 ///
 ///    > from_list(["a", "b", "c"]) |> zip(range(20, 30)) |> to_list
-///    [tuple("a", 20), tuple("b", 21), tuple("c", 22)]
+///    [#("a", 20), #("b", 21), #("c", 22)]
 ///
 pub fn zip(left: Iterator(a), right: Iterator(b)) -> Iterator(#(a, b)) {
   do_zip(left.continuation, right.continuation)
@@ -907,7 +907,7 @@ fn group_updater(
 /// ## Examples
 ///
 ///    > from_list([1, 2, 3, 4, 5, 6]) |> group(by: fn(n) { n % 3 })
-///    map.from_list([tuple(0, [3, 6]), tuple(1, [1, 4]), tuple(2, [2, 5])])
+///    map.from_list([#(0, [3, 6]), #(1, [1, 4]), #(2, [2, 5])])
 ///
 pub fn group(
   in iterator: Iterator(element),

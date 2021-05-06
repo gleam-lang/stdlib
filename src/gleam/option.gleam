@@ -142,8 +142,8 @@ pub fn flatten(option: Option(Option(a))) -> Option(a) {
 ///    > then(Some(1), fn(x) { Some(x + 1) })
 ///    Some(2)
 ///
-///    > then(Some(1), fn(x) { Some(tuple("a", x)) })
-///    Some(tuple("a", 1))
+///    > then(Some(1), fn(x) { Some(#("a", x)) })
+///    Some(#("a", 1))
 ///
 ///    > then(Some(1), fn(x) { None })
 ///    None

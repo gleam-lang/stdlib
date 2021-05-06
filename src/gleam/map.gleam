@@ -32,7 +32,7 @@ pub external type Map(key, value)
 pub external fn size(Map(k, v)) -> Int =
   "maps" "size"
 
-/// Converts the map to a list of 2-element tuples `tuple(key, value)`, one for
+/// Converts the map to a list of 2-element tuples `#(key, value)`, one for
 /// each key-value pair in the map.
 ///
 /// The tuples in the list have no specific order.
@@ -43,12 +43,12 @@ pub external fn size(Map(k, v)) -> Int =
 ///    []
 ///
 ///    > new() |> insert("key", 0) |> to_list()
-///    [tuple("key", 0)]
+///    [#("key", 0)]
 ///
 pub external fn to_list(Map(key, value)) -> List(#(key, value)) =
   "maps" "to_list"
 
-/// Converts a list of 2-element tuples `tuple(key, value)` to a map.
+/// Converts a list of 2-element tuples `#(key, value)` to a map.
 ///
 /// If two tuples have the same key the last one in the list will be the one
 /// that is present in the map.
@@ -105,10 +105,10 @@ external fn erl_insert(key, value, Map(key, value)) -> Map(key, value) =
 /// ## Examples
 ///
 ///    > new() |> insert("a", 0) |> to_list
-///    [tuple("a", 0)]
+///    [#("a", 0)]
 ///
 ///    > new() |> insert("a", 0) |> insert("a", 5) |> to_list
-///    [tuple("a", 5)]
+///    [#("a", 5)]
 ///
 pub fn insert(into map: Map(k, v), for key: k, insert value: v) -> Map(k, v) {
   erl_insert(key, value, map)
@@ -122,10 +122,10 @@ external fn erl_map_values(fn(key, a) -> b, Map(key, value)) -> Map(key, b) =
 ///
 /// ## Examples
 ///
-///    > [tuple(3, 3), tuple(2, 4)]
+///    > [#(3, 3), #(2, 4)]
 ///    > |> from_list
 ///    > |> map_values(fn(key, value) { key * value })
-///    [tuple(3, 9), tuple(2, 8)]
+///    [#(3, 9), #(2, 8)]
 ///
 ///
 pub fn map_values(in map: Map(k, v), with fun: fn(k, v) -> w) -> Map(k, w) {
@@ -140,7 +140,7 @@ pub fn map_values(in map: Map(k, v), with fun: fn(k, v) -> w) -> Map(k, w) {
 ///
 /// ## Examples
 ///
-///    > keys([tuple("a", 0), tuple("b", 1)])
+///    > keys([#("a", 0), #("b", 1)])
 ///    ["a", "b"]
 ///
 pub external fn keys(Map(keys, v)) -> List(keys) =
@@ -154,7 +154,7 @@ pub external fn keys(Map(keys, v)) -> List(keys) =
 ///
 /// ## Examples
 ///
-///    > keys(from_list([tuple("a", 0), tuple("b", 1)]))
+///    > keys(from_list([#("a", 0), #("b", 1)]))
 ///    [0, 1]
 ///
 pub external fn values(Map(k, values)) -> List(values) =
@@ -171,13 +171,13 @@ external fn erl_filter(
 ///
 /// ## Examples
 ///
-///    > from_list([tuple("a", 0), tuple("b", 1)])
+///    > from_list([#("a", 0), #("b", 1)])
 ///    > |> filter(fn(key, value) { value != 0 })
-///    from_list([tuple("b", 1)])
+///    from_list([#("b", 1)])
 ///
-///    > from_list([tuple("a", 0), tuple("b", 1)])
+///    > from_list([#("a", 0), #("b", 1)])
 ///    > |> filter(fn(key, value) { True })
-///    from_list([tuple("a", 0), tuple("b", 1)])
+///    from_list([#("a", 0), #("b", 1)])
 ///
 pub fn filter(in map: Map(k, v), for property: fn(k, v) -> Bool) -> Map(k, v) {
   erl_filter(property, map)
@@ -191,13 +191,13 @@ external fn erl_take(List(k), Map(k, v)) -> Map(k, v) =
 ///
 /// ## Examples
 ///
-///    > from_list([tuple("a", 0), tuple("b", 1)])
+///    > from_list([#("a", 0), #("b", 1)])
 ///    > |> take(["b"])
-///    from_list([tuple("b", 1)])
+///    from_list([#("b", 1)])
 ///
-///    > from_list([tuple("a", 0), tuple("b", 1)])
+///    > from_list([#("a", 0), #("b", 1)])
 ///    > |> take(["a", "b", "c"])
-///    from_list([tuple("a", 0), tuple("b", 1)])
+///    from_list([#("a", 0), #("b", 1)])
 ///
 pub fn take(from map: Map(k, v), keeping desired_keys: List(k)) -> Map(k, v) {
   erl_take(desired_keys, map)
@@ -210,10 +210,10 @@ pub fn take(from map: Map(k, v), keeping desired_keys: List(k)) -> Map(k, v) {
 ///
 /// ## Examples
 ///
-///    > let a = from_list([tuple("a", 0), tuple("b", 1)])
-///    > let b = from_list([tuple("b", 2), tuple("c", 3)])
+///    > let a = from_list([#("a", 0), #("b", 1)])
+///    > let b = from_list([#("b", 2), #("c", 3)])
 ///    > merge(a, b)
-///    from_list([tuple("a", 0), tuple("b", 2), tuple("c", 3)])
+///    from_list([#("a", 0), #("b", 2), #("c", 3)])
 ///
 pub external fn merge(into: Map(k, v), merge: Map(k, v)) -> Map(k, v) =
   "maps" "merge"
@@ -226,11 +226,11 @@ external fn erl_delete(k, Map(k, v)) -> Map(k, v) =
 ///
 /// ## Examples
 ///
-///    > delete([tuple("a", 0), tuple("b", 1)], "a")
-///    from_list([tuple("b", 1)])
+///    > delete([#("a", 0), #("b", 1)], "a")
+///    from_list([#("b", 1)])
 ///
-///    > delete([tuple("a", 0), tuple("b", 1)], "c")
-///    from_list([tuple("a", 0), tuple("b", 1)])
+///    > delete([#("a", 0), #("b", 1)], "c")
+///    from_list([#("a", 0), #("b", 1)])
 ///
 pub fn delete(from map: Map(k, v), delete key: k) -> Map(k, v) {
   erl_delete(key, map)
@@ -241,13 +241,13 @@ pub fn delete(from map: Map(k, v), delete key: k) -> Map(k, v) {
 ///
 /// ## Examples
 ///
-///    > drop([tuple("a", 0), tuple("b", 1)], ["a"])
-///    from_list([tuple("b", 2)])
+///    > drop([#("a", 0), #("b", 1)], ["a"])
+///    from_list([#("b", 2)])
 ///
-///    > delete([tuple("a", 0), tuple("b", 1)], ["c"])
-///    from_list([tuple("a", 0), tuple("b", 1)])
+///    > delete([#("a", 0), #("b", 1)], ["c"])
+///    from_list([#("a", 0), #("b", 1)])
 ///
-///    > drop([tuple("a", 0), tuple("b", 1)], ["a", "b", "c"])
+///    > drop([#("a", 0), #("b", 1)], ["a", "b", "c"])
 ///    from_list([])
 ///
 pub fn drop(from map: Map(k, v), drop disallowed_keys: List(k)) -> Map(k, v) {
@@ -267,13 +267,13 @@ pub fn drop(from map: Map(k, v), drop disallowed_keys: List(k)) -> Map(k, v) {
 ///    >     Error(Nil) -> 0
 ///    >   }
 ///    > }
-///    > let map = from_list([tuple("a", 0)])
+///    > let map = from_list([#("a", 0)])
 ///    >
 ///    > update(map, "a" increment)
-///    from_list([tuple("a", 1)])
+///    from_list([#("a", 1)])
 ///
 ///    > update(map, "b" increment)
-///    from_list([tuple("a", 0), tuple("b", 0)])
+///    from_list([#("a", 0), #("b", 0)])
 ///
 pub fn update(
   in map: Map(k, v),
@@ -302,7 +302,7 @@ fn do_fold(list: List(#(k, v)), initial: acc, fun: fn(k, v, acc) -> acc) -> acc 
 ///
 /// # Examples
 ///
-///    > let map = from_list([tuple("a", 1), tuple("b", 3), tuple("c", 9)])
+///    > let map = from_list([#("a", 1), #("b", 3), #("c", 9)])
 ///    > fold(map, 0, fn(key, value, accumulator) { accumulator + value })
 ///    13
 ///

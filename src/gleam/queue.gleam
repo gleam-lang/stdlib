@@ -125,12 +125,12 @@ pub fn push_front(onto queue: Queue(a), this item: a) -> Queue(a) {
 ///    > |> queue.push_back(0)
 ///    > |> queue.push_back(1)
 ///    > |> queue.pop_back()
-///    Ok(tuple(1, queue.push_front(queue.new(), 0)))
+///    Ok(#(1, queue.push_front(queue.new(), 0)))
 ///
 ///    > queue.new()
 ///    > |> queue.push_front(0)
 ///    > |> queue.pop_back()
-///    Ok(tuple(0, queue.new()))
+///    Ok(#(0, queue.new()))
 ///
 ///    > queue.new()
 ///    > |> queue.pop_back()
@@ -159,12 +159,12 @@ pub fn pop_back(from queue: Queue(a)) -> Result(#(a, Queue(a)), Nil) {
 ///    > |> queue.push_front(1)
 ///    > |> queue.push_front(0)
 ///    > |> queue.pop_front()
-///    Ok(tuple(0, queue.push_back(queue.new(), 1)))
+///    Ok(#(0, queue.push_back(queue.new(), 1)))
 ///
 ///    > queue.new()
 ///    > |> queue.push_back(0)
 ///    > |> queue.pop_front()
-///    Ok(tuple(0, queue.new()))
+///    Ok(#(0, queue.new()))
 ///
 ///    > queue.new()
 ///    > |> queue.pop_back()

@@ -2,7 +2,7 @@
 ///
 /// ## Examples
 ///
-///    > first(tuple(1, 2))
+///    > first(#(1, 2))
 ///    1
 ///
 pub fn first(pair: #(a, b)) -> a {
@@ -14,7 +14,7 @@ pub fn first(pair: #(a, b)) -> a {
 ///
 /// ## Examples
 ///
-///    > second(tuple(1, 2))
+///    > second(#(1, 2))
 ///    2
 ///
 pub fn second(pair: #(a, b)) -> b {
@@ -26,8 +26,8 @@ pub fn second(pair: #(a, b)) -> b {
 ///
 /// ## Examples
 ///
-///    > swap(tuple(1, 2))
-///    tuple(2, 1)
+///    > swap(#(1, 2))
+///    #(2, 1)
 ///
 pub fn swap(pair: #(a, b)) -> #(b, a) {
   let #(a, b) = pair
@@ -39,7 +39,7 @@ pub fn swap(pair: #(a, b)) -> #(b, a) {
 ///
 /// ## Examples
 ///
-///    > tuple(1, 2) |> map_first(fn(n) { n * 2 })
+///    > #(1, 2) |> map_first(fn(n) { n * 2 })
 ///    2
 ///
 pub fn map_first(of pair: #(a, b), with fun: fn(a) -> c) -> #(c, b) {
@@ -52,7 +52,7 @@ pub fn map_first(of pair: #(a, b), with fun: fn(a) -> c) -> #(c, b) {
 ///
 /// ## Examples
 ///
-///    > tuple(1, 2) |> map_second(fn(n) { n * 2 })
+///    > #(1, 2) |> map_second(fn(n) { n * 2 })
 ///    4
 ///
 pub fn map_second(of pair: #(a, b), with fun: fn(b) -> c) -> #(a, c) {

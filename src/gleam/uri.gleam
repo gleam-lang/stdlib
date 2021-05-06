@@ -94,7 +94,7 @@ external fn erl_parse_query(String) -> Dynamic =
 /// ```
 /// > parse_query("a=1&b=2")
 ///
-/// Ok([tuple("a", "1"), tuple("b", "2")])
+/// Ok([#("a", "1"), #("b", "2")])
 /// ```
 ///
 pub fn parse_query(query: String) -> Result(List(#(String, String)), Nil) {
@@ -132,7 +132,7 @@ external fn erl_query_to_string(
 /// ## Examples
 ///
 /// ```
-/// > query_to_string([tuple("a", "1"), tuple("b", "2")])
+/// > query_to_string([#("a", "1"), #("b", "2")])
 ///
 /// "a=1&b=2"
 /// ```

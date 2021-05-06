@@ -305,10 +305,10 @@ pub external fn field(from: Dynamic, named: a) -> Result(Dynamic, String) =
 ///
 /// ## Examples
 ///
-///    > element(from(tuple(1, 2)), 0)
+///    > element(from(#(1, 2)), 0)
 ///    Ok(from(1))
 ///
-///    > element(from(tuple(1, 2)), 2)
+///    > element(from(#(1, 2)), 2)
 ///    Error("Expected a tuple of at least 3 size, got a tuple of 2 size")
 ///
 ///    > element(from(""), 2)
@@ -324,10 +324,10 @@ pub external fn element(from: Dynamic, position: Int) -> Result(Dynamic, String)
 ///
 /// ## Examples
 ///
-///    > tuple2(from(tuple(1, 2)))
-///    Ok(tuple(from(1), from(2)))
+///    > tuple2(from(#(1, 2)))
+///    Ok(#(from(1), from(2)))
 ///
-///    > tuple2(from(tuple(1, 2, 3)))
+///    > tuple2(from(#(1, 2, 3)))
 ///    Error("Expected a 2 element tuple")
 ///
 ///    > tuple2(from(""))
@@ -344,13 +344,13 @@ pub external fn tuple2(from: Dynamic) -> Result(#(Dynamic, Dynamic), String) =
 ///
 /// ## Examples
 ///
-///    > typed_tuple2(from(tuple(1, 2)), int, int)
-///    Ok(tuple(1, 2))
+///    > typed_tuple2(from(#(1, 2)), int, int)
+///    Ok(#(1, 2))
 ///
-///    > typed_tuple2(from(tuple(1, 2.0)), int, float)
-///    Ok(tuple(1, 2.0))
+///    > typed_tuple2(from(#(1, 2.0)), int, float)
+///    Ok(#(1, 2.0))
 ///
-///    > typed_tuple2(from(tuple(1, 2, 3)), int, float)
+///    > typed_tuple2(from(#(1, 2, 3)), int, float)
 ///    Error("Expected a 2 element tuple, got a 3 element tuple")
 ///
 ///    > typed_tuple2(from(""), int, float)
@@ -374,10 +374,10 @@ pub fn typed_tuple2(
 ///
 /// ## Examples
 ///
-///    > tuple3(from(tuple(1, 2, 3)))
-///    Ok(tuple(from(1), from(2), from(3)))
+///    > tuple3(from(#(1, 2, 3)))
+///    Ok(#(from(1), from(2), from(3)))
 ///
-///    > tuple3(from(tuple(1, 2)))
+///    > tuple3(from(#(1, 2)))
 ///    Error("Expected a 3 element tuple")
 ///
 ///    > tuple3(from(""))
@@ -396,13 +396,13 @@ pub external fn tuple3(
 ///
 /// ## Examples
 ///
-///    > typed_tuple3(from(tuple(1, 2, 3)), int, int, int)
-///    Ok(tuple(1, 2, 3))
+///    > typed_tuple3(from(#(1, 2, 3)), int, int, int)
+///    Ok(#(1, 2, 3))
 ///
-///    > typed_tuple3(from(tuple(1, 2.0, "3")), int, float, string)
-///    Ok(tuple(1, 2.0, "3"))
+///    > typed_tuple3(from(#(1, 2.0, "3")), int, float, string)
+///    Ok(#(1, 2.0, "3"))
 ///
-///    > typed_tuple3(from(tuple(1, 2)), int, float, string)
+///    > typed_tuple3(from(#(1, 2)), int, float, string)
 ///    Error("Expected a 3 element tuple, got a 2 element tuple")
 ///
 ///    > typed_tuple3(from(""), int, float, string)
@@ -428,10 +428,10 @@ pub fn typed_tuple3(
 ///
 /// ## Examples
 ///
-///    > tuple4(from(tuple(1, 2, 3, 4)))
-///    Ok(tuple(from(1), from(2), from(3), from(4)))
+///    > tuple4(from(#(1, 2, 3, 4)))
+///    Ok(#(from(1), from(2), from(3), from(4)))
 ///
-///    > tuple4(from(tuple(1, 2)))
+///    > tuple4(from(#(1, 2)))
 ///    Error("Expected a 4 element tuple")
 ///
 ///    > tuple4(from(""))
@@ -450,13 +450,13 @@ pub external fn tuple4(
 ///
 /// ## Examples
 ///
-///    > typed_tuple4(from(tuple(1, 2, 3, 4)), int, int, int, int)
-///    Ok(tuple(1, 2, 3, 4))
+///    > typed_tuple4(from(#(1, 2, 3, 4)), int, int, int, int)
+///    Ok(#(1, 2, 3, 4))
 ///
-///    > typed_tuple4(from(tuple(1, 2.0, "3", 4)), int, float, string, int)
-///    Ok(tuple(1, 2.0, "3", 4))
+///    > typed_tuple4(from(#(1, 2.0, "3", 4)), int, float, string, int)
+///    Ok(#(1, 2.0, "3", 4))
 ///
-///    > typed_tuple4(from(tuple(1, 2)), int, float, string, int)
+///    > typed_tuple4(from(#(1, 2)), int, float, string, int)
 ///    Error("Expected a 4 element tuple, got a 2 element tuple")
 ///
 ///    > typed_tuple4(from(""), int, float, string, int)
@@ -484,10 +484,10 @@ pub fn typed_tuple4(
 ///
 /// ## Examples
 ///
-///    > tuple5(from(tuple(1, 2, 3, 4, 5)))
-///    Ok(tuple(from(1), from(2), from(3), from(4), from(5)))
+///    > tuple5(from(#(1, 2, 3, 4, 5)))
+///    Ok(#(from(1), from(2), from(3), from(4), from(5)))
 ///
-///    > tuple5(from(tuple(1, 2)))
+///    > tuple5(from(#(1, 2)))
 ///    Error("Expected a 5 element tuple")
 ///
 ///    > tuple5(from(""))
@@ -506,13 +506,13 @@ pub external fn tuple5(
 ///
 /// ## Examples
 ///
-///    > typed_tuple5(from(tuple(1, 2, 3, 4, 5)), int, int, int, int, int)
-///    Ok(tuple(1, 2, 3, 4, 5))
+///    > typed_tuple5(from(#(1, 2, 3, 4, 5)), int, int, int, int, int)
+///    Ok(#(1, 2, 3, 4, 5))
 ///
-///    > typed_tuple5(from(tuple(1, 2.0, "3", 4, 5)), int, float, string, int, int)
-///    Ok(tuple(1, 2.0, "3", 4, 5))
+///    > typed_tuple5(from(#(1, 2.0, "3", 4, 5)), int, float, string, int, int)
+///    Ok(#(1, 2.0, "3", 4, 5))
 ///
-///    > typed_tuple5(from(tuple(1, 2)), int, float, string, int, int)
+///    > typed_tuple5(from(#(1, 2)), int, float, string, int, int)
 ///    Error("Expected a 5 element tuple, got a 2 element tuple")
 ///
 ///    > typed_tuple5(from(""), int, float, string, int, int)
@@ -542,10 +542,10 @@ pub fn typed_tuple5(
 ///
 /// ## Examples
 ///
-///    > tuple6(from(tuple(1, 2, 3, 4, 5, 6)))
-///    Ok(tuple(from(1), from(2), from(3), from(4), from(5), from(6)))
+///    > tuple6(from(#(1, 2, 3, 4, 5, 6)))
+///    Ok(#(from(1), from(2), from(3), from(4), from(5), from(6)))
 ///
-///    > tuple6(from(tuple(1, 2)))
+///    > tuple6(from(#(1, 2)))
 ///    Error("Expected a 6 element tuple")
 ///
 ///    > tuple6(from(""))
@@ -564,13 +564,13 @@ pub external fn tuple6(
 ///
 /// ## Examples
 ///
-///    > typed_tuple6(from(tuple(1, 2, 3, 4, 5, 6)), int, int, int, int, int, int)
-///    Ok(tuple(1, 2, 3, 4, 5, 6))
+///    > typed_tuple6(from(#(1, 2, 3, 4, 5, 6)), int, int, int, int, int, int)
+///    Ok(#(1, 2, 3, 4, 5, 6))
 ///
-///    > typed_tuple6(from(tuple(1, 2.0, "3", 4, 5, 6)), int, float, string, int, int)
-///    Ok(tuple(1, 2.0, "3", 4, 5, 6))
+///    > typed_tuple6(from(#(1, 2.0, "3", 4, 5, 6)), int, float, string, int, int)
+///    Ok(#(1, 2.0, "3", 4, 5, 6))
 ///
-///    > typed_tuple6(from(tuple(1, 2)), int, float, string, int, int, int)
+///    > typed_tuple6(from(#(1, 2)), int, float, string, int, int, int)
 ///    Error("Expected a 6 element tuple, got a 2 element tuple")
 ///
 ///    > typed_tuple6(from(""), int, float, string, int, int, int)
