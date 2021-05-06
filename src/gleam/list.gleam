@@ -262,15 +262,15 @@ pub fn map(list: List(a), with fun: fn(a) -> b) -> List(b) {
 pub fn map_fold(
   over list: List(a),
   from memo: memo,
-  with fun: fn(a, memo) -> tuple(b, memo),
-) -> tuple(List(b), memo) {
+  with fun: fn(a, memo) -> #(b, memo),
+) -> #(List(b), memo) {
   fold(
     over: list,
-    from: tuple([], memo),
+    from: #([], memo),
     with: fn(item, acc) {
-      let tuple(items, current_memo) = acc
-      let tuple(next_item, next_memo) = fun(item, current_memo)
-      tuple([next_item, ..items], next_memo)
+      let #(items, current_memo) = acc
+      let #(next_item, next_memo) = fun(item, current_memo)
+      #([next_item, ..items], next_memo)
     },
   )
   |> pair.map_first(reverse)
@@ -694,9 +694,9 @@ pub fn any(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
   }
 }
 
-fn do_zip(xs: List(a), ys: List(b), acc: List(tuple(a, b))) -> List(tuple(a, b)) {
+fn do_zip(xs: List(a), ys: List(b), acc: List(#(a, b))) -> List(#(a, b)) {
   case xs, ys {
-    [x, ..xs], [y, ..ys] -> do_zip(xs, ys, [tuple(x, y), ..acc])
+    [x, ..xs], [y, ..ys] -> do_zip(xs, ys, [#(x, y), ..acc])
     _, _ -> reverse(acc)
   }
 }
@@ -720,7 +720,7 @@ fn do_zip(xs: List(a), ys: List(b), acc: List(tuple(a, b))) -> List(tuple(a, b))
 ///    > zip([1, 2], [3, 4])
 ///    [tuple(1, 3), tuple(2, 4)]
 ///
-pub fn zip(xs: List(a), ys: List(b)) -> List(tuple(a, b)) {
+pub fn zip(xs: List(a), ys: List(b)) -> List(#(a, b)) {
   do_zip(xs, ys, [])
 }
 
@@ -745,7 +745,7 @@ pub fn zip(xs: List(a), ys: List(b)) -> List(tuple(a, b)) {
 pub fn strict_zip(
   l1: List(a),
   l2: List(b),
-) -> Result(List(tuple(a, b)), LengthMismatch) {
+) -> Result(List(#(a, b)), LengthMismatch) {
   case length(of: l1) == length(of: l2) {
     True -> Ok(zip(l1, l2))
     False -> Error(LengthMismatch)
@@ -754,8 +754,8 @@ pub fn strict_zip(
 
 fn do_unzip(input, xs, ys) {
   case input {
-    [] -> tuple(reverse(xs), reverse(ys))
-    [tuple(x, y), ..rest] -> do_unzip(rest, [x, ..xs], [y, ..ys])
+    [] -> #(reverse(xs), reverse(ys))
+    [#(x, y), ..rest] -> do_unzip(rest, [x, ..xs], [y, ..ys])
   }
 }
 
@@ -769,7 +769,7 @@ fn do_unzip(input, xs, ys) {
 ///    > unzip([])
 ///    tuple([], [])
 ///
-pub fn unzip(input: List(tuple(a, b))) -> tuple(List(a), List(b)) {
+pub fn unzip(input: List(#(a, b))) -> #(List(a), List(b)) {
   do_unzip(input, [], [])
 }
 
@@ -930,12 +930,12 @@ pub fn repeat(item a: a, times times: Int) -> List(a) {
   do_repeat(a, times, [])
 }
 
-fn do_split(list: List(a), n: Int, taken: List(a)) -> tuple(List(a), List(a)) {
+fn do_split(list: List(a), n: Int, taken: List(a)) -> #(List(a), List(a)) {
   case n <= 0 {
-    True -> tuple(reverse(taken), list)
+    True -> #(reverse(taken), list)
     False ->
       case list {
-        [] -> tuple(reverse(taken), [])
+        [] -> #(reverse(taken), [])
         [x, ..xs] -> do_split(xs, n - 1, [x, ..taken])
       }
   }
@@ -957,7 +957,7 @@ fn do_split(list: List(a), n: Int, taken: List(a)) -> tuple(List(a), List(a)) {
 ///    > split([6, 7, 8, 9], 4)
 ///    tuple([6, 7, 8, 9], [])
 ///
-pub fn split(list list: List(a), at index: Int) -> tuple(List(a), List(a)) {
+pub fn split(list list: List(a), at index: Int) -> #(List(a), List(a)) {
   do_split(list, index, [])
 }
 
@@ -965,12 +965,12 @@ fn do_split_while(
   list: List(a),
   f: fn(a) -> Bool,
   acc: List(a),
-) -> tuple(List(a), List(a)) {
+) -> #(List(a), List(a)) {
   case list {
-    [] -> tuple(reverse(acc), [])
+    [] -> #(reverse(acc), [])
     [x, ..xs] ->
       case f(x) {
-        False -> tuple(reverse(acc), list)
+        False -> #(reverse(acc), list)
         _ -> do_split_while(xs, f, [x, ..acc])
       }
   }
@@ -993,7 +993,7 @@ fn do_split_while(
 pub fn split_while(
   list list: List(a),
   satisfying predicate: fn(a) -> Bool,
-) -> tuple(List(a), List(a)) {
+) -> #(List(a), List(a)) {
   do_split_while(list, predicate, [])
 }
 
@@ -1017,13 +1017,13 @@ pub fn split_while(
 ///    Error(Nil)
 ///
 pub fn key_find(
-  in keyword_list: List(tuple(k, v)),
+  in keyword_list: List(#(k, v)),
   find desired_key: k,
 ) -> Result(v, Nil) {
   find_map(
     keyword_list,
     fn(keyword) {
-      let tuple(key, value) = keyword
+      let #(key, value) = keyword
       case key == desired_key {
         True -> Ok(value)
         False -> Error(Nil)
@@ -1037,7 +1037,7 @@ fn do_pop(haystack, predicate, checked) {
     [] -> Error(Nil)
     [x, ..rest] ->
       case predicate(x) {
-        True -> Ok(tuple(x, append(reverse(checked), rest)))
+        True -> Ok(#(x, append(reverse(checked), rest)))
         False -> do_pop(rest, predicate, [x, ..checked])
       }
   }
@@ -1062,7 +1062,7 @@ fn do_pop(haystack, predicate, checked) {
 pub fn pop(
   in haystack: List(a),
   one_that is_desired: fn(a) -> Bool,
-) -> Result(tuple(a, List(a)), Nil) {
+) -> Result(#(a, List(a)), Nil) {
   do_pop(haystack, is_desired, [])
 }
 
@@ -1071,7 +1071,7 @@ fn do_pop_map(haystack, mapper, checked) {
     [] -> Error(Nil)
     [x, ..rest] ->
       case mapper(x) {
-        Ok(y) -> Ok(tuple(y, append(reverse(checked), rest)))
+        Ok(y) -> Ok(#(y, append(reverse(checked), rest)))
         Error(_) -> do_pop_map(rest, mapper, [x, ..checked])
       }
   }
@@ -1097,7 +1097,7 @@ fn do_pop_map(haystack, mapper, checked) {
 pub fn pop_map(
   in haystack: List(a),
   one_that is_desired: fn(a) -> Result(b, c),
-) -> Result(tuple(b, List(a)), Nil) {
+) -> Result(#(b, List(a)), Nil) {
   do_pop_map(haystack, is_desired, [])
 }
 
@@ -1119,13 +1119,13 @@ pub fn pop_map(
 ///    Error(Nil)
 ///
 pub fn key_pop(
-  haystack: List(tuple(k, v)),
+  haystack: List(#(k, v)),
   key: k,
-) -> Result(tuple(v, List(tuple(k, v))), Nil) {
+) -> Result(#(v, List(#(k, v))), Nil) {
   pop_map(
     haystack,
     fn(entry) {
-      let tuple(k, v) = entry
+      let #(k, v) = entry
       case k {
         k if k == key -> Ok(v)
         _ -> Error(Nil)
@@ -1148,10 +1148,10 @@ pub fn key_pop(
 ///    > key_set([tuple(5, 0), tuple(4, 1)], 1, 100)
 ///    [tuple(5, 0), tuple(4, 1), tuple(1, 100)]
 ///
-pub fn key_set(list: List(tuple(a, b)), key: a, value: b) -> List(tuple(a, b)) {
+pub fn key_set(list: List(#(a, b)), key: a, value: b) -> List(#(a, b)) {
   case list {
-    [] -> [tuple(key, value)]
-    [tuple(k, _), ..rest] if k == key -> [tuple(key, value), ..rest]
+    [] -> [#(key, value)]
+    [#(k, _), ..rest] if k == key -> [#(key, value), ..rest]
     [first, ..rest] -> [first, ..key_set(rest, key, value)]
   }
 }
@@ -1170,7 +1170,7 @@ pub fn each(list: List(a), f: fn(a) -> b) -> Nil {
 
 fn do_partition(list, categorise, trues, falses) {
   case list {
-    [] -> tuple(reverse(trues), reverse(falses))
+    [] -> #(reverse(trues), reverse(falses))
     [x, ..xs] ->
       case categorise(x) {
         True -> do_partition(xs, categorise, [x, ..trues], falses)
@@ -1182,7 +1182,7 @@ fn do_partition(list, categorise, trues, falses) {
 pub fn partition(
   list: List(a),
   with categorise: fn(a) -> Bool,
-) -> tuple(List(a), List(a)) {
+) -> #(List(a), List(a)) {
   do_partition(list, categorise, [], [])
 }
 
@@ -1248,7 +1248,7 @@ pub fn window(l: List(a), by n: Int) -> List(List(a)) {
 /// []
 /// ```
 ///
-pub fn window_by_2(l: List(a)) -> List(tuple(a, a)) {
+pub fn window_by_2(l: List(a)) -> List(#(a, a)) {
   zip(l, drop(l, 1))
 }
 
@@ -1485,11 +1485,11 @@ pub fn combinations(items: List(a), by n: Int) -> List(List(a)) {
   }
 }
 
-fn do_combination_pairs(items: List(a)) -> List(List(tuple(a, a))) {
+fn do_combination_pairs(items: List(a)) -> List(List(#(a, a))) {
   case items {
     [] -> []
     [x, ..xs] -> {
-      let first_combinations = map(xs, with: fn(other) { tuple(x, other) })
+      let first_combinations = map(xs, with: fn(other) { #(x, other) })
       [first_combinations, ..do_combination_pairs(xs)]
     }
   }
@@ -1504,7 +1504,7 @@ fn do_combination_pairs(items: List(a)) -> List(List(tuple(a, a))) {
 /// [tuple(1, 2), tuple(1, 3), tuple(2, 3)]
 /// ```
 ///
-pub fn combination_pairs(items: List(a)) -> List(tuple(a, a)) {
+pub fn combination_pairs(items: List(a)) -> List(#(a, a)) {
   do_combination_pairs(items)
   |> flatten
 }

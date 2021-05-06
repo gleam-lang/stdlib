@@ -169,12 +169,11 @@ pub external fn list(from: Dynamic) -> Result(List(Dynamic), String) =
 ///    Error("Expected a 2 element tuple, got an int")
 ///
 pub fn result(from: Dynamic) -> Result(Result(Dynamic, Dynamic), String) {
-  try tuple(key, val) = tuple2(from)
-  try tag = atom(key)
+  try #(key, val) = tuple2(from)
 
+  try tag = atom(key)
   let ok_atom = atom.create_from_string("ok")
   let error_atom = atom.create_from_string("error")
-
   case tag {
     tag if tag == ok_atom -> Ok(Ok(val))
     tag if tag == error_atom -> Ok(Error(val))
@@ -334,7 +333,7 @@ pub external fn element(from: Dynamic, position: Int) -> Result(Dynamic, String)
 ///    > tuple2(from(""))
 ///    Error("Expected a tuple, got a binary")
 ///
-pub external fn tuple2(from: Dynamic) -> Result(tuple(Dynamic, Dynamic), String) =
+pub external fn tuple2(from: Dynamic) -> Result(#(Dynamic, Dynamic), String) =
   "gleam_stdlib" "decode_tuple2"
 
 /// Checks to see if the Dynamic value is a 2 element tuple containing two
@@ -361,11 +360,11 @@ pub fn typed_tuple2(
   from tup: Dynamic,
   first decode_first: Decoder(a),
   second decode_second: Decoder(b),
-) -> Result(tuple(a, b), String) {
-  try tuple(first, second) = tuple2(tup)
+) -> Result(#(a, b), String) {
+  try #(first, second) = tuple2(tup)
   try a = decode_first(first)
   try b = decode_second(second)
-  Ok(tuple(a, b))
+  Ok(#(a, b))
 }
 
 /// Checks to see if the Dynamic value is a 3 element tuple.
@@ -386,7 +385,7 @@ pub fn typed_tuple2(
 ///
 pub external fn tuple3(
   from: Dynamic,
-) -> Result(tuple(Dynamic, Dynamic, Dynamic), String) =
+) -> Result(#(Dynamic, Dynamic, Dynamic), String) =
   "gleam_stdlib" "decode_tuple3"
 
 /// Checks to see if the Dynamic value is a 3 element tuple containing two
@@ -414,12 +413,12 @@ pub fn typed_tuple3(
   first decode_first: Decoder(a),
   second decode_second: Decoder(b),
   third decode_third: Decoder(c),
-) -> Result(tuple(a, b, c), String) {
-  try tuple(first, second, third) = tuple3(tup)
+) -> Result(#(a, b, c), String) {
+  try #(first, second, third) = tuple3(tup)
   try a = decode_first(first)
   try b = decode_second(second)
   try c = decode_third(third)
-  Ok(tuple(a, b, c))
+  Ok(#(a, b, c))
 }
 
 /// Checks to see if the Dynamic value is a 4 element tuple.
@@ -440,7 +439,7 @@ pub fn typed_tuple3(
 ///
 pub external fn tuple4(
   from: Dynamic,
-) -> Result(tuple(Dynamic, Dynamic, Dynamic, Dynamic), String) =
+) -> Result(#(Dynamic, Dynamic, Dynamic, Dynamic), String) =
   "gleam_stdlib" "decode_tuple4"
 
 /// Checks to see if the Dynamic value is a 4 element tuple containing two
@@ -469,13 +468,13 @@ pub fn typed_tuple4(
   second decode_second: Decoder(b),
   third decode_third: Decoder(c),
   fourth decode_fourth: Decoder(d),
-) -> Result(tuple(a, b, c, d), String) {
-  try tuple(first, second, third, fourth) = tuple4(tup)
+) -> Result(#(a, b, c, d), String) {
+  try #(first, second, third, fourth) = tuple4(tup)
   try a = decode_first(first)
   try b = decode_second(second)
   try c = decode_third(third)
   try d = decode_fourth(fourth)
-  Ok(tuple(a, b, c, d))
+  Ok(#(a, b, c, d))
 }
 
 /// Checks to see if the Dynamic value is a 5 element tuple.
@@ -496,7 +495,7 @@ pub fn typed_tuple4(
 ///
 pub external fn tuple5(
   from: Dynamic,
-) -> Result(tuple(Dynamic, Dynamic, Dynamic, Dynamic, Dynamic), String) =
+) -> Result(#(Dynamic, Dynamic, Dynamic, Dynamic, Dynamic), String) =
   "gleam_stdlib" "decode_tuple5"
 
 /// Checks to see if the Dynamic value is a 5 element tuple containing two
@@ -526,14 +525,14 @@ pub fn typed_tuple5(
   third decode_third: Decoder(c),
   fourth decode_fourth: Decoder(d),
   fifth decode_fifth: Decoder(e),
-) -> Result(tuple(a, b, c, d, e), String) {
-  try tuple(first, second, third, fourth, fifth) = tuple5(tup)
+) -> Result(#(a, b, c, d, e), String) {
+  try #(first, second, third, fourth, fifth) = tuple5(tup)
   try a = decode_first(first)
   try b = decode_second(second)
   try c = decode_third(third)
   try d = decode_fourth(fourth)
   try e = decode_fifth(fifth)
-  Ok(tuple(a, b, c, d, e))
+  Ok(#(a, b, c, d, e))
 }
 
 /// Checks to see if the Dynamic value is a 6 element tuple.
@@ -554,7 +553,7 @@ pub fn typed_tuple5(
 ///
 pub external fn tuple6(
   from: Dynamic,
-) -> Result(tuple(Dynamic, Dynamic, Dynamic, Dynamic, Dynamic, Dynamic), String) =
+) -> Result(#(Dynamic, Dynamic, Dynamic, Dynamic, Dynamic, Dynamic), String) =
   "gleam_stdlib" "decode_tuple6"
 
 /// Checks to see if the Dynamic value is a 6 element tuple containing two
@@ -585,15 +584,15 @@ pub fn typed_tuple6(
   fourth decode_fourth: Decoder(d),
   fifth decode_fifth: Decoder(e),
   sixth decode_sixth: Decoder(f),
-) -> Result(tuple(a, b, c, d, e, f), String) {
-  try tuple(first, second, third, fourth, fifth, sixth) = tuple6(tup)
+) -> Result(#(a, b, c, d, e, f), String) {
+  try #(first, second, third, fourth, fifth, sixth) = tuple6(tup)
   try a = decode_first(first)
   try b = decode_second(second)
   try c = decode_third(third)
   try d = decode_fourth(fourth)
   try e = decode_fifth(fifth)
   try f = decode_sixth(sixth)
-  Ok(tuple(a, b, c, d, e, f))
+  Ok(#(a, b, c, d, e, f))
 }
 
 /// Checks to see if the Dynamic value is map.

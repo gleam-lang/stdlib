@@ -62,5 +62,5 @@ pub external fn system_time(TimeUnit) -> Int =
 /// Returns the current OS system time as a tuple of Ints
 ///
 /// http://erlang.org/doc/man/os.html#timestamp-0
-pub external fn erlang_timestamp() -> tuple(Int, Int, Int) =
+pub external fn erlang_timestamp() -> #(Int, Int, Int) =
   "os" "timestamp"

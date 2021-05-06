@@ -478,12 +478,12 @@ pub fn find(
 fn do_index(
   continuation: fn() -> Action(element),
   next: Int,
-) -> fn() -> Action(tuple(Int, element)) {
+) -> fn() -> Action(#(Int, element)) {
   fn() {
     case continuation() {
       Stop -> Stop
       Continue(e, continuation) ->
-        Continue(tuple(next, e), do_index(continuation, next + 1))
+        Continue(#(next, e), do_index(continuation, next + 1))
     }
   }
 }
@@ -495,7 +495,7 @@ fn do_index(
 ///    > from_list(["a", "b", "c"]) |> index |> to_list
 ///    [tuple(0, "a"), tuple(1, "b"), tuple(2, "c")]
 ///
-pub fn index(over iterator: Iterator(element)) -> Iterator(tuple(Int, element)) {
+pub fn index(over iterator: Iterator(element)) -> Iterator(#(Int, element)) {
   iterator.continuation
   |> do_index(0)
   |> Iterator
@@ -616,7 +616,7 @@ pub fn scan(
 fn do_zip(
   left: fn() -> Action(a),
   right: fn() -> Action(b),
-) -> fn() -> Action(tuple(a, b)) {
+) -> fn() -> Action(#(a, b)) {
   fn() {
     case left() {
       Stop -> Stop
@@ -624,7 +624,7 @@ fn do_zip(
         case right() {
           Stop -> Stop
           Continue(el_right, next_right) ->
-            Continue(tuple(el_left, el_right), do_zip(next_left, next_right))
+            Continue(#(el_left, el_right), do_zip(next_left, next_right))
         }
     }
   }
@@ -638,7 +638,7 @@ fn do_zip(
 ///    > from_list(["a", "b", "c"]) |> zip(range(20, 30)) |> to_list
 ///    [tuple("a", 20), tuple("b", 21), tuple("c", 22)]
 ///
-pub fn zip(left: Iterator(a), right: Iterator(b)) -> Iterator(tuple(a, b)) {
+pub fn zip(left: Iterator(a), right: Iterator(b)) -> Iterator(#(a, b)) {
   do_zip(left.continuation, right.continuation)
   |> Iterator
 }

@@ -168,13 +168,10 @@ pub fn take(from set: Set(member), keeping desired: List(member)) -> Set(member)
   Set(map.take(from: set.map, keeping: desired))
 }
 
-fn order(
-  first: Set(member),
-  second: Set(member),
-) -> tuple(Set(member), Set(member)) {
+fn order(first: Set(member), second: Set(member)) -> #(Set(member), Set(member)) {
   case map.size(first.map) > map.size(second.map) {
-    True -> tuple(first, second)
-    False -> tuple(second, first)
+    True -> #(first, second)
+    False -> #(second, first)
   }
 }
 
@@ -188,7 +185,7 @@ fn order(
 ///     [1, 2, 3]
 ///
 pub fn union(of first: Set(member), and second: Set(member)) -> Set(member) {
-  let tuple(larger, smaller) = order(first, second)
+  let #(larger, smaller) = order(first, second)
   fold(over: smaller, from: larger, with: fn(m, a) { insert(a, m) })
 }
 
@@ -205,6 +202,6 @@ pub fn intersection(
   of first: Set(member),
   and second: Set(member),
 ) -> Set(member) {
-  let tuple(larger, smaller) = order(first, second)
+  let #(larger, smaller) = order(first, second)
   take(from: larger, keeping: to_list(smaller))
 }
