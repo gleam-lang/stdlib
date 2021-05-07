@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- The `result` module gains the `values` function.
 - All modules now use the new `#(a, b, ...)` tuple syntax.
 
 ## v0.15.0 - 2021-05-05
