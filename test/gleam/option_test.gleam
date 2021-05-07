@@ -100,3 +100,8 @@ pub fn or_option_test() {
   |> option.or(None)
   |> should.equal(None)
 }
+
+pub fn values_test() {
+  option.values([Some(1), None, Some(3)])
+  |> should.equal([1, 3])
+}

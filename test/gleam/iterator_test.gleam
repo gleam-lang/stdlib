@@ -261,7 +261,7 @@ pub fn index_test() {
   iterator.from_list(["a", "b", "c"])
   |> iterator.index
   |> iterator.to_list
-  |> should.equal([tuple(0, "a"), tuple(1, "b"), tuple(2, "c")])
+  |> should.equal([#(0, "a"), #(1, "b"), #(2, "c")])
 }
 
 pub fn iterate_test() {
@@ -297,7 +297,7 @@ pub fn zip_test() {
   iterator.from_list(["a", "b", "c"])
   |> iterator.zip(iterator.range(20, 30))
   |> iterator.to_list
-  |> should.equal([tuple("a", 20), tuple("b", 21), tuple("c", 22)])
+  |> should.equal([#("a", 20), #("b", 21), #("c", 22)])
 }
 
 pub fn chunk_test() {
@@ -367,11 +367,7 @@ pub fn all_test() {
 pub fn group_test() {
   iterator.from_list([1, 2, 3, 4, 5, 6])
   |> iterator.group(by: fn(n) { n % 3 })
-  |> should.equal(map.from_list([
-    tuple(0, [3, 6]),
-    tuple(1, [1, 4]),
-    tuple(2, [2, 5]),
-  ]))
+  |> should.equal(map.from_list([#(0, [3, 6]), #(1, [1, 4]), #(2, [2, 5])]))
 }
 
 pub fn reduce_test() {
