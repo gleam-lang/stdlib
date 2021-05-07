@@ -66,13 +66,13 @@ pub fn path_only_uri_to_string_test() {
 
 pub fn parse_query_string_test() {
   assert Ok(parsed) = uri.parse_query("foo+bar=1&city=%C3%B6rebro")
-  should.equal(parsed, [tuple("foo bar", "1"), tuple("city", "örebro")])
+  should.equal(parsed, [#("foo bar", "1"), #("city", "örebro")])
 
   // Duplicates keys not overridden
   assert Ok(parsed) = uri.parse_query("a[]=1&a[]=2")
 
   parsed
-  |> should.equal([tuple("a[]", "1"), tuple("a[]", "2")])
+  |> should.equal([#("a[]", "1"), #("a[]", "2")])
 }
 
 pub fn parse_empty_query_string_test() {
@@ -82,7 +82,7 @@ pub fn parse_empty_query_string_test() {
 
 pub fn parse_query_string_with_empty_test() {
   uri.parse_query("present")
-  |> should.equal(Ok([tuple("present", "")]))
+  |> should.equal(Ok([#("present", "")]))
 }
 
 pub fn error_parsing_query_test() {
@@ -91,7 +91,7 @@ pub fn error_parsing_query_test() {
 
 pub fn query_to_string_test() {
   let query_string =
-    uri.query_to_string([tuple("foo bar", "1"), tuple("city", "örebro")])
+    uri.query_to_string([#("foo bar", "1"), #("city", "örebro")])
   should.equal(query_string, "foo+bar=1&city=%C3%B6rebro")
 }
 
@@ -102,37 +102,37 @@ pub fn empty_query_to_string_test() {
 
 fn percent_codec_fixtures() {
   [
-    tuple(" ", "+"),
-    tuple(",", "%2C"),
-    tuple(";", "%3B"),
-    tuple(":", "%3A"),
-    tuple("!", "%21"),
-    tuple("?", "%3F"),
-    tuple("'", "%27"),
-    tuple("(", "%28"),
-    tuple(")", "%29"),
-    tuple("[", "%5B"),
-    tuple("@", "%40"),
-    tuple("/", "%2F"),
-    tuple("\\", "%5C"),
-    tuple("&", "%26"),
-    tuple("#", "%23"),
-    tuple("=", "%3D"),
-    tuple("~", "%7E"),
-    tuple("ñ", "%C3%B1"),
+    #(" ", "+"),
+    #(",", "%2C"),
+    #(";", "%3B"),
+    #(":", "%3A"),
+    #("!", "%21"),
+    #("?", "%3F"),
+    #("'", "%27"),
+    #("(", "%28"),
+    #(")", "%29"),
+    #("[", "%5B"),
+    #("@", "%40"),
+    #("/", "%2F"),
+    #("\\", "%5C"),
+    #("&", "%26"),
+    #("#", "%23"),
+    #("=", "%3D"),
+    #("~", "%7E"),
+    #("ñ", "%C3%B1"),
     // Allowed chars
-    tuple("-", "-"),
-    tuple("_", "_"),
-    tuple(".", "."),
-    tuple("*", "*"),
-    tuple("100% great", "100%25+great"),
+    #("-", "-"),
+    #("_", "_"),
+    #(".", "."),
+    #("*", "*"),
+    #("100% great", "100%25+great"),
   ]
 }
 
 pub fn percent_encode_test() {
   percent_codec_fixtures()
   |> list.map(fn(t) {
-    let tuple(a, b) = t
+    let #(a, b) = t
     uri.percent_encode(a)
     |> should.equal(b)
   })
@@ -142,7 +142,7 @@ pub fn percent_encode_consistency_test() {
   let k = "foo bar[]"
   let v = "ñaña (,:*~)"
 
-  let query_string = uri.query_to_string([tuple(k, v)])
+  let query_string = uri.query_to_string([#(k, v)])
 
   let encoded_key = uri.percent_encode(k)
   let encoded_value = uri.percent_encode(v)
@@ -154,7 +154,7 @@ pub fn percent_encode_consistency_test() {
 pub fn percent_decode_test() {
   percent_codec_fixtures()
   |> list.map(fn(t) {
-    let tuple(a, b) = t
+    let #(a, b) = t
     uri.percent_decode(b)
     |> should.equal(Ok(a))
   })
@@ -169,7 +169,7 @@ pub fn percent_decode_consistency_test() {
   assert Ok(decoded_key) = uri.percent_decode(k)
   assert Ok(decoded_value) = uri.percent_decode(v)
 
-  should.equal(parsed, [tuple(decoded_key, decoded_value)])
+  should.equal(parsed, [#(decoded_key, decoded_value)])
 }
 
 pub fn parse_segments_test() {

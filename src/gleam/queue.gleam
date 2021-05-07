@@ -125,24 +125,24 @@ pub fn push_front(onto queue: Queue(a), this item: a) -> Queue(a) {
 ///    > |> queue.push_back(0)
 ///    > |> queue.push_back(1)
 ///    > |> queue.pop_back()
-///    Ok(tuple(1, queue.push_front(queue.new(), 0)))
+///    Ok(#(1, queue.push_front(queue.new(), 0)))
 ///
 ///    > queue.new()
 ///    > |> queue.push_front(0)
 ///    > |> queue.pop_back()
-///    Ok(tuple(0, queue.new()))
+///    Ok(#(0, queue.new()))
 ///
 ///    > queue.new()
 ///    > |> queue.pop_back()
 ///    Error(Nil)
 ///
-pub fn pop_back(from queue: Queue(a)) -> Result(tuple(a, Queue(a)), Nil) {
+pub fn pop_back(from queue: Queue(a)) -> Result(#(a, Queue(a)), Nil) {
   case queue {
     Queue(in: [], out: []) -> Error(Nil)
     Queue(in: [], out: out) -> pop_back(Queue(in: list.reverse(out), out: []))
     Queue(in: [first, ..rest], out: out) -> {
       let queue = Queue(in: rest, out: out)
-      Ok(tuple(first, queue))
+      Ok(#(first, queue))
     }
   }
 }
@@ -159,24 +159,24 @@ pub fn pop_back(from queue: Queue(a)) -> Result(tuple(a, Queue(a)), Nil) {
 ///    > |> queue.push_front(1)
 ///    > |> queue.push_front(0)
 ///    > |> queue.pop_front()
-///    Ok(tuple(0, queue.push_back(queue.new(), 1)))
+///    Ok(#(0, queue.push_back(queue.new(), 1)))
 ///
 ///    > queue.new()
 ///    > |> queue.push_back(0)
 ///    > |> queue.pop_front()
-///    Ok(tuple(0, queue.new()))
+///    Ok(#(0, queue.new()))
 ///
 ///    > queue.new()
 ///    > |> queue.pop_back()
 ///    Error(Nil)
 ///
-pub fn pop_front(from queue: Queue(a)) -> Result(tuple(a, Queue(a)), Nil) {
+pub fn pop_front(from queue: Queue(a)) -> Result(#(a, Queue(a)), Nil) {
   case queue {
     Queue(in: [], out: []) -> Error(Nil)
     Queue(in: in, out: []) -> pop_front(Queue(in: [], out: list.reverse(in)))
     Queue(in: in, out: [first, ..rest]) -> {
       let queue = Queue(in: in, out: rest)
-      Ok(tuple(first, queue))
+      Ok(#(first, queue))
     }
   }
 }

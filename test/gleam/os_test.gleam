@@ -30,7 +30,7 @@ pub fn system_time_test() {
 pub fn erlang_timestamp_test() {
   // in microseconds
   let june_12_2020 = 1591966971000000
-  let tuple(mega_seconds, seconds, micro_seconds) = os.erlang_timestamp()
+  let #(mega_seconds, seconds, micro_seconds) = os.erlang_timestamp()
 
   let stamp_as_micro =
     { mega_seconds * 1_000_000 + seconds } * 1_000_000 + micro_seconds
