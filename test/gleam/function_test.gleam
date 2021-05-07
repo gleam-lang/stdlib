@@ -103,9 +103,9 @@ pub fn identity_test() {
   |> function.identity
   |> should.equal([])
 
-  tuple(1, 2.0)
+  #(1, 2.0)
   |> function.identity
-  |> should.equal(tuple(1, 2.0))
+  |> should.equal(#(1, 2.0))
 }
 
 external fn throw(a) -> Nil =

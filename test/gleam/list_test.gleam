@@ -101,8 +101,8 @@ pub fn map_test() {
 
 pub fn map_fold_test() {
   [1, 2, 3, 4]
-  |> list.map_fold(from: 0, with: fn(i, acc) { tuple(i * 2, acc + i) })
-  |> should.equal(tuple([2, 4, 6, 8], 10))
+  |> list.map_fold(from: 0, with: fn(i, acc) { #(i * 2, acc + i) })
+  |> should.equal(#([2, 4, 6, 8], 10))
 }
 
 pub fn try_map_test() {
@@ -179,8 +179,8 @@ pub fn fold_right_test() {
 
 pub fn index_fold_test() {
   ["a", "b", "c"]
-  |> list.index_fold([], fn(ix, i, acc) { [tuple(ix, i), ..acc] })
-  |> should.equal([tuple(2, "c"), tuple(1, "b"), tuple(0, "a")])
+  |> list.index_fold([], fn(ix, i, acc) { [#(ix, i), ..acc] })
+  |> should.equal([#(2, "c"), #(1, "b"), #(0, "a")])
 }
 
 pub fn fold_until_test() {
@@ -290,13 +290,13 @@ pub fn zip_test() {
   |> should.equal([])
 
   list.zip([1, 2, 3], [4, 5, 6])
-  |> should.equal([tuple(1, 4), tuple(2, 5), tuple(3, 6)])
+  |> should.equal([#(1, 4), #(2, 5), #(3, 6)])
 
   list.zip([5, 6], [1, 2, 3])
-  |> should.equal([tuple(5, 1), tuple(6, 2)])
+  |> should.equal([#(5, 1), #(6, 2)])
 
   list.zip([5, 6, 7], [1, 2])
-  |> should.equal([tuple(5, 1), tuple(6, 2)])
+  |> should.equal([#(5, 1), #(6, 2)])
 }
 
 pub fn strict_zip_test() {
@@ -307,7 +307,7 @@ pub fn strict_zip_test() {
   |> should.equal(Error(list.LengthMismatch))
 
   list.strict_zip([1, 2, 3], [4, 5, 6])
-  |> should.equal(Ok([tuple(1, 4), tuple(2, 5), tuple(3, 6)]))
+  |> should.equal(Ok([#(1, 4), #(2, 5), #(3, 6)]))
 
   list.strict_zip([5, 6], [1, 2, 3])
   |> should.equal(Error(list.LengthMismatch))
@@ -317,11 +317,11 @@ pub fn strict_zip_test() {
 }
 
 pub fn unzip_test() {
-  list.unzip([tuple(1, 2), tuple(3, 4)])
-  |> should.equal(tuple([1, 3], [2, 4]))
+  list.unzip([#(1, 2), #(3, 4)])
+  |> should.equal(#([1, 3], [2, 4]))
 
   list.unzip([])
-  |> should.equal(tuple([], []))
+  |> should.equal(#([], []))
 }
 
 pub fn intersperse_test() {
@@ -379,8 +379,8 @@ pub fn sort_test() {
 }
 
 pub fn index_map_test() {
-  list.index_map([3, 4, 5], fn(i, x) { tuple(i, x) })
-  |> should.equal([tuple(0, 3), tuple(1, 4), tuple(2, 5)])
+  list.index_map([3, 4, 5], fn(i, x) { #(i, x) })
+  |> should.equal([#(0, 3), #(1, 4), #(2, 5)])
 
   let f = fn(i, x) { string.append(x, int.to_string(i)) }
   list.index_map(["a", "b", "c"], f)
@@ -424,53 +424,53 @@ pub fn repeat_test() {
 pub fn split_test() {
   []
   |> list.split(0)
-  |> should.equal(tuple([], []))
+  |> should.equal(#([], []))
 
   [0, 1, 2, 3, 4]
   |> list.split(0)
-  |> should.equal(tuple([], [0, 1, 2, 3, 4]))
+  |> should.equal(#([], [0, 1, 2, 3, 4]))
 
   [0, 1, 2, 3, 4]
   |> list.split(-2)
-  |> should.equal(tuple([], [0, 1, 2, 3, 4]))
+  |> should.equal(#([], [0, 1, 2, 3, 4]))
 
   [0, 1, 2, 3, 4]
   |> list.split(1)
-  |> should.equal(tuple([0], [1, 2, 3, 4]))
+  |> should.equal(#([0], [1, 2, 3, 4]))
 
   [0, 1, 2, 3, 4]
   |> list.split(3)
-  |> should.equal(tuple([0, 1, 2], [3, 4]))
+  |> should.equal(#([0, 1, 2], [3, 4]))
 
   [0, 1, 2, 3, 4]
   |> list.split(9)
-  |> should.equal(tuple([0, 1, 2, 3, 4], []))
+  |> should.equal(#([0, 1, 2, 3, 4], []))
 }
 
 pub fn split_while_test() {
   []
   |> list.split_while(fn(x) { x <= 5 })
-  |> should.equal(tuple([], []))
+  |> should.equal(#([], []))
 
   [1, 2, 3, 4, 5]
   |> list.split_while(fn(x) { x <= 5 })
-  |> should.equal(tuple([1, 2, 3, 4, 5], []))
+  |> should.equal(#([1, 2, 3, 4, 5], []))
 
   [1, 2, 3, 4, 5]
   |> list.split_while(fn(x) { x == 2 })
-  |> should.equal(tuple([], [1, 2, 3, 4, 5]))
+  |> should.equal(#([], [1, 2, 3, 4, 5]))
 
   [1, 2, 3, 4, 5]
   |> list.split_while(fn(x) { x <= 3 })
-  |> should.equal(tuple([1, 2, 3], [4, 5]))
+  |> should.equal(#([1, 2, 3], [4, 5]))
 
   [1, 2, 3, 4, 5]
   |> list.split_while(fn(x) { x <= -3 })
-  |> should.equal(tuple([], [1, 2, 3, 4, 5]))
+  |> should.equal(#([], [1, 2, 3, 4, 5]))
 }
 
 pub fn key_find_test() {
-  let proplist = [tuple(0, "1"), tuple(1, "2")]
+  let proplist = [#(0, "1"), #(1, "2")]
 
   proplist
   |> list.key_find(0)
@@ -487,7 +487,7 @@ pub fn key_find_test() {
 
 pub fn pop_test() {
   list.pop([1, 2, 3], fn(x) { x > 2 })
-  |> should.equal(Ok(tuple(3, [1, 2])))
+  |> should.equal(Ok(#(3, [1, 2])))
 
   list.pop([1, 2, 3], fn(x) { x > 4 })
   |> should.equal(Error(Nil))
@@ -498,7 +498,7 @@ pub fn pop_test() {
 
 pub fn pop_map_test() {
   list.pop_map(["foo", "2", "3"], int.parse)
-  |> should.equal(Ok(tuple(2, ["foo", "3"])))
+  |> should.equal(Ok(#(2, ["foo", "3"])))
 
   list.pop_map(["foo", "bar"], int.parse)
   |> should.equal(Error(Nil))
@@ -508,30 +508,30 @@ pub fn pop_map_test() {
 }
 
 pub fn key_pop_test() {
-  list.key_pop([tuple("a", 0), tuple("b", 1)], "a")
-  |> should.equal(Ok(tuple(0, [tuple("b", 1)])))
+  list.key_pop([#("a", 0), #("b", 1)], "a")
+  |> should.equal(Ok(#(0, [#("b", 1)])))
 
-  list.key_pop([tuple("a", 0), tuple("b", 1)], "b")
-  |> should.equal(Ok(tuple(1, [tuple("a", 0)])))
+  list.key_pop([#("a", 0), #("b", 1)], "b")
+  |> should.equal(Ok(#(1, [#("a", 0)])))
 
-  list.key_pop([tuple("a", 0), tuple("b", 1)], "c")
+  list.key_pop([#("a", 0), #("b", 1)], "c")
   |> should.equal(Error(Nil))
 }
 
 pub fn key_set_test() {
-  [tuple(5, 0), tuple(4, 1)]
+  [#(5, 0), #(4, 1)]
   |> list.key_set(4, 100)
-  |> should.equal([tuple(5, 0), tuple(4, 100)])
+  |> should.equal([#(5, 0), #(4, 100)])
 
-  [tuple(5, 0), tuple(4, 1)]
+  [#(5, 0), #(4, 1)]
   |> list.key_set(1, 100)
-  |> should.equal([tuple(5, 0), tuple(4, 1), tuple(1, 100)])
+  |> should.equal([#(5, 0), #(4, 1), #(1, 100)])
 }
 
 pub fn partition_test() {
   [1, 2, 3, 4, 5, 6, 7]
   |> list.partition(int.is_odd)
-  |> should.equal(tuple([1, 3, 5, 7], [2, 4, 6]))
+  |> should.equal(#([1, 3, 5, 7], [2, 4, 6]))
 }
 
 pub fn permutations_test() {
@@ -578,7 +578,7 @@ pub fn window_test() {
 pub fn window_by_2_test() {
   [1, 2, 3, 4]
   |> list.window_by_2
-  |> should.equal([tuple(1, 2), tuple(2, 3), tuple(3, 4)])
+  |> should.equal([#(1, 2), #(2, 3), #(3, 4)])
 
   [1]
   |> list.window_by_2
@@ -679,18 +679,11 @@ pub fn combination_pairs_test() {
   |> should.equal([])
 
   list.combination_pairs([1, 2])
-  |> should.equal([tuple(1, 2)])
+  |> should.equal([#(1, 2)])
 
   list.combination_pairs([1, 2, 3])
-  |> should.equal([tuple(1, 2), tuple(1, 3), tuple(2, 3)])
+  |> should.equal([#(1, 2), #(1, 3), #(2, 3)])
 
   list.combination_pairs([1, 2, 3, 4])
-  |> should.equal([
-    tuple(1, 2),
-    tuple(1, 3),
-    tuple(1, 4),
-    tuple(2, 3),
-    tuple(2, 4),
-    tuple(3, 4),
-  ])
+  |> should.equal([#(1, 2), #(1, 3), #(1, 4), #(2, 3), #(2, 4), #(3, 4)])
 }

@@ -274,7 +274,7 @@ external fn erl_split(String, String) -> List(String) =
 /// ## Examples
 ///
 ///    > split_once("home/gleam/desktop/", on: "/")
-///    Ok(tuple("home", "gleam/desktop/"))
+///    Ok(#("home", "gleam/desktop/"))
 ///
 ///    > split_once("home/gleam/desktop/", on: "?")
 ///    Error(Nil)
@@ -282,9 +282,9 @@ external fn erl_split(String, String) -> List(String) =
 pub fn split_once(
   x: String,
   on substring: String,
-) -> Result(tuple(String, String), Nil) {
+) -> Result(#(String, String), Nil) {
   case erl_split(x, substring) {
-    [first, rest] -> Ok(tuple(first, rest))
+    [first, rest] -> Ok(#(first, rest))
     _ -> Error(Nil)
   }
 }
@@ -439,14 +439,12 @@ pub fn trim_right(string: String) -> String {
 ///
 /// ## Examples
 ///    > pop_grapheme("gleam")
-///    Ok(tuple("g", "leam"))
+///    Ok(#("g", "leam"))
 ///
 ///    > pop_grapheme("")
 ///    Error(Nil)
 ///
-pub external fn pop_grapheme(
-  string: String,
-) -> Result(tuple(String, String), Nil) =
+pub external fn pop_grapheme(string: String) -> Result(#(String, String), Nil) =
   "gleam_stdlib" "string_pop_grapheme"
 
 /// Converts a string to a list of Graphemes.
@@ -456,7 +454,7 @@ pub external fn pop_grapheme(
 ///
 pub fn to_graphemes(string: String) -> List(String) {
   case pop_grapheme(string) {
-    Ok(tuple(grapheme, rest)) -> [grapheme, ..to_graphemes(rest)]
+    Ok(#(grapheme, rest)) -> [grapheme, ..to_graphemes(rest)]
     _ -> []
   }
 }

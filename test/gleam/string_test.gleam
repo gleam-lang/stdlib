@@ -41,7 +41,7 @@ pub fn split_test() {
 pub fn split_once_test() {
   "Gleam,Erlang,Elixir"
   |> string.split_once(",")
-  |> should.equal(Ok(tuple("Gleam", "Erlang,Elixir")))
+  |> should.equal(Ok(#("Gleam", "Erlang,Elixir")))
 
   "Gleam"
   |> string.split_once(",")
@@ -292,11 +292,11 @@ pub fn pad_right_test() {
 pub fn pop_grapheme_test() {
   "gleam"
   |> string.pop_grapheme()
-  |> should.equal(Ok(tuple("g", "leam")))
+  |> should.equal(Ok(#("g", "leam")))
 
   "g"
   |> string.pop_grapheme()
-  |> should.equal(Ok(tuple("g", "")))
+  |> should.equal(Ok(#("g", "")))
 
   ""
   |> string.pop_grapheme()

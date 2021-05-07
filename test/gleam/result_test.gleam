@@ -37,8 +37,8 @@ pub fn map_error_test() {
   |> should.equal(Ok(1))
 
   Error(1)
-  |> result.map_error(fn(x) { tuple("ok", x + 1) })
-  |> should.equal(Error(tuple("ok", 2)))
+  |> result.map_error(fn(x) { #("ok", x + 1) })
+  |> should.equal(Error(#("ok", 2)))
 }
 
 pub fn flatten_test() {
@@ -161,4 +161,9 @@ pub fn replace_error_test() {
   Error(Nil)
   |> result.replace_error("Invalid")
   |> should.equal(Error("Invalid"))
+}
+
+pub fn values_test() {
+  result.values([Ok(1), Error(""), Ok(3)])
+  |> should.equal([1, 3])
 }
