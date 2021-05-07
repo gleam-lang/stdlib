@@ -165,6 +165,11 @@ pub fn flatten_test() {
   |> should.equal([1, 2, 3, 4])
 }
 
+pub fn flat_map_test() {
+  list.flat_map([1, 10, 20], fn(x) { [x, x + 1] })
+  |> should.equal([1, 2, 10, 11, 20, 21])
+}
+
 pub fn fold_test() {
   [1, 2, 3]
   |> list.fold([], fn(x, acc) { [x, ..acc] })
