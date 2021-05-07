@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- The `option` module gains the `values` function.
 - The `result` module gains the `values` function.
 - All modules now use the new `#(a, b, ...)` tuple syntax.
 

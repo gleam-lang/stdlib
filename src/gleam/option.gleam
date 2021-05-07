@@ -1,3 +1,5 @@
+import gleam/list
+
 /// Option represents a value that may be present or not. Some means the value is
 /// present, None means the value is not.
 ///
@@ -179,4 +181,18 @@ pub fn or(first: Option(a), second: Option(a)) -> Option(a) {
     Some(_) -> first
     None -> second
   }
+}
+
+/// Given a list of options
+/// Return only the values inside Some
+///
+/// ## Examples
+///
+/// ```
+/// > values([Some(1), None, Some(3)])
+/// [1, 3]
+/// ```
+///
+pub fn values(options: List(Option(a))) -> List(a) {
+  list.filter_map(options, fn(op) { to_result(op, "") })
 }
