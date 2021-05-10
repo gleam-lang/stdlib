@@ -17,10 +17,10 @@ external fn os_unsetenv(key: CharList) -> Bool =
   "os" "unsetenv"
 
 external fn char_list_to_string(CharList) -> String =
-  "erlang" "list_to_binary"
+  "unicode" "characters_to_binary"
 
 external fn string_to_char_list(String) -> CharList =
-  "erlang" "binary_to_list"
+  "unicode" "characters_to_list"
 
 /// Returns all environment variables set on the system.
 pub fn get_env() -> Map(String, String) {

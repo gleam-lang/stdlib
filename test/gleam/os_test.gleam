@@ -15,6 +15,13 @@ pub fn env_test() {
   |> should.equal(Error(Nil))
 }
 
+pub fn unicode_test() {
+  os.insert_env("GLEAM_UNICODE_TEST", "Iñtërnâtiônà£ißætiøn☃💩")
+  os.get_env()
+  |> map.get("GLEAM_UNICODE_TEST")
+  |> should.equal(Ok("Iñtërnâtiônà£ißætiøn☃💩"))
+}
+
 pub fn system_time_test() {
   let june_12_2020 = 1591966971
   { os.system_time(os.Second) > june_12_2020 }
