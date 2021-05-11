@@ -4,6 +4,8 @@
 
 - The `list` module gains the `interleave`, `flat_map` and `transpose` functions.
 - The `option` module gains the `all` and `values` functions.
+- The `os` module now uses unicode to encode/decode environment variables.
+  This fixes an issue when non-latin characters are present in environment.
 - The `result` module gains the `values` function.
 - All modules now use the new `#(a, b, ...)` tuple syntax.
 
