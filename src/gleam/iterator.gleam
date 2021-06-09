@@ -330,7 +330,7 @@ fn do_flatten(flattened: fn() -> Action(Iterator(a))) -> Action(a) {
 ///
 /// ## Examples
 ///
-///    > [[1, 2], [3, 4]] |> list.map(from_list) |> flatten |> to_list
+///    > from_list([[1, 2], [3, 4]]) |> map(from_list) |> flatten |> to_list
 ///    [1, 2, 3, 4]
 ///
 pub fn flatten(iterator: Iterator(Iterator(a))) -> Iterator(a) {
