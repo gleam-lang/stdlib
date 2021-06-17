@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.16.0 - 2021-06-17
 
 - The `list` module gains the `interleave`, `flat_map` and `transpose` functions.
 - The `option` module gains the `all` and `values` functions.
