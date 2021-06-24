@@ -303,6 +303,16 @@ pub fn pop_grapheme_test() {
   |> should.equal(Error(Nil))
 }
 
+pub fn pop_codepoint_test() {
+  "e̊fg"
+  |> string.pop_codepoint()
+  |> should.equal(Ok(#(101, "̊fg")))
+
+  ""
+  |> string.pop_codepoint()
+  |> should.equal(Error(Nil))
+}
+
 pub fn to_graphemes_test() {
   "abc"
   |> string.to_graphemes()
@@ -314,6 +324,20 @@ pub fn to_graphemes_test() {
 
   ""
   |> string.to_graphemes()
+  |> should.equal([])
+}
+
+pub fn to_codepoints_test() {
+  "abc"
+  |> string.to_codepoints()
+  |> should.equal([97, 98, 99])
+
+  "a"
+  |> string.to_codepoints()
+  |> should.equal([97])
+
+  ""
+  |> string.to_codepoints()
   |> should.equal([])
 }
 

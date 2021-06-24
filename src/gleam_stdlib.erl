@@ -7,12 +7,13 @@
          decode_int/1, decode_bool/1, decode_float/1,
          decode_thunk/1, decode_atom/1, decode_list/1, decode_field/2,
          decode_element/2, parse_int/1, parse_float/1, compare_strings/2,
-         string_pop_grapheme/1, string_starts_with/2, string_ends_with/2,
-         string_pad/4, decode_tuple2/1, decode_tuple3/1, decode_tuple4/1,
-         decode_tuple5/1, decode_tuple6/1, decode_map/1, bit_string_int_to_u32/1,
-         bit_string_int_from_u32/1, bit_string_append/2, bit_string_part_/3,
-         decode_bit_string/1, compile_regex/2, regex_match/2, regex_split/2,
-         regex_scan/2, base_decode64/1, wrap_list/1, rescue/1, get_line/1]).
+         string_pop_grapheme/1, string_pop_codepoint/1, string_starts_with/2,
+         string_ends_with/2, string_pad/4, decode_tuple2/1, decode_tuple3/1,
+         decode_tuple4/1, decode_tuple5/1, decode_tuple6/1, decode_map/1,
+         bit_string_int_to_u32/1, bit_string_int_from_u32/1, bit_string_append/2,
+         bit_string_part_/3, decode_bit_string/1, compile_regex/2, regex_match/2,
+         regex_split/2, regex_scan/2, base_decode64/1, wrap_list/1, rescue/1,
+         get_line/1]).
 
 should_equal(Actual, Expected) -> ?assertEqual(Expected, Actual).
 should_not_equal(Actual, Expected) -> ?assertNotEqual(Expected, Actual).
@@ -148,6 +149,13 @@ string_pad(String, Length, Dir, PadString) ->
     case unicode:characters_to_binary(Chars) of
         Bin when is_binary(Bin) -> Bin;
         Error -> erlang:error({gleam_error, {string_invalid_utf8, Error}})
+    end.
+
+string_pop_codepoint(String) ->
+    case string:next_codepoint(String) of
+        [ Next | Rest ] ->
+            {ok, {Next, unicode:characters_to_binary(Rest)}};
+        _ -> {error, nil}
     end.
 
 string_pop_grapheme(String) ->

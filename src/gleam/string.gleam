@@ -447,6 +447,18 @@ pub fn trim_right(string: String) -> String {
 pub external fn pop_grapheme(string: String) -> Result(#(String, String), Nil) =
   "gleam_stdlib" "string_pop_grapheme"
 
+/// Splits a non-empty string into its first codepoint and tail.
+///
+/// ## Examples
+///    > pop_codepoint("e̊fg")
+///    Ok(#(101, "̊fg"))
+///
+///    > pop_codepoint("")
+///    Error(Nil)
+///
+pub external fn pop_codepoint(string: String) -> Result(#(Int, String), Nil) =
+  "gleam_stdlib" "string_pop_codepoint"
+
 /// Converts a string to a list of Graphemes.
 ///
 ///    > to_graphemes("abc")
@@ -458,6 +470,14 @@ pub fn to_graphemes(string: String) -> List(String) {
     _ -> []
   }
 }
+
+/// Converts a string to a list of codepoints.
+///
+///    > to_codepoints("abc")
+///    [97, 98, 99]
+///
+pub external fn to_codepoints(string: String) -> List(Int) =
+  "unicode" "characters_to_list"
 
 external fn int_to_utf_codepoint(Int) -> UtfCodepoint =
   "gleam_stdlib" "identity"
