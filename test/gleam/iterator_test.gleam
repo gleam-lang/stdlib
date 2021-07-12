@@ -421,3 +421,29 @@ if erlang {
     |> should.equal([1, 100, 2, 3, 4])
   }
 }
+
+// a |> from_list |> fold_until(a, f) == a |> list.fold_until(_, a, f)
+pub fn fold_until_test() {
+  let test = fn(subject, acc, f) {
+    subject
+    |> iterator.from_list()
+    |> iterator.fold_until(acc, f)
+    |> should.equal(list.fold_until(subject, acc, f))
+  }
+
+  let f = fn(e, acc) {
+    case e {
+      _ if e < 6 -> list.Continue([e, ..acc])
+      _ -> list.Stop(acc)
+    }
+  }
+  test([], [], f)
+  test([1], [], f)
+  test([1, 2, 3], [], f)
+  test([1, 2, 3, 4, 5, 6, 7, 8], [], f)
+
+  [1, 2, 3, 4, 5, 6, 7, 8]
+  |> iterator.from_list()
+  |> iterator.fold_until([], f)
+  |> should.equal([5, 4, 3, 2, 1])
+}
