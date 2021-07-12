@@ -45,8 +45,15 @@ pub fn is_empty(str: String) -> Bool {
 ///    > length("")
 ///    0
 ///
-pub external fn length(String) -> Int =
-  "string" "length"
+if erlang {
+  pub external fn length(String) -> Int =
+    "string" "length"
+}
+
+if javascript {
+  pub external fn length(String) -> Int =
+  "" "String.prototype.length.call"
+}
 
 ///
 /// Reverses a string.
@@ -97,8 +104,16 @@ pub fn replace(
 ///    > lowercase("X-FILES")
 ///    "x-files"
 ///
-pub external fn lowercase(String) -> String =
-  "string" "lowercase"
+if erlang {
+  pub external fn lowercase(String) -> String =
+    "string" "lowercase"
+}
+
+// No tests for this function
+if javascript {
+  pub external fn lowercase(String) -> String =
+  "" "String.prototype.toLowerCase.call"
+}
 
 /// Creates a new string with all the graphemes in the input string converted to
 /// uppercase.
@@ -110,8 +125,17 @@ pub external fn lowercase(String) -> String =
 ///    > uppercase("skinner")
 ///    "SKINNER"
 ///
-pub external fn uppercase(String) -> String =
-  "string" "uppercase"
+// No tests for this function
+
+if erlang {
+  pub external fn uppercase(String) -> String =
+    "string" "uppercase"
+}
+
+if javascript {
+  pub external fn uppercase(String) -> String =
+  "" "String.prototype.toUpperCase.call"
+}
 
 /// Compares two strings to see which is "larger" by comparing their graphemes.
 ///
@@ -237,8 +261,15 @@ pub fn contains(does haystack: String, contain needle: String) -> Bool {
 ///    > starts_with("theory", "ory")
 ///    False
 ///
-pub external fn starts_with(String, String) -> Bool =
-  "gleam_stdlib" "string_starts_with"
+if erlang {
+  pub external fn starts_with(String, String) -> Bool =
+    "gleam_stdlib" "string_starts_with"
+}
+
+if javascript {
+  pub external fn starts_with(String, String) -> Bool =
+  "" "String.prototype.startsWith.call"
+}
 
 /// Checks whether the first string ends with the second one.
 ///
@@ -247,8 +278,15 @@ pub external fn starts_with(String, String) -> Bool =
 ///    > ends_with("theory", "ory")
 ///    True
 ///
+if erlang {
+  pub external fn ends_with(String, String) -> Bool =
+    "gleam_stdlib" "string_ends_with"
+}
+
+if javascript {
 pub external fn ends_with(String, String) -> Bool =
-  "gleam_stdlib" "string_ends_with"
+  "" "String.prototype.endsWith.call"
+}
 
 /// Creates a list of strings by splitting a given string on a given substring.
 ///
@@ -459,6 +497,7 @@ pub fn to_graphemes(string: String) -> List(String) {
   }
 }
 
+// code point Just an integer with type information, could this just be the dynamic coerce fn
 external fn int_to_utf_codepoint(Int) -> UtfCodepoint =
   "gleam_stdlib" "identity"
 

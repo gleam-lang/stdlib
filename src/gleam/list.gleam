@@ -50,8 +50,16 @@ pub type LengthMismatch {
 ///    > length([1, 2])
 ///    2
 ///
-pub external fn length(of: List(a)) -> Int =
-  "erlang" "length"
+if erlang {
+  pub external fn length(of: List(a)) -> Int =
+    "erlang" "length"
+}
+
+if javascript {
+  pub fn length(of of: List(a)) -> Int {
+    fold(of, 0, fn(_, count) { count + 1})
+  }
+}
 
 /// Creates a new list from a given list containing the same elements but in the
 /// opposite order.
@@ -73,8 +81,23 @@ pub external fn length(of: List(a)) -> Int =
 ///    > reverse([1, 2])
 ///    [2, 1]
 ///
-pub external fn reverse(List(a)) -> List(a) =
-  "lists" "reverse"
+if erlang {
+  pub external fn reverse(List(a)) -> List(a) =
+    "lists" "reverse"
+}
+
+if javascript {
+  pub fn reverse(list) {
+    do_reverse(list, [])
+  }
+
+  fn do_reverse(remaining, accumulator) {
+    case remaining {
+      [] -> accumulator
+      [item, ..rest] -> do_reverse(rest, [item, ..accumulator])
+    }
+  }
+}
 
 /// Determines whether or not the list is empty.
 ///
@@ -428,8 +451,23 @@ pub fn new() -> List(a) {
 ///    > append([1, 2], [3])
 ///    [1, 2, 3]
 ///
-pub external fn append(List(a), List(a)) -> List(a) =
-  "lists" "append"
+if erlang {
+  pub external fn append(List(a), List(a)) -> List(a) =
+    "lists" "append"
+}
+
+if javascript {
+  pub fn append(first, second) {
+    do_append(reverse(first), second)
+  }
+
+  fn do_append(remaining, second) {
+    case remaining {
+      [] -> second
+      [item, ..rest] -> do_append(rest, [item, ..second])
+    }
+  }
+}
 
 fn do_flatten(lists: List(List(a)), acc: List(a)) -> List(a) {
   case lists {
