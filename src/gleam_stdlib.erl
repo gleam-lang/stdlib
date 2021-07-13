@@ -14,10 +14,18 @@
          decode_bit_string/1, compile_regex/2, regex_match/2, regex_split/2,
          regex_scan/2, base_decode64/1, wrap_list/1, rescue/1, get_line/1]).
 
-should_equal(Actual, Expected) -> ?assertEqual(Expected, Actual).
-should_not_equal(Actual, Expected) -> ?assertNotEqual(Expected, Actual).
-should_be_ok(A) -> ?assertMatch({ok, _}, A).
-should_be_error(A) -> ?assertMatch({error, _}, A).
+should_equal(Actual, Expected) -> 
+    ?assertEqual(Expected, Actual),
+    nil.
+should_not_equal(Actual, Expected) -> 
+    ?assertNotEqual(Expected, Actual),
+    nil.
+should_be_ok(A) -> 
+    ?assertMatch({ok, _}, A),
+    nil.
+should_be_error(A) -> 
+    ?assertMatch({error, _}, A),
+    nil.
 
 map_get(Map, Key) ->
     case maps:find(Key, Map) of
