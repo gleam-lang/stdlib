@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- The `map.update` function now uses `Option` rather than `Result`.
+
 ## v0.16.0 - 2021-06-17
 
 - The `list` module gains the `interleave`, `flat_map` and `transpose` functions.

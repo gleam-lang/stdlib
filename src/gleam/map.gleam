@@ -1,5 +1,6 @@
 if erlang {
   import gleam/result
+  import gleam/option.{Option}
   import gleam/list
 
   /// A dictionary of keys and values.
@@ -279,10 +280,11 @@ if erlang {
   pub fn update(
     in map: Map(k, v),
     update key: k,
-    with fun: fn(Result(v, Nil)) -> v,
+    with fun: fn(Option(v)) -> v,
   ) -> Map(k, v) {
     map
     |> get(key)
+    |> option.from_result
     |> fun
     |> insert(map, key, _)
   }

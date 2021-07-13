@@ -2,6 +2,7 @@ if erlang {
   import gleam/string
   import gleam/should
   import gleam/map
+  import gleam/option.{None, Some}
 
   pub fn from_list_test() {
     [#(4, 0), #(1, 0)]
@@ -131,8 +132,8 @@ if erlang {
 
     let inc_or_zero = fn(x) {
       case x {
-        Ok(i) -> i + 1
-        Error(_) -> 0
+        Some(i) -> i + 1
+        None -> 0
       }
     }
 

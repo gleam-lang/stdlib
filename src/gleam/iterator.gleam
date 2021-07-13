@@ -1,6 +1,7 @@
 if erlang {
   import gleam/list
   import gleam/map.{Map}
+  import gleam/option.{None, Option, Some}
 
   // Internal private representation of an Iterator
   type Action(element) {
@@ -712,7 +713,7 @@ if erlang {
   type SizedChunk(element) {
     Another(List(element), fn() -> Action(element))
     Last(List(element))
-    None
+    NoMore
   }
 
   fn next_sized_chunk(
@@ -723,7 +724,7 @@ if erlang {
     case continuation() {
       Stop ->
         case current_chunk {
-          [] -> None
+          [] -> NoMore
           remaining -> Last(list.reverse(remaining))
         }
       Continue(e, next) -> {
@@ -742,7 +743,7 @@ if erlang {
   ) -> fn() -> Action(List(element)) {
     fn() {
       case next_sized_chunk(continuation, count, []) {
-        None -> Stop
+        NoMore -> Stop
         Last(chunk) -> Continue(chunk, stop)
         Another(chunk, next_element) ->
           Continue(chunk, do_sized_chunk(next_element, count))
@@ -888,11 +889,11 @@ if erlang {
 
   fn update_group_with(
     el: element,
-  ) -> fn(Result(List(element), Nil)) -> List(element) {
+  ) -> fn(Option(List(element))) -> List(element) {
     fn(maybe_group) {
       case maybe_group {
-        Ok(group) -> [el, ..group]
-        Error(Nil) -> [el]
+        Some(group) -> [el, ..group]
+        None -> [el]
       }
     }
   }
