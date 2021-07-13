@@ -1035,49 +1035,49 @@ if erlang {
     fn() { do_interleave(left.continuation, right.continuation) }
     |> Iterator
   }
-}
 
-fn do_fold_until(
-  continuation: fn() -> Action(e),
-  f: fn(e, acc) -> list.ContinueOrStop(acc),
-  accumulator: acc,
-) -> acc {
-  case continuation() {
-    Stop -> accumulator
-    Continue(elem, next) ->
-      case f(elem, accumulator) {
-        list.Continue(accumulator) -> do_fold_until(next, f, accumulator)
-        list.Stop(accumulator) -> accumulator
-      }
+  fn do_fold_until(
+    continuation: fn() -> Action(e),
+    f: fn(e, acc) -> list.ContinueOrStop(acc),
+    accumulator: acc,
+  ) -> acc {
+    case continuation() {
+      Stop -> accumulator
+      Continue(elem, next) ->
+        case f(elem, accumulator) {
+          list.Continue(accumulator) -> do_fold_until(next, f, accumulator)
+          list.Stop(accumulator) -> accumulator
+        }
+    }
   }
-}
 
-/// Like `fold`, `fold_until` reduces an iterator of elements into a single value by calling a given
-/// function on each element in turn, but uses a `list.ContinueOrStop` to determine 
-/// whether or not to keep iterating.
-///
-/// If called on an iterator of infinite length then this function will only ever
-/// return if the give function returns list.Stop.
-///
-///
-/// ## Examples
-///    > let f = fn(e, acc) {
-///    >   case e {
-///    >     _ if e < 4 -> list.Continue(e + acc)
-///    >     _ -> list.Stop(acc)
-///    >   }
-///    > }
-///    >
-///    > [1, 2, 3, 4]
-///    > |> from_list
-///    > |> iterator.fold_until(from: acc, with: f) 
-///    6
-///
-pub fn fold_until(
-  over iterator: Iterator(e),
-  from initial: acc,
-  with f: fn(e, acc) -> list.ContinueOrStop(acc),
-) -> acc {
-  iterator.continuation
-  |> do_fold_until(f, initial)
+  /// Like `fold`, `fold_until` reduces an iterator of elements into a single value by calling a given
+  /// function on each element in turn, but uses a `list.ContinueOrStop` to determine 
+  /// whether or not to keep iterating.
+  ///
+  /// If called on an iterator of infinite length then this function will only ever
+  /// return if the give function returns list.Stop.
+  ///
+  ///
+  /// ## Examples
+  ///    > let f = fn(e, acc) {
+  ///    >   case e {
+  ///    >     _ if e < 4 -> list.Continue(e + acc)
+  ///    >     _ -> list.Stop(acc)
+  ///    >   }
+  ///    > }
+  ///    >
+  ///    > [1, 2, 3, 4]
+  ///    > |> from_list
+  ///    > |> iterator.fold_until(from: acc, with: f) 
+  ///    6
+  ///
+  pub fn fold_until(
+    over iterator: Iterator(e),
+    from initial: acc,
+    with f: fn(e, acc) -> list.ContinueOrStop(acc),
+  ) -> acc {
+    iterator.continuation
+    |> do_fold_until(f, initial)
+  }
 }
