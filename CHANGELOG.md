@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- The `bool`, and `order` modules now support JavaScript compilation.
+- The `bool`, `order`, and `pair` modules now support JavaScript compilation.
 - The `map.update` function now uses `Option` rather than `Result`.
 - The `iterator` module gains the `fold_until` function.
 
