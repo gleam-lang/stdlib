@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- The `bool`, and `order` modules now support JavaScript compilation.
 - The `map.update` function now uses `Option` rather than `Result`.
 
 ## v0.16.0 - 2021-06-17
