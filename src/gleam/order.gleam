@@ -98,3 +98,4 @@ pub fn min(a: Order, b: Order) -> Order {
     Eq, Gt -> Eq
     _, _ -> b
   }
+}
