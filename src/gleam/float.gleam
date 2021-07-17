@@ -1,6 +1,6 @@
+import gleam/order.{Order}
 if erlang {
   import gleam/string_builder
-  import gleam/order.{Order}
 
   pub type Float =
     Float
@@ -45,6 +45,7 @@ if erlang {
     |> max(min_bound)
   }
 
+}
   /// Compares two floats, returning an order.
   ///
   /// ## Examples
@@ -61,6 +62,7 @@ if erlang {
         }
     }
   }
+if erlang {
 
   /// Compares two floats, returning the smaller of the two.
   ///

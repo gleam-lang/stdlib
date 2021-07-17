@@ -1,4 +1,3 @@
-if erlang {
   import gleam/should
   import gleam/list
   import gleam/int
@@ -384,6 +383,8 @@ if erlang {
     |> should.equal([])
   }
 
+if erlang {
+// TODO requires string.append
   pub fn index_map_test() {
     list.index_map([3, 4, 5], fn(i, x) { #(i, x) })
     |> should.equal([#(0, 3), #(1, 4), #(2, 5)])
@@ -392,6 +393,7 @@ if erlang {
     list.index_map(["a", "b", "c"], f)
     |> should.equal(["a0", "b1", "c2"])
   }
+}
 
   pub fn range_test() {
     list.range(0, 0)
@@ -502,6 +504,8 @@ if erlang {
     |> should.equal(Error(Nil))
   }
 
+if erlang {
+// TODO requires int.parse
   pub fn pop_map_test() {
     list.pop_map(["foo", "2", "3"], int.parse)
     |> should.equal(Ok(#(2, ["foo", "3"])))
@@ -512,6 +516,7 @@ if erlang {
     list.pop_map([], int.parse)
     |> should.equal(Error(Nil))
   }
+}
 
   pub fn key_pop_test() {
     list.key_pop([#("a", 0), #("b", 1)], "a")
@@ -629,6 +634,8 @@ if erlang {
     |> should.equal(Ok(15))
   }
 
+if erlang {
+// TODO requires string.append
   pub fn scan_test() {
     []
     |> list.scan(from: 0, with: fn(i, acc) { i + acc })
@@ -651,6 +658,7 @@ if erlang {
     )
     |> should.equal(["Odd", "OddEven", "OddEvenOdd", "OddEvenOddEven"])
   }
+}
 
   pub fn last_test() {
     list.last([])
@@ -723,4 +731,3 @@ if erlang {
     list.transpose([[1, 2, 3], [101, 102], [201, 202, 203]])
     |> should.equal([[1, 101, 201], [2, 102, 202], [3, 203]])
   }
-}

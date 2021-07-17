@@ -1,5 +1,5 @@
+import gleam/order.{Order}
 if erlang {
-  import gleam/order.{Order}
 
   pub type Int =
     Int
@@ -91,6 +91,7 @@ if erlang {
     |> max(min_bound)
   }
 
+}
   /// Compares two ints, returning an order.
   ///
   /// ## Examples
@@ -114,6 +115,7 @@ if erlang {
         }
     }
   }
+if erlang {
 
   /// Compares two int, returning the smaller of the two.
   ///
@@ -156,6 +158,7 @@ if erlang {
   pub fn is_even(x: Int) -> Bool {
     x % 2 == 0
   }
+}
 
   /// Returns whether the value provided is odd.
   ///
@@ -171,6 +174,7 @@ if erlang {
     x % 2 != 0
   }
 
+if erlang {
   /// Returns the negative of the value provided
   ///
   /// ## Examples

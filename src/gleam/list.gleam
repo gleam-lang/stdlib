@@ -18,7 +18,6 @@
 ////    }
 ////
 
-if erlang {
   import gleam/int
   import gleam/pair
   import gleam/order.{Order}
@@ -1574,4 +1573,3 @@ if erlang {
       }
     }
   }
-}
