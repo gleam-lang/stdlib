@@ -1,4 +1,3 @@
-if erlang {
   import gleam/should
   import gleam/int
   import gleam/order
@@ -227,4 +226,3 @@ if erlang {
     int.product([1, 2, 3])
     |> should.equal(6)
   }
-}

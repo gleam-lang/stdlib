@@ -1,5 +1,4 @@
 import gleam/order.{Order}
-if erlang {
 
   pub type Int =
     Int
@@ -31,8 +30,14 @@ if erlang {
   ///    > parse("ABC")
   ///    Error(Nil)
   ///
+if erlang {
   pub external fn parse(String) -> Result(Int, Nil) =
     "gleam_stdlib" "parse_int"
+}
+if javascript {
+  pub external fn parse(String) -> Result(Int, Nil) =
+    "../gleam_stdlib.js" "parse_int"
+}
 
   /// Prints a given int to a string.
   ///
@@ -41,8 +46,14 @@ if erlang {
   ///    > to_string(2)
   ///    "2"
   ///
+if erlang {
   pub external fn to_string(Int) -> String =
     "erlang" "integer_to_binary"
+}
+if javascript {
+  pub external fn to_string(Int) -> String =
+    "../gleam_stdlib.js" "int_to_string"
+}
 
   /// Prints a given int to a string using the base number provided.
   ///
@@ -57,8 +68,14 @@ if erlang {
   ///    > to_base_string(48, 36)
   ///    "1C"
   ///
+if erlang {
   pub external fn to_base_string(Int, Int) -> String =
     "erlang" "integer_to_binary"
+}
+if javascript {
+  pub external fn to_base_string(Int, Int) -> String =
+    "../gleam_stdlib.js" "int_to_base_string"
+}
 
   /// Takes an int and returns its value as a float
   ///
@@ -73,9 +90,14 @@ if erlang {
   ///   > to_float(-3)
   ///   -3.
   ///
+if erlang {
   pub external fn to_float(a: Int) -> Float =
     "erlang" "float"
-
+}
+if javascript {
+  pub external fn to_float(a: Int) -> Float =
+    "../gleam_stdlib.js" "identity"
+}
   /// Restricts an Int between a lower and upper bound
   ///
   /// ## Examples
@@ -91,7 +113,6 @@ if erlang {
     |> max(min_bound)
   }
 
-}
   /// Compares two ints, returning an order.
   ///
   /// ## Examples
@@ -115,7 +136,6 @@ if erlang {
         }
     }
   }
-if erlang {
 
   /// Compares two int, returning the smaller of the two.
   ///
@@ -158,7 +178,6 @@ if erlang {
   pub fn is_even(x: Int) -> Bool {
     x % 2 == 0
   }
-}
 
   /// Returns whether the value provided is odd.
   ///
@@ -174,7 +193,6 @@ if erlang {
     x % 2 != 0
   }
 
-if erlang {
   /// Returns the negative of the value provided
   ///
   /// ## Examples
@@ -225,4 +243,3 @@ if erlang {
       [x, ..rest] -> do_product(rest, x * initial)
     }
   }
-}
