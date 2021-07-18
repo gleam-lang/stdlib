@@ -5,10 +5,10 @@
 - The `os` module has been moved to the `gleam_os` library.
 - The `rescue` function has been removed from the `function` library in favour
   of target specific versions in Erlang and JavaScript specific libraries.
-- The `bool`, `list`, `order`, and `pair` modules now support JavaScript
-  compilation.
 - The `map.update` function now uses `Option` rather than `Result`.
 - The `iterator` module gains the `fold_until` function.
+- All modules have been updated to work when running on both Erlang and
+  JavaScript.
 
 ## v0.16.0 - 2021-06-17
 
