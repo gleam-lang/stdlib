@@ -3,7 +3,8 @@
 ## Unreleased
 
 - The `os` module has been moved to the `gleam_os` library.
-- The `bool`, `order`, and `pair` modules now support JavaScript compilation.
+- The `bool`, `list`, `order`, and `pair` modules now support JavaScript
+  compilation.
 - The `map.update` function now uses `Option` rather than `Result`.
 - The `iterator` module gains the `fold_until` function.
 

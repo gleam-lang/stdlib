@@ -1,6 +1,6 @@
-if erlang {
-  import gleam/order.{Order}
+import gleam/order.{Order}
 
+if erlang {
   pub type Int =
     Int
 
@@ -90,135 +90,135 @@ if erlang {
     |> min(max_bound)
     |> max(min_bound)
   }
+}
 
-  /// Compares two ints, returning an order.
-  ///
-  /// ## Examples
-  ///
-  ///    > compare(2, 3)
-  ///    Lt
-  ///
-  ///    > compare(4, 3)
-  ///    Gt
-  ///
-  ///    > compare(3, 3)
-  ///    Eq
-  ///
-  pub fn compare(a: Int, with b: Int) -> Order {
-    case a == b {
-      True -> order.Eq
-      False ->
-        case a < b {
-          True -> order.Lt
-          False -> order.Gt
-        }
-    }
+/// Compares two ints, returning an order.
+///
+/// ## Examples
+///
+///    > compare(2, 3)
+///    Lt
+///
+///    > compare(4, 3)
+///    Gt
+///
+///    > compare(3, 3)
+///    Eq
+///
+pub fn compare(a: Int, with b: Int) -> Order {
+  case a == b {
+    True -> order.Eq
+    False ->
+      case a < b {
+        True -> order.Lt
+        False -> order.Gt
+      }
   }
+}
 
-  /// Compares two int, returning the smaller of the two.
-  ///
-  /// ## Examples
-  ///
-  ///    > min(2, 3)
-  ///    2
-  ///
-  pub fn min(a: Int, b: Int) -> Int {
-    case a < b {
-      True -> a
-      False -> b
-    }
+/// Compares two int, returning the smaller of the two.
+///
+/// ## Examples
+///
+///    > min(2, 3)
+///    2
+///
+pub fn min(a: Int, b: Int) -> Int {
+  case a < b {
+    True -> a
+    False -> b
   }
+}
 
-  /// Compares two int, returning the larger of the two.
-  ///
-  /// ## Examples
-  ///
-  ///    > max(2, 3)
-  ///    3
-  ///
-  pub fn max(a: Int, b: Int) -> Int {
-    case a > b {
-      True -> a
-      False -> b
-    }
+/// Compares two int, returning the larger of the two.
+///
+/// ## Examples
+///
+///    > max(2, 3)
+///    3
+///
+pub fn max(a: Int, b: Int) -> Int {
+  case a > b {
+    True -> a
+    False -> b
   }
+}
 
-  /// Returns whether the value provided is even.
-  ///
-  /// ## Examples
-  ///
-  ///    > is_even(2)
-  ///    True
-  ///
-  ///    > is_even(3)
-  ///    False
-  ///
-  pub fn is_even(x: Int) -> Bool {
-    x % 2 == 0
+/// Returns whether the value provided is even.
+///
+/// ## Examples
+///
+///    > is_even(2)
+///    True
+///
+///    > is_even(3)
+///    False
+///
+pub fn is_even(x: Int) -> Bool {
+  x % 2 == 0
+}
+
+/// Returns whether the value provided is odd.
+///
+/// ## Examples
+///
+///    > is_odd(3)
+///    True
+///
+///    > is_odd(2)
+///    False
+///
+pub fn is_odd(x: Int) -> Bool {
+  x % 2 != 0
+}
+
+/// Returns the negative of the value provided
+///
+/// ## Examples
+///
+///    > negate(1)
+///    -1
+///
+pub fn negate(x: Int) -> Int {
+  -1 * x
+}
+
+/// Sums a list of Ints.
+///
+/// ## Example
+///
+///    > sum([1, 2, 3])
+///    6
+///
+pub fn sum(numbers: List(Int)) -> Int {
+  numbers
+  |> do_sum(0)
+}
+
+fn do_sum(numbers: List(Int), initial: Int) -> Int {
+  case numbers {
+    [] -> initial
+    [x, ..rest] -> do_sum(rest, x + initial)
   }
+}
 
-  /// Returns whether the value provided is odd.
-  ///
-  /// ## Examples
-  ///
-  ///    > is_odd(3)
-  ///    True
-  ///
-  ///    > is_odd(2)
-  ///    False
-  ///
-  pub fn is_odd(x: Int) -> Bool {
-    x % 2 != 0
+/// Multiplies a list of Ints and returns the product.
+///
+/// ## Example
+///
+///    > product([2, 3, 4])
+///    24
+///
+pub fn product(numbers: List(Int)) -> Int {
+  case numbers {
+    [] -> 0
+    _ -> do_product(numbers, 1)
   }
+}
 
-  /// Returns the negative of the value provided
-  ///
-  /// ## Examples
-  ///
-  ///    > negate(1)
-  ///    -1
-  ///
-  pub fn negate(x: Int) -> Int {
-    -1 * x
-  }
-
-  /// Sums a list of Ints.
-  ///
-  /// ## Example
-  ///
-  ///    > sum([1, 2, 3])
-  ///    6
-  ///
-  pub fn sum(numbers: List(Int)) -> Int {
-    numbers
-    |> do_sum(0)
-  }
-
-  fn do_sum(numbers: List(Int), initial: Int) -> Int {
-    case numbers {
-      [] -> initial
-      [x, ..rest] -> do_sum(rest, x + initial)
-    }
-  }
-
-  /// Multiplies a list of Ints and returns the product.
-  ///
-  /// ## Example
-  ///
-  ///    > product([2, 3, 4])
-  ///    24
-  ///
-  pub fn product(numbers: List(Int)) -> Int {
-    case numbers {
-      [] -> 0
-      _ -> do_product(numbers, 1)
-    }
-  }
-
-  fn do_product(numbers: List(Int), initial: Int) -> Int {
-    case numbers {
-      [] -> initial
-      [x, ..rest] -> do_product(rest, x * initial)
-    }
+fn do_product(numbers: List(Int), initial: Int) -> Int {
+  case numbers {
+    [] -> initial
+    [x, ..rest] -> do_product(rest, x * initial)
   }
 }
