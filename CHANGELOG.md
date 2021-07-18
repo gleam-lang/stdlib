@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- The `os` module has been moved to the `gleam_os` library.
 - The `bool`, `order`, and `pair` modules now support JavaScript compilation.
 - The `map.update` function now uses `Option` rather than `Result`.
 - The `iterator` module gains the `fold_until` function.
@@ -46,7 +47,8 @@
 - The `bool` module gains the `nand`, `nor`, `exclusive_nor`, and `exclusive_or` functions.
 - The `bit_builder` module gains the `from_string_builder` function.
 - The `list` modules gains the `index_fold`, `permutations`, and `try_fold` functions.
-- Breaking change in `queue.from_list`. The head element in the list becomes the first element in the queue.
+- Breaking change in `queue.from_list`. The head element in the list becomes the
+  first element in the queue.
 - Fix `queue.pop_back` and `queue.pop_front`
 
 ## v0.12.0 - 2020-11-04
