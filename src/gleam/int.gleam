@@ -20,86 +20,102 @@ pub fn absolute_value(num: Int) -> Int {
   }
 }
 
+/// Parses a given string as an int if possible.
+///
+/// ## Examples
+///
+///    > parse("2")
+///    Ok(2)
+///
+///    > parse("ABC")
+///    Error(Nil)
+///
+pub fn parse(string) {
+  do_parse(string)
+}
+
 if erlang {
-  /// Parses a given string as an int if possible.
-  ///
-  /// ## Examples
-  ///
-  ///    > parse("2")
-  ///    Ok(2)
-  ///
-  ///    > parse("ABC")
-  ///    Error(Nil)
-  ///
-  pub external fn parse(String) -> Result(Int, Nil) =
+  external fn do_parse(String) -> Result(Int, Nil) =
     "gleam_stdlib" "parse_int"
 }
 
 if javascript {
-  pub external fn parse(String) -> Result(Int, Nil) =
+  external fn do_parse(String) -> Result(Int, Nil) =
     "../gleam_stdlib.js" "parse_int"
 }
 
+/// Prints a given int to a string.
+///
+/// ## Examples
+///
+///    > to_string(2)
+///    "2"
+///
+pub fn to_string(int) {
+  do_to_string(int)
+}
+
 if erlang {
-  /// Prints a given int to a string.
-  ///
-  /// ## Examples
-  ///
-  ///    > to_string(2)
-  ///    "2"
-  ///
-  pub external fn to_string(Int) -> String =
+  external fn do_to_string(Int) -> String =
     "erlang" "integer_to_binary"
 }
 
 if javascript {
-  pub external fn to_string(Int) -> String =
+  external fn do_to_string(Int) -> String =
     "../gleam_stdlib.js" "int_to_string"
 }
 
+/// Prints a given int to a string using the base number provided.
+///
+/// ## Examples
+///
+///    > to_base_string(2, 2)
+///    "10"
+///
+///    > to_base_string(48, 16)
+///    "30"
+///
+///    > to_base_string(48, 36)
+///    "1C"
+///
+pub fn to_base_string(int, base) {
+  do_to_base_string(int, base)
+}
+
 if erlang {
-  /// Prints a given int to a string using the base number provided.
-  ///
-  /// ## Examples
-  ///
-  ///    > to_base_string(2, 2)
-  ///    "10"
-  ///
-  ///    > to_base_string(48, 16)
-  ///    "30"
-  ///
-  ///    > to_base_string(48, 36)
-  ///    "1C"
-  ///
-  pub external fn to_base_string(Int, Int) -> String =
+  external fn do_to_base_string(Int, Int) -> String =
     "erlang" "integer_to_binary"
 }
 
 if javascript {
-  pub external fn to_base_string(Int, Int) -> String =
+  external fn do_to_base_string(Int, Int) -> String =
     "../gleam_stdlib.js" "int_to_base_string"
 }
 
+/// Takes an int and returns its value as a float
+///
+/// ## Examples
+///
+///   > to_float(5)
+///   5.
+///
+///   > to_float(0)
+///   0.
+///
+///   > to_float(-3)
+///   -3.
+///
+pub fn to_float(int) {
+  do_to_float(int)
+}
+
 if erlang {
-  /// Takes an int and returns its value as a float
-  ///
-  /// ## Examples
-  ///
-  ///   > to_float(5)
-  ///   5.
-  ///
-  ///   > to_float(0)
-  ///   0.
-  ///
-  ///   > to_float(-3)
-  ///   -3.
-  ///
-  pub external fn to_float(a: Int) -> Float =
+  external fn do_to_float(a: Int) -> Float =
     "erlang" "float"
 }
 
 if javascript {
-  pub external fn to_float(a: Int) -> Float =
+  external fn do_to_float(a: Int) -> Float =
     "../gleam_stdlib.js" "identity"
 }
 
