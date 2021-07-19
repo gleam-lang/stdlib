@@ -2,9 +2,13 @@
 
 ## Unreleased
 
-- The `bool`, `order`, and `pair` modules now support JavaScript compilation.
+- The `os` module has been moved to the `gleam_os` library.
+- The `rescue` function has been removed from the `function` library in favour
+  of target specific versions in Erlang and JavaScript specific libraries.
 - The `map.update` function now uses `Option` rather than `Result`.
 - The `iterator` module gains the `fold_until` function.
+- All modules have been updated to work when running on both Erlang and
+  JavaScript.
 
 ## v0.16.0 - 2021-06-17
 
@@ -46,7 +50,8 @@
 - The `bool` module gains the `nand`, `nor`, `exclusive_nor`, and `exclusive_or` functions.
 - The `bit_builder` module gains the `from_string_builder` function.
 - The `list` modules gains the `index_fold`, `permutations`, and `try_fold` functions.
-- Breaking change in `queue.from_list`. The head element in the list becomes the first element in the queue.
+- Breaking change in `queue.from_list`. The head element in the list becomes the
+  first element in the queue.
 - Fix `queue.pop_back` and `queue.pop_front`
 
 ## v0.12.0 - 2020-11-04

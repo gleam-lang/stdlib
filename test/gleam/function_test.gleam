@@ -1,4 +1,5 @@
 if erlang {
+  // TODO: JavaScript
   import gleam/should
   import gleam/dynamic
   import gleam/function
@@ -107,22 +108,5 @@ if erlang {
     #(1, 2.0)
     |> function.identity
     |> should.equal(#(1, 2.0))
-  }
-
-  external fn throw(a) -> Nil =
-    "erlang" "throw"
-
-  external fn raise_error(a) -> Nil =
-    "erlang" "error"
-
-  pub fn rescue_test() {
-    function.rescue(fn() { 1 })
-    |> should.equal(Ok(1))
-
-    function.rescue(fn() { throw(1) })
-    |> should.equal(Error(function.Thrown(dynamic.from(1))))
-
-    function.rescue(fn() { raise_error("") })
-    |> should.equal(Error(function.Errored(dynamic.from(""))))
   }
 }
