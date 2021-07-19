@@ -1,26 +1,26 @@
 import gleam/order.{Order}
 
-if erlang {
-  pub type Int =
-    Int
+pub type Int =
+  Int
 
-  /// Returns the absolute value of the input.
-  ///
-  /// ## Examples
-  ///
-  ///    > absolute_value(-12)
-  ///    12
-  ///
-  ///    > absolute_value(10)
-  ///    10
-  ///
-  pub fn absolute_value(num: Int) -> Int {
-    case num >= 0 {
-      True -> num
-      False -> num * -1
-    }
+/// Returns the absolute value of the input.
+///
+/// ## Examples
+///
+///    > absolute_value(-12)
+///    12
+///
+///    > absolute_value(10)
+///    10
+///
+pub fn absolute_value(num: Int) -> Int {
+  case num >= 0 {
+    True -> num
+    False -> num * -1
   }
+}
 
+if erlang {
   /// Parses a given string as an int if possible.
   ///
   /// ## Examples
@@ -31,15 +31,16 @@ if erlang {
   ///    > parse("ABC")
   ///    Error(Nil)
   ///
-if erlang {
   pub external fn parse(String) -> Result(Int, Nil) =
     "gleam_stdlib" "parse_int"
 }
+
 if javascript {
   pub external fn parse(String) -> Result(Int, Nil) =
     "../gleam_stdlib.js" "parse_int"
 }
 
+if erlang {
   /// Prints a given int to a string.
   ///
   /// ## Examples
@@ -47,15 +48,16 @@ if javascript {
   ///    > to_string(2)
   ///    "2"
   ///
-if erlang {
   pub external fn to_string(Int) -> String =
     "erlang" "integer_to_binary"
 }
+
 if javascript {
   pub external fn to_string(Int) -> String =
     "../gleam_stdlib.js" "int_to_string"
 }
 
+if erlang {
   /// Prints a given int to a string using the base number provided.
   ///
   /// ## Examples
@@ -69,15 +71,16 @@ if javascript {
   ///    > to_base_string(48, 36)
   ///    "1C"
   ///
-if erlang {
   pub external fn to_base_string(Int, Int) -> String =
     "erlang" "integer_to_binary"
 }
+
 if javascript {
   pub external fn to_base_string(Int, Int) -> String =
     "../gleam_stdlib.js" "int_to_base_string"
 }
 
+if erlang {
   /// Takes an int and returns its value as a float
   ///
   /// ## Examples
@@ -91,28 +94,28 @@ if javascript {
   ///   > to_float(-3)
   ///   -3.
   ///
-if erlang {
   pub external fn to_float(a: Int) -> Float =
     "erlang" "float"
 }
+
 if javascript {
   pub external fn to_float(a: Int) -> Float =
     "../gleam_stdlib.js" "identity"
 }
-  /// Restricts an Int between a lower and upper bound
-  ///
-  /// ## Examples
-  ///
-  /// ```
-  /// > clamp(40, min: 50, max: 60)
-  /// 50
-  /// ```
-  ///
-  pub fn clamp(n: Int, min min_bound: Int, max max_bound: Int) -> Int {
-    n
-    |> min(max_bound)
-    |> max(min_bound)
-  }
+
+/// Restricts an Int between a lower and upper bound
+///
+/// ## Examples
+///
+/// ```
+/// > clamp(40, min: 50, max: 60)
+/// 50
+/// ```
+///
+pub fn clamp(n: Int, min min_bound: Int, max max_bound: Int) -> Int {
+  n
+  |> min(max_bound)
+  |> max(min_bound)
 }
 
 /// Compares two ints, returning an order.
@@ -244,3 +247,4 @@ fn do_product(numbers: List(Int), initial: Int) -> Int {
     [] -> initial
     [x, ..rest] -> do_product(rest, x * initial)
   }
+}

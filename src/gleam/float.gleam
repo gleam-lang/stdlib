@@ -1,4 +1,5 @@
 import gleam/order.{Order}
+
 if erlang {
   import gleam/string_builder
 
