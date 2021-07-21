@@ -1,3 +1,6 @@
+//// Result represents the result of something that may succeed or not.
+//// `Ok` means it was successful, `Error` means it was not successful.
+
 import gleam/list
 
 /// Checks whether the result is an Ok value.
