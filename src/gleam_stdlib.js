@@ -31,7 +31,7 @@ export function string_replace(string, target, substitute) {
 }
 
 export function string_reverse(string) {
-  return string.split("").reverse().join("");
+  return [...string].reverse().join("");
 }
 
 export function string_length(string) {
