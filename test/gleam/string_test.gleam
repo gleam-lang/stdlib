@@ -28,6 +28,11 @@ pub fn reverse_test() {
   |> should.equal("maelG")
 }
 
+pub fn unicode_reverse_test() {
+  string.reverse("👍 OK")
+  |> should.equal("KO 👍")
+}
+
 pub fn split_test() {
   "Gleam,Erlang,Elixir"
   |> string.split(",")
