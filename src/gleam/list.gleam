@@ -22,9 +22,6 @@ import gleam/int
 import gleam/pair
 import gleam/order.{Order}
 
-pub type List(elements) =
-  List(elements)
-
 /// An error value returned by the `strict_zip` function.
 ///
 pub type LengthMismatch {

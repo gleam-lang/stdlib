@@ -1,5 +1,5 @@
 if erlang {
-  import gleam/bit_string.{BitString}
+  import gleam/bit_string
   import gleam/string
 
   external fn erl_encode64(BitString) -> String =

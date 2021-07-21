@@ -1,6 +1,6 @@
 if erlang {
   import gleam/atom
-  import gleam/bit_string.{BitString}
+  import gleam/bit_string
   import gleam/list
   import gleam/map.{Map}
   import gleam/option.{None, Option, Some}

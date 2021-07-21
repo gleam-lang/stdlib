@@ -3,9 +3,6 @@
 //// encoded.
 
 if erlang {
-  pub type BitString =
-    BitString
-
   /// Converts a UTF-8 String type into a raw BitString type.
   ///
   pub external fn from_string(String) -> BitString =

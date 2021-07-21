@@ -1,6 +1,5 @@
 if erlang {
   import gleam/base
-  import gleam/bit_string.{BitString}
   import gleam/io
   import gleam/list
   import gleam/should

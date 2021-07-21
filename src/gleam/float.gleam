@@ -3,9 +3,6 @@ import gleam/order.{Order}
 if erlang {
   import gleam/string_builder
 
-  pub type Float =
-    Float
-
   /// Attempts to parse a string as a float, returning `Error(Nil)` if it was not
   /// possible.
   ///
