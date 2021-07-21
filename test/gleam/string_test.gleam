@@ -1,34 +1,34 @@
+import gleam/string
+import gleam/should
+import gleam/order
+
+pub fn length_test() {
+  string.length("ß↑e̊")
+  |> should.equal(3)
+
+  string.length("Gleam")
+  |> should.equal(5)
+
+  string.length("")
+  |> should.equal(0)
+}
+
+pub fn lowercase_test() {
+  string.lowercase("Gleam")
+  |> should.equal("gleam")
+}
+
+pub fn uppercase_test() {
+  string.uppercase("Gleam")
+  |> should.equal("GLEAM")
+}
+
+pub fn reverse_test() {
+  string.reverse("Gleam")
+  |> should.equal("maelG")
+}
+
 if erlang {
-  import gleam/string
-  import gleam/should
-  import gleam/order
-
-  pub fn length_test() {
-    string.length("ß↑e̊")
-    |> should.equal(3)
-
-    string.length("Gleam")
-    |> should.equal(5)
-
-    string.length("")
-    |> should.equal(0)
-  }
-
-  pub fn lowercase_test() {
-    string.lowercase("Gleam")
-    |> should.equal("gleam")
-  }
-
-  pub fn uppercase_test() {
-    string.uppercase("Gleam")
-    |> should.equal("GLEAM")
-  }
-
-  pub fn reverse_test() {
-    string.reverse("Gleam")
-    |> should.equal("maelG")
-  }
-
   pub fn split_test() {
     "Gleam,Erlang,Elixir"
     |> string.split(",")
@@ -52,13 +52,15 @@ if erlang {
     |> string.split_once(",")
     |> should.equal(Error(Nil))
   }
+}
 
-  pub fn replace_test() {
-    "Gleam,Erlang,Elixir"
-    |> string.replace(",", "++")
-    |> should.equal("Gleam++Erlang++Elixir")
-  }
+pub fn replace_test() {
+  "Gleam,Erlang,Elixir"
+  |> string.replace(",", "++")
+  |> should.equal("Gleam++Erlang++Elixir")
+}
 
+if erlang {
   pub fn append_test() {
     "Test"
     |> string.append(" Me")

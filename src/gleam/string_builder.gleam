@@ -1,17 +1,17 @@
-if erlang {
-  /// StringBuilder is a type used for efficiently building strings.
-  ///
-  /// When we append one string to another the strings must be copied to a
-  /// new location in memory so that they can sit together. This behaviour
-  /// enables efficient reading of the string but copying can be expensive,
-  /// especially if we want to join many strings together.
-  ///
-  /// StringBuilder is different in that it can be joined together in constant time
-  /// using minimal memory, and then can be efficiently converted to a string
-  /// using the `to_string` function.
-  ///
-  pub external type StringBuilder
+/// StringBuilder is a type used for efficiently building strings.
+///
+/// When we append one string to another the strings must be copied to a
+/// new location in memory so that they can sit together. This behaviour
+/// enables efficient reading of the string but copying can be expensive,
+/// especially if we want to join many strings together.
+///
+/// StringBuilder is different in that it can be joined together in constant time
+/// using minimal memory, and then can be efficiently converted to a string
+/// using the `to_string` function.
+///
+pub external type StringBuilder
 
+if erlang {
   /// Prepends a String onto the start of some StringBuilder.
   ///
   /// Runs in constant time.
@@ -59,22 +59,46 @@ if erlang {
   ///
   pub external fn concat(List(StringBuilder)) -> StringBuilder =
     "gleam_stdlib" "identity"
+}
 
-  /// Converts a string into a builder.
-  ///
-  /// Runs in constant time.
-  ///
-  pub external fn from_string(String) -> StringBuilder =
+/// Converts a string into a builder.
+///
+/// Runs in constant time.
+///
+pub fn from_string(string: String) -> StringBuilder {
+  do_from_string(string)
+}
+
+if erlang {
+  external fn do_from_string(String) -> StringBuilder =
     "gleam_stdlib" "identity"
+}
 
-  /// Turns an `StringBuilder` into a `String`
-  ///
-  /// This function is implemented natively by the virtual machine and is highly
-  /// optimised.
-  ///
-  pub external fn to_string(StringBuilder) -> String =
+if javascript {
+  external fn do_from_string(String) -> StringBuilder =
+    "../gleam_stdlib.js" "identity"
+}
+
+/// Turns an `StringBuilder` into a `String`
+///
+/// This function is implemented natively by the virtual machine and is highly
+/// optimised.
+///
+pub fn to_string(builder: StringBuilder) -> String {
+  do_to_string(builder)
+}
+
+if erlang {
+  external fn do_to_string(StringBuilder) -> String =
     "erlang" "iolist_to_binary"
+}
 
+if javascript {
+  external fn do_to_string(StringBuilder) -> String =
+    "../gleam_stdlib.js" "identity"
+}
+
+if erlang {
   /// Returns the size of the StringBuilder in bytes.
   ///
   pub external fn byte_size(StringBuilder) -> Int =
@@ -96,12 +120,25 @@ if erlang {
   ///
   pub external fn uppercase(StringBuilder) -> StringBuilder =
     "string" "uppercase"
+}
 
-  /// Converts a builder to a new builder with the contents reversed.
-  ///
-  pub external fn reverse(StringBuilder) -> StringBuilder =
+/// Converts a builder to a new builder with the contents reversed.
+///
+pub fn reverse(builder: StringBuilder) -> StringBuilder {
+  do_reverse(builder)
+}
+
+if erlang {
+  external fn do_reverse(StringBuilder) -> StringBuilder =
     "string" "reverse"
+}
 
+if javascript {
+  external fn do_reverse(StringBuilder) -> StringBuilder =
+    "../gleam_stdlib.js" "string_reverse"
+}
+
+if erlang {
   type Direction {
     All
   }
@@ -114,6 +151,26 @@ if erlang {
   pub fn split(iodata: StringBuilder, on pattern: String) -> List(StringBuilder) {
     erl_split(iodata, pattern, All)
   }
+}
+
+/// Replaces all instances of a pattern with a given string substitute.
+///
+pub fn replace(
+  in builder: StringBuilder,
+  each pattern: String,
+  with substitute: String,
+) -> StringBuilder {
+  do_replace(builder, pattern, substitute)
+}
+
+if erlang {
+  fn do_replace(
+    iodata: StringBuilder,
+    pattern: String,
+    substitute: String,
+  ) -> StringBuilder {
+    erl_replace(iodata, pattern, substitute, All)
+  }
 
   external fn erl_replace(
     StringBuilder,
@@ -122,17 +179,14 @@ if erlang {
     Direction,
   ) -> StringBuilder =
     "string" "replace"
+}
 
-  /// Replaces all instances of a pattern with a given string substitute.
-  ///
-  pub fn replace(
-    in iodata: StringBuilder,
-    each pattern: String,
-    with substitute: String,
-  ) -> StringBuilder {
-    erl_replace(iodata, pattern, substitute, All)
-  }
+if javascript {
+  external fn do_replace(StringBuilder, String, String) -> StringBuilder =
+    "../gleam_stdlib.js" "string_replace"
+}
 
+if erlang {
   /// Compares two builders to determine if they have the same textual content.
   ///
   /// Comparing two iodata using the `==` operator may return False even if they

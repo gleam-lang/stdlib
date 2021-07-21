@@ -1,119 +1,155 @@
 //// Strings in Gleam are UTF-8 binaries. They can be written in your code a
 //// text surrounded by `"double quotes"`.
 
+import gleam/string_builder
+import gleam/iterator
+import gleam/list
+import gleam/order
+import gleam/result
+
 if erlang {
-  import gleam/string_builder
   import gleam/dynamic.{Dynamic}
-  import gleam/iterator
-  import gleam/list
-  import gleam/order
-  import gleam/result
+}
 
-  pub type String =
-    String
+pub type String =
+  String
 
-  /// A UtfCodepoint is the integer representation of a valid UTF codepoint
-  pub type UtfCodepoint =
-    UtfCodepoint
+/// A UtfCodepoint is the integer representation of a valid UTF codepoint
+pub type UtfCodepoint =
+  UtfCodepoint
 
-  /// Determines if a string is empty.
-  ///
-  /// ## Examples
-  ///
-  ///    > is_empty("")
-  ///    True
-  ///
-  ///    > is_empty("the world")
-  ///    False
-  ///
-  pub fn is_empty(str: String) -> Bool {
-    str == ""
-  }
+/// Determines if a string is empty.
+///
+/// ## Examples
+///
+///    > is_empty("")
+///    True
+///
+///    > is_empty("the world")
+///    False
+///
+pub fn is_empty(str: String) -> Bool {
+  str == ""
+}
 
-  /// Gets the number of grapheme clusters in a given string.
-  ///
-  /// This function has to iterate across the whole string to count the number of
-  /// graphemes, so it runs in linear time.
-  ///
-  /// ## Examples
-  ///
-  ///    > length("Gleam")
-  ///    5
-  ///
-  ///    > length("ß↑e̊")
-  ///    3
-  ///
-  ///    > length("")
-  ///    0
-  ///
-  pub external fn length(String) -> Int =
+/// Gets the number of grapheme clusters in a given string.
+///
+/// This function has to iterate across the whole string to count the number of
+/// graphemes, so it runs in linear time.
+///
+/// ## Examples
+///
+///    > length("Gleam")
+///    5
+///
+///    > length("ß↑e̊")
+///    3
+///
+///    > length("")
+///    0
+///
+pub fn length(string: String) -> Int {
+  do_length(string)
+}
+
+if erlang {
+  external fn do_length(String) -> Int =
     "string" "length"
+}
 
-  ///
-  /// Reverses a string.
-  ///
-  /// This function has to iterate across the whole string so it runs in linear
-  /// time.
-  ///
-  /// ## Examples
-  ///
-  ///    > reverse("stressed")
-  ///    "desserts"
-  ///
-  pub fn reverse(string: String) -> String {
-    string
-    |> string_builder.from_string
-    |> string_builder.reverse
-    |> string_builder.to_string
-  }
+if javascript {
+  external fn do_length(String) -> Int =
+    "../gleam_stdlib.js" "string_length"
+}
 
-  /// Creates a new string by replacing all occurrences of a given substring.
-  ///
-  /// ## Examples
-  ///
-  ///    > replace("www.example.com", each: ".", with: "-")
-  ///    "www-example-com"
-  ///
-  ///    > replace("a,b,c,d,e", each: ",", with: "/")
-  ///    "a/b/c/d/e"
-  ///
-  pub fn replace(
-    in string: String,
-    each pattern: String,
-    with substitute: String,
-  ) -> String {
-    string
-    |> string_builder.from_string
-    |> string_builder.replace(each: pattern, with: substitute)
-    |> string_builder.to_string
-  }
+///
+/// Reverses a string.
+///
+/// This function has to iterate across the whole string so it runs in linear
+/// time.
+///
+/// ## Examples
+///
+///    > reverse("stressed")
+///    "desserts"
+///
+pub fn reverse(string: String) -> String {
+  string
+  |> string_builder.from_string
+  |> string_builder.reverse
+  |> string_builder.to_string
+}
 
-  /// Creates a new string with all the graphemes in the input string converted to
-  /// lowercase.
-  ///
-  /// Useful for case-insensitive comparisons.
-  ///
-  /// ## Examples
-  ///
-  ///    > lowercase("X-FILES")
-  ///    "x-files"
-  ///
-  pub external fn lowercase(String) -> String =
+/// Creates a new string by replacing all occurrences of a given substring.
+///
+/// ## Examples
+///
+///    > replace("www.example.com", each: ".", with: "-")
+///    "www-example-com"
+///
+///    > replace("a,b,c,d,e", each: ",", with: "/")
+///    "a/b/c/d/e"
+///
+pub fn replace(
+  in string: String,
+  each pattern: String,
+  with substitute: String,
+) -> String {
+  string
+  |> string_builder.from_string
+  |> string_builder.replace(each: pattern, with: substitute)
+  |> string_builder.to_string
+}
+
+/// Creates a new string with all the graphemes in the input string converted to
+/// lowercase.
+///
+/// Useful for case-insensitive comparisons.
+///
+/// ## Examples
+///
+///    > lowercase("X-FILES")
+///    "x-files"
+///
+pub fn lowercase(string: String) -> String {
+  do_lowercase(string)
+}
+
+if erlang {
+  external fn do_lowercase(String) -> String =
     "string" "lowercase"
+}
 
-  /// Creates a new string with all the graphemes in the input string converted to
-  /// uppercase.
-  ///
-  /// Useful for case-insensitive comparisons and VIRTUAL YELLING.
-  ///
-  /// ## Examples
-  ///
-  ///    > uppercase("skinner")
-  ///    "SKINNER"
-  ///
-  pub external fn uppercase(String) -> String =
+if javascript {
+  external fn do_lowercase(String) -> String =
+    "../gleam_stdlib.js" "string_lowercase"
+}
+
+/// Creates a new string with all the graphemes in the input string converted to
+/// uppercase.
+///
+/// Useful for case-insensitive comparisons and VIRTUAL YELLING.
+///
+/// ## Examples
+///
+///    > uppercase("skinner")
+///    "SKINNER"
+///
+pub fn uppercase(string: String) -> String {
+  do_uppercase(string)
+}
+
+if erlang {
+  external fn do_uppercase(String) -> String =
     "string" "uppercase"
+}
 
+if javascript {
+  external fn do_uppercase(String) -> String =
+    "../gleam_stdlib.js" "string_uppercase"
+}
+
+if erlang {
   /// Compares two strings to see which is "larger" by comparing their graphemes.
   ///
   /// This does not compare the size or length of the given strings.
@@ -463,20 +499,27 @@ if erlang {
       _ -> []
     }
   }
+}
 
-  external fn int_to_utf_codepoint(Int) -> UtfCodepoint =
+if erlang {
+  external fn unsafe_int_to_utf_codepoint(Int) -> UtfCodepoint =
     "gleam_stdlib" "identity"
+}
 
-  /// Converts an integer to a UtfCodepoint
-  ///
-  /// Returns an error if the integer does not represent a valid UTF codepoint.
-  ///
-  pub fn utf_codepoint(value: Int) -> Result(UtfCodepoint, Nil) {
-    case value {
-      i if i > 1114111 -> Error(Nil)
-      65534 | 65535 -> Error(Nil)
-      i if i >= 55296 && i <= 57343 -> Error(Nil)
-      i -> Ok(int_to_utf_codepoint(i))
-    }
+if javascript {
+  external fn unsafe_int_to_utf_codepoint(Int) -> UtfCodepoint =
+    "../gleam_stdlib.js" "identity"
+}
+
+/// Converts an integer to a UtfCodepoint
+///
+/// Returns an error if the integer does not represent a valid UTF codepoint.
+///
+pub fn utf_codepoint(value: Int) -> Result(UtfCodepoint, Nil) {
+  case value {
+    i if i > 1114111 -> Error(Nil)
+    65534 | 65535 -> Error(Nil)
+    i if i >= 55296 && i <= 57343 -> Error(Nil)
+    i -> Ok(unsafe_int_to_utf_codepoint(i))
   }
 }
