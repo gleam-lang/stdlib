@@ -122,7 +122,7 @@ if erlang {
 
 if javascript {
   external fn do_lowercase(String) -> String =
-    "../gleam_stdlib.js" "string_lowercase"
+    "../gleam_stdlib.js" "lowercase"
 }
 
 /// Creates a new string with all the graphemes in the input string converted to
@@ -146,25 +146,43 @@ if erlang {
 
 if javascript {
   external fn do_uppercase(String) -> String =
-    "../gleam_stdlib.js" "string_uppercase"
+    "../gleam_stdlib.js" "uppercase"
+}
+
+/// Compares two strings to see which is "larger" by comparing their graphemes.
+///
+/// This does not compare the size or length of the given strings.
+///
+/// ## Examples
+///
+///    > compare("Anthony", "Anthony")
+///    order.Eq
+///
+///    > compare("A", "B")
+///    order.Lt
+///
+pub fn compare(a: String, b: String) -> order.Order {
+  case a == b {
+    True -> order.Eq
+    _ ->
+      case less_than(a, b) {
+        True -> order.Lt
+        _ -> order.Gt
+      }
+  }
 }
 
 if erlang {
-  /// Compares two strings to see which is "larger" by comparing their graphemes.
-  ///
-  /// This does not compare the size or length of the given strings.
-  ///
-  /// ## Examples
-  ///
-  ///    > compare("Anthony", "Anthony")
-  ///    order.Eq
-  ///
-  ///    > compare("A", "B")
-  ///    order.Lt
-  ///
-  pub external fn compare(String, String) -> order.Order =
-    "gleam_stdlib" "compare_strings"
+  external fn less_than(String, String) -> Bool =
+    "gleam_stdlib" "less_than"
+}
 
+if javascript {
+  external fn less_than(String, String) -> Bool =
+    "../gleam_stdlib.js" "less_than"
+}
+
+if erlang {
   external fn erl_slice(String, Int, Int) -> String =
     "string" "slice"
 
@@ -290,21 +308,23 @@ if erlang {
   ///
   pub external fn ends_with(String, String) -> Bool =
     "gleam_stdlib" "string_ends_with"
+}
 
-  /// Creates a list of strings by splitting a given string on a given substring.
-  ///
-  /// ## Examples
-  ///
-  ///    > split("home/gleam/desktop/", on: "/")
-  ///    ["home", "gleam", "desktop", ""]
-  ///
-  pub fn split(x: String, on substring: String) -> List(String) {
-    x
-    |> string_builder.from_string
-    |> string_builder.split(on: substring)
-    |> list.map(with: string_builder.to_string)
-  }
+/// Creates a list of strings by splitting a given string on a given substring.
+///
+/// ## Examples
+///
+///    > split("home/gleam/desktop/", on: "/")
+///    ["home", "gleam", "desktop", ""]
+///
+pub fn split(x: String, on substring: String) -> List(String) {
+  x
+  |> string_builder.from_string
+  |> string_builder.split(on: substring)
+  |> list.map(with: string_builder.to_string)
+}
 
+if erlang {
   external fn erl_split(String, String) -> List(String) =
     "string" "split"
 
@@ -329,42 +349,44 @@ if erlang {
       _ -> Error(Nil)
     }
   }
+}
 
-  /// Creates a new string by joining two strings together.
-  ///
-  /// This function copies both strings and runs in linear time. If you find
-  /// yourself joining strings frequently consider using the [string_builder](../string_builder)
-  /// module as it can append strings much faster!
-  ///
-  /// ## Examples
-  ///
-  ///    > append(to: "butter", suffix: "fly")
-  ///    "butterfly"
-  ///
-  pub fn append(to first: String, suffix second: String) -> String {
-    first
-    |> string_builder.from_string
-    |> string_builder.append(second)
-    |> string_builder.to_string
-  }
+/// Creates a new string by joining two strings together.
+///
+/// This function copies both strings and runs in linear time. If you find
+/// yourself joining strings frequently consider using the [string_builder](../string_builder)
+/// module as it can append strings much faster!
+///
+/// ## Examples
+///
+///    > append(to: "butter", suffix: "fly")
+///    "butterfly"
+///
+pub fn append(to first: String, suffix second: String) -> String {
+  first
+  |> string_builder.from_string
+  |> string_builder.append(second)
+  |> string_builder.to_string
+}
 
-  /// Creates a new string by joining many strings together.
-  ///
-  /// This function copies both strings and runs in linear time. If you find
-  /// yourself joining strings frequently consider using the [string_builder](../string_builder)
-  /// module as it can append strings much faster!
-  ///
-  /// ## Examples
-  ///
-  ///    > concat(["never", "the", "less"])
-  ///    "nevertheless"
-  ///
-  pub fn concat(strings: List(String)) -> String {
-    strings
-    |> string_builder.from_strings
-    |> string_builder.to_string
-  }
+/// Creates a new string by joining many strings together.
+///
+/// This function copies both strings and runs in linear time. If you find
+/// yourself joining strings frequently consider using the [string_builder](../string_builder)
+/// module as it can append strings much faster!
+///
+/// ## Examples
+///
+///    > concat(["never", "the", "less"])
+///    "nevertheless"
+///
+pub fn concat(strings: List(String)) -> String {
+  strings
+  |> string_builder.from_strings
+  |> string_builder.to_string
+}
 
+if erlang {
   /// Creates a new string by repeating a string a given number of times.
   ///
   /// This function runs in linear time.

@@ -3,16 +3,16 @@
 
 -export([should_equal/2, should_not_equal/2, should_be_ok/1, should_be_error/1,
          atom_from_string/1, atom_create_from_string/1, atom_to_string/1,
-         map_get/2, iodata_append/2, iodata_prepend/2, identity/1,
-         decode_int/1, decode_bool/1, decode_float/1,
-         decode_thunk/1, decode_atom/1, decode_list/1, decode_field/2,
-         decode_element/2, parse_int/1, parse_float/1, compare_strings/2,
-         string_pop_grapheme/1, string_starts_with/2, string_ends_with/2,
-         string_pad/4, decode_tuple2/1, decode_tuple3/1, decode_tuple4/1,
-         decode_tuple5/1, decode_tuple6/1, decode_map/1, bit_string_int_to_u32/1,
-         bit_string_int_from_u32/1, bit_string_append/2, bit_string_part_/3,
-         decode_bit_string/1, compile_regex/2, regex_match/2, regex_split/2,
-         regex_scan/2, base_decode64/1, wrap_list/1, rescue/1, get_line/1]).
+         map_get/2, iodata_append/2, identity/1, decode_int/1, decode_bool/1,
+         decode_float/1, decode_thunk/1, decode_atom/1, decode_list/1,
+         decode_field/2, decode_element/2, parse_int/1, parse_float/1,
+         less_than/2, string_pop_grapheme/1, string_starts_with/2,
+         string_ends_with/2, string_pad/4, decode_tuple2/1, decode_tuple3/1,
+         decode_tuple4/1, decode_tuple5/1, decode_tuple6/1, decode_map/1,
+         bit_string_int_to_u32/1, bit_string_int_from_u32/1,
+         bit_string_append/2, bit_string_part_/3, decode_bit_string/1,
+         compile_regex/2, regex_match/2, regex_split/2, regex_scan/2,
+         base_decode64/1, wrap_list/1, rescue/1, get_line/1]).
 
 should_equal(Actual, Expected) -> 
     ?assertEqual(Expected, Actual),
@@ -45,7 +45,6 @@ atom_from_string(S) ->
     end.
 
 iodata_append(Iodata, String) -> [Iodata, String].
-iodata_prepend(Iodata, String) -> [String, Iodata].
 
 identity(X) -> X.
 
@@ -132,12 +131,8 @@ parse_float(String) ->
         _ -> {error, nil}
     end.
 
-compare_strings(Lhs, Rhs) ->
-    if
-        Lhs == Rhs -> eq;
-        Lhs < Rhs -> lt;
-        true -> gt
-    end.
+less_than(Lhs, Rhs) ->
+    Lhs < Rhs.
 
 string_starts_with(_, <<>>) -> true;
 string_starts_with(String, Prefix) when byte_size(Prefix) > byte_size(String) -> false;
@@ -227,14 +222,6 @@ base_decode64(S) ->
 
 wrap_list(X) when is_list(X) -> X;
 wrap_list(X) -> [X].
-
-rescue(F) ->
-    try {ok, F()}
-    catch
-        throw:X -> {error, {thrown, X}};
-        error:X -> {error, {errored, X}};
-        exit:X -> {error, {exited, X}}
-    end.
 
 get_line(Prompt) ->
     case io:get_line(Prompt) of

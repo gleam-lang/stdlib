@@ -62,7 +62,7 @@ if erlang {
 
 if javascript {
   external fn do_to_string(Int) -> String =
-    "../gleam_stdlib.js" "int_to_string"
+    "../gleam_stdlib.js" "to_string"
 }
 
 /// Prints a given int to a string using the base number provided.

@@ -1,3 +1,11 @@
+function to_list(array) {
+  let list = [];
+  for (let item of array.reverse()) {
+    list = [item, list];
+  }
+  return list;
+}
+
 export function identity(x) {
   return x;
 }
@@ -10,7 +18,7 @@ export function parse_int(value) {
   }
 }
 
-export function int_to_string(int) {
+export function to_string(int) {
   return int.toString();
 }
 
@@ -38,10 +46,40 @@ export function string_length(string) {
   }
 }
 
-export function string_lowercase(string) {
+export function lowercase(string) {
   return string.toLowerCase();
 }
 
-export function string_uppercase(string) {
+export function uppercase(string) {
   return string.toUpperCase();
+}
+
+export function less_than(a, b) {
+  return a < b;
+}
+
+export function add(a, b) {
+  return a + b;
+}
+
+export function equal(a, b) {
+  return a === b;
+}
+
+export function split(xs, pattern) {
+  return to_list(xs.split(pattern));
+}
+
+export function join(xs) {
+  return xs.flat().join("");
+}
+
+export function byte_size(data) {
+  if (typeof Blob === "function") {
+    return new Blob([data]).size;
+  } else if (typeof Buffer === "function") {
+    return Buffer.byteLength(data);
+  } else {
+    return data.length;
+  }
 }

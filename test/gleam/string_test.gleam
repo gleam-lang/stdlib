@@ -28,17 +28,17 @@ pub fn reverse_test() {
   |> should.equal("maelG")
 }
 
+pub fn split_test() {
+  "Gleam,Erlang,Elixir"
+  |> string.split(",")
+  |> should.equal(["Gleam", "Erlang", "Elixir"])
+
+  "Gleam, Erlang,Elixir"
+  |> string.split(", ")
+  |> should.equal(["Gleam", "Erlang,Elixir"])
+}
+
 if erlang {
-  pub fn split_test() {
-    "Gleam,Erlang,Elixir"
-    |> string.split(",")
-    |> should.equal(["Gleam", "Erlang", "Elixir"])
-
-    "Gleam, Erlang,Elixir"
-    |> string.split(", ")
-    |> should.equal(["Gleam", "Erlang,Elixir"])
-  }
-
   pub fn split_once_test() {
     "Gleam,Erlang,Elixir"
     |> string.split_once(",")
@@ -66,24 +66,26 @@ if erlang {
     |> string.append(" Me")
     |> should.equal("Test Me")
   }
+}
 
-  pub fn compare_test() {
-    string.compare("", "")
-    |> should.equal(order.Eq)
+pub fn compare_test() {
+  string.compare("", "")
+  |> should.equal(order.Eq)
 
-    string.compare("a", "")
-    |> should.equal(order.Gt)
+  string.compare("a", "")
+  |> should.equal(order.Gt)
 
-    string.compare("a", "A")
-    |> should.equal(order.Gt)
+  string.compare("a", "A")
+  |> should.equal(order.Gt)
 
-    string.compare("A", "B")
-    |> should.equal(order.Lt)
+  string.compare("A", "B")
+  |> should.equal(order.Lt)
 
-    string.compare("t", "ABC")
-    |> should.equal(order.Gt)
-  }
+  string.compare("t", "ABC")
+  |> should.equal(order.Gt)
+}
 
+if erlang {
   pub fn contains_test() {
     "gleam"
     |> string.contains("ea")
