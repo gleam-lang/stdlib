@@ -11,13 +11,6 @@ if erlang {
   import gleam/dynamic.{Dynamic}
 }
 
-pub type String =
-  String
-
-/// A UtfCodepoint is the integer representation of a valid UTF codepoint
-pub type UtfCodepoint =
-  UtfCodepoint
-
 /// Determines if a string is empty.
 ///
 /// ## Examples

@@ -1,16 +1,5 @@
 import gleam/order.{Order}
 
-/// A type with two possible values, True and False. Used to indicate whether
-/// things are... true or false!
-///
-/// Often is it clearer and offers more type safety to define a custom type
-/// than to use Bool. For example, rather than having a `is_teacher: Bool`
-/// field consider having a `role: SchoolRole` field where SchoolRole is a custom
-/// type that can be either Student or Teacher.
-///
-pub type Bool =
-  Bool
-
 /// Returns the opposite bool value.
 ///
 /// This is the same as the `!` or `not` operators in some other languages.

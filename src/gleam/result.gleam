@@ -1,19 +1,5 @@
 import gleam/list
 
-/// Result represents the result of something that may succeed or not.
-/// `Ok` means it was successful, `Error` means it was not successful.
-///
-pub type Result(success, error) =
-  Result(success, error)
-
-/// Nil is a type used to represent the absence of something, similar to null
-/// or undefined in other languages.
-///
-/// Unlike some other languages values cannot be implicitly nil.
-///
-pub type Nil =
-  Nil
-
 /// Checks whether the result is an Ok value.
 ///
 /// ## Examples

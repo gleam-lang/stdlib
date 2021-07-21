@@ -1,5 +1,4 @@
 if erlang {
-  import gleam/bit_string.{BitString}
   import gleam/string_builder.{StringBuilder}
 
   /// BitBuilder is a type used for efficiently concatenating bits to create bit

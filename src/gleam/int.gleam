@@ -1,8 +1,5 @@
 import gleam/order.{Order}
 
-pub type Int =
-  Int
-
 /// Returns the absolute value of the input.
 ///
 /// ## Examples
