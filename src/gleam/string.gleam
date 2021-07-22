@@ -182,132 +182,181 @@ if javascript {
     "../gleam_stdlib.js" "less_than"
 }
 
-if erlang {
-  external fn erl_slice(String, Int, Int) -> String =
-    "string" "slice"
-
-  /// Takes a substring given a start and end Grapheme indexes. Negative indexes
-  /// are taken starting from the *end* of the list.
-  ///
-  /// ## Examples
-  ///    > slice(from: "gleam", at_index: 1, length: 2)
-  ///    "le"
-  ///
-  ///    > slice(from: "gleam", at_index: 1, length: 10)
-  ///    "leam"
-  ///
-  ///    > slice(from: "gleam", at_index: 10, length: 3)
-  ///    ""
-  ///
-  ///    > slice(from: "gleam", at_index: -2, length: 2)
-  ///    "am"
-  ///
-  ///    > slice(from: "gleam", at_index: -12, length: 2)
-  ///    ""
-  ///
-  pub fn slice(
-    from string: String,
-    at_index idx: Int,
-    length len: Int,
-  ) -> String {
-    case len < 0 {
-      True -> ""
-      False ->
-        case idx < 0 {
-          True -> {
-            let translated_idx = length(string) + idx
-            case translated_idx < 0 {
-              True -> ""
-              False -> erl_slice(string, translated_idx, len)
-            }
+/// Takes a substring given a start and end Grapheme indexes. Negative indexes
+/// are taken starting from the *end* of the list.
+///
+/// ## Examples
+///    > slice(from: "gleam", at_index: 1, length: 2)
+///    "le"
+///
+///    > slice(from: "gleam", at_index: 1, length: 10)
+///    "leam"
+///
+///    > slice(from: "gleam", at_index: 10, length: 3)
+///    ""
+///
+///    > slice(from: "gleam", at_index: -2, length: 2)
+///    "am"
+///
+///    > slice(from: "gleam", at_index: -12, length: 2)
+///    ""
+///
+pub fn slice(from string: String, at_index idx: Int, length len: Int) -> String {
+  case len < 0 {
+    True -> ""
+    False ->
+      case idx < 0 {
+        True -> {
+          let translated_idx = length(string) + idx
+          case translated_idx < 0 {
+            True -> ""
+            False -> do_slice(string, translated_idx, len)
           }
-          False -> erl_slice(string, idx, len)
         }
-    }
+        False -> do_slice(string, idx, len)
+      }
   }
+}
 
-  /// Drops contents of the first string that occur before the second string.
-  /// If the first string does not contain the second string, the first string is returned.
-  ///
-  /// ## Examples
-  ///    > crop(from: "The Lone Gunmen", before: "Lone")
-  ///    "Lone Gunmen"
-  ///
-  pub fn crop(from string: String, before substring: String) -> String {
+if erlang {
+  external fn do_slice(String, Int, Int) -> String =
+    "string" "slice"
+}
+
+if javascript {
+  external fn do_slice(String, Int, Int) -> String =
+    "../gleam_stdlib.js" "slice_string"
+}
+
+/// Drops contents of the first string that occur before the second string.
+/// If the first string does not contain the second string, the first string is returned.
+///
+/// ## Examples
+///    > crop(from: "The Lone Gunmen", before: "Lone")
+///    "Lone Gunmen"
+///
+pub fn crop(from string: String, before substring: String) -> String {
+  do_crop(string, substring)
+}
+
+if erlang {
+  fn do_crop(string: String, substring: String) -> String {
     string
     |> erl_contains(substring)
     |> dynamic.string()
     |> result.unwrap(string)
   }
 
-  /// Drops *n* Graphemes from the left side of a string.
-  ///
-  /// ## Examples
-  ///    > drop_left(from: "The Lone Gunmen", up_to: 2)
-  ///    "e Lone Gunmen"
-  ///
-  pub fn drop_left(from string: String, up_to num_graphemes: Int) -> String {
-    case num_graphemes < 0 {
-      True -> string
-      False -> slice(string, num_graphemes, length(string) - num_graphemes)
-    }
-  }
-
-  /// Drops *n* Graphemes from the right side of a string.
-  ///
-  /// ## Examples
-  ///    > drop_right(from: "Cigarette Smoking Man", up_to: 2)
-  ///    "Cigarette Smoking M"
-  ///
-  pub fn drop_right(from string: String, up_to num_graphemes: Int) -> String {
-    case num_graphemes < 0 {
-      True -> string
-      False -> slice(string, 0, length(string) - num_graphemes)
-    }
-  }
-
   external fn erl_contains(String, String) -> Dynamic =
     "string" "find"
+}
 
-  /// Checks if the first string contains the second.
-  ///
-  /// ## Examples
-  ///
-  ///    > contains(does: "theory", contain: "ory")
-  ///    True
-  ///
-  ///    > contains(does: "theory", contain: "the")
-  ///    True
-  ///
-  ///    > contains(does: "theory", contain: "THE")
-  ///    False
-  ///
-  pub fn contains(does haystack: String, contain needle: String) -> Bool {
+if javascript {
+  external fn do_crop(String, String) -> String =
+    "../gleam_stdlib.js" "crop_string"
+}
+
+/// Drops *n* Graphemes from the left side of a string.
+///
+/// ## Examples
+///    > drop_left(from: "The Lone Gunmen", up_to: 2)
+///    "e Lone Gunmen"
+///
+pub fn drop_left(from string: String, up_to num_graphemes: Int) -> String {
+  case num_graphemes < 0 {
+    True -> string
+    False -> slice(string, num_graphemes, length(string) - num_graphemes)
+  }
+}
+
+/// Drops *n* Graphemes from the right side of a string.
+///
+/// ## Examples
+///    > drop_right(from: "Cigarette Smoking Man", up_to: 2)
+///    "Cigarette Smoking M"
+///
+pub fn drop_right(from string: String, up_to num_graphemes: Int) -> String {
+  case num_graphemes < 0 {
+    True -> string
+    False -> slice(string, 0, length(string) - num_graphemes)
+  }
+}
+
+/// Checks if the first string contains the second.
+///
+/// ## Examples
+///
+///    > contains(does: "theory", contain: "ory")
+///    True
+///
+///    > contains(does: "theory", contain: "the")
+///    True
+///
+///    > contains(does: "theory", contain: "THE")
+///    False
+///
+pub fn contains(does haystack: String, contain needle: String) -> Bool {
+  do_contains(haystack, needle)
+}
+
+if erlang {
+  fn do_contains(haystack: String, needle: String) -> Bool {
     haystack
     |> erl_contains(needle)
     |> dynamic.atom
     |> result.is_error
   }
+}
 
-  /// Checks whether the first string starts with the second one.
-  ///
-  /// ## Examples
-  ///
-  ///    > starts_with("theory", "ory")
-  ///    False
-  ///
-  pub external fn starts_with(String, String) -> Bool =
+if javascript {
+  fn do_contains(haystack: String, needle: String) -> Bool {
+    index_of(haystack, needle) != -1
+  }
+
+  external fn index_of(String, String) -> Int =
+    "../gleam_stdlib.js" "index_of"
+}
+
+/// Checks whether the first string starts with the second one.
+///
+/// ## Examples
+///
+///    > starts_with("theory", "ory")
+///    False
+///
+pub fn starts_with(string: String, prefix: String) -> Bool {
+  do_starts_with(string, prefix)
+}
+
+if erlang {
+  external fn do_starts_with(String, String) -> Bool =
     "gleam_stdlib" "string_starts_with"
+}
 
-  /// Checks whether the first string ends with the second one.
-  ///
-  /// ## Examples
-  ///
-  ///    > ends_with("theory", "ory")
-  ///    True
-  ///
-  pub external fn ends_with(String, String) -> Bool =
+if javascript {
+  external fn do_starts_with(String, String) -> Bool =
+    "../gleam_stdlib.js" "starts_with"
+}
+
+/// Checks whether the first string ends with the second one.
+///
+/// ## Examples
+///
+///    > ends_with("theory", "ory")
+///    True
+///
+pub fn ends_with(string: String, suffix: String) -> Bool {
+  do_ends_with(string, suffix)
+}
+
+if erlang {
+  external fn do_ends_with(String, String) -> Bool =
     "gleam_stdlib" "string_ends_with"
+}
+
+if javascript {
+  external fn do_ends_with(String, String) -> Bool =
+    "../gleam_stdlib.js" "ends_with"
 }
 
 /// Creates a list of strings by splitting a given string on a given substring.
@@ -324,31 +373,46 @@ pub fn split(x: String, on substring: String) -> List(String) {
   |> list.map(with: string_builder.to_string)
 }
 
+/// Splits a string a single time on the given substring.
+///
+/// Returns an error if substring not present.
+///
+/// ## Examples
+///
+///    > split_once("home/gleam/desktop/", on: "/")
+///    Ok(#("home", "gleam/desktop/"))
+///
+///    > split_once("home/gleam/desktop/", on: "?")
+///    Error(Nil)
+///
+pub fn split_once(
+  x: String,
+  on substring: String,
+) -> Result(#(String, String), Nil) {
+  do_split_once(x, substring)
+}
+
 if erlang {
   external fn erl_split(String, String) -> List(String) =
     "string" "split"
 
-  /// Splits a string a single time on the given substring.
-  ///
-  /// Returns an error if substring not present.
-  ///
-  /// ## Examples
-  ///
-  ///    > split_once("home/gleam/desktop/", on: "/")
-  ///    Ok(#("home", "gleam/desktop/"))
-  ///
-  ///    > split_once("home/gleam/desktop/", on: "?")
-  ///    Error(Nil)
-  ///
-  pub fn split_once(
+  fn do_split_once(
     x: String,
-    on substring: String,
+    substring: String,
   ) -> Result(#(String, String), Nil) {
     case erl_split(x, substring) {
       [first, rest] -> Ok(#(first, rest))
       _ -> Error(Nil)
     }
   }
+}
+
+if javascript {
+  external fn do_split_once(
+    x: String,
+    substring: String,
+  ) -> Result(#(String, String), Nil) =
+    "../gleam_stdlib.js" "split_once"
 }
 
 /// Creates a new string by joining two strings together.
@@ -386,38 +450,38 @@ pub fn concat(strings: List(String)) -> String {
   |> string_builder.to_string
 }
 
+/// Creates a new string by repeating a string a given number of times.
+///
+/// This function runs in linear time.
+///
+/// ## Examples
+///
+///    > repeat("ha", times: 3)
+///    "hahaha"
+///
+pub fn repeat(string: String, times times: Int) -> String {
+  iterator.repeat(string)
+  |> iterator.take(times)
+  |> iterator.to_list
+  |> concat
+}
+
+/// Joins many strings together with a given separator.
+///
+/// This function runs in linear time.
+///
+/// ## Examples
+///
+///    > join(["home","evan","Desktop"], with: "/")
+///    "home/evan/Desktop"
+///
+pub fn join(strings: List(String), with separator: String) -> String {
+  strings
+  |> list.intersperse(with: separator)
+  |> concat
+}
+
 if erlang {
-  /// Creates a new string by repeating a string a given number of times.
-  ///
-  /// This function runs in linear time.
-  ///
-  /// ## Examples
-  ///
-  ///    > repeat("ha", times: 3)
-  ///    "hahaha"
-  ///
-  pub fn repeat(string: String, times times: Int) -> String {
-    iterator.repeat(string)
-    |> iterator.take(times)
-    |> iterator.to_list
-    |> concat
-  }
-
-  /// Joins many strings together with a given separator.
-  ///
-  /// This function runs in linear time.
-  ///
-  /// ## Examples
-  ///
-  ///    > join(["home","evan","Desktop"], with: "/")
-  ///    "home/evan/Desktop"
-  ///
-  pub fn join(strings: List(String), with separator: String) -> String {
-    strings
-    |> list.intersperse(with: separator)
-    |> concat
-  }
-
   type Direction {
     Leading
     Trailing
@@ -460,66 +524,110 @@ if erlang {
   pub fn pad_right(string: String, to length: Int, with pad_string: String) {
     erl_pad(string, length, Trailing, pad_string)
   }
+}
 
-  external fn erl_trim(String, Direction) -> String =
-    "string" "trim"
+/// Removes whitespace on both sides of a String.
+///
+/// ## Examples
+///
+///    > trim("  hats  \n")
+///    "hats"
+///
+pub fn trim(string: String) -> String {
+  do_trim(string)
+}
 
-  /// Removes whitespace on both sides of a String.
-  ///
-  /// ## Examples
-  ///
-  ///    > trim("  hats  \n")
-  ///    "hats"
-  ///
-  pub fn trim(string: String) -> String {
+if erlang {
+  fn do_trim(string: String) -> String {
     erl_trim(string, Both)
   }
 
-  /// Removes whitespace on the left of a String.
-  ///
-  /// ## Examples
-  ///
-  ///    > trim_left("  hats  \n")
-  ///    "hats  \n"
-  ///
-  pub fn trim_left(string: String) -> String {
+  external fn erl_trim(String, Direction) -> String =
+    "string" "trim"
+}
+
+if javascript {
+  external fn do_trim(string: String) -> String =
+    "../gleam_stdlib.js" "trim"
+}
+
+/// Removes whitespace on the left of a String.
+///
+/// ## Examples
+///
+///    > trim_left("  hats  \n")
+///    "hats  \n"
+///
+pub fn trim_left(string: String) -> String {
+  do_trim_left(string)
+}
+
+if erlang {
+  fn do_trim_left(string: String) -> String {
     erl_trim(string, Leading)
   }
+}
 
-  /// Removes whitespace on the right of a String.
-  ///
-  /// ## Examples
-  ///
-  ///    > trim_right("  hats  \n")
-  ///    "  hats"
-  ///
-  pub fn trim_right(string: String) -> String {
+if javascript {
+  external fn do_trim_left(string: String) -> String =
+    "../gleam_stdlib.js" "trim_left"
+}
+
+/// Removes whitespace on the right of a String.
+///
+/// ## Examples
+///
+///    > trim_right("  hats  \n")
+///    "  hats"
+///
+pub fn trim_right(string: String) -> String {
+  do_trim_right(string)
+}
+
+if erlang {
+  fn do_trim_right(string: String) -> String {
     erl_trim(string, Trailing)
   }
+}
 
-  /// Splits a non-empty string into its head and tail. This lets you
-  /// pattern match on strings exactly as you would with lists.
-  ///
-  /// ## Examples
-  ///    > pop_grapheme("gleam")
-  ///    Ok(#("g", "leam"))
-  ///
-  ///    > pop_grapheme("")
-  ///    Error(Nil)
-  ///
-  pub external fn pop_grapheme(string: String) -> Result(#(String, String), Nil) =
+if javascript {
+  external fn do_trim_right(string: String) -> String =
+    "../gleam_stdlib.js" "trim_right"
+}
+
+/// Splits a non-empty string into its head and tail. This lets you
+/// pattern match on strings exactly as you would with lists.
+///
+/// ## Examples
+///    > pop_grapheme("gleam")
+///    Ok(#("g", "leam"))
+///
+///    > pop_grapheme("")
+///    Error(Nil)
+///
+pub fn pop_grapheme(string: String) -> Result(#(String, String), Nil) {
+  do_pop_grapheme(string)
+}
+
+if erlang {
+  external fn do_pop_grapheme(string: String) -> Result(#(String, String), Nil) =
     "gleam_stdlib" "string_pop_grapheme"
+}
 
-  /// Converts a string to a list of Graphemes.
-  ///
-  ///    > to_graphemes("abc")
-  ///    ["a", "b", "c"]
-  ///
-  pub fn to_graphemes(string: String) -> List(String) {
-    case pop_grapheme(string) {
-      Ok(#(grapheme, rest)) -> [grapheme, ..to_graphemes(rest)]
-      _ -> []
-    }
+if javascript {
+  external fn do_pop_grapheme(string: String) -> Result(#(String, String), Nil) =
+    "../gleam_stdlib.js" "pop_grapheme"
+}
+
+/// Converts a string to a list of Graphemes.
+///
+///    > to_graphemes("abc")
+///    ["a", "b", "c"]
+///
+pub fn to_graphemes(string: String) -> List(String) {
+  case pop_grapheme(string) {
+    Ok(#(grapheme, rest)) -> [grapheme, ..to_graphemes(rest)]
+    _ -> []
   }
 }
 

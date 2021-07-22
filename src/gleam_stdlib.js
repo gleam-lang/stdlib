@@ -1,3 +1,5 @@
+const Nil = undefined;
+
 function to_list(array) {
   let list = [];
   for (let item of array.reverse()) {
@@ -6,15 +8,23 @@ function to_list(array) {
   return list;
 }
 
+function Ok(x) {
+  return { type: "Ok", 0: x };
+}
+
+function Error(x) {
+  return { type: "Error", 0: x };
+}
+
 export function identity(x) {
   return x;
 }
 
 export function parse_int(value) {
   if (/^[-+]?(\d+)$/.test(value)) {
-    return { type: "Ok", 0: Number(value) };
+    return Ok(Number(value));
   } else {
-    return { type: "Error", 0: null };
+    return Error(Nil);
   }
 }
 
@@ -35,14 +45,36 @@ export function string_reverse(string) {
 }
 
 export function string_length(string) {
-  if (Intl && Intl.Segmenter) {
+  let iterator = graphemes_iterator(string);
+  if (iterator) {
     let i = 0;
-    for (let _ of new Intl.Segmenter("en-gb").segment(string)) {
+    for (let _ of iterator) {
       i++;
     }
     return i;
   } else {
     return string.match(/./gu).length;
+  }
+}
+
+function graphemes_iterator(string) {
+  if (Intl && Intl.Segmenter) {
+    return new Intl.Segmenter("en-gb").segment(string)[Symbol.iterator]();
+  }
+}
+
+export function pop_grapheme(string) {
+  let first;
+  let iterator = graphemes_iterator(string);
+  if (iterator) {
+    first = iterator.next().value?.segment;
+  } else {
+    first = string.match(/./u)?.[0];
+  }
+  if (first) {
+    return Ok([first, string.slice(first.length)]);
+  } else {
+    return Error(Nil);
   }
 }
 
@@ -71,7 +103,7 @@ export function split(xs, pattern) {
 }
 
 export function join(xs) {
-  return xs.flat().join("");
+  return xs.flat(Infinity).join("");
 }
 
 export function byte_size(data) {
@@ -82,4 +114,47 @@ export function byte_size(data) {
   } else {
     return data.length;
   }
+}
+
+export function slice_string(string, from, length) {
+  return string.slice(from, from + length);
+}
+
+export function crop_string(string, substring) {
+  return string.substring(string.indexOf(substring));
+}
+
+export function index_of(haystack, needle) {
+  return haystack.indexOf(needle) | 0;
+}
+
+export function starts_with(haystack, needle) {
+  return haystack.startsWith(needle);
+}
+
+export function ends_with(haystack, needle) {
+  return haystack.endsWith(needle);
+}
+
+export function split_once(haystack, needle) {
+  let index = haystack.indexOf(needle);
+  if (index >= 0) {
+    let before = haystack.slice(0, index);
+    let after = haystack.slice(index + needle.length);
+    return Ok([before, after]);
+  } else {
+    return Error(Nil);
+  }
+}
+
+export function trim(string) {
+  return string.trim();
+}
+
+export function trim_left(string) {
+  return string.trimLeft();
+}
+
+export function trim_right(string) {
+  return string.trimRight();
 }

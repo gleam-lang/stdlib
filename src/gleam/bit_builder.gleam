@@ -20,25 +20,25 @@ if erlang {
   ///
   /// Runs in constant time.
   ///
-  pub external fn prepend(to: BitBuilder, prefix: BitString) -> BitBuilder =
-    "gleam_stdlib" "iodata_prepend"
+  pub fn prepend(to: BitBuilder, prefix: BitString) -> BitBuilder {
+    append_builder(from_bit_string(prefix), to)
+  }
 
   /// Appends a bit string to the end of a builder.
   ///
   /// Runs in constant time.
   ///
-  pub external fn append(to: BitBuilder, suffix: BitString) -> BitBuilder =
-    "gleam_stdlib" "iodata_append"
+  pub fn append(to: BitBuilder, suffix: BitString) -> BitBuilder {
+    append_builder(to, from_bit_string(suffix))
+  }
 
   /// Prepends a builder onto the start of another.
   ///
   /// Runs in constant time.
   ///
-  pub external fn prepend_builder(
-    to: BitBuilder,
-    prefix: BitBuilder,
-  ) -> BitBuilder =
-    "gleam_stdlib" "iodata_prepend"
+  pub fn prepend_builder(to: BitBuilder, prefix: BitBuilder) -> BitBuilder {
+    append_builder(prefix, to)
+  }
 
   /// Appends a builder onto the end of another.
   ///
@@ -54,15 +54,17 @@ if erlang {
   ///
   /// Runs in constant time.
   ///
-  pub external fn prepend_string(to: BitBuilder, prefix: String) -> BitBuilder =
-    "gleam_stdlib" "iodata_prepend"
+  pub fn prepend_string(to: BitBuilder, prefix: String) -> BitBuilder {
+    append_builder(from_string(prefix), to)
+  }
 
   /// Appends a string onto the end of a builder.
   ///
   /// Runs in constant time.
   ///
-  pub external fn append_string(to: BitBuilder, suffix: String) -> BitBuilder =
-    "gleam_stdlib" "iodata_append"
+  pub fn append_string(to: BitBuilder, suffix: String) -> BitBuilder {
+    append_builder(to, from_string(suffix))
+  }
 
   /// Joins a list of builders into a single builders.
   ///

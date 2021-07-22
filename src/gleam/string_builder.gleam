@@ -127,7 +127,7 @@ pub fn to_string(builder: StringBuilder) -> String {
 
 if erlang {
   external fn do_to_string(StringBuilder) -> String =
-    "erlang" "iolist_to_binary"
+    "unicode" "characters_to_binary"
 }
 
 if javascript {
@@ -232,7 +232,7 @@ if erlang {
     "string" "split"
 
   fn do_split(iodata: StringBuilder, pattern: String) -> List(StringBuilder) {
-    do_split(iodata, pattern, All)
+    erl_split(iodata, pattern, All)
   }
 }
 

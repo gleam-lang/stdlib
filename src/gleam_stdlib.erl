@@ -12,7 +12,7 @@
          bit_string_int_to_u32/1, bit_string_int_from_u32/1,
          bit_string_append/2, bit_string_part_/3, decode_bit_string/1,
          compile_regex/2, regex_match/2, regex_split/2, regex_scan/2,
-         base_decode64/1, wrap_list/1, rescue/1, get_line/1]).
+         base_decode64/1, wrap_list/1, get_line/1]).
 
 should_equal(Actual, Expected) -> 
     ?assertEqual(Expected, Actual),
