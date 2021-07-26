@@ -481,6 +481,23 @@ pub fn join(strings: List(String), with separator: String) -> String {
   |> concat
 }
 
+/// Pads a string on the left until it has at least given number of Graphemes.
+///
+/// ## Examples
+///
+///    > pad_left("121", to: 5, with: ".")
+///    "..121"
+///
+///    > pad_left("121", to: 3, with: ".")
+///    "121"
+///
+///    > pad_left("121", to: 2, with: ".")
+///    "121"
+///
+pub fn pad_left(string: String, to length: Int, with pad_string: String) {
+  do_pad_left(string, length, pad_string)
+}
+
 if erlang {
   type Direction {
     Leading
@@ -488,42 +505,45 @@ if erlang {
     Both
   }
 
-  external fn erl_pad(String, Int, Direction, String) -> String =
-    "gleam_stdlib" "string_pad"
-
-  /// Pads a string on the left until it has at least given number of Graphemes.
-  ///
-  /// ## Examples
-  ///
-  ///    > pad_left("121", to: 5, with: ".")
-  ///    "..121"
-  ///
-  ///    > pad_left("121", to: 3, with: ".")
-  ///    "121"
-  ///
-  ///    > pad_left("121", to: 2, with: ".")
-  ///    "121"
-  ///
-  pub fn pad_left(string: String, to length: Int, with pad_string: String) {
+  fn do_pad_left(string: String, to length: Int, with pad_string: String) {
     erl_pad(string, length, Leading, pad_string)
   }
 
-  /// Pads a string on the right until it has a given length.
-  ///
-  /// ## Examples
-  ///
-  ///    > pad_right("121", to: 5, with: ".")
-  ///    "121.."
-  ///
-  ///    > pad_right("121", to: 3, with: ".")
-  ///    "121"
-  ///
-  ///    > pad_right("121", to: 2, with: ".")
-  ///    "121"
-  ///
-  pub fn pad_right(string: String, to length: Int, with pad_string: String) {
+  external fn erl_pad(String, Int, Direction, String) -> String =
+    "gleam_stdlib" "string_pad"
+}
+
+if javascript {
+  external fn do_pad_left(String, Int, String) -> String =
+    "../gleam_stdlib.js" "pad_left"
+}
+
+/// Pads a string on the right until it has a given length.
+///
+/// ## Examples
+///
+///    > pad_right("121", to: 5, with: ".")
+///    "121.."
+///
+///    > pad_right("121", to: 3, with: ".")
+///    "121"
+///
+///    > pad_right("121", to: 2, with: ".")
+///    "121"
+///
+pub fn pad_right(string: String, to length: Int, with pad_string: String) {
+  do_pad_right(string, length, pad_string)
+}
+
+if erlang {
+  fn do_pad_right(string: String, to length: Int, with pad_string: String) {
     erl_pad(string, length, Trailing, pad_string)
   }
+}
+
+if javascript {
+  external fn do_pad_right(String, Int, String) -> String =
+    "../gleam_stdlib.js" "pad_right"
 }
 
 /// Removes whitespace on both sides of a String.

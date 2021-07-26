@@ -158,3 +158,11 @@ export function trim_left(string) {
 export function trim_right(string) {
   return string.trimRight();
 }
+
+export function pad_left(string, length, pad) {
+  return string.padStart(length, pad);
+}
+
+export function pad_right(string, length, pad) {
+  return string.padEnd(length, pad);
+}

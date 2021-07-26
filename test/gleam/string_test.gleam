@@ -258,42 +258,40 @@ pub fn drop_right_test() {
   |> should.equal("gleam")
 }
 
-if erlang {
-  pub fn pad_left_test() {
-    "121"
-    |> string.pad_left(to: 5, with: ".")
-    |> should.equal("..121")
+pub fn pad_left_test() {
+  "121"
+  |> string.pad_left(to: 5, with: ".")
+  |> should.equal("..121")
 
-    "121"
-    |> string.pad_left(to: 3, with: ".")
-    |> should.equal("121")
+  "121"
+  |> string.pad_left(to: 3, with: ".")
+  |> should.equal("121")
 
-    "121"
-    |> string.pad_left(to: 2, with: ".")
-    |> should.equal("121")
+  "121"
+  |> string.pad_left(to: 2, with: ".")
+  |> should.equal("121")
 
-    "121"
-    |> string.pad_left(to: 5, with: "XY")
-    |> should.equal("XYXY121")
-  }
+  "121"
+  |> string.pad_left(to: 5, with: "XY")
+  |> should.equal("XYXY121")
+}
 
-  pub fn pad_right_test() {
-    "121"
-    |> string.pad_right(to: 5, with: ".")
-    |> should.equal("121..")
+pub fn pad_right_test() {
+  "121"
+  |> string.pad_right(to: 5, with: ".")
+  |> should.equal("121..")
 
-    "121"
-    |> string.pad_right(to: 3, with: ".")
-    |> should.equal("121")
+  "121"
+  |> string.pad_right(to: 3, with: ".")
+  |> should.equal("121")
 
-    "121"
-    |> string.pad_right(to: 2, with: ".")
-    |> should.equal("121")
+  "121"
+  |> string.pad_right(to: 2, with: ".")
+  |> should.equal("121")
 
-    "121"
-    |> string.pad_right(to: 5, with: "XY")
-    |> should.equal("121XYXY")
-  }
+  "121"
+  |> string.pad_right(to: 5, with: "XY")
+  |> should.equal("121XYXY")
 }
 
 pub fn pop_grapheme_test() {
@@ -324,17 +322,19 @@ pub fn to_graphemes_test() {
   |> should.equal([])
 }
 
+pub fn utf_codepoint_test() {
+  string.utf_codepoint(1114444)
+  |> should.be_error
+
+  string.utf_codepoint(65534)
+  |> should.be_error
+
+  string.utf_codepoint(55296)
+  |> should.be_error
+}
+
 if erlang {
-  pub fn utf_codepoint_test() {
-    string.utf_codepoint(1114444)
-    |> should.be_error
-
-    string.utf_codepoint(65534)
-    |> should.be_error
-
-    string.utf_codepoint(55296)
-    |> should.be_error
-
+  pub fn bit_string_utf_codepoint_test() {
     assert Ok(snake) = string.utf_codepoint(128013)
     should.equal(<<snake:utf8_codepoint>>, <<"🐍":utf8>>)
   }
