@@ -272,8 +272,16 @@ pub fn pad_left_test() {
   |> should.equal("121")
 
   "121"
+  |> string.pad_left(to: 4, with: "XY")
+  |> should.equal("X121")
+
+  "121"
   |> string.pad_left(to: 5, with: "XY")
-  |> should.equal("XYXY121")
+  |> should.equal("XY121")
+
+  "121"
+  |> string.pad_left(to: 6, with: "XY")
+  |> should.equal("XYX121")
 }
 
 pub fn pad_right_test() {
@@ -290,8 +298,16 @@ pub fn pad_right_test() {
   |> should.equal("121")
 
   "121"
+  |> string.pad_right(to: 4, with: "XY")
+  |> should.equal("121X")
+
+  "121"
   |> string.pad_right(to: 5, with: "XY")
-  |> should.equal("121XYXY")
+  |> should.equal("121XY")
+
+  "121"
+  |> string.pad_right(to: 6, with: "XY")
+  |> should.equal("121XYX")
 }
 
 pub fn pop_grapheme_test() {

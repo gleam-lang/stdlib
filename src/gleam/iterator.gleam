@@ -922,159 +922,159 @@ if erlang {
     |> fold(map.new(), group_updater(key))
     |> map.map_values(fn(_, group) { list.reverse(group) })
   }
+}
 
-  /// This function acts similar to fold, but does not take an initial state.
-  /// Instead, it starts from the first yielded element
-  /// and combines it with each subsequent element in turn using the given function.
-  /// The function is called as f(current_element, accumulator).
-  ///
-  /// Returns `Ok` to indicate a successful run, and `Error` if called on an empty iterator.
-  ///
-  /// ## Examples
-  ///
-  ///    > from_list([]) |> reduce(fn(x, y) { x + y })
-  ///    Error(Nil)
-  ///
-  ///    > from_list([1, 2, 3, 4, 5]) |> reduce(fn(x, y) { x + y })
-  ///    Ok(15)
-  ///
-  pub fn reduce(
-    over iterator: Iterator(e),
-    with f: fn(e, e) -> e,
-  ) -> Result(e, Nil) {
-    case iterator.continuation() {
-      Stop -> Error(Nil)
-      Continue(e, next) ->
-        do_fold(next, f, e)
-        |> Ok
-    }
+/// This function acts similar to fold, but does not take an initial state.
+/// Instead, it starts from the first yielded element
+/// and combines it with each subsequent element in turn using the given function.
+/// The function is called as f(current_element, accumulator).
+///
+/// Returns `Ok` to indicate a successful run, and `Error` if called on an empty iterator.
+///
+/// ## Examples
+///
+///    > from_list([]) |> reduce(fn(x, y) { x + y })
+///    Error(Nil)
+///
+///    > from_list([1, 2, 3, 4, 5]) |> reduce(fn(x, y) { x + y })
+///    Ok(15)
+///
+pub fn reduce(
+  over iterator: Iterator(e),
+  with f: fn(e, e) -> e,
+) -> Result(e, Nil) {
+  case iterator.continuation() {
+    Stop -> Error(Nil)
+    Continue(e, next) ->
+      do_fold(next, f, e)
+      |> Ok
   }
+}
 
-  /// Returns the last element in the given iterator.
-  ///
-  /// Returns `Error(Nil)` if the iterator is empty.
-  ///
-  /// This function runs in linear time.
-  ///
-  /// ## Examples
-  ///
-  ///    > empty() |> last
-  ///    Error(Nil)
-  ///
-  ///    > range(1, 10) |> last
-  ///    Ok(9)
-  ///
-  pub fn last(iterator: Iterator(element)) -> Result(element, Nil) {
-    iterator
-    |> reduce(fn(elem, _) { elem })
-  }
+/// Returns the last element in the given iterator.
+///
+/// Returns `Error(Nil)` if the iterator is empty.
+///
+/// This function runs in linear time.
+///
+/// ## Examples
+///
+///    > empty() |> last
+///    Error(Nil)
+///
+///    > range(1, 10) |> last
+///    Ok(9)
+///
+pub fn last(iterator: Iterator(element)) -> Result(element, Nil) {
+  iterator
+  |> reduce(fn(elem, _) { elem })
+}
 
-  /// Creates an iterator that yields no elements.
-  ///
-  /// ## Examples
-  ///
-  ///    > empty() |> to_list
-  ///    []
-  ///
-  pub fn empty() -> Iterator(element) {
-    Iterator(stop)
-  }
+/// Creates an iterator that yields no elements.
+///
+/// ## Examples
+///
+///    > empty() |> to_list
+///    []
+///
+pub fn empty() -> Iterator(element) {
+  Iterator(stop)
+}
 
-  /// Creates an iterator that yields exactly one element provided by calling the given function.
-  ///
-  /// ## Examples
-  ///
-  ///    > once(fn() { 1 }) |> to_list
-  ///    [1]
-  ///
-  pub fn once(f: fn() -> element) -> Iterator(element) {
-    fn() { Continue(f(), stop) }
-    |> Iterator
-  }
+/// Creates an iterator that yields exactly one element provided by calling the given function.
+///
+/// ## Examples
+///
+///    > once(fn() { 1 }) |> to_list
+///    [1]
+///
+pub fn once(f: fn() -> element) -> Iterator(element) {
+  fn() { Continue(f(), stop) }
+  |> Iterator
+}
 
-  /// Creates an iterator that yields the given element exactly once.
-  ///
-  /// ## Examples
-  ///
-  ///    > single(1) |> to_list
-  ///    [1]
-  ///
-  pub fn single(elem: element) -> Iterator(element) {
-    once(fn() { elem })
-  }
+/// Creates an iterator that yields the given element exactly once.
+///
+/// ## Examples
+///
+///    > single(1) |> to_list
+///    [1]
+///
+pub fn single(elem: element) -> Iterator(element) {
+  once(fn() { elem })
+}
 
-  fn do_interleave(
-    current: fn() -> Action(element),
-    next: fn() -> Action(element),
-  ) -> Action(element) {
-    case current() {
-      Stop -> next()
-      Continue(e, next_other) ->
-        Continue(e, fn() { do_interleave(next, next_other) })
-    }
+fn do_interleave(
+  current: fn() -> Action(element),
+  next: fn() -> Action(element),
+) -> Action(element) {
+  case current() {
+    Stop -> next()
+    Continue(e, next_other) ->
+      Continue(e, fn() { do_interleave(next, next_other) })
   }
+}
 
-  /// Creates an iterator that alternates between the two given iterators
-  /// until both have run out.
-  ///
-  /// ## Examples
-  ///
-  ///    > from_list([1, 2, 3, 4]) |> interleave(from_list([11, 12, 13, 14])) |> to_list
-  ///    [1, 11, 2, 12, 3, 13, 4, 14]
-  ///
-  ///    > from_list([1, 2, 3, 4]) |> interleave(from_list([100])) |> to_list
-  ///    [1, 100, 2, 3, 4]
-  ///
-  pub fn interleave(
-    left: Iterator(element),
-    with right: Iterator(element),
-  ) -> Iterator(element) {
-    fn() { do_interleave(left.continuation, right.continuation) }
-    |> Iterator
-  }
+/// Creates an iterator that alternates between the two given iterators
+/// until both have run out.
+///
+/// ## Examples
+///
+///    > from_list([1, 2, 3, 4]) |> interleave(from_list([11, 12, 13, 14])) |> to_list
+///    [1, 11, 2, 12, 3, 13, 4, 14]
+///
+///    > from_list([1, 2, 3, 4]) |> interleave(from_list([100])) |> to_list
+///    [1, 100, 2, 3, 4]
+///
+pub fn interleave(
+  left: Iterator(element),
+  with right: Iterator(element),
+) -> Iterator(element) {
+  fn() { do_interleave(left.continuation, right.continuation) }
+  |> Iterator
+}
 
-  fn do_fold_until(
-    continuation: fn() -> Action(e),
-    f: fn(e, acc) -> list.ContinueOrStop(acc),
-    accumulator: acc,
-  ) -> acc {
-    case continuation() {
-      Stop -> accumulator
-      Continue(elem, next) ->
-        case f(elem, accumulator) {
-          list.Continue(accumulator) -> do_fold_until(next, f, accumulator)
-          list.Stop(accumulator) -> accumulator
-        }
-    }
+fn do_fold_until(
+  continuation: fn() -> Action(e),
+  f: fn(e, acc) -> list.ContinueOrStop(acc),
+  accumulator: acc,
+) -> acc {
+  case continuation() {
+    Stop -> accumulator
+    Continue(elem, next) ->
+      case f(elem, accumulator) {
+        list.Continue(accumulator) -> do_fold_until(next, f, accumulator)
+        list.Stop(accumulator) -> accumulator
+      }
   }
+}
 
-  /// Like `fold`, `fold_until` reduces an iterator of elements into a single value by calling a given
-  /// function on each element in turn, but uses a `list.ContinueOrStop` to determine 
-  /// whether or not to keep iterating.
-  ///
-  /// If called on an iterator of infinite length then this function will only ever
-  /// return if the give function returns list.Stop.
-  ///
-  ///
-  /// ## Examples
-  ///    > let f = fn(e, acc) {
-  ///    >   case e {
-  ///    >     _ if e < 4 -> list.Continue(e + acc)
-  ///    >     _ -> list.Stop(acc)
-  ///    >   }
-  ///    > }
-  ///    >
-  ///    > [1, 2, 3, 4]
-  ///    > |> from_list
-  ///    > |> iterator.fold_until(from: acc, with: f) 
-  ///    6
-  ///
-  pub fn fold_until(
-    over iterator: Iterator(e),
-    from initial: acc,
-    with f: fn(e, acc) -> list.ContinueOrStop(acc),
-  ) -> acc {
-    iterator.continuation
-    |> do_fold_until(f, initial)
-  }
+/// Like `fold`, `fold_until` reduces an iterator of elements into a single value by calling a given
+/// function on each element in turn, but uses a `list.ContinueOrStop` to determine 
+/// whether or not to keep iterating.
+///
+/// If called on an iterator of infinite length then this function will only ever
+/// return if the give function returns list.Stop.
+///
+///
+/// ## Examples
+///    > let f = fn(e, acc) {
+///    >   case e {
+///    >     _ if e < 4 -> list.Continue(e + acc)
+///    >     _ -> list.Stop(acc)
+///    >   }
+///    > }
+///    >
+///    > [1, 2, 3, 4]
+///    > |> from_list
+///    > |> iterator.fold_until(from: acc, with: f) 
+///    6
+///
+pub fn fold_until(
+  over iterator: Iterator(e),
+  from initial: acc,
+  with f: fn(e, acc) -> list.ContinueOrStop(acc),
+) -> acc {
+  iterator.continuation
+  |> do_fold_until(f, initial)
 }

@@ -2,7 +2,7 @@
 //// text surrounded by `"double quotes"`.
 
 import gleam/string_builder
-import gleam/iterator
+import gleam/iterator.{Iterator}
 import gleam/list
 import gleam/order
 import gleam/result
@@ -494,28 +494,13 @@ pub fn join(strings: List(String), with separator: String) -> String {
 ///    > pad_left("121", to: 2, with: ".")
 ///    "121"
 ///
-pub fn pad_left(string: String, to length: Int, with pad_string: String) {
-  do_pad_left(string, length, pad_string)
-}
-
-if erlang {
-  type Direction {
-    Leading
-    Trailing
-    Both
-  }
-
-  fn do_pad_left(string: String, to length: Int, with pad_string: String) {
-    erl_pad(string, length, Leading, pad_string)
-  }
-
-  external fn erl_pad(String, Int, Direction, String) -> String =
-    "gleam_stdlib" "string_pad"
-}
-
-if javascript {
-  external fn do_pad_left(String, Int, String) -> String =
-    "../gleam_stdlib.js" "pad_left"
+pub fn pad_left(string: String, to desired_length: Int, with pad_string: String) {
+  let current_length = length(string)
+  let to_pad_length = desired_length - current_length
+  padding(to_pad_length, pad_string)
+  |> iterator.append(iterator.single(string))
+  |> iterator.to_list
+  |> concat
 }
 
 /// Pads a string on the right until it has a given length.
@@ -531,19 +516,26 @@ if javascript {
 ///    > pad_right("121", to: 2, with: ".")
 ///    "121"
 ///
-pub fn pad_right(string: String, to length: Int, with pad_string: String) {
-  do_pad_right(string, length, pad_string)
+pub fn pad_right(
+  string: String,
+  to desired_length: Int,
+  with pad_string: String,
+) {
+  let current_length = length(string)
+  let to_pad_length = desired_length - current_length
+  iterator.single(string)
+  |> iterator.append(padding(to_pad_length, pad_string))
+  |> iterator.to_list
+  |> concat
 }
 
-if erlang {
-  fn do_pad_right(string: String, to length: Int, with pad_string: String) {
-    erl_pad(string, length, Trailing, pad_string)
-  }
-}
-
-if javascript {
-  external fn do_pad_right(String, Int, String) -> String =
-    "../gleam_stdlib.js" "pad_right"
+fn padding(size: Int, pad_string: String) -> Iterator(String) {
+  let pad_length = length(pad_string)
+  let num_pads = size / pad_length
+  let extra = size % pad_length
+  iterator.repeat(pad_string)
+  |> iterator.take(num_pads)
+  |> iterator.append(iterator.single(slice(pad_string, 0, extra)))
 }
 
 /// Removes whitespace on both sides of a String.
@@ -560,6 +552,12 @@ pub fn trim(string: String) -> String {
 if erlang {
   fn do_trim(string: String) -> String {
     erl_trim(string, Both)
+  }
+
+  type Direction {
+    Leading
+    Trailing
+    Both
   }
 
   external fn erl_trim(String, Direction) -> String =
