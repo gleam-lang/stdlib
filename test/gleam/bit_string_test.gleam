@@ -1,26 +1,29 @@
+import gleam/bit_string
+import gleam/should
+
+pub fn byte_size_test() {
+  bit_string.byte_size(bit_string.from_string("hello"))
+  |> should.equal(5)
+
+  bit_string.byte_size(bit_string.from_string(""))
+  |> should.equal(0)
+}
+
+pub fn append_test() {
+  bit_string.from_string("Test")
+  |> bit_string.append(bit_string.from_string(" Me"))
+  |> should.equal(bit_string.from_string("Test Me"))
+
+  <<1, 2>>
+  |> bit_string.append(<<>>)
+  |> should.equal(<<1, 2>>)
+
+  <<1, 2>>
+  |> bit_string.append(<<3, 4>>)
+  |> should.equal(<<1, 2, 3, 4>>)
+}
+
 if erlang {
-  import gleam/bit_string
-  import gleam/should
-
-  pub fn length_test() {
-    bit_string.byte_size(bit_string.from_string("hello"))
-    |> should.equal(5)
-
-    bit_string.byte_size(bit_string.from_string(""))
-    |> should.equal(0)
-  }
-
-  pub fn append_test() {
-    bit_string.from_string("Test")
-    |> bit_string.append(bit_string.from_string(" Me"))
-    |> should.equal(bit_string.from_string("Test Me"))
-
-    let Ok(zero_32bit) = bit_string.int_to_u32(0)
-    zero_32bit
-    |> bit_string.append(bit_string.from_string(""))
-    |> should.equal(zero_32bit)
-  }
-
   pub fn part_test() {
     bit_string.from_string("hello")
     |> bit_string.part(0, 5)

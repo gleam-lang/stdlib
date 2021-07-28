@@ -29,34 +29,47 @@ if erlang {
     erl_print("~ts\n", [string])
     Nil
   }
+}
 
-  /// Prints a value to standard output using Erlang syntax.
-  ///
-  /// The value is returned after being printed so it can be used in pipelines.
-  ///
-  /// ## Example
-  ///
-  ///    > io.debug("Hi mum")
-  ///    // -> <<"Hi mum">>
-  ///    "Hi mum"
-  ///
-  ///    > io.debug(Ok(1))
-  ///    // -> {ok, 1}
-  ///    Ok(1)
-  ///
-  ///    > import list
-  ///    > [1, 2]
-  ///    > |> list.map(fn(x) { x + 1 })
-  ///    > |> io.debug
-  ///    > |> list.map(fn(x) { x * 2 })
-  ///    // -> [2, 3]
-  ///    [4, 6]
-  ///
-  pub fn debug(term: anything) -> anything {
+/// Prints a value to standard output using Erlang syntax.
+///
+/// The value is returned after being printed so it can be used in pipelines.
+///
+/// ## Example
+///
+///    > io.debug("Hi mum")
+///    // -> <<"Hi mum">>
+///    "Hi mum"
+///
+///    > io.debug(Ok(1))
+///    // -> {ok, 1}
+///    Ok(1)
+///
+///    > import list
+///    > [1, 2]
+///    > |> list.map(fn(x) { x + 1 })
+///    > |> io.debug
+///    > |> list.map(fn(x) { x * 2 })
+///    // -> [2, 3]
+///    [4, 6]
+///
+pub fn debug(term: anything) -> anything {
+  debug_print(term)
+  term
+}
+
+if erlang {
+  fn debug_print(term: anything) -> DoNotLeak {
     erl_print("~tp\n", [term])
-    term
   }
+}
 
+if javascript {
+  external fn debug_print(anything) -> Nil =
+    "../gleam_stdlib" "log"
+}
+
+if erlang {
   /// Error value returned by `get_line` function
   ///
   pub type GetLineError {

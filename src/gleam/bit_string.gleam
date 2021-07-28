@@ -2,27 +2,60 @@
 //// The BitString type should be used instead of a String type when not utf8
 //// encoded.
 
+/// Converts a UTF-8 String type into a raw BitString type.
+///
+pub fn from_string(x: String) -> BitString {
+  do_from_string(x)
+}
+
 if erlang {
-  /// Converts a UTF-8 String type into a raw BitString type.
-  ///
-  pub external fn from_string(String) -> BitString =
+  external fn do_from_string(String) -> BitString =
     "gleam_stdlib" "identity"
+}
 
-  /// Returns an integer which is the number of bytes in the bit string.
-  ///
-  pub external fn byte_size(BitString) -> Int =
+if javascript {
+  external fn do_from_string(String) -> BitString =
+    "../gleam_stdlib.js" "bit_string_from_string"
+}
+
+/// Returns an integer which is the number of bytes in the bit string.
+///
+pub fn byte_size(x: BitString) -> Int {
+  do_byte_size(x)
+}
+
+if erlang {
+  external fn do_byte_size(BitString) -> Int =
     "erlang" "byte_size"
+}
 
-  /// Creates a new bit string by joining two binaries.
-  ///
-  /// ## Examples
-  ///
-  ///    > append(to: from_string("butter"), suffix: from_string("fly"))
-  ///    from_string("butterfly")
-  ///
-  pub external fn append(first: BitString, second: BitString) -> BitString =
+if javascript {
+  external fn do_byte_size(BitString) -> Int =
+    "../gleam_stdlib.js" "byte_size"
+}
+
+/// Creates a new bit string by joining two binaries.
+///
+/// ## Examples
+///
+///    > append(to: from_string("butter"), suffix: from_string("fly"))
+///    from_string("butterfly")
+///
+pub fn append(to first: BitString, suffix second: BitString) -> BitString {
+  do_append(first, second)
+}
+
+if erlang {
+  external fn do_append(BitString, BitString) -> BitString =
     "gleam_stdlib" "bit_string_append"
+}
 
+if javascript {
+  external fn do_append(BitString, BitString) -> BitString =
+    "../gleam_stdlib.js" "bit_string_append"
+}
+
+if erlang {
   /// Extracts part of a bit string.
   ///
   /// BitString part will start at given position and continue up to specified
