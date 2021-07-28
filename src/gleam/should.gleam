@@ -21,24 +21,53 @@ if erlang {
 }
 
 if javascript {
+  import gleam/string
+
+  external fn stringify(anything) -> String =
+    "../gleam_stdlib.js" "stringify"
+
+  external fn crash(String) -> anything =
+    "../gleam_stdlib.js" "crash"
+
   pub fn equal(a, b) {
-    assert True = a == b
-    Nil
+    case a == b {
+      True -> Nil
+      _ ->
+        crash(string.concat([
+          "\n",
+          stringify(b),
+          "\nshould equal \n",
+          stringify(a),
+          "\n",
+        ]))
+    }
   }
 
   pub fn not_equal(a, b) {
-    assert True = a != b
-    Nil
+    case a != b {
+      True -> Nil
+      _ ->
+        crash(string.concat([
+          "\n",
+          stringify(b),
+          "\nshould not equal \n",
+          stringify(a),
+        ]))
+    }
   }
 
   pub fn be_ok(a) {
-    assert Ok(_) = a
-    Nil
+    case a {
+      Ok(_) -> Nil
+      _ -> crash(string.concat(["\n", stringify(a), "\nshould be ok"]))
+    }
   }
 
   pub fn be_error(a) {
-    assert Error(_) = a
-    Nil
+    case a {
+      Error(_) -> Nil
+      _ -> crash(string.concat(["\n", stringify(a), "\nshould be error"]))
+    }
   }
 }
 

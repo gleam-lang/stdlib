@@ -8,11 +8,11 @@ function to_list(array) {
   return list;
 }
 
-function Ok(x) {
+function ok(x) {
   return { type: "Ok", 0: x };
 }
 
-function Error(x) {
+function error(x) {
   return { type: "Error", 0: x };
 }
 
@@ -22,9 +22,9 @@ export function identity(x) {
 
 export function parse_int(value) {
   if (/^[-+]?(\d+)$/.test(value)) {
-    return Ok(Number(value));
+    return ok(Number(value));
   } else {
-    return Error(Nil);
+    return error(Nil);
   }
 }
 
@@ -72,9 +72,9 @@ export function pop_grapheme(string) {
     first = string.match(/./u)?.[0];
   }
   if (first) {
-    return Ok([first, string.slice(first.length)]);
+    return ok([first, string.slice(first.length)]);
   } else {
-    return Error(Nil);
+    return error(Nil);
   }
 }
 
@@ -143,9 +143,9 @@ export function split_once(haystack, needle) {
   if (index >= 0) {
     let before = haystack.slice(0, index);
     let after = haystack.slice(index + needle.length);
-    return Ok([before, after]);
+    return ok([before, after]);
   } else {
-    return Error(Nil);
+    return error(Nil);
   }
 }
 
@@ -174,4 +174,18 @@ export function bit_string_append(first, second) {
 
 export function log(term) {
   console.log(term);
+}
+
+export function stringify(data) {
+  let replacer = (_key, value) =>
+    typeof value === "bigint" ? value.toString() + "n" : value;
+  try {
+    return JSON.stringify(data, replacer);
+  } catch (_error) {
+    return "//reference-cycle";
+  }
+}
+
+export function crash(message) {
+  throw new Error(message);
 }
