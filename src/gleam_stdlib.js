@@ -107,7 +107,7 @@ export function join(xs) {
 }
 
 export function byte_size(data) {
-  if (data instanceof ArrayBuffer) {
+  if (data instanceof Uint8Array) {
     return data.byteLength;
   } else if (typeof Blob === "function") {
     return new Blob([data]).size;
@@ -162,14 +162,14 @@ export function trim_right(string) {
 }
 
 export function bit_string_from_string(string) {
-  return new TextEncoder().encode(string).buffer;
+  return new TextEncoder().encode(string);
 }
 
 export function bit_string_append(first, second) {
   let array = new Uint8Array(first.byteLength + second.byteLength);
-  array.set(new Uint8Array(first), 0);
-  array.set(new Uint8Array(second), first.byteLength);
-  return array.buffer;
+  array.set(first, 0);
+  array.set(second, first.byteLength);
+  return array;
 }
 
 export function log(term) {
