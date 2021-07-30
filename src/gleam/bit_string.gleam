@@ -68,43 +68,54 @@ if erlang {
     length: Int,
   ) -> Result(BitString, Nil) =
     "gleam_stdlib" "bit_string_part_"
+}
 
-  /// Converts an integer to unsigned 32 bits.
-  ///
-  /// Returns an error if integer is less than zero or equal to or larger than
-  /// 2^32.
-  ///
-  pub external fn int_to_u32(Int) -> Result(BitString, Nil) =
-    "gleam_stdlib" "bit_string_int_to_u32"
+/// Tests to see whether a bit string is valid UTF-8.
+///
+pub fn is_utf8(bits: BitString) -> Bool {
+  do_is_utf8(bits)
+}
 
-  /// Converts unsigned 32 bits to an integer.
-  ///
-  /// Returns an error if the bit string is not 32 bits in length.
-  ///
-  pub external fn int_from_u32(BitString) -> Result(Int, Nil) =
-    "gleam_stdlib" "bit_string_int_from_u32"
-
-  /// Tests to see whether a bit string is valid UTF-8.
-  ///
-  pub fn is_utf8(bits: BitString) -> Bool {
+if erlang {
+  fn do_is_utf8(bits: BitString) -> Bool {
     case bits {
       <<>> -> True
       <<_:utf8, rest:binary>> -> is_utf8(rest)
       _ -> False
     }
   }
+}
 
+if javascript {
+  fn do_is_utf8(bits: BitString) -> Bool {
+    case to_string(bits) {
+      Ok(_) -> True
+      _ -> False
+    }
+  }
+}
+
+/// Converts a bit string to a string.
+///
+/// Returns an error if the bit string is invalid UTF-8 data.
+///
+pub fn to_string(bits: BitString) -> Result(String, Nil) {
+  do_to_string(bits)
+}
+
+if erlang {
   external fn unsafe_to_string(BitString) -> String =
     "gleam_stdlib" "identity"
 
-  /// Converts a bit string to a string.
-  ///
-  /// Returns an error if the bit string is invalid UTF-8 data.
-  ///
-  pub fn to_string(bits: BitString) -> Result(String, Nil) {
+  fn do_to_string(bits: BitString) -> Result(String, Nil) {
     case is_utf8(bits) {
       True -> Ok(unsafe_to_string(bits))
       False -> Error(Nil)
     }
   }
+}
+
+if javascript {
+  external fn do_to_string(BitString) -> Result(String, Nil) =
+    "../gleam_stdlib.js" "bit_string_to_string"
 }

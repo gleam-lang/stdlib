@@ -7,7 +7,9 @@
   of target specific versions in Erlang and JavaScript specific libraries.
 - The `map.update` function now uses `Option` rather than `Result`.
 - The `iterator` module gains the `fold_until` function.
-- Prelude types like `Result`, `List` etc. are no longer redefined in their stdlib modules.
+- The `bit_string` module loses the u32 functions in favour of bit string literals.
+- Prelude types like `Result`, `List` etc. are no longer redefined in their
+  stdlib modules.
 - All modules have been updated to work when running on both Erlang and
   JavaScript.
 

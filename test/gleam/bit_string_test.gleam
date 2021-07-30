@@ -57,45 +57,48 @@ if erlang {
     |> bit_string.part(1, 6)
     |> should.equal(Error(Nil))
   }
+}
 
-  pub fn u32_test() {
-    let Ok(bin) = bit_string.int_to_u32(0)
-    should.equal(4, bit_string.byte_size(bin))
-    should.equal(Ok(0), bit_string.int_from_u32(bin))
+pub fn to_string_test() {
+  <<>>
+  |> bit_string.to_string
+  |> should.equal(Ok(""))
 
-    let Ok(bin) = bit_string.int_to_u32(4294967295)
-    should.equal(4, bit_string.byte_size(bin))
-    should.equal(Ok(4294967295), bit_string.int_from_u32(bin))
+  <<"":utf8>>
+  |> bit_string.to_string
+  |> should.equal(Ok(""))
 
-    should.equal(
-      Error(Nil),
-      bit_string.int_from_u32(bit_string.from_string("")),
-    )
-    should.equal(
-      Error(Nil),
-      bit_string.int_from_u32(bit_string.from_string("12345")),
-    )
-  }
+  <<"Hello":utf8>>
+  |> bit_string.to_string
+  |> should.equal(Ok("Hello"))
 
-  pub fn to_string_test() {
-    <<>>
-    |> bit_string.to_string
-    |> should.equal(Ok(""))
+  <<"ø":utf8>>
+  |> bit_string.to_string
+  |> should.equal(Ok("ø"))
 
-    <<"":utf8>>
-    |> bit_string.to_string
-    |> should.equal(Ok(""))
+  <<65535>>
+  |> bit_string.to_string
+  |> should.equal(Error(Nil))
+}
 
-    <<"Hello":utf8>>
-    |> bit_string.to_string
-    |> should.equal(Ok("Hello"))
+pub fn is_utf8_test() {
+  <<>>
+  |> bit_string.is_utf8
+  |> should.be_true
 
-    <<"ø":utf8>>
-    |> bit_string.to_string
-    |> should.equal(Ok("ø"))
+  <<"":utf8>>
+  |> bit_string.is_utf8
+  |> should.be_true
 
-    <<65535:16>>
-    |> bit_string.to_string
-    |> should.equal(Error(Nil))
-  }
+  <<"Hello":utf8>>
+  |> bit_string.is_utf8
+  |> should.be_true
+
+  <<"ø":utf8>>
+  |> bit_string.is_utf8
+  |> should.be_true
+
+  <<65535>>
+  |> bit_string.is_utf8
+  |> should.be_false
 }

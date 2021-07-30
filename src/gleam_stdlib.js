@@ -8,11 +8,11 @@ function to_list(array) {
   return list;
 }
 
-function ok(x) {
+function gleam_ok(x) {
   return { type: "Ok", 0: x };
 }
 
-function error(x) {
+function gleam_error(x) {
   return { type: "Error", 0: x };
 }
 
@@ -22,9 +22,9 @@ export function identity(x) {
 
 export function parse_int(value) {
   if (/^[-+]?(\d+)$/.test(value)) {
-    return ok(Number(value));
+    return gleam_ok(Number(value));
   } else {
-    return error(Nil);
+    return gleam_error(Nil);
   }
 }
 
@@ -72,9 +72,9 @@ export function pop_grapheme(string) {
     first = string.match(/./u)?.[0];
   }
   if (first) {
-    return ok([first, string.slice(first.length)]);
+    return gleam_ok([first, string.slice(first.length)]);
   } else {
-    return error(Nil);
+    return gleam_error(Nil);
   }
 }
 
@@ -143,9 +143,9 @@ export function split_once(haystack, needle) {
   if (index >= 0) {
     let before = haystack.slice(0, index);
     let after = haystack.slice(index + needle.length);
-    return ok([before, after]);
+    return gleam_ok([before, after]);
   } else {
-    return error(Nil);
+    return gleam_error(Nil);
   }
 }
 
@@ -188,4 +188,14 @@ export function stringify(data) {
 
 export function crash(message) {
   throw new Error(message);
+}
+
+export function bit_string_to_string(bit_string) {
+  try {
+    return gleam_ok(
+      new TextDecoder("utf-8", { fatal: true }).decode(bit_string)
+    );
+  } catch (_error) {
+    return gleam_error(undefined);
+  }
 }
