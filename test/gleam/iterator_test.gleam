@@ -430,7 +430,7 @@ pub fn interleave_test() {
   |> should.equal([1, 100, 2, 3, 4])
 }
 
-// a |> from_list |> fold_until(a, f) == a |> list.fold_until(_, a, f)
+// a |> from_list |> fold_until(acc, f) == a |> list.fold_until(acc, f)
 pub fn fold_until_test() {
   let test = fn(subject, acc, f) {
     subject
@@ -454,4 +454,35 @@ pub fn fold_until_test() {
   |> iterator.from_list()
   |> iterator.fold_until([], f)
   |> should.equal([5, 4, 3, 2, 1])
+}
+
+// a |> from_list |> try_fold(acc, f) == a |> list.try_fold(acc, f)
+pub fn try_fold_test() {
+  let test = fn(subject, acc, fun) {
+    subject
+    |> iterator.from_list()
+    |> iterator.try_fold(acc, fun)
+    |> should.equal(list.try_fold(subject, acc, fun))
+  }
+
+  let f = fn(e, acc) {
+    case e % 2 {
+      0 -> Ok(e + acc)
+      _ -> Error("tried to add an odd number")
+    }
+  }
+  test([], 0, f)
+  test([2, 4, 6], 0, f)
+  test([1, 2, 3], 0, f)
+  test([1, 2, 3, 4, 5, 6, 7, 8], 0, f)
+
+  [0, 2, 4, 6]
+  |> iterator.from_list()
+  |> iterator.try_fold(0, f)
+  |> should.equal(Ok(12))
+
+  [1, 2, 3, 4]
+  |> iterator.from_list()
+  |> iterator.try_fold(0, f)
+  |> should.equal(Error("tried to add an odd number"))
 }

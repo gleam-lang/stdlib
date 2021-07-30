@@ -1078,3 +1078,44 @@ pub fn fold_until(
   iterator.continuation
   |> do_fold_until(f, initial)
 }
+
+fn do_try_fold(
+  over continuation: fn() -> Action(a),
+  with f: fn(a, acc) -> Result(acc, err),
+  from accumulator: acc,
+) -> Result(acc, err) {
+  case continuation() {
+    Stop -> Ok(accumulator)
+    Continue(elem, next) -> {
+      try accumulator = f(elem, accumulator)
+      do_try_fold(next, f, accumulator)
+    }
+  }
+}
+
+/// A variant of fold that might fail.
+/// 
+///
+/// The folding function should return `Result(accumulator, error)
+/// If the returned value is `Ok(accumulator)` try_fold will try the next value in the list.
+/// If the returned value is `Error(error)` try_fold will stop and return that error.
+///
+/// ## Examples
+/// 
+///    > [1, 2, 3, 4]
+///    > |> iterator.from_list()
+///    > |> try_fold(0, fn(i, acc) {
+///    >   case i < 3 {
+///    >     True -> Ok(acc + i)
+///    >     False -> Error(Nil)
+///    >   }
+///    > })
+///    Error(Nil)
+///
+pub fn try_fold(
+  over iterator: Iterator(e),
+  from initial: acc,
+  with f: fn(e, acc) -> Result(acc, err),
+) -> Result(acc, err) {
+  do_try_fold(iterator.continuation, f, initial)
+}
