@@ -1117,5 +1117,6 @@ pub fn try_fold(
   from initial: acc,
   with f: fn(e, acc) -> Result(acc, err),
 ) -> Result(acc, err) {
-  do_try_fold(iterator.continuation, f, initial)
+  iterator.continuation
+  |> do_try_fold(f, initial)
 }
