@@ -11,7 +11,7 @@
          bit_string_int_to_u32/1, bit_string_int_from_u32/1, decode_result/1,
          bit_string_append/2, bit_string_part_/3, decode_bit_string/1,
          compile_regex/2, regex_match/2, regex_split/2, regex_scan/2,
-         base_decode64/1, wrap_list/1, get_line/1]).
+         base_decode64/1, wrap_list/1]).
 
 should_equal(Actual, Expected) -> 
     ?assertEqual(Expected, Actual),
@@ -233,10 +233,3 @@ base_decode64(S) ->
 
 wrap_list(X) when is_list(X) -> X;
 wrap_list(X) -> [X].
-
-get_line(Prompt) ->
-    case io:get_line(Prompt) of
-        eof -> {error, eof};
-        {error, _} -> {error, no_data};
-        Data -> {ok, Data}
-    end.
