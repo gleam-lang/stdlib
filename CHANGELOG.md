@@ -8,6 +8,11 @@
 - The `map.update` function now uses `Option` rather than `Result`.
 - The `iterator` module gains the `fold_until` function.
 - The `bit_string` module loses the u32 functions in favour of bit string literals.
+- The `dynamic` module loses the `atom` function
+- The `dynamic.option` function has been renamed to `optional` and made more
+  permissive to other null values.
+- The `dynamic.result` function has been made more permissive to other result values.
+- The `atom` module has been moved to the `gleam_erlang` library.
 - Prelude types like `Result`, `List` etc. are no longer redefined in their
   stdlib modules.
 - All modules have been updated to work when running on both Erlang and

@@ -296,8 +296,8 @@ if erlang {
   fn do_contains(haystack: String, needle: String) -> Bool {
     haystack
     |> erl_contains(needle)
-    |> dynamic.atom
-    |> result.is_error
+    |> dynamic.bit_string
+    |> result.is_ok
   }
 }
 

@@ -1,7 +1,6 @@
 if erlang {
   import gleam/bit_string
   import gleam/dynamic
-  import gleam/atom
   import gleam/list
   import gleam/should
   import gleam/result
@@ -156,30 +155,6 @@ if erlang {
     |> should.equal(Error("Expected a bool, got a list"))
   }
 
-  pub fn atom_test() {
-    ""
-    |> atom.create_from_string
-    |> dynamic.from
-    |> dynamic.atom
-    |> should.equal(Ok(atom.create_from_string("")))
-
-    "ok"
-    |> atom.create_from_string
-    |> dynamic.from
-    |> dynamic.atom
-    |> should.equal(Ok(atom.create_from_string("ok")))
-
-    1
-    |> dynamic.from
-    |> dynamic.atom
-    |> should.be_error
-
-    []
-    |> dynamic.from
-    |> dynamic.atom
-    |> should.be_error
-  }
-
   pub fn typed_list_test() {
     []
     |> dynamic.from
@@ -222,48 +197,50 @@ if erlang {
     |> should.be_error
   }
 
-  pub fn option_test() {
-    let Ok(null) = atom.from_string("null")
+  pub fn optional_test() {
+    1
+    |> dynamic.from
+    |> dynamic.optional(dynamic.int)
+    |> should.equal(Ok(Some(1)))
+
+    option.None
+    |> dynamic.from
+    |> dynamic.optional(dynamic.int)
+    |> should.equal(Ok(None))
+
+    Nil
+    |> dynamic.from
+    |> dynamic.optional(dynamic.int)
+    |> should.equal(Ok(None))
 
     1
     |> dynamic.from
-    |> dynamic.option(dynamic.int)
-    |> should.equal(Ok(Some(1)))
-    null
-    |> dynamic.from
-    |> dynamic.option(dynamic.int)
-    |> should.equal(Ok(None))
-    1
-    |> dynamic.from
-    |> dynamic.option(dynamic.string)
+    |> dynamic.optional(dynamic.string)
     |> should.be_error
   }
 
   pub fn field_test() {
-    let Ok(ok_atom) = atom.from_string("ok")
-    let Ok(error_atom) = atom.from_string("error")
-
     map.new()
-    |> map.insert(ok_atom, 1)
+    |> map.insert("ok", 1)
     |> dynamic.from
-    |> dynamic.field(ok_atom)
+    |> dynamic.field("ok")
     |> should.equal(Ok(dynamic.from(1)))
 
     map.new()
-    |> map.insert(ok_atom, 3)
-    |> map.insert(error_atom, 1)
+    |> map.insert("ok", 3)
+    |> map.insert("error", 1)
     |> dynamic.from
-    |> dynamic.field(ok_atom)
+    |> dynamic.field("ok")
     |> should.equal(Ok(dynamic.from(3)))
 
     map.new()
     |> dynamic.from
-    |> dynamic.field(ok_atom)
+    |> dynamic.field("ok")
     |> should.be_error
 
     1
     |> dynamic.from
-    |> dynamic.field(ok_atom)
+    |> dynamic.field("ok")
     |> should.be_error
 
     []
@@ -273,13 +250,12 @@ if erlang {
   }
 
   pub fn element_test() {
-    let Ok(ok_atom) = atom.from_string("ok")
-    let ok_one_tuple = #(ok_atom, 1)
+    let ok_one_tuple = #("ok", 1)
 
     ok_one_tuple
     |> dynamic.from
     |> dynamic.element(0)
-    |> should.equal(Ok(dynamic.from(ok_atom)))
+    |> should.equal(Ok(dynamic.from("ok")))
 
     ok_one_tuple
     |> dynamic.from
@@ -302,7 +278,7 @@ if erlang {
     |> should.be_error
 
     map.new()
-    |> map.insert(1, ok_atom)
+    |> map.insert(1, "ok")
     |> dynamic.from
     |> dynamic.element(0)
     |> should.be_error
@@ -707,14 +683,12 @@ if erlang {
     1
     |> dynamic.from
     |> dynamic.result
-    |> should.equal(Error("Expected a 2 element tuple, got an int"))
+    |> should.equal(Error("Expected a result tuple, got an int"))
 
-    let tag = atom.create_from_string("bad")
-
-    #(tag, "value")
+    #("bad", "value")
     |> dynamic.from
     |> dynamic.result
-    |> should.equal(Error("Expected a tag of \"ok\" or \"error\", got \"bad\""))
+    |> should.equal(Error("Expected a result tuple, got a 2 element tuple"))
   }
 
   pub fn typed_result_test() {
@@ -741,6 +715,6 @@ if erlang {
     1
     |> dynamic.from
     |> dynamic.typed_result(ok: dynamic.int, error: dynamic.string)
-    |> should.equal(Error("Expected a 2 element tuple, got an int"))
+    |> should.equal(Error("Expected a result tuple, got an int"))
   }
 }

@@ -1,9 +1,8 @@
 if erlang {
-  import gleam/atom
   import gleam/bit_string
   import gleam/list
   import gleam/map.{Map}
-  import gleam/option.{None, Option, Some}
+  import gleam/option.{Option}
   import gleam/result
   import gleam/string_builder
 
@@ -93,21 +92,6 @@ if erlang {
   pub external fn float(from: Dynamic) -> Result(Float, String) =
     "gleam_stdlib" "decode_float"
 
-  /// Checks to see whether a Dynamic value is an atom, and return the atom if
-  /// it is.
-  ///
-  /// ## Examples
-  ///
-  ///    > import gleam/atom
-  ///    > atom(from(atom.create_from_string("hello")))
-  ///    OK("hello")
-  ///
-  ///    > atom(from(123))
-  ///    Error("Expected an Atom, got `123`")
-  ///
-  pub external fn atom(from: Dynamic) -> Result(atom.Atom, String) =
-    "gleam_stdlib" "decode_atom"
-
   /// Checks to see whether a Dynamic value is an bool, and return the bool if
   /// it is.
   ///
@@ -156,7 +140,7 @@ if erlang {
     "gleam_stdlib" "decode_list"
 
   /// Checks to see whether a Dynamic value is a result, and return the result if
-  /// it is
+  /// it is.
   ///
   /// ## Examples
   ///
@@ -169,24 +153,8 @@ if erlang {
   ///    > result(from(123))
   ///    Error("Expected a 2 element tuple, got an int")
   ///
-  pub fn result(from: Dynamic) -> Result(Result(Dynamic, Dynamic), String) {
-    try #(key, val) = tuple2(from)
-
-    try tag = atom(key)
-    let ok_atom = atom.create_from_string("ok")
-    let error_atom = atom.create_from_string("error")
-    case tag {
-      tag if tag == ok_atom -> Ok(Ok(val))
-      tag if tag == error_atom -> Ok(Error(val))
-      tag ->
-        "Expected a tag of \"ok\" or \"error\", got \""
-        |> string_builder.from_string
-        |> string_builder.append(atom.to_string(tag))
-        |> string_builder.append("\"")
-        |> string_builder.to_string
-        |> Error
-    }
-  }
+  pub external fn result(Dynamic) -> Result(Result(Dynamic, Dynamic), String) =
+    "gleam_stdlib" "decode_result"
 
   /// Checks to see whether a Dynamic value is a result of a particular type, and
   /// return the result if it is
@@ -254,14 +222,13 @@ if erlang {
     |> result.then(list.try_map(_, decoder_type))
   }
 
-  /// Checks to see if a Dynamic value is an Option of a particular type, and return
-  /// the Option if it is.
-  ///
-  /// The second argument is a decoder function used to decode the elements of
-  /// the list. The list is only decoded if all elements in the list can be
-  /// successfully decoded using this function.
+  /// Checks to see if a Dynamic value is a nullable version of a particular
+  /// type, and return the Option if it is.
   ///
   /// ## Examples
+  ///
+  ///    > option(from("Hello"), string)
+  ///    Ok(Some("Hello"))
   ///
   ///    > option(from("Hello"), string)
   ///    Ok(Some("Hello"))
@@ -269,20 +236,20 @@ if erlang {
   ///    > option(from(atom.from_string("null")), string)
   ///    Ok(None)
   ///
+  ///    > option(from(atom.from_string("nil")), string)
+  ///    Ok(None)
+  ///
+  ///    > option(from(atom.from_string("undefined")), string)
+  ///    Ok(None)
+  ///
   ///    > option(from(123), string)
   ///    Error("Expected a bit_string, got an int")
   ///
-  pub fn option(
-    from dynamic: Dynamic,
-    of decoder: Decoder(inner),
-  ) -> Result(Option(inner), String) {
-    let Ok(null) = atom.from_string("null")
-    case atom(dynamic), decoder(dynamic) {
-      Ok(atom), _ if atom == null -> Ok(None)
-      _, Ok(result) -> Ok(Some(result))
-      _, Error(msg) -> Error(msg)
-    }
-  }
+  pub external fn optional(
+    from: Dynamic,
+    of: Decoder(inner),
+  ) -> Result(Option(inner), String) =
+    "gleam_stdlib" "decode_optional"
 
   /// Checks to see if a Dynamic value is a map with a specific field, and return
   /// the value of the field if it is.

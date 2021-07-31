@@ -1,34 +1,53 @@
+/// Writes a string to standard output.
+///
+/// If you want your output to be printed on its own line see `println`.
+///
+/// ## Example
+///
+/// ```
+/// > io.print("Hi mum")
+/// // -> Hi mum
+/// Nil
+/// ```
+///
+pub fn print(string: String) -> Nil {
+  do_print(string)
+}
+
 if erlang {
-  external type DoNotLeak
-
-  external fn erl_print(String, List(a)) -> DoNotLeak =
-    "io" "fwrite"
-
-  /// Writes a string to standard output.
-  ///
-  /// ## Example
-  ///
-  ///    > io.print("Hi mum")
-  ///    // -> Hi mum
-  ///    Nil
-  ///
-  pub fn print(string: String) -> Nil {
+  fn do_print(string: String) -> Nil {
     erl_print(string, [])
     Nil
   }
+}
 
-  /// Writes a string to standard output, appending a newline to the end.
-  ///
-  /// ## Example
-  ///
-  ///    > io.println("Hi mum")
-  ///    // -> Hi mum
-  ///    Nil
-  ///
-  pub fn println(string: String) -> Nil {
+if javascript {
+  external fn do_print(String) -> Nil =
+    "../gleam_stdlib.js" "print"
+}
+
+/// Writes a string to standard output, appending a newline to the end.
+///
+/// ## Example
+///
+///    > io.println("Hi mum")
+///    // -> Hi mum
+///    Nil
+///
+pub fn println(string: String) -> Nil {
+  do_println(string)
+}
+
+if erlang {
+  fn do_println(string: String) -> Nil {
     erl_print("~ts\n", [string])
     Nil
   }
+}
+
+if javascript {
+  external fn do_println(String) -> Nil =
+    "../gleam_stdlib.js" "log"
 }
 
 /// Prints a value to standard output using Erlang syntax.
@@ -66,7 +85,7 @@ if erlang {
 
 if javascript {
   external fn debug_print(anything) -> Nil =
-    "../gleam_stdlib" "log"
+    "../gleam_stdlib.js" "log"
 }
 
 if erlang {
@@ -77,6 +96,7 @@ if erlang {
     NoData
   }
 
+  // TODO: move to OS library
   /// Reads a line from standard input with the given prompt.
   ///
   /// # Example
@@ -87,4 +107,11 @@ if erlang {
   ///
   pub external fn get_line(prompt: String) -> Result(String, GetLineError) =
     "gleam_stdlib" "get_line"
+}
+
+if erlang {
+  external type DoNotLeak
+
+  external fn erl_print(String, List(a)) -> DoNotLeak =
+    "io" "fwrite"
 }
