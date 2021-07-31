@@ -89,27 +89,6 @@ if javascript {
 }
 
 if erlang {
-  /// Error value returned by `get_line` function
-  ///
-  pub type GetLineError {
-    Eof
-    NoData
-  }
-
-  // TODO: move to OS library
-  /// Reads a line from standard input with the given prompt.
-  ///
-  /// # Example
-  ///
-  ///    > io.get_line("Language: ")
-  ///    // -> Language: <- gleam
-  ///    Ok("gleam\n")
-  ///
-  pub external fn get_line(prompt: String) -> Result(String, GetLineError) =
-    "gleam_stdlib" "get_line"
-}
-
-if erlang {
   external type DoNotLeak
 
   external fn erl_print(String, List(a)) -> DoNotLeak =
