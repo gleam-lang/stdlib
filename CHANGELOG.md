@@ -6,7 +6,7 @@
 - The `rescue` function has been removed from the `function` library in favour
   of target specific versions in Erlang and JavaScript specific libraries.
 - The `map.update` function now uses `Option` rather than `Result`.
-- The `iterator` module gains the `fold_until` function.
+- The `iterator` module gains the `fold_until` and `try_fold` functions.
 - The `bit_string` module loses the u32 functions in favour of bit string literals.
 - Prelude types like `Result`, `List` etc. are no longer redefined in their
   stdlib modules.
