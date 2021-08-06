@@ -640,17 +640,14 @@ pub fn take_while_test() {
   |> should.equal([1, 2])
 }
 
-if erlang {
-  // TODO: JavaScript fix
-  pub fn chunk_test() {
-    [1, 2, 3]
-    |> list.chunk(by: fn(n) { n % 2 })
-    |> should.equal([[1], [2], [3]])
+pub fn chunk_test() {
+  [1, 2, 3]
+  |> list.chunk(by: fn(n) { n % 2 })
+  |> should.equal([[1], [2], [3]])
 
-    [1, 2, 2, 3, 4, 4, 6, 7, 7]
-    |> list.chunk(by: fn(n) { n % 2 })
-    |> should.equal([[1], [2, 2], [3], [4, 4, 6], [7, 7]])
-  }
+  [1, 2, 2, 3, 4, 4, 6, 7, 7]
+  |> list.chunk(by: fn(n) { n % 2 })
+  |> should.equal([[1], [2, 2], [3], [4, 4, 6], [7, 7]])
 }
 
 pub fn sized_chunk_test() {
