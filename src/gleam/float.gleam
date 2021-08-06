@@ -2,20 +2,33 @@ import gleam/order.{Order}
 
 if erlang {
   import gleam/string_builder
+}
 
-  /// Attempts to parse a string as a float, returning `Error(Nil)` if it was not
-  /// possible.
-  ///
-  /// ## Examples
-  ///    > parse("2.3")
-  ///    Ok(2.3)
-  ///
-  ///    > parse("ABC")
-  ///    Error(Nil)
-  ///
-  pub external fn parse(String) -> Result(Float, Nil) =
+/// Attempts to parse a string as a float, returning `Error(Nil)` if it was not
+/// possible.
+///
+/// ## Examples
+///    > parse("2.3")
+///    Ok(2.3)
+///
+///    > parse("ABC")
+///    Error(Nil)
+///
+pub fn parse(string: String) -> Result(Float, Nil) {
+  do_parse(string)
+}
+
+if erlang {
+  external fn do_parse(String) -> Result(Float, Nil) =
     "gleam_stdlib" "parse_float"
+}
 
+if javascript {
+  external fn do_parse(String) -> Result(Float, Nil) =
+    "../gleam_stdlib.js" "parse_float"
+}
+
+if erlang {
   /// Returns the string representation of the provided float.
   ///
   /// ## Examples

@@ -1,34 +1,45 @@
+import gleam/should
+import gleam/float
+
 if erlang {
-  import gleam/should
-  import gleam/float
   import gleam/order
+}
 
-  pub fn parse_test() {
-    "1.23"
-    |> float.parse
-    |> should.equal(Ok(1.23))
+pub fn parse_test() {
+  "1.23"
+  |> float.parse
+  |> should.equal(Ok(1.23))
 
-    "5.0"
-    |> float.parse
-    |> should.equal(Ok(5.0))
+  "+1.23"
+  |> float.parse
+  |> should.equal(Ok(1.23))
 
-    "0.123456789"
-    |> float.parse
-    |> should.equal(Ok(0.123456789))
+  "-1.23"
+  |> float.parse
+  |> should.equal(Ok(1.23))
 
-    ""
-    |> float.parse
-    |> should.equal(Error(Nil))
+  "5.0"
+  |> float.parse
+  |> should.equal(Ok(5.0))
 
-    "what"
-    |> float.parse
-    |> should.equal(Error(Nil))
+  "0.123456789"
+  |> float.parse
+  |> should.equal(Ok(0.123456789))
 
-    "1"
-    |> float.parse
-    |> should.equal(Error(Nil))
-  }
+  ""
+  |> float.parse
+  |> should.equal(Error(Nil))
 
+  "what"
+  |> float.parse
+  |> should.equal(Error(Nil))
+
+  "1"
+  |> float.parse
+  |> should.equal(Error(Nil))
+}
+
+if erlang {
   pub fn to_string_test() {
     123.0
     |> float.to_string

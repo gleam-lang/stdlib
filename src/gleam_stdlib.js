@@ -22,7 +22,15 @@ export function identity(x) {
 
 export function parse_int(value) {
   if (/^[-+]?(\d+)$/.test(value)) {
-    return gleam_ok(Number(value));
+    return gleam_ok(parseInt(value));
+  } else {
+    return gleam_error(Nil);
+  }
+}
+
+export function parse_float(value) {
+  if (/^[-+]?(\d+)\.(\d+)$/.test(value)) {
+    return gleam_ok(parseFloat(value));
   } else {
     return gleam_error(Nil);
   }
