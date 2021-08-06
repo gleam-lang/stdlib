@@ -480,10 +480,10 @@ if javascript {
     do_append_acc(reverse(first), second)
   }
 
-  fn do_append_acc(remaining: List(a), second: List(a)) -> List(a) {
-    case remaining {
+  fn do_append_acc(first: List(a), second: List(a)) -> List(a) {
+    case first {
       [] -> second
-      [item, ..rest] -> do_append(rest, [item, ..second])
+      [item, ..rest] -> do_append_acc(rest, [item, ..second])
     }
   }
 }
@@ -1377,37 +1377,41 @@ pub fn take_while(
   do_take_while(list, predicate, [])
 }
 
-fn do_chunk(
-  list: List(a),
-  f: fn(a) -> key,
-  previous_key: key,
-  current_chunk: List(a),
-  acc: List(List(a)),
-) -> List(List(a)) {
-  case list {
-    [] -> reverse([reverse(current_chunk), ..acc])
-    [head, ..tail] -> {
-      let key = f(head)
-      case key == previous_key {
-        False -> do_chunk(tail, f, key, [head], [reverse(current_chunk), ..acc])
-        True -> do_chunk(tail, f, key, [head, ..current_chunk], acc)
+if erlang {
+  // TODO: JavaScript fix
+  fn do_chunk(
+    list: List(a),
+    f: fn(a) -> key,
+    previous_key: key,
+    current_chunk: List(a),
+    acc: List(List(a)),
+  ) -> List(List(a)) {
+    case list {
+      [] -> reverse([reverse(current_chunk), ..acc])
+      [head, ..tail] -> {
+        let key = f(head)
+        case key == previous_key {
+          False ->
+            do_chunk(tail, f, key, [head], [reverse(current_chunk), ..acc])
+          True -> do_chunk(tail, f, key, [head, ..current_chunk], acc)
+        }
       }
     }
   }
-}
 
-/// Returns a list of chunks in which
-/// the result of calling `f` on each element is the same.
-///
-/// ## Examples
-///
-///    > [1, 2, 2, 3, 4, 4, 6, 7, 7] |> chunk(by: fn(n) { n % 2 })
-///    [[1], [2, 2], [3], [4, 4, 6], [7, 7]]
-///
-pub fn chunk(in list: List(a), by f: fn(a) -> key) -> List(List(a)) {
-  case list {
-    [] -> []
-    [head, ..tail] -> do_chunk(tail, f, f(head), [head], [])
+  /// Returns a list of chunks in which
+  /// the result of calling `f` on each element is the same.
+  ///
+  /// ## Examples
+  ///
+  ///    > [1, 2, 2, 3, 4, 4, 6, 7, 7] |> chunk(by: fn(n) { n % 2 })
+  ///    [[1], [2, 2], [3], [4, 4, 6], [7, 7]]
+  ///
+  pub fn chunk(in list: List(a), by f: fn(a) -> key) -> List(List(a)) {
+    case list {
+      [] -> []
+      [head, ..tail] -> do_chunk(tail, f, f(head), [head], [])
+    }
   }
 }
 

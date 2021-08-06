@@ -16,7 +16,7 @@ pub fn parse_test() {
 
   "-1.23"
   |> float.parse
-  |> should.equal(Ok(1.23))
+  |> should.equal(Ok(-1.23))
 
   "5.0"
   |> float.parse
@@ -39,17 +39,17 @@ pub fn parse_test() {
   |> should.equal(Error(Nil))
 }
 
+pub fn to_string_test() {
+  123.0
+  |> float.to_string
+  |> should.equal("123.0")
+
+  -8.1
+  |> float.to_string
+  |> should.equal("-8.1")
+}
+
 if erlang {
-  pub fn to_string_test() {
-    123.0
-    |> float.to_string
-    |> should.equal("123.0")
-
-    -8.1
-    |> float.to_string
-    |> should.equal("-8.1")
-  }
-
   pub fn clamp_test() {
     float.clamp(1.4, min: 1.3, max: 1.5)
     |> should.equal(1.4)

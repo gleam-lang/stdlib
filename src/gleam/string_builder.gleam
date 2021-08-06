@@ -164,7 +164,7 @@ if erlang {
 
 if javascript {
   external fn do_from_float(Float) -> StringBuilder =
-    "../gleam_stdlib.js" "to_string"
+    "../gleam_stdlib.js" "float_to_string"
 }
 
 /// Converts a builder to a new builder where the contents have been

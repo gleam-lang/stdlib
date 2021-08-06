@@ -3,10 +3,21 @@ import gleam/int
 import gleam/list
 import gleam/should
 import gleam/pair
+import gleam/io
 
 pub fn from_and_to_list_test() {
   queue.from_list([])
   |> should.equal(queue.new())
+
+  [1]
+  |> queue.from_list
+  |> queue.to_list
+  |> should.equal([1])
+
+  [1, 2]
+  |> queue.from_list
+  |> queue.to_list
+  |> should.equal([1, 2])
 
   [1, 2, 3]
   |> queue.from_list

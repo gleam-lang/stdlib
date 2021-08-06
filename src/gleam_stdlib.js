@@ -36,8 +36,17 @@ export function parse_float(value) {
   }
 }
 
-export function to_string(int) {
-  return int.toString();
+export function to_string(term) {
+  return term.toString();
+}
+
+export function float_to_string(float) {
+  let string = float.toString();
+  if (string.indexOf(".") >= 0) {
+    return string;
+  } else {
+    return string + ".0";
+  }
 }
 
 export function int_to_base_string(int, base) {

@@ -1,8 +1,5 @@
 import gleam/order.{Order}
-
-if erlang {
-  import gleam/string_builder
-}
+import gleam/string_builder
 
 /// Attempts to parse a string as a float, returning `Error(Nil)` if it was not
 /// possible.
@@ -28,18 +25,16 @@ if javascript {
     "../gleam_stdlib.js" "parse_float"
 }
 
-if erlang {
-  /// Returns the string representation of the provided float.
-  ///
-  /// ## Examples
-  ///    > to_string(2.3)
-  ///    "2.3"
-  ///
-  pub fn to_string(f: Float) -> String {
-    f
-    |> string_builder.from_float
-    |> string_builder.to_string
-  }
+/// Returns the string representation of the provided float.
+///
+/// ## Examples
+///    > to_string(2.3)
+///    "2.3"
+///
+pub fn to_string(f: Float) -> String {
+  f
+  |> string_builder.from_float
+  |> string_builder.to_string
 }
 
 /// Restricts a Float between a lower and upper bound

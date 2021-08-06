@@ -35,9 +35,9 @@ if javascript {
       _ ->
         crash(string.concat([
           "\n",
-          stringify(b),
-          "\nshould equal \n",
           stringify(a),
+          "\nshould equal \n",
+          stringify(b),
           "\n",
         ]))
     }
@@ -49,9 +49,9 @@ if javascript {
       _ ->
         crash(string.concat([
           "\n",
-          stringify(b),
-          "\nshould not equal \n",
           stringify(a),
+          "\nshould not equal \n",
+          stringify(b),
         ]))
     }
   }
