@@ -213,8 +213,11 @@ export function log(term) {
 }
 
 export function stringify(data) {
-  let replacer = (_key, value) =>
-    typeof value === "bigint" ? value.toString() + "n" : value;
+  let replacer = (_key, value) => {
+    if (typeof value === "bigint") return value.toString() + "n";
+    if (typeof value === "undefined") return null;
+    return value;
+  };
   try {
     return JSON.stringify(data, replacer);
   } catch (_error) {
@@ -262,4 +265,11 @@ export function truncate(float) {
 
 export function power(base, exponent) {
   return Math.pow(base, exponent);
+}
+
+export function bit_string_slice(bits, position, length) {
+  let start = Math.min(position, position + length);
+  let end = Math.max(position, position + length);
+  if (start < 0 || end > bits.byteLength) return gleam_error(Nil);
+  return gleam_ok(new Uint8Array(bits.buffer, start, Math.abs(length)));
 }

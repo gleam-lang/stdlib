@@ -33,40 +33,42 @@ pub fn concat_test() {
   |> should.equal(<<1, 2, 3, 4>>)
 }
 
-if erlang {
-  pub fn part_test() {
-    bit_string.from_string("hello")
-    |> bit_string.part(0, 5)
-    |> should.equal(Ok(bit_string.from_string("hello")))
+pub fn slice_test() {
+  <<"hello":utf8>>
+  |> bit_string.slice(0, 5)
+  |> should.equal(Ok(<<"hello":utf8>>))
 
-    bit_string.from_string("hello")
-    |> bit_string.part(0, 0)
-    |> should.equal(Ok(bit_string.from_string("")))
+  <<"hello":utf8>>
+  |> bit_string.slice(0, 0)
+  |> should.equal(Ok(<<"":utf8>>))
 
-    bit_string.from_string("hello")
-    |> bit_string.part(2, 2)
-    |> should.equal(Ok(bit_string.from_string("ll")))
+  <<"hello":utf8>>
+  |> bit_string.slice(2, 2)
+  |> should.equal(Ok(<<"ll":utf8>>))
 
-    bit_string.from_string("hello")
-    |> bit_string.part(5, -2)
-    |> should.equal(Ok(bit_string.from_string("lo")))
+  <<"hello":utf8>>
+  |> bit_string.slice(5, -2)
+  |> should.equal(Ok(<<"lo":utf8>>))
 
-    bit_string.from_string("")
-    |> bit_string.part(0, 0)
-    |> should.equal(Ok(bit_string.from_string("")))
+  <<"":utf8>>
+  |> bit_string.slice(0, 0)
+  |> should.equal(Ok(<<"":utf8>>))
 
-    bit_string.from_string("hello")
-    |> bit_string.part(6, 0)
-    |> should.equal(Error(Nil))
+  <<"hello":utf8>>
+  |> bit_string.slice(6, 0)
+  |> should.equal(Error(Nil))
 
-    bit_string.from_string("hello")
-    |> bit_string.part(-1, 1)
-    |> should.equal(Error(Nil))
+  <<"hello":utf8>>
+  |> bit_string.slice(1, -2)
+  |> should.equal(Error(Nil))
 
-    bit_string.from_string("hello")
-    |> bit_string.part(1, 6)
-    |> should.equal(Error(Nil))
-  }
+  bit_string.from_string("hello")
+  |> bit_string.slice(-1, 1)
+  |> should.equal(Error(Nil))
+
+  bit_string.from_string("hello")
+  |> bit_string.slice(1, 6)
+  |> should.equal(Error(Nil))
 }
 
 pub fn to_string_test() {

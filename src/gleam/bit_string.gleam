@@ -45,19 +45,38 @@ pub fn append(to first: BitString, suffix second: BitString) -> BitString {
   concat([first, second])
 }
 
+/// Extracts a sub-section of a bit string.
+///
+/// The slice will start at given position and continue up to specified
+/// length.
+/// A negative length can be used to extract bytes at the end of a bit string.
+///
+/// This function runs in constant time.
+///
+pub fn slice(
+  from string: BitString,
+  at position: Int,
+  take length: Int,
+) -> Result(BitString, Nil) {
+  do_slice(string, position, length)
+}
+
 if erlang {
-  /// Extracts part of a bit string.
-  ///
-  /// BitString part will start at given position and continue up to specified
-  /// length.
-  /// A negative length can be used to extract bytes at the end of a bit string.
-  ///
-  pub external fn part(
+  pub external fn do_slice(
     string: BitString,
     position: Int,
     length: Int,
   ) -> Result(BitString, Nil) =
-    "gleam_stdlib" "bit_string_part_"
+    "gleam_stdlib" "bit_string_slice"
+}
+
+if javascript {
+  pub external fn do_slice(
+    string: BitString,
+    position: Int,
+    length: Int,
+  ) -> Result(BitString, Nil) =
+    "../gleam_stdlib.js" "bit_string_slice"
 }
 
 /// Tests to see whether a bit string is valid UTF-8.
