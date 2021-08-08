@@ -36,54 +36,54 @@ iodata_append(Iodata, String) -> [Iodata, String].
 
 identity(X) -> X.
 
-decode_error_msg(Type, Data) ->
-    {error, iolist_to_binary(io_lib:format("Expected ~s, got ~s", [Type, classify(Data)]))}.
+decode_error_msg(Expected, Data) ->
+    {error, {decode_error, Expected, classify(Data)}}.
 
-classify(X) when is_atom(X) -> "an atom";
-classify(X) when is_binary(X) -> "a binary";
-classify(X) when is_integer(X) -> "an int";
-classify(X) when is_float(X) -> "a float";
-classify(X) when is_list(X) -> "a list";
-classify(X) when is_boolean(X) -> "a bool";
-classify(X) when is_function(X, 0) -> "a zero arity function";
-classify(X) when is_tuple(X) -> ["a ", integer_to_list(tuple_size(X)), " element tuple"];
+classify(X) when is_atom(X) -> <<"atom">>;
+classify(X) when is_binary(X) -> <<"binary">>;
+classify(X) when is_integer(X) -> <<"int">>;
+classify(X) when is_float(X) -> <<"float">>;
+classify(X) when is_list(X) -> <<"list">>;
+classify(X) when is_boolean(X) -> <<"bool">>;
+classify(X) when is_function(X, 0) -> <<"zero arity function">>;
+classify(X) when is_tuple(X) -> iolist_to_binary([integer_to_list(tuple_size(X)), " element tuple"]);
 classify(_) -> "some other type".
 
 decode_tuple2({_, _} = T) -> {ok, T};
-decode_tuple2(Data) -> decode_error_msg("a 2 element tuple", Data).
+decode_tuple2(Data) -> decode_error_msg(<<"2 element tuple">>, Data).
 
 decode_tuple3({_, _, _} = T) -> {ok, T};
-decode_tuple3(Data) -> decode_error_msg("a 3 element tuple", Data).
+decode_tuple3(Data) -> decode_error_msg(<<"3 element tuple">>, Data).
 
 decode_tuple4({_, _, _, _} = T) -> {ok, T};
-decode_tuple4(Data) -> decode_error_msg("a 4 element tuple", Data).
+decode_tuple4(Data) -> decode_error_msg(<<"4 element tuple">>, Data).
 
 decode_tuple5({_, _, _, _, _} = T) -> {ok, T};
-decode_tuple5(Data) -> decode_error_msg("a 5 element tuple", Data).
+decode_tuple5(Data) -> decode_error_msg(<<"5 element tuple">>, Data).
 
 decode_tuple6({_, _, _, _, _, _} = T) -> {ok, T};
-decode_tuple6(Data) -> decode_error_msg("a 6 element tuple", Data).
+decode_tuple6(Data) -> decode_error_msg(<<"6 element tuple">>, Data).
 
 decode_map(Data) when is_map(Data) -> {ok, Data};
-decode_map(Data) -> decode_error_msg("a map", Data).
+decode_map(Data) -> decode_error_msg(<<"map">>, Data).
 
 decode_bit_string(Data) when is_bitstring(Data) -> {ok, Data};
-decode_bit_string(Data) -> decode_error_msg("a bit_string", Data).
+decode_bit_string(Data) -> decode_error_msg(<<"bit_string">>, Data).
 
 decode_int(Data) when is_integer(Data) -> {ok, Data};
-decode_int(Data) -> decode_error_msg("an int", Data).
+decode_int(Data) -> decode_error_msg(<<"int">>, Data).
 
 decode_float(Data) when is_float(Data) -> {ok, Data};
-decode_float(Data) -> decode_error_msg("a float", Data).
+decode_float(Data) -> decode_error_msg(<<"float">>, Data).
 
 decode_bool(Data) when is_boolean(Data) -> {ok, Data};
-decode_bool(Data) -> decode_error_msg("a bool", Data).
+decode_bool(Data) -> decode_error_msg(<<"bool">>, Data).
 
 decode_thunk(Data) when is_function(Data, 0) -> {ok, Data};
-decode_thunk(Data) -> decode_error_msg("a zero arity function", Data).
+decode_thunk(Data) -> decode_error_msg("zero arity function", Data).
 
 decode_list(Data) when is_list(Data) -> {ok, Data};
-decode_list(Data) -> decode_error_msg("a list", Data).
+decode_list(Data) -> decode_error_msg(<<"list">>, Data).
 
 decode_field(Data, Key) ->
     case Data of
@@ -127,7 +127,7 @@ decode_result(Term) ->
         ok -> {ok, {ok, nil}};
         {error, Inner} -> {ok, {error, Inner}};
         error -> {ok, {error, nil}};
-        _ -> decode_error_msg("a result tuple", Term)
+        _ -> decode_error_msg(<<"result tuple">>, Term)
     end.
 
 parse_int(String) ->
