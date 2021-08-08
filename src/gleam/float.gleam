@@ -97,40 +97,80 @@ pub fn max(a: Float, b: Float) -> Float {
   }
 }
 
+/// Rounds the value to the next highest whole number as a float.
+///
+/// ## Examples
+///
+///    > ceiling(2.3)
+///    3.0
+///
+pub fn ceiling(float: Float) -> Float {
+  do_ceiling(float)
+}
+
 if erlang {
-  /// Rounds the value to the next highest whole number as a float.
-  ///
-  /// ## Examples
-  ///
-  ///    > ceiling(2.3)
-  ///    3.0
-  ///
-  pub external fn ceiling(Float) -> Float =
+  external fn do_ceiling(Float) -> Float =
     "math" "ceil"
+}
 
-  /// Rounds the value to the next lowest whole number as a float.
-  ///
-  /// ## Examples
-  ///
-  ///    > floor(2.3)
-  ///    2.0
-  ///
-  pub external fn floor(Float) -> Float =
+if javascript {
+  external fn do_ceiling(Float) -> Float =
+    "../gleam_stdlib.js" "ceiling"
+}
+
+/// Rounds the value to the next lowest whole number as a float.
+///
+/// ## Examples
+///
+///    > floor(2.3)
+///    2.0
+///
+pub fn floor(float: Float) -> Float {
+  do_floor(float)
+}
+
+if erlang {
+  external fn do_floor(Float) -> Float =
     "math" "floor"
+}
 
-  /// Rounds the value to the nearest whole number as an int.
-  ///
-  /// ## Examples
-  ///
-  ///    > round(2.3)
-  ///    2
-  ///
-  ///    > round(2.5)
-  ///    3
-  ///
-  pub external fn round(Float) -> Int =
-    "erlang" "round"
+if javascript {
+  external fn do_floor(Float) -> Float =
+    "../gleam_stdlib.js" "floor"
+}
 
+/// Rounds the value to the nearest whole number as an int.
+///
+/// ## Examples
+///
+///    > round(2.3)
+///    2
+///
+///    > round(2.5)
+///    3
+///
+pub fn round(float: Float) -> Int {
+  do_round(float)
+}
+
+if erlang {
+  external fn do_round(Float) -> Int =
+    "math" "round"
+}
+
+if javascript {
+  fn do_round(float: Float) -> Int {
+    case float >=. 0.0 {
+      True -> js_round(float)
+      _ -> 0 - js_round(negate(float))
+    }
+  }
+
+  external fn js_round(Float) -> Int =
+    "../gleam_stdlib.js" "round"
+}
+
+if erlang {
   /// Returns the value as an int, truncating all decimal digits.
   ///
   /// ## Examples

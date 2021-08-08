@@ -1,9 +1,6 @@
 import gleam/should
 import gleam/float
-
-if erlang {
-  import gleam/order
-}
+import gleam/order
 
 pub fn parse_test() {
   "1.23"
@@ -49,92 +46,92 @@ pub fn to_string_test() {
   |> should.equal("-8.1")
 }
 
+pub fn clamp_test() {
+  float.clamp(1.4, min: 1.3, max: 1.5)
+  |> should.equal(1.4)
+
+  float.clamp(1.2, min: 1.3, max: 1.5)
+  |> should.equal(1.3)
+
+  float.clamp(1.6, min: 1.3, max: 1.5)
+  |> should.equal(1.5)
+}
+
+pub fn compare_test() {
+  float.compare(0., 0.)
+  |> should.equal(order.Eq)
+
+  float.compare(0.1, 0.1)
+  |> should.equal(order.Eq)
+
+  float.compare(0., 0.1)
+  |> should.equal(order.Lt)
+
+  float.compare(-2., -1.9)
+  |> should.equal(order.Lt)
+
+  float.compare(2., 1.9)
+  |> should.equal(order.Gt)
+
+  float.compare(-1.9, -2.)
+  |> should.equal(order.Gt)
+}
+
+pub fn ceiling_test() {
+  8.1
+  |> float.ceiling
+  |> should.equal(9.0)
+
+  -8.1
+  |> float.ceiling
+  |> should.equal(-8.0)
+
+  -8.0
+  |> float.ceiling
+  |> should.equal(-8.0)
+}
+
+pub fn floor_test() {
+  8.1
+  |> float.floor
+  |> should.equal(8.0)
+
+  -8.1
+  |> float.floor
+  |> should.equal(-9.0)
+
+  -8.0
+  |> float.floor
+  |> should.equal(-8.0)
+}
+
+pub fn round_test() {
+  8.1
+  |> float.round
+  |> should.equal(8)
+
+  8.4
+  |> float.round
+  |> should.equal(8)
+
+  8.499
+  |> float.round
+  |> should.equal(8)
+
+  8.5
+  |> float.round
+  |> should.equal(9)
+
+  -8.1
+  |> float.round
+  |> should.equal(-8)
+
+  -7.5
+  |> float.round
+  |> should.equal(-8)
+}
+
 if erlang {
-  pub fn clamp_test() {
-    float.clamp(1.4, min: 1.3, max: 1.5)
-    |> should.equal(1.4)
-
-    float.clamp(1.2, min: 1.3, max: 1.5)
-    |> should.equal(1.3)
-
-    float.clamp(1.6, min: 1.3, max: 1.5)
-    |> should.equal(1.5)
-  }
-
-  pub fn compare_test() {
-    float.compare(0., 0.)
-    |> should.equal(order.Eq)
-
-    float.compare(0.1, 0.1)
-    |> should.equal(order.Eq)
-
-    float.compare(0., 0.1)
-    |> should.equal(order.Lt)
-
-    float.compare(-2., -1.9)
-    |> should.equal(order.Lt)
-
-    float.compare(2., 1.9)
-    |> should.equal(order.Gt)
-
-    float.compare(-1.9, -2.)
-    |> should.equal(order.Gt)
-  }
-
-  pub fn ceiling_test() {
-    8.1
-    |> float.ceiling
-    |> should.equal(9.0)
-
-    -8.1
-    |> float.ceiling
-    |> should.equal(-8.0)
-
-    -8.0
-    |> float.ceiling
-    |> should.equal(-8.0)
-  }
-
-  pub fn floor_test() {
-    8.1
-    |> float.floor
-    |> should.equal(8.0)
-
-    -8.1
-    |> float.floor
-    |> should.equal(-9.0)
-
-    -8.0
-    |> float.floor
-    |> should.equal(-8.0)
-  }
-
-  pub fn round_test() {
-    8.1
-    |> float.round
-    |> should.equal(8)
-
-    8.4
-    |> float.round
-    |> should.equal(8)
-
-    8.499
-    |> float.round
-    |> should.equal(8)
-
-    8.5
-    |> float.round
-    |> should.equal(9)
-
-    -8.1
-    |> float.round
-    |> should.equal(-8)
-
-    -7.5
-    |> float.round
-    |> should.equal(-8)
-  }
-
   pub fn truncate_test() {
     8.1
     |> float.truncate

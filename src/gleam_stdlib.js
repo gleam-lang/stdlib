@@ -224,3 +224,15 @@ export function print(string) {
     console.log(string); // We're in a browser. Newlines are mandated
   }
 }
+
+export function ceiling(float) {
+  return Math.ceil(float);
+}
+
+export function floor(float) {
+  return Math.floor(float);
+}
+
+export function round(float) {
+  return Math.round(float);
+}
