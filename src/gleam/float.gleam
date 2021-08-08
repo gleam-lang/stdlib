@@ -170,59 +170,83 @@ if javascript {
     "../gleam_stdlib.js" "round"
 }
 
+/// Returns the value as an int, truncating all decimal digits.
+///
+/// ## Examples
+///
+///    > truncate(2.4343434847383438)
+///    2
+///
+pub fn truncate(float: Float) -> Int {
+  do_truncate(float)
+}
+
 if erlang {
-  /// Returns the value as an int, truncating all decimal digits.
-  ///
-  /// ## Examples
-  ///
-  ///    > truncate(2.4343434847383438)
-  ///    2
-  ///
-  pub external fn truncate(Float) -> Int =
-    "erlang" "trunc"
+  external fn do_truncate(Float) -> Int =
+    "math" "trunc"
+}
 
-  /// Returns the absolute value of the input as a float.
-  ///
-  /// ## Examples
-  ///
-  ///    > absolute_value(-12.5)
-  ///    12.5
-  ///
-  ///    > absolute_value(10.2)
-  ///    10.2
-  ///
-  pub external fn absolute_value(Float) -> Float =
-    "erlang" "abs"
+if javascript {
+  external fn do_truncate(Float) -> Int =
+    "../gleam_stdlib.js" "truncate"
+}
 
-  /// Returns the results of the base being raised to the power of the
-  /// exponent, as a float.
-  ///
-  /// ## Examples
-  ///
-  ///    > power(2.0, 2.0)
-  ///    4.0
-  ///
-  ///    > power(8.0, 1.5)
-  ///    64.0
-  ///
-  pub external fn power(base: Float, exponent: Float) -> Float =
+/// Returns the absolute value of the input as a float.
+///
+/// ## Examples
+///
+///    > absolute_value(-12.5)
+///    12.5
+///
+///    > absolute_value(10.2)
+///    10.2
+///
+pub fn absolute_value(float: Float) -> Float {
+  case float >=. 0. {
+    True -> float
+    _ -> 0. -. float
+  }
+}
+
+/// Returns the results of the base being raised to the power of the
+/// exponent, as a float.
+///
+/// ## Examples
+///
+///    > power(2.0, 2.0)
+///    4.0
+///
+///    > power(8.0, 1.5)
+///    64.0
+///
+pub fn power(base: Float, exponent: Float) -> Float {
+  do_power(base, exponent)
+}
+
+if erlang {
+  external fn do_power(Float, Float) -> Float =
     "math" "pow"
+}
 
-  /// Returns the square root of the input as a float.
-  ///
-  /// ## Examples
-  ///
-  ///    > square_root(4.0)
-  ///    Ok(2.0)
-  ///
-  ///    > square_root(-16.0)
-  ///    Error(Nil)
-  ///
-  pub fn square_root(number: Float) -> Result(Float, Nil) {
-    case number <. 0.0 {
-      True -> Error(Nil)
-      False -> Ok(power(number, 0.5))
-    }
+if javascript {
+  external fn do_power(Float, Float) -> Float =
+    "../gleam_stdlib.js" "power"
+}
+
+/// Returns the square root of the input as a float.
+///
+/// ## Examples
+///
+///    > square_root(4.0)
+///    Ok(2.0)
+///
+///    > square_root(-16.0)
+///    Error(Nil)
+///
+pub fn square_root(number: Float) -> Result(Float, Nil) {
+  case number <. 0.0 {
+    True -> Error(Nil)
+    False -> Ok(power(number, 0.5))
   }
 }
 

@@ -236,3 +236,11 @@ export function floor(float) {
 export function round(float) {
   return Math.round(float);
 }
+
+export function truncate(float) {
+  return Math.trunc(float);
+}
+
+export function power(base, exponent) {
+  return Math.pow(base, exponent);
+}
