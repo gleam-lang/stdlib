@@ -33,6 +33,8 @@ if javascript {
   /// time using minimal memory, and then can be efficiently converted to a
   /// bit string using the `to_bit_string` function.
   ///
+  /// On Erlang this type is compatible with Erlang's iolists.
+  ///
   pub opaque type BitBuilder {
     Bits(BitString)
     Text(StringBuilder)
