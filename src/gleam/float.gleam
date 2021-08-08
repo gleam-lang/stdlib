@@ -118,17 +118,28 @@ if javascript {
     "../gleam_stdlib.js" "ceiling"
 }
 
-if erlang {
-  /// Rounds the value to the next lowest whole number as a float.
-  ///
-  /// ## Examples
-  ///
-  ///    > floor(2.3)
-  ///    2.0
-  ///
-  pub external fn floor(Float) -> Float =
-    "math" "floor"
+/// Rounds the value to the next lowest whole number as a float.
+///
+/// ## Examples
+///
+///    > floor(2.3)
+///    2.0
+///
+pub fn floor(float: Float) -> Float {
+  do_floor(float)
+}
 
+if erlang {
+  pub external fn do_floor(Float) -> Float =
+    "math" "floor"
+}
+
+if javascript {
+  pub external fn do_floor(Float) -> Float =
+    "../gleam_stdlib.js" "floor"
+}
+
+if erlang {
   /// Rounds the value to the nearest whole number as an int.
   ///
   /// ## Examples

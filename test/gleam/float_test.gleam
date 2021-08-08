@@ -96,21 +96,21 @@ pub fn ceiling_test() {
   |> should.equal(-8.0)
 }
 
+pub fn floor_test() {
+  8.1
+  |> float.floor
+  |> should.equal(8.0)
+
+  -8.1
+  |> float.floor
+  |> should.equal(-9.0)
+
+  -8.0
+  |> float.floor
+  |> should.equal(-8.0)
+}
+
 if erlang {
-  pub fn floor_test() {
-    8.1
-    |> float.floor
-    |> should.equal(8.0)
-
-    -8.1
-    |> float.floor
-    |> should.equal(-9.0)
-
-    -8.0
-    |> float.floor
-    |> should.equal(-8.0)
-  }
-
   pub fn round_test() {
     8.1
     |> float.round

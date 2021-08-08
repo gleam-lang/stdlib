@@ -230,3 +230,7 @@ export function print(string) {
 export function ceiling(number) {
   return Math.ceil(number)
 }
+
+export function floor(number) {
+  return Math.floor(number)
+}
