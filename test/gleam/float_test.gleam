@@ -110,33 +110,33 @@ pub fn floor_test() {
   |> should.equal(-8.0)
 }
 
+pub fn round_test() {
+  8.1
+  |> float.round
+  |> should.equal(8)
+
+  8.4
+  |> float.round
+  |> should.equal(8)
+
+  8.499
+  |> float.round
+  |> should.equal(8)
+
+  8.5
+  |> float.round
+  |> should.equal(9)
+
+  -8.1
+  |> float.round
+  |> should.equal(-8)
+
+  -7.5
+  |> float.round
+  |> should.equal(-8)
+}
+
 if erlang {
-  pub fn round_test() {
-    8.1
-    |> float.round
-    |> should.equal(8)
-
-    8.4
-    |> float.round
-    |> should.equal(8)
-
-    8.499
-    |> float.round
-    |> should.equal(8)
-
-    8.5
-    |> float.round
-    |> should.equal(9)
-
-    -8.1
-    |> float.round
-    |> should.equal(-8)
-
-    -7.5
-    |> float.round
-    |> should.equal(-8)
-  }
-
   pub fn truncate_test() {
     8.1
     |> float.truncate

@@ -234,3 +234,12 @@ export function ceiling(number) {
 export function floor(number) {
   return Math.floor(number)
 }
+
+export function round(number) {
+    // Javascript behaves differently to erlang, it rounds -x.5 up towards zero rather than down
+    // away from zero so we have to try to catch it.
+    if (number - Math.trunc(number) == -0.5) {
+        return Math.floor(number);
+    }
+    return Math.round(number);
+}

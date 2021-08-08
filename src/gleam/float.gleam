@@ -139,20 +139,31 @@ if javascript {
     "../gleam_stdlib.js" "floor"
 }
 
-if erlang {
-  /// Rounds the value to the nearest whole number as an int.
-  ///
-  /// ## Examples
-  ///
-  ///    > round(2.3)
-  ///    2
-  ///
-  ///    > round(2.5)
-  ///    3
-  ///
-  pub external fn round(Float) -> Int =
-    "erlang" "round"
+/// Rounds the value to the nearest whole number as an int.
+///
+/// ## Examples
+///
+///    > round(2.3)
+///    2
+///
+///    > round(2.5)
+///    3
+///
+pub fn round(float: Float) -> Int {
+  do_round(float)
+}
 
+if erlang {
+  pub external fn do_round(Float) -> Int =
+    "erlang" "round"
+}
+
+if javascript {
+  pub external fn do_round(Float) -> Int =
+    "../gleam_stdlib.js" "round"
+}
+
+if erlang {
   /// Returns the value as an int, truncating all decimal digits.
   ///
   /// ## Examples
