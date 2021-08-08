@@ -26,12 +26,12 @@ if erlang {
     1
     |> dynamic.from
     |> dynamic.bit_string
-    |> should.equal(Error(DecodeError(expected: "bit_string", got: "int")))
+    |> should.equal(Error(DecodeError(expected: "bit_string", found: "int")))
 
     []
     |> dynamic.from
     |> dynamic.bit_string
-    |> should.equal(Error(DecodeError(expected: "bit_string", got: "list")))
+    |> should.equal(Error(DecodeError(expected: "bit_string", found: "list")))
   }
 
   pub fn string_test() {
@@ -48,17 +48,17 @@ if erlang {
     <<65535:16>>
     |> dynamic.from
     |> dynamic.string
-    |> should.equal(Error(DecodeError(expected: "string", got: "bit_string")))
+    |> should.equal(Error(DecodeError(expected: "string", found: "bit_string")))
 
     1
     |> dynamic.from
     |> dynamic.string
-    |> should.equal(Error(DecodeError(expected: "bit_string", got: "int")))
+    |> should.equal(Error(DecodeError(expected: "bit_string", found: "int")))
 
     []
     |> dynamic.from
     |> dynamic.string
-    |> should.equal(Error(DecodeError(expected: "bit_string", got: "list")))
+    |> should.equal(Error(DecodeError(expected: "bit_string", found: "list")))
   }
 
   pub fn int_test() {
@@ -75,12 +75,12 @@ if erlang {
     1.0
     |> dynamic.from
     |> dynamic.int
-    |> should.equal(Error(DecodeError(expected: "int", got: "float")))
+    |> should.equal(Error(DecodeError(expected: "int", found: "float")))
 
     []
     |> dynamic.from
     |> dynamic.int
-    |> should.equal(Error(DecodeError(expected: "int", got: "list")))
+    |> should.equal(Error(DecodeError(expected: "int", found: "list")))
   }
 
   pub fn float_test() {
@@ -97,12 +97,12 @@ if erlang {
     1
     |> dynamic.from
     |> dynamic.float
-    |> should.equal(Error(DecodeError(expected: "float", got: "int")))
+    |> should.equal(Error(DecodeError(expected: "float", found: "int")))
 
     []
     |> dynamic.from
     |> dynamic.float
-    |> should.equal(Error(DecodeError(expected: "float", got: "list")))
+    |> should.equal(Error(DecodeError(expected: "float", found: "list")))
   }
 
   pub fn thunk_test() {
@@ -147,12 +147,12 @@ if erlang {
     1
     |> dynamic.from
     |> dynamic.bool
-    |> should.equal(Error(DecodeError(expected: "bool", got: "int")))
+    |> should.equal(Error(DecodeError(expected: "bool", found: "int")))
 
     []
     |> dynamic.from
     |> dynamic.bool
-    |> should.equal(Error(DecodeError(expected: "bool", got: "list")))
+    |> should.equal(Error(DecodeError(expected: "bool", found: "list")))
   }
 
   pub fn typed_list_test() {
@@ -300,13 +300,13 @@ if erlang {
     |> dynamic.tuple2
     |> should.equal(Error(DecodeError(
       expected: "2 element tuple",
-      got: "3 element tuple",
+      found: "3 element tuple",
     )))
 
     1
     |> dynamic.from
     |> dynamic.tuple2
-    |> should.equal(Error(DecodeError(expected: "2 element tuple", got: "int")))
+    |> should.equal(Error(DecodeError(expected: "2 element tuple", found: "int")))
   }
 
   pub fn typed_tuple2_test() {
@@ -323,20 +323,20 @@ if erlang {
     #(1, "")
     |> dynamic.from
     |> dynamic.typed_tuple2(dynamic.int, dynamic.int)
-    |> should.equal(Error(DecodeError(expected: "int", got: "binary")))
+    |> should.equal(Error(DecodeError(expected: "int", found: "binary")))
 
     #(1, 2, 3)
     |> dynamic.from
     |> dynamic.typed_tuple2(dynamic.int, dynamic.int)
     |> should.equal(Error(DecodeError(
       expected: "2 element tuple",
-      got: "3 element tuple",
+      found: "3 element tuple",
     )))
 
     1
     |> dynamic.from
     |> dynamic.typed_tuple2(dynamic.int, dynamic.int)
-    |> should.equal(Error(DecodeError(expected: "2 element tuple", got: "int")))
+    |> should.equal(Error(DecodeError(expected: "2 element tuple", found: "int")))
   }
 
   pub fn tuple3_test() {
@@ -355,13 +355,13 @@ if erlang {
     |> dynamic.tuple3
     |> should.equal(Error(DecodeError(
       expected: "3 element tuple",
-      got: "2 element tuple",
+      found: "2 element tuple",
     )))
 
     1
     |> dynamic.from
     |> dynamic.tuple3
-    |> should.equal(Error(DecodeError(expected: "3 element tuple", got: "int")))
+    |> should.equal(Error(DecodeError(expected: "3 element tuple", found: "int")))
   }
 
   pub fn typed_tuple3_test() {
@@ -378,20 +378,20 @@ if erlang {
     #(1, 2, "")
     |> dynamic.from
     |> dynamic.typed_tuple3(dynamic.int, dynamic.int, dynamic.int)
-    |> should.equal(Error(DecodeError(expected: "int", got: "binary")))
+    |> should.equal(Error(DecodeError(expected: "int", found: "binary")))
 
     #(1, 2)
     |> dynamic.from
     |> dynamic.typed_tuple3(dynamic.int, dynamic.int, dynamic.int)
     |> should.equal(Error(DecodeError(
       expected: "3 element tuple",
-      got: "2 element tuple",
+      found: "2 element tuple",
     )))
 
     1
     |> dynamic.from
     |> dynamic.typed_tuple3(dynamic.int, dynamic.int, dynamic.int)
-    |> should.equal(Error(DecodeError(expected: "3 element tuple", got: "int")))
+    |> should.equal(Error(DecodeError(expected: "3 element tuple", found: "int")))
   }
 
   pub fn tuple4_test() {
@@ -420,13 +420,13 @@ if erlang {
     |> dynamic.tuple4
     |> should.equal(Error(DecodeError(
       expected: "4 element tuple",
-      got: "2 element tuple",
+      found: "2 element tuple",
     )))
 
     1
     |> dynamic.from
     |> dynamic.tuple4
-    |> should.equal(Error(DecodeError(expected: "4 element tuple", got: "int")))
+    |> should.equal(Error(DecodeError(expected: "4 element tuple", found: "int")))
   }
 
   pub fn typed_tuple4_test() {
@@ -448,20 +448,20 @@ if erlang {
     #(1, 2, 3, "")
     |> dynamic.from
     |> dynamic.typed_tuple4(dynamic.int, dynamic.int, dynamic.int, dynamic.int)
-    |> should.equal(Error(DecodeError(expected: "int", got: "binary")))
+    |> should.equal(Error(DecodeError(expected: "int", found: "binary")))
 
     #(1, 2)
     |> dynamic.from
     |> dynamic.typed_tuple4(dynamic.int, dynamic.int, dynamic.int, dynamic.int)
     |> should.equal(Error(DecodeError(
       expected: "4 element tuple",
-      got: "2 element tuple",
+      found: "2 element tuple",
     )))
 
     1
     |> dynamic.from
     |> dynamic.typed_tuple4(dynamic.int, dynamic.int, dynamic.int, dynamic.int)
-    |> should.equal(Error(DecodeError(expected: "4 element tuple", got: "int")))
+    |> should.equal(Error(DecodeError(expected: "4 element tuple", found: "int")))
   }
 
   pub fn tuple5_test() {
@@ -492,13 +492,13 @@ if erlang {
     |> dynamic.tuple5
     |> should.equal(Error(DecodeError(
       expected: "5 element tuple",
-      got: "2 element tuple",
+      found: "2 element tuple",
     )))
 
     1
     |> dynamic.from
     |> dynamic.tuple5
-    |> should.equal(Error(DecodeError(expected: "5 element tuple", got: "int")))
+    |> should.equal(Error(DecodeError(expected: "5 element tuple", found: "int")))
   }
 
   pub fn typed_tuple5_test() {
@@ -533,7 +533,7 @@ if erlang {
       dynamic.int,
       dynamic.int,
     )
-    |> should.equal(Error(DecodeError(expected: "int", got: "binary")))
+    |> should.equal(Error(DecodeError(expected: "int", found: "binary")))
 
     #(1, 2)
     |> dynamic.from
@@ -546,7 +546,7 @@ if erlang {
     )
     |> should.equal(Error(DecodeError(
       expected: "5 element tuple",
-      got: "2 element tuple",
+      found: "2 element tuple",
     )))
 
     1
@@ -558,7 +558,7 @@ if erlang {
       dynamic.int,
       dynamic.int,
     )
-    |> should.equal(Error(DecodeError(expected: "5 element tuple", got: "int")))
+    |> should.equal(Error(DecodeError(expected: "5 element tuple", found: "int")))
   }
 
   pub fn tuple6_test() {
@@ -591,13 +591,13 @@ if erlang {
     |> dynamic.tuple6
     |> should.equal(Error(DecodeError(
       expected: "6 element tuple",
-      got: "2 element tuple",
+      found: "2 element tuple",
     )))
 
     1
     |> dynamic.from
     |> dynamic.tuple6
-    |> should.equal(Error(DecodeError(expected: "6 element tuple", got: "int")))
+    |> should.equal(Error(DecodeError(expected: "6 element tuple", found: "int")))
   }
 
   pub fn typed_tuple6_test() {
@@ -635,7 +635,7 @@ if erlang {
       dynamic.int,
       dynamic.int,
     )
-    |> should.equal(Error(DecodeError(expected: "int", got: "binary")))
+    |> should.equal(Error(DecodeError(expected: "int", found: "binary")))
 
     #(1, 2)
     |> dynamic.from
@@ -649,7 +649,7 @@ if erlang {
     )
     |> should.equal(Error(DecodeError(
       expected: "6 element tuple",
-      got: "2 element tuple",
+      found: "2 element tuple",
     )))
 
     1
@@ -662,7 +662,7 @@ if erlang {
       dynamic.int,
       dynamic.int,
     )
-    |> should.equal(Error(DecodeError(expected: "6 element tuple", got: "int")))
+    |> should.equal(Error(DecodeError(expected: "6 element tuple", found: "int")))
   }
 
   pub fn map_test() {
@@ -674,7 +674,7 @@ if erlang {
     1
     |> dynamic.from
     |> dynamic.map
-    |> should.equal(Error(DecodeError(expected: "map", got: "int")))
+    |> should.equal(Error(DecodeError(expected: "map", found: "int")))
   }
 
   pub fn list_test() {
@@ -696,7 +696,7 @@ if erlang {
     1
     |> dynamic.from
     |> dynamic.list
-    |> should.equal(Error(DecodeError(expected: "list", got: "int")))
+    |> should.equal(Error(DecodeError(expected: "list", found: "int")))
   }
 
   pub fn result_test() {
@@ -713,14 +713,14 @@ if erlang {
     1
     |> dynamic.from
     |> dynamic.result
-    |> should.equal(Error(DecodeError(expected: "result tuple", got: "int")))
+    |> should.equal(Error(DecodeError(expected: "result tuple", found: "int")))
 
     #("bad", "value")
     |> dynamic.from
     |> dynamic.result
     |> should.equal(Error(DecodeError(
       expected: "result tuple",
-      got: "2 element tuple",
+      found: "2 element tuple",
     )))
   }
 
@@ -738,16 +738,16 @@ if erlang {
     Ok("1")
     |> dynamic.from
     |> dynamic.typed_result(ok: dynamic.int, error: dynamic.string)
-    |> should.equal(Error(DecodeError(expected: "int", got: "binary")))
+    |> should.equal(Error(DecodeError(expected: "int", found: "binary")))
 
     Error(1)
     |> dynamic.from
     |> dynamic.typed_result(ok: dynamic.int, error: dynamic.string)
-    |> should.equal(Error(DecodeError(expected: "bit_string", got: "int")))
+    |> should.equal(Error(DecodeError(expected: "bit_string", found: "int")))
 
     1
     |> dynamic.from
     |> dynamic.typed_result(ok: dynamic.int, error: dynamic.string)
-    |> should.equal(Error(DecodeError(expected: "result tuple", got: "int")))
+    |> should.equal(Error(DecodeError(expected: "result tuple", found: "int")))
   }
 }
