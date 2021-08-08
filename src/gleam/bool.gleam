@@ -168,13 +168,13 @@ pub fn max(a: Bool, b: Bool) -> Bool {
 ///
 /// ## Examples
 ///
-///    > max(True, False)
+///    > min(True, False)
 ///    False
 ///
-///    > max(False, True)
+///    > min(False, True)
 ///    False
 ///
-///    > max(False, False)
+///    > min(False, False)
 ///    False
 ///
 pub fn min(a: Bool, b: Bool) -> Bool {
