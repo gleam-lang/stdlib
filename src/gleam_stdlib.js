@@ -224,3 +224,9 @@ export function print(string) {
     console.log(string); // We're in a browser. Newlines are mandated
   }
 }
+
+// module: gleam/float
+
+export function ceiling(number) {
+  return Math.ceil(number)
+}

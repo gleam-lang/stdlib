@@ -80,21 +80,23 @@ if erlang {
     float.compare(-1.9, -2.)
     |> should.equal(order.Gt)
   }
+}
 
-  pub fn ceiling_test() {
-    8.1
-    |> float.ceiling
-    |> should.equal(9.0)
+pub fn ceiling_test() {
+  8.1
+  |> float.ceiling
+  |> should.equal(9.0)
 
-    -8.1
-    |> float.ceiling
-    |> should.equal(-8.0)
+  -8.1
+  |> float.ceiling
+  |> should.equal(-8.0)
 
-    -8.0
-    |> float.ceiling
-    |> should.equal(-8.0)
-  }
+  -8.0
+  |> float.ceiling
+  |> should.equal(-8.0)
+}
 
+if erlang {
   pub fn floor_test() {
     8.1
     |> float.floor

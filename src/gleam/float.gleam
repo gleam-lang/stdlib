@@ -97,17 +97,28 @@ pub fn max(a: Float, b: Float) -> Float {
   }
 }
 
-if erlang {
-  /// Rounds the value to the next highest whole number as a float.
-  ///
-  /// ## Examples
-  ///
-  ///    > ceiling(2.3)
-  ///    3.0
-  ///
-  pub external fn ceiling(Float) -> Float =
-    "math" "ceil"
+/// Rounds the value to the next highest whole number as a float.
+///
+/// ## Examples
+///
+///    > ceiling(2.3)
+///    3.0
+///
+pub fn ceiling(float: Float) -> Float {
+  do_ceiling(float)
+}
 
+if erlang {
+  external fn do_ceiling(Float) -> Float =
+    "math" "ceil"
+}
+
+if javascript {
+  external fn do_ceiling(Float) -> Float =
+    "../gleam_stdlib.js" "ceiling"
+}
+
+if erlang {
   /// Rounds the value to the next lowest whole number as a float.
   ///
   /// ## Examples
