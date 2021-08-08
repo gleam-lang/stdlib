@@ -155,7 +155,7 @@ pub fn round(float: Float) -> Int {
 
 if erlang {
   external fn do_round(Float) -> Int =
-    "math" "round"
+    "erlang" "round"
 }
 
 if javascript {
@@ -183,7 +183,7 @@ pub fn truncate(float: Float) -> Int {
 
 if erlang {
   external fn do_truncate(Float) -> Int =
-    "math" "trunc"
+    "erlang" "trunc"
 }
 
 if javascript {
