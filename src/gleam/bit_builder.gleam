@@ -15,6 +15,8 @@ if erlang {
   /// time using minimal memory, and then can be efficiently converted to a
   /// bit string using the `to_bit_string` function.
   ///
+  /// On Erlang this type is compatible with Erlang's iolists.
+  ///
   pub external type BitBuilder
 }
 
@@ -83,7 +85,10 @@ if erlang {
 
 if javascript {
   fn do_append_builder(first: BitBuilder, second: BitBuilder) -> BitBuilder {
-    Many([first, second])
+    case second {
+      Many(builders) -> Many([first, ..builders])
+      _ -> Many([first, second])
+    }
   }
 }
 
@@ -130,7 +135,18 @@ if javascript {
 /// Runs in linear time otherwise.
 ///
 pub fn from_string(string: String) -> BitBuilder {
-  Text(string_builder.from_string(string))
+  do_from_string(string)
+}
+
+if erlang {
+  external fn do_from_string(String) -> BitBuilder =
+    "gleam_stdlib" "wrap_list"
+}
+
+if javascript {
+  fn do_from_string(string: String) -> BitBuilder {
+    Text(string_builder.from_string(string))
+  }
 }
 
 /// Creates a new builder from a string builder.

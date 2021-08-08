@@ -9,6 +9,9 @@
 /// using minimal memory, and then can be efficiently converted to a string
 /// using the `to_string` function.
 ///
+/// On Erlang this type is compatible with Erlang's iolists. On JavaScript this
+/// type is compatible with normal strings.
+///
 pub external type StringBuilder
 
 /// Prepends a String onto the start of some StringBuilder.
