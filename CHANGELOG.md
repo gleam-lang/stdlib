@@ -2,7 +2,8 @@
 
 ## Unreleased
 
-- The `bit_string` module gains the `concat` function.
+- The `bit_string` module gains the `concat` function and has the `part`
+  function renamed to `slice`.
 - The `os` module has been moved to the `gleam_os` library.
 - The `rescue` function has been removed from the `function` library in favour
   of target specific versions in Erlang and JavaScript specific libraries.
