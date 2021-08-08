@@ -189,6 +189,25 @@ export function bit_string_append(first, second) {
   return array;
 }
 
+function reduce_list(list, acc, f) {
+  let [current, next] = list;
+  while (next) {
+    acc = f(acc, current);
+    [current, next] = next;
+  }
+  return acc;
+}
+
+export function bit_string_concat(bit_strings) {
+  let size = reduce_list(bit_strings, 0, (size, b) => b.byteLength + size);
+  let array = new Uint8Array(size);
+  reduce_list(bit_strings, 0, (index, bit_string) => {
+    array.set(bit_string, index);
+    return index + bit_string.byteLength;
+  });
+  return array;
+}
+
 export function log(term) {
   console.log(term);
 }

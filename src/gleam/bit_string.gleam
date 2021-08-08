@@ -42,17 +42,7 @@ if javascript {
 ///    from_string("butterfly")
 ///
 pub fn append(to first: BitString, suffix second: BitString) -> BitString {
-  do_append(first, second)
-}
-
-if erlang {
-  external fn do_append(BitString, BitString) -> BitString =
-    "gleam_stdlib" "bit_string_append"
-}
-
-if javascript {
-  external fn do_append(BitString, BitString) -> BitString =
-    "../gleam_stdlib.js" "bit_string_append"
+  concat([first, second])
 }
 
 if erlang {
@@ -118,4 +108,25 @@ if erlang {
 if javascript {
   external fn do_to_string(BitString) -> Result(String, Nil) =
     "../gleam_stdlib.js" "bit_string_to_string"
+}
+
+/// Creates a new bit string by joining multiple binaries.
+///
+/// ## Examples
+///
+///    > concat([from_string("butter"), from_string("fly")])
+///    from_string("butterfly")
+///
+pub fn concat(bit_strings: List(BitString)) -> BitString {
+  do_concat(bit_strings)
+}
+
+if erlang {
+  external fn do_concat(List(BitString)) -> BitString =
+    "gleam_stdlib" "bit_string_concat"
+}
+
+if javascript {
+  external fn do_concat(List(BitString)) -> BitString =
+    "../gleam_stdlib.js" "bit_string_concat"
 }

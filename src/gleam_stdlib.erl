@@ -9,9 +9,9 @@
          string_ends_with/2, string_pad/4, decode_tuple2/1, decode_tuple3/1,
          decode_tuple4/1, decode_tuple5/1, decode_tuple6/1, decode_map/1,
          bit_string_int_to_u32/1, bit_string_int_from_u32/1, decode_result/1,
-         bit_string_append/2, bit_string_part_/3, decode_bit_string/1,
-         compile_regex/2, regex_match/2, regex_split/2, regex_scan/2,
-         base_decode64/1, wrap_list/1]).
+         bit_string_part_/3, decode_bit_string/1, compile_regex/2,
+         regex_match/2, regex_split/2, regex_scan/2, base_decode64/1,
+         wrap_list/1, bit_string_concat/1]).
 
 should_equal(Actual, Expected) -> 
     ?assertEqual(Expected, Actual),
@@ -171,8 +171,8 @@ string_pop_grapheme(String) ->
         _ -> {error, nil}
     end.
 
-bit_string_append(First, Second) ->
-    <<First/bitstring, Second/bitstring>>.
+bit_string_concat(BitStrings) ->
+    iolist_to_binary(BitStrings).
 
 bit_string_part_(Bin, Pos, Len) ->
     try {ok, binary:part(Bin, Pos, Len)}

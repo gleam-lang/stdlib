@@ -23,6 +23,16 @@ pub fn append_test() {
   |> should.equal(<<1, 2, 3, 4>>)
 }
 
+pub fn concat_test() {
+  [<<1, 2>>]
+  |> bit_string.concat
+  |> should.equal(<<1, 2>>)
+
+  [<<1, 2>>, <<3>>, <<4>>]
+  |> bit_string.concat
+  |> should.equal(<<1, 2, 3, 4>>)
+}
+
 if erlang {
   pub fn part_test() {
     bit_string.from_string("hello")
