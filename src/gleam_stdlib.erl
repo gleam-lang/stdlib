@@ -39,12 +39,13 @@ identity(X) -> X.
 decode_error_msg(Expected, Data) ->
     {error, {decode_error, Expected, classify(Data)}}.
 
-classify(X) when is_atom(X) -> <<"atom">>;
-classify(X) when is_binary(X) -> <<"binary">>;
-classify(X) when is_integer(X) -> <<"int">>;
-classify(X) when is_float(X) -> <<"float">>;
-classify(X) when is_list(X) -> <<"list">>;
-classify(X) when is_boolean(X) -> <<"bool">>;
+classify(X) when is_atom(X) -> <<"Atom">>;
+classify(X) when is_binary(X) -> <<"String">>;
+classify(X) when is_bitstring(X) -> <<"BitString">>;
+classify(X) when is_integer(X) -> <<"Int">>;
+classify(X) when is_float(X) -> <<"Float">>;
+classify(X) when is_list(X) -> <<"List">>;
+classify(X) when is_boolean(X) -> <<"Bool">>;
 classify(X) when is_function(X, 0) -> <<"zero arity function">>;
 classify(X) when is_tuple(X) -> iolist_to_binary([integer_to_list(tuple_size(X)), " element tuple"]);
 classify(_) -> "some other type".
@@ -65,25 +66,25 @@ decode_tuple6({_, _, _, _, _, _} = T) -> {ok, T};
 decode_tuple6(Data) -> decode_error_msg(<<"6 element tuple">>, Data).
 
 decode_map(Data) when is_map(Data) -> {ok, Data};
-decode_map(Data) -> decode_error_msg(<<"map">>, Data).
+decode_map(Data) -> decode_error_msg(<<"Map">>, Data).
 
 decode_bit_string(Data) when is_bitstring(Data) -> {ok, Data};
-decode_bit_string(Data) -> decode_error_msg(<<"bit_string">>, Data).
+decode_bit_string(Data) -> decode_error_msg(<<"BitString">>, Data).
 
 decode_int(Data) when is_integer(Data) -> {ok, Data};
-decode_int(Data) -> decode_error_msg(<<"int">>, Data).
+decode_int(Data) -> decode_error_msg(<<"Int">>, Data).
 
 decode_float(Data) when is_float(Data) -> {ok, Data};
-decode_float(Data) -> decode_error_msg(<<"float">>, Data).
+decode_float(Data) -> decode_error_msg(<<"Float">>, Data).
 
 decode_bool(Data) when is_boolean(Data) -> {ok, Data};
-decode_bool(Data) -> decode_error_msg(<<"bool">>, Data).
+decode_bool(Data) -> decode_error_msg(<<"Bool">>, Data).
 
 decode_thunk(Data) when is_function(Data, 0) -> {ok, Data};
 decode_thunk(Data) -> decode_error_msg("zero arity function", Data).
 
 decode_list(Data) when is_list(Data) -> {ok, Data};
-decode_list(Data) -> decode_error_msg(<<"list">>, Data).
+decode_list(Data) -> decode_error_msg(<<"List">>, Data).
 
 decode_field(Data, Key) ->
     case Data of
@@ -102,7 +103,7 @@ decode_element(Data, Position) when is_tuple(Data) ->
         Value ->
             {ok, Value}
     end;
-decode_element(Data, _Position) -> decode_error_msg("a tuple", Data).
+decode_element(Data, _Position) -> decode_error_msg(<<"Tuple">>, Data).
 
 decode_optional(Term, F) ->
     Decode = fun(Inner) ->
