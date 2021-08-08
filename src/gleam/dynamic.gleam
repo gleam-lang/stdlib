@@ -11,8 +11,12 @@ if erlang {
   /// IO with the outside world.
   pub external type Dynamic
 
+  pub type DecodeError {
+    DecodeError(expected: String, got: String)
+  }
+
   pub type Decoder(t) =
-    fn(Dynamic) -> Result(t, String)
+    fn(Dynamic) -> Result(t, DecodeError)
 
   /// Converts any Gleam data into `Dynamic` data.
   ///
@@ -40,7 +44,7 @@ if erlang {
   ///    > bit_string(from(123))
   ///    Error("Expected a BitString, got `123`")
   ///
-  pub external fn bit_string(from: Dynamic) -> Result(BitString, String) =
+  pub external fn bit_string(from: Dynamic) -> Result(BitString, DecodeError) =
     "gleam_stdlib" "decode_bit_string"
 
   /// Checks to see whether a Dynamic value is a string, and return the string if
@@ -54,12 +58,12 @@ if erlang {
   ///    > string(from(123))
   ///    Error("Expected a String, got `123`")
   ///
-  pub fn string(from: Dynamic) -> Result(String, String) {
+  pub fn string(from: Dynamic) -> Result(String, DecodeError) {
     bit_string(from)
     |> result.then(fn(raw) {
       case bit_string.to_string(raw) {
         Ok(string) -> Ok(string)
-        Error(Nil) -> Error("Expected a string, got a bit_string")
+        Error(Nil) -> Error(DecodeError(expected: "string", got: "bit_string"))
       }
     })
   }
@@ -75,7 +79,7 @@ if erlang {
   ///    > int(from("Hello"))
   ///    Error("Expected an Int, got `\"Hello World\"`")
   ///
-  pub external fn int(from: Dynamic) -> Result(Int, String) =
+  pub external fn int(from: Dynamic) -> Result(Int, DecodeError) =
     "gleam_stdlib" "decode_int"
 
   /// Checks to see whether a Dynamic value is an float, and return the float if
@@ -89,7 +93,7 @@ if erlang {
   ///    > float(from(123))
   ///    Error("Expected a Float, got `123`")
   ///
-  pub external fn float(from: Dynamic) -> Result(Float, String) =
+  pub external fn float(from: Dynamic) -> Result(Float, DecodeError) =
     "gleam_stdlib" "decode_float"
 
   /// Checks to see whether a Dynamic value is an bool, and return the bool if
@@ -103,7 +107,7 @@ if erlang {
   ///    > bool(from(123))
   ///    Error("Expected a Bool, got `123`")
   ///
-  pub external fn bool(from: Dynamic) -> Result(Bool, String) =
+  pub external fn bool(from: Dynamic) -> Result(Bool, DecodeError) =
     "gleam_stdlib" "decode_bool"
 
   /// Checks to see whether a Dynamic value is a function that takes no arguments,
@@ -119,7 +123,7 @@ if erlang {
   ///    > thunk(from(123))
   ///    Error("Expected a zero arity function, got `123`")
   ///
-  pub external fn thunk(from: Dynamic) -> Result(fn() -> Dynamic, String) =
+  pub external fn thunk(from: Dynamic) -> Result(fn() -> Dynamic, DecodeError) =
     "gleam_stdlib" "decode_thunk"
 
   /// Checks to see whether a Dynamic value is a list, and return the list if it
@@ -136,7 +140,7 @@ if erlang {
   ///    > list(1)
   ///    Error("Expected an Int, got a binary")
   ///
-  pub external fn list(from: Dynamic) -> Result(List(Dynamic), String) =
+  pub external fn list(from: Dynamic) -> Result(List(Dynamic), DecodeError) =
     "gleam_stdlib" "decode_list"
 
   /// Checks to see whether a Dynamic value is a result, and return the result if
@@ -153,7 +157,9 @@ if erlang {
   ///    > result(from(123))
   ///    Error("Expected a 2 element tuple, got an int")
   ///
-  pub external fn result(Dynamic) -> Result(Result(Dynamic, Dynamic), String) =
+  pub external fn result(
+    Dynamic,
+  ) -> Result(Result(Dynamic, Dynamic), DecodeError) =
     "gleam_stdlib" "decode_result"
 
   /// Checks to see whether a Dynamic value is a result of a particular type, and
@@ -177,7 +183,7 @@ if erlang {
     of dynamic: Dynamic,
     ok decode_ok: Decoder(a),
     error decode_error: Decoder(e),
-  ) -> Result(Result(a, e), String) {
+  ) -> Result(Result(a, e), DecodeError) {
     try inner_result = result(dynamic)
 
     case inner_result {
@@ -215,8 +221,8 @@ if erlang {
   ///
   pub fn typed_list(
     from dynamic: Dynamic,
-    of decoder_type: fn(Dynamic) -> Result(inner, String),
-  ) -> Result(List(inner), String) {
+    of decoder_type: fn(Dynamic) -> Result(inner, DecodeError),
+  ) -> Result(List(inner), DecodeError) {
     dynamic
     |> list
     |> result.then(list.try_map(_, decoder_type))
@@ -248,7 +254,7 @@ if erlang {
   pub external fn optional(
     from: Dynamic,
     of: Decoder(inner),
-  ) -> Result(Option(inner), String) =
+  ) -> Result(Option(inner), DecodeError) =
     "gleam_stdlib" "decode_optional"
 
   /// Checks to see if a Dynamic value is a map with a specific field, and return
@@ -265,7 +271,7 @@ if erlang {
   ///    > field(from(123), "Hello")
   ///    Error("Expected a map with key `\"Hello\"`, got an Int")
   ///
-  pub external fn field(from: Dynamic, named: a) -> Result(Dynamic, String) =
+  pub external fn field(from: Dynamic, named: a) -> Result(Dynamic, DecodeError) =
     "gleam_stdlib" "decode_field"
 
   /// Checks to see if the Dynamic value is a tuple large enough to have a certain
@@ -285,7 +291,7 @@ if erlang {
   pub external fn element(
     from: Dynamic,
     position: Int,
-  ) -> Result(Dynamic, String) =
+  ) -> Result(Dynamic, DecodeError) =
     "gleam_stdlib" "decode_element"
 
   /// Checks to see if the Dynamic value is a 2 element tuple.
@@ -304,7 +310,9 @@ if erlang {
   ///    > tuple2(from(""))
   ///    Error("Expected a tuple, got a binary")
   ///
-  pub external fn tuple2(from: Dynamic) -> Result(#(Dynamic, Dynamic), String) =
+  pub external fn tuple2(
+    from: Dynamic,
+  ) -> Result(#(Dynamic, Dynamic), DecodeError) =
     "gleam_stdlib" "decode_tuple2"
 
   /// Checks to see if the Dynamic value is a 2 element tuple containing two
@@ -331,7 +339,7 @@ if erlang {
     from tup: Dynamic,
     first decode_first: Decoder(a),
     second decode_second: Decoder(b),
-  ) -> Result(#(a, b), String) {
+  ) -> Result(#(a, b), DecodeError) {
     try #(first, second) = tuple2(tup)
     try a = decode_first(first)
     try b = decode_second(second)
@@ -356,7 +364,7 @@ if erlang {
   ///
   pub external fn tuple3(
     from: Dynamic,
-  ) -> Result(#(Dynamic, Dynamic, Dynamic), String) =
+  ) -> Result(#(Dynamic, Dynamic, Dynamic), DecodeError) =
     "gleam_stdlib" "decode_tuple3"
 
   /// Checks to see if the Dynamic value is a 3 element tuple containing two
@@ -384,7 +392,7 @@ if erlang {
     first decode_first: Decoder(a),
     second decode_second: Decoder(b),
     third decode_third: Decoder(c),
-  ) -> Result(#(a, b, c), String) {
+  ) -> Result(#(a, b, c), DecodeError) {
     try #(first, second, third) = tuple3(tup)
     try a = decode_first(first)
     try b = decode_second(second)
@@ -410,7 +418,7 @@ if erlang {
   ///
   pub external fn tuple4(
     from: Dynamic,
-  ) -> Result(#(Dynamic, Dynamic, Dynamic, Dynamic), String) =
+  ) -> Result(#(Dynamic, Dynamic, Dynamic, Dynamic), DecodeError) =
     "gleam_stdlib" "decode_tuple4"
 
   /// Checks to see if the Dynamic value is a 4 element tuple containing two
@@ -439,7 +447,7 @@ if erlang {
     second decode_second: Decoder(b),
     third decode_third: Decoder(c),
     fourth decode_fourth: Decoder(d),
-  ) -> Result(#(a, b, c, d), String) {
+  ) -> Result(#(a, b, c, d), DecodeError) {
     try #(first, second, third, fourth) = tuple4(tup)
     try a = decode_first(first)
     try b = decode_second(second)
@@ -466,7 +474,7 @@ if erlang {
   ///
   pub external fn tuple5(
     from: Dynamic,
-  ) -> Result(#(Dynamic, Dynamic, Dynamic, Dynamic, Dynamic), String) =
+  ) -> Result(#(Dynamic, Dynamic, Dynamic, Dynamic, Dynamic), DecodeError) =
     "gleam_stdlib" "decode_tuple5"
 
   /// Checks to see if the Dynamic value is a 5 element tuple containing two
@@ -496,7 +504,7 @@ if erlang {
     third decode_third: Decoder(c),
     fourth decode_fourth: Decoder(d),
     fifth decode_fifth: Decoder(e),
-  ) -> Result(#(a, b, c, d, e), String) {
+  ) -> Result(#(a, b, c, d, e), DecodeError) {
     try #(first, second, third, fourth, fifth) = tuple5(tup)
     try a = decode_first(first)
     try b = decode_second(second)
@@ -524,7 +532,10 @@ if erlang {
   ///
   pub external fn tuple6(
     from: Dynamic,
-  ) -> Result(#(Dynamic, Dynamic, Dynamic, Dynamic, Dynamic, Dynamic), String) =
+  ) -> Result(
+    #(Dynamic, Dynamic, Dynamic, Dynamic, Dynamic, Dynamic),
+    DecodeError,
+  ) =
     "gleam_stdlib" "decode_tuple6"
 
   /// Checks to see if the Dynamic value is a 6 element tuple containing two
@@ -555,7 +566,7 @@ if erlang {
     fourth decode_fourth: Decoder(d),
     fifth decode_fifth: Decoder(e),
     sixth decode_sixth: Decoder(f),
-  ) -> Result(#(a, b, c, d, e, f), String) {
+  ) -> Result(#(a, b, c, d, e, f), DecodeError) {
     try #(first, second, third, fourth, fifth, sixth) = tuple6(tup)
     try a = decode_first(first)
     try b = decode_second(second)
@@ -580,7 +591,9 @@ if erlang {
   ///    > map(from(""))
   ///    Error("Expected a map, got a binary")
   ///
-  pub external fn map(from: Dynamic) -> Result(Map(Dynamic, Dynamic), String) =
+  pub external fn map(
+    from: Dynamic,
+  ) -> Result(Map(Dynamic, Dynamic), DecodeError) =
     "gleam_stdlib" "decode_map"
 
   /// Joins multiple decoders into one. When run they will each be tried in turn
@@ -605,9 +618,11 @@ if erlang {
   pub fn any(
     from data: Dynamic,
     of decoders: List(Decoder(t)),
-  ) -> Result(t, String) {
+  ) -> Result(t, DecodeError) {
     decoders
     |> list.find_map(fn(decoder) { decoder(data) })
-    |> result.map_error(fn(_) { "Unexpected value" })
+    |> result.map_error(fn(_) {
+      DecodeError(expected: "any", got: "unexpected")
+    })
   }
 }
