@@ -1,5 +1,6 @@
 import gleam/string_builder.{StringBuilder}
 import gleam/bit_string
+import gleam/list
 
 if erlang {
   /// BitBuilder is a type used for efficiently concatenating bits to create bit
@@ -31,8 +32,9 @@ if javascript {
   /// bit string using the `to_bit_string` function.
   ///
   pub opaque type BitBuilder {
-    Leaf(BitString)
-    Branch(List(BitBuilder))
+    Bits(BitString)
+    Text(StringBuilder)
+    Many(List(BitBuilder))
   }
 }
 
@@ -81,13 +83,14 @@ if erlang {
 
 if javascript {
   fn do_append_builder(first: BitBuilder, second: BitBuilder) -> BitBuilder {
-    Branch([first, second])
+    Many([first, second])
   }
 }
 
 /// Prepends a string onto the start of a builder.
 ///
-/// Runs in constant time.
+/// Runs in constant time when running on Erlang.
+/// Runs in linear time with the length of the string otherwise.
 ///
 pub fn prepend_string(to: BitBuilder, prefix: String) -> BitBuilder {
   append_builder(from_string(prefix), to)
@@ -95,7 +98,8 @@ pub fn prepend_string(to: BitBuilder, prefix: String) -> BitBuilder {
 
 /// Appends a string onto the end of a builder.
 ///
-/// Runs in constant time.
+/// Runs in constant time when running on Erlang.
+/// Runs in linear time with the length of the string otherwise.
 ///
 pub fn append_string(to: BitBuilder, suffix: String) -> BitBuilder {
   append_builder(to, from_string(suffix))
@@ -116,7 +120,7 @@ if erlang {
 
 if javascript {
   fn do_concat(builders: List(BitBuilder)) -> BitBuilder {
-    Branch(builders)
+    Many(builders)
   }
 }
 
@@ -126,18 +130,27 @@ if javascript {
 /// Runs in linear time otherwise.
 ///
 pub fn from_string(string: String) -> BitBuilder {
-  string
-  |> bit_string.from_string
-  |> from_bit_string
+  Text(string_builder.from_string(string))
+}
+
+/// Creates a new builder from a string builder.
+///
+/// Runs in constant time when running on Erlang.
+/// Runs in linear time otherwise.
+///
+pub fn from_string_builder(builder: StringBuilder) -> BitBuilder {
+  do_from_string_builder(builder)
 }
 
 if erlang {
-  /// Creates a new builder from a string builder.
-  ///
-  /// Runs in constant time.
-  ///
-  pub external fn from_string_builder(StringBuilder) -> BitBuilder =
+  external fn do_from_string_builder(StringBuilder) -> BitBuilder =
     "gleam_stdlib" "identity"
+}
+
+if javascript {
+  fn do_from_string_builder(builder: StringBuilder) -> BitBuilder {
+    Text(builder)
+  }
 }
 
 /// Creates a new builder from a bit string.
@@ -155,23 +168,74 @@ if erlang {
 
 if javascript {
   fn do_from_bit_string(bits: BitString) -> BitBuilder {
-    Leaf(bits)
+    Bits(bits)
   }
 }
 
-if erlang {
-  /// Turns an builder into a bit string.
-  ///
-  /// Runs in linear time.
-  ///
-  /// When running on Erlang this function is implemented natively by the
-  /// virtual machine and is highly optimised.
-  ///
-  pub external fn to_bit_string(BitBuilder) -> BitString =
-    "erlang" "list_to_bitstring"
+/// Turns an builder into a bit string.
+///
+/// Runs in linear time.
+///
+/// When running on Erlang this function is implemented natively by the
+/// virtual machine and is highly optimised.
+///
+pub fn to_bit_string(builder: BitBuilder) -> BitString {
+  do_to_bit_string(builder)
+}
 
-  /// Returns the size of the builder's content in bytes.
-  ///
-  pub external fn byte_size(BitBuilder) -> Int =
+if erlang {
+  external fn do_to_bit_string(BitBuilder) -> BitString =
+    "erlang" "list_to_bitstring"
+}
+
+if javascript {
+  fn do_to_bit_string(builder: BitBuilder) -> BitString {
+    [[builder]]
+    |> to_list([])
+    |> list.reverse
+    |> bit_string.concat
+  }
+
+  fn to_list(
+    stack: List(List(BitBuilder)),
+    acc: List(BitString),
+  ) -> List(BitString) {
+    case stack {
+      [] -> acc
+
+      [[], ..remaining_stack] -> to_list(remaining_stack, acc)
+
+      [[Bits(bits), ..rest], ..remaining_stack] ->
+        to_list([rest, ..remaining_stack], [bits, ..acc])
+
+      [[Text(builder), ..rest], ..remaining_stack] -> {
+        let bits = bit_string.from_string(string_builder.to_string(builder))
+        to_list([rest, ..remaining_stack], [bits, ..acc])
+      }
+
+      [[Many(builders), ..rest], ..remaining_stack] ->
+        to_list([builders, rest, ..remaining_stack], acc)
+    }
+  }
+}
+
+/// Returns the size of the builder's content in bytes.
+///
+/// Runs in linear time.
+///
+pub fn byte_size(builder: BitBuilder) -> Int {
+  do_byte_size(builder)
+}
+
+if erlang {
+  external fn do_byte_size(BitBuilder) -> Int =
     "erlang" "iolist_size"
+}
+
+if javascript {
+  fn do_byte_size(builder: BitBuilder) -> Int {
+    [[builder]]
+    |> to_list([])
+    |> list.fold(0, fn(builder, acc) { bit_string.byte_size(builder) + acc })
+  }
 }
