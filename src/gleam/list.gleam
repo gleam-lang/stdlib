@@ -371,7 +371,7 @@ fn do_try_map(
 ///    > try_map([1, 2, 3], fn(x) { Ok(x + 2) })
 ///    Ok([3, 4, 5])
 ///
-///    > try_map([1, 2, 3], fn(x) { Error(0) })
+///    > try_map([1, 2, 3], fn(_) { Error(0) })
 ///    Error(0)
 ///
 ///    > try_map([[1], [2, 3]], head)
@@ -674,7 +674,7 @@ pub fn fold_until(
 ///    > find([1, 2, 3], fn(x) { x > 4 })
 ///    Error(Nil)
 ///
-///    > find([], fn(x) { True })
+///    > find([], fn(_) { True })
 ///    Error(Nil)
 ///
 pub fn find(
@@ -1131,7 +1131,7 @@ fn do_pop(haystack, predicate, checked) {
 ///    > pop([1, 2, 3], fn(x) { x > 4 })
 ///    Error(Nil)
 ///
-///    > pop([], fn(x) { True })
+///    > pop([], fn(_) { True })
 ///    Error(Nil)
 ///
 pub fn pop(
