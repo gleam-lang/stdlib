@@ -138,7 +138,7 @@ pub fn is_empty(list: List(a)) -> Bool {
 /// ## Examples
 ///
 ///    > [] |> contains(any: 0)
-///    True
+///    False
 ///
 ///    > [0] |> contains(any: 0)
 ///    True
@@ -256,7 +256,7 @@ fn do_filter_map(
 ///    []
 ///
 ///    > filter_map([2, 4, 6, 1], fn(x) { Ok(x + 1) })
-///    [3, 4, 6, 2]
+///    [3, 5, 7, 2]
 ///
 pub fn filter_map(list: List(a), with fun: fn(a) -> Result(b, e)) -> List(b) {
   do_filter_map(list, fun, [])
@@ -754,10 +754,10 @@ pub fn all(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
 ///    False
 ///
 ///    > any([4, 5], fn(x) { x > 3 })
-///    False
-///
-///    > any([4, 3], fn(x) { x > 3 })
 ///    True
+///
+///    > any([4, 3], fn(x) { x > 4 })
+///    False
 ///
 ///    > any([3, 4], fn(x) { x > 3 })
 ///    True
