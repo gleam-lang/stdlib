@@ -120,7 +120,7 @@ pub fn flatten(result: Result(Result(a, e), e)) -> Result(a, e) {
 ///    > then(Ok(1), fn(x) { Ok(#("a", x)) })
 ///    Ok(#("a", 1))
 ///
-///    > then(Ok(1), fn(x) { Error("Oh no") })
+///    > then(Ok(1), fn(_) { Error("Oh no") })
 ///    Error("Oh no")
 ///
 ///    > then(Error(Nil), fn(x) { Ok(x + 1) })

@@ -174,7 +174,7 @@ pub fn flatten(option: Option(Option(a))) -> Option(a) {
 ///    > then(Some(1), fn(x) { Some(#("a", x)) })
 ///    Some(#("a", 1))
 ///
-///    > then(Some(1), fn(x) { None })
+///    > then(Some(1), fn(_) { None })
 ///    None
 ///
 ///    > then(None, fn(x) { Some(x + 1) })

@@ -468,7 +468,7 @@ fn do_find(continuation: fn() -> Action(a), f: fn(a) -> Bool) -> Result(a, Nil) 
 ///    > find(from_list([1, 2, 3]), fn(x) { x > 4 })
 ///    Error(Nil)
 ///
-///    > find(empty(), fn(x) { True })
+///    > find(empty(), fn(_) { True })
 ///    Error(Nil)
 ///
 pub fn find(
