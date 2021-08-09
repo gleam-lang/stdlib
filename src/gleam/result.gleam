@@ -89,7 +89,7 @@ pub fn map_error(
 ///    > flatten(Ok(Ok(1)))
 ///    Ok(1)
 ///
-///    > flatten(Ok(Error(""))
+///    > flatten(Ok(Error("")))
 ///    Error("")
 ///
 ///    > flatten(Error(Nil))

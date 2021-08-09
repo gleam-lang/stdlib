@@ -405,7 +405,7 @@ pub fn filter(
 ///
 /// ## Examples
 ///
-///    > [1, 2] |> from_list |> cycle |> take(6)
+///    > [1, 2] |> from_list |> cycle |> take(6) |> to_list
 ///    [1, 2, 1, 2, 1, 2]
 ///
 pub fn cycle(iterator: Iterator(a)) -> Iterator(a) {
@@ -509,7 +509,7 @@ pub fn index(over iterator: Iterator(element)) -> Iterator(#(Int, element)) {
 ///
 /// ## Examples
 ///
-///    > iterate(1, fn(n) { n * 3 }) |> take(5)
+///    > iterate(1, fn(n) { n * 3 }) |> take(5) |> to_list
 ///    [1, 3, 9, 27, 81]
 ///
 pub fn iterate(
@@ -756,10 +756,10 @@ fn do_sized_chunk(
 ///
 /// ## Examples
 ///
-///    > from_list([1, 2, 3, 4, 5, 6]) |> chunk(into: 2) |> to_list
+///    > from_list([1, 2, 3, 4, 5, 6]) |> sized_chunk(into: 2) |> to_list
 ///    [[1, 2], [3, 4], [5, 6]]
 ///
-///    > from_list([1, 2, 3, 4, 5, 6, 7, 8]) |> chunk(into: 3) |> to_list
+///    > from_list([1, 2, 3, 4, 5, 6, 7, 8]) |> sized_chunk(into: 3) |> to_list
 ///    [[1, 2, 3], [4, 5, 6], [7, 8]]
 ///
 pub fn sized_chunk(

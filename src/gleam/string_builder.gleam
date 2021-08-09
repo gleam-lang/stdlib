@@ -288,12 +288,6 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > from_strings(["a", "b"]) == new("ab")
-///    False
-///
-///    > is_equal(from_strings(["a", "b"]), new("ab"))
-///    True
-///
 ///
 pub fn is_equal(a: StringBuilder, b: StringBuilder) -> Bool {
   do_is_equal(a, b)
@@ -312,12 +306,6 @@ if javascript {
 /// Inspects a builder to determine if it is equivalent to an empty string.
 ///
 /// ## Examples
-///
-///    > new("ok") |> is_empty
-///    False
-///
-///    > new("") |> is_empty
-///    True
 ///
 ///    > from_strings([]) |> is_empty
 ///    True

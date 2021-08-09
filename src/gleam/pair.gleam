@@ -40,7 +40,7 @@ pub fn swap(pair: #(a, b)) -> #(b, a) {
 /// ## Examples
 ///
 ///    > #(1, 2) |> map_first(fn(n) { n * 2 })
-///    2
+///    #(2, 2)
 ///
 pub fn map_first(of pair: #(a, b), with fun: fn(a) -> c) -> #(c, b) {
   let #(a, b) = pair
@@ -53,7 +53,7 @@ pub fn map_first(of pair: #(a, b), with fun: fn(a) -> c) -> #(c, b) {
 /// ## Examples
 ///
 ///    > #(1, 2) |> map_second(fn(n) { n * 2 })
-///    4
+///    #(1, 4)
 ///
 pub fn map_second(of pair: #(a, b), with fun: fn(b) -> c) -> #(a, c) {
   let #(a, b) = pair

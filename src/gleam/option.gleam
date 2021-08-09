@@ -88,7 +88,7 @@ pub fn to_result(option: Option(a), e) -> Result(a, e) {
 ///
 ///    > from_result(Ok(1))
 ///    Some(1)
-///    > from_result(Error"some_error"))
+///    > from_result(Error("some_error"))
 ///    None
 ///
 pub fn from_result(result: Result(a, e)) -> Option(a) {

@@ -188,13 +188,13 @@ pub fn pop_front(from queue: Queue(a)) -> Result(#(a, Queue(a)), Nil) {
 ///
 /// ## Examples
 ///
-///    > reverse(from_list([]))
+///    > [] |> from_list |> reverse |> to_list
 ///    []
 ///
-///    > reverse(from_list([1]))
+///    > [1] |> from_list |> reverse |> to_list
 ///    [1]
 ///
-///    > reverse(from_list([1, 2]))
+///    > [1, 2] |> from_list |> reverse |> to_list
 ///    [2, 1]
 ///
 pub fn reverse(queue: Queue(a)) -> Queue(a) {
