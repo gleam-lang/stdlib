@@ -99,7 +99,7 @@ if erlang {
 }
 
 if javascript {
-  pub fn do_reverse(list) {
+  fn do_reverse(list) {
     do_reverse_acc(list, [])
   }
 
@@ -1185,10 +1185,10 @@ pub fn pop_map(
 /// ## Examples
 ///
 ///    > key_pop([#("a", 0), #("b", 1)], "a")
-///    Ok(#(0, [#("b", 1)])
+///    Ok(#(0, [#("b", 1)]))
 ///
 ///    > key_pop([#("a", 0), #("b", 1)], "b")
-///    Ok(#(1, [#("a", 0)])
+///    Ok(#(1, [#("a", 0)]))
 ///
 ///    > key_pop([#("a", 0), #("b", 1)], "c")
 ///    Error(Nil)
@@ -1331,7 +1331,7 @@ pub fn window_by_2(l: List(a)) -> List(#(a, a)) {
 ///
 /// ## Examples
 ///
-///    > drop_while([1, 2, 3, 4], fun (x) { x < 3 })
+///    > drop_while([1, 2, 3, 4], fn (x) { x < 3 })
 ///    [3, 4]
 ///
 pub fn drop_while(
@@ -1367,7 +1367,7 @@ fn do_take_while(
 ///
 /// ## Examples
 ///
-///    > take_while([1, 2, 3, 2, 4], fun (x) { x < 3 })
+///    > take_while([1, 2, 3, 2, 4], fn (x) { x < 3 })
 ///    [1, 2]
 ///
 pub fn take_while(
@@ -1446,10 +1446,10 @@ fn do_sized_chunk(
 ///
 /// ## Examples
 ///
-///    > [1, 2, 3, 4, 5, 6] |> chunk(into: 2)
+///    > [1, 2, 3, 4, 5, 6] |> sized_chunk(into: 2)
 ///    [[1, 2], [3, 4], [5, 6]]
 ///
-///    > [1, 2, 3, 4, 5, 6, 7, 8] |> chunk(into: 3)
+///    > [1, 2, 3, 4, 5, 6, 7, 8] |> sized_chunk(into: 3)
 ///    [[1, 2, 3], [4, 5, 6], [7, 8]]
 ///
 pub fn sized_chunk(in list: List(a), into count: Int) -> List(List(a)) {
