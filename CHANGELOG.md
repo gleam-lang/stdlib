@@ -20,6 +20,8 @@
   stdlib modules.
 - All modules have been updated to work when running on both Erlang and
   JavaScript.
+- The `dynamic` module functions now return structured error values instead of a
+  string error description.
 
 ## v0.16.0 - 2021-06-17
 
