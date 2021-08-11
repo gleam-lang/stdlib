@@ -61,13 +61,7 @@ if erlang {
   ///
   pub fn string(from: Dynamic) -> Result(String, DecodeError) {
     bit_string(from)
-    |> result.map_error(fn(error) {
-      case error {
-        DecodeError(_expected, found) ->
-          // Convert error so it doesn't say expected 'BitString'
-          DecodeError(expected: "String", found: found)
-      }
-    })
+    |> result.map_error(fn(error) { DecodeError(..error, expected: "String") })
     |> result.then(fn(raw) {
       case bit_string.to_string(raw) {
         Ok(string) -> Ok(string)
