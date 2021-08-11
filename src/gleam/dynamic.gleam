@@ -11,6 +11,7 @@ if erlang {
   /// IO with the outside world.
   pub external type Dynamic
 
+  /// Error returned when unexpected data is encountered
   pub type DecodeError {
     DecodeError(expected: String, found: String)
   }
@@ -42,7 +43,7 @@ if erlang {
   ///    True
   ///
   ///    > bit_string(from(123))
-  ///    Error(DecoderError(expected: "BitString", found: "Int"))
+  ///    Error(DecodeError(expected: "BitString", found: "Int"))
   ///
   pub external fn bit_string(from: Dynamic) -> Result(BitString, DecodeError) =
     "gleam_stdlib" "decode_bit_string"
@@ -56,7 +57,7 @@ if erlang {
   ///    Ok("Hello")
   ///
   ///    > string(from(123))
-  ///    Error(DecoderError(expected: "String", found: "Int"))
+  ///    Error(DecodeError(expected: "String", found: "Int"))
   ///
   pub fn string(from: Dynamic) -> Result(String, DecodeError) {
     bit_string(from)
@@ -84,7 +85,7 @@ if erlang {
   ///    Ok(123)
   ///
   ///    > int(from("Hello"))
-  ///    Error(DecoderError(expected: "Int", found: "String"))
+  ///    Error(DecodeError(expected: "Int", found: "String"))
   ///
   pub external fn int(from: Dynamic) -> Result(Int, DecodeError) =
     "gleam_stdlib" "decode_int"
@@ -98,7 +99,7 @@ if erlang {
   ///    Ok(2.0)
   ///
   ///    > float(from(123))
-  ///    Error(DecoderError(expected: "Float", found: "Int"))
+  ///    Error(DecodeError(expected: "Float", found: "Int"))
   ///
   pub external fn float(from: Dynamic) -> Result(Float, DecodeError) =
     "gleam_stdlib" "decode_float"
@@ -112,7 +113,7 @@ if erlang {
   ///    Ok(True)
   ///
   ///    > bool(from(123))
-  ///    Error(DecoderError(expected: "bool", found: "Int"))
+  ///    Error(DecodeError(expected: "bool", found: "Int"))
   ///
   pub external fn bool(from: Dynamic) -> Result(Bool, DecodeError) =
     "gleam_stdlib" "decode_bool"
@@ -128,7 +129,7 @@ if erlang {
   ///    True
   ///
   ///    > thunk(from(123))
-  ///    Error(DecoderError(expected: "zero arity function", found: "Int"))
+  ///    Error(DecodeError(expected: "zero arity function", found: "Int"))
   ///
   pub external fn thunk(from: Dynamic) -> Result(fn() -> Dynamic, DecodeError) =
     "gleam_stdlib" "decode_thunk"
@@ -145,7 +146,7 @@ if erlang {
   ///    Ok([from("a"), from("b"), from("c")])
   ///
   ///    > list(1)
-  ///    Error(DecoderError(expected: "Int", found: "Int"))
+  ///    Error(DecodeError(expected: "Int", found: "Int"))
   ///
   pub external fn list(from: Dynamic) -> Result(List(Dynamic), DecodeError) =
     "gleam_stdlib" "decode_list"
@@ -162,7 +163,7 @@ if erlang {
   ///    Ok(Error(from("boom")))
   ///
   ///    > result(from(123))
-  ///    Error(DecoderError(expected: "2 element tuple", found: "Int"))
+  ///    Error(DecodeError(expected: "2 element tuple", found: "Int"))
   ///
   pub external fn result(
     Dynamic,
@@ -184,7 +185,7 @@ if erlang {
   ///    Ok(Error("boom"))
   ///
   ///    > typed_result(of: from(123), ok: int, error: string)
-  ///    Error(DecoderError(expected: "2 element tuple", found: "Int"))
+  ///    Error(DecodeError(expected: "2 element tuple", found: "Int"))
   ///
   pub fn typed_result(
     of dynamic: Dynamic,
@@ -221,10 +222,10 @@ if erlang {
   ///    Ok(["a", "b", "c"])
   ///
   ///    > typed_list(from([1, 2, 3]), of: string)
-  ///    Error(DecoderError(expected: "String", found: "Int"))
+  ///    Error(DecodeError(expected: "String", found: "Int"))
   ///
   ///    > typed_list(from("ok"), of: string)
-  ///    Error(DecoderError(expected: "List", found: "String"))
+  ///    Error(DecodeError(expected: "List", found: "String"))
   ///
   pub fn typed_list(
     from dynamic: Dynamic,
@@ -256,7 +257,7 @@ if erlang {
   ///    Ok(None)
   ///
   ///    > option(from(123), string)
-  ///    Error(DecoderError(expected: "BitString", found: "Int"))
+  ///    Error(DecodeError(expected: "BitString", found: "Int"))
   ///
   pub external fn optional(
     from: Dynamic,
@@ -276,7 +277,7 @@ if erlang {
   ///    Ok(Dynamic)
   ///
   ///    > field(from(123), "Hello")
-  ///    Error(DecoderError(expected: "Map", found: "Int"))
+  ///    Error(DecodeError(expected: "Map", found: "Int"))
   ///
   pub external fn field(from: Dynamic, named: a) -> Result(Dynamic, DecodeError) =
     "gleam_stdlib" "decode_field"
@@ -290,10 +291,10 @@ if erlang {
   ///    Ok(from(1))
   ///
   ///    > element(from(#(1, 2)), 2)
-  ///    Error(DecoderError(expected: "3 element tuple", found: "2 element tuple"))
+  ///    Error(DecodeError(expected: "3 element tuple", found: "2 element tuple"))
   ///
   ///    > element(from(""), 2)
-  ///    Error(DecoderError(expected: "Tuple", found: "String"))
+  ///    Error(DecodeError(expected: "Tuple", found: "String"))
   ///
   pub external fn element(
     from: Dynamic,
@@ -312,10 +313,10 @@ if erlang {
   ///    Ok(#(from(1), from(2)))
   ///
   ///    > tuple2(from(#(1, 2, 3)))
-  ///    Error(DecoderError(expected: "2 element tuple", found: "3 element tuple"))
+  ///    Error(DecodeError(expected: "2 element tuple", found: "3 element tuple"))
   ///
   ///    > tuple2(from(""))
-  ///    Error(DecoderError(expected: "2 element tuple", found: "String"))
+  ///    Error(DecodeError(expected: "2 element tuple", found: "String"))
   ///
   pub external fn tuple2(
     from: Dynamic,
@@ -337,10 +338,10 @@ if erlang {
   ///    Ok(#(1, 2.0))
   ///
   ///    > typed_tuple2(from(#(1, 2, 3)), int, float)
-  ///    Error(DecoderError(expected: "2 element tuple", found: "3 element tuple"))
+  ///    Error(DecodeError(expected: "2 element tuple", found: "3 element tuple"))
   ///
   ///    > typed_tuple2(from(""), int, float)
-  ///    Error(DecoderError(expected: "2 element tuple", found: "String"))
+  ///    Error(DecodeError(expected: "2 element tuple", found: "String"))
   ///
   pub fn typed_tuple2(
     from tup: Dynamic,
@@ -364,10 +365,10 @@ if erlang {
   ///    Ok(#(from(1), from(2), from(3)))
   ///
   ///    > tuple3(from(#(1, 2)))
-  ///    Error(DecoderError(expected: "3 element tuple", found: "3 element tuple"))
+  ///    Error(DecodeError(expected: "3 element tuple", found: "3 element tuple"))
   ///
   ///    > tuple3(from(""))
-  ///    Error(DecoderError(expected: "3 element tuple", found: "String"))
+  ///    Error(DecodeError(expected: "3 element tuple", found: "String"))
   ///
   pub external fn tuple3(
     from: Dynamic,
@@ -389,10 +390,10 @@ if erlang {
   ///    Ok(#(1, 2.0, "3"))
   ///
   ///    > typed_tuple3(from(#(1, 2)), int, float, string)
-  ///    Error(DecoderError(expected: "3 element tuple", found: "2 element tuple"))
+  ///    Error(DecodeError(expected: "3 element tuple", found: "2 element tuple"))
   ///
   ///    > typed_tuple3(from(""), int, float, string)
-  ///    Error(DecoderError(expected: "3 element tuple", found: "String"))
+  ///    Error(DecodeError(expected: "3 element tuple", found: "String"))
   ///
   pub fn typed_tuple3(
     from tup: Dynamic,
@@ -418,10 +419,10 @@ if erlang {
   ///    Ok(#(from(1), from(2), from(3), from(4)))
   ///
   ///    > tuple4(from(#(1, 2)))
-  ///    Error(DecoderError(expected: "4 element tuple", found: "2 element tuple"))
+  ///    Error(DecodeError(expected: "4 element tuple", found: "2 element tuple"))
   ///
   ///    > tuple4(from(""))
-  ///    Error(DecoderError(expected: "4 element tuple", found: "String"))
+  ///    Error(DecodeError(expected: "4 element tuple", found: "String"))
   ///
   pub external fn tuple4(
     from: Dynamic,
@@ -444,10 +445,10 @@ if erlang {
   ///
   ///    > typed_tuple4(from(#(1, 2)), int, float, string, int)
   ///    Error("Expected a 4 element tuple, found a 2 element tuple")
-  ///    Error(DecoderError(expected: "4 element tuple", found: "2 element tuple"))
+  ///    Error(DecodeError(expected: "4 element tuple", found: "2 element tuple"))
   ///
   ///    > typed_tuple4(from(""), int, float, string, int)
-  ///    Error(DecoderError(expected: "4 element tuple", found: "String"))
+  ///    Error(DecodeError(expected: "4 element tuple", found: "String"))
   ///
   pub fn typed_tuple4(
     from tup: Dynamic,
@@ -475,10 +476,10 @@ if erlang {
   ///    Ok(#(from(1), from(2), from(3), from(4), from(5)))
   ///
   ///    > tuple5(from(#(1, 2)))
-  ///    Error(DecoderError(expected: "5 element tuple", found: "2 element tuple"))
+  ///    Error(DecodeError(expected: "5 element tuple", found: "2 element tuple"))
   ///
   ///    > tuple5(from(""))
-  ///    Error(DecoderError(expected: "5 element tuple", found: "String"))
+  ///    Error(DecodeError(expected: "5 element tuple", found: "String"))
   ///
   pub external fn tuple5(
     from: Dynamic,
@@ -500,10 +501,10 @@ if erlang {
   ///    Ok(#(1, 2.0, "3", 4, 5))
   ///
   ///    > typed_tuple5(from(#(1, 2)), int, float, string, int, int)
-  ///    Error(DecoderError(expected: "5 element tuple", found: "2 element tuple"))
+  ///    Error(DecodeError(expected: "5 element tuple", found: "2 element tuple"))
   ///
   ///    > typed_tuple5(from(""), int, float, string, int, int)
-  ///    Error(DecoderError(expected: "5 element tuple", found: "String"))
+  ///    Error(DecodeError(expected: "5 element tuple", found: "String"))
   ///
   pub fn typed_tuple5(
     from tup: Dynamic,
@@ -533,10 +534,10 @@ if erlang {
   ///    Ok(#(from(1), from(2), from(3), from(4), from(5), from(6)))
   ///
   ///    > tuple6(from(#(1, 2)))
-  ///    Error(DecoderError(expected: "6 element tuple", found: "2 element tuple"))
+  ///    Error(DecodeError(expected: "6 element tuple", found: "2 element tuple"))
   ///
   ///    > tuple6(from(""))
-  ///    Error(DecoderError(expected: "6 element tuple", found: "String"))
+  ///    Error(DecodeError(expected: "6 element tuple", found: "String"))
   ///
   pub external fn tuple6(
     from: Dynamic,
@@ -561,10 +562,10 @@ if erlang {
   ///    Ok(#(1, 2.0, "3", 4, 5, 6))
   ///
   ///    > typed_tuple6(from(#(1, 2)), int, float, string, int, int, int)
-  ///    Error(DecoderError(expected: "6 element tuple", found: "2 element tuple"))
+  ///    Error(DecodeError(expected: "6 element tuple", found: "2 element tuple"))
   ///
   ///    > typed_tuple6(from(""), int, float, string, int, int, int)
-  ///    Error(DecoderError(expected: "6 element tuple", found: "String"))
+  ///    Error(DecodeError(expected: "6 element tuple", found: "String"))
   ///
   pub fn typed_tuple6(
     from tup: Dynamic,
@@ -594,10 +595,10 @@ if erlang {
   ///    Ok(map.new())
   ///
   ///    > map(from(1))
-  ///    Error(DecoderError(expected: "Map", found: "Int"))
+  ///    Error(DecodeError(expected: "Map", found: "Int"))
   ///
   ///    > map(from(""))
-  ///    Error(DecoderError(expected: "Map", found: "String"))
+  ///    Error(DecodeError(expected: "Map", found: "String"))
   ///
   pub external fn map(
     from: Dynamic,
@@ -621,7 +622,7 @@ if erlang {
   ///    Ok("a bool")
   ///
   ///    > bool_or_string(from(1))
-  ///    Error(DecoderError(expected: "unknown", found: "unknown"))
+  ///    Error(DecodeError(expected: "unknown", found: "unknown"))
   ///
   pub fn any(
     from data: Dynamic,
