@@ -1,6 +1,8 @@
 import gleam/string
 import gleam/should
 import gleam/order
+import gleam/io
+import gleam/bit_string
 
 pub fn length_test() {
   string.length("ß↑e̊")
@@ -349,9 +351,7 @@ pub fn utf_codepoint_test() {
   |> should.be_error
 }
 
-if erlang {
-  pub fn bit_string_utf_codepoint_test() {
-    assert Ok(snake) = string.utf_codepoint(128013)
-    should.equal(<<snake:utf8_codepoint>>, <<"🐍":utf8>>)
-  }
+pub fn bit_string_utf_codepoint_test() {
+  assert Ok(snake) = string.utf_codepoint(128013)
+  should.equal(<<snake:utf8_codepoint>>, <<"🐍":utf8>>)
 }
