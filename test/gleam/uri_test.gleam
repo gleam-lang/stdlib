@@ -114,6 +114,10 @@ pub fn host_to_string_test() {
   uri.Uri(None, None, Some("example.com"), None, "noslash", None, None)
   |> uri.to_string
   |> should.equal("//example.com/noslash")
+
+  uri.Uri(None, None, Some(""), None, "", None, None)
+  |> uri.to_string
+  |> should.equal("//")
 }
 
 pub fn port_to_string_test() {

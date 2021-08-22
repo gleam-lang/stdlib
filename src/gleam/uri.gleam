@@ -15,7 +15,7 @@ if erlang {
   import gleam/list
   import gleam/result
   import gleam/dynamic.{Dynamic}
-  import gleam/map.{Map}
+  import gleam/map
   import gleam/function
   import gleam/pair
 }
@@ -221,9 +221,6 @@ if erlang {
   pub fn path_segments(path: String) -> List(String) {
     remove_dot_segments(string.split(path, "/"))
   }
-
-  external fn erl_to_string(Map(UriKey, Dynamic)) -> Dynamic =
-    "uri_string" "recompose"
 }
 
 /// Encodes a `Uri` value as a URI string.
@@ -240,12 +237,10 @@ if erlang {
 /// ```
 ///
 pub fn to_string(uri: Uri) -> String {
-  // TODO: query
-  // TODO: fragment
   let parts = []
   let parts = [uri.path, ..parts]
   let parts = case uri.host, string.starts_with(uri.path, "/") {
-    Some(_), False -> ["/", ..parts]
+    Some(host), False if host != "" -> ["/", ..parts]
     _, _ -> parts
   }
   let parts = case uri.host, uri.port {
