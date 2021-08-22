@@ -1,9 +1,10 @@
+import gleam/uri
+import gleam/should
+import gleam/option.{None, Some}
+
 if erlang {
-  import gleam/uri
-  import gleam/should
   import gleam/string
   import gleam/list
-  import gleam/option.{None, Some}
 
   pub fn full_parse_test() {
     assert Ok(parsed) =
@@ -59,12 +60,85 @@ if erlang {
       "https://foo:bar@example.com:1234/path?query=true#fragment",
     )
   }
+}
 
-  pub fn path_only_uri_to_string_test() {
-    let test_uri = uri.Uri(None, None, None, None, "/", None, None)
-    should.equal(uri.to_string(test_uri), "/")
-  }
+pub fn path_only_uri_to_string_test() {
+  uri.Uri(None, None, None, None, "/", None, None)
+  |> uri.to_string
+  |> should.equal("/")
 
+  uri.Uri(None, None, None, None, "/teapot", None, None)
+  |> uri.to_string
+  |> should.equal("/teapot")
+
+  uri.Uri(None, Some("user"), None, None, "/teapot", None, None)
+  |> uri.to_string
+  |> should.equal("/teapot")
+
+  uri.Uri(None, None, None, None, "", None, None)
+  |> uri.to_string
+  |> should.equal("")
+}
+
+pub fn scheme_to_string_test() {
+  uri.Uri(Some("ftp"), None, None, None, "thing.txt", None, None)
+  |> uri.to_string
+  |> should.equal("ftp:thing.txt")
+
+  uri.Uri(Some("ftp"), None, None, None, "", None, None)
+  |> uri.to_string
+  |> should.equal("ftp:")
+
+  uri.Uri(Some("ftp"), Some("ignored"), None, None, "", None, None)
+  |> uri.to_string
+  |> should.equal("ftp:")
+
+  uri.Uri(Some("https"), None, None, None, "/one/two", None, None)
+  |> uri.to_string
+  |> should.equal("https:/one/two")
+}
+
+pub fn host_to_string_test() {
+  uri.Uri(Some("ftp"), None, Some("example.com"), None, "", None, None)
+  |> uri.to_string
+  |> should.equal("ftp://example.com/")
+
+  uri.Uri(None, None, Some("example.com"), None, "", None, None)
+  |> uri.to_string
+  |> should.equal("//example.com/")
+
+  uri.Uri(None, None, Some("example.com"), None, "/slash", None, None)
+  |> uri.to_string
+  |> should.equal("//example.com/slash")
+
+  uri.Uri(None, None, Some("example.com"), None, "noslash", None, None)
+  |> uri.to_string
+  |> should.equal("//example.com/noslash")
+}
+
+pub fn port_to_string_test() {
+  uri.Uri(Some("ftp"), None, Some("example.com"), Some(80), "", None, None)
+  |> uri.to_string
+  |> should.equal("ftp://example.com:80/")
+
+  uri.Uri(None, None, Some("example.com"), Some(40), "", None, None)
+  |> uri.to_string
+  |> should.equal("//example.com:40/")
+
+  uri.Uri(None, None, Some("example.com"), Some(80), "/slash", None, None)
+  |> uri.to_string
+  |> should.equal("//example.com:80/slash")
+
+  uri.Uri(None, None, Some("example.com"), Some(81), "noslash", None, None)
+  |> uri.to_string
+  |> should.equal("//example.com:81/noslash")
+
+  uri.Uri(None, None, None, Some(81), "noslash", None, None)
+  |> uri.to_string
+  |> should.equal("noslash")
+}
+
+if erlang {
   pub fn parse_query_string_test() {
     assert Ok(parsed) = uri.parse_query("foo+bar=1&city=%C3%B6rebro")
     should.equal(parsed, [#("foo bar", "1"), #("city", "örebro")])
@@ -190,15 +264,15 @@ if erlang {
   pub fn origin_test() {
     assert Ok(parsed) = uri.parse("http://example.test/path?foo#bar")
     uri.origin(parsed)
-    |> should.equal(Ok("http://example.test"))
+    |> should.equal(Ok("http://example.test/"))
 
     assert Ok(parsed) = uri.parse("http://example.test:8080")
     uri.origin(parsed)
-    |> should.equal(Ok("http://example.test:8080"))
+    |> should.equal(Ok("http://example.test:8080/"))
 
     assert Ok(parsed) = uri.parse("https://example.test")
     uri.origin(parsed)
-    |> should.equal(Ok("https://example.test"))
+    |> should.equal(Ok("https://example.test/"))
 
     assert Ok(parsed) = uri.parse("http:///path")
     uri.origin(parsed)

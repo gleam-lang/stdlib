@@ -7,31 +7,35 @@
 //// Query encoding (Form encoding) is defined in the w3c specification.
 //// https://www.w3.org/TR/html52/sec-forms.html#urlencoded-form-data
 
+import gleam/option.{None, Option, Some}
+import gleam/string
+import gleam/int
+
 if erlang {
   import gleam/list
   import gleam/result
-  import gleam/option.{None, Option, Some}
-  import gleam/string
   import gleam/dynamic.{Dynamic}
   import gleam/map.{Map}
   import gleam/function
   import gleam/pair
+}
 
-  /// Type representing holding the parsed components of an URI.
-  /// All components of a URI are optional, except the path.
-  ///
-  pub type Uri {
-    Uri(
-      scheme: Option(String),
-      userinfo: Option(String),
-      host: Option(String),
-      port: Option(Int),
-      path: String,
-      query: Option(String),
-      fragment: Option(String),
-    )
-  }
+/// Type representing holding the parsed components of an URI.
+/// All components of a URI are optional, except the path.
+///
+pub type Uri {
+  Uri(
+    scheme: Option(String),
+    userinfo: Option(String),
+    host: Option(String),
+    port: Option(Int),
+    path: String,
+    query: Option(String),
+    fragment: Option(String),
+  )
+}
 
+if erlang {
   pub external fn erl_parse(String) -> Dynamic =
     "uri_string" "parse"
 
@@ -220,47 +224,45 @@ if erlang {
 
   external fn erl_to_string(Map(UriKey, Dynamic)) -> Dynamic =
     "uri_string" "recompose"
+}
 
-  /// Encodes a `Uri` value as a URI string.
-  ///
-  /// The opposite operation is `uri.parse`.
-  ///
-  /// ## Examples
-  ///
-  /// ```
-  /// > let uri = Uri(Some("http"), None, Some("example.com"), ...)
-  /// > to_string(uri)
-  ///
-  /// "https://example.com"
-  /// ```
-  ///
-  pub fn to_string(uri: Uri) -> String {
-    let field = fn(key: UriKey, value: Option(anything)) -> Result(
-      #(UriKey, Dynamic),
-      Nil,
-    ) {
-      case value {
-        Some(v) -> Ok(#(key, dynamic.from(v)))
-        None -> Error(Nil)
-      }
-    }
-
-    [
-      field(Scheme, uri.scheme),
-      field(Userinfo, uri.userinfo),
-      field(Host, uri.host),
-      field(Port, uri.port),
-      field(Path, option.Some(uri.path)),
-      field(Query, uri.query),
-      field(Fragment, uri.fragment),
-    ]
-    |> list.filter_map(fn(x) { x })
-    |> map.from_list
-    |> erl_to_string
-    |> dynamic.string
-    |> result.unwrap("")
+/// Encodes a `Uri` value as a URI string.
+///
+/// The opposite operation is `uri.parse`.
+///
+/// ## Examples
+///
+/// ```
+/// > let uri = Uri(Some("http"), None, Some("example.com"), ...)
+/// > to_string(uri)
+///
+/// "https://example.com"
+/// ```
+///
+pub fn to_string(uri: Uri) -> String {
+  // TODO: query
+  // TODO: fragment
+  let parts = []
+  let parts = [uri.path, ..parts]
+  let parts = case uri.host, string.starts_with(uri.path, "/") {
+    Some(_), False -> ["/", ..parts]
+    _, _ -> parts
   }
+  let parts = case uri.host, uri.port {
+    Some(_), Some(port) -> [":", int.to_string(port), ..parts]
+    _, _ -> parts
+  }
+  let parts = case uri.scheme, uri.userinfo, uri.host {
+    Some(s), Some(u), Some(h) -> [s, ":", u, "@", h, ..parts]
+    Some(s), None, Some(h) -> [s, "://", h, ..parts]
+    Some(s), Some(_), None | Some(s), None, None -> [s, ":", ..parts]
+    None, None, Some(h) -> ["//", h, ..parts]
+    None, Some(_), None | None, None, None -> parts
+  }
+  string.concat(parts)
+}
 
+if erlang {
   /// Fetches the origin of a uri
   ///
   /// Return the origin of a uri as defined in
