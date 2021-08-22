@@ -34,11 +34,10 @@ if javascript {
       True -> Nil
       _ ->
         crash(string.concat([
-          "\n",
+          "\n\t",
           stringify(a),
-          "\nshould equal \n",
+          "\n\tshould equal \n\t",
           stringify(b),
-          "\n",
         ]))
     }
   }
