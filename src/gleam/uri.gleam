@@ -237,7 +237,10 @@ if erlang {
 /// ```
 ///
 pub fn to_string(uri: Uri) -> String {
-  let parts = []
+  let parts = case uri.fragment {
+    Some(fragment) -> ["#", fragment]
+    _ -> []
+  }
   let parts = [uri.path, ..parts]
   let parts = case uri.host, string.starts_with(uri.path, "/") {
     Some(host), False if host != "" -> ["/", ..parts]

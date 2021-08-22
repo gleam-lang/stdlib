@@ -96,6 +96,10 @@ pub fn scheme_to_string_test() {
   uri.Uri(Some("https"), None, None, None, "/one/two", None, None)
   |> uri.to_string
   |> should.equal("https:/one/two")
+
+  uri.Uri(None, None, None, None, "noslash", None, Some("frag"))
+  |> uri.to_string
+  |> should.equal("noslash#frag")
 }
 
 pub fn host_to_string_test() {
@@ -118,6 +122,14 @@ pub fn host_to_string_test() {
   uri.Uri(None, None, Some(""), None, "", None, None)
   |> uri.to_string
   |> should.equal("//")
+
+  uri.Uri(None, None, Some("example.com"), None, "noslash", None, Some("ok"))
+  |> uri.to_string
+  |> should.equal("//example.com/noslash#ok")
+
+  uri.Uri(None, None, Some(""), None, "", None, Some("ok"))
+  |> uri.to_string
+  |> should.equal("//#ok")
 }
 
 pub fn port_to_string_test() {
