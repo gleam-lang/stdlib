@@ -23,6 +23,7 @@
 - The `dynamic` module functions now return structured error values instead of a
   string error description.
 - The `string` module gains the `to_option` function.
+- Fixed a bug where `io.print` could crash when printing special characters.
 
 ## v0.16.0 - 2021-06-17
 
