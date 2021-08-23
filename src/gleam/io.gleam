@@ -16,7 +16,7 @@ pub fn print(string: String) -> Nil {
 
 if erlang {
   fn do_print(string: String) -> Nil {
-    erl_print(string, [])
+    erl_print("~s", [string])
     Nil
   }
 }
