@@ -10,9 +10,9 @@
 import gleam/option.{None, Option, Some}
 import gleam/string
 import gleam/int
+import gleam/list
 
 if erlang {
-  import gleam/list
   import gleam/result
   import gleam/dynamic.{Dynamic}
   import gleam/map
@@ -181,46 +181,46 @@ if erlang {
     |> result.then(list.head)
     |> result.map(pair.second)
   }
+}
 
-  fn do_remove_dot_segments(
-    input: List(String),
-    accumulator: List(String),
-  ) -> List(String) {
-    case input {
-      [] -> list.reverse(accumulator)
-      [segment, ..rest] -> {
-        let accumulator = case segment, accumulator {
-          "", accumulator -> accumulator
-          ".", accumulator -> accumulator
-          "..", [] -> []
-          "..", [_, ..accumulator] -> accumulator
-          segment, accumulator -> [segment, ..accumulator]
-        }
-        do_remove_dot_segments(rest, accumulator)
+fn do_remove_dot_segments(
+  input: List(String),
+  accumulator: List(String),
+) -> List(String) {
+  case input {
+    [] -> list.reverse(accumulator)
+    [segment, ..rest] -> {
+      let accumulator = case segment, accumulator {
+        "", accumulator -> accumulator
+        ".", accumulator -> accumulator
+        "..", [] -> []
+        "..", [_, ..accumulator] -> accumulator
+        segment, accumulator -> [segment, ..accumulator]
       }
+      do_remove_dot_segments(rest, accumulator)
     }
   }
+}
 
-  fn remove_dot_segments(input: List(String)) -> List(String) {
-    do_remove_dot_segments(input, [])
-  }
+fn remove_dot_segments(input: List(String)) -> List(String) {
+  do_remove_dot_segments(input, [])
+}
 
-  /// Splits the path section of a URI into it's constituent segments.
-  ///
-  /// Removes empty segments and resolves dot-segments as specified in
-  /// [section 5.2](https://www.ietf.org/rfc/rfc3986.html#section-5.2) of the RFC.
-  ///
-  /// ## Examples
-  ///
-  /// ```
-  /// > path_segments("/users/1")
-  ///
-  /// ["users" ,"1"]
-  /// ```
-  ///
-  pub fn path_segments(path: String) -> List(String) {
-    remove_dot_segments(string.split(path, "/"))
-  }
+/// Splits the path section of a URI into it's constituent segments.
+///
+/// Removes empty segments and resolves dot-segments as specified in
+/// [section 5.2](https://www.ietf.org/rfc/rfc3986.html#section-5.2) of the RFC.
+///
+/// ## Examples
+///
+/// ```
+/// > path_segments("/users/1")
+///
+/// ["users" ,"1"]
+/// ```
+///
+pub fn path_segments(path: String) -> List(String) {
+  remove_dot_segments(string.split(path, "/"))
 }
 
 /// Encodes a `Uri` value as a URI string.
@@ -241,6 +241,10 @@ pub fn to_string(uri: Uri) -> String {
     Some(fragment) -> ["#", fragment]
     _ -> []
   }
+  let parts = case uri.query {
+    Some(query) -> ["?", query, ..parts]
+    _ -> parts
+  }
   let parts = [uri.path, ..parts]
   let parts = case uri.host, string.starts_with(uri.path, "/") {
     Some(host), False if host != "" -> ["/", ..parts]
@@ -251,7 +255,7 @@ pub fn to_string(uri: Uri) -> String {
     _, _ -> parts
   }
   let parts = case uri.scheme, uri.userinfo, uri.host {
-    Some(s), Some(u), Some(h) -> [s, ":", u, "@", h, ..parts]
+    Some(s), Some(u), Some(h) -> [s, "://", u, "@", h, ..parts]
     Some(s), None, Some(h) -> [s, "://", h, ..parts]
     Some(s), Some(_), None | Some(s), None, None -> [s, ":", ..parts]
     None, None, Some(h) -> ["//", h, ..parts]
@@ -260,100 +264,98 @@ pub fn to_string(uri: Uri) -> String {
   string.concat(parts)
 }
 
-if erlang {
-  /// Fetches the origin of a uri
-  ///
-  /// Return the origin of a uri as defined in
-  /// https://tools.ietf.org/html/rfc6454
-  ///
-  /// The supported uri schemes are `http` and `https`
-  /// Urls without a scheme will return Error
-  ///
-  /// ## Examples
-  ///
-  /// ```
-  /// > assert Ok(uri) = parse("http://example.com/path?foo#bar")
-  /// > origin(uri)
-  ///
-  /// Ok("http://example.com")
-  /// ```
-  ///
-  pub fn origin(uri: Uri) -> Result(String, Nil) {
-    let Uri(scheme: scheme, host: host, port: port, ..) = uri
-    case scheme {
-      Some("https") | Some("http") -> {
-        let origin = Uri(scheme, None, host, port, "", None, None)
-        Ok(to_string(origin))
-      }
-      _ -> Error(Nil)
+/// Fetches the origin of a uri
+///
+/// Return the origin of a uri as defined in
+/// https://tools.ietf.org/html/rfc6454
+///
+/// The supported uri schemes are `http` and `https`
+/// Urls without a scheme will return Error
+///
+/// ## Examples
+///
+/// ```
+/// > assert Ok(uri) = parse("http://example.com/path?foo#bar")
+/// > origin(uri)
+///
+/// Ok("http://example.com")
+/// ```
+///
+pub fn origin(uri: Uri) -> Result(String, Nil) {
+  let Uri(scheme: scheme, host: host, port: port, ..) = uri
+  case scheme {
+    Some("https") | Some("http") -> {
+      let origin = Uri(scheme, None, host, port, "", None, None)
+      Ok(to_string(origin))
     }
+    _ -> Error(Nil)
   }
+}
 
-  fn drop_last(elements: List(a)) -> List(a) {
-    list.take(from: elements, up_to: list.length(elements) - 1)
-  }
+fn drop_last(elements: List(a)) -> List(a) {
+  list.take(from: elements, up_to: list.length(elements) - 1)
+}
 
-  fn join_segments(segments: List(String)) -> String {
-    string.join(["", ..segments], "/")
-  }
+fn join_segments(segments: List(String)) -> String {
+  string.join(["", ..segments], "/")
+}
 
-  /// Resolves a uri with respect to the given base uri
-  ///
-  /// The base uri must be an absolute uri or this function will return an error.
-  /// The algorithm for merging uris is described in [RFC 3986](https://tools.ietf.org/html/rfc3986#section-5.2)
-  pub fn merge(base: Uri, relative: Uri) -> Result(Uri, Nil) {
-    case base {
-      Uri(scheme: Some(_), host: Some(_), ..) ->
-        case relative {
-          Uri(host: Some(_), ..) -> {
-            let path =
-              string.split(relative.path, "/")
-              |> remove_dot_segments()
-              |> join_segments()
-            let resolved =
-              Uri(
-                option.or(relative.scheme, base.scheme),
-                None,
-                relative.host,
-                relative.port,
-                path,
-                relative.query,
-                relative.fragment,
-              )
-            Ok(resolved)
-          }
-          Uri(scheme: None, host: None, ..) -> {
-            let #(new_path, new_query) = case relative.path {
-              "" -> #(base.path, option.or(relative.query, base.query))
-              _ -> {
-                let path_segments = case string.starts_with(relative.path, "/") {
-                  True -> string.split(relative.path, "/")
-                  False ->
-                    string.split(base.path, "/")
-                    |> drop_last()
-                    |> list.append(string.split(relative.path, "/"))
-                }
-                let path =
-                  path_segments
-                  |> remove_dot_segments()
-                  |> join_segments()
-                #(path, relative.query)
-              }
-            }
-            let resolved =
-              Uri(
-                base.scheme,
-                None,
-                base.host,
-                base.port,
-                new_path,
-                new_query,
-                relative.fragment,
-              )
-            Ok(resolved)
-          }
+/// Resolves a uri with respect to the given base uri
+///
+/// The base uri must be an absolute uri or this function will return an error.
+/// The algorithm for merging uris is described in [RFC 3986](https://tools.ietf.org/html/rfc3986#section-5.2)
+pub fn merge(base: Uri, relative: Uri) -> Result(Uri, Nil) {
+  case base {
+    Uri(scheme: Some(_), host: Some(_), ..) ->
+      case relative {
+        Uri(host: Some(_), ..) -> {
+          let path =
+            string.split(relative.path, "/")
+            |> remove_dot_segments()
+            |> join_segments()
+          let resolved =
+            Uri(
+              option.or(relative.scheme, base.scheme),
+              None,
+              relative.host,
+              relative.port,
+              path,
+              relative.query,
+              relative.fragment,
+            )
+          Ok(resolved)
         }
-      _ -> Error(Nil)
-    }
+        Uri(scheme: None, host: None, ..) -> {
+          let #(new_path, new_query) = case relative.path {
+            "" -> #(base.path, option.or(relative.query, base.query))
+            _ -> {
+              let path_segments = case string.starts_with(relative.path, "/") {
+                True -> string.split(relative.path, "/")
+                False ->
+                  string.split(base.path, "/")
+                  |> drop_last()
+                  |> list.append(string.split(relative.path, "/"))
+              }
+              let path =
+                path_segments
+                |> remove_dot_segments()
+                |> join_segments()
+              #(path, relative.query)
+            }
+          }
+          let resolved =
+            Uri(
+              base.scheme,
+              None,
+              base.host,
+              base.port,
+              new_path,
+              new_query,
+              relative.fragment,
+            )
+          Ok(resolved)
+        }
+      }
+    _ -> Error(Nil)
   }
 }

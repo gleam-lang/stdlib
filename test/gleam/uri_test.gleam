@@ -43,23 +43,23 @@ if erlang {
   pub fn error_parsing_uri_test() {
     should.equal(uri.parse("::"), Error(Nil))
   }
+}
 
-  pub fn full_uri_to_string_test() {
-    let test_uri =
-      uri.Uri(
-        Some("https"),
-        Some("foo:bar"),
-        Some("example.com"),
-        Some(1234),
-        "/path",
-        Some("query=true"),
-        Some("fragment"),
-      )
-    should.equal(
-      uri.to_string(test_uri),
-      "https://foo:bar@example.com:1234/path?query=true#fragment",
+pub fn full_uri_to_string_test() {
+  let test_uri =
+    uri.Uri(
+      Some("https"),
+      Some("foo:bar"),
+      Some("example.com"),
+      Some(1234),
+      "/path",
+      Some("query=true"),
+      Some("fragment"),
     )
-  }
+  should.equal(
+    uri.to_string(test_uri),
+    "https://foo:bar@example.com:1234/path?query=true#fragment",
+  )
 }
 
 pub fn path_only_uri_to_string_test() {
