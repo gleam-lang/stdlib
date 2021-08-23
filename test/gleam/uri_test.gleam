@@ -8,9 +8,9 @@ if erlang {
 
   pub fn full_parse_test() {
     assert Ok(parsed) =
-      uri.parse("https://foo:bar@example.com:1234/path?query=true#fragment")
+      uri.parse("https://weebl:bob@example.com:1234/path?query=true#fragment")
     should.equal(parsed.scheme, Some("https"))
-    should.equal(parsed.userinfo, Some("foo:bar"))
+    should.equal(parsed.userinfo, Some("weebl:bob"))
     should.equal(parsed.host, Some("example.com"))
     should.equal(parsed.port, Some(1234))
     should.equal(parsed.path, "/path")
@@ -49,7 +49,7 @@ pub fn full_uri_to_string_test() {
   let test_uri =
     uri.Uri(
       Some("https"),
-      Some("foo:bar"),
+      Some("weebl:bob"),
       Some("example.com"),
       Some(1234),
       "/path",
@@ -58,7 +58,7 @@ pub fn full_uri_to_string_test() {
     )
   should.equal(
     uri.to_string(test_uri),
-    "https://foo:bar@example.com:1234/path?query=true#fragment",
+    "https://weebl:bob@example.com:1234/path?query=true#fragment",
   )
 }
 
@@ -156,8 +156,8 @@ pub fn port_to_string_test() {
 
 if erlang {
   pub fn parse_query_string_test() {
-    assert Ok(parsed) = uri.parse_query("foo+bar=1&city=%C3%B6rebro")
-    should.equal(parsed, [#("foo bar", "1"), #("city", "örebro")])
+    assert Ok(parsed) = uri.parse_query("weebl+bob=1&city=%C3%B6rebro")
+    should.equal(parsed, [#("weebl bob", "1"), #("city", "örebro")])
 
     // Duplicates keys not overridden
     assert Ok(parsed) = uri.parse_query("a[]=1&a[]=2")
@@ -182,8 +182,8 @@ if erlang {
 
   pub fn query_to_string_test() {
     let query_string =
-      uri.query_to_string([#("foo bar", "1"), #("city", "örebro")])
-    should.equal(query_string, "foo+bar=1&city=%C3%B6rebro")
+      uri.query_to_string([#("weebl bob", "1"), #("city", "örebro")])
+    should.equal(query_string, "weebl+bob=1&city=%C3%B6rebro")
   }
 
   pub fn empty_query_to_string_test() {
@@ -230,7 +230,7 @@ if erlang {
   }
 
   pub fn percent_encode_consistency_test() {
-    let k = "foo bar[]"
+    let k = "weebl bob[]"
     let v = "ñaña (,:*~)"
 
     let query_string = uri.query_to_string([#(k, v)])
@@ -252,7 +252,7 @@ if erlang {
   }
 
   pub fn percent_decode_consistency_test() {
-    let k = "foo+bar[]"
+    let k = "weebl+bob[]"
     let v = "%C3%B6rebro"
     let query = string.concat([k, "=", v])
     assert Ok(parsed) = uri.parse_query(query)
@@ -265,20 +265,20 @@ if erlang {
 
   pub fn parse_segments_test() {
     should.equal(uri.path_segments("/"), [])
-    should.equal(uri.path_segments("/foo/bar"), ["foo", "bar"])
+    should.equal(uri.path_segments("/weebl/bob"), ["weebl", "bob"])
     should.equal(uri.path_segments("////"), [])
-    should.equal(uri.path_segments("/foo//bar"), ["foo", "bar"])
+    should.equal(uri.path_segments("/weebl//bob"), ["weebl", "bob"])
 
     should.equal(uri.path_segments("/."), [])
-    should.equal(uri.path_segments("/.foo"), [".foo"])
+    should.equal(uri.path_segments("/.weebl"), [".weebl"])
 
-    should.equal(uri.path_segments("/../bar"), ["bar"])
-    should.equal(uri.path_segments("../bar"), ["bar"])
-    should.equal(uri.path_segments("/foo/../bar"), ["bar"])
+    should.equal(uri.path_segments("/../bob"), ["bob"])
+    should.equal(uri.path_segments("../bob"), ["bob"])
+    should.equal(uri.path_segments("/weebl/../bob"), ["bob"])
   }
 
   pub fn origin_test() {
-    assert Ok(parsed) = uri.parse("http://example.test/path?foo#bar")
+    assert Ok(parsed) = uri.parse("http://example.test/path?weebl#bob")
     uri.origin(parsed)
     |> should.equal(Ok("http://example.test/"))
 
@@ -313,40 +313,40 @@ if erlang {
     uri.merge(a, b)
     |> should.equal(Error(Nil))
 
-    assert Ok(a) = uri.parse("http://google.com/foo")
+    assert Ok(a) = uri.parse("http://google.com/weebl")
     assert Ok(b) = uri.parse("http://example.com/baz")
     uri.merge(a, b)
     |> should.equal(uri.parse("http://example.com/baz"))
 
-    assert Ok(a) = uri.parse("http://google.com/foo")
-    assert Ok(b) = uri.parse("http://example.com/.././bar/../../baz")
+    assert Ok(a) = uri.parse("http://google.com/weebl")
+    assert Ok(b) = uri.parse("http://example.com/.././bob/../../baz")
     uri.merge(a, b)
     |> should.equal(uri.parse("http://example.com/baz"))
 
-    assert Ok(a) = uri.parse("http://google.com/foo")
+    assert Ok(a) = uri.parse("http://google.com/weebl")
     assert Ok(b) = uri.parse("//example.com/baz")
     uri.merge(a, b)
     |> should.equal(uri.parse("http://example.com/baz"))
 
-    assert Ok(a) = uri.parse("http://google.com/foo")
-    assert Ok(b) = uri.parse("//example.com/.././bar/../../../baz")
+    assert Ok(a) = uri.parse("http://google.com/weebl")
+    assert Ok(b) = uri.parse("//example.com/.././bob/../../../baz")
     uri.merge(a, b)
     |> should.equal(uri.parse("http://example.com/baz"))
 
-    assert Ok(a) = uri.parse("http://example.com/foo/bar")
+    assert Ok(a) = uri.parse("http://example.com/weebl/bob")
     assert Ok(b) = uri.parse("/baz")
     uri.merge(a, b)
     |> should.equal(uri.parse("http://example.com/baz"))
 
-    assert Ok(a) = uri.parse("http://example.com/foo/bar")
+    assert Ok(a) = uri.parse("http://example.com/weebl/bob")
     assert Ok(b) = uri.parse("baz")
     uri.merge(a, b)
-    |> should.equal(uri.parse("http://example.com/foo/baz"))
+    |> should.equal(uri.parse("http://example.com/weebl/baz"))
 
-    assert Ok(a) = uri.parse("http://example.com/foo/")
+    assert Ok(a) = uri.parse("http://example.com/weebl/")
     assert Ok(b) = uri.parse("baz")
     uri.merge(a, b)
-    |> should.equal(uri.parse("http://example.com/foo/baz"))
+    |> should.equal(uri.parse("http://example.com/weebl/baz"))
 
     assert Ok(a) = uri.parse("http://example.com")
     assert Ok(b) = uri.parse("baz")
@@ -354,33 +354,33 @@ if erlang {
     |> should.equal(uri.parse("http://example.com/baz"))
 
     assert Ok(a) = uri.parse("http://example.com")
-    assert Ok(b) = uri.parse("/.././bar/../../../baz")
+    assert Ok(b) = uri.parse("/.././bob/../../../baz")
     uri.merge(a, b)
     |> should.equal(uri.parse("http://example.com/baz"))
 
-    assert Ok(a) = uri.parse("http://example.com/foo/bar")
+    assert Ok(a) = uri.parse("http://example.com/weebl/bob")
     assert Ok(b) = uri.parse("")
     uri.merge(a, b)
-    |> should.equal(uri.parse("http://example.com/foo/bar"))
+    |> should.equal(uri.parse("http://example.com/weebl/bob"))
 
-    assert Ok(a) = uri.parse("http://example.com/foo/bar")
+    assert Ok(a) = uri.parse("http://example.com/weebl/bob")
     assert Ok(b) = uri.parse("#fragment")
     uri.merge(a, b)
-    |> should.equal(uri.parse("http://example.com/foo/bar#fragment"))
+    |> should.equal(uri.parse("http://example.com/weebl/bob#fragment"))
 
-    assert Ok(a) = uri.parse("http://example.com/foo/bar")
+    assert Ok(a) = uri.parse("http://example.com/weebl/bob")
     assert Ok(b) = uri.parse("?query")
     uri.merge(a, b)
-    |> should.equal(uri.parse("http://example.com/foo/bar?query"))
+    |> should.equal(uri.parse("http://example.com/weebl/bob?query"))
 
-    assert Ok(a) = uri.parse("http://example.com/foo/bar?query1")
+    assert Ok(a) = uri.parse("http://example.com/weebl/bob?query1")
     assert Ok(b) = uri.parse("?query2")
     uri.merge(a, b)
-    |> should.equal(uri.parse("http://example.com/foo/bar?query2"))
+    |> should.equal(uri.parse("http://example.com/weebl/bob?query2"))
 
-    assert Ok(a) = uri.parse("http://example.com/foo/bar?query")
+    assert Ok(a) = uri.parse("http://example.com/weebl/bob?query")
     assert Ok(b) = uri.parse("")
     uri.merge(a, b)
-    |> should.equal(uri.parse("http://example.com/foo/bar?query"))
+    |> should.equal(uri.parse("http://example.com/weebl/bob?query"))
   }
 }
