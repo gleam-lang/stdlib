@@ -6,6 +6,7 @@ import gleam/iterator.{Iterator}
 import gleam/list
 import gleam/order
 import gleam/result
+import gleam/option.{None, Option, Some}
 
 if erlang {
   import gleam/dynamic.{Dynamic}
@@ -662,5 +663,26 @@ pub fn utf_codepoint(value: Int) -> Result(UtfCodepoint, Nil) {
     65534 | 65535 -> Error(Nil)
     i if i >= 55296 && i <= 57343 -> Error(Nil)
     i -> Ok(unsafe_int_to_utf_codepoint(i))
+  }
+}
+
+/// Convert a string into an optional string where an empty string becomes `None`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > to_option("")
+/// None
+/// ```
+///
+/// ```gleam
+/// > to_option("")
+/// None
+/// ```
+///
+pub fn to_option(s: String) -> Option(String) {
+  case s {
+    "" -> None
+    _ -> Some(s)
   }
 }

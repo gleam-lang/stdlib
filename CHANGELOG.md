@@ -22,6 +22,7 @@
   JavaScript.
 - The `dynamic` module functions now return structured error values instead of a
   string error description.
+- The `string` module gains the `to_option` function.
 
 ## v0.16.0 - 2021-06-17
 

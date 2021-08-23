@@ -1,6 +1,7 @@
 import gleam/string
 import gleam/should
 import gleam/order
+import gleam/option.{None, Some}
 import gleam/io
 import gleam/bit_string
 
@@ -354,4 +355,14 @@ pub fn utf_codepoint_test() {
 pub fn bit_string_utf_codepoint_test() {
   assert Ok(snake) = string.utf_codepoint(128013)
   should.equal(<<snake:utf8_codepoint>>, <<"🐍":utf8>>)
+}
+
+pub fn to_option_test() {
+  ""
+  |> string.to_option
+  |> should.equal(None)
+
+  "ok"
+  |> string.to_option
+  |> should.equal(Some("ok"))
 }
