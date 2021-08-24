@@ -1,19 +1,9 @@
+import { Ok, Error, List } from "./gleam.js";
+
 const Nil = undefined;
 
 function to_list(array) {
-  let list = [];
-  for (let item of array.reverse()) {
-    list = [item, list];
-  }
-  return list;
-}
-
-function gleam_ok(x) {
-  return { type: "Ok", 0: x };
-}
-
-function gleam_error(x) {
-  return { type: "Error", 0: x };
+  return List.fromArray(array);
 }
 
 export function identity(x) {
@@ -22,17 +12,17 @@ export function identity(x) {
 
 export function parse_int(value) {
   if (/^[-+]?(\d+)$/.test(value)) {
-    return gleam_ok(parseInt(value));
+    return new Ok(parseInt(value));
   } else {
-    return gleam_error(Nil);
+    return new Error(Nil);
   }
 }
 
 export function parse_float(value) {
   if (/^[-+]?(\d+)\.(\d+)$/.test(value)) {
-    return gleam_ok(parseFloat(value));
+    return new Ok(parseFloat(value));
   } else {
-    return gleam_error(Nil);
+    return new Error(Nil);
   }
 }
 
@@ -89,9 +79,9 @@ export function pop_grapheme(string) {
     first = string.match(/./u)?.[0];
   }
   if (first) {
-    return gleam_ok([first, string.slice(first.length)]);
+    return new Ok([first, string.slice(first.length)]);
   } else {
-    return gleam_error(Nil);
+    return new Error(Nil);
   }
 }
 
@@ -120,7 +110,7 @@ export function split(xs, pattern) {
 }
 
 export function join(xs) {
-  return xs.flat(Infinity).join("");
+  return xs.toArray().join("");
 }
 
 export function byte_size(data) {
@@ -160,9 +150,9 @@ export function split_once(haystack, needle) {
   if (index >= 0) {
     let before = haystack.slice(0, index);
     let after = haystack.slice(index + needle.length);
-    return gleam_ok([before, after]);
+    return new Ok([before, after]);
   } else {
-    return gleam_error(Nil);
+    return new Error(Nil);
   }
 }
 
@@ -226,16 +216,14 @@ export function stringify(data) {
 }
 
 export function crash(message) {
-  throw new Error(message);
+  throw new globalThis.Error(message);
 }
 
 export function bit_string_to_string(bit_string) {
   try {
-    return gleam_ok(
-      new TextDecoder("utf-8", { fatal: true }).decode(bit_string)
-    );
+    return new Ok(new TextDecoder("utf-8", { fatal: true }).decode(bit_string));
   } catch (_error) {
-    return gleam_error(undefined);
+    return new Error(undefined);
   }
 }
 
@@ -270,6 +258,6 @@ export function power(base, exponent) {
 export function bit_string_slice(bits, position, length) {
   let start = Math.min(position, position + length);
   let end = Math.max(position, position + length);
-  if (start < 0 || end > bits.byteLength) return gleam_error(Nil);
-  return gleam_ok(new Uint8Array(bits.buffer, start, Math.abs(length)));
+  if (start < 0 || end > bits.byteLength) return new Error(Nil);
+  return new Ok(new Uint8Array(bits.buffer, start, Math.abs(length)));
 }

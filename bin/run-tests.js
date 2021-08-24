@@ -11,7 +11,6 @@ async function main() {
   for await (let entry of await opendir(dir)) {
     if (!entry.name.endsWith("_test.js")) continue;
     let path = "../" + dir + entry.name;
-    // process.stdout.write("\ngleam/" + entry.name.slice(0, -3) + ":\n  ");
     let module = await import(path);
 
     for (let fnName of Object.keys(module)) {
@@ -21,7 +20,8 @@ async function main() {
         process.stdout.write(`\u001b[${32}m.\u001b[${0}m`);
         passes++;
       } catch (error) {
-        process.stdout.write(`\n❌ ${fnName}: ${error}\n`);
+        let moduleName = "\ngleam/" + entry.name.slice(0, -3);
+        process.stdout.write(`\n❌ ${moduleName}.${fnName}: ${error}\n`);
         failures++;
       }
     }
