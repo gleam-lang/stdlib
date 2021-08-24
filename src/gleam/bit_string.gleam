@@ -62,7 +62,7 @@ pub fn slice(
 }
 
 if erlang {
-  pub external fn do_slice(
+  external fn do_slice(
     string: BitString,
     position: Int,
     length: Int,
@@ -71,7 +71,7 @@ if erlang {
 }
 
 if javascript {
-  pub external fn do_slice(
+  external fn do_slice(
     string: BitString,
     position: Int,
     length: Int,
