@@ -7,7 +7,11 @@ import {
   toBitString,
   stringBits,
 } from "./gleam.js";
-import { CompileError as RegexCompileError } from "./gleam/regex.js";
+import {
+  CompileError as RegexCompileError,
+  Match as RegexMatch,
+} from "./gleam/regex.js";
+import { Some, None } from "./gleam/option.js";
 
 const Nil = undefined;
 
@@ -236,13 +240,21 @@ export function regex_check(regex, string) {
 
 export function compile_regex(pattern, options) {
   try {
-    let flags = "";
+    let flags = "gu";
     if (options.case_insensitive) flags += "i";
     if (options.multi_line) flags += "m";
     return new Ok(new RegExp(pattern, flags));
   } catch (error) {
-    return new Error(
-      new RegexCompileError(error.message, error.columnNumber || 0)
-    );
+    let number = (error.columnNumber || 0) | 0;
+    return new Error(new RegexCompileError(error.message, number));
   }
+}
+
+export function regex_scan(regex, string) {
+  let matches = Array.from(string.matchAll(regex)).map((match) => {
+    let content = match.shift();
+    let submatches = match.map((x) => (x ? new Some(x) : new None()));
+    return new RegexMatch(content, List.fromArray(submatches));
+  });
+  return List.fromArray(matches);
 }

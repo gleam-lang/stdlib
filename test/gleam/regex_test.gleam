@@ -46,33 +46,23 @@ pub fn split_test() {
   |> should.equal(["foo", "32", "4", "9", "0"])
 }
 
-if erlang {
-  pub fn scan_test() {
-    assert Ok(re) = regex.from_string("Gl\\w+")
+pub fn scan_test() {
+  assert Ok(re) = regex.from_string("Gl\\w+")
 
-    regex.scan(re, "!Gleam")
-    |> should.equal([Match(content: "Gleam", byte_index: 1, submatches: [])])
+  regex.scan(re, "!Gleam")
+  |> should.equal([Match(content: "Gleam", submatches: [])])
 
-    regex.scan(re, "हGleam")
-    |> should.equal([Match(content: "Gleam", byte_index: 3, submatches: [])])
+  regex.scan(re, "हGleam")
+  |> should.equal([Match(content: "Gleam", submatches: [])])
 
-    regex.scan(re, "𐍈Gleam")
-    |> should.equal([Match(content: "Gleam", byte_index: 4, submatches: [])])
+  regex.scan(re, "𐍈Gleam")
+  |> should.equal([Match(content: "Gleam", submatches: [])])
 
-    assert Ok(re) = regex.from_string("[oi]n a(.?) (\\w+)")
+  assert Ok(re) = regex.from_string("[oi]n a(.?) (\\w+)")
 
-    regex.scan(re, "I am on a boat in a lake.")
-    |> should.equal([
-      Match(
-        content: "on a boat",
-        byte_index: 5,
-        submatches: [None, Some("boat")],
-      ),
-      Match(
-        content: "in a lake",
-        byte_index: 15,
-        submatches: [None, Some("lake")],
-      ),
-    ])
-  }
+  regex.scan(re, "I am on a boat in a lake.")
+  |> should.equal([
+    Match(content: "on a boat", submatches: [None, Some("boat")]),
+    Match(content: "in a lake", submatches: [None, Some("lake")]),
+  ])
 }
