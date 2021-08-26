@@ -1,10 +1,13 @@
-import { Ok, Error, List } from "./gleam.js";
+import {
+  Ok,
+  Error,
+  List,
+  BitString,
+  toBitString,
+  stringBits,
+} from "./gleam.js";
 
 const Nil = undefined;
-
-function to_list(array) {
-  return List.fromArray(array);
-}
 
 export function identity(x) {
   return x;
@@ -106,7 +109,7 @@ export function equal(a, b) {
 }
 
 export function split(xs, pattern) {
-  return to_list(xs.split(pattern));
+  return List.fromArray(xs.split(pattern));
 }
 
 export function join(xs) {
@@ -114,12 +117,8 @@ export function join(xs) {
 }
 
 export function byte_size(data) {
-  if (data instanceof Uint8Array) {
-    return data.byteLength;
-  } else if (typeof Blob === "function") {
-    return new Blob([data]).size;
-  } else if (typeof Buffer === "function") {
-    return Buffer.byteLength(data);
+  if (data instanceof BitString) {
+    return data.size();
   } else {
     return data.length;
   }
@@ -169,50 +168,19 @@ export function trim_right(string) {
 }
 
 export function bit_string_from_string(string) {
-  return new TextEncoder().encode(string);
+  return new toBitString([stringBits(string)]);
 }
 
 export function bit_string_append(first, second) {
-  let array = new Uint8Array(first.byteLength + second.byteLength);
-  array.set(first, 0);
-  array.set(second, first.byteLength);
-  return array;
-}
-
-function reduce_list(list, acc, f) {
-  let [current, next] = list;
-  while (next) {
-    acc = f(acc, current);
-    [current, next] = next;
-  }
-  return acc;
+  return new toBitString([first.buffer, second.buffer]);
 }
 
 export function bit_string_concat(bit_strings) {
-  let size = reduce_list(bit_strings, 0, (size, b) => b.byteLength + size);
-  let array = new Uint8Array(size);
-  reduce_list(bit_strings, 0, (index, bit_string) => {
-    array.set(bit_string, index);
-    return index + bit_string.byteLength;
-  });
-  return array;
+  return toBitString(bit_strings.toArray().map((b) => b.buffer));
 }
 
 export function log(term) {
   console.log(term);
-}
-
-export function stringify(data) {
-  let replacer = (_key, value) => {
-    if (typeof value === "bigint") return value.toString() + "n";
-    if (typeof value === "undefined") return null;
-    return value;
-  };
-  try {
-    return JSON.stringify(data, replacer);
-  } catch (_error) {
-    return "//reference-cycle";
-  }
 }
 
 export function crash(message) {
@@ -221,7 +189,8 @@ export function crash(message) {
 
 export function bit_string_to_string(bit_string) {
   try {
-    return new Ok(new TextDecoder("utf-8", { fatal: true }).decode(bit_string));
+    let decoder = new TextDecoder("utf-8", { fatal: true });
+    return new Ok(decoder.decode(bit_string.buffer));
   } catch (_error) {
     return new Error(undefined);
   }
@@ -258,6 +227,7 @@ export function power(base, exponent) {
 export function bit_string_slice(bits, position, length) {
   let start = Math.min(position, position + length);
   let end = Math.max(position, position + length);
-  if (start < 0 || end > bits.byteLength) return new Error(Nil);
-  return new Ok(new Uint8Array(bits.buffer, start, Math.abs(length)));
+  if (start < 0 || end > bits.size()) return new Error(Nil);
+  let buffer = new Uint8Array(bits.buffer.buffer, start, Math.abs(length));
+  return new Ok(new BitString(buffer));
 }
