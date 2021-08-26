@@ -10,7 +10,7 @@
          decode_tuple4/1, decode_tuple5/1, decode_tuple6/1, decode_map/1,
          bit_string_int_to_u32/1, bit_string_int_from_u32/1, decode_result/1,
          bit_string_slice/3, decode_bit_string/1, compile_regex/2,
-         regex_match/2, regex_split/2, regex_scan/2, base_decode64/1,
+         regex_check/2, regex_split/2, regex_scan/2, base_decode64/1,
          wrap_list/1, bit_string_concat/1]).
 
 should_equal(Actual, Expected) -> 
@@ -218,8 +218,8 @@ regex_submatches(String, {S, L}) ->
     end.
 
 regex_matches(String, [{S, L} | Submatches]) ->
-    {match, binary:part(String, S, L), S,
-     lists:map(fun(X) -> regex_submatches(String, X) end, Submatches)}.
+    Submatches1 = lists:map(fun(X) -> regex_submatches(String, X) end, Submatches),
+    {match, binary:part(String, S, L), Submatches1}.
 
 regex_scan(Regex, String) ->
     case re:run(String, Regex, [global]) of
