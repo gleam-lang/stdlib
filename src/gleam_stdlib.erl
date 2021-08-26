@@ -204,7 +204,7 @@ compile_regex(String, Options) ->
             {error, {compile_error, unicode:characters_to_binary(Str), Pos}}
     end.
 
-regex_match(Regex, String) ->
+regex_check(Regex, String) ->
     re:run(String, Regex) /= nomatch.
 
 regex_split(Regex, String) ->

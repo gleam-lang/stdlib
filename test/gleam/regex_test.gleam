@@ -1,8 +1,9 @@
+import gleam/regex.{CompileError, Match, Options}
+import gleam/should
+
 if erlang {
   import gleam/io
   import gleam/option.{None, Some}
-  import gleam/regex.{CompileError, Match, Options}
-  import gleam/should
 
   pub fn from_string_test() {
     assert Ok(re) = regex.from_string("[0-9]")
@@ -21,21 +22,23 @@ if erlang {
       byte_index: 4,
     ))
   }
+}
 
-  pub fn compile_test() {
-    let options = Options(case_insensitive: True, multi_line: False)
-    assert Ok(re) = regex.compile("[A-B]", options)
+pub fn compile_test() {
+  let options = Options(case_insensitive: True, multi_line: False)
+  assert Ok(re) = regex.compile("[A-B]", options)
 
-    regex.check(re, "abc123")
-    |> should.equal(True)
+  regex.check(re, "abc123")
+  |> should.equal(True)
 
-    let options = Options(case_insensitive: False, multi_line: True)
-    assert Ok(re) = regex.compile("^[0-9]", options)
+  let options = Options(case_insensitive: False, multi_line: True)
+  assert Ok(re) = regex.compile("^[0-9]", options)
 
-    regex.check(re, "abc\n123")
-    |> should.equal(True)
-  }
+  regex.check(re, "abc\n123")
+  |> should.equal(True)
+}
 
+if erlang {
   pub fn check_test() {
     assert Ok(re) = regex.from_string("^f.o.?")
 

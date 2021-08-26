@@ -17,7 +17,7 @@ async function main() {
       if (!fnName.endsWith("_test")) continue;
       try {
         module[fnName]();
-        process.stdout.write(`\u001b[${32}m.\u001b[${0}m`);
+        process.stdout.write(`\u001b[32m.\u001b[0m`);
         passes++;
       } catch (error) {
         let moduleName = "\ngleam/" + entry.name.slice(0, -3);
