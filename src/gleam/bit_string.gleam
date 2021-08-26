@@ -31,7 +31,7 @@ if erlang {
 
 if javascript {
   external fn do_byte_size(BitString) -> Int =
-    "../gleam_stdlib.js" "byte_size"
+    "../gleam_stdlib.js" "length"
 }
 
 /// Creates a new bit string by joining two binaries.

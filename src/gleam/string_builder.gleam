@@ -151,7 +151,7 @@ if erlang {
 
 if javascript {
   external fn do_byte_size(StringBuilder) -> Int =
-    "../gleam_stdlib.js" "byte_size"
+    "../gleam_stdlib.js" "length"
 }
 
 /// Creates a builder containing the textual representation of a given float.

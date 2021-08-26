@@ -116,12 +116,8 @@ export function join(xs) {
   return xs.toArray().join("");
 }
 
-export function byte_size(data) {
-  if (data instanceof BitString) {
-    return data.size();
-  } else {
-    return data.length;
-  }
+export function length(data) {
+  return data.length;
 }
 
 export function slice_string(string, from, length) {
@@ -169,10 +165,6 @@ export function trim_right(string) {
 
 export function bit_string_from_string(string) {
   return new toBitString([stringBits(string)]);
-}
-
-export function bit_string_append(first, second) {
-  return new toBitString([first.buffer, second.buffer]);
 }
 
 export function bit_string_concat(bit_strings) {
@@ -227,7 +219,7 @@ export function power(base, exponent) {
 export function bit_string_slice(bits, position, length) {
   let start = Math.min(position, position + length);
   let end = Math.max(position, position + length);
-  if (start < 0 || end > bits.size()) return new Error(Nil);
+  if (start < 0 || end > bits.length) return new Error(Nil);
   let buffer = new Uint8Array(bits.buffer.buffer, start, Math.abs(length));
   return new Ok(new BitString(buffer));
 }
