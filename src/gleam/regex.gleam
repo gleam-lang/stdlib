@@ -27,6 +27,7 @@ pub type CompileError {
     /// The problem encountered that caused the compilation to fail
     error: String,
     /// The byte index into the string to where the problem was found
+    /// This value may not be correct in JavaScript environments.
     byte_index: Int,
   )
 }
@@ -114,18 +115,33 @@ if javascript {
     "../gleam_stdlib.js" "regex_check"
 }
 
-if erlang {
-  /// Splits a string
-  ///
-  /// ## Examples
-  ///
-  ///    > assert Ok(re) = from_string(" *, *")
-  ///    > split(with: re, content: "foo,32, 4, 9  ,0")
-  ///    ["foo", "32", "4", "9", "0"]
-  ///
-  pub external fn split(with: Regex, content: String) -> List(String) =
-    "gleam_stdlib" "regex_split"
+/// Splits a string
+///
+/// ## Examples
+///
+///    > assert Ok(re) = from_string(" *, *")
+///    > split(with: re, content: "foo,32, 4, 9  ,0")
+///    ["foo", "32", "4", "9", "0"]
+///
+pub fn split(with regex: Regex, content string: String) -> List(String) {
+  do_split(regex, string)
+}
 
+if erlang {
+  external fn do_split(Regex, String) -> List(String) =
+    "gleam_stdlib" "regex_split"
+}
+
+if javascript {
+  fn do_split(regex, string) -> List(String) {
+    js_split(string, regex)
+  }
+
+  external fn js_split(String, Regex) -> List(String) =
+    "../gleam_stdlib.js" "split"
+}
+
+if erlang {
   /// Collects all matches of the regular expression.
   ///
   /// ## Examples

@@ -1,4 +1,4 @@
-import gleam/regex.{CompileError, Match, Options}
+import gleam/regex.{Match, Options}
 import gleam/should
 import gleam/io
 import gleam/option.{None, Some}
@@ -39,14 +39,14 @@ pub fn check_test() {
   |> should.equal(False)
 }
 
+pub fn split_test() {
+  assert Ok(re) = regex.from_string(" *, *")
+
+  regex.split(re, "foo,32, 4, 9  ,0")
+  |> should.equal(["foo", "32", "4", "9", "0"])
+}
+
 if erlang {
-  pub fn split_test() {
-    assert Ok(re) = regex.from_string(" *, *")
-
-    regex.split(re, "foo,32, 4, 9  ,0")
-    |> should.equal(["foo", "32", "4", "9", "0"])
-  }
-
   pub fn scan_test() {
     assert Ok(re) = regex.from_string("Gl\\w+")
 
