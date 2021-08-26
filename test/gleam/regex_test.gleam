@@ -1,27 +1,18 @@
 import gleam/regex.{CompileError, Match, Options}
 import gleam/should
+import gleam/io
+import gleam/option.{None, Some}
 
-if erlang {
-  import gleam/io
-  import gleam/option.{None, Some}
+pub fn from_string_test() {
+  assert Ok(re) = regex.from_string("[0-9]")
 
-  pub fn from_string_test() {
-    assert Ok(re) = regex.from_string("[0-9]")
+  regex.check(re, "abc123")
+  |> should.equal(True)
 
-    regex.check(re, "abc123")
-    |> should.equal(True)
+  regex.check(re, "abcxyz")
+  |> should.equal(False)
 
-    regex.check(re, "abcxyz")
-    |> should.equal(False)
-
-    assert Error(from_string_err) = regex.from_string("[0-9")
-
-    from_string_err
-    |> should.equal(CompileError(
-      error: "missing terminating ] for character class",
-      byte_index: 4,
-    ))
-  }
+  assert Error(_) = regex.from_string("[0-9")
 }
 
 pub fn compile_test() {
@@ -38,17 +29,17 @@ pub fn compile_test() {
   |> should.equal(True)
 }
 
+pub fn check_test() {
+  assert Ok(re) = regex.from_string("^f.o.?")
+
+  regex.check(re, "foo")
+  |> should.equal(True)
+
+  regex.check(re, "boo")
+  |> should.equal(False)
+}
+
 if erlang {
-  pub fn check_test() {
-    assert Ok(re) = regex.from_string("^f.o.?")
-
-    regex.check(re, "foo")
-    |> should.equal(True)
-
-    regex.check(re, "boo")
-    |> should.equal(False)
-  }
-
   pub fn split_test() {
     assert Ok(re) = regex.from_string(" *, *")
 

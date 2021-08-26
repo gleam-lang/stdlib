@@ -7,6 +7,7 @@ import {
   toBitString,
   stringBits,
 } from "./gleam.js";
+import { CompileError as RegexCompileError } from "./gleam/regex.js";
 
 const Nil = undefined;
 
@@ -227,4 +228,21 @@ export function bit_string_slice(bits, position, length) {
 
 export function codepoint(int) {
   return new UtfCodepoint(int);
+}
+
+export function regex_check(regex, string) {
+  return regex.test(string);
+}
+
+export function compile_regex(pattern, options) {
+  try {
+    let flags = "";
+    if (options.case_insensitive) flags += "i";
+    if (options.multi_line) flags += "m";
+    return new Ok(new RegExp(pattern, flags));
+  } catch (error) {
+    return new Error(
+      new RegexCompileError(error.message, error.columnNumber || 0)
+    );
+  }
 }
