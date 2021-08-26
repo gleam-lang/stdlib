@@ -3,6 +3,7 @@ import {
   Error,
   List,
   BitString,
+  UtfCodepoint,
   toBitString,
   stringBits,
 } from "./gleam.js";
@@ -222,4 +223,8 @@ export function bit_string_slice(bits, position, length) {
   if (start < 0 || end > bits.length) return new Error(Nil);
   let buffer = new Uint8Array(bits.buffer.buffer, start, Math.abs(length));
   return new Ok(new BitString(buffer));
+}
+
+export function codepoint(int) {
+  return new UtfCodepoint(int);
 }

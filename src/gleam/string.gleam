@@ -650,7 +650,7 @@ if erlang {
 
 if javascript {
   external fn unsafe_int_to_utf_codepoint(Int) -> UtfCodepoint =
-    "../gleam_stdlib.js" "identity"
+    "../gleam_stdlib.js" "codepoint"
 }
 
 /// Converts an integer to a UtfCodepoint
