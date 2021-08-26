@@ -13,8 +13,6 @@ pub type Match {
   Match(
     /// The full string of the match.
     content: String,
-    /// The byte index of the match in the original string.
-    byte_index: Int,
     /// A Regex can have subpatterns, sup-parts that are in parentheses.
     submatches: List(Option(String)),
   )
@@ -141,26 +139,33 @@ if javascript {
     "../gleam_stdlib.js" "split"
 }
 
+/// Collects all matches of the regular expression.
+///
+/// ## Examples
+///
+///    > assert Ok(re) = regex.from_string("[oi]n a (\\w+)")
+///    > regex.scan(with: re, content: "I am on a boat in a lake.")
+///    [
+///      Match(
+///        content: "on a boat",
+///        submatches: [Some("boat")]
+///      ),
+///      Match(
+///        content: "in a lake",
+///        submatches: [Some("lake")]
+///      )
+///    ]
+///
+pub fn scan(with regex: Regex, content string: String) -> List(Match) {
+  do_scan(regex, string)
+}
+
 if erlang {
-  /// Collects all matches of the regular expression.
-  ///
-  /// ## Examples
-  ///
-  ///    > assert Ok(re) = regex.from_string("[oi]n a (\\w+)")
-  ///    > regex.scan(with: re, content: "I am on a boat in a lake.")
-  ///    [
-  ///      Match(
-  ///        content: "on a boat",
-  ///        byte_index: 5,
-  ///        submatches: [Some("boat")]
-  ///      ),
-  ///      Match(
-  ///        content: "in a lake",
-  ///        byte_index: 15,
-  ///        submatches: [Some("lake")]
-  ///      )
-  ///    ]
-  ///
-  pub external fn scan(with: Regex, content: String) -> List(Match) =
+  external fn do_scan(Regex, String) -> List(Match) =
     "gleam_stdlib" "regex_scan"
+}
+
+if javascript {
+  external fn do_scan(Regex, String) -> List(Match) =
+    "../gleam_stdlib.js" "regex_scan"
 }
