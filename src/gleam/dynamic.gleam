@@ -1,3 +1,8 @@
+/// `Dynamic` data is data that we don't know the type of yet.
+/// We likely get data like this from interop with Erlang, or from
+/// IO with the outside world.
+pub external type Dynamic
+
 if erlang {
   import gleam/bit_string
   import gleam/list
@@ -5,11 +10,6 @@ if erlang {
   import gleam/option.{Option}
   import gleam/result
   import gleam/string_builder
-
-  /// `Dynamic` data is data that we don't know the type of yet.
-  /// We likely get data like this from interop with Erlang, or from
-  /// IO with the outside world.
-  pub external type Dynamic
 
   /// Error returned when unexpected data is encountered
   pub type DecodeError {
