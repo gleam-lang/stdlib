@@ -258,3 +258,67 @@ export function regex_scan(regex, string) {
   });
   return List.fromArray(matches);
 }
+
+export function new_map() {
+  return new Map();
+}
+
+export function map_size(map) {
+  return map.size;
+}
+
+export function map_to_list(map) {
+  const result = [];
+  map.forEach(([a, b]) => result.push([JSON.parse(a), b]))
+}
+
+export function map_from_list(list) {
+  return new Map(list.map(([a, b]) => [JSON.stringify(a), b]));
+}
+
+export function map_has_key(k, map) {
+  return map.contains(JSON.stringify(k));
+}
+
+export function map_remove(k, map) {
+   new Map(map).remove(JSON.stringify(k));
+}
+
+export function map_filter(f, map) {
+  const result = new Map();
+  map.entries.forEach(([a, b]) => {
+    if (f(JSON.parse(a))) {
+      result.set(a, b);
+    }
+  })
+}
+
+export function map_get(from, get) {
+  from.get(JSON.stringify(get));
+}
+
+export function map_insert(key, value, map) {
+  return new Map(map).set(JSON.stringify(key), value);
+}
+
+export function map_keys(map) {
+  return [...map.keys()].map(key => JSON.parse(key));
+}
+
+export function map_values(map) {
+  return [...map.values()];
+}
+
+export function map_map_values(fn, map) {
+  const result = new Map();
+  map.forEach(([a, b]) => result.set(JSON.stringify(fn(JSON.parse(a))), b));
+}
+
+export function map_merge(into, merge) {
+  return new Map(...into, ...merge);
+}
+
+export function map_take(keys, map) {
+  const result = new Map();
+  keys.forEach(key => result.set(JSON.stringify(key), map.get(JSON.stringify(key))));
+}
