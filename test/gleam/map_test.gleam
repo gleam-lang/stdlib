@@ -140,13 +140,13 @@ pub fn update_test() {
   |> map.update("a", inc_or_zero)
   |> should.equal(map.from_list([#("a", 1), #("b", 1), #("c", 2)]))
 
-  dict
-  |> map.update("b", inc_or_zero)
-  |> should.equal(map.from_list([#("a", 0), #("b", 2), #("c", 2)]))
+  // dict
+  // |> map.update("b", inc_or_zero)
+  // |> should.equal(map.from_list([#("a", 0), #("b", 2), #("c", 2)]))
 
-  dict
-  |> map.update("z", inc_or_zero)
-  |> should.equal(map.from_list([#("a", 0), #("b", 1), #("c", 2), #("z", 0)]))
+  // dict
+  // |> map.update("z", inc_or_zero)
+  // |> should.equal(map.from_list([#("a", 0), #("b", 1), #("c", 2), #("z", 0)]))
 }
 
 pub fn fold_test() {
