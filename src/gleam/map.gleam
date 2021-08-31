@@ -87,7 +87,7 @@ if erlang {
 
 if javascript {
   external fn do_from_list(List(#(key, value))) -> Map(key, value) =
-    "../gleam_stdlib.js" "map_to_list"
+    "../gleam_stdlib.js" "map_from_list"
 }
 
 /// Determines whether or not a value present in the map for a given key.
@@ -200,12 +200,12 @@ pub fn map_values(in map: Map(k, v), with fun: fn(k, v) -> w) -> Map(k, w) {
 }
 
 if erlang {
-  external fn do_map_values(fn(key, a) -> b, Map(key, value)) -> Map(key, b) =
+  external fn do_map_values(fn(key, value) -> b, Map(key, value)) -> Map(key, b) =
     "maps" "map"
 }
 
 if javascript {
-  external fn do_map_values(fn(key, a) -> b, Map(key, value)) -> Map(key, b) =
+  external fn do_map_values(fn(key, value) -> b, Map(key, value)) -> Map(key, b) =
     "../gleam_stdlib.js" "map_map_values"
 }
 
