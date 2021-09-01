@@ -13,6 +13,8 @@ import {
 } from "./gleam/regex.js";
 import { Some, None } from "./gleam/option.js";
 
+const HASHCODE_CACHE = new WeakMap();
+
 const Nil = undefined;
 
 export function identity(x) {
@@ -259,8 +261,17 @@ export function regex_scan(regex, string) {
   return List.fromArray(matches);
 }
 
-export function map_hash(obj) {
-  return JSON.stringify(obj);
+export function hashcode(obj) {
+  let existing = HASHCODE_CACHE.get(obj);
+  if (existing) {
+    return existing;
+  } else if (obj instanceof Object) {
+    let hashcode = JSON.stringify(obj);
+    HASHCODE_CACHE.set(obj, hashcode);
+    return hashcode;
+  } else {
+    return obj.toString();
+  }
 }
 
 export function new_map() {
@@ -276,40 +287,42 @@ export function map_to_list(map) {
 }
 
 export function map_from_list(list) {
-  return new Map(list.toArray().map(([a, b]) => [map_hash(a), [a, b]]));
+  let map = new Map();
+  for (let pair of list) {
+    map.set(hashcode(pair[0]), pair);
+  }
+  return map;
 }
 
 export function map_has_key(k, map) {
-  return map.has(map_hash(k));
+  return map.has(hashcode(k));
 }
 
 export function map_remove(k, map) {
   const result = new Map(map);
-  result.delete(map_hash(k));
+  result.delete(hashcode(k));
   return result;
 }
 
 export function map_filter(f, map) {
   const result = new Map();
-  map.forEach(([key, value], hash) => {
-    if (f(key)) {
-      result.set(hash, [key, value]);
-    }
-  })
+  for (let [hash, [k, v]] of map) {
+    if (f(k)) result.set(hash, [k, v]);
+  }
   return result;
 }
 
 export function map_get(from, get) {
-  const entry = from.get(map_hash(get));
+  const entry = from.get(hashcode(get));
   if (entry) {
-    return new Ok(entry[1]); // [0] is the key, [1] is the value
+    return new Ok(entry[1]);
   } else {
     return new Error(Nil);
   }
 }
 
 export function map_insert(key, value, map) {
-  return new Map(map).set(map_hash(key), [key, value]);
+  return new Map(map).set(hashcode(key), [key, value]);
 }
 
 export function map_keys(map) {
@@ -322,7 +335,7 @@ export function map_values(map) {
 
 export function map_map_values(fn, map) {
   const result = new Map();
-  map.forEach(([key, value], hash) => result.set(hash, [key, fn(key, value)]));
+  for (let [hash, [k, v]] of map) result.set(hash, [k, fn(k, v)]);
   return result;
 }
 
@@ -332,8 +345,8 @@ export function map_merge(into, merge) {
 
 export function map_take(keys, map) {
   const result = new Map();
-  keys.toArray().forEach(key => {
-    const hash = map_hash(key);
+  keys.toArray().forEach((key) => {
+    const hash = hashcode(key);
     const keyValue = map.get(hash);
     if (keyValue !== undefined) {
       result.set(hash, keyValue);
