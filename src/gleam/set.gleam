@@ -2,15 +2,29 @@ import gleam/map.{Map}
 import gleam/result
 import gleam/list
 
+if erlang {
+  // A list is used as the map value as an empty list has the smallest
+  // representation in Erlang's binary format
+  type Token =
+    List(Nil)
+
+  const token = []
+}
+
+if javascript {
+  type Token =
+    Nil
+
+  const token = Nil
+}
+
 /// A set is a collection of unique members of the same type.
 ///
 /// It is implemented using the `gleam/map` module, so inserts and lookups have
 /// logarithmic time complexity.
 ///
 pub opaque type Set(member) {
-  // A list is used as the map value as an empty list has the smallest
-  // representation in Erlang's binary format
-  Set(map: Map(member, List(Nil)))
+  Set(map: Map(member, Token))
 }
 
 /// Creates a new empty set.
@@ -42,7 +56,7 @@ pub fn size(set: Set(member)) -> Int {
 ///    2
 ///
 pub fn insert(into set: Set(member), this member: member) -> Set(member) {
-  Set(map: map.insert(set.map, member, []))
+  Set(map: map.insert(set.map, member, token))
 }
 
 /// Checks whether a set contains a given member.
@@ -108,7 +122,7 @@ pub fn from_list(members: List(member)) -> Set(member) {
     list.fold(
       over: members,
       from: map.new(),
-      with: fn(k, m) { map.insert(m, k, []) },
+      with: fn(k, m) { map.insert(m, k, token) },
     )
   Set(map)
 }

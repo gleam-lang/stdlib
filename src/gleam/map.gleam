@@ -92,10 +92,6 @@ if javascript {
   }
 }
 
-fn insert_pair(pair: #(k, v), map: Map(k, v)) -> Map(k, v) {
-  insert(map, pair.0, pair.1)
-}
-
 /// Determines whether or not a value present in the map for a given key.
 ///
 /// ## Examples
@@ -378,6 +374,10 @@ if erlang {
 }
 
 if javascript {
+  fn insert_pair(pair: #(k, v), map: Map(k, v)) -> Map(k, v) {
+    insert(map, pair.0, pair.1)
+  }
+
   fn do_merge(map: Map(k, v), new_entries: Map(k, v)) -> Map(k, v) {
     new_entries
     |> to_list
