@@ -288,9 +288,7 @@ export function map_to_list(map) {
 
 export function map_from_list(list) {
   let map = new Map();
-  for (let pair of list) {
-    map.set(hashcode(pair[0]), pair);
-  }
+  for (let pair of list) map.set(hashcode(pair[0]), pair);
   return map;
 }
 
@@ -345,12 +343,9 @@ export function map_merge(into, merge) {
 
 export function map_take(keys, map) {
   const result = new Map();
-  keys.toArray().forEach((key) => {
-    const hash = hashcode(key);
-    const keyValue = map.get(hash);
-    if (keyValue !== undefined) {
-      result.set(hash, keyValue);
-    }
-  });
+  for (let key of keys) {
+    const code = hashcode(key);
+    if (map.has(code)) result.set(code, map.get(code));
+  }
   return result;
 }
