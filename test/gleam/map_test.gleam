@@ -106,9 +106,19 @@ pub fn drop_test() {
   |> should.equal(map.from_list([#("c", 2)]))
 }
 
+pub fn merge_same_key_test() {
+  let a = map.from_list([#("a", 2)])
+  let b = map.from_list([#("a", 0)])
+
+  map.merge(a, b)
+  |> should.equal(map.from_list([#("a", 0)]))
+
+  map.merge(b, a)
+  |> should.equal(map.from_list([#("a", 2)]))
+}
+
 pub fn merge_test() {
   let a = map.from_list([#("a", 2), #("c", 4), #("d", 3)])
-
   let b = map.from_list([#("a", 0), #("b", 1), #("c", 2)])
 
   map.merge(a, b)
@@ -140,13 +150,13 @@ pub fn update_test() {
   |> map.update("a", inc_or_zero)
   |> should.equal(map.from_list([#("a", 1), #("b", 1), #("c", 2)]))
 
-  // dict
-  // |> map.update("b", inc_or_zero)
-  // |> should.equal(map.from_list([#("a", 0), #("b", 2), #("c", 2)]))
+  dict
+  |> map.update("b", inc_or_zero)
+  |> should.equal(map.from_list([#("a", 0), #("b", 2), #("c", 2)]))
 
-  // dict
-  // |> map.update("z", inc_or_zero)
-  // |> should.equal(map.from_list([#("a", 0), #("b", 1), #("c", 2), #("z", 0)]))
+  dict
+  |> map.update("z", inc_or_zero)
+  |> should.equal(map.from_list([#("a", 0), #("b", 1), #("c", 2), #("z", 0)]))
 }
 
 pub fn fold_test() {

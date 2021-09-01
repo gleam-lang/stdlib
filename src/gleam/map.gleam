@@ -1,6 +1,7 @@
 import gleam/result
 import gleam/option.{Option}
 import gleam/list
+import gleam/pair
 
 /// A dictionary of keys and values.
 ///
@@ -76,7 +77,7 @@ if javascript {
 /// If two tuples have the same key the last one in the list will be the one
 /// that is present in the map.
 ///
-pub fn from_list(list: List(#(key, value))) -> Map(key, value) {
+pub fn from_list(list: List(#(k, v))) -> Map(k, v) {
   do_from_list(list)
 }
 
@@ -86,8 +87,13 @@ if erlang {
 }
 
 if javascript {
-  external fn do_from_list(List(#(key, value))) -> Map(key, value) =
-    "../gleam_stdlib.js" "map_from_list"
+  fn do_from_list(list: List(#(k, v))) -> Map(k, v) {
+    list.fold(list, new(), insert_pair)
+  }
+}
+
+fn insert_pair(pair: #(k, v), map: Map(k, v)) -> Map(k, v) {
+  insert(map, pair.0, pair.1)
 }
 
 /// Determines whether or not a value present in the map for a given key.
@@ -110,8 +116,9 @@ if erlang {
 }
 
 if javascript {
-  external fn do_has_key(k, Map(k, v)) -> Bool =
-    "../gleam_stdlib.js" "map_has_key"
+  fn do_has_key(key: k, map: Map(k, v)) -> Bool {
+    get(map, key) != Error(Nil)
+  }
 }
 
 /// Creates a fresh map that contains no values.
@@ -144,7 +151,7 @@ if javascript {
 ///    Error(Nil)
 ///
 pub fn get(from: Map(key, value), get: key) -> Result(value, Nil) {
-  do_get(from, get);
+  do_get(from, get)
 }
 
 if erlang {
@@ -205,8 +212,15 @@ if erlang {
 }
 
 if javascript {
-  external fn do_map_values(fn(key, value) -> b, Map(key, value)) -> Map(key, b) =
-    "../gleam_stdlib.js" "map_map_values"
+  fn do_map_values(f: fn(key, value) -> b, map: Map(key, value)) -> Map(key, b) {
+    let insert = fn(pair, map) {
+      let #(k, v) = pair
+      insert(map, k, f(k, v))
+    }
+    map
+    |> to_list
+    |> list.fold(new(), insert)
+  }
 }
 
 /// Gets a list of all keys in a given map.
@@ -230,8 +244,11 @@ if erlang {
 }
 
 if javascript {
-  external fn do_keys(Map(keys, v)) -> List(keys) =
-    "../gleam_stdlib.js" "map_keys"
+  fn do_keys(map: Map(k, v)) -> List(k) {
+    map
+    |> to_list
+    |> list.map(pair.first)
+  }
 }
 
 /// Gets a list of all values in a given map.
@@ -255,8 +272,11 @@ if erlang {
 }
 
 if javascript {
-  external fn do_values(Map(k, values)) -> List(values) =
-    "../gleam_stdlib.js" "map_values"
+  fn do_values(map: Map(k, v)) -> List(v) {
+    map
+    |> to_list
+    |> list.map(pair.second)
+  }
 }
 
 /// Creates a new map from a given map, minus any entries that a given function
@@ -285,11 +305,21 @@ if erlang {
 }
 
 if javascript {
-  external fn do_filter(
-    fn(key, value) -> Bool,
-    Map(key, value),
-  ) -> Map(key, value) =
-    "../gleam_stdlib.js" "map_filter"
+  fn do_filter(
+    f: fn(key, value) -> Bool,
+    map: Map(key, value),
+  ) -> Map(key, value) {
+    let insert = fn(pair, map) {
+      let #(k, v) = pair
+      case f(k, v) {
+        True -> insert(map, k, v)
+        _ -> map
+      }
+    }
+    map
+    |> to_list
+    |> list.fold(new(), insert)
+  }
 }
 
 /// Creates a new map from a given map, only including any entries for which the
@@ -310,13 +340,20 @@ pub fn take(from map: Map(k, v), keeping desired_keys: List(k)) -> Map(k, v) {
 }
 
 if erlang {
- external fn do_take(List(k), Map(k, v)) -> Map(k, v) =
-  "maps" "with"
+  external fn do_take(List(k), Map(k, v)) -> Map(k, v) =
+    "maps" "with"
 }
 
 if javascript {
- external fn do_take(List(k), Map(k, v)) -> Map(k, v) =
-  "../gleam_stdlib.js" "map_take"
+  fn do_take(desired_keys: List(k), map: Map(k, v)) -> Map(k, v) {
+    let insert = fn(key, taken) {
+      case get(map, key) {
+        Ok(value) -> insert(taken, key, value)
+        _ -> taken
+      }
+    }
+    list.fold(desired_keys, new(), insert)
+  }
 }
 
 /// Creates a new map from a pair of given maps by combining their entries.
@@ -331,18 +368,21 @@ if javascript {
 ///    > merge(a, b)
 ///    from_list([#("a", 0), #("b", 2), #("c", 3)])
 ///
-pub fn merge(into: Map(k, v), merge: Map(k, v)) -> Map(k, v) {
-  do_merge(into, merge)
+pub fn merge(into map: Map(k, v), from new_entries: Map(k, v)) -> Map(k, v) {
+  do_merge(map, new_entries)
 }
 
 if erlang {
-  external fn do_merge(into: Map(k, v), merge: Map(k, v)) -> Map(k, v) =
+  external fn do_merge(Map(k, v), Map(k, v)) -> Map(k, v) =
     "maps" "merge"
 }
 
 if javascript {
-  external fn do_merge(into: Map(k, v), merge: Map(k, v)) -> Map(k, v) =
-    "../gleam_stdlib.js" "map_merge"
+  fn do_merge(map: Map(k, v), new_entries: Map(k, v)) -> Map(k, v) {
+    new_entries
+    |> to_list
+    |> list.fold(map, insert_pair)
+  }
 }
 
 /// Creates a new map from a given map with all the same entries except for the
@@ -421,11 +461,7 @@ pub fn update(
   |> insert(map, key, _)
 }
 
-fn do_fold(
-  list: List(#(k, v)),
-  initial: acc,
-  fun: fn(k, v, acc) -> acc,
-) -> acc {
+fn do_fold(list: List(#(k, v)), initial: acc, fun: fn(k, v, acc) -> acc) -> acc {
   case list {
     [] -> initial
     [#(k, v), ..tail] -> do_fold(tail, fun(k, v, initial), fun)

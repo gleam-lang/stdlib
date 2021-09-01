@@ -6,6 +6,7 @@ import {
   UtfCodepoint,
   toBitString,
   stringBits,
+  inspect,
 } from "./gleam.js";
 import {
   CompileError as RegexCompileError,
@@ -183,6 +184,10 @@ export function log(term) {
   console.log(term);
 }
 
+export function debug(term) {
+  console.log(inspect(term));
+}
+
 export function crash(message) {
   throw new globalThis.Error(message);
 }
@@ -261,16 +266,66 @@ export function regex_scan(regex, string) {
   return List.fromArray(matches);
 }
 
-export function hashcode(obj) {
-  let existing = HASHCODE_CACHE.get(obj);
-  if (existing) {
-    return existing;
-  } else if (obj instanceof Object) {
-    let hashcode = JSON.stringify(obj);
-    HASHCODE_CACHE.set(obj, hashcode);
-    return hashcode;
-  } else {
-    return obj.toString();
+class Map {
+  static #hashcode_cache = new WeakMap();
+
+  static hash(value) {
+    let existing = this.#hashcode_cache.get(value);
+    if (existing) {
+      return existing;
+    } else if (value instanceof Object) {
+      let hashcode = JSON.stringify(value);
+      HASHCODE_CACHE.set(value, hashcode);
+      return hashcode;
+    } else {
+      return value.toString();
+    }
+  }
+
+  constructor() {
+    this.entries = new globalThis.Map();
+  }
+
+  get size() {
+    return this.entries.size;
+  }
+
+  inspect() {
+    let entries = [...this.entries.values()]
+      .map((pair) => inspect(pair))
+      .join(", ");
+    return `map.from_list([${entries}])`;
+  }
+
+  copy() {
+    let map = new Map();
+    map.entries = new globalThis.Map(this.entries);
+    return map;
+  }
+
+  toList() {
+    return List.fromArray([...this.entries.values()]);
+  }
+
+  insert(k, v) {
+    let map = this.copy();
+    map.entries.set(Map.hash(k), [k, v]);
+    return map;
+  }
+
+  delete(k) {
+    let map = this.copy();
+    map.entries.delete(Map.hash(k));
+    return map;
+  }
+
+  get(key) {
+    let code = Map.hash(key);
+    if (this.entries.has(code)) {
+      return new Ok(this.entries.get(code)[1]);
+    } else {
+      return new Error(Nil);
+    }
   }
 }
 
@@ -283,69 +338,17 @@ export function map_size(map) {
 }
 
 export function map_to_list(map) {
-  return List.fromArray([...map.values()]);
-}
-
-export function map_from_list(list) {
-  let map = new Map();
-  for (let pair of list) map.set(hashcode(pair[0]), pair);
-  return map;
-}
-
-export function map_has_key(k, map) {
-  return map.has(hashcode(k));
+  return map.toList();
 }
 
 export function map_remove(k, map) {
-  const result = new Map(map);
-  result.delete(hashcode(k));
-  return result;
+  return map.delete(k);
 }
 
-export function map_filter(f, map) {
-  const result = new Map();
-  for (let [hash, [k, v]] of map) {
-    if (f(k)) result.set(hash, [k, v]);
-  }
-  return result;
-}
-
-export function map_get(from, get) {
-  const entry = from.get(hashcode(get));
-  if (entry) {
-    return new Ok(entry[1]);
-  } else {
-    return new Error(Nil);
-  }
+export function map_get(map, key) {
+  return map.get(key);
 }
 
 export function map_insert(key, value, map) {
-  return new Map(map).set(hashcode(key), [key, value]);
-}
-
-export function map_keys(map) {
-  return List.fromArray([...map.values()].map(([key, value]) => key));
-}
-
-export function map_values(map) {
-  return List.fromArray([...map.values()].map(([key, value]) => value));
-}
-
-export function map_map_values(fn, map) {
-  const result = new Map();
-  for (let [hash, [k, v]] of map) result.set(hash, [k, fn(k, v)]);
-  return result;
-}
-
-export function map_merge(into, merge) {
-  return new Map([...into, ...merge]);
-}
-
-export function map_take(keys, map) {
-  const result = new Map();
-  for (let key of keys) {
-    const code = hashcode(key);
-    if (map.has(code)) result.set(code, map.get(code));
-  }
-  return result;
+  return map.insert(key, value);
 }

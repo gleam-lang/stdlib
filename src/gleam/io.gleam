@@ -85,7 +85,7 @@ if erlang {
 
 if javascript {
   external fn debug_print(anything) -> Nil =
-    "../gleam_stdlib.js" "log"
+    "../gleam_stdlib.js" "debug"
 }
 
 if erlang {
