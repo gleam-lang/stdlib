@@ -294,32 +294,32 @@ pub fn port_to_string_test() {
   |> should.equal("noslash")
 }
 
+pub fn parse_query_string_test() {
+  assert Ok(parsed) = uri.parse_query("weebl+bob=1&city=%C3%B6rebro")
+  should.equal(parsed, [#("weebl bob", "1"), #("city", "örebro")])
+
+  // Duplicates keys not overridden
+  assert Ok(parsed) = uri.parse_query("a[]=1&a[]=2")
+
+  parsed
+  |> should.equal([#("a[]", "1"), #("a[]", "2")])
+}
+
+pub fn parse_empty_query_string_test() {
+  assert Ok(parsed) = uri.parse_query("")
+  should.equal(parsed, [])
+}
+
+pub fn parse_query_string_with_empty_test() {
+  uri.parse_query("present")
+  |> should.equal(Ok([#("present", "")]))
+}
+
+pub fn error_parsing_query_test() {
+  should.equal(uri.parse_query("%C2"), Error(Nil))
+}
+
 if erlang {
-  pub fn parse_query_string_test() {
-    assert Ok(parsed) = uri.parse_query("weebl+bob=1&city=%C3%B6rebro")
-    should.equal(parsed, [#("weebl bob", "1"), #("city", "örebro")])
-
-    // Duplicates keys not overridden
-    assert Ok(parsed) = uri.parse_query("a[]=1&a[]=2")
-
-    parsed
-    |> should.equal([#("a[]", "1"), #("a[]", "2")])
-  }
-
-  pub fn parse_empty_query_string_test() {
-    assert Ok(parsed) = uri.parse_query("")
-    should.equal(parsed, [])
-  }
-
-  pub fn parse_query_string_with_empty_test() {
-    uri.parse_query("present")
-    |> should.equal(Ok([#("present", "")]))
-  }
-
-  pub fn error_parsing_query_test() {
-    should.equal(uri.parse_query("%C2"), Error(Nil))
-  }
-
   pub fn query_to_string_test() {
     let query_string =
       uri.query_to_string([#("weebl bob", "1"), #("city", "örebro")])
@@ -416,151 +416,151 @@ if erlang {
     should.equal(uri.path_segments("../bob"), ["bob"])
     should.equal(uri.path_segments("/weebl/../bob"), ["bob"])
   }
+}
 
-  pub fn origin1_test() {
-    let parsed = uri.parse("http://example.test/path?weebl#bob")
-    uri.origin(parsed)
-    |> should.equal(Ok("http://example.test/"))
-  }
+pub fn origin1_test() {
+  let parsed = uri.parse("http://example.test/path?weebl#bob")
+  uri.origin(parsed)
+  |> should.equal(Ok("http://example.test/"))
+}
 
-  pub fn origin2_test() {
-    let parsed = uri.parse("http://example.test:8080")
-    uri.origin(parsed)
-    |> should.equal(Ok("http://example.test:8080/"))
-  }
+pub fn origin2_test() {
+  let parsed = uri.parse("http://example.test:8080")
+  uri.origin(parsed)
+  |> should.equal(Ok("http://example.test:8080/"))
+}
 
-  pub fn origin3_test() {
-    let parsed = uri.parse("https://example.test")
-    uri.origin(parsed)
-    |> should.equal(Ok("https://example.test/"))
-  }
+pub fn origin3_test() {
+  let parsed = uri.parse("https://example.test")
+  uri.origin(parsed)
+  |> should.equal(Ok("https://example.test/"))
+}
 
-  pub fn origin4_test() {
-    let parsed = uri.parse("http:///path")
-    uri.origin(parsed)
-    |> should.equal(Ok("http://"))
-  }
+pub fn origin4_test() {
+  let parsed = uri.parse("http:///path")
+  uri.origin(parsed)
+  |> should.equal(Ok("http://"))
+}
 
-  pub fn origin5_test() {
-    let parsed = uri.parse("http://")
-    uri.origin(parsed)
-    |> should.equal(Ok("http://"))
-  }
+pub fn origin5_test() {
+  let parsed = uri.parse("http://")
+  uri.origin(parsed)
+  |> should.equal(Ok("http://"))
+}
 
-  pub fn origin6_test() {
-    let parsed = uri.parse("/path")
-    uri.origin(parsed)
-    |> should.equal(Error(Nil))
-  }
+pub fn origin6_test() {
+  let parsed = uri.parse("/path")
+  uri.origin(parsed)
+  |> should.equal(Error(Nil))
+}
 
-  pub fn origin7_test() {
-    let parsed = uri.parse("file:///dev/null")
-    uri.origin(parsed)
-    |> should.equal(Error(Nil))
-  }
+pub fn origin7_test() {
+  let parsed = uri.parse("file:///dev/null")
+  uri.origin(parsed)
+  |> should.equal(Error(Nil))
+}
 
-  pub fn merge1_test() {
-    let a = uri.parse("/relative")
-    let b = uri.parse("")
-    uri.merge(a, b)
-    |> should.equal(Error(Nil))
-  }
+pub fn merge1_test() {
+  let a = uri.parse("/relative")
+  let b = uri.parse("")
+  uri.merge(a, b)
+  |> should.equal(Error(Nil))
+}
 
-  pub fn merge2_test() {
-    let a = uri.parse("http://google.com/weebl")
-    let b = uri.parse("http://example.com/baz")
-    uri.merge(a, b)
-    |> should.equal(Ok(uri.parse("http://example.com/baz")))
-  }
+pub fn merge2_test() {
+  let a = uri.parse("http://google.com/weebl")
+  let b = uri.parse("http://example.com/baz")
+  uri.merge(a, b)
+  |> should.equal(Ok(uri.parse("http://example.com/baz")))
+}
 
-  pub fn merge3_test() {
-    let a = uri.parse("http://google.com/weebl")
-    let b = uri.parse("http://example.com/.././bob/../../baz")
-    uri.merge(a, b)
-    |> should.equal(Ok(uri.parse("http://example.com/baz")))
-  }
+pub fn merge3_test() {
+  let a = uri.parse("http://google.com/weebl")
+  let b = uri.parse("http://example.com/.././bob/../../baz")
+  uri.merge(a, b)
+  |> should.equal(Ok(uri.parse("http://example.com/baz")))
+}
 
-  pub fn merge4_test() {
-    let a = uri.parse("http://google.com/weebl")
-    let b = uri.parse("//example.com/baz")
-    uri.merge(a, b)
-    |> should.equal(Ok(uri.parse("http://example.com/baz")))
-  }
+pub fn merge4_test() {
+  let a = uri.parse("http://google.com/weebl")
+  let b = uri.parse("//example.com/baz")
+  uri.merge(a, b)
+  |> should.equal(Ok(uri.parse("http://example.com/baz")))
+}
 
-  pub fn merge5_test() {
-    let a = uri.parse("http://google.com/weebl")
-    let b = uri.parse("//example.com/.././bob/../../../baz")
-    uri.merge(a, b)
-    |> should.equal(Ok(uri.parse("http://example.com/baz")))
-  }
+pub fn merge5_test() {
+  let a = uri.parse("http://google.com/weebl")
+  let b = uri.parse("//example.com/.././bob/../../../baz")
+  uri.merge(a, b)
+  |> should.equal(Ok(uri.parse("http://example.com/baz")))
+}
 
-  pub fn merge6_test() {
-    let a = uri.parse("http://example.com/weebl/bob")
-    let b = uri.parse("/baz")
-    uri.merge(a, b)
-    |> should.equal(Ok(uri.parse("http://example.com/baz")))
-  }
+pub fn merge6_test() {
+  let a = uri.parse("http://example.com/weebl/bob")
+  let b = uri.parse("/baz")
+  uri.merge(a, b)
+  |> should.equal(Ok(uri.parse("http://example.com/baz")))
+}
 
-  pub fn merge7_test() {
-    let a = uri.parse("http://example.com/weebl/bob")
-    let b = uri.parse("baz")
-    uri.merge(a, b)
-    |> should.equal(Ok(uri.parse("http://example.com/weebl/baz")))
-  }
+pub fn merge7_test() {
+  let a = uri.parse("http://example.com/weebl/bob")
+  let b = uri.parse("baz")
+  uri.merge(a, b)
+  |> should.equal(Ok(uri.parse("http://example.com/weebl/baz")))
+}
 
-  pub fn merge8_test() {
-    let a = uri.parse("http://example.com/weebl/")
-    let b = uri.parse("baz")
-    uri.merge(a, b)
-    |> should.equal(Ok(uri.parse("http://example.com/weebl/baz")))
-  }
+pub fn merge8_test() {
+  let a = uri.parse("http://example.com/weebl/")
+  let b = uri.parse("baz")
+  uri.merge(a, b)
+  |> should.equal(Ok(uri.parse("http://example.com/weebl/baz")))
+}
 
-  pub fn merge9_test() {
-    let a = uri.parse("http://example.com")
-    let b = uri.parse("baz")
-    uri.merge(a, b)
-    |> should.equal(Ok(uri.parse("http://example.com/baz")))
-  }
+pub fn merge9_test() {
+  let a = uri.parse("http://example.com")
+  let b = uri.parse("baz")
+  uri.merge(a, b)
+  |> should.equal(Ok(uri.parse("http://example.com/baz")))
+}
 
-  pub fn merge10_test() {
-    let a = uri.parse("http://example.com")
-    let b = uri.parse("/.././bob/../../../baz")
-    uri.merge(a, b)
-    |> should.equal(Ok(uri.parse("http://example.com/baz")))
-  }
+pub fn merge10_test() {
+  let a = uri.parse("http://example.com")
+  let b = uri.parse("/.././bob/../../../baz")
+  uri.merge(a, b)
+  |> should.equal(Ok(uri.parse("http://example.com/baz")))
+}
 
-  pub fn merge11_test() {
-    let a = uri.parse("http://example.com/weebl/bob")
-    let b = uri.parse("")
-    uri.merge(a, b)
-    |> should.equal(Ok(uri.parse("http://example.com/weebl/bob")))
-  }
+pub fn merge11_test() {
+  let a = uri.parse("http://example.com/weebl/bob")
+  let b = uri.parse("")
+  uri.merge(a, b)
+  |> should.equal(Ok(uri.parse("http://example.com/weebl/bob")))
+}
 
-  pub fn merge12_test() {
-    let a = uri.parse("http://example.com/weebl/bob")
-    let b = uri.parse("#fragment")
-    uri.merge(a, b)
-    |> should.equal(Ok(uri.parse("http://example.com/weebl/bob#fragment")))
-  }
+pub fn merge12_test() {
+  let a = uri.parse("http://example.com/weebl/bob")
+  let b = uri.parse("#fragment")
+  uri.merge(a, b)
+  |> should.equal(Ok(uri.parse("http://example.com/weebl/bob#fragment")))
+}
 
-  pub fn merge13_test() {
-    let a = uri.parse("http://example.com/weebl/bob")
-    let b = uri.parse("?query")
-    uri.merge(a, b)
-    |> should.equal(Ok(uri.parse("http://example.com/weebl/bob?query")))
-  }
+pub fn merge13_test() {
+  let a = uri.parse("http://example.com/weebl/bob")
+  let b = uri.parse("?query")
+  uri.merge(a, b)
+  |> should.equal(Ok(uri.parse("http://example.com/weebl/bob?query")))
+}
 
-  pub fn merge14_test() {
-    let a = uri.parse("http://example.com/weebl/bob?query1")
-    let b = uri.parse("?query2")
-    uri.merge(a, b)
-    |> should.equal(Ok(uri.parse("http://example.com/weebl/bob?query2")))
-  }
+pub fn merge14_test() {
+  let a = uri.parse("http://example.com/weebl/bob?query1")
+  let b = uri.parse("?query2")
+  uri.merge(a, b)
+  |> should.equal(Ok(uri.parse("http://example.com/weebl/bob?query2")))
+}
 
-  pub fn merge15_test() {
-    let a = uri.parse("http://example.com/weebl/bob?query")
-    let b = uri.parse("")
-    uri.merge(a, b)
-    |> should.equal(Ok(uri.parse("http://example.com/weebl/bob?query")))
-  }
+pub fn merge15_test() {
+  let a = uri.parse("http://example.com/weebl/bob?query")
+  let b = uri.parse("")
+  uri.merge(a, b)
+  |> should.equal(Ok(uri.parse("http://example.com/weebl/bob?query")))
 }

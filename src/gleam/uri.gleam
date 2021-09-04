@@ -189,39 +189,34 @@ fn extra_required(list: List(a), remaining: Int) -> Int {
   }
 }
 
+/// Parses an urlencoded query string into a list of key value pairs.
+/// Returns an error for invalid encoding.
+///
+/// The opposite operation is `uri.query_to_string`.
+///
+/// ## Examples
+///
+/// ```
+/// > parse_query("a=1&b=2")
+///
+/// Ok([#("a", "1"), #("b", "2")])
+/// ```
+///
+pub fn parse_query(query: String) -> Result(List(#(String, String)), Nil) {
+  do_parse_query(query)
+}
+
 if erlang {
-  import gleam/io
+  external fn do_parse_query(String) -> Result(List(#(String, String)), Nil) =
+    "gleam_stdlib" "parse_query"
+}
 
-  external fn erl_parse_query(String) -> Dynamic =
-    "uri_string" "dissect_query"
+if javascript {
+  external fn do_parse_query(String) -> Result(List(#(String, String)), Nil) =
+    "../gleam_stdlib.js" "parse_query"
+}
 
-  /// Parses an urlencoded query string into a list of key value pairs.
-  /// Returns an error for invalid encoding.
-  ///
-  /// The opposite operation is `uri.query_to_string`.
-  ///
-  /// ## Examples
-  ///
-  /// ```
-  /// > parse_query("a=1&b=2")
-  ///
-  /// Ok([#("a", "1"), #("b", "2")])
-  /// ```
-  ///
-  pub fn parse_query(query: String) -> Result(List(#(String, String)), Nil) {
-    let bool_value = fn(x) { result.map(dynamic.bool(x), fn(_) { "" }) }
-    let query_param = dynamic.typed_tuple2(
-      _,
-      dynamic.string,
-      dynamic.any(_, of: [dynamic.string, bool_value]),
-    )
-
-    query
-    |> erl_parse_query
-    |> dynamic.typed_list(of: query_param)
-    |> result.nil_error
-  }
-
+if erlang {
   type Encoding {
     Utf8
   }

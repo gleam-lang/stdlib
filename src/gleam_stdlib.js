@@ -352,3 +352,21 @@ export function map_get(map, key) {
 export function map_insert(key, value, map) {
   return map.insert(key, value);
 }
+
+function decode_query_component(string) {
+  return decodeURIComponent((string || "").replace("+", " "));
+}
+
+export function parse_query(query) {
+  try {
+    let pairs = [];
+    for (let section of query.split("&")) {
+      let [key, value] = section.split("=");
+      if (!key) continue;
+      pairs.push([decode_query_component(key), decode_query_component(value)]);
+    }
+    return new Ok(List.fromArray(pairs));
+  } catch (error) {
+    return new Error(Nil);
+  }
+}

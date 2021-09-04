@@ -5,13 +5,13 @@
          map_get/2, iodata_append/2, identity/1, decode_int/1, decode_bool/1,
          decode_float/1, decode_thunk/1, decode_list/1, decode_optional/2,
          decode_field/2, decode_element/2, parse_int/1, parse_float/1,
-         less_than/2, string_pop_grapheme/1, string_starts_with/2,
+         less_than/2, string_pop_grapheme/1, string_starts_with/2, wrap_list/1, 
          string_ends_with/2, string_pad/4, decode_tuple2/1, decode_tuple3/1,
          decode_tuple4/1, decode_tuple5/1, decode_tuple6/1, decode_map/1,
          bit_string_int_to_u32/1, bit_string_int_from_u32/1, decode_result/1,
          bit_string_slice/3, decode_bit_string/1, compile_regex/2,
          regex_check/2, regex_split/2, regex_scan/2, base_decode64/1,
-         wrap_list/1, bit_string_concat/1]).
+        parse_query/1, bit_string_concat/1]).
 
 should_equal(Actual, Expected) -> 
     ?assertEqual(Expected, Actual),
@@ -234,3 +234,14 @@ base_decode64(S) ->
 
 wrap_list(X) when is_list(X) -> X;
 wrap_list(X) -> [X].
+
+parse_query(Query) ->
+    case uri_string:dissect_query(Query) of
+        {error, _, _} -> {error, nil};
+        Pairs -> 
+            Pairs1 = lists:map(fun
+                ({K, true}) -> {K, <<"">>};
+                (Pair) -> Pair
+            end, Pairs),
+            {ok, Pairs1}
+    end.
