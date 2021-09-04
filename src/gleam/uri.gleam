@@ -7,18 +7,19 @@
 //// Query encoding (Form encoding) is defined in the w3c specification.
 //// https://www.w3.org/TR/html52/sec-forms.html#urlencoded-form-data
 
-import gleam/option.{None, Option, Some}
-import gleam/string
+if erlang {
+  import gleam/dynamic.{Dynamic}
+}
+
+import gleam/function
 import gleam/int
 import gleam/list
-
-if erlang {
-  import gleam/result
-  import gleam/dynamic.{Dynamic}
-  import gleam/map
-  import gleam/function
-  import gleam/pair
-}
+import gleam/map
+import gleam/option.{None, Option, Some}
+import gleam/pair
+import gleam/regex
+import gleam/result
+import gleam/string
 
 /// Type representing holding the parsed components of an URI.
 /// All components of a URI are optional, except the path.
@@ -35,56 +36,161 @@ pub type Uri {
   )
 }
 
-if erlang {
-  pub external fn erl_parse(String) -> Dynamic =
-    "uri_string" "parse"
+// Special thanks to Elixir for this algorithm
+//
+/// Parses a compliant URI string into the `Uri` Type.
+/// If the string is not a valid URI string then an error is returned.
+///
+/// The opposite operation is `uri.to_string`
+///
+/// ## Examples
+///
+/// ```
+/// > parse("https://example.com:1234/a/b?query=true#fragment")
+///
+/// Ok(Uri(scheme: Some("https"), ...))
+/// ```
+///
+pub fn parse(uri_string: String) -> Uri {
+  // From https://tools.ietf.org/html/rfc3986#appendix-B
+  let pattern =
+    //    12                        3  4          5       6  7        8 
+    "^(([a-z][a-z0-9\\+\\-\\.]*):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#.*)?"
+  let matches =
+    pattern
+    |> regex_submatches(uri_string)
+    |> pad_list(8)
 
-  type UriKey {
-    Scheme
-    Userinfo
-    Host
-    Port
-    Path
-    Query
-    Fragment
+  let #(scheme, authority, path, query, fragment) = case matches {
+    [
+      _scheme_with_colon,
+      scheme,
+      authority_with_slashes,
+      _authority,
+      path,
+      query_with_question_mark,
+      _query,
+      fragment,
+    ] -> #(
+      scheme,
+      authority_with_slashes,
+      path,
+      query_with_question_mark,
+      fragment,
+    )
+    _ -> #(None, None, None, None, None)
   }
 
-  /// Parses a compliant URI string into the `Uri` Type.
-  /// If the string is not a valid URI string then an error is returned.
-  ///
-  /// The opposite operation is `uri.to_string`
-  ///
-  /// ## Examples
-  ///
-  /// ```
-  /// > parse("https://example.com:1234/a/b?query=true#fragment")
-  ///
-  /// Ok(Uri(scheme: Some("https"), ...))
-  /// ```
-  ///
-  pub fn parse(string: String) -> Result(Uri, Nil) {
-    try uri_map =
-      dynamic.map(erl_parse(string))
-      |> result.nil_error
-    let get = fn(k: UriKey, decode_type: dynamic.Decoder(t)) -> Option(t) {
-      uri_map
-      |> map.get(dynamic.from(k))
-      |> result.then(function.compose(decode_type, result.nil_error))
-      |> option.from_result
+  let scheme = noneify_empty_string(scheme)
+  let path = option.unwrap(path, "")
+  let query = noneify_query(query)
+  let #(userinfo, host, port) = split_authority(authority)
+  let fragment =
+    fragment
+    |> option.to_result(Nil)
+    |> result.then(string.pop_grapheme)
+    |> result.map(pair.second)
+    |> option.from_result
+  let port = case port {
+    None ->
+      case scheme {
+        Some("ftp") -> Some(21)
+        Some("sftp") -> Some(22)
+        Some("tftp") -> Some(69)
+        Some("http") -> Some(80)
+        Some("https") -> Some(443)
+        Some("ldap") -> Some(389)
+        _ -> None
+      }
+    _ -> port
+  }
+  let scheme =
+    scheme
+    |> noneify_empty_string
+    |> option.map(string.lowercase)
+  Uri(
+    scheme: scheme,
+    userinfo: userinfo,
+    host: host,
+    port: port,
+    path: path,
+    query: query,
+    fragment: fragment,
+  )
+}
+
+fn regex_submatches(pattern: String, string: String) -> List(Option(String)) {
+  pattern
+  |> regex.compile(regex.Options(case_insensitive: True, multi_line: False))
+  |> result.nil_error
+  |> result.map(regex.scan(_, string))
+  |> result.then(list.head)
+  |> result.map(fn(m: regex.Match) { m.submatches })
+  |> result.unwrap([])
+}
+
+fn noneify_query(x: Option(String)) -> Option(String) {
+  case x {
+    None -> None
+    Some(x) ->
+      case string.pop_grapheme(x) {
+        Ok(#("?", query)) -> Some(query)
+        _ -> None
+      }
+  }
+}
+
+fn noneify_empty_string(x: Option(String)) -> Option(String) {
+  case x {
+    Some("") | None -> None
+    Some(_) -> x
+  }
+}
+
+// Split an authority into its userinfo, host and port parts.
+fn split_authority(
+  authority: Option(String),
+) -> #(Option(String), Option(String), Option(Int)) {
+  case option.unwrap(authority, "") {
+    "" -> #(None, None, None)
+    "//" -> #(None, Some(""), None)
+    authority -> {
+      let matches =
+        "^(//)?((.*)@)?(\\[[a-zA-Z0-9:.]*\\]|[^:]*)(:(\\d*))?"
+        |> regex_submatches(authority)
+        |> pad_list(6)
+      case matches {
+        [_, _, userinfo, host, _, port] -> {
+          let userinfo = noneify_empty_string(userinfo)
+          let host = noneify_empty_string(host)
+          let port =
+            port
+            |> option.unwrap("")
+            |> int.parse
+            |> option.from_result
+          #(userinfo, host, port)
+        }
+        _ -> #(None, None, None)
+      }
     }
-
-    let uri =
-      Uri(
-        scheme: get(Scheme, dynamic.string),
-        userinfo: get(Userinfo, dynamic.string),
-        host: get(Host, dynamic.string),
-        port: get(Port, dynamic.int),
-        path: option.unwrap(get(Path, dynamic.string), ""),
-        query: get(Query, dynamic.string),
-        fragment: get(Fragment, dynamic.string),
-      )
-    Ok(uri)
   }
+}
+
+fn pad_list(list: List(Option(a)), size: Int) -> List(Option(a)) {
+  list
+  |> list.append(list.repeat(None, extra_required(list, size)))
+}
+
+fn extra_required(list: List(a), remaining: Int) -> Int {
+  case list {
+    _ if remaining == 0 -> 0
+    [] -> remaining
+    [_, ..xs] -> extra_required(xs, remaining - 1)
+  }
+}
+
+if erlang {
+  import gleam/io
 
   external fn erl_parse_query(String) -> Dynamic =
     "uri_string" "dissect_query"
@@ -284,7 +390,15 @@ pub fn to_string(uri: Uri) -> String {
 pub fn origin(uri: Uri) -> Result(String, Nil) {
   let Uri(scheme: scheme, host: host, port: port, ..) = uri
   case scheme {
-    Some("https") | Some("http") -> {
+    Some("https") if port == Some(443) -> {
+      let origin = Uri(scheme, None, host, None, "", None, None)
+      Ok(to_string(origin))
+    }
+    Some("http") if port == Some(80) -> {
+      let origin = Uri(scheme, None, host, None, "", None, None)
+      Ok(to_string(origin))
+    }
+    Some(s) if s == "http" || s == "https" -> {
       let origin = Uri(scheme, None, host, port, "", None, None)
       Ok(to_string(origin))
     }
@@ -318,7 +432,7 @@ pub fn merge(base: Uri, relative: Uri) -> Result(Uri, Nil) {
               option.or(relative.scheme, base.scheme),
               None,
               relative.host,
-              relative.port,
+              option.or(relative.port, base.port),
               path,
               relative.query,
               relative.fragment,
