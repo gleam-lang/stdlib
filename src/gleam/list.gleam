@@ -1473,9 +1473,7 @@ pub fn sized_chunk(in list: List(a), into count: Int) -> List(List(a)) {
 pub fn reduce(over list: List(a), with fun: fn(a, a) -> a) -> Result(a, Nil) {
   case list {
     [] -> Error(Nil)
-    [head, ..tail] ->
-      fold(tail, head, fun)
-      |> Ok
+    [head, ..tail] -> Ok(fold(tail, head, fun))
   }
 }
 
