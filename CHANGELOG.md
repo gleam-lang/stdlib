@@ -25,6 +25,7 @@
 - The `string` module gains the `to_option` function.
 - Fixed a bug where `io.print` could crash when printing special characters.
 - The `regex.Match` record no longer has the `byte_index` field any more.
+- The `should` module has been moved to the `gleam_should_assertions` package.
 
 ## v0.16.0 - 2021-06-17
 
