@@ -5,8 +5,6 @@
 //// documentation](https://rebar3.org/docs/testing/eunit/).
 
 if erlang {
-  // TODO: Move this module into another package so it can be used as a
-  // dep only in test.
   pub external fn equal(a, a) -> Nil =
     "gleam_stdlib" "should_equal"
 

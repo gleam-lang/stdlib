@@ -5,6 +5,7 @@ import gleam/should
 import gleam/option.{None, Some}
 import gleam/string
 import gleam/list
+import gleam/io
 
 pub fn full_parse_test() {
   let parsed =
@@ -319,90 +320,88 @@ pub fn error_parsing_query_test() {
   should.equal(uri.parse_query("%C2"), Error(Nil))
 }
 
+pub fn query_to_string_test() {
+  let query_string =
+    uri.query_to_string([#("weebl bob", "1"), #("city", "örebro")])
+  should.equal(query_string, "weebl%20bob=1&city=%C3%B6rebro")
+}
+
+pub fn empty_query_to_string_test() {
+  let query_string = uri.query_to_string([])
+  should.equal(query_string, "")
+}
+
+const percent_codec_fixtures = [
+  #(" ", "%20"),
+  #(",", "%2C"),
+  #(";", "%3B"),
+  #(":", "%3A"),
+  #("!", "!"),
+  #("?", "%3F"),
+  #("'", "'"),
+  #("(", "("),
+  #(")", ")"),
+  #("[", "%5B"),
+  #("@", "%40"),
+  #("/", "%2F"),
+  #("\\", "%5C"),
+  #("&", "%26"),
+  #("#", "%23"),
+  #("=", "%3D"),
+  #("~", "~"),
+  #("ñ", "%C3%B1"),
+  #("-", "-"),
+  #("_", "_"),
+  #(".", "."),
+  #("*", "*"),
+  #("100% great", "100%25%20great"),
+]
+
+// Allowed chars
+pub fn percent_encode_test() {
+  percent_codec_fixtures
+  |> list.map(fn(t) {
+    let #(a, b) = t
+    uri.percent_encode(a)
+    |> should.equal(b)
+  })
+}
+
+pub fn percent_encode_consistency_test() {
+  let k = "weebl bob[]"
+  let v = "ñaña (,:*~)"
+
+  let query_string = uri.query_to_string([#(k, v)])
+
+  let encoded_key = uri.percent_encode(k)
+  let encoded_value = uri.percent_encode(v)
+  let manual_query_string = string.concat([encoded_key, "=", encoded_value])
+
+  should.equal(query_string, manual_query_string)
+}
+
+pub fn percent_decode_test() {
+  percent_codec_fixtures
+  |> list.map(fn(t) {
+    let #(a, b) = t
+    uri.percent_decode(b)
+    |> should.equal(Ok(a))
+  })
+}
+
+pub fn percent_decode_consistency_test() {
+  let k = "weebl%20bob[]"
+  let v = "%C3%B6rebro"
+  let query = string.concat([k, "=", v])
+  assert Ok(parsed) = uri.parse_query(query)
+
+  assert Ok(decoded_key) = uri.percent_decode(k)
+  assert Ok(decoded_value) = uri.percent_decode(v)
+
+  should.equal(parsed, [#(decoded_key, decoded_value)])
+}
+
 if erlang {
-  pub fn query_to_string_test() {
-    let query_string =
-      uri.query_to_string([#("weebl bob", "1"), #("city", "örebro")])
-    should.equal(query_string, "weebl+bob=1&city=%C3%B6rebro")
-  }
-
-  pub fn empty_query_to_string_test() {
-    let query_string = uri.query_to_string([])
-    should.equal(query_string, "")
-  }
-
-  fn percent_codec_fixtures() {
-    [
-      #(" ", "+"),
-      #(",", "%2C"),
-      #(";", "%3B"),
-      #(":", "%3A"),
-      #("!", "%21"),
-      #("?", "%3F"),
-      #("'", "%27"),
-      #("(", "%28"),
-      #(")", "%29"),
-      #("[", "%5B"),
-      #("@", "%40"),
-      #("/", "%2F"),
-      #("\\", "%5C"),
-      #("&", "%26"),
-      #("#", "%23"),
-      #("=", "%3D"),
-      #("~", "%7E"),
-      #("ñ", "%C3%B1"),
-      // Allowed chars
-      #("-", "-"),
-      #("_", "_"),
-      #(".", "."),
-      #("*", "*"),
-      #("100% great", "100%25+great"),
-    ]
-  }
-
-  pub fn percent_encode_test() {
-    percent_codec_fixtures()
-    |> list.map(fn(t) {
-      let #(a, b) = t
-      uri.percent_encode(a)
-      |> should.equal(b)
-    })
-  }
-
-  pub fn percent_encode_consistency_test() {
-    let k = "weebl bob[]"
-    let v = "ñaña (,:*~)"
-
-    let query_string = uri.query_to_string([#(k, v)])
-
-    let encoded_key = uri.percent_encode(k)
-    let encoded_value = uri.percent_encode(v)
-    let manual_query_string = string.concat([encoded_key, "=", encoded_value])
-
-    should.equal(query_string, manual_query_string)
-  }
-
-  pub fn percent_decode_test() {
-    percent_codec_fixtures()
-    |> list.map(fn(t) {
-      let #(a, b) = t
-      uri.percent_decode(b)
-      |> should.equal(Ok(a))
-    })
-  }
-
-  pub fn percent_decode_consistency_test() {
-    let k = "weebl+bob[]"
-    let v = "%C3%B6rebro"
-    let query = string.concat([k, "=", v])
-    assert Ok(parsed) = uri.parse_query(query)
-
-    assert Ok(decoded_key) = uri.percent_decode(k)
-    assert Ok(decoded_value) = uri.percent_decode(v)
-
-    should.equal(parsed, [#(decoded_key, decoded_value)])
-  }
-
   pub fn parse_segments_test() {
     should.equal(uri.path_segments("/"), [])
     should.equal(uri.path_segments("/weebl/bob"), ["weebl", "bob"])

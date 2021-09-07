@@ -7,11 +7,8 @@
 //// Query encoding (Form encoding) is defined in the w3c specification.
 //// https://www.w3.org/TR/html52/sec-forms.html#urlencoded-form-data
 
-if erlang {
-  import gleam/dynamic.{Dynamic}
-}
-
 import gleam/function
+import gleam/string_builder.{StringBuilder}
 import gleam/int
 import gleam/list
 import gleam/map
@@ -216,72 +213,80 @@ if javascript {
     "../gleam_stdlib.js" "parse_query"
 }
 
+/// Encodes a list of key value pairs as a URI query string.
+///
+/// The opposite operation is `uri.parse_query`.
+///
+/// ## Examples
+///
+/// ```
+/// > query_to_string([#("a", "1"), #("b", "2")])
+///
+/// "a=1&b=2"
+/// ```
+///
+pub fn query_to_string(query: List(#(String, String))) -> String {
+  query
+  |> list.map(query_pair)
+  |> list.intersperse(string_builder.from_string("&"))
+  |> string_builder.concat
+  |> string_builder.to_string
+}
+
+fn query_pair(pair: #(String, String)) -> StringBuilder {
+  string_builder.from_strings([
+    percent_encode(pair.0),
+    "=",
+    percent_encode(pair.1),
+  ])
+}
+
+/// Encodes a string into a percent encoded representation.
+///
+/// ## Examples
+///
+/// ```
+/// > percent_encode("100% great")
+///
+/// "100%25%20great"
+/// ```
+///
+pub fn percent_encode(value: String) -> String {
+  do_percent_encode(value)
+}
+
 if erlang {
-  type Encoding {
-    Utf8
-  }
+  external fn do_percent_encode(String) -> String =
+    "gleam_stdlib" "percent_encode"
+}
 
-  type ErlQueryToStringOption {
-    Encoding(Encoding)
-  }
+if javascript {
+  external fn do_percent_encode(String) -> String =
+    "../gleam_stdlib.js" "percent_encode"
+}
 
-  external fn erl_query_to_string(
-    List(#(String, String)),
-    List(ErlQueryToStringOption),
-  ) -> Dynamic =
-    "uri_string" "compose_query"
+/// Decodes a percent encoded string.
+///
+/// ## Examples
+///
+/// ```
+/// > percent_decode("100%25+great")
+///
+/// Ok("100% great")
+/// ```
+///
+pub fn percent_decode(value: String) -> Result(String, Nil) {
+  do_percent_decode(value)
+}
 
-  /// Encodes a list of key value pairs as a URI query string.
-  ///
-  /// The opposite operation is `uri.parse_query`.
-  ///
-  /// ## Examples
-  ///
-  /// ```
-  /// > query_to_string([#("a", "1"), #("b", "2")])
-  ///
-  /// "a=1&b=2"
-  /// ```
-  ///
-  pub fn query_to_string(query: List(#(String, String))) -> String {
-    query
-    |> erl_query_to_string([Encoding(Utf8)])
-    |> dynamic.string
-    |> result.unwrap("")
-  }
+if erlang {
+  external fn do_percent_decode(String) -> Result(String, Nil) =
+    "gleam_stdlib" "percent_decode"
+}
 
-  /// Encodes a string into a percent encoded representation.
-  /// Note that this encodes space as +.
-  ///
-  /// ## Examples
-  ///
-  /// ```
-  /// > percent_encode("100% great")
-  ///
-  /// "100%25+great"
-  /// ```
-  ///
-  pub fn percent_encode(value: String) -> String {
-    query_to_string([#("k", value)])
-    |> string.replace(each: "k=", with: "")
-  }
-
-  /// Decodes a percent encoded string.
-  ///
-  /// ## Examples
-  ///
-  /// ```
-  /// > percent_decode("100%25+great")
-  ///
-  /// Ok("100% great")
-  /// ```
-  ///
-  pub fn percent_decode(value: String) -> Result(String, Nil) {
-    string.concat(["k=", value])
-    |> parse_query
-    |> result.then(list.head)
-    |> result.map(pair.second)
-  }
+if javascript {
+  external fn do_percent_decode(String) -> Result(String, Nil) =
+    "../gleam_stdlib.js" "percent_decode"
 }
 
 fn do_remove_dot_segments(

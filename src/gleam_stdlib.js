@@ -353,8 +353,20 @@ export function map_insert(key, value, map) {
   return map.insert(key, value);
 }
 
-function decode_query_component(string) {
+function unsafe_percent_decode(string) {
   return decodeURIComponent((string || "").replace("+", " "));
+}
+
+export function percent_decode(string) {
+  try {
+    return new Ok(unsafe_percent_decode(string));
+  } catch (error) {
+    return new Error(Nil);
+  }
+}
+
+export function percent_encode(string) {
+  return encodeURIComponent(string);
 }
 
 export function parse_query(query) {
@@ -363,7 +375,7 @@ export function parse_query(query) {
     for (let section of query.split("&")) {
       let [key, value] = section.split("=");
       if (!key) continue;
-      pairs.push([decode_query_component(key), decode_query_component(value)]);
+      pairs.push([unsafe_percent_decode(key), unsafe_percent_decode(value)]);
     }
     return new Ok(List.fromArray(pairs));
   } catch (error) {

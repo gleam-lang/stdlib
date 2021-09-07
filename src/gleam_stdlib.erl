@@ -9,9 +9,22 @@
          string_ends_with/2, string_pad/4, decode_tuple2/1, decode_tuple3/1,
          decode_tuple4/1, decode_tuple5/1, decode_tuple6/1, decode_map/1,
          bit_string_int_to_u32/1, bit_string_int_from_u32/1, decode_result/1,
-         bit_string_slice/3, decode_bit_string/1, compile_regex/2,
-         regex_check/2, regex_split/2, regex_scan/2, base_decode64/1,
-        parse_query/1, bit_string_concat/1]).
+         bit_string_slice/3, decode_bit_string/1, compile_regex/2, regex_scan/2,
+         percent_encode/1, percent_decode/1, regex_check/2, regex_split/2,
+         base_decode64/1, parse_query/1, bit_string_concat/1]).
+
+%% Taken from OTP's uri_string module
+-define(DEC2HEX(X),
+        if ((X) >= 0) andalso ((X) =< 9) -> (X) + $0;
+           ((X) >= 10) andalso ((X) =< 15) -> (X) + $A - 10
+        end).
+
+%% Taken from OTP's uri_string module
+-define(HEX2DEC(X),
+        if ((X) >= $0) andalso ((X) =< $9) -> (X) - $0;
+           ((X) >= $A) andalso ((X) =< $F) -> (X) - $A + 10;
+           ((X) >= $a) andalso ((X) =< $f) -> (X) - $a + 10
+        end).
 
 should_equal(Actual, Expected) -> 
     ?assertEqual(Expected, Actual),
@@ -244,4 +257,56 @@ parse_query(Query) ->
                 (Pair) -> Pair
             end, Pairs),
             {ok, Pairs1}
+    end.
+
+percent_encode(B) -> percent_encode(B, <<>>).
+percent_encode(<<>>, Acc) ->
+    Acc;
+percent_encode(<<H,T/binary>>, Acc) ->
+    case percent_ok(H) of
+        true ->
+            percent_encode(T, <<Acc/binary,H>>);
+        false ->
+            <<A:4,B:4>> = <<H>>,
+            percent_encode(T, <<Acc/binary,$%,(?DEC2HEX(A)),(?DEC2HEX(B))>>)
+    end.
+
+percent_decode(Cs) -> percent_decode(Cs, <<>>).
+percent_decode(<<$%, C0, C1, Cs/binary>>, Acc) ->
+    case is_hex_digit(C0) andalso is_hex_digit(C1) of
+        true ->
+            B = ?HEX2DEC(C0)*16+?HEX2DEC(C1),
+            percent_decode(Cs, <<Acc/binary, B>>);
+        false ->
+            {error, nil}
+    end;
+percent_decode(<<C,Cs/binary>>, Acc) ->
+    percent_decode(Cs, <<Acc/binary, C>>);
+percent_decode(<<>>, Acc) ->
+    check_utf8(Acc).
+
+percent_ok($!) -> true;
+percent_ok($$) -> true;
+percent_ok($') -> true;
+percent_ok($() -> true;
+percent_ok($)) -> true;
+percent_ok($*) -> true;
+percent_ok($+) -> true;
+percent_ok($-) -> true;
+percent_ok($.) -> true;
+percent_ok($_) -> true;
+percent_ok($~) -> true;
+percent_ok(C) when $0 =< C, C =< $9 -> true;
+percent_ok(C) when $A =< C, C =< $Z -> true;
+percent_ok(C) when $a =< C, C =< $z -> true;
+percent_ok(_) -> false.
+
+is_hex_digit(C) ->
+  ($0 =< C andalso C =< $9) orelse ($a =< C andalso C =< $f) orelse ($A =< C andalso C =< $F).
+
+check_utf8(Cs) ->
+    case unicode:characters_to_list(Cs) of
+        {incomplete, _, _} -> {error, nil};
+        {error, _, _} -> {error, nil};
+        _ -> {ok, Cs}
     end.
