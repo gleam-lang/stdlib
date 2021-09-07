@@ -1,27 +1,26 @@
+import gleam/base
+import gleam/list
+import gleam/should
+
+pub fn encode64_test() {
+  <<255, 127, 254, 252>>
+  |> base.encode64(True)
+  |> should.equal("/3/+/A==")
+
+  <<255, 127, 254, 252>>
+  |> base.encode64(False)
+  |> should.equal("/3/+/A")
+
+  <<0, 0, 0>>
+  |> base.encode64(True)
+  |> should.equal("AAAA")
+
+  <<>>
+  |> base.encode64(True)
+  |> should.equal("")
+}
+
 if erlang {
-  import gleam/base
-  import gleam/io
-  import gleam/list
-  import gleam/should
-
-  pub fn encode64_test() {
-    <<255, 127, 254, 252>>
-    |> base.encode64(True)
-    |> should.equal("/3/+/A==")
-
-    <<255, 127, 254, 252>>
-    |> base.encode64(False)
-    |> should.equal("/3/+/A")
-
-    <<0, 0, 0>>
-    |> base.encode64(True)
-    |> should.equal("AAAA")
-
-    <<>>
-    |> base.encode64(True)
-    |> should.equal("")
-  }
-
   pub fn decode64_test() {
     "/3/+/A=="
     |> base.decode64()
@@ -43,25 +42,27 @@ if erlang {
     |> base.decode64()
     |> should.equal(Error(Nil))
   }
+}
 
-  pub fn url_encode64_test() {
-    <<255, 127, 254, 252>>
-    |> base.url_encode64(True)
-    |> should.equal("_3_-_A==")
+pub fn url_encode64_test() {
+  <<255, 127, 254, 252>>
+  |> base.url_encode64(True)
+  |> should.equal("_3_-_A==")
 
-    <<255, 127, 254, 252>>
-    |> base.url_encode64(False)
-    |> should.equal("_3_-_A")
+  <<255, 127, 254, 252>>
+  |> base.url_encode64(False)
+  |> should.equal("_3_-_A")
 
-    <<0, 0, 0>>
-    |> base.url_encode64(True)
-    |> should.equal("AAAA")
+  <<0, 0, 0>>
+  |> base.url_encode64(True)
+  |> should.equal("AAAA")
 
-    <<>>
-    |> base.url_encode64(True)
-    |> should.equal("")
-  }
+  <<>>
+  |> base.url_encode64(True)
+  |> should.equal("")
+}
 
+if erlang {
   pub fn url_decode64_test() {
     "_3_-_A=="
     |> base.url_decode64()
