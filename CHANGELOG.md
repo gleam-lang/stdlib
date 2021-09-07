@@ -26,6 +26,8 @@
 - Fixed a bug where `io.print` could crash when printing special characters.
 - The `regex.Match` record no longer has the `byte_index` field any more.
 - The `should` module has been moved to the `gleam_should_assertions` package.
+- The `uri.percent_encode` function has a slightly different behaviour. For
+  example spaces are encoded as `%20`, not as `+`.
 
 ## v0.16.0 - 2021-06-17
 
