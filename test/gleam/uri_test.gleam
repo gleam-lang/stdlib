@@ -401,20 +401,18 @@ pub fn percent_decode_consistency_test() {
   should.equal(parsed, [#(decoded_key, decoded_value)])
 }
 
-if erlang {
-  pub fn parse_segments_test() {
-    should.equal(uri.path_segments("/"), [])
-    should.equal(uri.path_segments("/weebl/bob"), ["weebl", "bob"])
-    should.equal(uri.path_segments("////"), [])
-    should.equal(uri.path_segments("/weebl//bob"), ["weebl", "bob"])
+pub fn parse_segments_test() {
+  should.equal(uri.path_segments("/"), [])
+  should.equal(uri.path_segments("/weebl/bob"), ["weebl", "bob"])
+  should.equal(uri.path_segments("////"), [])
+  should.equal(uri.path_segments("/weebl//bob"), ["weebl", "bob"])
 
-    should.equal(uri.path_segments("/."), [])
-    should.equal(uri.path_segments("/.weebl"), [".weebl"])
+  should.equal(uri.path_segments("/."), [])
+  should.equal(uri.path_segments("/.weebl"), [".weebl"])
 
-    should.equal(uri.path_segments("/../bob"), ["bob"])
-    should.equal(uri.path_segments("../bob"), ["bob"])
-    should.equal(uri.path_segments("/weebl/../bob"), ["bob"])
-  }
+  should.equal(uri.path_segments("/../bob"), ["bob"])
+  should.equal(uri.path_segments("../bob"), ["bob"])
+  should.equal(uri.path_segments("/weebl/../bob"), ["bob"])
 }
 
 pub fn origin1_test() {
