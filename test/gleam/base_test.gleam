@@ -20,28 +20,26 @@ pub fn encode64_test() {
   |> should.equal("")
 }
 
-if erlang {
-  pub fn decode64_test() {
-    "/3/+/A=="
-    |> base.decode64()
-    |> should.equal(Ok(<<255, 127, 254, 252>>))
+pub fn decode64_test() {
+  "/3/+/A=="
+  |> base.decode64()
+  |> should.equal(Ok(<<255, 127, 254, 252>>))
 
-    "/3/+/A"
-    |> base.decode64()
-    |> should.equal(Ok(<<255, 127, 254, 252>>))
+  "/3/+/A"
+  |> base.decode64()
+  |> should.equal(Ok(<<255, 127, 254, 252>>))
 
-    "AAAA"
-    |> base.decode64()
-    |> should.equal(Ok(<<0, 0, 0>>))
+  "AAAA"
+  |> base.decode64()
+  |> should.equal(Ok(<<0, 0, 0>>))
 
-    ""
-    |> base.decode64()
-    |> should.equal(Ok(<<>>))
+  ""
+  |> base.decode64()
+  |> should.equal(Ok(<<>>))
 
-    ")!"
-    |> base.decode64()
-    |> should.equal(Error(Nil))
-  }
+  ")!"
+  |> base.decode64()
+  |> should.equal(Error(Nil))
 }
 
 pub fn url_encode64_test() {
@@ -62,26 +60,24 @@ pub fn url_encode64_test() {
   |> should.equal("")
 }
 
-if erlang {
-  pub fn url_decode64_test() {
-    "_3_-_A=="
-    |> base.url_decode64()
-    |> should.equal(Ok(<<255, 127, 254, 252>>))
+pub fn url_decode64_test() {
+  "_3_-_A=="
+  |> base.url_decode64()
+  |> should.equal(Ok(<<255, 127, 254, 252>>))
 
-    "_3_-_A"
-    |> base.url_decode64()
-    |> should.equal(Ok(<<255, 127, 254, 252>>))
+  "_3_-_A"
+  |> base.url_decode64()
+  |> should.equal(Ok(<<255, 127, 254, 252>>))
 
-    "AAAA"
-    |> base.url_decode64()
-    |> should.equal(Ok(<<0, 0, 0>>))
+  "AAAA"
+  |> base.url_decode64()
+  |> should.equal(Ok(<<0, 0, 0>>))
 
-    ""
-    |> base.url_decode64()
-    |> should.equal(Ok(<<>>))
+  ""
+  |> base.url_decode64()
+  |> should.equal(Ok(<<>>))
 
-    ")!"
-    |> base.url_decode64()
-    |> should.equal(Error(Nil))
-  }
+  ")!"
+  |> base.url_decode64()
+  |> should.equal(Error(Nil))
 }

@@ -426,3 +426,44 @@ function uint6ToB64(nUint6) {
     ? 47
     : 65;
 }
+
+// From https://developer.mozilla.org/en-US/docs/Glossary/Base64#Solution_2_%E2%80%93_rewrite_the_DOMs_atob()_and_btoa()_using_JavaScript's_TypedArrays_and_UTF-8
+function b64ToUint6(nChr) {
+  return nChr > 64 && nChr < 91
+    ? nChr - 65
+    : nChr > 96 && nChr < 123
+    ? nChr - 71
+    : nChr > 47 && nChr < 58
+    ? nChr + 4
+    : nChr === 43
+    ? 62
+    : nChr === 47
+    ? 63
+    : 0;
+}
+
+// From https://developer.mozilla.org/en-US/docs/Glossary/Base64#Solution_2_%E2%80%93_rewrite_the_DOMs_atob()_and_btoa()_using_JavaScript's_TypedArrays_and_UTF-8
+export function decode64(sBase64) {
+  if (sBase64.match(/[^A-Za-z0-9\+\/=]/g)) return new Error(Nil);
+  let sB64Enc = sBase64.replace(/=/g, "");
+  let nInLen = sB64Enc.length;
+  let nOutLen = (nInLen * 3 + 1) >> 2;
+  let taBytes = new Uint8Array(nOutLen);
+
+  for (
+    let nMod3, nMod4, nUint24 = 0, nOutIdx = 0, nInIdx = 0;
+    nInIdx < nInLen;
+    nInIdx++
+  ) {
+    nMod4 = nInIdx & 3;
+    nUint24 |= b64ToUint6(sB64Enc.charCodeAt(nInIdx)) << (6 * (3 - nMod4));
+    if (nMod4 === 3 || nInLen - nInIdx === 1) {
+      for (nMod3 = 0; nMod3 < 3 && nOutIdx < nOutLen; nMod3++, nOutIdx++) {
+        taBytes[nOutIdx] = (nUint24 >>> ((16 >>> nMod3) & 24)) & 255;
+      }
+      nUint24 = 0;
+    }
+  }
+
+  return new Ok(new BitString(taBytes));
+}
