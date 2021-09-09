@@ -60,20 +60,29 @@ if javascript {
     "../gleam_stdlib.js" "identity"
 }
 
+/// Checks to see whether a Dynamic value is a bit_string, and return the bit_string if
+/// it is.
+///
+/// ## Examples
+///
+///    > bit_string(from("Hello")) == bit_string.from_string("Hello")
+///    True
+///
+///    > bit_string(from(123))
+///    Error(DecodeError(expected: "BitString", found: "Int"))
+///
+pub fn bit_string(from data: Dynamic) -> Result(BitString, DecodeError) {
+  decode_bit_string(data)
+}
+
 if erlang {
-  /// Checks to see whether a Dynamic value is a bit_string, and return the bit_string if
-  /// it is.
-  ///
-  /// ## Examples
-  ///
-  ///    > bit_string(from("Hello")) == bit_string.from_string("Hello")
-  ///    True
-  ///
-  ///    > bit_string(from(123))
-  ///    Error(DecodeError(expected: "BitString", found: "Int"))
-  ///
-  pub external fn bit_string(from: Dynamic) -> Result(BitString, DecodeError) =
+  external fn decode_bit_string(Dynamic) -> Result(BitString, DecodeError) =
     "gleam_stdlib" "decode_bit_string"
+}
+
+if javascript {
+  external fn decode_bit_string(Dynamic) -> Result(BitString, DecodeError) =
+    "../gleam_stdlib.js" "decode_bit_string"
 }
 
 /// Checks to see whether a Dynamic value is a string, and return the string if

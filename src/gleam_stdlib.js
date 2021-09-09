@@ -476,6 +476,8 @@ function classify_dynamic(data) {
     return "List";
   } else if (Number.isInteger(data)) {
     return "Int";
+  } else if (BitString.isBitString(data)) {
+    return "BitString";
   } else if (typeof data === "number") {
     return "Float";
   } else {
@@ -501,6 +503,13 @@ export function decode_int(data) {
 export function decode_float(data) {
   return typeof data === "number" ? new Ok(data) : decoder_error("Float", data);
 }
+
 export function decode_bool(data) {
   return typeof data === "boolean" ? new Ok(data) : decoder_error("Bool", data);
+}
+
+export function decode_bit_string(data) {
+  return BitString.isBitString(data)
+    ? new Ok(data)
+    : decoder_error("BitString", data);
 }
