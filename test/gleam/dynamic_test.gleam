@@ -129,29 +129,34 @@ if javascript {
   }
 }
 
+pub fn bool_test() {
+  True
+  |> dynamic.from
+  |> dynamic.bool
+  |> should.equal(Ok(True))
+
+  False
+  |> dynamic.from
+  |> dynamic.bool
+  |> should.equal(Ok(False))
+
+  1
+  |> dynamic.from
+  |> dynamic.bool
+  |> should.equal(Error(DecodeError(expected: "Bool", found: "Int")))
+
+  1.5
+  |> dynamic.from
+  |> dynamic.bool
+  |> should.equal(Error(DecodeError(expected: "Bool", found: "Float")))
+
+  []
+  |> dynamic.from
+  |> dynamic.bool
+  |> should.equal(Error(DecodeError(expected: "Bool", found: "List")))
+}
+
 if erlang {
-  pub fn bool_test() {
-    True
-    |> dynamic.from
-    |> dynamic.bool
-    |> should.equal(Ok(True))
-
-    False
-    |> dynamic.from
-    |> dynamic.bool
-    |> should.equal(Ok(False))
-
-    1
-    |> dynamic.from
-    |> dynamic.bool
-    |> should.equal(Error(DecodeError(expected: "Bool", found: "Int")))
-
-    []
-    |> dynamic.from
-    |> dynamic.bool
-    |> should.equal(Error(DecodeError(expected: "Bool", found: "List")))
-  }
-
   pub fn typed_list_test() {
     []
     |> dynamic.from

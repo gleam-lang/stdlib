@@ -159,21 +159,32 @@ if javascript {
     "../gleam_stdlib.js" "decode_float"
 }
 
-if erlang {
-  /// Checks to see whether a Dynamic value is an bool, and return the bool if
-  /// it is.
-  ///
-  /// ## Examples
-  ///
-  ///    > bool(from(True))
-  ///    Ok(True)
-  ///
-  ///    > bool(from(123))
-  ///    Error(DecodeError(expected: "bool", found: "Int"))
-  ///
-  pub external fn bool(from: Dynamic) -> Result(Bool, DecodeError) =
-    "gleam_stdlib" "decode_bool"
+/// Checks to see whether a Dynamic value is an bool, and return the bool if
+/// it is.
+///
+/// ## Examples
+///
+///    > bool(from(True))
+///    Ok(True)
+///
+///    > bool(from(123))
+///    Error(DecodeError(expected: "bool", found: "Int"))
+///
+pub fn bool(from data: Dynamic) -> Result(Bool, DecodeError) {
+  decode_bool(data)
+}
 
+if erlang {
+  external fn decode_bool(Dynamic) -> Result(Bool, DecodeError) =
+    "gleam_stdlib" "decode_bool"
+}
+
+if javascript {
+  external fn decode_bool(Dynamic) -> Result(Bool, DecodeError) =
+    "../gleam_stdlib.js" "decode_bool"
+}
+
+if erlang {
   /// Checks to see whether a Dynamic value is a list, and return the list if it
   /// is.
   ///
