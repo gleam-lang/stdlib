@@ -68,7 +68,7 @@ classify(X) when
     is_function(X, 6) orelse is_function(X, 7) orelse is_function(X, 8) orelse
     is_function(X, 9) orelse is_function(X, 10) orelse is_function(X, 11) orelse
     is_function(X, 12) -> <<"Function">>;
-classify(_) -> "Some other type".
+classify(_) -> <<"Some other type">>.
 
 decode_tuple2({_, _} = T) -> {ok, T};
 decode_tuple2(Data) -> decode_error_msg(<<"Tuple of 2 elements">>, Data).
