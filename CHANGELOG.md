@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- All modules have been updated to work on JavaScript as well as Erlang.
 - The `bit_string` module gains the `concat` function and has the `part`
   function renamed to `slice`.
 - The `os` module has been removed in favour of target specific libraries.
@@ -21,8 +22,6 @@
 - The `atom` module has been moved to the `gleam_erlang` library.
 - Prelude types like `Result`, `List` etc. are no longer redefined in their
   stdlib modules.
-- All modules have been updated to work when running on both Erlang and
-  JavaScript.
 - The `dynamic` module functions now return structured error values instead of a
   string error description.
 - The `string` module gains the `to_option` function.
