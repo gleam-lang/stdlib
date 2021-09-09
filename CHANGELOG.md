@@ -14,6 +14,7 @@
 - The `dynamic.option` function has been renamed to `optional` and made more
   permissive to other null values.
 - The `dynamic.result` function has been made more permissive to other result values.
+- The `dynamic.thunk` function has been removed.
 - The `io.get_line` function has been moved to the `gleam_erlang` library.
 - The `atom` module has been moved to the `gleam_erlang` library.
 - Prelude types like `Result`, `List` etc. are no longer redefined in their
