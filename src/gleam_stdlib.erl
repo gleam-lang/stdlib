@@ -108,35 +108,39 @@ decode_list(Data) -> decode_error_msg(<<"List">>, Data).
 
 decode_field(Data, Key) ->
     case Data of
-        #{Key := Value} ->
-            {ok, Value};
-
-        _ ->
-            decode_error_msg(io_lib:format("a map with key `~p`", [Key]), Data)
+        #{Key := Value} -> {ok, Value};
+        _ -> decode_error_msg(io_lib:format("a map with key `~p`", [Key]), Data)
     end.
 
-decode_element(Data, Index) when is_tuple(Data) ->
-    Error = fun(Size) ->
-        S = case Size of 
-            1 -> "s";
-            _ -> ""
-        end,
-        Msg = list_to_binary(["Tuple of at least ", integer_to_list(Size), S, " elements"]),
-        decode_error_msg(Msg, Data)
+
+decode_tuple_error(Size, Data) ->
+    S = case Size of 
+        1 -> "";
+        _ -> "s"
     end,
+    Msg = list_to_binary([
+        "Tuple of at least ", integer_to_list(Size), " element", S
+    ]),
+    decode_error_msg(Msg, Data).
+
+decode_element(Data, Index) when is_tuple(Data) ->
     Size = tuple_size(Data),
     case Index >= 0 of
         true -> case Index < Size of
             true -> {ok, element(Index + 1, Data)};
-            false -> Error(Index + 1)
+            false -> decode_tuple_error(Index + 1, Data)
         end;
         false -> case abs(Index) < Size of
             true -> {ok, element(Size + Index + 1, Data)};
-            false -> Error(abs(Index))
+            false -> decode_tuple_error(abs(Index), Data)
         end
     end;
-decode_element(Data, _Position) -> 
-    decode_error_msg(<<"Tuple of at least 1 element">>, Data).
+decode_element(Data, Index) -> 
+    Size = case Index < 0 of
+        true -> abs(Index);
+        false -> Index + 1
+    end,
+    decode_tuple_error(Size, Data).
 
 decode_optional(Term, F) ->
     Decode = fun(Inner) ->

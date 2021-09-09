@@ -292,6 +292,14 @@ pub fn element_test() {
 
   1
   |> dynamic.from
+  |> dynamic.element(-3)
+  |> should.equal(Error(DecodeError(
+    expected: "Tuple of at least 3 elements",
+    found: "Int",
+  )))
+
+  1
+  |> dynamic.from
   |> dynamic.element(0)
   |> should.equal(Error(DecodeError(
     expected: "Tuple of at least 1 element",
