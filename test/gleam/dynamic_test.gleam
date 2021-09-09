@@ -67,51 +67,70 @@ if erlang {
   }
 }
 
+pub fn int_test() {
+  1
+  |> dynamic.from
+  |> dynamic.int
+  |> should.equal(Ok(1))
+
+  2
+  |> dynamic.from
+  |> dynamic.int
+  |> should.equal(Ok(2))
+
+  []
+  |> dynamic.from
+  |> dynamic.int
+  |> should.equal(Error(DecodeError(expected: "Int", found: "List")))
+}
+
+pub fn float_test() {
+  1.0
+  |> dynamic.from
+  |> dynamic.float
+  |> should.equal(Ok(1.0))
+
+  2.2
+  |> dynamic.from
+  |> dynamic.float
+  |> should.equal(Ok(2.2))
+
+  []
+  |> dynamic.from
+  |> dynamic.float
+  |> should.equal(Error(DecodeError(expected: "Float", found: "List")))
+}
+
 if erlang {
-  pub fn int_test() {
-    1
-    |> dynamic.from
-    |> dynamic.int
-    |> should.equal(Ok(1))
-
-    2
-    |> dynamic.from
-    |> dynamic.int
-    |> should.equal(Ok(2))
-
-    1.0
-    |> dynamic.from
-    |> dynamic.int
-    |> should.equal(Error(DecodeError(expected: "Int", found: "Float")))
-
-    []
-    |> dynamic.from
-    |> dynamic.int
-    |> should.equal(Error(DecodeError(expected: "Int", found: "List")))
-  }
-
-  pub fn float_test() {
-    1.0
-    |> dynamic.from
-    |> dynamic.float
-    |> should.equal(Ok(1.0))
-
-    2.2
-    |> dynamic.from
-    |> dynamic.float
-    |> should.equal(Ok(2.2))
-
+  pub fn float_on_js_is_also_int_test() {
     1
     |> dynamic.from
     |> dynamic.float
     |> should.equal(Error(DecodeError(expected: "Float", found: "Int")))
 
-    []
+    1.0
+    |> dynamic.from
+    |> dynamic.int
+    |> should.equal(Error(DecodeError(expected: "Int", found: "Float")))
+  }
+}
+
+if javascript {
+  pub fn float_on_js_is_also_int_test() {
+    1
     |> dynamic.from
     |> dynamic.float
-    |> should.equal(Error(DecodeError(expected: "Float", found: "List")))
-  }
+    |> should.equal(Ok(1.0))
 
+    1.0
+    |> dynamic.from
+    |> dynamic.int
+    |> should.equal(Ok(1))
+  }
+}
+
+if erlang {
+  // TODO: remove
   pub fn thunk_test() {
     fn() { 1 }
     |> dynamic.from

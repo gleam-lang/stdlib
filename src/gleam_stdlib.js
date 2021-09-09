@@ -490,3 +490,11 @@ export function decode_string(data) {
     ? new Ok(data)
     : decoder_error("String", data);
 }
+
+export function decode_int(data) {
+  return Number.isInteger(data) ? new Ok(data) : decoder_error("Int", data);
+}
+
+export function decode_float(data) {
+  return typeof data === "number" ? new Ok(data) : decoder_error("Float", data);
+}

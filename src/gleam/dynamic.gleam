@@ -109,35 +109,57 @@ if javascript {
     "../gleam_stdlib.js" "decode_string"
 }
 
+/// Checks to see whether a Dynamic value is an int, and return the int if it
+/// is.
+///
+/// ## Examples
+///
+///    > int(from(123))
+///    Ok(123)
+///
+///    > int(from("Hello"))
+///    Error(DecodeError(expected: "Int", found: "String"))
+///
+pub fn int(from data: Dynamic) -> Result(Int, DecodeError) {
+  decode_int(data)
+}
+
 if erlang {
-  /// Checks to see whether a Dynamic value is an int, and return the int if it
-  /// is.
-  ///
-  /// ## Examples
-  ///
-  ///    > int(from(123))
-  ///    Ok(123)
-  ///
-  ///    > int(from("Hello"))
-  ///    Error(DecodeError(expected: "Int", found: "String"))
-  ///
-  pub external fn int(from: Dynamic) -> Result(Int, DecodeError) =
+  external fn decode_int(Dynamic) -> Result(Int, DecodeError) =
     "gleam_stdlib" "decode_int"
+}
 
-  /// Checks to see whether a Dynamic value is an float, and return the float if
-  /// it is.
-  ///
-  /// ## Examples
-  ///
-  ///    > float(from(2.0))
-  ///    Ok(2.0)
-  ///
-  ///    > float(from(123))
-  ///    Error(DecodeError(expected: "Float", found: "Int"))
-  ///
-  pub external fn float(from: Dynamic) -> Result(Float, DecodeError) =
+if javascript {
+  external fn decode_int(Dynamic) -> Result(Int, DecodeError) =
+    "../gleam_stdlib.js" "decode_int"
+}
+
+/// Checks to see whether a Dynamic value is an float, and return the float if
+/// it is.
+///
+/// ## Examples
+///
+///    > float(from(2.0))
+///    Ok(2.0)
+///
+///    > float(from(123))
+///    Error(DecodeError(expected: "Float", found: "Int"))
+///
+pub fn float(from data: Dynamic) -> Result(Float, DecodeError) {
+  decode_float(data)
+}
+
+if erlang {
+  external fn decode_float(Dynamic) -> Result(Float, DecodeError) =
     "gleam_stdlib" "decode_float"
+}
 
+if javascript {
+  external fn decode_float(Dynamic) -> Result(Float, DecodeError) =
+    "../gleam_stdlib.js" "decode_float"
+}
+
+if erlang {
   /// Checks to see whether a Dynamic value is an bool, and return the bool if
   /// it is.
   ///
