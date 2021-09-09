@@ -1,11 +1,11 @@
 import gleam/should
 import gleam/dynamic.{DecodeError}
 import gleam/bit_string
+import gleam/map
 
 if erlang {
   import gleam/list
   import gleam/result
-  import gleam/map
   import gleam/option.{None, Some}
 }
 
@@ -86,11 +86,6 @@ pub fn int_test() {
   |> dynamic.from
   |> dynamic.int
   |> should.equal(Error(DecodeError(expected: "Int", found: "List")))
-
-  <<1>>
-  |> dynamic.from
-  |> dynamic.int
-  |> should.equal(Error(DecodeError(expected: "Int", found: "BitString")))
 }
 
 pub fn float_test() {
@@ -259,42 +254,61 @@ if erlang {
     |> dynamic.field([])
     |> should.be_error
   }
+}
 
-  pub fn element_test() {
-    let ok_one_tuple = #("ok", 1)
+pub fn element_test() {
+  let ok_one_tuple = #("ok", 1)
 
-    ok_one_tuple
-    |> dynamic.from
-    |> dynamic.element(0)
-    |> should.equal(Ok(dynamic.from("ok")))
+  ok_one_tuple
+  |> dynamic.from
+  |> dynamic.element(0)
+  |> should.equal(Ok(dynamic.from("ok")))
 
-    ok_one_tuple
-    |> dynamic.from
-    |> dynamic.element(1)
-    |> should.equal(Ok(dynamic.from(1)))
+  ok_one_tuple
+  |> dynamic.from
+  |> dynamic.element(1)
+  |> should.equal(Ok(dynamic.from(1)))
 
-    ok_one_tuple
-    |> dynamic.from
-    |> dynamic.element(2)
-    |> should.be_error
+  ok_one_tuple
+  |> dynamic.from
+  |> dynamic.element(2)
+  |> should.equal(Error(DecodeError(
+    expected: "Tuple of at least 3 elements",
+    found: "Tuple of 2 elements",
+  )))
 
-    ok_one_tuple
-    |> dynamic.from
-    |> dynamic.element(-1)
-    |> should.be_error
+  ok_one_tuple
+  |> dynamic.from
+  |> dynamic.element(-1)
+  |> should.equal(Ok(dynamic.from(1)))
 
-    1
-    |> dynamic.from
-    |> dynamic.element(0)
-    |> should.be_error
+  ok_one_tuple
+  |> dynamic.from
+  |> dynamic.element(-3)
+  |> should.equal(Error(DecodeError(
+    expected: "Tuple of at least 3 elements",
+    found: "Tuple of 2 elements",
+  )))
 
-    map.new()
-    |> map.insert(1, "ok")
-    |> dynamic.from
-    |> dynamic.element(0)
-    |> should.be_error
-  }
+  1
+  |> dynamic.from
+  |> dynamic.element(0)
+  |> should.equal(Error(DecodeError(
+    expected: "Tuple of at least 1 element",
+    found: "Int",
+  )))
 
+  map.new()
+  |> map.insert(1, "ok")
+  |> dynamic.from
+  |> dynamic.element(0)
+  |> should.equal(Error(DecodeError(
+    expected: "Tuple of at least 1 element",
+    found: "Map",
+  )))
+}
+
+if erlang {
   pub fn tuple2_test() {
     #(1, 2)
     |> dynamic.from

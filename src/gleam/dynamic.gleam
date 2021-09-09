@@ -341,27 +341,40 @@ if erlang {
   ///
   pub external fn field(from: Dynamic, named: a) -> Result(Dynamic, DecodeError) =
     "gleam_stdlib" "decode_field"
+}
 
-  /// Checks to see if the Dynamic value is a tuple large enough to have a certain
-  /// index, and return the value of that index if it is.
-  ///
-  /// ## Examples
-  ///
-  ///    > element(from(#(1, 2)), 0)
-  ///    Ok(from(1))
-  ///
-  ///    > element(from(#(1, 2)), 2)
-  ///    Error(DecodeError(expected: "3 element tuple", found: "2 element tuple"))
-  ///
-  ///    > element(from(""), 2)
-  ///    Error(DecodeError(expected: "Tuple", found: "String"))
-  ///
-  pub external fn element(
-    from: Dynamic,
-    position: Int,
-  ) -> Result(Dynamic, DecodeError) =
+/// Checks to see if the Dynamic value is a tuple large enough to have a certain
+/// index, and return the value of that index if it is.
+///
+/// ## Examples
+///
+///    > element(from(#(1, 2)), 0)
+///    Ok(from(1))
+///
+///    > element(from(#(1, 2)), 2)
+///    Error(DecodeError(expected: "3 element tuple", found: "2 element tuple"))
+///
+///    > element(from(""), 2)
+///    Error(DecodeError(expected: "Tuple", found: "String"))
+///
+pub fn element(
+  from data: Dynamic,
+  get index: Int,
+) -> Result(Dynamic, DecodeError) {
+  decode_element(data, index)
+}
+
+if erlang {
+  external fn decode_element(Dynamic, Int) -> Result(a, DecodeError) =
     "gleam_stdlib" "decode_element"
+}
 
+if javascript {
+  external fn decode_element(Dynamic, Int) -> Result(a, DecodeError) =
+    "../gleam_stdlib.js" "decode_element"
+}
+
+if erlang {
   /// Checks to see if the Dynamic value is a 2 element tuple.
   ///
   /// If you do not wish to decode all the elements in the tuple use the

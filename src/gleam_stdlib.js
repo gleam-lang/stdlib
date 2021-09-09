@@ -476,8 +476,12 @@ function classify_dynamic(data) {
     return "List";
   } else if (Number.isInteger(data)) {
     return "Int";
+  } else if (Array.isArray(data)) {
+    return `Tuple of ${data.length} elements`;
   } else if (BitString.isBitString(data)) {
     return "BitString";
+  } else if (data instanceof Map) {
+    return "Map";
   } else if (typeof data === "number") {
     return "Float";
   } else {
@@ -512,4 +516,26 @@ export function decode_bit_string(data) {
   return BitString.isBitString(data)
     ? new Ok(data)
     : decoder_error("BitString", data);
+}
+
+export function decode_element(data, index) {
+  let error = (size) =>
+    decoder_error(
+      `Tuple of at least ${size} element${size > 1 ? "s" : ""}`,
+      data
+    );
+  if (!Array.isArray(data)) return error(index < 0 ? 1 : index + 1);
+  if (index >= 0) {
+    if (index < data.length) {
+      return new Ok(data[index]);
+    } else {
+      return error(index + 1);
+    }
+  } else {
+    if (Math.abs(index) <= data.length) {
+      return new Ok(data[data.length + index]);
+    } else {
+      return error(Math.abs(index));
+    }
+  }
 }

@@ -111,7 +111,8 @@ decode_field(Data, Key) ->
 decode_element(Data, Position) when is_tuple(Data) ->
     case catch element(Position + 1, Data) of
         {'EXIT', _Reason} ->
-            decode_error_msg(["a tuple of at least ", integer_to_list(Position + 1), " size"], Data);
+            Msg = ["Tuple of at least ", integer_to_list(Position + 1), " elements"],
+            decode_error_msg(list_to_binary(Msg), Data);
 
         Value ->
             {ok, Value}
