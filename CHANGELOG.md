@@ -10,7 +10,7 @@
 - The `map.update` function now uses `Option` rather than `Result`.
 - The `iterator` module gains the `fold_until` and `try_fold` functions.
 - The `bit_string` module loses the u32 functions in favour of bit string literals.
-- The `dynamic` module loses the `atom` function
+- The `dynamic` module loses the `atom` function and gains the `classify` function.
 - The `dynamic.option` function has been renamed to `optional` and made more
   permissive to other null values.
 - The `dynamic.result` function has been made more permissive to other result values.
