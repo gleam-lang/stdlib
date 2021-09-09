@@ -1,6 +1,7 @@
 import gleam/bit_string
 import gleam/list
 import gleam/map
+import gleam/int
 import gleam/option
 import gleam/result
 import gleam/string_builder
@@ -116,6 +117,27 @@ if erlang {
 if javascript {
   external fn decode_string(Dynamic) -> Result(String, DecodeError) =
     "../gleam_stdlib.js" "decode_string"
+}
+
+/// Return a string indicating the type of the dynamic value.
+///
+/// ```
+/// > classify(from("Hello"))
+/// "String"
+/// ```
+///
+pub fn classify(data: Dynamic) -> String {
+  do_classify(data)
+}
+
+if erlang {
+  external fn do_classify(Dynamic) -> String =
+    "gleam_stdlib" "classify_dynamic"
+}
+
+if javascript {
+  external fn do_classify(Dynamic) -> String =
+    "../gleam_stdlib.js" "classify_dynamic"
 }
 
 /// Checks to see whether a Dynamic value is an int, and return the int if it
@@ -361,17 +383,57 @@ pub fn element(
   from data: Dynamic,
   get index: Int,
 ) -> Result(Dynamic, DecodeError) {
-  decode_element(data, index)
+  try tuple = decode_tuple(data)
+  let size = tuple_size(tuple)
+  case index >= 0 {
+    True ->
+      case index < size {
+        True -> tuple_get(tuple, index)
+        False -> decode_tuple_error(index + 1, data)
+      }
+    False ->
+      case int.absolute_value(index) <= size {
+        True -> tuple_get(tuple, size + index)
+        False -> decode_tuple_error(int.absolute_value(index), data)
+      }
+  }
 }
 
+fn decode_tuple_error(size: Int, data: Dynamic) -> Result(a, DecodeError) {
+  let s = case size {
+    0 -> ""
+    _ -> "s"
+  }
+  ["Tuple of at least ", int.to_string(size), " element", s]
+  |> string_builder.from_strings
+  |> string_builder.to_string
+  |> DecodeError(found: classify(data))
+  |> Error
+}
+
+// A tuple of unknown size
+external type UnknownTuple
+
 if erlang {
-  external fn decode_element(Dynamic, Int) -> Result(a, DecodeError) =
-    "gleam_stdlib" "decode_element"
+  external fn decode_tuple(Dynamic) -> Result(UnknownTuple, DecodeError) =
+    "gleam_stdlib" "decode_tuple"
+
+  external fn tuple_get(UnknownTuple, Int) -> Result(Dynamic, DecodeError) =
+    "gleam_stdlib" "tuple_get"
+
+  external fn tuple_size(UnknownTuple) -> Int =
+    "gleam_stdlib" "size_of_tuple"
 }
 
 if javascript {
-  external fn decode_element(Dynamic, Int) -> Result(a, DecodeError) =
-    "../gleam_stdlib.js" "decode_element"
+  external fn decode_tuple(Dynamic) -> Result(UnknownTuple, DecodeError) =
+    "../gleam_stdlib.js" "decode_tuple"
+
+  external fn tuple_get(UnknownTuple, Int) -> Result(Dynamic, DecodeError) =
+    "../gleam_stdlib.js" "tuple_get"
+
+  external fn tuple_size(UnknownTuple) -> Int =
+    "../gleam_stdlib.js" "length"
 }
 
 if erlang {

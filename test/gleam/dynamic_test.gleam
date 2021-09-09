@@ -293,27 +293,18 @@ pub fn element_test() {
   1
   |> dynamic.from
   |> dynamic.element(-3)
-  |> should.equal(Error(DecodeError(
-    expected: "Tuple of at least 3 elements",
-    found: "Int",
-  )))
+  |> should.equal(Error(DecodeError(expected: "Tuple", found: "Int")))
 
   1
   |> dynamic.from
   |> dynamic.element(0)
-  |> should.equal(Error(DecodeError(
-    expected: "Tuple of at least 1 element",
-    found: "Int",
-  )))
+  |> should.equal(Error(DecodeError(expected: "Tuple", found: "Int")))
 
   map.new()
   |> map.insert(1, "ok")
   |> dynamic.from
   |> dynamic.element(0)
-  |> should.equal(Error(DecodeError(
-    expected: "Tuple of at least 1 element",
-    found: "Map",
-  )))
+  |> should.equal(Error(DecodeError(expected: "Tuple", found: "Map")))
 }
 
 if erlang {

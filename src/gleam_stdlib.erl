@@ -4,14 +4,15 @@
 -export([should_equal/2, should_not_equal/2, should_be_ok/1, should_be_error/1,
          map_get/2, iodata_append/2, identity/1, decode_int/1, decode_bool/1,
          decode_float/1, decode_thunk/1, decode_list/1, decode_optional/2,
-         decode_field/2, decode_element/2, parse_int/1, parse_float/1,
-         less_than/2, string_pop_grapheme/1, string_starts_with/2, wrap_list/1, 
+         decode_field/2, parse_int/1, parse_float/1, less_than/2,
+         string_pop_grapheme/1, string_starts_with/2, wrap_list/1,
          string_ends_with/2, string_pad/4, decode_tuple2/1, decode_tuple3/1,
          decode_tuple4/1, decode_tuple5/1, decode_tuple6/1, decode_map/1,
          bit_string_int_to_u32/1, bit_string_int_from_u32/1, decode_result/1,
          bit_string_slice/3, decode_bit_string/1, compile_regex/2, regex_scan/2,
          percent_encode/1, percent_decode/1, regex_check/2, regex_split/2,
-         base_decode64/1, parse_query/1, bit_string_concat/1]).
+         base_decode64/1, parse_query/1, bit_string_concat/1, size_of_tuple/1,
+         decode_tuple/1, tuple_get/2, classify_dynamic/1]).
 
 %% Taken from OTP's uri_string module
 -define(DEC2HEX(X),
@@ -50,25 +51,25 @@ iodata_append(Iodata, String) -> [Iodata, String].
 identity(X) -> X.
 
 decode_error_msg(Expected, Data) ->
-    {error, {decode_error, Expected, classify(Data)}}.
+    {error, {decode_error, Expected, classify_dynamic(Data)}}.
 
-classify(X) when is_atom(X) -> <<"Atom">>;
-classify(X) when is_binary(X) -> <<"String">>;
-classify(X) when is_bitstring(X) -> <<"BitString">>;
-classify(X) when is_integer(X) -> <<"Int">>;
-classify(X) when is_float(X) -> <<"Float">>;
-classify(X) when is_list(X) -> <<"List">>;
-classify(X) when is_boolean(X) -> <<"Bool">>;
-classify(X) when is_map(X) -> <<"Map">>;
-classify(X) when is_tuple(X) -> 
+classify_dynamic(X) when is_atom(X) -> <<"Atom">>;
+classify_dynamic(X) when is_binary(X) -> <<"String">>;
+classify_dynamic(X) when is_bitstring(X) -> <<"BitString">>;
+classify_dynamic(X) when is_integer(X) -> <<"Int">>;
+classify_dynamic(X) when is_float(X) -> <<"Float">>;
+classify_dynamic(X) when is_list(X) -> <<"List">>;
+classify_dynamic(X) when is_boolean(X) -> <<"Bool">>;
+classify_dynamic(X) when is_map(X) -> <<"Map">>;
+classify_dynamic(X) when is_tuple(X) -> 
     iolist_to_binary(["Tuple of ", integer_to_list(tuple_size(X)), " elements"]);
-classify(X) when 
+classify_dynamic(X) when 
     is_function(X, 0) orelse is_function(X, 1) orelse is_function(X, 2) orelse
     is_function(X, 3) orelse is_function(X, 4) orelse is_function(X, 5) orelse
     is_function(X, 6) orelse is_function(X, 7) orelse is_function(X, 8) orelse
     is_function(X, 9) orelse is_function(X, 10) orelse is_function(X, 11) orelse
     is_function(X, 12) -> <<"Function">>;
-classify(_) -> <<"Some other type">>.
+classify_dynamic(_) -> <<"Some other type">>.
 
 decode_tuple2({_, _} = T) -> {ok, T};
 decode_tuple2(Data) -> decode_error_msg(<<"Tuple of 2 elements">>, Data).
@@ -112,35 +113,14 @@ decode_field(Data, Key) ->
         _ -> decode_error_msg(io_lib:format("a map with key `~p`", [Key]), Data)
     end.
 
+size_of_tuple(Data) -> tuple_size(Data).
 
-decode_tuple_error(Size, Data) ->
-    S = case Size of 
-        1 -> "";
-        _ -> "s"
-    end,
-    Msg = list_to_binary([
-        "Tuple of at least ", integer_to_list(Size), " element", S
-    ]),
-    decode_error_msg(Msg, Data).
+tuple_get(_tup, Index) when Index < 0 -> {error, nil};
+tuple_get(Data, Index) when Index >= tuple_size(Data) -> {error, nil};
+tuple_get(Data, Index) -> {ok, element(Index + 1, Data)}.
 
-decode_element(Data, Index) when is_tuple(Data) ->
-    Size = tuple_size(Data),
-    case Index >= 0 of
-        true -> case Index < Size of
-            true -> {ok, element(Index + 1, Data)};
-            false -> decode_tuple_error(Index + 1, Data)
-        end;
-        false -> case abs(Index) < Size of
-            true -> {ok, element(Size + Index + 1, Data)};
-            false -> decode_tuple_error(abs(Index), Data)
-        end
-    end;
-decode_element(Data, Index) -> 
-    Size = case Index < 0 of
-        true -> abs(Index);
-        false -> Index + 1
-    end,
-    decode_tuple_error(Size, Data).
+decode_tuple(Data) when is_tuple(Data) -> {ok, Data};
+decode_tuple(Data) -> decode_error_msg(<<"Tuple">>, Data).
 
 decode_optional(Term, F) ->
     Decode = fun(Inner) ->

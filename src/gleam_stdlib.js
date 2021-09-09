@@ -469,7 +469,7 @@ export function decode64(sBase64) {
   return new Ok(new BitString(taBytes));
 }
 
-function classify_dynamic(data) {
+export function classify_dynamic(data) {
   if (typeof data === "string") {
     return "String";
   } else if (List.isList(data)) {
@@ -518,27 +518,12 @@ export function decode_bit_string(data) {
     : decoder_error("BitString", data);
 }
 
-function decode_tuple_error(size, data) {
-  return decoder_error(
-    `Tuple of at least ${size} element${size == 1 ? "" : "s"}`,
-    data
-  );
+export function decode_tuple(data) {
+  return Array.isArray(data) ? new Ok(data) : decoder_error("Tuple", data);
 }
 
-export function decode_element(data, index) {
-  if (!Array.isArray(data))
-    return decode_tuple_error(index < 0 ? Math.abs(index) : index + 1, data);
-  if (index >= 0) {
-    if (index < data.length) {
-      return new Ok(data[index]);
-    } else {
-      return decode_tuple_error(index + 1, data);
-    }
-  } else {
-    if (Math.abs(index) <= data.length) {
-      return new Ok(data[data.length + index]);
-    } else {
-      return decode_tuple_error(Math.abs(index), data);
-    }
-  }
+export function tuple_get(data, index) {
+  return index >= 0 && data.length > index
+    ? new Ok(data[index])
+    : new Error(Nil);
 }
