@@ -521,7 +521,7 @@ export function decode_bit_string(data) {
 export function decode_element(data, index) {
   let error = (size) =>
     decoder_error(
-      `Tuple of at least ${size} element${size > 1 ? "s" : ""}`,
+      `Tuple of at least ${size} element${size == 1 ? "" : "s"}`,
       data
     );
   if (!Array.isArray(data)) return error(index < 0 ? 1 : index + 1);

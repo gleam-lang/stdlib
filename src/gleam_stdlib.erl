@@ -59,24 +59,31 @@ classify(X) when is_integer(X) -> <<"Int">>;
 classify(X) when is_float(X) -> <<"Float">>;
 classify(X) when is_list(X) -> <<"List">>;
 classify(X) when is_boolean(X) -> <<"Bool">>;
-classify(X) when is_function(X, 0) -> <<"zero arity function">>;
-classify(X) when is_tuple(X) -> iolist_to_binary([integer_to_list(tuple_size(X)), " element tuple"]);
-classify(_) -> "some other type".
+classify(X) when is_map(X) -> <<"Map">>;
+classify(X) when is_tuple(X) -> 
+    iolist_to_binary(["Tuple of ", integer_to_list(tuple_size(X)), " elements"]);
+classify(X) when 
+    is_function(X, 0) orelse is_function(X, 1) orelse is_function(X, 2) orelse
+    is_function(X, 3) orelse is_function(X, 4) orelse is_function(X, 5) orelse
+    is_function(X, 6) orelse is_function(X, 7) orelse is_function(X, 8) orelse
+    is_function(X, 9) orelse is_function(X, 10) orelse is_function(X, 11) orelse
+    is_function(X, 12) -> <<"Function">>;
+classify(_) -> "Some other type".
 
 decode_tuple2({_, _} = T) -> {ok, T};
-decode_tuple2(Data) -> decode_error_msg(<<"2 element tuple">>, Data).
+decode_tuple2(Data) -> decode_error_msg(<<"Tuple of 2 elements">>, Data).
 
 decode_tuple3({_, _, _} = T) -> {ok, T};
-decode_tuple3(Data) -> decode_error_msg(<<"3 element tuple">>, Data).
+decode_tuple3(Data) -> decode_error_msg(<<"Tuple of 3 elements">>, Data).
 
 decode_tuple4({_, _, _, _} = T) -> {ok, T};
-decode_tuple4(Data) -> decode_error_msg(<<"4 element tuple">>, Data).
+decode_tuple4(Data) -> decode_error_msg(<<"Tuple of 4 elements">>, Data).
 
 decode_tuple5({_, _, _, _, _} = T) -> {ok, T};
-decode_tuple5(Data) -> decode_error_msg(<<"5 element tuple">>, Data).
+decode_tuple5(Data) -> decode_error_msg(<<"Tuple of 5 elements">>, Data).
 
 decode_tuple6({_, _, _, _, _, _} = T) -> {ok, T};
-decode_tuple6(Data) -> decode_error_msg(<<"6 element tuple">>, Data).
+decode_tuple6(Data) -> decode_error_msg(<<"Tuple of 6 elements">>, Data).
 
 decode_map(Data) when is_map(Data) -> {ok, Data};
 decode_map(Data) -> decode_error_msg(<<"Map">>, Data).
@@ -108,16 +115,28 @@ decode_field(Data, Key) ->
             decode_error_msg(io_lib:format("a map with key `~p`", [Key]), Data)
     end.
 
-decode_element(Data, Position) when is_tuple(Data) ->
-    case catch element(Position + 1, Data) of
-        {'EXIT', _Reason} ->
-            Msg = ["Tuple of at least ", integer_to_list(Position + 1), " elements"],
-            decode_error_msg(list_to_binary(Msg), Data);
-
-        Value ->
-            {ok, Value}
+decode_element(Data, Index) when is_tuple(Data) ->
+    Error = fun(Size) ->
+        S = case Size of 
+            1 -> "s";
+            _ -> ""
+        end,
+        Msg = list_to_binary(["Tuple of at least ", integer_to_list(Size), S, " elements"]),
+        decode_error_msg(Msg, Data)
+    end,
+    Size = tuple_size(Data),
+    case Index >= 0 of
+        true -> case Index < Size of
+            true -> {ok, element(Index + 1, Data)};
+            false -> Error(Index + 1)
+        end;
+        false -> case abs(Index) < Size of
+            true -> {ok, element(Size + Index + 1, Data)};
+            false -> Error(abs(Index))
+        end
     end;
-decode_element(Data, _Position) -> decode_error_msg(<<"Tuple">>, Data).
+decode_element(Data, _Position) -> 
+    decode_error_msg(<<"Tuple of at least 1 element">>, Data).
 
 decode_optional(Term, F) ->
     Decode = fun(Inner) ->
