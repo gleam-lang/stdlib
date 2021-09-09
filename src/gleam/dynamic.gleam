@@ -174,22 +174,6 @@ if erlang {
   pub external fn bool(from: Dynamic) -> Result(Bool, DecodeError) =
     "gleam_stdlib" "decode_bool"
 
-  /// Checks to see whether a Dynamic value is a function that takes no arguments,
-  /// and return the function if it is.
-  ///
-  /// ## Examples
-  ///
-  ///    > import gleam/result
-  ///    > let f = fn() { 1 }
-  ///    > thunk(from(f)) |> result.is_ok
-  ///    True
-  ///
-  ///    > thunk(from(123))
-  ///    Error(DecodeError(expected: "zero arity function", found: "Int"))
-  ///
-  pub external fn thunk(from: Dynamic) -> Result(fn() -> Dynamic, DecodeError) =
-    "gleam_stdlib" "decode_thunk"
-
   /// Checks to see whether a Dynamic value is a list, and return the list if it
   /// is.
   ///

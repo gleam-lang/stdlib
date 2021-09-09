@@ -130,35 +130,6 @@ if javascript {
 }
 
 if erlang {
-  // TODO: remove
-  pub fn thunk_test() {
-    fn() { 1 }
-    |> dynamic.from
-    |> dynamic.thunk
-    |> should.be_ok
-
-    fn() { 1 }
-    |> dynamic.from
-    |> dynamic.thunk
-    |> result.map(fn(f) { f() })
-    |> should.equal(Ok(dynamic.from(1)))
-
-    fn(x) { x }
-    |> dynamic.from
-    |> dynamic.thunk
-    |> should.be_error
-
-    1
-    |> dynamic.from
-    |> dynamic.thunk
-    |> should.be_error
-
-    []
-    |> dynamic.from
-    |> dynamic.thunk
-    |> should.be_error
-  }
-
   pub fn bool_test() {
     True
     |> dynamic.from
