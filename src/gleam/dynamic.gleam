@@ -1,39 +1,66 @@
+import gleam/bit_string
+import gleam/list
+import gleam/map
+import gleam/option
+import gleam/result
+import gleam/string_builder
+
+if erlang {
+  import gleam/map.{Map}
+  import gleam/option.{Option}
+}
+
 /// `Dynamic` data is data that we don't know the type of yet.
 /// We likely get data like this from interop with Erlang, or from
 /// IO with the outside world.
 pub external type Dynamic
 
+/// Error returned when unexpected data is encountered
+pub type DecodeError {
+  DecodeError(expected: String, found: String)
+}
+
+pub type Decoder(t) =
+  fn(Dynamic) -> Result(t, DecodeError)
+
+/// Converts any Gleam data into `Dynamic` data.
+///
+pub fn from(a) -> Dynamic {
+  do_from(a)
+}
+
 if erlang {
-  import gleam/bit_string
-  import gleam/list
-  import gleam/map.{Map}
-  import gleam/option.{Option}
-  import gleam/result
-  import gleam/string_builder
-
-  /// Error returned when unexpected data is encountered
-  pub type DecodeError {
-    DecodeError(expected: String, found: String)
-  }
-
-  pub type Decoder(t) =
-    fn(Dynamic) -> Result(t, DecodeError)
-
-  /// Converts any Gleam data into `Dynamic` data.
-  ///
-  pub external fn from(a) -> Dynamic =
+  external fn do_from(anything) -> Dynamic =
     "gleam_stdlib" "identity"
+}
 
-  /// Unsafely casts a Dynamic value into any other type.
-  ///
-  /// This is an escape hatch for the type system that may be useful when wrapping
-  /// native Erlang APIs. It is to be used as a last measure only!
-  ///
-  /// If you can avoid using this function, do!
-  ///
-  pub external fn unsafe_coerce(Dynamic) -> a =
+if javascript {
+  external fn do_from(anything) -> Dynamic =
+    "../gleam_stdlib.js" "identity"
+}
+
+/// Unsafely casts a Dynamic value into any other type.
+///
+/// This is an escape hatch for the type system that may be useful when wrapping
+/// native Erlang APIs. It is to be used as a last measure only!
+///
+/// If you can avoid using this function, do!
+///
+pub fn unsafe_coerce(a: Dynamic) -> anything {
+  do_unsafe_coerce(a)
+}
+
+if erlang {
+  external fn do_unsafe_coerce(Dynamic) -> a =
     "gleam_stdlib" "identity"
+}
 
+if javascript {
+  external fn do_unsafe_coerce(Dynamic) -> a =
+    "../gleam_stdlib.js" "identity"
+}
+
+if erlang {
   /// Checks to see whether a Dynamic value is a bit_string, and return the bit_string if
   /// it is.
   ///
@@ -47,20 +74,26 @@ if erlang {
   ///
   pub external fn bit_string(from: Dynamic) -> Result(BitString, DecodeError) =
     "gleam_stdlib" "decode_bit_string"
+}
 
-  /// Checks to see whether a Dynamic value is a string, and return the string if
-  /// it is.
-  ///
-  /// ## Examples
-  ///
-  ///    > string(from("Hello"))
-  ///    Ok("Hello")
-  ///
-  ///    > string(from(123))
-  ///    Error(DecodeError(expected: "String", found: "Int"))
-  ///
-  pub fn string(from: Dynamic) -> Result(String, DecodeError) {
-    bit_string(from)
+/// Checks to see whether a Dynamic value is a string, and return the string if
+/// it is.
+///
+/// ## Examples
+///
+///    > string(from("Hello"))
+///    Ok("Hello")
+///
+///    > string(from(123))
+///    Error(DecodeError(expected: "String", found: "Int"))
+///
+pub fn string(from data: Dynamic) -> Result(String, DecodeError) {
+  decode_string(data)
+}
+
+if erlang {
+  fn decode_string(data: Dynamic) -> Result(String, DecodeError) {
+    bit_string(data)
     |> result.map_error(fn(error) { DecodeError(..error, expected: "String") })
     |> result.then(fn(raw) {
       case bit_string.to_string(raw) {
@@ -69,7 +102,14 @@ if erlang {
       }
     })
   }
+}
 
+if javascript {
+  external fn decode_string(Dynamic) -> Result(String, DecodeError) =
+    "../gleam_stdlib.js" "decode_string"
+}
+
+if erlang {
   /// Checks to see whether a Dynamic value is an int, and return the int if it
   /// is.
   ///

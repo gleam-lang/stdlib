@@ -1,8 +1,9 @@
+import gleam/should
+import gleam/dynamic.{DecodeError}
+
 if erlang {
   import gleam/bit_string
-  import gleam/dynamic.{DecodeError}
   import gleam/list
-  import gleam/should
   import gleam/result
   import gleam/map
   import gleam/option.{None, Some}
@@ -33,34 +34,40 @@ if erlang {
     |> dynamic.bit_string
     |> should.equal(Error(DecodeError(expected: "BitString", found: "List")))
   }
+}
 
-  pub fn string_test() {
-    ""
-    |> dynamic.from
-    |> dynamic.string
-    |> should.equal(Ok(""))
+pub fn string_test() {
+  ""
+  |> dynamic.from
+  |> dynamic.string
+  |> should.equal(Ok(""))
 
-    "Hello"
-    |> dynamic.from
-    |> dynamic.string
-    |> should.equal(Ok("Hello"))
+  "Hello"
+  |> dynamic.from
+  |> dynamic.string
+  |> should.equal(Ok("Hello"))
 
+  1
+  |> dynamic.from
+  |> dynamic.string
+  |> should.equal(Error(DecodeError(expected: "String", found: "Int")))
+
+  []
+  |> dynamic.from
+  |> dynamic.string
+  |> should.equal(Error(DecodeError(expected: "String", found: "List")))
+}
+
+if erlang {
+  pub fn string_non_utf8_test() {
     <<65535:16>>
     |> dynamic.from
     |> dynamic.string
     |> should.equal(Error(DecodeError(expected: "String", found: "BitString")))
-
-    1
-    |> dynamic.from
-    |> dynamic.string
-    |> should.equal(Error(DecodeError(expected: "String", found: "Int")))
-
-    []
-    |> dynamic.from
-    |> dynamic.string
-    |> should.equal(Error(DecodeError(expected: "String", found: "List")))
   }
+}
 
+if erlang {
   pub fn int_test() {
     1
     |> dynamic.from

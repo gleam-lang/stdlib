@@ -12,6 +12,7 @@ import {
   CompileError as RegexCompileError,
   Match as RegexMatch,
 } from "./gleam/regex.js";
+import { DecodeError } from "./gleam/dynamic.js";
 import { Some, None } from "./gleam/option.js";
 
 const HASHCODE_CACHE = new WeakMap();
@@ -466,4 +467,26 @@ export function decode64(sBase64) {
   }
 
   return new Ok(new BitString(taBytes));
+}
+
+function classify_dynamic(data) {
+  if (typeof data === "string") {
+    return "String";
+  } else if (List.isList(data)) {
+    return "List";
+  } else if (Number.isInteger(data)) {
+    return "Int";
+  } else {
+    return typeof data;
+  }
+}
+
+function decoder_error(expected, got) {
+  return new Error(new DecodeError(expected, classify_dynamic(got)));
+}
+
+export function decode_string(data) {
+  return typeof data === "string"
+    ? new Ok(data)
+    : decoder_error("String", data);
 }
