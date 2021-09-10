@@ -540,3 +540,15 @@ export function decode_result(data) {
 export function decode_map(data) {
   return data instanceof Map ? new Ok(data) : decoder_error("Map", data);
 }
+
+export function decode_option(data, decoder) {
+  if (data === null || data === undefined || data instanceof None)
+    return new Ok(new None());
+  if (data instanceof Some) data = data[0];
+  let result = decoder(data);
+  if (result.isOk()) {
+    return new Ok(new Some(result[0]));
+  } else {
+    return result;
+  }
+}

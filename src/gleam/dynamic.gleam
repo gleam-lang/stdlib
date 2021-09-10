@@ -6,10 +6,7 @@ import gleam/option
 import gleam/result
 import gleam/string_builder
 import gleam/map.{Map}
-
-if erlang {
-  import gleam/option.{Option}
-}
+import gleam/option.{Option}
 
 /// `Dynamic` data is data that we don't know the type of yet.
 /// We likely get data like this from interop with Erlang, or from
@@ -339,36 +336,53 @@ pub fn typed_list(
   |> result.then(list.try_map(_, decoder_type))
 }
 
-if erlang {
-  /// Checks to see if a Dynamic value is a nullable version of a particular
-  /// type, and return the Option if it is.
-  ///
-  /// ## Examples
-  ///
-  ///    > option(from("Hello"), string)
-  ///    Ok(Some("Hello"))
-  ///
-  ///    > option(from("Hello"), string)
-  ///    Ok(Some("Hello"))
-  ///
-  ///    > option(from(atom.from_string("null")), string)
-  ///    Ok(None)
-  ///
-  ///    > option(from(atom.from_string("nil")), string)
-  ///    Ok(None)
-  ///
-  ///    > option(from(atom.from_string("undefined")), string)
-  ///    Ok(None)
-  ///
-  ///    > option(from(123), string)
-  ///    Error(DecodeError(expected: "BitString", found: "Int"))
-  ///
-  pub external fn optional(
-    from: Dynamic,
-    of: Decoder(inner),
-  ) -> Result(Option(inner), DecodeError) =
-    "gleam_stdlib" "decode_optional"
+/// Checks to see if a Dynamic value is a nullable version of a particular
+/// type, and return the Option if it is.
+///
+/// ## Examples
+///
+///    > option(from("Hello"), string)
+///    Ok(Some("Hello"))
+///
+///    > option(from("Hello"), string)
+///    Ok(Some("Hello"))
+///
+///    > option(from(atom.from_string("null")), string)
+///    Ok(None)
+///
+///    > option(from(atom.from_string("nil")), string)
+///    Ok(None)
+///
+///    > option(from(atom.from_string("undefined")), string)
+///    Ok(None)
+///
+///    > option(from(123), string)
+///    Error(DecodeError(expected: "BitString", found: "Int"))
+///
+pub fn optional(
+  from value: Dynamic,
+  of decode: Decoder(inner),
+) -> Result(Option(inner), DecodeError) {
+  decode_optional(value, decode)
+}
 
+if erlang {
+  external fn decode_optional(
+    Dynamic,
+    Decoder(Option(a)),
+  ) -> Result(a, DecodeError) =
+    "gleam_stdlib" "decode_optionl"
+}
+
+if javascript {
+  external fn decode_optional(
+    Dynamic,
+    Decoder(a),
+  ) -> Result(Option(a), DecodeError) =
+    "../gleam_stdlib.js" "decode_option"
+}
+
+if erlang {
   /// Checks to see if a Dynamic value is a map with a specific field, and return
   /// the value of the field if it is.
   ///

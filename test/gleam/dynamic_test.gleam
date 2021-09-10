@@ -2,11 +2,11 @@ import gleam/should
 import gleam/dynamic.{DecodeError}
 import gleam/bit_string
 import gleam/map
+import gleam/option.{None, Some}
 
 if erlang {
   import gleam/list
   import gleam/result
-  import gleam/option.{None, Some}
 }
 
 pub fn bit_string_test() {
@@ -202,29 +202,29 @@ pub fn typed_list_test() {
   |> should.be_error
 }
 
+pub fn optional_test() {
+  1
+  |> dynamic.from
+  |> dynamic.optional(dynamic.int)
+  |> should.equal(Ok(Some(1)))
+
+  option.None
+  |> dynamic.from
+  |> dynamic.optional(dynamic.int)
+  |> should.equal(Ok(None))
+
+  Nil
+  |> dynamic.from
+  |> dynamic.optional(dynamic.int)
+  |> should.equal(Ok(None))
+
+  1
+  |> dynamic.from
+  |> dynamic.optional(dynamic.string)
+  |> should.be_error
+}
+
 if erlang {
-  pub fn optional_test() {
-    1
-    |> dynamic.from
-    |> dynamic.optional(dynamic.int)
-    |> should.equal(Ok(Some(1)))
-
-    option.None
-    |> dynamic.from
-    |> dynamic.optional(dynamic.int)
-    |> should.equal(Ok(None))
-
-    Nil
-    |> dynamic.from
-    |> dynamic.optional(dynamic.int)
-    |> should.equal(Ok(None))
-
-    1
-    |> dynamic.from
-    |> dynamic.optional(dynamic.string)
-    |> should.be_error
-  }
-
   pub fn field_test() {
     map.new()
     |> map.insert("ok", 1)
