@@ -527,3 +527,7 @@ export function tuple_get(data, index) {
     ? new Ok(data[index])
     : new Error(Nil);
 }
+
+export function decode_list(data) {
+  return List.isList(data) ? new Ok(data) : decoder_error("List", data);
+}

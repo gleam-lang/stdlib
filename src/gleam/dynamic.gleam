@@ -215,24 +215,35 @@ if javascript {
     "../gleam_stdlib.js" "decode_bool"
 }
 
-if erlang {
-  /// Checks to see whether a Dynamic value is a list, and return the list if it
-  /// is.
-  ///
-  /// If you wish to decode all the elements in the list use the `typed_list`
-  /// instead.
-  ///
-  /// ## Examples
-  ///
-  ///    > list(from(["a", "b", "c"]))
-  ///    Ok([from("a"), from("b"), from("c")])
-  ///
-  ///    > list(1)
-  ///    Error(DecodeError(expected: "Int", found: "Int"))
-  ///
-  pub external fn list(from: Dynamic) -> Result(List(Dynamic), DecodeError) =
-    "gleam_stdlib" "decode_list"
+/// Checks to see whether a Dynamic value is a list, and return the list if it
+/// is.
+///
+/// If you wish to decode all the elements in the list use the `typed_list`
+/// instead.
+///
+/// ## Examples
+///
+///    > list(from(["a", "b", "c"]))
+///    Ok([from("a"), from("b"), from("c")])
+///
+///    > list(1)
+///    Error(DecodeError(expected: "Int", found: "Int"))
+///
+pub fn list(from value: Dynamic) -> Result(List(Dynamic), DecodeError) {
+  decode_list(value)
+}
 
+if erlang {
+  external fn decode_list(Dynamic) -> Result(List(Dynamic), DecodeError) =
+    "gleam_stdlib" "decode_list"
+}
+
+if javascript {
+  external fn decode_list(Dynamic) -> Result(List(Dynamic), DecodeError) =
+    "../gleam_stdlib.js" "decode_list"
+}
+
+if erlang {
   /// Checks to see whether a Dynamic value is a result, and return the result if
   /// it is.
   ///
@@ -287,37 +298,39 @@ if erlang {
         |> result.map(Error)
     }
   }
+}
 
-  /// Checks to see whether a Dynamic value is a list of a particular type, and
-  /// return the list if it is.
-  ///
-  /// The second argument is a decoder function used to decode the elements of
-  /// the list. The list is only decoded if all elements in the list can be
-  /// successfully decoded using this function.
-  ///
-  /// If you do not wish to decode all the elements in the list use the `list`
-  /// function instead.
-  ///
-  /// ## Examples
-  ///
-  ///    > typed_list(from(["a", "b", "c"]), of: string)
-  ///    Ok(["a", "b", "c"])
-  ///
-  ///    > typed_list(from([1, 2, 3]), of: string)
-  ///    Error(DecodeError(expected: "String", found: "Int"))
-  ///
-  ///    > typed_list(from("ok"), of: string)
-  ///    Error(DecodeError(expected: "List", found: "String"))
-  ///
-  pub fn typed_list(
-    from dynamic: Dynamic,
-    of decoder_type: fn(Dynamic) -> Result(inner, DecodeError),
-  ) -> Result(List(inner), DecodeError) {
-    dynamic
-    |> list
-    |> result.then(list.try_map(_, decoder_type))
-  }
+/// Checks to see whether a Dynamic value is a list of a particular type, and
+/// return the list if it is.
+///
+/// The second argument is a decoder function used to decode the elements of
+/// the list. The list is only decoded if all elements in the list can be
+/// successfully decoded using this function.
+///
+/// If you do not wish to decode all the elements in the list use the `list`
+/// function instead.
+///
+/// ## Examples
+///
+///    > typed_list(from(["a", "b", "c"]), of: string)
+///    Ok(["a", "b", "c"])
+///
+///    > typed_list(from([1, 2, 3]), of: string)
+///    Error(DecodeError(expected: "String", found: "Int"))
+///
+///    > typed_list(from("ok"), of: string)
+///    Error(DecodeError(expected: "List", found: "String"))
+///
+pub fn typed_list(
+  from dynamic: Dynamic,
+  of decoder_type: fn(Dynamic) -> Result(inner, DecodeError),
+) -> Result(List(inner), DecodeError) {
+  dynamic
+  |> list
+  |> result.then(list.try_map(_, decoder_type))
+}
 
+if erlang {
   /// Checks to see if a Dynamic value is a nullable version of a particular
   /// type, and return the Option if it is.
   ///
