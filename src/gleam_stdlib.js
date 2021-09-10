@@ -1,12 +1,13 @@
 import {
-  Ok,
+  BitString,
   Error,
   List,
-  BitString,
+  Ok,
+  Result,
   UtfCodepoint,
-  toBitString,
-  stringBits,
   inspect,
+  stringBits,
+  toBitString,
 } from "./gleam.js";
 import {
   CompileError as RegexCompileError,
@@ -530,6 +531,10 @@ export function tuple_get(data, index) {
 
 export function decode_list(data) {
   return List.isList(data) ? new Ok(data) : decoder_error("List", data);
+}
+
+export function decode_result(data) {
+  return Result.isResult(data) ? new Ok(data) : decoder_error("Result", data);
 }
 
 export function decode_map(data) {

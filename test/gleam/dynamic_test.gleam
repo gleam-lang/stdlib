@@ -752,56 +752,54 @@ pub fn list_test() {
   |> should.equal(Error(DecodeError(expected: "List", found: "Int")))
 }
 
-if erlang {
-  pub fn result_test() {
-    Ok(1)
-    |> dynamic.from
-    |> dynamic.result
-    |> should.equal(Ok(Ok(dynamic.from(1))))
+pub fn result_test() {
+  Ok(1)
+  |> dynamic.from
+  |> dynamic.result
+  |> should.equal(Ok(Ok(dynamic.from(1))))
 
-    Error("error")
-    |> dynamic.from
-    |> dynamic.result
-    |> should.equal(Ok(Error(dynamic.from("error"))))
+  Error("error")
+  |> dynamic.from
+  |> dynamic.result
+  |> should.equal(Ok(Error(dynamic.from("error"))))
 
-    1
-    |> dynamic.from
-    |> dynamic.result
-    |> should.equal(Error(DecodeError(expected: "result tuple", found: "Int")))
+  1
+  |> dynamic.from
+  |> dynamic.result
+  |> should.equal(Error(DecodeError(expected: "Result", found: "Int")))
 
-    #("bad", "value")
-    |> dynamic.from
-    |> dynamic.result
-    |> should.equal(Error(DecodeError(
-      expected: "result tuple",
-      found: "Tuple of 2 elements",
-    )))
-  }
+  #("bad", "value")
+  |> dynamic.from
+  |> dynamic.result
+  |> should.equal(Error(DecodeError(
+    expected: "Result",
+    found: "Tuple of 2 elements",
+  )))
+}
 
-  pub fn typed_result_test() {
-    Ok(1)
-    |> dynamic.from
-    |> dynamic.typed_result(ok: dynamic.int, error: dynamic.string)
-    |> should.equal(Ok(Ok(1)))
+pub fn typed_result_test() {
+  Ok(1)
+  |> dynamic.from
+  |> dynamic.typed_result(ok: dynamic.int, error: dynamic.string)
+  |> should.equal(Ok(Ok(1)))
 
-    Error("error")
-    |> dynamic.from
-    |> dynamic.typed_result(ok: dynamic.int, error: dynamic.string)
-    |> should.equal(Ok(Error("error")))
+  Error("error")
+  |> dynamic.from
+  |> dynamic.typed_result(ok: dynamic.int, error: dynamic.string)
+  |> should.equal(Ok(Error("error")))
 
-    Ok("1")
-    |> dynamic.from
-    |> dynamic.typed_result(ok: dynamic.int, error: dynamic.string)
-    |> should.equal(Error(DecodeError(expected: "Int", found: "String")))
+  Ok("1")
+  |> dynamic.from
+  |> dynamic.typed_result(ok: dynamic.int, error: dynamic.string)
+  |> should.equal(Error(DecodeError(expected: "Int", found: "String")))
 
-    Error(1)
-    |> dynamic.from
-    |> dynamic.typed_result(ok: dynamic.int, error: dynamic.string)
-    |> should.equal(Error(DecodeError(expected: "String", found: "Int")))
+  Error(1)
+  |> dynamic.from
+  |> dynamic.typed_result(ok: dynamic.int, error: dynamic.string)
+  |> should.equal(Error(DecodeError(expected: "String", found: "Int")))
 
-    1
-    |> dynamic.from
-    |> dynamic.typed_result(ok: dynamic.int, error: dynamic.string)
-    |> should.equal(Error(DecodeError(expected: "result tuple", found: "Int")))
-  }
+  1
+  |> dynamic.from
+  |> dynamic.typed_result(ok: dynamic.int, error: dynamic.string)
+  |> should.equal(Error(DecodeError(expected: "Result", found: "Int")))
 }

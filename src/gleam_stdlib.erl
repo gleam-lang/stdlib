@@ -129,7 +129,7 @@ decode_result(Term) ->
         ok -> {ok, {ok, nil}};
         {error, Inner} -> {ok, {error, Inner}};
         error -> {ok, {error, nil}};
-        _ -> decode_error_msg(<<"result tuple">>, Term)
+        _ -> decode_error_msg(<<"Result">>, Term)
     end.
 
 parse_int(String) ->
