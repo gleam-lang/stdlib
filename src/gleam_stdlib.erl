@@ -6,8 +6,7 @@
          decode_float/1, decode_thunk/1, decode_list/1, decode_optional/2,
          decode_field/2, parse_int/1, parse_float/1, less_than/2,
          string_pop_grapheme/1, string_starts_with/2, wrap_list/1,
-         string_ends_with/2, string_pad/4, decode_tuple2/1, decode_tuple3/1,
-         decode_tuple4/1, decode_tuple5/1, decode_tuple6/1, decode_map/1,
+         string_ends_with/2, string_pad/4, decode_map/1,
          bit_string_int_to_u32/1, bit_string_int_from_u32/1, decode_result/1,
          bit_string_slice/3, decode_bit_string/1, compile_regex/2, regex_scan/2,
          percent_encode/1, percent_decode/1, regex_check/2, regex_split/2,
@@ -70,21 +69,6 @@ classify_dynamic(X) when
     is_function(X, 9) orelse is_function(X, 10) orelse is_function(X, 11) orelse
     is_function(X, 12) -> <<"Function">>;
 classify_dynamic(_) -> <<"Some other type">>.
-
-decode_tuple2({_, _} = T) -> {ok, T};
-decode_tuple2(Data) -> decode_error_msg(<<"Tuple of 2 elements">>, Data).
-
-decode_tuple3({_, _, _} = T) -> {ok, T};
-decode_tuple3(Data) -> decode_error_msg(<<"Tuple of 3 elements">>, Data).
-
-decode_tuple4({_, _, _, _} = T) -> {ok, T};
-decode_tuple4(Data) -> decode_error_msg(<<"Tuple of 4 elements">>, Data).
-
-decode_tuple5({_, _, _, _, _} = T) -> {ok, T};
-decode_tuple5(Data) -> decode_error_msg(<<"Tuple of 5 elements">>, Data).
-
-decode_tuple6({_, _, _, _, _, _} = T) -> {ok, T};
-decode_tuple6(Data) -> decode_error_msg(<<"Tuple of 6 elements">>, Data).
 
 decode_map(Data) when is_map(Data) -> {ok, Data};
 decode_map(Data) -> decode_error_msg(<<"Map">>, Data).
