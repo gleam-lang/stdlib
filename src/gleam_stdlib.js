@@ -531,3 +531,7 @@ export function tuple_get(data, index) {
 export function decode_list(data) {
   return List.isList(data) ? new Ok(data) : decoder_error("List", data);
 }
+
+export function decode_map(data) {
+  return data instanceof Map ? new Ok(data) : decoder_error("Map", data);
+}

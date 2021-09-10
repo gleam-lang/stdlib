@@ -718,18 +718,16 @@ pub fn typed_tuple6_test() {
   )))
 }
 
-if erlang {
-  pub fn map_test() {
-    map.new()
-    |> dynamic.from
-    |> dynamic.map
-    |> should.equal(Ok(map.new()))
+pub fn map_test() {
+  map.new()
+  |> dynamic.from
+  |> dynamic.map
+  |> should.equal(Ok(map.new()))
 
-    1
-    |> dynamic.from
-    |> dynamic.map
-    |> should.equal(Error(DecodeError(expected: "Map", found: "Int")))
-  }
+  1
+  |> dynamic.from
+  |> dynamic.map
+  |> should.equal(Error(DecodeError(expected: "Map", found: "Int")))
 }
 
 pub fn list_test() {

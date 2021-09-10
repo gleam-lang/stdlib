@@ -5,9 +5,9 @@ import gleam/int
 import gleam/option
 import gleam/result
 import gleam/string_builder
+import gleam/map.{Map}
 
 if erlang {
-  import gleam/map.{Map}
   import gleam/option.{Option}
 }
 
@@ -783,26 +783,35 @@ pub fn typed_tuple6(
   Ok(#(a, b, c, d, e, f))
 }
 
-if erlang {
-  /// Checks to see if the Dynamic value is map.
-  ///
-  /// ## Examples
-  ///
-  ///    > import gleam/map
-  ///    > map(from(map.new()))
-  ///    Ok(map.new())
-  ///
-  ///    > map(from(1))
-  ///    Error(DecodeError(expected: "Map", found: "Int"))
-  ///
-  ///    > map(from(""))
-  ///    Error(DecodeError(expected: "Map", found: "String"))
-  ///
-  pub external fn map(
-    from: Dynamic,
-  ) -> Result(Map(Dynamic, Dynamic), DecodeError) =
-    "gleam_stdlib" "decode_map"
+/// Checks to see if the Dynamic value is map.
+///
+/// ## Examples
+///
+///    > import gleam/map
+///    > map(from(map.new()))
+///    Ok(map.new())
+///
+///    > map(from(1))
+///    Error(DecodeError(expected: "Map", found: "Int"))
+///
+///    > map(from(""))
+///    Error(DecodeError(expected: "Map", found: "String"))
+///
+pub fn map(from value: Dynamic) -> Result(Map(Dynamic, Dynamic), DecodeError) {
+  decode_map(value)
+}
 
+if erlang {
+  external fn decode_map(Dynamic) -> Result(Map(Dynamic, Dynamic), DecodeError) =
+    "gleam_stdlib" "decode_map"
+}
+
+if javascript {
+  external fn decode_map(Dynamic) -> Result(Map(Dynamic, Dynamic), DecodeError) =
+    "../gleam_stdlib.js" "decode_map"
+}
+
+if erlang {
   /// Joins multiple decoders into one. When run they will each be tried in turn
   /// until one succeeds, or they all fail.
   ///
