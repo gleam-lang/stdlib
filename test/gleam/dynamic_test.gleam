@@ -4,11 +4,6 @@ import gleam/bit_string
 import gleam/map
 import gleam/option.{None, Some}
 
-if erlang {
-  import gleam/list
-  import gleam/result
-}
-
 pub fn bit_string_test() {
   <<>>
   |> dynamic.from
