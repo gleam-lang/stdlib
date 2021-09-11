@@ -209,13 +209,9 @@ if erlang {
 
 if javascript {
   fn do_map_values(f: fn(key, value) -> b, map: Map(key, value)) -> Map(key, b) {
-    let insert = fn(pair, map) {
-      let #(k, v) = pair
-      insert(map, k, f(k, v))
-    }
+    let f = fn(map, k, v) { insert(map, k, f(k, v)) }
     map
-    |> to_list
-    |> list.fold(new(), insert)
+    |> fold(from: new(), with: f)
   }
 }
 
@@ -305,16 +301,14 @@ if javascript {
     f: fn(key, value) -> Bool,
     map: Map(key, value),
   ) -> Map(key, value) {
-    let insert = fn(pair, map) {
-      let #(k, v) = pair
+    let insert = fn(map, k, v) {
       case f(k, v) {
         True -> insert(map, k, v)
         _ -> map
       }
     }
     map
-    |> to_list
-    |> list.fold(new(), insert)
+    |> fold(from: new(), with: insert)
   }
 }
 
@@ -342,13 +336,13 @@ if erlang {
 
 if javascript {
   fn do_take(desired_keys: List(k), map: Map(k, v)) -> Map(k, v) {
-    let insert = fn(key, taken) {
+    let insert = fn(taken, key) {
       case get(map, key) {
         Ok(value) -> insert(taken, key, value)
         _ -> taken
       }
     }
-    list.fold(desired_keys, new(), insert)
+    list.fold(over: desired_keys, from: new(), with: insert)
   }
 }
 
@@ -374,7 +368,7 @@ if erlang {
 }
 
 if javascript {
-  fn insert_pair(pair: #(k, v), map: Map(k, v)) -> Map(k, v) {
+  fn insert_pair(map: Map(k, v), pair: #(k, v)) -> Map(k, v) {
     insert(map, pair.0, pair.1)
   }
 
@@ -425,7 +419,7 @@ if javascript {
 ///    from_list([])
 ///
 pub fn drop(from map: Map(k, v), drop disallowed_keys: List(k)) -> Map(k, v) {
-  list.fold(disallowed_keys, map, fn(key, acc) { delete(acc, key) })
+  list.fold(over: disallowed_keys, from: map, with: delete)
 }
 
 /// Creates a new map with one entry updated using a given function.
@@ -461,10 +455,10 @@ pub fn update(
   |> insert(map, key, _)
 }
 
-fn do_fold(list: List(#(k, v)), initial: acc, fun: fn(k, v, acc) -> acc) -> acc {
+fn do_fold(list: List(#(k, v)), initial: acc, fun: fn(acc, k, v) -> acc) -> acc {
   case list {
     [] -> initial
-    [#(k, v), ..tail] -> do_fold(tail, fun(k, v, initial), fun)
+    [#(k, v), ..tail] -> do_fold(tail, fun(initial, k, v), fun)
   }
 }
 
@@ -488,7 +482,7 @@ fn do_fold(list: List(#(k, v)), initial: acc, fun: fn(k, v, acc) -> acc) -> acc 
 pub fn fold(
   over map: Map(k, v),
   from initial: acc,
-  with fun: fn(k, v, acc) -> acc,
+  with fun: fn(acc, k, v) -> acc,
 ) -> acc {
   map
   |> to_list

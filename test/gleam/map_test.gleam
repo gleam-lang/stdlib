@@ -162,13 +162,13 @@ pub fn update_test() {
 pub fn fold_test() {
   let dict = map.from_list([#("a", 0), #("b", 1), #("c", 2), #("d", 3)])
 
-  let add = fn(_, v, acc) { v + acc }
+  let add = fn(acc, _, v) { v + acc }
 
   dict
   |> map.fold(0, add)
   |> should.equal(6)
 
-  let concat = fn(k, _, acc) { string.append(acc, k) }
+  let concat = fn(acc, k, _) { string.append(acc, k) }
 
   dict
   |> map.fold("", concat)

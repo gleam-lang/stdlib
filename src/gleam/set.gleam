@@ -122,7 +122,7 @@ pub fn from_list(members: List(member)) -> Set(member) {
     list.fold(
       over: members,
       from: map.new(),
-      with: fn(k, m) { map.insert(m, k, token) },
+      with: fn(m, k) { map.insert(m, k, token) },
     )
   Set(map)
 }
@@ -143,9 +143,9 @@ pub fn from_list(members: List(member)) -> Set(member) {
 pub fn fold(
   over set: Set(member),
   from initial: acc,
-  with reducer: fn(member, acc) -> acc,
+  with reducer: fn(acc, member) -> acc,
 ) -> acc {
-  map.fold(over: set.map, from: initial, with: fn(k, _, a) { reducer(k, a) })
+  map.fold(over: set.map, from: initial, with: fn(a, k, _) { reducer(a, k) })
 }
 
 /// Creates a new set from an existing set, minus any members that a given
@@ -200,7 +200,7 @@ fn order(first: Set(member), second: Set(member)) -> #(Set(member), Set(member))
 ///
 pub fn union(of first: Set(member), and second: Set(member)) -> Set(member) {
   let #(larger, smaller) = order(first, second)
-  fold(over: smaller, from: larger, with: fn(m, a) { insert(a, m) })
+  fold(over: smaller, from: larger, with: insert)
 }
 
 /// Creates a new set that contains members that are present in both given sets.

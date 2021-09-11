@@ -108,8 +108,8 @@ pub fn map_test() {
 
 pub fn map_fold_test() {
   [1, 2, 3, 4]
-  |> list.map_fold(from: 0, with: fn(i, acc) { #(i * 2, acc + i) })
-  |> should.equal(#([2, 4, 6, 8], 10))
+  |> list.map_fold(from: 0, with: fn(acc, i) { #(acc + i, i * 2) })
+  |> should.equal(#(10, [2, 4, 6, 8]))
 }
 
 pub fn try_map_test() {
@@ -200,19 +200,19 @@ pub fn flat_map_test() {
 
 pub fn fold_test() {
   [1, 2, 3]
-  |> list.fold([], fn(x, acc) { [x, ..acc] })
+  |> list.fold([], fn(acc, x) { [x, ..acc] })
   |> should.equal([3, 2, 1])
 }
 
 pub fn fold_right_test() {
   [1, 2, 3]
-  |> list.fold_right(from: [], with: fn(x, acc) { [x, ..acc] })
+  |> list.fold_right(from: [], with: fn(acc, x) { [x, ..acc] })
   |> should.equal([1, 2, 3])
 }
 
 pub fn index_fold_test() {
   ["a", "b", "c"]
-  |> list.index_fold([], fn(ix, i, acc) { [#(ix, i), ..acc] })
+  |> list.index_fold([], fn(acc, i, ix) { [#(ix, i), ..acc] })
   |> should.equal([#(2, "c"), #(1, "b"), #(0, "a")])
 }
 
@@ -220,7 +220,7 @@ pub fn fold_until_test() {
   [1, 2, 3, 4]
   |> list.fold_until(
     from: 0,
-    with: fn(n, acc) {
+    with: fn(acc, n) {
       case n < 4 {
         True -> list.Continue(acc + n)
         False -> list.Stop(acc)
@@ -672,17 +672,17 @@ pub fn reduce_test() {
 
 pub fn scan_test() {
   []
-  |> list.scan(from: 0, with: fn(i, acc) { i + acc })
+  |> list.scan(from: 0, with: fn(acc, i) { i + acc })
   |> should.equal([])
 
   [1, 2, 3, 4]
-  |> list.scan(from: 0, with: fn(i, acc) { 2 * i + acc })
+  |> list.scan(from: 0, with: fn(acc, i) { 2 * i + acc })
   |> should.equal([2, 6, 12, 20])
 
   [1, 2, 3, 4]
   |> list.scan(
     from: [],
-    with: fn(i, acc) {
+    with: fn(acc, i) {
       case int.is_even(i) {
         True -> ["Even", ..acc]
         False -> ["Odd", ..acc]

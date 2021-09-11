@@ -30,6 +30,11 @@
 - The `should` module has been moved to the `gleam_should_assertions` package.
 - The `uri.percent_encode` function has a slightly different behaviour. For
   example spaces are encoded as `%20`, not as `+`.
+- The order of the arguments of the the function accepted by the
+  `list.map_fold`, `list.fold`, `list.fold_right`, `list.index_fold`,
+  `list.try_fold`, `list.fold_until`, `list.reduce`, `list.scan`, `map.fold`,
+  `set.fold`, `iterator.fold`, `iterator.scan`, `iterator.reduce`,
+  `iterator.fold_until`, and `iterator.try_fold` have been flipped.
 
 ## v0.16.0 - 2021-06-17
 

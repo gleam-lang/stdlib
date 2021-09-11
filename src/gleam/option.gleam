@@ -29,7 +29,7 @@ pub fn all(list: List(Option(a))) -> Option(List(a)) {
   list.fold_right(
     list,
     from: Some([]),
-    with: fn(item, acc) {
+    with: fn(acc, item) {
       case acc, item {
         Some(values), Some(value) -> Some([value, ..values])
         _, _ -> None

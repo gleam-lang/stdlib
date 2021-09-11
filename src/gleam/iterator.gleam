@@ -1,9 +1,6 @@
 import gleam/list
-
-if erlang {
-  import gleam/option.{None, Option, Some}
-  import gleam/map.{Map}
-}
+import gleam/option.{None, Option, Some}
+import gleam/map.{Map}
 
 // Internal private representation of an Iterator
 type Action(element) {
@@ -119,11 +116,11 @@ pub fn from_list(list: List(element)) -> Iterator(element) {
 // Consuming Iterators
 fn do_fold(
   continuation: fn() -> Action(e),
-  f: fn(e, acc) -> acc,
+  f: fn(acc, e) -> acc,
   accumulator: acc,
 ) -> acc {
   case continuation() {
-    Continue(elem, next) -> do_fold(next, f, f(elem, accumulator))
+    Continue(elem, next) -> do_fold(next, f, f(accumulator, elem))
     Stop -> accumulator
   }
 }
@@ -147,7 +144,7 @@ fn do_fold(
 pub fn fold(
   over iterator: Iterator(e),
   from initial: acc,
-  with f: fn(e, acc) -> acc,
+  with f: fn(acc, e) -> acc,
 ) -> acc {
   iterator.continuation
   |> do_fold(f, initial)
@@ -174,7 +171,7 @@ pub fn run(iterator: Iterator(e)) -> Nil {
 ///
 pub fn to_list(iterator: Iterator(element)) -> List(element) {
   iterator
-  |> fold([], fn(e, acc) { [e, ..acc] })
+  |> fold([], fn(acc, e) { [e, ..acc] })
   |> list.reverse
 }
 
@@ -583,14 +580,14 @@ pub fn drop_while(
 
 fn do_scan(
   continuation: fn() -> Action(element),
-  f: fn(element, acc) -> acc,
+  f: fn(acc, element) -> acc,
   accumulator: acc,
 ) -> fn() -> Action(acc) {
   fn() {
     case continuation() {
       Stop -> Stop
       Continue(el, next) -> {
-        let accumulated = f(el, accumulator)
+        let accumulated = f(accumulator, el)
         Continue(accumulated, do_scan(next, f, accumulated))
       }
     }
@@ -610,7 +607,7 @@ fn do_scan(
 pub fn scan(
   over iterator: Iterator(element),
   from initial: acc,
-  with f: fn(element, acc) -> acc,
+  with f: fn(acc, element) -> acc,
 ) -> Iterator(acc) {
   iterator.continuation
   |> do_scan(f, initial)
@@ -883,45 +880,41 @@ pub fn all(
   |> do_all(predicate)
 }
 
-if erlang {
-  fn update_group_with(
-    el: element,
-  ) -> fn(Option(List(element))) -> List(element) {
-    fn(maybe_group) {
-      case maybe_group {
-        Some(group) -> [el, ..group]
-        None -> [el]
-      }
+fn update_group_with(el: element) -> fn(Option(List(element))) -> List(element) {
+  fn(maybe_group) {
+    case maybe_group {
+      Some(group) -> [el, ..group]
+      None -> [el]
     }
   }
+}
 
-  fn group_updater(
-    f: fn(element) -> key,
-  ) -> fn(element, Map(key, List(element))) -> Map(key, List(element)) {
-    fn(elem, groups) {
-      groups
-      |> map.update(f(elem), update_group_with(elem))
-    }
+fn group_updater(
+  f: fn(element) -> key,
+) -> fn(Map(key, List(element)), element) -> Map(key, List(element)) {
+  fn(groups, elem) {
+    groups
+    |> map.update(f(elem), update_group_with(elem))
   }
+}
 
-  /// Returns a `Map(k, List(element))` of elements from the given iterator
-  /// grouped with the given key function.
-  ///
-  /// The order within each group is preserved from the iterator.
-  ///
-  /// ## Examples
-  ///
-  ///    > from_list([1, 2, 3, 4, 5, 6]) |> group(by: fn(n) { n % 3 })
-  ///    map.from_list([#(0, [3, 6]), #(1, [1, 4]), #(2, [2, 5])])
-  ///
-  pub fn group(
-    in iterator: Iterator(element),
-    by key: fn(element) -> key,
-  ) -> Map(key, List(element)) {
-    iterator
-    |> fold(map.new(), group_updater(key))
-    |> map.map_values(fn(_, group) { list.reverse(group) })
-  }
+/// Returns a `Map(k, List(element))` of elements from the given iterator
+/// grouped with the given key function.
+///
+/// The order within each group is preserved from the iterator.
+///
+/// ## Examples
+///
+///    > from_list([1, 2, 3, 4, 5, 6]) |> group(by: fn(n) { n % 3 })
+///    map.from_list([#(0, [3, 6]), #(1, [1, 4]), #(2, [2, 5])])
+///
+pub fn group(
+  in iterator: Iterator(element),
+  by key: fn(element) -> key,
+) -> Map(key, List(element)) {
+  iterator
+  |> fold(map.new(), group_updater(key))
+  |> map.map_values(fn(_, group) { list.reverse(group) })
 }
 
 /// This function acts similar to fold, but does not take an initial state.
@@ -967,7 +960,7 @@ pub fn reduce(
 ///
 pub fn last(iterator: Iterator(element)) -> Result(element, Nil) {
   iterator
-  |> reduce(fn(elem, _) { elem })
+  |> reduce(fn(_, elem) { elem })
 }
 
 /// Creates an iterator that yields no elements.
@@ -1036,13 +1029,13 @@ pub fn interleave(
 
 fn do_fold_until(
   continuation: fn() -> Action(e),
-  f: fn(e, acc) -> list.ContinueOrStop(acc),
+  f: fn(acc, e) -> list.ContinueOrStop(acc),
   accumulator: acc,
 ) -> acc {
   case continuation() {
     Stop -> accumulator
     Continue(elem, next) ->
-      case f(elem, accumulator) {
+      case f(accumulator, elem) {
         list.Continue(accumulator) -> do_fold_until(next, f, accumulator)
         list.Stop(accumulator) -> accumulator
       }
@@ -1073,7 +1066,7 @@ fn do_fold_until(
 pub fn fold_until(
   over iterator: Iterator(e),
   from initial: acc,
-  with f: fn(e, acc) -> list.ContinueOrStop(acc),
+  with f: fn(acc, e) -> list.ContinueOrStop(acc),
 ) -> acc {
   iterator.continuation
   |> do_fold_until(f, initial)
@@ -1081,13 +1074,13 @@ pub fn fold_until(
 
 fn do_try_fold(
   over continuation: fn() -> Action(a),
-  with f: fn(a, acc) -> Result(acc, err),
+  with f: fn(acc, a) -> Result(acc, err),
   from accumulator: acc,
 ) -> Result(acc, err) {
   case continuation() {
     Stop -> Ok(accumulator)
     Continue(elem, next) -> {
-      try accumulator = f(elem, accumulator)
+      try accumulator = f(accumulator, elem)
       do_try_fold(next, f, accumulator)
     }
   }
@@ -1115,7 +1108,7 @@ fn do_try_fold(
 pub fn try_fold(
   over iterator: Iterator(e),
   from initial: acc,
-  with f: fn(e, acc) -> Result(acc, err),
+  with f: fn(acc, e) -> Result(acc, err),
 ) -> Result(acc, err) {
   iterator.continuation
   |> do_try_fold(f, initial)

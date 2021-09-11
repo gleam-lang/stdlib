@@ -296,19 +296,19 @@ pub fn map(list: List(a), with fun: fn(a) -> b) -> List(b) {
 ///
 pub fn map_fold(
   over list: List(a),
-  from memo: memo,
-  with fun: fn(a, memo) -> #(b, memo),
-) -> #(List(b), memo) {
+  from acc: acc,
+  with fun: fn(acc, a) -> #(acc, b),
+) -> #(acc, List(b)) {
   fold(
     over: list,
-    from: #([], memo),
-    with: fn(item, acc) {
-      let #(items, current_memo) = acc
-      let #(next_item, next_memo) = fun(item, current_memo)
-      #([next_item, ..items], next_memo)
+    from: #(acc, []),
+    with: fn(acc, item) {
+      let #(current_acc, items) = acc
+      let #(next_acc, next_item) = fun(current_acc, item)
+      #(next_acc, [next_item, ..items])
     },
   )
-  |> pair.map_first(reverse)
+  |> pair.map_second(reverse)
 }
 
 fn do_index_map(
@@ -530,10 +530,14 @@ pub fn flat_map(over list: List(a), with fun: fn(a) -> List(b)) -> List(b) {
 ///
 /// This function runs in linear time.
 ///
-pub fn fold(over list: List(a), from initial: b, with fun: fn(a, b) -> b) -> b {
+pub fn fold(
+  over list: List(a),
+  from initial: acc,
+  with fun: fn(acc, a) -> acc,
+) -> acc {
   case list {
     [] -> initial
-    [x, ..rest] -> fold(rest, fun(x, initial), fun)
+    [x, ..rest] -> fold(rest, fun(initial, x), fun)
   }
 }
 
@@ -550,25 +554,25 @@ pub fn fold(over list: List(a), from initial: b, with fun: fn(a, b) -> b) -> b {
 ///
 pub fn fold_right(
   over list: List(a),
-  from initial: b,
-  with fun: fn(a, b) -> b,
-) -> b {
+  from initial: acc,
+  with fun: fn(acc, a) -> acc,
+) -> acc {
   case list {
     [] -> initial
-    [x, ..rest] -> fun(x, fold_right(rest, initial, fun))
+    [x, ..rest] -> fun(fold_right(rest, initial, fun), x)
   }
 }
 
 fn do_index_fold(
   over: List(a),
-  acc: b,
-  with: fn(Int, a, b) -> b,
+  acc: acc,
+  with: fn(acc, a, Int) -> acc,
   index: Int,
-) -> b {
+) -> acc {
   case over {
     [] -> acc
     [first, ..rest] ->
-      do_index_fold(rest, with(index, first, acc), with, index + 1)
+      do_index_fold(rest, with(acc, first, index), with, index + 1)
   }
 }
 
@@ -583,9 +587,9 @@ fn do_index_fold(
 ///
 pub fn index_fold(
   over over: List(a),
-  from initial: b,
-  with fun: fn(Int, a, b) -> b,
-) -> b {
+  from initial: acc,
+  with fun: fn(acc, a, Int) -> acc,
+) -> acc {
   do_index_fold(over, initial, fun, 0)
 }
 
@@ -609,13 +613,13 @@ pub fn index_fold(
 ///
 pub fn try_fold(
   over collection: List(a),
-  from accumulator: b,
-  with fun: fn(a, b) -> Result(b, e),
-) -> Result(b, e) {
+  from accumulator: acc,
+  with fun: fn(acc, a) -> Result(acc, e),
+) -> Result(acc, e) {
   case collection {
     [] -> Ok(accumulator)
     [first, ..rest] -> {
-      try accumulator = fun(first, accumulator)
+      try accumulator = fun(accumulator, first)
       try_fold(rest, accumulator, fun)
     }
   }
@@ -646,13 +650,13 @@ pub type ContinueOrStop(a) {
 ///
 pub fn fold_until(
   over collection: List(a),
-  from accumulator: b,
-  with fun: fn(a, b) -> ContinueOrStop(b),
-) -> b {
+  from accumulator: acc,
+  with fun: fn(acc, a) -> ContinueOrStop(acc),
+) -> acc {
   case collection {
     [] -> accumulator
     [first, ..rest] ->
-      case fun(first, accumulator) {
+      case fun(accumulator, first) {
         Continue(next_accumulator) -> fold_until(rest, next_accumulator, fun)
         Stop(b) -> b
       }
@@ -1479,14 +1483,14 @@ pub fn reduce(over list: List(a), with fun: fn(a, a) -> a) -> Result(a, Nil) {
 
 fn do_scan(
   list: List(a),
-  accumulator: b,
-  accumulated: List(b),
-  fun: fn(a, b) -> b,
-) -> List(b) {
+  accumulator: acc,
+  accumulated: List(acc),
+  fun: fn(acc, a) -> acc,
+) -> List(acc) {
   case list {
     [] -> reverse(accumulated)
     [x, ..xs] -> {
-      let next = fun(x, accumulator)
+      let next = fun(accumulator, x)
       do_scan(xs, next, [next, ..accumulated], fun)
     }
   }
@@ -1501,9 +1505,9 @@ fn do_scan(
 ///
 pub fn scan(
   over list: List(a),
-  from initial: b,
-  with fun: fn(a, b) -> b,
-) -> List(b) {
+  from initial: acc,
+  with fun: fn(acc, a) -> acc,
+) -> List(acc) {
   do_scan(list, initial, [], fun)
 }
 
@@ -1525,7 +1529,7 @@ pub fn scan(
 ///
 pub fn last(list: List(a)) -> Result(a, Nil) {
   list
-  |> reduce(fn(elem, _) { elem })
+  |> reduce(fn(_, elem) { elem })
 }
 
 /// Return unique combinations of elements in the list
@@ -1553,7 +1557,7 @@ pub fn combinations(items: List(a), by n: Int) -> List(List(a)) {
           fold(
             first_combinations,
             combinations(xs, n),
-            fn(c, acc) { [c, ..acc] },
+            fn(acc, c) { [c, ..acc] },
           )
         }
       }

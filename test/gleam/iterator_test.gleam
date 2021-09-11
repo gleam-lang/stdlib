@@ -1,10 +1,7 @@
 import gleam/should
 import gleam/iterator.{Done, Next}
 import gleam/list
-
-if erlang {
-  import gleam/map
-}
+import gleam/map
 
 // a |> from_list |> to_list == a
 pub fn to_from_list_test() {
@@ -81,7 +78,7 @@ pub fn fold_test() {
     |> should.equal(list.fold(subject, acc, f))
   }
 
-  let f = fn(e, acc) { [e, ..acc] }
+  let f = fn(acc, e) { [e, ..acc] }
   test([], [], f)
   test([1], [], f)
   test([1, 2, 3], [], f)
@@ -372,22 +369,20 @@ pub fn all_test() {
   |> should.be_false
 }
 
-if erlang {
-  pub fn group_test() {
-    iterator.from_list([1, 2, 3, 4, 5, 6])
-    |> iterator.group(by: fn(n) { n % 3 })
-    |> should.equal(map.from_list([#(0, [3, 6]), #(1, [1, 4]), #(2, [2, 5])]))
-  }
+pub fn group_test() {
+  iterator.from_list([1, 2, 3, 4, 5, 6])
+  |> iterator.group(by: fn(n) { n % 3 })
+  |> should.equal(map.from_list([#(0, [3, 6]), #(1, [1, 4]), #(2, [2, 5])]))
+}
 
-  pub fn reduce_test() {
-    iterator.empty()
-    |> iterator.reduce(with: fn(x, y) { x + y })
-    |> should.equal(Error(Nil))
+pub fn reduce_test() {
+  iterator.empty()
+  |> iterator.reduce(with: fn(x, y) { x + y })
+  |> should.equal(Error(Nil))
 
-    iterator.from_list([1, 2, 3, 4, 5])
-    |> iterator.reduce(with: fn(x, y) { x + y })
-    |> should.equal(Ok(15))
-  }
+  iterator.from_list([1, 2, 3, 4, 5])
+  |> iterator.reduce(with: fn(x, y) { x + y })
+  |> should.equal(Ok(15))
 }
 
 pub fn last_test() {
@@ -439,7 +434,7 @@ pub fn fold_until_test() {
     |> should.equal(list.fold_until(subject, acc, f))
   }
 
-  let f = fn(e, acc) {
+  let f = fn(acc, e) {
     case e {
       _ if e < 6 -> list.Continue([e, ..acc])
       _ -> list.Stop(acc)

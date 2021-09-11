@@ -254,6 +254,6 @@ if javascript {
   fn do_byte_size(builder: BitBuilder) -> Int {
     [[builder]]
     |> to_list([])
-    |> list.fold(0, fn(builder, acc) { bit_string.byte_size(builder) + acc })
+    |> list.fold(0, fn(acc, builder) { bit_string.byte_size(builder) + acc })
   }
 }
