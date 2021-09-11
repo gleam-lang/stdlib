@@ -224,6 +224,28 @@ pub fn optional_test() {
   |> should.be_error
 }
 
+if javascript {
+  pub fn javascript_object_field_test() {
+    Ok(123)
+    |> dynamic.from
+    |> dynamic.field("0")
+    |> should.equal(Ok(dynamic.from(123)))
+
+    Ok(123)
+    |> dynamic.from
+    |> dynamic.field(0)
+    |> should.equal(Ok(dynamic.from(123)))
+
+    Ok(123)
+    |> dynamic.from
+    |> dynamic.field("Nope")
+    |> should.equal(Error(DecodeError(
+      expected: "Value with field \"Nope\"",
+      found: "Result",
+    )))
+  }
+}
+
 if erlang {
   pub fn field_test() {
     map.new()

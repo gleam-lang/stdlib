@@ -382,23 +382,32 @@ if javascript {
     "../gleam_stdlib.js" "decode_option"
 }
 
+/// Checks to see if a Dynamic value is a map with a specific field, and return
+/// the value of the field if it is.
+///
+/// This will not succeed on a record.
+///
+/// ## Examples
+///
+///    > import gleam/map
+///    > field(from(map.new("Hello", "World")), "Hello")
+///    Ok(Dynamic)
+///
+///    > field(from(123), "Hello")
+///    Error(DecodeError(expected: "Map", found: "Int"))
+///
+pub fn field(from value: Dynamic, named name: a) -> Result(Dynamic, DecodeError) {
+  decode_field(value, name)
+}
+
 if erlang {
-  /// Checks to see if a Dynamic value is a map with a specific field, and return
-  /// the value of the field if it is.
-  ///
-  /// This will not succeed on a record.
-  ///
-  /// ## Examples
-  ///
-  ///    > import gleam/map
-  ///    > field(from(map.new("Hello", "World")), "Hello")
-  ///    Ok(Dynamic)
-  ///
-  ///    > field(from(123), "Hello")
-  ///    Error(DecodeError(expected: "Map", found: "Int"))
-  ///
-  pub external fn field(from: Dynamic, named: a) -> Result(Dynamic, DecodeError) =
+  external fn decode_field(Dynamic, name) -> Result(Dynamic, DecodeError) =
     "gleam_stdlib" "decode_field"
+}
+
+if javascript {
+  external fn decode_field(Dynamic, name) -> Result(Dynamic, DecodeError) =
+    "../gleam_stdlib.js" "decode_field"
 }
 
 /// Checks to see if the Dynamic value is a tuple large enough to have a certain

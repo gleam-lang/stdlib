@@ -473,6 +473,8 @@ export function decode64(sBase64) {
 export function classify_dynamic(data) {
   if (typeof data === "string") {
     return "String";
+  } else if (Result.isResult(data)) {
+    return "Result";
   } else if (List.isList(data)) {
     return "List";
   } else if (Number.isInteger(data)) {
@@ -551,4 +553,10 @@ export function decode_option(data, decoder) {
   } else {
     return result;
   }
+}
+
+export function decode_field(value, name) {
+  return name in value
+    ? new Ok(value[name])
+    : decoder_error(`Value with field ${inspect(name)}`, value);
 }
