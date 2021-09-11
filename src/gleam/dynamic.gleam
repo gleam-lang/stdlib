@@ -369,9 +369,9 @@ pub fn optional(
 if erlang {
   external fn decode_optional(
     Dynamic,
-    Decoder(Option(a)),
-  ) -> Result(a, DecodeError) =
-    "gleam_stdlib" "decode_optionl"
+    Decoder(a),
+  ) -> Result(Option(a), DecodeError) =
+    "gleam_stdlib" "decode_option"
 }
 
 if javascript {

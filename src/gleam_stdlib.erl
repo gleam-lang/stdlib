@@ -3,7 +3,7 @@
 
 -export([should_equal/2, should_not_equal/2, should_be_ok/1, should_be_error/1,
          map_get/2, iodata_append/2, identity/1, decode_int/1, decode_bool/1,
-         decode_float/1, decode_thunk/1, decode_list/1, decode_optional/2,
+         decode_float/1, decode_thunk/1, decode_list/1, decode_option/2,
          decode_field/2, parse_int/1, parse_float/1, less_than/2,
          string_pop_grapheme/1, string_starts_with/2, wrap_list/1,
          string_ends_with/2, string_pad/4, decode_map/1,
@@ -106,7 +106,7 @@ tuple_get(Data, Index) -> {ok, element(Index + 1, Data)}.
 decode_tuple(Data) when is_tuple(Data) -> {ok, Data};
 decode_tuple(Data) -> decode_error_msg(<<"Tuple">>, Data).
 
-decode_optional(Term, F) ->
+decode_option(Term, F) ->
     Decode = fun(Inner) ->
         case F(Inner) of
             {ok, Decoded} -> {ok, {some, Decoded}};
