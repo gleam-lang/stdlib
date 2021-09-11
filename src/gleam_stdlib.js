@@ -556,7 +556,14 @@ export function decode_option(data, decoder) {
 }
 
 export function decode_field(value, name) {
-  return name in value
-    ? new Ok(value[name])
-    : decoder_error(`Value with field ${inspect(name)}`, value);
+  let error = () => decoder_error(`Value with field ${inspect(name)}`, value);
+  if (value instanceof Map) {
+    let entry = value.get(name);
+    return entry.isOk() ? entry : error();
+  }
+  try {
+    return name in value ? new Ok(value[name]) : error();
+  } catch {
+    return error();
+  }
 }

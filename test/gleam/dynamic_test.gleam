@@ -246,36 +246,34 @@ if javascript {
   }
 }
 
-if erlang {
-  pub fn field_test() {
-    map.new()
-    |> map.insert("ok", 1)
-    |> dynamic.from
-    |> dynamic.field("ok")
-    |> should.equal(Ok(dynamic.from(1)))
+pub fn field_test() {
+  map.new()
+  |> map.insert("ok", 1)
+  |> dynamic.from
+  |> dynamic.field("ok")
+  |> should.equal(Ok(dynamic.from(1)))
 
-    map.new()
-    |> map.insert("ok", 3)
-    |> map.insert("error", 1)
-    |> dynamic.from
-    |> dynamic.field("ok")
-    |> should.equal(Ok(dynamic.from(3)))
+  map.new()
+  |> map.insert("ok", 3)
+  |> map.insert("error", 1)
+  |> dynamic.from
+  |> dynamic.field("ok")
+  |> should.equal(Ok(dynamic.from(3)))
 
-    map.new()
-    |> dynamic.from
-    |> dynamic.field("ok")
-    |> should.be_error
+  map.new()
+  |> dynamic.from
+  |> dynamic.field("ok")
+  |> should.be_error
 
-    1
-    |> dynamic.from
-    |> dynamic.field("ok")
-    |> should.be_error
+  1
+  |> dynamic.from
+  |> dynamic.field("ok")
+  |> should.be_error
 
-    []
-    |> dynamic.from
-    |> dynamic.field([])
-    |> should.be_error
-  }
+  []
+  |> dynamic.from
+  |> dynamic.field([])
+  |> should.be_error
 }
 
 pub fn element_test() {
