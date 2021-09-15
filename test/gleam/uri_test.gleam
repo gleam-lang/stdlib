@@ -8,7 +8,7 @@ import gleam/list
 import gleam/io
 
 pub fn full_parse_test() {
-  let parsed =
+  assert Ok(parsed) =
     uri.parse("https://weebl:bob@example.com:1234/path?query=true#fragment")
   should.equal(parsed.scheme, Some("https"))
   should.equal(parsed.userinfo, Some("weebl:bob"))
@@ -20,7 +20,7 @@ pub fn full_parse_test() {
 }
 
 pub fn parse_only_path_test() {
-  let parsed = uri.parse("")
+  assert Ok(parsed) = uri.parse("")
   should.equal(parsed.scheme, None)
   should.equal(parsed.userinfo, None)
   should.equal(parsed.host, None)
@@ -31,7 +31,7 @@ pub fn parse_only_path_test() {
 }
 
 pub fn parse_only_host_test() {
-  let parsed = uri.parse("//")
+  assert Ok(parsed) = uri.parse("//")
   should.equal(parsed.scheme, None)
   should.equal(parsed.userinfo, None)
   should.equal(parsed.host, Some(""))
@@ -42,7 +42,7 @@ pub fn parse_only_host_test() {
 }
 
 pub fn colon_uri_test() {
-  let parsed = uri.parse("::")
+  assert Ok(parsed) = uri.parse("::")
   should.equal(parsed.scheme, None)
   should.equal(parsed.userinfo, None)
   should.equal(parsed.host, None)
@@ -54,7 +54,7 @@ pub fn colon_uri_test() {
 
 pub fn parse_scheme_test() {
   uri.parse("http://one.com/path/to/something?one=two&two=one#fragment")
-  |> should.equal(uri.Uri(
+  |> should.equal(Ok(uri.Uri(
     scheme: Some("http"),
     host: Some("one.com"),
     path: "/path/to/something",
@@ -62,12 +62,12 @@ pub fn parse_scheme_test() {
     fragment: Some("fragment"),
     port: Some(80),
     userinfo: None,
-  ))
+  )))
 }
 
 pub fn parse_https_scheme_test() {
   uri.parse("https://foo.com")
-  |> should.equal(uri.Uri(
+  |> should.equal(Ok(uri.Uri(
     scheme: Some("https"),
     host: Some("foo.com"),
     path: "",
@@ -75,12 +75,12 @@ pub fn parse_https_scheme_test() {
     fragment: None,
     port: Some(443),
     userinfo: None,
-  ))
+  )))
 }
 
 pub fn parse_file_scheme_test() {
   uri.parse("file:///one/two/three")
-  |> should.equal(uri.Uri(
+  |> should.equal(Ok(uri.Uri(
     scheme: Some("file"),
     host: Some(""),
     path: "/one/two/three",
@@ -88,13 +88,13 @@ pub fn parse_file_scheme_test() {
     fragment: None,
     port: None,
     userinfo: None,
-  ))
+  )))
 }
 
 pub fn parse_ftp_scheme_test() {
   "ftp://user001:password@private.ftp-server.example.com/my_directory/my_file.txt"
   |> uri.parse
-  |> should.equal(uri.Uri(
+  |> should.equal(Ok(uri.Uri(
     scheme: Some("ftp"),
     host: Some("private.ftp-server.example.com"),
     userinfo: Some("user001:password"),
@@ -102,13 +102,13 @@ pub fn parse_ftp_scheme_test() {
     query: None,
     fragment: None,
     port: Some(21),
-  ))
+  )))
 }
 
 pub fn parse_sftp_scheme_test() {
   "sftp://user001:password@private.ftp-server.example.com/my_directory/my_file.txt"
   |> uri.parse
-  |> should.equal(uri.Uri(
+  |> should.equal(Ok(uri.Uri(
     scheme: Some("sftp"),
     host: Some("private.ftp-server.example.com"),
     userinfo: Some("user001:password"),
@@ -116,13 +116,13 @@ pub fn parse_sftp_scheme_test() {
     query: None,
     fragment: None,
     port: Some(22),
-  ))
+  )))
 }
 
 pub fn parse_tftp_scheme_test() {
   "tftp://user001:password@private.ftp-server.example.com/my_directory/my_file.txt"
   |> uri.parse
-  |> should.equal(uri.Uri(
+  |> should.equal(Ok(uri.Uri(
     scheme: Some("tftp"),
     host: Some("private.ftp-server.example.com"),
     userinfo: Some("user001:password"),
@@ -130,13 +130,13 @@ pub fn parse_tftp_scheme_test() {
     query: None,
     fragment: None,
     port: Some(69),
-  ))
+  )))
 }
 
 pub fn parse_ldap_scheme_test() {
   "ldap:///dc=example,dc=com??sub?(givenName=John)"
   |> uri.parse
-  |> should.equal(uri.Uri(
+  |> should.equal(Ok(uri.Uri(
     scheme: Some("ldap"),
     host: Some(""),
     userinfo: None,
@@ -144,13 +144,13 @@ pub fn parse_ldap_scheme_test() {
     query: Some("?sub?(givenName=John)"),
     fragment: None,
     port: Some(389),
-  ))
+  )))
 }
 
 pub fn parse_ldap_2_scheme_test() {
   "ldap://ldap.example.com/cn=John%20Doe,dc=foo,dc=com"
   |> uri.parse
-  |> should.equal(uri.Uri(
+  |> should.equal(Ok(uri.Uri(
     scheme: Some("ldap"),
     host: Some("ldap.example.com"),
     userinfo: None,
@@ -158,32 +158,37 @@ pub fn parse_ldap_2_scheme_test() {
     query: None,
     fragment: None,
     port: Some(389),
-  ))
+  )))
 }
 
-pub fn parse_bad_uris_test() {
-  uri.parse("")
-  uri.parse("https:??@?F?@#>F//23/")
-  assert ":https" = uri.parse(":https").path
-  assert "https" = uri.parse("https").path
+fn assert_parse(s) {
+  assert Ok(u) = uri.parse(s)
+  u
 }
 
+// TODO: Assert these do not parse
+// pub fn parse_bad_uris_test() {
+//   uri.parse("")
+//   uri.parse("https:??@?F?@#>F//23/")
+//   assert ":https" = uri.parse(":https").path
+//   assert "https" = uri.parse("https").path
+// }
 pub fn parse_downcases_scheme() {
-  let uri = uri.parse("HTTPS://EXAMPLE.COM")
+  assert Ok(uri) = uri.parse("HTTPS://EXAMPLE.COM")
   assert Some("https") = uri.scheme
   assert Some("EXAMPLE.COM") = uri.host
 }
 
 pub fn parse_empty_fragments_test() {
-  assert Some("") = uri.parse("http://example.com#").fragment
-  assert Some("") = uri.parse("http://example.com/#").fragment
-  assert Some("") = uri.parse("http://example.com/test#").fragment
+  assert Some("") = assert_parse("http://example.com#").fragment
+  assert Some("") = assert_parse("http://example.com/#").fragment
+  assert Some("") = assert_parse("http://example.com/test#").fragment
 }
 
 pub fn parse_empty_queries_test() {
-  assert Some("") = uri.parse("http://example.com?").query
-  assert Some("") = uri.parse("http://example.com/?").query
-  assert Some("") = uri.parse("http://example.com/test?").query
+  assert Some("") = assert_parse("http://example.com?").query
+  assert Some("") = assert_parse("http://example.com/?").query
+  assert Some("") = assert_parse("http://example.com/test?").query
 }
 
 pub fn full_uri_to_string_test() {
@@ -416,148 +421,148 @@ pub fn parse_segments_test() {
 }
 
 pub fn origin1_test() {
-  let parsed = uri.parse("http://example.test/path?weebl#bob")
+  assert Ok(parsed) = uri.parse("http://example.test/path?weebl#bob")
   uri.origin(parsed)
   |> should.equal(Ok("http://example.test/"))
 }
 
 pub fn origin2_test() {
-  let parsed = uri.parse("http://example.test:8080")
+  assert Ok(parsed) = uri.parse("http://example.test:8080")
   uri.origin(parsed)
   |> should.equal(Ok("http://example.test:8080/"))
 }
 
 pub fn origin3_test() {
-  let parsed = uri.parse("https://example.test")
+  assert Ok(parsed) = uri.parse("https://example.test")
   uri.origin(parsed)
   |> should.equal(Ok("https://example.test/"))
 }
 
 pub fn origin4_test() {
-  let parsed = uri.parse("http:///path")
+  assert Ok(parsed) = uri.parse("http:///path")
   uri.origin(parsed)
   |> should.equal(Ok("http://"))
 }
 
 pub fn origin5_test() {
-  let parsed = uri.parse("http://")
+  assert Ok(parsed) = uri.parse("http://")
   uri.origin(parsed)
   |> should.equal(Ok("http://"))
 }
 
 pub fn origin6_test() {
-  let parsed = uri.parse("/path")
+  assert Ok(parsed) = uri.parse("/path")
   uri.origin(parsed)
   |> should.equal(Error(Nil))
 }
 
 pub fn origin7_test() {
-  let parsed = uri.parse("file:///dev/null")
+  assert Ok(parsed) = uri.parse("file:///dev/null")
   uri.origin(parsed)
   |> should.equal(Error(Nil))
 }
 
 pub fn merge1_test() {
-  let a = uri.parse("/relative")
-  let b = uri.parse("")
+  assert Ok(a) = uri.parse("/relative")
+  assert Ok(b) = uri.parse("")
   uri.merge(a, b)
   |> should.equal(Error(Nil))
 }
 
 pub fn merge2_test() {
-  let a = uri.parse("http://google.com/weebl")
-  let b = uri.parse("http://example.com/baz")
+  assert Ok(a) = uri.parse("http://google.com/weebl")
+  assert Ok(b) = uri.parse("http://example.com/baz")
   uri.merge(a, b)
-  |> should.equal(Ok(uri.parse("http://example.com/baz")))
+  |> should.equal(uri.parse("http://example.com/baz"))
 }
 
 pub fn merge3_test() {
-  let a = uri.parse("http://google.com/weebl")
-  let b = uri.parse("http://example.com/.././bob/../../baz")
+  assert Ok(a) = uri.parse("http://google.com/weebl")
+  assert Ok(b) = uri.parse("http://example.com/.././bob/../../baz")
   uri.merge(a, b)
-  |> should.equal(Ok(uri.parse("http://example.com/baz")))
+  |> should.equal(uri.parse("http://example.com/baz"))
 }
 
 pub fn merge4_test() {
-  let a = uri.parse("http://google.com/weebl")
-  let b = uri.parse("//example.com/baz")
+  assert Ok(a) = uri.parse("http://google.com/weebl")
+  assert Ok(b) = uri.parse("//example.com/baz")
   uri.merge(a, b)
-  |> should.equal(Ok(uri.parse("http://example.com/baz")))
+  |> should.equal(uri.parse("http://example.com/baz"))
 }
 
 pub fn merge5_test() {
-  let a = uri.parse("http://google.com/weebl")
-  let b = uri.parse("//example.com/.././bob/../../../baz")
+  assert Ok(a) = uri.parse("http://google.com/weebl")
+  assert Ok(b) = uri.parse("//example.com/.././bob/../../../baz")
   uri.merge(a, b)
-  |> should.equal(Ok(uri.parse("http://example.com/baz")))
+  |> should.equal(uri.parse("http://example.com/baz"))
 }
 
 pub fn merge6_test() {
-  let a = uri.parse("http://example.com/weebl/bob")
-  let b = uri.parse("/baz")
+  assert Ok(a) = uri.parse("http://example.com/weebl/bob")
+  assert Ok(b) = uri.parse("/baz")
   uri.merge(a, b)
-  |> should.equal(Ok(uri.parse("http://example.com/baz")))
+  |> should.equal(uri.parse("http://example.com/baz"))
 }
 
 pub fn merge7_test() {
-  let a = uri.parse("http://example.com/weebl/bob")
-  let b = uri.parse("baz")
+  assert Ok(a) = uri.parse("http://example.com/weebl/bob")
+  assert Ok(b) = uri.parse("baz")
   uri.merge(a, b)
-  |> should.equal(Ok(uri.parse("http://example.com/weebl/baz")))
+  |> should.equal(uri.parse("http://example.com/weebl/baz"))
 }
 
 pub fn merge8_test() {
-  let a = uri.parse("http://example.com/weebl/")
-  let b = uri.parse("baz")
+  assert Ok(a) = uri.parse("http://example.com/weebl/")
+  assert Ok(b) = uri.parse("baz")
   uri.merge(a, b)
-  |> should.equal(Ok(uri.parse("http://example.com/weebl/baz")))
+  |> should.equal(uri.parse("http://example.com/weebl/baz"))
 }
 
 pub fn merge9_test() {
-  let a = uri.parse("http://example.com")
-  let b = uri.parse("baz")
+  assert Ok(a) = uri.parse("http://example.com")
+  assert Ok(b) = uri.parse("baz")
   uri.merge(a, b)
-  |> should.equal(Ok(uri.parse("http://example.com/baz")))
+  |> should.equal(uri.parse("http://example.com/baz"))
 }
 
 pub fn merge10_test() {
-  let a = uri.parse("http://example.com")
-  let b = uri.parse("/.././bob/../../../baz")
+  assert Ok(a) = uri.parse("http://example.com")
+  assert Ok(b) = uri.parse("/.././bob/../../../baz")
   uri.merge(a, b)
-  |> should.equal(Ok(uri.parse("http://example.com/baz")))
+  |> should.equal(uri.parse("http://example.com/baz"))
 }
 
 pub fn merge11_test() {
-  let a = uri.parse("http://example.com/weebl/bob")
-  let b = uri.parse("")
+  assert Ok(a) = uri.parse("http://example.com/weebl/bob")
+  assert Ok(b) = uri.parse("")
   uri.merge(a, b)
-  |> should.equal(Ok(uri.parse("http://example.com/weebl/bob")))
+  |> should.equal(uri.parse("http://example.com/weebl/bob"))
 }
 
 pub fn merge12_test() {
-  let a = uri.parse("http://example.com/weebl/bob")
-  let b = uri.parse("#fragment")
+  assert Ok(a) = uri.parse("http://example.com/weebl/bob")
+  assert Ok(b) = uri.parse("#fragment")
   uri.merge(a, b)
-  |> should.equal(Ok(uri.parse("http://example.com/weebl/bob#fragment")))
+  |> should.equal(uri.parse("http://example.com/weebl/bob#fragment"))
 }
 
 pub fn merge13_test() {
-  let a = uri.parse("http://example.com/weebl/bob")
-  let b = uri.parse("?query")
+  assert Ok(a) = uri.parse("http://example.com/weebl/bob")
+  assert Ok(b) = uri.parse("?query")
   uri.merge(a, b)
-  |> should.equal(Ok(uri.parse("http://example.com/weebl/bob?query")))
+  |> should.equal(uri.parse("http://example.com/weebl/bob?query"))
 }
 
 pub fn merge14_test() {
-  let a = uri.parse("http://example.com/weebl/bob?query1")
-  let b = uri.parse("?query2")
+  assert Ok(a) = uri.parse("http://example.com/weebl/bob?query1")
+  assert Ok(b) = uri.parse("?query2")
   uri.merge(a, b)
-  |> should.equal(Ok(uri.parse("http://example.com/weebl/bob?query2")))
+  |> should.equal(uri.parse("http://example.com/weebl/bob?query2"))
 }
 
 pub fn merge15_test() {
-  let a = uri.parse("http://example.com/weebl/bob?query")
-  let b = uri.parse("")
+  assert Ok(a) = uri.parse("http://example.com/weebl/bob?query")
+  assert Ok(b) = uri.parse("")
   uri.merge(a, b)
-  |> should.equal(Ok(uri.parse("http://example.com/weebl/bob?query")))
+  |> should.equal(uri.parse("http://example.com/weebl/bob?query"))
 }

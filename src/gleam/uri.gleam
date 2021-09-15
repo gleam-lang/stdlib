@@ -33,8 +33,6 @@ pub type Uri {
   )
 }
 
-// Special thanks to Elixir for this algorithm
-//
 /// Parses a compliant URI string into the `Uri` Type.
 /// If the string is not a valid URI string then an error is returned.
 ///
@@ -48,7 +46,11 @@ pub type Uri {
 /// Ok(Uri(scheme: Some("https"), ...))
 /// ```
 ///
-pub fn parse(uri_string: String) -> Uri {
+pub fn parse(uri_string: String) -> Result(Uri, Nil) {
+  do_parse(uri_string)
+}
+
+fn do_parse(uri_string: String) -> Result(Uri, Nil) {
   // From https://tools.ietf.org/html/rfc3986#appendix-B
   let pattern =
     //    12                        3  4          5       6  7        8 
@@ -89,23 +91,14 @@ pub fn parse(uri_string: String) -> Uri {
     |> result.map(pair.second)
     |> option.from_result
   let port = case port {
-    None ->
-      case scheme {
-        Some("ftp") -> Some(21)
-        Some("sftp") -> Some(22)
-        Some("tftp") -> Some(69)
-        Some("http") -> Some(80)
-        Some("https") -> Some(443)
-        Some("ldap") -> Some(389)
-        _ -> None
-      }
+    None -> default_port(scheme)
     _ -> port
   }
   let scheme =
     scheme
     |> noneify_empty_string
     |> option.map(string.lowercase)
-  Uri(
+  Ok(Uri(
     scheme: scheme,
     userinfo: userinfo,
     host: host,
@@ -113,7 +106,19 @@ pub fn parse(uri_string: String) -> Uri {
     path: path,
     query: query,
     fragment: fragment,
-  )
+  ))
+}
+
+fn default_port(scheme: Option(String)) -> Option(Int) {
+  case scheme {
+    Some("ftp") -> Some(21)
+    Some("sftp") -> Some(22)
+    Some("tftp") -> Some(69)
+    Some("http") -> Some(80)
+    Some("https") -> Some(443)
+    Some("ldap") -> Some(389)
+    _ -> None
+  }
 }
 
 fn regex_submatches(pattern: String, string: String) -> List(Option(String)) {
