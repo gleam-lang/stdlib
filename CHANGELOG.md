@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- `uri.parse` now returns a result.
+
+## v0.17.0 - 2021-09-11
+
 - All modules have been updated to work on JavaScript as well as Erlang.
 - The `bit_string` module gains the `concat` function and has the `part`
   function renamed to `slice`.
