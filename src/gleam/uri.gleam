@@ -50,144 +50,135 @@ pub fn parse(uri_string: String) -> Result(Uri, Nil) {
   do_parse(uri_string)
 }
 
-fn do_parse(uri_string: String) -> Result(Uri, Nil) {
-  // From https://tools.ietf.org/html/rfc3986#appendix-B
-  let pattern =
-    //    12                        3  4          5       6  7        8 
-    "^(([a-z][a-z0-9\\+\\-\\.]*):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#.*)?"
-  let matches =
+if erlang {
+  external fn do_parse(String) -> Result(Uri, Nil) =
+    "gleam_stdlib" "uri_parse"
+}
+
+if javascript {
+  fn do_parse(uri_string: String) -> Result(Uri, Nil) {
+    // From https://tools.ietf.org/html/rfc3986#appendix-B
+    let pattern =
+      //    12                        3  4          5       6  7        8 
+      "^(([a-z][a-z0-9\\+\\-\\.]*):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#.*)?"
+    let matches =
+      pattern
+      |> regex_submatches(uri_string)
+      |> pad_list(8)
+
+    let #(scheme, authority, path, query, fragment) = case matches {
+      [
+        _scheme_with_colon,
+        scheme,
+        authority_with_slashes,
+        _authority,
+        path,
+        query_with_question_mark,
+        _query,
+        fragment,
+      ] -> #(
+        scheme,
+        authority_with_slashes,
+        path,
+        query_with_question_mark,
+        fragment,
+      )
+      _ -> #(None, None, None, None, None)
+    }
+
+    let scheme = noneify_empty_string(scheme)
+    let path = option.unwrap(path, "")
+    let query = noneify_query(query)
+    let #(userinfo, host, port) = split_authority(authority)
+    let fragment =
+      fragment
+      |> option.to_result(Nil)
+      |> result.then(string.pop_grapheme)
+      |> result.map(pair.second)
+      |> option.from_result
+    let scheme =
+      scheme
+      |> noneify_empty_string
+      |> option.map(string.lowercase)
+    Ok(Uri(
+      scheme: scheme,
+      userinfo: userinfo,
+      host: host,
+      port: port,
+      path: path,
+      query: query,
+      fragment: fragment,
+    ))
+  }
+
+  fn regex_submatches(pattern: String, string: String) -> List(Option(String)) {
     pattern
-    |> regex_submatches(uri_string)
-    |> pad_list(8)
-
-  let #(scheme, authority, path, query, fragment) = case matches {
-    [
-      _scheme_with_colon,
-      scheme,
-      authority_with_slashes,
-      _authority,
-      path,
-      query_with_question_mark,
-      _query,
-      fragment,
-    ] -> #(
-      scheme,
-      authority_with_slashes,
-      path,
-      query_with_question_mark,
-      fragment,
-    )
-    _ -> #(None, None, None, None, None)
+    |> regex.compile(regex.Options(case_insensitive: True, multi_line: False))
+    |> result.nil_error
+    |> result.map(regex.scan(_, string))
+    |> result.then(list.head)
+    |> result.map(fn(m: regex.Match) { m.submatches })
+    |> result.unwrap([])
   }
 
-  let scheme = noneify_empty_string(scheme)
-  let path = option.unwrap(path, "")
-  let query = noneify_query(query)
-  let #(userinfo, host, port) = split_authority(authority)
-  let fragment =
-    fragment
-    |> option.to_result(Nil)
-    |> result.then(string.pop_grapheme)
-    |> result.map(pair.second)
-    |> option.from_result
-  let port = case port {
-    None -> default_port(scheme)
-    _ -> port
-  }
-  let scheme =
-    scheme
-    |> noneify_empty_string
-    |> option.map(string.lowercase)
-  Ok(Uri(
-    scheme: scheme,
-    userinfo: userinfo,
-    host: host,
-    port: port,
-    path: path,
-    query: query,
-    fragment: fragment,
-  ))
-}
-
-fn default_port(scheme: Option(String)) -> Option(Int) {
-  case scheme {
-    Some("ftp") -> Some(21)
-    Some("sftp") -> Some(22)
-    Some("tftp") -> Some(69)
-    Some("http") -> Some(80)
-    Some("https") -> Some(443)
-    Some("ldap") -> Some(389)
-    _ -> None
-  }
-}
-
-fn regex_submatches(pattern: String, string: String) -> List(Option(String)) {
-  pattern
-  |> regex.compile(regex.Options(case_insensitive: True, multi_line: False))
-  |> result.nil_error
-  |> result.map(regex.scan(_, string))
-  |> result.then(list.head)
-  |> result.map(fn(m: regex.Match) { m.submatches })
-  |> result.unwrap([])
-}
-
-fn noneify_query(x: Option(String)) -> Option(String) {
-  case x {
-    None -> None
-    Some(x) ->
-      case string.pop_grapheme(x) {
-        Ok(#("?", query)) -> Some(query)
-        _ -> None
-      }
-  }
-}
-
-fn noneify_empty_string(x: Option(String)) -> Option(String) {
-  case x {
-    Some("") | None -> None
-    Some(_) -> x
-  }
-}
-
-// Split an authority into its userinfo, host and port parts.
-fn split_authority(
-  authority: Option(String),
-) -> #(Option(String), Option(String), Option(Int)) {
-  case option.unwrap(authority, "") {
-    "" -> #(None, None, None)
-    "//" -> #(None, Some(""), None)
-    authority -> {
-      let matches =
-        "^(//)?((.*)@)?(\\[[a-zA-Z0-9:.]*\\]|[^:]*)(:(\\d*))?"
-        |> regex_submatches(authority)
-        |> pad_list(6)
-      case matches {
-        [_, _, userinfo, host, _, port] -> {
-          let userinfo = noneify_empty_string(userinfo)
-          let host = noneify_empty_string(host)
-          let port =
-            port
-            |> option.unwrap("")
-            |> int.parse
-            |> option.from_result
-          #(userinfo, host, port)
+  fn noneify_query(x: Option(String)) -> Option(String) {
+    case x {
+      None -> None
+      Some(x) ->
+        case string.pop_grapheme(x) {
+          Ok(#("?", query)) -> Some(query)
+          _ -> None
         }
-        _ -> #(None, None, None)
+    }
+  }
+
+  fn noneify_empty_string(x: Option(String)) -> Option(String) {
+    case x {
+      Some("") | None -> None
+      Some(_) -> x
+    }
+  }
+
+  // Split an authority into its userinfo, host and port parts.
+  fn split_authority(
+    authority: Option(String),
+  ) -> #(Option(String), Option(String), Option(Int)) {
+    case option.unwrap(authority, "") {
+      "" -> #(None, None, None)
+      "//" -> #(None, Some(""), None)
+      authority -> {
+        let matches =
+          "^(//)?((.*)@)?(\\[[a-zA-Z0-9:.]*\\]|[^:]*)(:(\\d*))?"
+          |> regex_submatches(authority)
+          |> pad_list(6)
+        case matches {
+          [_, _, userinfo, host, _, port] -> {
+            let userinfo = noneify_empty_string(userinfo)
+            let host = noneify_empty_string(host)
+            let port =
+              port
+              |> option.unwrap("")
+              |> int.parse
+              |> option.from_result
+            #(userinfo, host, port)
+          }
+          _ -> #(None, None, None)
+        }
       }
     }
   }
-}
 
-fn pad_list(list: List(Option(a)), size: Int) -> List(Option(a)) {
-  list
-  |> list.append(list.repeat(None, extra_required(list, size)))
-}
+  fn pad_list(list: List(Option(a)), size: Int) -> List(Option(a)) {
+    list
+    |> list.append(list.repeat(None, extra_required(list, size)))
+  }
 
-fn extra_required(list: List(a), remaining: Int) -> Int {
-  case list {
-    _ if remaining == 0 -> 0
-    [] -> remaining
-    [_, ..xs] -> extra_required(xs, remaining - 1)
+  fn extra_required(list: List(a), remaining: Int) -> Int {
+    case list {
+      _ if remaining == 0 -> 0
+      [] -> remaining
+      [_, ..xs] -> extra_required(xs, remaining - 1)
+    }
   }
 }
 

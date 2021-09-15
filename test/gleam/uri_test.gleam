@@ -41,17 +41,6 @@ pub fn parse_only_host_test() {
   should.equal(parsed.fragment, None)
 }
 
-pub fn colon_uri_test() {
-  assert Ok(parsed) = uri.parse("::")
-  should.equal(parsed.scheme, None)
-  should.equal(parsed.userinfo, None)
-  should.equal(parsed.host, None)
-  should.equal(parsed.port, None)
-  should.equal(parsed.path, "::")
-  should.equal(parsed.query, None)
-  should.equal(parsed.fragment, None)
-}
-
 pub fn parse_scheme_test() {
   uri.parse("http://one.com/path/to/something?one=two&two=one#fragment")
   |> should.equal(Ok(uri.Uri(
@@ -60,7 +49,7 @@ pub fn parse_scheme_test() {
     path: "/path/to/something",
     query: Some("one=two&two=one"),
     fragment: Some("fragment"),
-    port: Some(80),
+    port: None,
     userinfo: None,
   )))
 }
@@ -73,7 +62,7 @@ pub fn parse_https_scheme_test() {
     path: "",
     query: None,
     fragment: None,
-    port: Some(443),
+    port: None,
     userinfo: None,
   )))
 }
@@ -101,7 +90,7 @@ pub fn parse_ftp_scheme_test() {
     path: "/my_directory/my_file.txt",
     query: None,
     fragment: None,
-    port: Some(21),
+    port: None,
   )))
 }
 
@@ -115,7 +104,7 @@ pub fn parse_sftp_scheme_test() {
     path: "/my_directory/my_file.txt",
     query: None,
     fragment: None,
-    port: Some(22),
+    port: None,
   )))
 }
 
@@ -129,7 +118,7 @@ pub fn parse_tftp_scheme_test() {
     path: "/my_directory/my_file.txt",
     query: None,
     fragment: None,
-    port: Some(69),
+    port: None,
   )))
 }
 
@@ -143,7 +132,7 @@ pub fn parse_ldap_scheme_test() {
     path: "/dc=example,dc=com",
     query: Some("?sub?(givenName=John)"),
     fragment: None,
-    port: Some(389),
+    port: None,
   )))
 }
 
@@ -157,7 +146,7 @@ pub fn parse_ldap_2_scheme_test() {
     path: "/cn=John%20Doe,dc=foo,dc=com",
     query: None,
     fragment: None,
-    port: Some(389),
+    port: None,
   )))
 }
 
