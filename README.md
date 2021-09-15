@@ -13,14 +13,14 @@ Add `gleam_stdlib` to the deps section of your `rebar.config` or `mix.exs`
 
 ```erlang
 {deps, [
-    {gleam_stdlib, "~> 0.16.0"}
+    {gleam_stdlib, "~> 0.17.1"}
 ]}
 ```
 
 ```elixir
 defp deps do
   [
-    {:gleam_stdlib, "~> 0.16.0"},
+    {:gleam_stdlib, "~> 0.17.1"},
   ]
 end
 ```
