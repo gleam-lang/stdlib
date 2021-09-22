@@ -213,16 +213,16 @@ pub fn or(first: Result(a, e), second: Result(a, e)) -> Result(a, e) {
 ///
 /// ## Examples
 ///
-///    > or(Ok(1), Ok(2))
+///    > lazy_or(Ok(1), fn() { Ok(2) })
 ///    Ok(1)
 ///
-///    > or(Ok(1), Error("Error 2"))
+///    > lazy_or(Ok(1), fn() { Error("Error 2") })
 ///    Ok(1)
 ///
-///    > or(Error("Error 1"), Ok(2))
+///    > lazy_or(Error("Error 1"), fn() { Ok(2) })
 ///    Ok(2)
 ///
-///    > or(Error("Error 1"), Error("Error 2"))
+///    > lazy_or(Error("Error 1"), fn() { Error("Error 2") })
 ///    Error("Error 2")
 ///
 pub fn lazy_or(
