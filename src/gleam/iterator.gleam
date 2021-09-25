@@ -1113,3 +1113,45 @@ pub fn try_fold(
   iterator.continuation
   |> do_try_fold(f, initial)
 }
+
+fn try_yield(continuation: fn() -> Action(e)) -> Result(e, Nil) {
+  case continuation() {
+    Stop -> Error(Nil)
+    Continue(e, _) -> Ok(e)
+  }
+}
+
+fn do_at(continuation: fn() -> Action(e), index: Int) -> Result(e, Nil) {
+  case index > 0 {
+    False -> try_yield(continuation)
+    True ->
+      case continuation() {
+        Stop -> Error(Nil)
+        Continue(_, next) -> do_at(next, index - 1)
+      }
+  }
+}
+
+/// Returns nth element yielded by the given iterator, where 0 means the first element.
+///
+/// If there are not enough elements in the iterator, `Error(Nil)` is returned.
+///
+/// For any `index` less than 0 this function behaves as if it was set to 0.
+///
+/// ## Examples
+///
+/// ```
+/// > from_list([1, 2, 3, 4]) |> at(2)
+/// Ok(3)
+///
+/// > from_list([1, 2, 3, 4]) |> at(4)
+/// Error(Nil)
+///
+/// > empty() |> iterator.at(0)
+/// Error(Nil)
+/// ```
+///
+pub fn at(in iterator: Iterator(e), get index: Int) -> Result(e, Nil) {
+  iterator.continuation
+  |> do_at(index)
+}
