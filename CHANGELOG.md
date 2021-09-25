@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.17.1 - 2021-09-15
 
 - `uri.parse` now returns a result.
 
