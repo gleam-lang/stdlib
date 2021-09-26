@@ -481,3 +481,29 @@ pub fn try_fold_test() {
   |> iterator.try_fold(0, f)
   |> should.equal(Error("tried to add an odd number"))
 }
+
+if erlang {
+  pub fn from_map_test() {
+    let map = map.from_list([#("a", 1), #("b", 2)])
+
+    iterator.from_map(map)
+    |> iterator.to_list
+    |> should.equal([#("a", 1), #("b", 2)])
+  }
+
+  pub fn from_map_keys_test() {
+    let map = map.from_list([#("a", 1), #("b", 2)])
+
+    iterator.from_map_keys(map)
+    |> iterator.to_list
+    |> should.equal(["a", "b"])
+  }
+
+  pub fn from_map_values_test() {
+    let map = map.from_list([#("a", 1), #("b", 2)])
+
+    iterator.from_map_values(map)
+    |> iterator.to_list()
+    |> should.equal([1, 2])
+  }
+}

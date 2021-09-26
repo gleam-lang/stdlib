@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- The `iterator` module gains the `to_map` function.
+- The `iterator` module gains the `from_map`, `from_map_keys` and `from_map_values` functions (Erlang only).
+
 ## v0.17.1 - 2021-09-15
 
 - `uri.parse` now returns a result.
