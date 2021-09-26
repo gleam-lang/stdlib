@@ -1227,3 +1227,67 @@ pub fn at(in iterator: Iterator(e), get index: Int) -> Result(e, Nil) {
   |> drop(index)
   |> first
 }
+
+/// Evaluates an iterator of `#(key, value)` pairs and returns them as a map.
+///
+/// If called on an iterator of infinite length then this function will never return.
+///
+/// ## Examples
+///
+/// ```
+/// > from_list([#("a", 1), #("b", 2)]) |> to_map
+/// {"a": 1, "b": 2}
+/// ```
+pub fn to_map(iterator: Iterator(#(k, v))) -> Map(k, v) {
+  iterator
+  |> fold(
+    map.new(),
+    fn(map, pair: #(k, v)) {
+      map
+      |> map.insert(pair.0, pair.1)
+    },
+  )
+}
+
+if erlang {
+  external fn do_from_map(Map(k, v)) -> Iterator(#(k, v)) =
+    "gleam_stdlib" "map_iterator"
+
+  /// Creates an iterator that yields `#(key, value)` pairs from the given map.
+  ///
+  /// # Examples
+  ///
+  /// ```
+  /// > map.from_list([#("a", 1), #("b", 2)]) |> from_map |> to_list
+  /// [#("a", 1), #("b", 2)]
+  /// ```
+  pub fn from_map(map: Map(k, v)) -> Iterator(#(k, v)) {
+    do_from_map(map)
+  }
+
+  /// Creates an iterator that yields keys from the given map.
+  ///
+  /// ## Examples
+  ///
+  /// ```
+  /// > map.from_list([#("a", 1), #("b", 2)]) |> from_map_keys |> to_list
+  /// ["a", "b"]
+  /// ```
+  pub fn from_map_keys(m: Map(k, v)) -> Iterator(k) {
+    from_map(m)
+    |> map(fn(pair: #(k, v)) { pair.0 })
+  }
+
+  /// Creates an iterator that yields values from the given map.
+  ///
+  /// ## Examples
+  ///
+  /// ```
+  /// > map.from_list([#("a", 1), #("b", 2)]) |> from_map_values |> to_list
+  /// [1, 2]
+  /// ```
+  pub fn from_map_values(m: Map(k, v)) -> Iterator(v) {
+    from_map(m)
+    |> map(fn(pair: #(k, v)) { pair.1 })
+  }
+}

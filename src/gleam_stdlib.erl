@@ -1,6 +1,6 @@
 -module(gleam_stdlib).
 
--export([map_get/2, iodata_append/2, identity/1, decode_int/1, decode_bool/1,
+-export([map_get/2, map_iterator/1, iodata_append/2, identity/1, decode_int/1, decode_bool/1,
          decode_float/1, decode_thunk/1, decode_list/1, decode_option/2,
          decode_field/2, parse_int/1, parse_float/1, less_than/2,
          string_pop_grapheme/1, string_starts_with/2, wrap_list/1,
@@ -319,3 +319,16 @@ print(String) ->
 println(String) ->
     io:put_chars([String, $\n]),
     nil.
+
+map_continuation(Iter) ->
+    fun() ->
+        case maps:next(Iter) of
+            none -> stop;
+            {Key, Value, Next} ->
+                {continue, {Key, Value}, map_continuation(Next)}
+        end
+    end.
+
+map_iterator(Map) ->
+    Iter = maps:iterator(Map),
+    {iterator, map_continuation(Iter)}.

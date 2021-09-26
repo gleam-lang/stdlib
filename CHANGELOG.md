@@ -5,6 +5,8 @@
 - The `float` module gains the `divide` function.
 - The `int` module gains the `divide`, `power`, and `square_root` functions.
 - The `string` module gains the `first`, `last`, and `capitalise` functions.
+- The `iterator` module gains the `to_map` function.
+- The `iterator` module gains the `from_map`, `from_map_keys` and `from_map_values` functions (Erlang only).
 
 ## v0.21.0 - 2022-04-24
 

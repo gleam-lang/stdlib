@@ -505,3 +505,29 @@ pub fn at_test() {
   |> iterator.at(0)
   |> should.equal(Error(Nil))
 }
+
+if erlang {
+  pub fn from_map_test() {
+    let map = map.from_list([#("a", 1), #("b", 2)])
+
+    iterator.from_map(map)
+    |> iterator.to_list
+    |> should.equal([#("a", 1), #("b", 2)])
+  }
+
+  pub fn from_map_keys_test() {
+    let map = map.from_list([#("a", 1), #("b", 2)])
+
+    iterator.from_map_keys(map)
+    |> iterator.to_list
+    |> should.equal(["a", "b"])
+  }
+
+  pub fn from_map_values_test() {
+    let map = map.from_list([#("a", 1), #("b", 2)])
+
+    iterator.from_map_values(map)
+    |> iterator.to_list()
+    |> should.equal([1, 2])
+  }
+}
