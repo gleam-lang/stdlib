@@ -1114,21 +1114,22 @@ pub fn try_fold(
   |> do_try_fold(f, initial)
 }
 
-fn try_yield(continuation: fn() -> Action(e)) -> Result(e, Nil) {
-  case continuation() {
+/// Returns the first element yielded by the given iterator, if it exists,
+/// or `Error(Nil)` otherwise.
+///
+/// ## Examples
+///
+/// ```
+/// > from_list([1, 2, 3]) |> first
+/// Ok(1)
+///
+/// > empty() |> first
+/// Error(Nil)
+/// ```
+pub fn first(from iterator: Iterator(e)) -> Result(e, Nil) {
+  case iterator.continuation() {
     Stop -> Error(Nil)
     Continue(e, _) -> Ok(e)
-  }
-}
-
-fn do_at(continuation: fn() -> Action(e), index: Int) -> Result(e, Nil) {
-  case index > 0 {
-    False -> try_yield(continuation)
-    True ->
-      case continuation() {
-        Stop -> Error(Nil)
-        Continue(_, next) -> do_at(next, index - 1)
-      }
   }
 }
 
@@ -1147,11 +1148,12 @@ fn do_at(continuation: fn() -> Action(e), index: Int) -> Result(e, Nil) {
 /// > from_list([1, 2, 3, 4]) |> at(4)
 /// Error(Nil)
 ///
-/// > empty() |> iterator.at(0)
+/// > empty() |> at(0)
 /// Error(Nil)
 /// ```
 ///
 pub fn at(in iterator: Iterator(e), get index: Int) -> Result(e, Nil) {
-  iterator.continuation
-  |> do_at(index)
+  iterator
+  |> drop(index)
+  |> first
 }
