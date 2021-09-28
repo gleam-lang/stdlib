@@ -1,9 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- The `iterator` module gains the `first` and `at` functions.
+
 ## v0.17.1 - 2021-09-15
 
 - `uri.parse` now returns a result.
-- The `iterator` module gains the `at` function.
 
 ## v0.17.0 - 2021-09-11
 
