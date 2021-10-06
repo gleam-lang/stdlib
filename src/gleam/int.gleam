@@ -344,7 +344,7 @@ fn do_digits(number: Int, base: Int, acc: List(Int)) -> List(Int) {
 pub fn undigits(numbers: List(Int), base: Int) -> Result(Int, DigitsErr) {
   case base < 2 {
     True -> Error(BaseTooLow)
-    False -> do_undigits(number, base, 0)
+    False -> do_undigits(numbers, base, 0)
   }
 }
 
@@ -355,8 +355,8 @@ fn do_undigits(
 ) -> Result(Int, DigitsErr) {
   case numbers {
     [] -> Ok(acc)
-    [digit, ..rest] if digit >= base ->
+    [digit, .._rest] if digit >= base ->
       Error(DigitIncompatibleWithBase(digit: digit, base: base))
-    [digit, ..rest] -> do_undigits(rest, acc * base + digit)
+    [digit, ..rest] -> do_undigits(rest, base, acc * base + digit)
   }
 }
