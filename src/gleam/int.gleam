@@ -321,3 +321,42 @@ fn do_product(numbers: List(Int), initial: Int) -> Int {
     [x, ..rest] -> do_product(rest, x * initial)
   }
 }
+
+pub type DigitsErr {
+  BaseTooLow
+  DigitIncompatibleWithBase(digit: Int, base: Int)
+}
+
+pub fn digits(number: Int, base: Int) -> Result(List(Int), DigitsErr) {
+  case base < 2 {
+    True -> Error(BaseTooLow)
+    False -> Ok(do_digits(number, base, []))
+  }
+}
+
+fn do_digits(number: Int, base: Int, acc: List(Int)) -> List(Int) {
+  case absolute_value(number) < base {
+    True -> [number, ..acc]
+    False -> do_digits(number / base, base, [number % base, ..acc])
+  }
+}
+
+pub fn undigits(numbers: List(Int), base: Int) -> Result(Int, DigitsErr) {
+  case base < 2 {
+    True -> Error(BaseTooLow)
+    False -> do_undigits(number, base, 0)
+  }
+}
+
+fn do_undigits(
+  numbers: List(Int),
+  base: Int,
+  acc: Int,
+) -> Result(Int, DigitsErr) {
+  case numbers {
+    [] -> Ok(acc)
+    [digit, ..rest] if digit >= base ->
+      Error(DigitIncompatibleWithBase(digit: digit, base: base))
+    [digit, ..rest] -> do_undigits(rest, acc * base + digit)
+  }
+}
