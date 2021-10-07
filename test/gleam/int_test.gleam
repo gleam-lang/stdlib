@@ -79,6 +79,10 @@ pub fn to_base_string_test() {
   100
   |> int.to_base_string(1)
   |> should.equal(Error(int.InvalidBase))
+
+  100
+  |> int.to_base_string(37)
+  |> should.equal(Error(int.InvalidBase))
 }
 
 pub fn to_base2_test() {
