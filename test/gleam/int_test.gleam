@@ -113,6 +113,14 @@ pub fn to_base16_test() {
   -100
   |> int.to_base16()
   |> should.equal("-64")
+
+  43981
+  |> int.to_base16()
+  |> should.equal("ABCD")
+
+  -43981
+  |> int.to_base16()
+  |> should.equal("-ABCD")
 }
 
 pub fn to_base36_test() {
