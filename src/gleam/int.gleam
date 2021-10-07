@@ -82,6 +82,12 @@ pub type InvalidBase {
 ///    > to_base_string(48, 36)
 ///    Ok("1C")
 ///
+///    > to_base_string(48, 1)
+///    Error(InvalidBase)
+///
+///    > to_base_string(48, 37)
+///    Error(InvalidBase)
+///
 pub fn to_base_string(int, base) -> Result(String, InvalidBase) {
   case base >= 2 && base <= 36 {
     True -> Ok(do_to_base_string(int, base))
