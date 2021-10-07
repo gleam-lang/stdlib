@@ -62,6 +62,7 @@ if javascript {
     "../gleam_stdlib.js" "to_string"
 }
 
+/// For use in to_base_string when base is outside of the allowed range.
 pub type InvalidBase {
   InvalidBase
 }
