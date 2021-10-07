@@ -110,7 +110,7 @@ if javascript {
 /// ## Examples
 ///
 ///    > to_base2(2)
-///    Ok("10")
+///    "10"
 ///
 pub fn to_base2(int) {
   do_to_base_string(int, 2)
@@ -121,7 +121,7 @@ pub fn to_base2(int) {
 /// ## Examples
 ///
 ///    > to_base8(15)
-///    Ok("17")
+///    "17"
 ///
 pub fn to_base8(int) {
   do_to_base_string(int, 8)
@@ -132,7 +132,7 @@ pub fn to_base8(int) {
 /// ## Examples
 ///
 ///    > to_base16(48)
-///    Ok("30")
+///    "30"
 ///
 pub fn to_base16(int) {
   do_to_base_string(int, 16)
@@ -143,7 +143,7 @@ pub fn to_base16(int) {
 /// ## Examples
 ///
 ///    > to_base36(48)
-///    Ok("1C")
+///    "1C"
 ///
 pub fn to_base36(int) {
   do_to_base_string(int, 36)
