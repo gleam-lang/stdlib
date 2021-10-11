@@ -3,6 +3,7 @@
 ## Unreleased
 
 - The `iterator` module gains the `first` and `at` functions.
+- The `list` module renames the `head` and `tail` functions to `first` and `rest`.
 
 ## v0.17.1 - 2021-09-15
 
