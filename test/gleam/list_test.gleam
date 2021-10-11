@@ -49,11 +49,11 @@ pub fn contains_test() {
   |> should.be_false
 }
 
-pub fn head_test() {
-  list.head([0, 4, 5, 7])
+pub fn first_test() {
+  list.first([0, 4, 5, 7])
   |> should.equal(Ok(0))
 
-  list.head([])
+  list.first([])
   |> should.equal(Error(Nil))
 }
 
