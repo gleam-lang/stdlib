@@ -186,16 +186,16 @@ pub fn first(list: List(a)) -> Result(a, Nil) {
 ///
 /// ## Examples
 ///
-///    > tail([])
+///    > rest([])
 ///    Error(Nil)
 ///
-///    > tail([0])
+///    > rest([0])
 ///    Ok([])
 ///
-///    > tail([1, 2])
+///    > rest([1, 2])
 ///    Ok([2])
 ///
-pub fn tail(list: List(a)) -> Result(List(a), Nil) {
+pub fn rest(list: List(a)) -> Result(List(a), Nil) {
   case list {
     [] -> Error(Nil)
     [_, ..xs] -> Ok(xs)
