@@ -57,14 +57,14 @@ pub fn first_test() {
   |> should.equal(Error(Nil))
 }
 
-pub fn tail_test() {
-  list.tail([0, 4, 5, 7])
+pub fn rest_test() {
+  list.rest([0, 4, 5, 7])
   |> should.equal(Ok([4, 5, 7]))
 
-  list.tail([0])
+  list.rest([0])
   |> should.equal(Ok([]))
 
-  list.tail([])
+  list.rest([])
   |> should.equal(Error(Nil))
 }
 
