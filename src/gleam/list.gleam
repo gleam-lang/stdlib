@@ -163,16 +163,16 @@ pub fn contains(list: List(a), any elem: a) -> Bool {
 ///
 /// ## Examples
 ///
-///    > head([])
+///    > first([])
 ///    Error(Nil)
 ///
-///    > head([0])
+///    > first([0])
 ///    Ok(0)
 ///
-///    > head([1, 2])
+///    > first([1, 2])
 ///    Ok(1)
 ///
-pub fn head(list: List(a)) -> Result(a, Nil) {
+pub fn first(list: List(a)) -> Result(a, Nil) {
   case list {
     [] -> Error(Nil)
     [x, .._] -> Ok(x)

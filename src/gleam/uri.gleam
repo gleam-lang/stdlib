@@ -116,7 +116,7 @@ if javascript {
     |> regex.compile(regex.Options(case_insensitive: True, multi_line: False))
     |> result.nil_error
     |> result.map(regex.scan(_, string))
-    |> result.then(list.head)
+    |> result.then(list.first)
     |> result.map(fn(m: regex.Match) { m.submatches })
     |> result.unwrap([])
   }
