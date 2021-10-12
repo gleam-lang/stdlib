@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- `int.to_base_string` now returns a `Result(Int, InvalidBase)`.
+- The `int` module gains the `to_base2`, `to_base8`, `to_base16` and `to_base36` functions.
+
 ## v0.17.1 - 2021-09-15
 
 - `uri.parse` now returns a result.
