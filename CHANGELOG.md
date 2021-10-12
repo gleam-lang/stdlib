@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- The `iterator` module gains the `first` and `at` functions.
+- The `list` module renames the `head` and `tail` functions to `first` and `rest`.
 - `int.to_base_string` now returns a `Result(Int, InvalidBase)`.
 - The `int` module gains the `to_base2`, `to_base8`, `to_base16` and `to_base36` functions.
 

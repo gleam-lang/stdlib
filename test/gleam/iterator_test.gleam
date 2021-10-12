@@ -481,3 +481,27 @@ pub fn try_fold_test() {
   |> iterator.try_fold(0, f)
   |> should.equal(Error("tried to add an odd number"))
 }
+
+pub fn first_test() {
+  iterator.from_list([1, 2, 3])
+  |> iterator.first
+  |> should.equal(Ok(1))
+
+  iterator.empty()
+  |> iterator.first
+  |> should.equal(Error(Nil))
+}
+
+pub fn at_test() {
+  iterator.from_list([1, 2, 3, 4])
+  |> iterator.at(2)
+  |> should.equal(Ok(3))
+
+  iterator.from_list([1, 2, 3, 4])
+  |> iterator.at(4)
+  |> should.equal(Error(Nil))
+
+  iterator.empty()
+  |> iterator.at(0)
+  |> should.equal(Error(Nil))
+}

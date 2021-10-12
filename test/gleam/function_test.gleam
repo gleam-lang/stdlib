@@ -18,17 +18,17 @@ pub fn compose_test() {
 
   // Takes a list of ints and returns the head as a string (if there is one, or
   // else "0" if there is not)
-  let head_to_string =
-    list.head
+  let first_to_string =
+    list.first
     |> function.compose(result.unwrap(_, 0))
     |> function.compose(int.to_string)
 
   [1]
-  |> head_to_string
+  |> first_to_string
   |> should.equal("1")
 
   []
-  |> head_to_string
+  |> first_to_string
   |> should.equal("0")
 }
 
