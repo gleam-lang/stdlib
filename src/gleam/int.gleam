@@ -62,21 +62,37 @@ if javascript {
     "../gleam_stdlib.js" "to_string"
 }
 
+/// For use in to_base_string when base is outside of the allowed range.
+pub type InvalidBase {
+  InvalidBase
+}
+
 /// Prints a given int to a string using the base number provided.
+/// Supports only bases 2 to 36, for values outside of which this function returns an Error(InvalidBase).
+/// For common bases (2, 8, 16, 36), use the to_baseN functions.
 ///
 /// ## Examples
 ///
 ///    > to_base_string(2, 2)
-///    "10"
+///    Ok("10")
 ///
 ///    > to_base_string(48, 16)
-///    "30"
+///    Ok("30")
 ///
 ///    > to_base_string(48, 36)
-///    "1C"
+///    Ok("1C")
 ///
-pub fn to_base_string(int, base) {
-  do_to_base_string(int, base)
+///    > to_base_string(48, 1)
+///    Error(InvalidBase)
+///
+///    > to_base_string(48, 37)
+///    Error(InvalidBase)
+///
+pub fn to_base_string(int, base) -> Result(String, InvalidBase) {
+  case base >= 2 && base <= 36 {
+    True -> Ok(do_to_base_string(int, base))
+    False -> Error(InvalidBase)
+  }
 }
 
 if erlang {
@@ -87,6 +103,50 @@ if erlang {
 if javascript {
   external fn do_to_base_string(Int, Int) -> String =
     "../gleam_stdlib.js" "int_to_base_string"
+}
+
+/// Prints a given int to a string using base2.
+///
+/// ## Examples
+///
+///    > to_base2(2)
+///    "10"
+///
+pub fn to_base2(int) {
+  do_to_base_string(int, 2)
+}
+
+/// Prints a given int to a string using base8.
+///
+/// ## Examples
+///
+///    > to_base8(15)
+///    "17"
+///
+pub fn to_base8(int) {
+  do_to_base_string(int, 8)
+}
+
+/// Prints a given int to a string using base16.
+///
+/// ## Examples
+///
+///    > to_base16(48)
+///    "30"
+///
+pub fn to_base16(int) {
+  do_to_base_string(int, 16)
+}
+
+/// Prints a given int to a string using base16.
+///
+/// ## Examples
+///
+///    > to_base36(48)
+///    "1C"
+///
+pub fn to_base36(int) {
+  do_to_base_string(int, 36)
 }
 
 /// Takes an int and returns its value as a float

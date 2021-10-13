@@ -70,11 +70,67 @@ pub fn parse_test() {
 pub fn to_base_string_test() {
   100
   |> int.to_base_string(16)
-  |> should.equal("64")
+  |> should.equal(Ok("64"))
 
   -100
   |> int.to_base_string(16)
+  |> should.equal(Ok("-64"))
+
+  100
+  |> int.to_base_string(1)
+  |> should.equal(Error(int.InvalidBase))
+
+  100
+  |> int.to_base_string(37)
+  |> should.equal(Error(int.InvalidBase))
+}
+
+pub fn to_base2_test() {
+  100
+  |> int.to_base2()
+  |> should.equal("1100100")
+
+  -100
+  |> int.to_base2()
+  |> should.equal("-1100100")
+}
+
+pub fn to_base8_test() {
+  100
+  |> int.to_base8()
+  |> should.equal("144")
+
+  -100
+  |> int.to_base8()
+  |> should.equal("-144")
+}
+
+pub fn to_base16_test() {
+  100
+  |> int.to_base16()
+  |> should.equal("64")
+
+  -100
+  |> int.to_base16()
   |> should.equal("-64")
+
+  43981
+  |> int.to_base16()
+  |> should.equal("ABCD")
+
+  -43981
+  |> int.to_base16()
+  |> should.equal("-ABCD")
+}
+
+pub fn to_base36_test() {
+  100
+  |> int.to_base36()
+  |> should.equal("2S")
+
+  -100
+  |> int.to_base36()
+  |> should.equal("-2S")
 }
 
 pub fn to_float_test() {

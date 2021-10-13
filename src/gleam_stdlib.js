@@ -54,7 +54,7 @@ export function float_to_string(float) {
 }
 
 export function int_to_base_string(int, base) {
-  return int.toString(base);
+  return int.toString(base).toUpperCase();
 }
 
 export function string_replace(string, target, substitute) {
