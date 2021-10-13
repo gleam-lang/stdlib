@@ -882,6 +882,8 @@ pub fn intersperse(list: List(a), with elem: a) -> List(a) {
 ///
 /// Error(Nil) is returned if the list is not long enough for the given index.
 ///
+/// For any `index` less than 0 this function behaves as if it was set to 0.
+///
 /// ## Examples
 ///
 ///    > at([1, 2, 3], 1)
@@ -891,18 +893,9 @@ pub fn intersperse(list: List(a), with elem: a) -> List(a) {
 ///    Error(Nil)
 ///
 pub fn at(in list: List(a), get index: Int) -> Result(a, Nil) {
-  case index < 0 {
-    True -> Error(Nil)
-    False ->
-      case list {
-        [] -> Error(Nil)
-        [x, ..rest] ->
-          case index == 0 {
-            True -> Ok(x)
-            False -> at(rest, index - 1)
-          }
-      }
-  }
+  list
+  |> drop(index)
+  |> first
 }
 
 /// Removes any duplicate elements from a given list.
