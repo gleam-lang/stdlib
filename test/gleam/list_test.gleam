@@ -376,7 +376,7 @@ pub fn at_test() {
   |> should.equal(Error(Nil))
 
   list.at([1, 2, 3, 4, 5, 6], -1)
-  |> should.equal(Error(Nil))
+  |> should.equal(Ok(1))
 }
 
 pub fn unique_test() {
