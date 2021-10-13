@@ -294,7 +294,7 @@ pub fn digits_test() {
   |> should.equal(Ok([1, 1, 1, 1, 0, 1, 1]))
 
   int.digits(123, 1)
-  |> should.equal(Error(int.BaseTooLow))
+  |> should.equal(Error(int.InvalidBase))
 }
 
 pub fn undigits_test() {
@@ -311,8 +311,8 @@ pub fn undigits_test() {
   |> should.equal(Ok(123))
 
   int.undigits([1, 2, 3], 1)
-  |> should.equal(Error(int.BaseTooLow))
+  |> should.equal(Error(int.InvalidBase))
 
   int.undigits([1, 1, 2], 2)
-  |> should.equal(Error(int.DigitIncompatibleWithBase(2, 2)))
+  |> should.equal(Error(int.InvalidBase))
 }
