@@ -425,14 +425,14 @@ pub fn drop(from map: Map(k, v), drop disallowed_keys: List(k)) -> Map(k, v) {
 /// Creates a new map with one entry updated using a given function.
 ///
 /// If there was not an entry in the map for the given key then the function
-/// gets `Error(Nil)` as its argument, otherwise it gets `Ok(value)`.
+/// gets `None` as its argument, otherwise it gets `Some(value)`.
 ///
 /// ## Example
 ///
 ///    > let increment = fn(x) {
 ///    >   case x {
-///    >     Ok(i) -> i + 1
-///    >     Error(Nil) -> 0
+///    >     Some(i) -> i + 1
+///    >     None -> 0
 ///    >   }
 ///    > }
 ///    > let map = from_list([#("a", 0)])
