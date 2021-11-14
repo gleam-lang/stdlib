@@ -1,4 +1,4 @@
-//// Strings in Gleam are UTF-8 binaries. They can be written in your code a
+//// Strings in Gleam are UTF-8 binaries. They can be written in your code as
 //// text surrounded by `"double quotes"`.
 
 import gleam/string_builder
