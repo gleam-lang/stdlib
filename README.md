@@ -9,20 +9,11 @@ Documentation available on [HexDocs](https://hexdocs.pm/gleam_stdlib/).
 
 ## Installation
 
-Add `gleam_stdlib` to the deps section of your `rebar.config` or `mix.exs`
+Add `gleam_stdlib` to the dependencies section of your `gleam.toml`
 
 ```erlang
-{deps, [
-    {gleam_stdlib, "~> 0.17.1"}
-]}
-```
-
-```elixir
-defp deps do
-  [
-    {:gleam_stdlib, "~> 0.17.1"},
-  ]
-end
+[dependencies]
+gleam_stdlib = "~> 0.18"
 ```
 
 ## Usage
