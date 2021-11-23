@@ -11,7 +11,7 @@ Documentation available on [HexDocs](https://hexdocs.pm/gleam_stdlib/).
 
 Add `gleam_stdlib` to the dependencies section of your `gleam.toml`
 
-```erlang
+```toml
 [dependencies]
 gleam_stdlib = "~> 0.18"
 ```
