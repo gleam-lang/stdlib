@@ -29,6 +29,7 @@ fn usage() {
 }
 
 fn more_usage() {
-  contains([1, 2, 3], any: 2)
+  [1, 2, 3]
+  |> contains(any: 2)
 }
 ```
