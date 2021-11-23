@@ -1,6 +1,6 @@
 name = "gleam_stdlib"
-version = "0.17.1"
-licence = "Apache-2.0"
+version = "0.18.0-rc1"
+licences = ["Apache-2.0"]
 description = "A standard library for the Gleam programming language"
 
 repository = { type = "github", user = "gleam-lang", repo = "stdlib" }
