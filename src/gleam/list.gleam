@@ -582,7 +582,7 @@ fn do_index_fold(
 ///
 /// ```
 /// ["a", "b", "c"]
-/// |> list.index_fold([], fn(index, item, acc) { ... })
+/// |> list.index_fold([], fn(acc, item, index) { ... })
 /// ```
 ///
 pub fn index_fold(
