@@ -377,11 +377,11 @@ pub fn group_test() {
 
 pub fn reduce_test() {
   iterator.empty()
-  |> iterator.reduce(with: fn(x, y) { x + y })
+  |> iterator.reduce(with: fn(acc, x) { acc + x })
   |> should.equal(Error(Nil))
 
   iterator.from_list([1, 2, 3, 4, 5])
-  |> iterator.reduce(with: fn(x, y) { x + y })
+  |> iterator.reduce(with: fn(acc, x) { acc + x })
   |> should.equal(Ok(15))
 }
 

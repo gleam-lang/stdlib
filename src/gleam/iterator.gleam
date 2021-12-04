@@ -920,16 +920,16 @@ pub fn group(
 /// This function acts similar to fold, but does not take an initial state.
 /// Instead, it starts from the first yielded element
 /// and combines it with each subsequent element in turn using the given function.
-/// The function is called as f(current_element, accumulator).
+/// The function is called as f(accumulator, current_element).
 ///
 /// Returns `Ok` to indicate a successful run, and `Error` if called on an empty iterator.
 ///
 /// ## Examples
 ///
-///    > from_list([]) |> reduce(fn(x, y) { x + y })
+///    > from_list([]) |> reduce(fn(acc, x) { acc + x })
 ///    Error(Nil)
 ///
-///    > from_list([1, 2, 3, 4, 5]) |> reduce(fn(x, y) { x + y })
+///    > from_list([1, 2, 3, 4, 5]) |> reduce(fn(acc, x) { acc + x })
 ///    Ok(15)
 ///
 pub fn reduce(
