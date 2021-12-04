@@ -293,7 +293,7 @@ pub fn drop_while_test() {
 
 pub fn scan_test() {
   iterator.from_list([1, 2, 3, 4, 5])
-  |> iterator.scan(from: 0, with: fn(el, acc) { acc + el })
+  |> iterator.scan(from: 0, with: fn(acc, el) { acc + el })
   |> iterator.to_list
   |> should.equal([1, 3, 6, 10, 15])
 }

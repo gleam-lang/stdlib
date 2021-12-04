@@ -472,11 +472,11 @@ fn do_fold(list: List(#(k, v)), initial: acc, fun: fn(acc, k, v) -> acc) -> acc 
 /// # Examples
 ///
 ///    > let map = from_list([#("a", 1), #("b", 3), #("c", 9)])
-///    > fold(map, 0, fn(key, value, accumulator) { accumulator + value })
+///    > fold(map, 0, fn(accumulator, key, value) { accumulator + value })
 ///    13
 ///
 ///    > import gleam/string.{append}
-///    > fold(map, "", fn(key, value, accumulator) { append(accumulator, value) })
+///    > fold(map, "", fn(accumulator, key, value) { append(accumulator, key) })
 ///    "abc"
 ///
 pub fn fold(
