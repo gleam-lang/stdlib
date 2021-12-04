@@ -138,7 +138,7 @@ fn do_fold(
 ///
 ///    > [1, 2, 3, 4]
 ///    > |> from_list
-///    > |> fold(from: 0, with: fn(element, acc) { element + acc })
+///    > |> fold(from: 0, with: fn(acc, element) { element + acc })
 ///    10
 ///
 pub fn fold(
@@ -601,7 +601,7 @@ fn do_scan(
 /// ## Examples
 ///
 ///    Generate a sequence of partial sums:
-///    > from_list([1, 2, 3, 4, 5]) |> scan(from: 0, with: fn(el, acc) { acc + el }) |> to_list
+///    > from_list([1, 2, 3, 4, 5]) |> scan(from: 0, with: fn(acc, el) { acc + el }) |> to_list
 ///    [1, 3, 6, 10, 15]
 ///
 pub fn scan(
@@ -1051,7 +1051,7 @@ fn do_fold_until(
 ///
 ///
 /// ## Examples
-///    > let f = fn(e, acc) {
+///    > let f = fn(acc, e) {
 ///    >   case e {
 ///    >     _ if e < 4 -> list.Continue(e + acc)
 ///    >     _ -> list.Stop(acc)
@@ -1097,7 +1097,7 @@ fn do_try_fold(
 /// 
 ///    > [1, 2, 3, 4]
 ///    > |> iterator.from_list()
-///    > |> try_fold(0, fn(i, acc) {
+///    > |> try_fold(0, fn(acc, i) {
 ///    >   case i < 3 {
 ///    >     True -> Ok(acc + i)
 ///    >     False -> Error(Nil)

@@ -289,7 +289,7 @@ pub fn map(list: List(a), with fun: fn(a) -> b) -> List(b) {
 /// > map_fold(
 ///     over: [1, 2, 3],
 ///     from: 100,
-///     with: fn(i, memo) { #(i * 2, memo + i) }
+///     with: fn(memo, i) { #(i * 2, memo + i) }
 ///  )
 ///  #([2, 4, 6], 106)
 /// ```
@@ -526,7 +526,7 @@ pub fn flat_map(over list: List(a), with fun: fn(a) -> List(b)) -> List(b) {
 /// Reduces a list of elements into a single value by calling a given function
 /// on each element, going from left to right.
 ///
-/// `fold([1, 2, 3], 0, add)` is the equivalent of `add(3, add(2, add(1, 0)))`.
+/// `fold(0, [1, 2, 3], add)` is the equivalent of `add(3, add(2, add(1, 0)))`.
 ///
 /// This function runs in linear time.
 ///
@@ -544,7 +544,7 @@ pub fn fold(
 /// Reduces a list of elements into a single value by calling a given function
 /// on each element, going from right to left.
 ///
-/// `fold_right([1, 2, 3], 0, add)` is the equivalent of
+/// `fold_right(0, [1, 2, 3], add)` is the equivalent of
 /// `add(1, add(2, add(3, 0)))`.
 ///
 /// This function runs in linear time.
@@ -603,7 +603,7 @@ pub fn index_fold(
 ///
 /// ```
 /// [1, 2, 3, 4]
-/// |> try_fold(0, fn(i, acc) {
+/// |> try_fold(0, fn(acc, i) {
 ///   case i < 3 {
 ///     True -> Ok(acc + i)
 ///     False -> Error(Nil)
@@ -640,7 +640,7 @@ pub type ContinueOrStop(a) {
 ///
 /// ```
 /// [1, 2, 3, 4]
-/// |> fold_until(0, fn(i, acc) {
+/// |> fold_until(0, fn(acc, i) {
 ///   case i < 3 {
 ///     True -> Continue(acc + i)
 ///     False -> Stop(acc)
@@ -1455,7 +1455,7 @@ pub fn sized_chunk(in list: List(a), into count: Int) -> List(List(a)) {
 /// This function acts similar to fold, but does not take an initial state.
 /// Instead, it starts from the first element in the list
 /// and combines it with each subsequent element in turn using the given function.
-/// The function is called as fun(current_element, accumulator).
+/// The function is called as fun(accumulator, current_element).
 ///
 /// Returns `Ok` to indicate a successful run, and `Error` if called on an empty list.
 ///
@@ -1464,7 +1464,7 @@ pub fn sized_chunk(in list: List(a), into count: Int) -> List(List(a)) {
 ///    > [] |> reduce(fn(x, y) { x + y })
 ///    Error(Nil)
 ///
-///    > [1, 2, 3, 4, 5] |> reduce(fn(x, y) { x + y })
+///    > [1, 2, 3, 4, 5] |> reduce(fn(acc, i) { acc + i })
 ///    Ok(15)
 ///
 pub fn reduce(over list: List(a), with fun: fn(a, a) -> a) -> Result(a, Nil) {
@@ -1493,7 +1493,7 @@ fn do_scan(
 ///
 /// ## Examples
 ///
-///    > scan(over: [1, 2, 3], from: 100, with: fn(i, acc) { acc + i })
+///    > scan(over: [1, 2, 3], from: 100, with: fn(acc, i) { acc + i })
 ///    [101, 103, 106]
 ///
 pub fn scan(
