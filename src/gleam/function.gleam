@@ -51,3 +51,10 @@ pub fn flip(fun: fn(a, b) -> c) -> fn(b, a) -> c {
 pub fn identity(x: a) -> a {
   x
 }
+
+/// A function that takes a single argument and returns a new function that
+/// ignores its argument and always returns the input value.
+///
+pub fn constant(value: a) -> fn(b) -> a {
+  fn(_) { value }
+}
