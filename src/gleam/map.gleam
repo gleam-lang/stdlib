@@ -425,14 +425,14 @@ pub fn drop(from map: Map(k, v), drop disallowed_keys: List(k)) -> Map(k, v) {
 /// Creates a new map with one entry updated using a given function.
 ///
 /// If there was not an entry in the map for the given key then the function
-/// gets `Error(Nil)` as its argument, otherwise it gets `Ok(value)`.
+/// gets `None` as its argument, otherwise it gets `Some(value)`.
 ///
 /// ## Example
 ///
 ///    > let increment = fn(x) {
 ///    >   case x {
-///    >     Ok(i) -> i + 1
-///    >     Error(Nil) -> 0
+///    >     Some(i) -> i + 1
+///    >     None -> 0
 ///    >   }
 ///    > }
 ///    > let map = from_list([#("a", 0)])
@@ -472,11 +472,11 @@ fn do_fold(list: List(#(k, v)), initial: acc, fun: fn(acc, k, v) -> acc) -> acc 
 /// # Examples
 ///
 ///    > let map = from_list([#("a", 1), #("b", 3), #("c", 9)])
-///    > fold(map, 0, fn(key, value, accumulator) { accumulator + value })
+///    > fold(map, 0, fn(accumulator, key, value) { accumulator + value })
 ///    13
 ///
 ///    > import gleam/string.{append}
-///    > fold(map, "", fn(key, value, accumulator) { append(accumulator, value) })
+///    > fold(map, "", fn(accumulator, key, value) { append(accumulator, key) })
 ///    "abc"
 ///
 pub fn fold(

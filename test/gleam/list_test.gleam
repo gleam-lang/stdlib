@@ -234,7 +234,7 @@ pub fn try_fold_test() {
   [1, 2, 3]
   |> list.try_fold(
     0,
-    fn(i, acc) {
+    fn(acc, i) {
       case i < 4 {
         True -> Ok(acc + i)
         False -> Error(Nil)
@@ -246,7 +246,7 @@ pub fn try_fold_test() {
   [1, 2, 3]
   |> list.try_fold(
     0,
-    fn(i, acc) {
+    fn(acc, i) {
       case i < 3 {
         True -> Ok(acc + i)
         False -> Error(Nil)
@@ -376,7 +376,7 @@ pub fn at_test() {
   |> should.equal(Error(Nil))
 
   list.at([1, 2, 3, 4, 5, 6], -1)
-  |> should.equal(Error(Nil))
+  |> should.equal(Ok(1))
 }
 
 pub fn unique_test() {

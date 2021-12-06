@@ -9,20 +9,11 @@ Documentation available on [HexDocs](https://hexdocs.pm/gleam_stdlib/).
 
 ## Installation
 
-Add `gleam_stdlib` to the deps section of your `rebar.config` or `mix.exs`
+Add `gleam_stdlib` to the dependencies section of your `gleam.toml`
 
-```erlang
-{deps, [
-    {gleam_stdlib, "~> 0.17.1"}
-]}
-```
-
-```elixir
-defp deps do
-  [
-    {:gleam_stdlib, "~> 0.17.1"},
-  ]
-end
+```toml
+[dependencies]
+gleam_stdlib = "~> 0.18"
 ```
 
 ## Usage
@@ -38,6 +29,7 @@ fn usage() {
 }
 
 fn more_usage() {
-  contains([1, 2, 3], any: 2)
+  [1, 2, 3]
+  |> contains(any: 2)
 }
 ```

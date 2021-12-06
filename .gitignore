@@ -19,3 +19,5 @@ _build
 rebar3.crashdump
 doc
 .tool-versions
+build
+manifest.toml
