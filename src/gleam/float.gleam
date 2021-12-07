@@ -1,7 +1,7 @@
 import gleam/order.{Order}
 import gleam/string_builder
 
-/// Attempts to parse a string as a float, returning `Error(Nil)` if it was not
+/// Attempts to parse a string as a `Float`, returning `Error(Nil)` if it was not
 /// possible.
 ///
 /// ## Examples
@@ -25,7 +25,7 @@ if javascript {
     "../gleam_stdlib.js" "parse_float"
 }
 
-/// Returns the string representation of the provided float.
+/// Returns the string representation of the provided `Float`.
 ///
 /// ## Examples
 ///    > to_string(2.3)
@@ -37,7 +37,7 @@ pub fn to_string(f: Float) -> String {
   |> string_builder.to_string
 }
 
-/// Restricts a float between a lower and upper bound.
+/// Restricts a `Float` between a lower and upper bound.
 ///
 /// ## Examples
 ///
@@ -52,7 +52,7 @@ pub fn clamp(n: Float, min min_bound: Float, max max_bound: Float) -> Float {
   |> max(min_bound)
 }
 
-/// Compares two floats, returning an order.
+/// Compares two `Float`s, returning an order.
 ///
 /// ## Examples
 ///    > compare(2.0, 2.3)
@@ -69,7 +69,7 @@ pub fn compare(a: Float, with b: Float) -> Order {
   }
 }
 
-/// Compares two floats, returning the smaller of the two.
+/// Compares two `Float`s, returning the smaller of the two.
 ///
 /// ## Examples
 ///
@@ -83,7 +83,7 @@ pub fn min(a: Float, b: Float) -> Float {
   }
 }
 
-/// Compares two floats, returning the larger of the two.
+/// Compares two `Float`s, returning the larger of the two.
 ///
 /// ## Examples
 ///
@@ -97,7 +97,7 @@ pub fn max(a: Float, b: Float) -> Float {
   }
 }
 
-/// Rounds the value to the next highest whole number as a float.
+/// Rounds the value to the next highest whole number as a `Float`.
 ///
 /// ## Examples
 ///
@@ -118,7 +118,7 @@ if javascript {
     "../gleam_stdlib.js" "ceiling"
 }
 
-/// Rounds the value to the next lowest whole number as a float.
+/// Rounds the value to the next lowest whole number as a `Float`.
 ///
 /// ## Examples
 ///
@@ -139,7 +139,7 @@ if javascript {
     "../gleam_stdlib.js" "floor"
 }
 
-/// Rounds the value to the nearest whole number as an int.
+/// Rounds the value to the nearest whole number as an `Int`.
 ///
 /// ## Examples
 ///
@@ -170,7 +170,7 @@ if javascript {
     "../gleam_stdlib.js" "round"
 }
 
-/// Returns the value as an integer, truncating all decimal digits.
+/// Returns the value as an `Int`, truncating all decimal digits.
 ///
 /// ## Examples
 ///
@@ -191,7 +191,7 @@ if javascript {
     "../gleam_stdlib.js" "truncate"
 }
 
-/// Returns the absolute value of the input as a float.
+/// Returns the absolute value of the input as a `Float`.
 ///
 /// ## Examples
 ///
@@ -209,7 +209,7 @@ pub fn absolute_value(float: Float) -> Float {
 }
 
 /// Returns the results of the base being raised to the power of the
-/// exponent, as a float.
+/// exponent, as a `Float`.
 ///
 /// ## Examples
 ///
@@ -233,7 +233,7 @@ if javascript {
     "../gleam_stdlib.js" "power"
 }
 
-/// Returns the square root of the input as a float.
+/// Returns the square root of the input as a `Float`.
 ///
 /// ## Examples
 ///
@@ -261,7 +261,7 @@ pub fn negate(x: Float) -> Float {
   -1. *. x
 }
 
-/// Sums a list of floats.
+/// Sums a list of `Float`s.
 ///
 /// ## Example
 ///
@@ -280,7 +280,7 @@ fn do_sum(numbers: List(Float), initial: Float) -> Float {
   }
 }
 
-/// Multiplies a list of floats and returns the product.
+/// Multiplies a list of `Float`s and returns the product.
 ///
 /// ## Example
 ///
