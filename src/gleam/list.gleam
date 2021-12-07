@@ -21,6 +21,7 @@
 import gleam/int
 import gleam/pair
 import gleam/order.{Order}
+import gleam/bool.{negate}
 
 /// An error value returned by the `strict_zip` function.
 ///
@@ -412,6 +413,26 @@ pub fn drop(from list: List(a), up_to n: Int) -> List(a) {
         [_, ..xs] -> drop(xs, n - 1)
       }
   }
+}
+
+/// Returns a list containing all elements except the elements
+/// that satisfy the given predicate.
+///
+/// ## Examples
+///
+///    > drop([1, 2, 3, 4, 3, 2, 1], fn (x) { x < 3 })
+///    [3, 4]
+///
+///    > ["hello", " ", "World!"]
+///      |> drop_where(string.is_blank)
+///    ["hello","World!"]
+///
+pub fn drop_where(
+  from list: List(a),
+  satisfying predicate: fn(a) -> Bool,
+) -> List(a) {
+  list
+  |> filter(fn(e) { negate(predicate(e)) })
 }
 
 fn do_take(list: List(a), n: Int, acc: List(a)) -> List(a) {

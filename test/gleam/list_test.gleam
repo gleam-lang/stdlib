@@ -139,6 +139,20 @@ pub fn drop_test() {
   |> should.equal([6, 7, 8])
 }
 
+pub fn drop_where_test() {
+  []
+  |> list.drop_where(fn(x) { x > 1 })
+  |> should.equal([])
+
+  [1, 2, 3, 4, 5, 6, 7, 8]
+  |> list.drop_where(fn(x) { x > 5 })
+  |> should.equal([1, 2, 3, 4, 5])
+
+  ["hello", " ", "World!"]
+  |> list.drop_where(string.is_blank)
+  |> should.equal(["hello", "World!"])
+}
+
 pub fn take_test() {
   []
   |> list.take(5)
