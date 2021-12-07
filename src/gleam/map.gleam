@@ -136,7 +136,7 @@ if javascript {
 /// Fetches a value from a map for a given key.
 ///
 /// The map may not have a value for the key, so the value is wrapped in a
-/// Result.
+/// `Result`.
 ///
 /// ## Examples
 ///

@@ -56,7 +56,6 @@ if javascript {
     "../gleam_stdlib.js" "string_length"
 }
 
-///
 /// Reverses a string.
 ///
 /// This function has to iterate across the whole string so it runs in linear
@@ -176,7 +175,7 @@ if javascript {
     "../gleam_stdlib.js" "less_than"
 }
 
-/// Takes a substring given a start and end Grapheme indexes. Negative indexes
+/// Takes a substring given a start and end grapheme indexes. Negative indexes
 /// are taken starting from the *end* of the list.
 ///
 /// ## Examples
@@ -250,7 +249,7 @@ if javascript {
     "../gleam_stdlib.js" "crop_string"
 }
 
-/// Drops *n* Graphemes from the left side of a string.
+/// Drops *n* graphemes from the left side of a string.
 ///
 /// ## Examples
 ///    > drop_left(from: "The Lone Gunmen", up_to: 2)
@@ -263,7 +262,7 @@ pub fn drop_left(from string: String, up_to num_graphemes: Int) -> String {
   }
 }
 
-/// Drops *n* Graphemes from the right side of a string.
+/// Drops *n* graphemes from the right side of a string.
 ///
 /// ## Examples
 ///    > drop_right(from: "Cigarette Smoking Man", up_to: 2)
@@ -412,7 +411,7 @@ if javascript {
 /// Creates a new string by joining two strings together.
 ///
 /// This function copies both strings and runs in linear time. If you find
-/// yourself joining strings frequently consider using the [string_builder](../string_builder)
+/// yourself joining strings frequently consider using the [`string_builder`](../string_builder)
 /// module as it can append strings much faster!
 ///
 /// ## Examples
@@ -430,7 +429,7 @@ pub fn append(to first: String, suffix second: String) -> String {
 /// Creates a new string by joining many strings together.
 ///
 /// This function copies both strings and runs in linear time. If you find
-/// yourself joining strings frequently consider using the [string_builder](../string_builder)
+/// yourself joining strings frequently consider using the [`string_builder`](../string_builder)
 /// module as it can append strings much faster!
 ///
 /// ## Examples
@@ -475,7 +474,7 @@ pub fn join(strings: List(String), with separator: String) -> String {
   |> concat
 }
 
-/// Pads a string on the left until it has at least given number of Graphemes.
+/// Pads a string on the left until it has at least given number of graphemes.
 ///
 /// ## Examples
 ///
@@ -532,7 +531,7 @@ fn padding(size: Int, pad_string: String) -> Iterator(String) {
   |> iterator.append(iterator.single(slice(pad_string, 0, extra)))
 }
 
-/// Removes whitespace on both sides of a String.
+/// Removes whitespace on both sides of a string.
 ///
 /// ## Examples
 ///
@@ -563,7 +562,7 @@ if javascript {
     "../gleam_stdlib.js" "trim"
 }
 
-/// Removes whitespace on the left of a String.
+/// Removes whitespace on the left of a string.
 ///
 /// ## Examples
 ///
@@ -585,7 +584,7 @@ if javascript {
     "../gleam_stdlib.js" "trim_left"
 }
 
-/// Removes whitespace on the right of a String.
+/// Removes whitespace on the right of a string.
 ///
 /// ## Examples
 ///
@@ -631,7 +630,7 @@ if javascript {
     "../gleam_stdlib.js" "pop_grapheme"
 }
 
-/// Converts a string to a list of Graphemes.
+/// Converts a string to a list of graphemes.
 ///
 ///    > to_graphemes("abc")
 ///    ["a", "b", "c"]
@@ -653,7 +652,7 @@ if javascript {
     "../gleam_stdlib.js" "codepoint"
 }
 
-/// Converts an integer to a UtfCodepoint
+/// Converts an integer to a `UtfCodepoint`.
 ///
 /// Returns an error if the integer does not represent a valid UTF codepoint.
 ///

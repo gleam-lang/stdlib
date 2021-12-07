@@ -37,7 +37,7 @@ pub fn to_string(f: Float) -> String {
   |> string_builder.to_string
 }
 
-/// Restricts a Float between a lower and upper bound
+/// Restricts a float between a lower and upper bound.
 ///
 /// ## Examples
 ///
@@ -170,7 +170,7 @@ if javascript {
     "../gleam_stdlib.js" "round"
 }
 
-/// Returns the value as an int, truncating all decimal digits.
+/// Returns the value as an integer, truncating all decimal digits.
 ///
 /// ## Examples
 ///
@@ -250,7 +250,7 @@ pub fn square_root(number: Float) -> Result(Float, Nil) {
   }
 }
 
-/// Returns the negative of the value provided
+/// Returns the negative of the value provided.
 ///
 /// ## Examples
 ///
@@ -261,7 +261,7 @@ pub fn negate(x: Float) -> Float {
   -1. *. x
 }
 
-/// Sums a list of Floats.
+/// Sums a list of floats.
 ///
 /// ## Example
 ///
@@ -280,7 +280,7 @@ fn do_sum(numbers: List(Float), initial: Float) -> Float {
   }
 }
 
-/// Multiplies a list of Floats and returns the product.
+/// Multiplies a list of floats and returns the product.
 ///
 /// ## Example
 ///
