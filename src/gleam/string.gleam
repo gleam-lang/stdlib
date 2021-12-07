@@ -12,7 +12,7 @@ if erlang {
   import gleam/dynamic.{Dynamic}
 }
 
-/// Determines if a string is empty.
+/// Determines if a `String` is empty.
 ///
 /// ## Examples
 ///
@@ -26,7 +26,7 @@ pub fn is_empty(str: String) -> Bool {
   str == ""
 }
 
-/// Gets the number of grapheme clusters in a given string.
+/// Gets the number of grapheme clusters in a given `String`.
 ///
 /// This function has to iterate across the whole string to count the number of
 /// graphemes, so it runs in linear time.
@@ -56,9 +56,9 @@ if javascript {
     "../gleam_stdlib.js" "string_length"
 }
 
-/// Reverses a string.
+/// Reverses a `String`.
 ///
-/// This function has to iterate across the whole string so it runs in linear
+/// This function has to iterate across the whole `String` so it runs in linear
 /// time.
 ///
 /// ## Examples
@@ -73,7 +73,7 @@ pub fn reverse(string: String) -> String {
   |> string_builder.to_string
 }
 
-/// Creates a new string by replacing all occurrences of a given substring.
+/// Creates a new `String` by replacing all occurrences of a given substring.
 ///
 /// ## Examples
 ///
@@ -94,7 +94,7 @@ pub fn replace(
   |> string_builder.to_string
 }
 
-/// Creates a new string with all the graphemes in the input string converted to
+/// Creates a new `String` with all the graphemes in the input `String` converted to
 /// lowercase.
 ///
 /// Useful for case-insensitive comparisons.
@@ -118,7 +118,7 @@ if javascript {
     "../gleam_stdlib.js" "lowercase"
 }
 
-/// Creates a new string with all the graphemes in the input string converted to
+/// Creates a new `String` with all the graphemes in the input `String` converted to
 /// uppercase.
 ///
 /// Useful for case-insensitive comparisons and VIRTUAL YELLING.
@@ -142,9 +142,9 @@ if javascript {
     "../gleam_stdlib.js" "uppercase"
 }
 
-/// Compares two strings to see which is "larger" by comparing their graphemes.
+/// Compares two `String`s to see which is "larger" by comparing their graphemes.
 ///
-/// This does not compare the size or length of the given strings.
+/// This does not compare the size or length of the given `String`s.
 ///
 /// ## Examples
 ///
@@ -221,8 +221,8 @@ if javascript {
     "../gleam_stdlib.js" "slice_string"
 }
 
-/// Drops contents of the first string that occur before the second string.
-/// If the first string does not contain the second string, the first string is returned.
+/// Drops contents of the first `String` that occur before the second `String`.
+/// If the `from` string does not contain the `before` string, `from` is returned unchanged.
 ///
 /// ## Examples
 ///    > crop(from: "The Lone Gunmen", before: "Lone")
@@ -249,7 +249,7 @@ if javascript {
     "../gleam_stdlib.js" "crop_string"
 }
 
-/// Drops *n* graphemes from the left side of a string.
+/// Drops *n* graphemes from the left side of a `String`.
 ///
 /// ## Examples
 ///    > drop_left(from: "The Lone Gunmen", up_to: 2)
@@ -262,7 +262,7 @@ pub fn drop_left(from string: String, up_to num_graphemes: Int) -> String {
   }
 }
 
-/// Drops *n* graphemes from the right side of a string.
+/// Drops *n* graphemes from the right side of a `String`.
 ///
 /// ## Examples
 ///    > drop_right(from: "Cigarette Smoking Man", up_to: 2)
@@ -275,7 +275,7 @@ pub fn drop_right(from string: String, up_to num_graphemes: Int) -> String {
   }
 }
 
-/// Checks if the first string contains the second.
+/// Checks if the first `String` contains the second.
 ///
 /// ## Examples
 ///
@@ -310,7 +310,7 @@ if javascript {
     "../gleam_stdlib.js" "index_of"
 }
 
-/// Checks whether the first string starts with the second one.
+/// Checks whether the first `String` starts with the second one.
 ///
 /// ## Examples
 ///
@@ -331,7 +331,7 @@ if javascript {
     "../gleam_stdlib.js" "starts_with"
 }
 
-/// Checks whether the first string ends with the second one.
+/// Checks whether the first `String` ends with the second one.
 ///
 /// ## Examples
 ///
@@ -352,7 +352,7 @@ if javascript {
     "../gleam_stdlib.js" "ends_with"
 }
 
-/// Creates a list of strings by splitting a given string on a given substring.
+/// Creates a list of `String`s by splitting a given string on a given substring.
 ///
 /// ## Examples
 ///
@@ -366,7 +366,7 @@ pub fn split(x: String, on substring: String) -> List(String) {
   |> list.map(with: string_builder.to_string)
 }
 
-/// Splits a string a single time on the given substring.
+/// Splits a `String` a single time on the given substring.
 ///
 /// Returns an error if substring not present.
 ///
@@ -408,11 +408,11 @@ if javascript {
     "../gleam_stdlib.js" "split_once"
 }
 
-/// Creates a new string by joining two strings together.
+/// Creates a new `String` by joining two `String`s together.
 ///
-/// This function copies both strings and runs in linear time. If you find
-/// yourself joining strings frequently consider using the [`string_builder`](../string_builder)
-/// module as it can append strings much faster!
+/// This function copies both `String`s and runs in linear time. If you find
+/// yourself joining `String`s frequently consider using the [`string_builder`](../string_builder)
+/// module as it can append `String`s much faster!
 ///
 /// ## Examples
 ///
@@ -426,11 +426,11 @@ pub fn append(to first: String, suffix second: String) -> String {
   |> string_builder.to_string
 }
 
-/// Creates a new string by joining many strings together.
+/// Creates a new `String` by joining many `String`s together.
 ///
-/// This function copies both strings and runs in linear time. If you find
-/// yourself joining strings frequently consider using the [`string_builder`](../string_builder)
-/// module as it can append strings much faster!
+/// This function copies both `String`s and runs in linear time. If you find
+/// yourself joining `String`s frequently consider using the [`string_builder`](../string_builder)
+/// module as it can append `String`s much faster!
 ///
 /// ## Examples
 ///
@@ -443,7 +443,7 @@ pub fn concat(strings: List(String)) -> String {
   |> string_builder.to_string
 }
 
-/// Creates a new string by repeating a string a given number of times.
+/// Creates a new `String` by repeating a `String` a given number of times.
 ///
 /// This function runs in linear time.
 ///
@@ -459,7 +459,7 @@ pub fn repeat(string: String, times times: Int) -> String {
   |> concat
 }
 
-/// Joins many strings together with a given separator.
+/// Joins many `String`s together with a given separator.
 ///
 /// This function runs in linear time.
 ///
@@ -474,7 +474,7 @@ pub fn join(strings: List(String), with separator: String) -> String {
   |> concat
 }
 
-/// Pads a string on the left until it has at least given number of graphemes.
+/// Pads a `String` on the left until it has at least given number of graphemes.
 ///
 /// ## Examples
 ///
@@ -496,7 +496,7 @@ pub fn pad_left(string: String, to desired_length: Int, with pad_string: String)
   |> concat
 }
 
-/// Pads a string on the right until it has a given length.
+/// Pads a `String` on the right until it has a given length.
 ///
 /// ## Examples
 ///
@@ -531,7 +531,7 @@ fn padding(size: Int, pad_string: String) -> Iterator(String) {
   |> iterator.append(iterator.single(slice(pad_string, 0, extra)))
 }
 
-/// Removes whitespace on both sides of a string.
+/// Removes whitespace on both sides of a `String`.
 ///
 /// ## Examples
 ///
@@ -562,7 +562,7 @@ if javascript {
     "../gleam_stdlib.js" "trim"
 }
 
-/// Removes whitespace on the left of a string.
+/// Removes whitespace on the left of a `String`.
 ///
 /// ## Examples
 ///
@@ -584,7 +584,7 @@ if javascript {
     "../gleam_stdlib.js" "trim_left"
 }
 
-/// Removes whitespace on the right of a string.
+/// Removes whitespace on the right of a `String`.
 ///
 /// ## Examples
 ///
@@ -606,8 +606,8 @@ if javascript {
     "../gleam_stdlib.js" "trim_right"
 }
 
-/// Splits a non-empty string into its head and tail. This lets you
-/// pattern match on strings exactly as you would with lists.
+/// Splits a non-empty `String` into its head and tail. This lets you
+/// pattern match on `String`s exactly as you would with lists.
 ///
 /// ## Examples
 ///    > pop_grapheme("gleam")
@@ -630,7 +630,7 @@ if javascript {
     "../gleam_stdlib.js" "pop_grapheme"
 }
 
-/// Converts a string to a list of graphemes.
+/// Converts a `String` to a list of graphemes.
 ///
 ///    > to_graphemes("abc")
 ///    ["a", "b", "c"]
@@ -665,7 +665,7 @@ pub fn utf_codepoint(value: Int) -> Result(UtfCodepoint, Nil) {
   }
 }
 
-/// Convert a string into an optional string where an empty string becomes `None`.
+/// Converts a `String` into `Option(String)` where an empty `String` becomes `None`.
 ///
 /// ## Examples
 ///
