@@ -7,13 +7,13 @@ import gleam/bit_string
 
 pub fn is_blank_test() {
   string.is_blank("    ")
-  |> should.equal(True)
+  |> should.be_true
 
   string.is_blank("Gleam")
-  |> should.equal(False)
+  |> should.be_false
 
   string.is_blank("")
-  |> should.equal(True)
+  |> should.be_true
 }
 
 pub fn length_test() {
