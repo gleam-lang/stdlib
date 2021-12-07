@@ -26,6 +26,25 @@ pub fn is_empty(str: String) -> Bool {
   str == ""
 }
 
+/// Determines if a string only contains whitespace characters.
+///
+/// ## Examples
+///
+///    > is_blank("  ")
+///    True
+///
+///    > is_blank("")
+///    True
+///
+///    > is_blank("the world")
+///    False
+///
+pub fn is_blank(str: String) -> Bool {
+  str
+  |> trim
+  |> is_empty
+}
+
 /// Gets the number of grapheme clusters in a given string.
 ///
 /// This function has to iterate across the whole string to count the number of

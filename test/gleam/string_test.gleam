@@ -5,6 +5,17 @@ import gleam/option.{None, Some}
 import gleam/io
 import gleam/bit_string
 
+pub fn is_blank_test() {
+  string.is_blank("    ")
+  |> should.equal(True)
+
+  string.is_blank("Gleam")
+  |> should.equal(False)
+
+  string.is_blank("")
+  |> should.equal(True)
+}
+
 pub fn length_test() {
   string.length("ß↑e̊")
   |> should.equal(3)
