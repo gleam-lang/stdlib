@@ -1089,7 +1089,7 @@ fn do_try_fold(
 /// A variant of fold that might fail.
 /// 
 ///
-/// The folding function should return `Result(accumulator, error)
+/// The folding function should return `Result(accumulator, error)`.
 /// If the returned value is `Ok(accumulator)` try_fold will try the next value in the iterator.
 /// If the returned value is `Error(error)` try_fold will stop and return that error.
 ///

@@ -13,7 +13,7 @@ pub type Match {
   Match(
     /// The full string of the match.
     content: String,
-    /// A Regex can have subpatterns, sup-parts that are in parentheses.
+    /// A `Regex` can have subpatterns, sup-parts that are in parentheses.
     submatches: List(Option(String)),
   )
 }
@@ -34,7 +34,7 @@ pub type Options {
   Options(case_insensitive: Bool, multi_line: Bool)
 }
 
-/// Creates a Regex with some additional options.
+/// Creates a `Regex` with some additional options.
 ///
 /// ## Examples
 ///
@@ -65,7 +65,7 @@ if javascript {
     "../gleam_stdlib.js" "compile_regex"
 }
 
-/// Creates a new Regex.
+/// Creates a new `Regex`.
 ///
 /// ## Examples
 ///
@@ -113,7 +113,7 @@ if javascript {
     "../gleam_stdlib.js" "regex_check"
 }
 
-/// Splits a string
+/// Splits a string.
 ///
 /// ## Examples
 ///

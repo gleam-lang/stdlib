@@ -1,11 +1,11 @@
-/// StringBuilder is a type used for efficiently building strings.
+/// `StringBuilder` is a type used for efficiently building strings.
 ///
 /// When we append one string to another the strings must be copied to a
 /// new location in memory so that they can sit together. This behaviour
 /// enables efficient reading of the string but copying can be expensive,
 /// especially if we want to join many strings together.
 ///
-/// StringBuilder is different in that it can be joined together in constant time
+/// `StringBuilder` is different in that it can be joined together in constant time
 /// using minimal memory, and then can be efficiently converted to a string
 /// using the `to_string` function.
 ///
@@ -14,7 +14,7 @@
 ///
 pub external type StringBuilder
 
-/// Prepends a String onto the start of some StringBuilder.
+/// Prepends a `String` onto the start of some `StringBuilder`.
 ///
 /// Runs in constant time.
 ///
@@ -25,7 +25,7 @@ pub fn prepend(
   append_builder(from_string(prefix), builder)
 }
 
-/// Appends a String onto the end of some StringBuilder.
+/// Appends a `String` onto the end of some `StringBuilder`.
 ///
 /// Runs in constant time.
 ///
@@ -33,7 +33,7 @@ pub fn append(to builder: StringBuilder, suffix second: String) -> StringBuilder
   append_builder(builder, from_string(second))
 }
 
-/// Prepends some StringBuilder onto the start of another.
+/// Prepends some `StringBuilder` onto the start of another.
 ///
 /// Runs in constant time.
 ///
@@ -44,7 +44,7 @@ pub fn prepend_builder(
   do_append(prefix, builder)
 }
 
-/// Appends some StringBuilder onto the end of another.
+/// Appends some `StringBuilder` onto the end of another.
 ///
 /// Runs in constant time.
 ///
@@ -138,7 +138,7 @@ if javascript {
     "../gleam_stdlib.js" "identity"
 }
 
-/// Returns the size of the StringBuilder in bytes.
+/// Returns the size of the `StringBuilder` in bytes.
 ///
 pub fn byte_size(builder: StringBuilder) -> Int {
   do_byte_size(builder)
@@ -282,7 +282,7 @@ if javascript {
 
 /// Compares two builders to determine if they have the same textual content.
 ///
-/// Comparing two iodata using the `==` operator may return False even if they
+/// Comparing two iodata using the `==` operator may return `False` even if they
 /// have the same content as they may have been build in different ways, so
 /// using this function is often preferred.
 ///
