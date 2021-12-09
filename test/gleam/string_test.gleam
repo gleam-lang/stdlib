@@ -14,6 +14,14 @@ pub fn is_blank_test() {
 
   string.is_blank("")
   |> should.be_true
+
+  //tabs
+  string.is_blank("       ")
+  |> should.be_true
+
+  //unicode
+  string.is_blank("‎‏‏‎")
+  |> should.be_true
 }
 
 pub fn length_test() {

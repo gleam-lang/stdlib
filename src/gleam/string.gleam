@@ -26,7 +26,6 @@ pub fn is_empty(str: String) -> Bool {
   str == ""
 }
 
-
 /// Determines if a string only contains whitespace characters.
 ///
 /// ## Examples
