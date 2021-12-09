@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- The `function` module gains the `constant` function.
+
 ## v0.18.0 - 2021-11-23
 ## v0.18.0-rc1 - 2021-11-23
 
