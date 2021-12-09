@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- The `function` module gains the `constant` function.
 - The `int` module gains the `digits` and `undigits` functions.
 
 ## v0.18.0 - 2021-11-23
