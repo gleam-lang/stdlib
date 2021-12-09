@@ -1,8 +1,8 @@
 //// Working with raw bit string data.
-//// The BitString type should be used instead of a String type when not utf8
+//// The `BitString` type should be used instead of a String type when not utf8
 //// encoded.
 
-/// Converts a UTF-8 String type into a raw BitString type.
+/// Converts a UTF-8 `String` type into a raw `BitString` type.
 ///
 pub fn from_string(x: String) -> BitString {
   do_from_string(x)

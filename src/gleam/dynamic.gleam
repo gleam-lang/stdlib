@@ -58,7 +58,7 @@ if javascript {
     "../gleam_stdlib.js" "identity"
 }
 
-/// Checks to see whether a Dynamic value is a bit_string, and return the bit_string if
+/// Checks to see whether a `Dynamic` value is a bit_string, and returns that bit string if
 /// it is.
 ///
 /// ## Examples
@@ -83,7 +83,7 @@ if javascript {
     "../gleam_stdlib.js" "decode_bit_string"
 }
 
-/// Checks to see whether a Dynamic value is a string, and return the string if
+/// Checks to see whether a `Dynamic` value is a string, and returns that string if
 /// it is.
 ///
 /// ## Examples
@@ -137,7 +137,7 @@ if javascript {
     "../gleam_stdlib.js" "classify_dynamic"
 }
 
-/// Checks to see whether a Dynamic value is an int, and return the int if it
+/// Checks to see whether a `Dynamic` value is an int, and returns that int if it
 /// is.
 ///
 /// ## Examples
@@ -162,7 +162,7 @@ if javascript {
     "../gleam_stdlib.js" "decode_int"
 }
 
-/// Checks to see whether a Dynamic value is an float, and return the float if
+/// Checks to see whether a `Dynamic` value is a float, and returns that float if
 /// it is.
 ///
 /// ## Examples
@@ -187,7 +187,7 @@ if javascript {
     "../gleam_stdlib.js" "decode_float"
 }
 
-/// Checks to see whether a Dynamic value is an bool, and return the bool if
+/// Checks to see whether a `Dynamic` value is a bool, and returns that bool if
 /// it is.
 ///
 /// ## Examples
@@ -212,7 +212,7 @@ if javascript {
     "../gleam_stdlib.js" "decode_bool"
 }
 
-/// Checks to see whether a Dynamic value is a list, and return the list if it
+/// Checks to see whether a `Dynamic` value is a list, and returns that list if it
 /// is.
 ///
 /// If you wish to decode all the elements in the list use the `typed_list`
@@ -240,7 +240,7 @@ if javascript {
     "../gleam_stdlib.js" "decode_list"
 }
 
-/// Checks to see whether a Dynamic value is a result, and return the result if
+/// Checks to see whether a `Dynamic` value is a result, and returns that result if
 /// it is.
 ///
 /// ## Examples
@@ -270,8 +270,8 @@ if javascript {
     "../gleam_stdlib.js" "decode_result"
 }
 
-/// Checks to see whether a Dynamic value is a result of a particular type, and
-/// return the result if it is
+/// Checks to see whether a `Dynamic` value is a result of a particular type, and
+/// returns that result if it is.
 ///
 /// The `ok` and `error` arguments are decoders for decoding the `Ok` and
 /// `Error` values of the result.
@@ -306,8 +306,8 @@ pub fn typed_result(
   }
 }
 
-/// Checks to see whether a Dynamic value is a list of a particular type, and
-/// return the list if it is.
+/// Checks to see whether a `Dynamic` value is a list of a particular type, and
+/// returns that list if it is.
 ///
 /// The second argument is a decoder function used to decode the elements of
 /// the list. The list is only decoded if all elements in the list can be
@@ -336,8 +336,8 @@ pub fn typed_list(
   |> result.then(list.try_map(_, decoder_type))
 }
 
-/// Checks to see if a Dynamic value is a nullable version of a particular
-/// type, and return the Option if it is.
+/// Checks to see if a `Dynamic` value is a nullable version of a particular
+/// type, and returns a corresponding `Option` if it is.
 ///
 /// ## Examples
 ///
@@ -382,8 +382,8 @@ if javascript {
     "../gleam_stdlib.js" "decode_option"
 }
 
-/// Checks to see if a Dynamic value is a map with a specific field, and return
-/// the value of the field if it is.
+/// Checks to see if a `Dynamic` value is a map with a specific field, and returns
+/// the value of that field if it is.
 ///
 /// This will not succeed on a record.
 ///
@@ -410,8 +410,8 @@ if javascript {
     "../gleam_stdlib.js" "decode_field"
 }
 
-/// Checks to see if the Dynamic value is a tuple large enough to have a certain
-/// index, and return the value of that index if it is.
+/// Checks to see if a `Dynamic` value is a tuple large enough to have a certain
+/// index, and returns the value of that index if it is.
 ///
 /// ## Examples
 ///
@@ -496,7 +496,7 @@ if javascript {
     "../gleam_stdlib.js" "length"
 }
 
-/// Checks to see if the Dynamic value is a 2 element tuple.
+/// Checks to see if a `Dynamic` value is a 2-element tuple.
 ///
 /// If you do not wish to decode all the elements in the tuple use the
 /// `typed_tuple2` function instead.
@@ -544,7 +544,7 @@ fn put_expected(
   }
 }
 
-/// Checks to see if the Dynamic value is a 2 element tuple containing two
+/// Checks to see if a `Dynamic` value is a 2 element tuple containing
 /// specifically typed elements.
 ///
 /// If you wish to decode all the elements in the list use the `typed_tuple2`
@@ -575,7 +575,7 @@ pub fn typed_tuple2(
   Ok(#(a, b))
 }
 
-/// Checks to see if the Dynamic value is a 3 element tuple.
+/// Checks to see if the `Dynamic` value is a 3-element tuple.
 ///
 /// If you do not wish to decode all the elements in the tuple use the
 /// `typed_tuple3` function instead.
@@ -598,7 +598,7 @@ pub fn tuple3(
   Ok(unsafe_coerce(value))
 }
 
-/// Checks to see if the Dynamic value is a 3 element tuple containing two
+/// Checks to see if a `Dynamic` value is a 3-element tuple containing
 /// specifically typed elements.
 ///
 /// If you wish to decode all the elements in the list use the `typed_tuple3`
@@ -631,7 +631,7 @@ pub fn typed_tuple3(
   Ok(#(a, b, c))
 }
 
-/// Checks to see if the Dynamic value is a 4 element tuple.
+/// Checks to see if a `Dynamic` value is a 4-element tuple.
 ///
 /// If you do not wish to decode all the elements in the tuple use the
 /// `typed_tuple4` function instead.
@@ -654,7 +654,7 @@ pub fn tuple4(
   Ok(unsafe_coerce(value))
 }
 
-/// Checks to see if the Dynamic value is a 4 element tuple containing two
+/// Checks to see if a `Dynamic` value is a 4 element tuple containing
 /// specifically typed elements.
 ///
 /// If you wish to decode all the elements in the list use the `typed_tuple4`
@@ -690,7 +690,7 @@ pub fn typed_tuple4(
   Ok(#(a, b, c, d))
 }
 
-/// Checks to see if the Dynamic value is a 5 element tuple.
+/// Checks to see if a `Dynamic` value is a 5-element tuple.
 ///
 /// If you do not wish to decode all the elements in the tuple use the
 /// `typed_tuple5` function instead.
@@ -713,7 +713,7 @@ pub fn tuple5(
   Ok(unsafe_coerce(value))
 }
 
-/// Checks to see if the Dynamic value is a 5 element tuple containing two
+/// Checks to see if a `Dynamic` value is a 5-element tuple containing
 /// specifically typed elements.
 ///
 /// If you wish to decode all the elements in the list use the `typed_tuple5`
@@ -750,7 +750,7 @@ pub fn typed_tuple5(
   Ok(#(a, b, c, d, e))
 }
 
-/// Checks to see if the Dynamic value is a 6 element tuple.
+/// Checks to see if a `Dynamic` value is a 6-element tuple.
 ///
 /// If you do not wish to decode all the elements in the tuple use the
 /// `typed_tuple6` function instead.
@@ -776,7 +776,7 @@ pub fn tuple6(
   Ok(unsafe_coerce(value))
 }
 
-/// Checks to see if the Dynamic value is a 6 element tuple containing two
+/// Checks to see if a `Dynamic` value is a 6-element tuple containing
 /// specifically typed elements.
 ///
 /// If you wish to decode all the elements in the list use the `typed_tuple6`
@@ -815,7 +815,7 @@ pub fn typed_tuple6(
   Ok(#(a, b, c, d, e, f))
 }
 
-/// Checks to see if the Dynamic value is map.
+/// Checks to see if a `Dynamic` value is a map.
 ///
 /// ## Examples
 ///
