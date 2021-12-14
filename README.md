@@ -11,7 +11,7 @@ Documentation available on [HexDocs](https://hexdocs.pm/gleam_stdlib/).
 
 Add `gleam_stdlib` to your Gleam project
 
-```toml
+```shell
 gleam add gleam_stdlib
 ```
 
