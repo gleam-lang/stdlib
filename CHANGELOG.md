@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.18.1 - 2021-12-19
 
 - The `function` module gains the `constant` function.
 - The internal `gleam_stdlib.js` module has been renamed to `gleam_stdlib.mjs`.
