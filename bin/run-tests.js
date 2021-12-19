@@ -1,4 +1,4 @@
-const { opendir } = require("fs/promises");
+import { opendir } from "fs/promises";
 
 const dir = "gen/javascript/gleam/";
 
