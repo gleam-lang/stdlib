@@ -206,7 +206,7 @@ if erlang {
 
 if javascript {
   external fn do_parse_query(String) -> Result(List(#(String, String)), Nil) =
-    "../gleam_stdlib.mjs" "parse_query"
+    "../gleam_stdlib.js" "parse_query"
 }
 
 /// Encodes a list of key value pairs as a URI query string.
@@ -258,7 +258,7 @@ if erlang {
 
 if javascript {
   external fn do_percent_encode(String) -> String =
-    "../gleam_stdlib.mjs" "percent_encode"
+    "../gleam_stdlib.js" "percent_encode"
 }
 
 /// Decodes a percent encoded string.
@@ -282,7 +282,7 @@ if erlang {
 
 if javascript {
   external fn do_percent_decode(String) -> Result(String, Nil) =
-    "../gleam_stdlib.mjs" "percent_decode"
+    "../gleam_stdlib.js" "percent_decode"
 }
 
 fn do_remove_dot_segments(

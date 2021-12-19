@@ -25,7 +25,7 @@ if javascript {
     "../gleam.js" "inspect"
 
   external fn crash(String) -> anything =
-    "../gleam_stdlib.mjs" "crash"
+    "../gleam_stdlib.js" "crash"
 
   pub fn equal(a, b) {
     case a == b {

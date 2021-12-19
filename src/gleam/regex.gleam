@@ -62,7 +62,7 @@ if erlang {
 
 if javascript {
   external fn do_compile(String, with: Options) -> Result(Regex, CompileError) =
-    "../gleam_stdlib.mjs" "compile_regex"
+    "../gleam_stdlib.js" "compile_regex"
 }
 
 /// Creates a new `Regex`.
@@ -110,7 +110,7 @@ if erlang {
 
 if javascript {
   external fn do_check(Regex, String) -> Bool =
-    "../gleam_stdlib.mjs" "regex_check"
+    "../gleam_stdlib.js" "regex_check"
 }
 
 /// Splits a string.
@@ -136,7 +136,7 @@ if javascript {
   }
 
   external fn js_split(String, Regex) -> List(String) =
-    "../gleam_stdlib.mjs" "split"
+    "../gleam_stdlib.js" "split"
 }
 
 /// Collects all matches of the regular expression.
@@ -167,5 +167,5 @@ if erlang {
 
 if javascript {
   external fn do_scan(Regex, String) -> List(Match) =
-    "../gleam_stdlib.mjs" "regex_scan"
+    "../gleam_stdlib.js" "regex_scan"
 }

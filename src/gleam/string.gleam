@@ -53,7 +53,7 @@ if erlang {
 
 if javascript {
   external fn do_length(String) -> Int =
-    "../gleam_stdlib.mjs" "string_length"
+    "../gleam_stdlib.js" "string_length"
 }
 
 /// Reverses a `String`.
@@ -115,7 +115,7 @@ if erlang {
 
 if javascript {
   external fn do_lowercase(String) -> String =
-    "../gleam_stdlib.mjs" "lowercase"
+    "../gleam_stdlib.js" "lowercase"
 }
 
 /// Creates a new `String` with all the graphemes in the input `String` converted to
@@ -139,7 +139,7 @@ if erlang {
 
 if javascript {
   external fn do_uppercase(String) -> String =
-    "../gleam_stdlib.mjs" "uppercase"
+    "../gleam_stdlib.js" "uppercase"
 }
 
 /// Compares two `String`s to see which is "larger" by comparing their graphemes.
@@ -172,7 +172,7 @@ if erlang {
 
 if javascript {
   external fn less_than(String, String) -> Bool =
-    "../gleam_stdlib.mjs" "less_than"
+    "../gleam_stdlib.js" "less_than"
 }
 
 /// Takes a substring given a start and end grapheme indexes. Negative indexes
@@ -218,7 +218,7 @@ if erlang {
 
 if javascript {
   external fn do_slice(String, Int, Int) -> String =
-    "../gleam_stdlib.mjs" "slice_string"
+    "../gleam_stdlib.js" "slice_string"
 }
 
 /// Drops contents of the first `String` that occur before the second `String`.
@@ -246,7 +246,7 @@ if erlang {
 
 if javascript {
   external fn do_crop(String, String) -> String =
-    "../gleam_stdlib.mjs" "crop_string"
+    "../gleam_stdlib.js" "crop_string"
 }
 
 /// Drops *n* graphemes from the left side of a `String`.
@@ -307,7 +307,7 @@ if javascript {
   }
 
   external fn index_of(String, String) -> Int =
-    "../gleam_stdlib.mjs" "index_of"
+    "../gleam_stdlib.js" "index_of"
 }
 
 /// Checks whether the first `String` starts with the second one.
@@ -328,7 +328,7 @@ if erlang {
 
 if javascript {
   external fn do_starts_with(String, String) -> Bool =
-    "../gleam_stdlib.mjs" "starts_with"
+    "../gleam_stdlib.js" "starts_with"
 }
 
 /// Checks whether the first `String` ends with the second one.
@@ -349,7 +349,7 @@ if erlang {
 
 if javascript {
   external fn do_ends_with(String, String) -> Bool =
-    "../gleam_stdlib.mjs" "ends_with"
+    "../gleam_stdlib.js" "ends_with"
 }
 
 /// Creates a list of `String`s by splitting a given string on a given substring.
@@ -405,7 +405,7 @@ if javascript {
     x: String,
     substring: String,
   ) -> Result(#(String, String), Nil) =
-    "../gleam_stdlib.mjs" "split_once"
+    "../gleam_stdlib.js" "split_once"
 }
 
 /// Creates a new `String` by joining two `String`s together.
@@ -559,7 +559,7 @@ if erlang {
 
 if javascript {
   external fn do_trim(string: String) -> String =
-    "../gleam_stdlib.mjs" "trim"
+    "../gleam_stdlib.js" "trim"
 }
 
 /// Removes whitespace on the left of a `String`.
@@ -581,7 +581,7 @@ if erlang {
 
 if javascript {
   external fn do_trim_left(string: String) -> String =
-    "../gleam_stdlib.mjs" "trim_left"
+    "../gleam_stdlib.js" "trim_left"
 }
 
 /// Removes whitespace on the right of a `String`.
@@ -603,7 +603,7 @@ if erlang {
 
 if javascript {
   external fn do_trim_right(string: String) -> String =
-    "../gleam_stdlib.mjs" "trim_right"
+    "../gleam_stdlib.js" "trim_right"
 }
 
 /// Splits a non-empty `String` into its head and tail. This lets you
@@ -627,7 +627,7 @@ if erlang {
 
 if javascript {
   external fn do_pop_grapheme(string: String) -> Result(#(String, String), Nil) =
-    "../gleam_stdlib.mjs" "pop_grapheme"
+    "../gleam_stdlib.js" "pop_grapheme"
 }
 
 /// Converts a `String` to a list of graphemes.
@@ -649,7 +649,7 @@ if erlang {
 
 if javascript {
   external fn unsafe_int_to_utf_codepoint(Int) -> UtfCodepoint =
-    "../gleam_stdlib.mjs" "codepoint"
+    "../gleam_stdlib.js" "codepoint"
 }
 
 /// Converts an integer to a `UtfCodepoint`.

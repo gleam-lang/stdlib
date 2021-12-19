@@ -18,7 +18,7 @@ if erlang {
 
 if javascript {
   external fn do_encode64(BitString) -> String =
-    "../gleam_stdlib.mjs" "encode64"
+    "../gleam_stdlib.js" "encode64"
 }
 
 /// Decodes a base 64 encoded string into a `BitString`.
@@ -38,7 +38,7 @@ if erlang {
 
 if javascript {
   external fn do_decode64(String) -> Result(BitString, Nil) =
-    "../gleam_stdlib.mjs" "decode64"
+    "../gleam_stdlib.js" "decode64"
 }
 
 /// Encodes a `BitString` into a base 64 encoded string with URL and filename safe alphabet.

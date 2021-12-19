@@ -34,7 +34,7 @@ if erlang {
 
 if javascript {
   external fn do_from(anything) -> Dynamic =
-    "../gleam_stdlib.mjs" "identity"
+    "../gleam_stdlib.js" "identity"
 }
 
 /// Unsafely casts a Dynamic value into any other type.
@@ -55,7 +55,7 @@ if erlang {
 
 if javascript {
   external fn do_unsafe_coerce(Dynamic) -> a =
-    "../gleam_stdlib.mjs" "identity"
+    "../gleam_stdlib.js" "identity"
 }
 
 /// Checks to see whether a `Dynamic` value is a bit_string, and returns that bit string if
@@ -80,7 +80,7 @@ if erlang {
 
 if javascript {
   external fn decode_bit_string(Dynamic) -> Result(BitString, DecodeError) =
-    "../gleam_stdlib.mjs" "decode_bit_string"
+    "../gleam_stdlib.js" "decode_bit_string"
 }
 
 /// Checks to see whether a `Dynamic` value is a string, and returns that string if
@@ -113,7 +113,7 @@ if erlang {
 
 if javascript {
   external fn decode_string(Dynamic) -> Result(String, DecodeError) =
-    "../gleam_stdlib.mjs" "decode_string"
+    "../gleam_stdlib.js" "decode_string"
 }
 
 /// Return a string indicating the type of the dynamic value.
@@ -134,7 +134,7 @@ if erlang {
 
 if javascript {
   external fn do_classify(Dynamic) -> String =
-    "../gleam_stdlib.mjs" "classify_dynamic"
+    "../gleam_stdlib.js" "classify_dynamic"
 }
 
 /// Checks to see whether a `Dynamic` value is an int, and returns that int if it
@@ -159,7 +159,7 @@ if erlang {
 
 if javascript {
   external fn decode_int(Dynamic) -> Result(Int, DecodeError) =
-    "../gleam_stdlib.mjs" "decode_int"
+    "../gleam_stdlib.js" "decode_int"
 }
 
 /// Checks to see whether a `Dynamic` value is a float, and returns that float if
@@ -184,7 +184,7 @@ if erlang {
 
 if javascript {
   external fn decode_float(Dynamic) -> Result(Float, DecodeError) =
-    "../gleam_stdlib.mjs" "decode_float"
+    "../gleam_stdlib.js" "decode_float"
 }
 
 /// Checks to see whether a `Dynamic` value is a bool, and returns that bool if
@@ -209,7 +209,7 @@ if erlang {
 
 if javascript {
   external fn decode_bool(Dynamic) -> Result(Bool, DecodeError) =
-    "../gleam_stdlib.mjs" "decode_bool"
+    "../gleam_stdlib.js" "decode_bool"
 }
 
 /// Checks to see whether a `Dynamic` value is a list, and returns that list if it
@@ -237,7 +237,7 @@ if erlang {
 
 if javascript {
   external fn decode_list(Dynamic) -> Result(List(Dynamic), DecodeError) =
-    "../gleam_stdlib.mjs" "decode_list"
+    "../gleam_stdlib.js" "decode_list"
 }
 
 /// Checks to see whether a `Dynamic` value is a result, and returns that result if
@@ -267,7 +267,7 @@ if erlang {
 
 if javascript {
   external fn decode_result(Dynamic) -> Result(Result(a, e), DecodeError) =
-    "../gleam_stdlib.mjs" "decode_result"
+    "../gleam_stdlib.js" "decode_result"
 }
 
 /// Checks to see whether a `Dynamic` value is a result of a particular type, and
@@ -379,7 +379,7 @@ if javascript {
     Dynamic,
     Decoder(a),
   ) -> Result(Option(a), DecodeError) =
-    "../gleam_stdlib.mjs" "decode_option"
+    "../gleam_stdlib.js" "decode_option"
 }
 
 /// Checks to see if a `Dynamic` value is a map with a specific field, and returns
@@ -407,7 +407,7 @@ if erlang {
 
 if javascript {
   external fn decode_field(Dynamic, name) -> Result(Dynamic, DecodeError) =
-    "../gleam_stdlib.mjs" "decode_field"
+    "../gleam_stdlib.js" "decode_field"
 }
 
 /// Checks to see if a `Dynamic` value is a tuple large enough to have a certain
@@ -487,13 +487,13 @@ if erlang {
 
 if javascript {
   external fn decode_tuple(Dynamic) -> Result(UnknownTuple, DecodeError) =
-    "../gleam_stdlib.mjs" "decode_tuple"
+    "../gleam_stdlib.js" "decode_tuple"
 
   external fn tuple_get(UnknownTuple, Int) -> Result(Dynamic, DecodeError) =
-    "../gleam_stdlib.mjs" "tuple_get"
+    "../gleam_stdlib.js" "tuple_get"
 
   external fn tuple_size(UnknownTuple) -> Int =
-    "../gleam_stdlib.mjs" "length"
+    "../gleam_stdlib.js" "length"
 }
 
 /// Checks to see if a `Dynamic` value is a 2-element tuple.
@@ -840,7 +840,7 @@ if erlang {
 
 if javascript {
   external fn decode_map(Dynamic) -> Result(Map(Dynamic, Dynamic), DecodeError) =
-    "../gleam_stdlib.mjs" "decode_map"
+    "../gleam_stdlib.js" "decode_map"
 }
 
 if erlang {

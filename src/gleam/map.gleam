@@ -42,7 +42,7 @@ if erlang {
 
 if javascript {
   external fn do_size(Map(k, v)) -> Int =
-    "../gleam_stdlib.mjs" "map_size"
+    "../gleam_stdlib.js" "map_size"
 }
 
 /// Converts the map to a list of 2-element tuples `#(key, value)`, one for
@@ -69,7 +69,7 @@ if erlang {
 
 if javascript {
   external fn do_to_list(Map(key, value)) -> List(#(key, value)) =
-    "../gleam_stdlib.mjs" "map_to_list"
+    "../gleam_stdlib.js" "map_to_list"
 }
 
 /// Converts a list of 2-element tuples `#(key, value)` to a map.
@@ -130,7 +130,7 @@ if erlang {
 
 if javascript {
   external fn do_new() -> Map(key, value) =
-    "../gleam_stdlib.mjs" "new_map"
+    "../gleam_stdlib.js" "new_map"
 }
 
 /// Fetches a value from a map for a given key.
@@ -157,7 +157,7 @@ if erlang {
 
 if javascript {
   external fn do_get(Map(key, value), key) -> Result(value, Nil) =
-    "../gleam_stdlib.mjs" "map_get"
+    "../gleam_stdlib.js" "map_get"
 }
 
 /// Inserts a value into the map with the given key.
@@ -184,7 +184,7 @@ if erlang {
 
 if javascript {
   external fn do_insert(key, value, Map(key, value)) -> Map(key, value) =
-    "../gleam_stdlib.mjs" "map_insert"
+    "../gleam_stdlib.js" "map_insert"
 }
 
 /// Updates all values in a given map by calling a given function on each key
@@ -401,7 +401,7 @@ if erlang {
 
 if javascript {
   external fn do_delete(k, Map(k, v)) -> Map(k, v) =
-    "../gleam_stdlib.mjs" "map_remove"
+    "../gleam_stdlib.js" "map_remove"
 }
 
 /// Creates a new map from a given map with all the same entries except any with
