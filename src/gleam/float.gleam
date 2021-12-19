@@ -22,7 +22,7 @@ if erlang {
 
 if javascript {
   external fn do_parse(String) -> Result(Float, Nil) =
-    "../gleam_stdlib.js" "parse_float"
+    "../gleam_stdlib.mjs" "parse_float"
 }
 
 /// Returns the string representation of the provided `Float`.
@@ -115,7 +115,7 @@ if erlang {
 
 if javascript {
   external fn do_ceiling(Float) -> Float =
-    "../gleam_stdlib.js" "ceiling"
+    "../gleam_stdlib.mjs" "ceiling"
 }
 
 /// Rounds the value to the next lowest whole number as a `Float`.
@@ -136,7 +136,7 @@ if erlang {
 
 if javascript {
   external fn do_floor(Float) -> Float =
-    "../gleam_stdlib.js" "floor"
+    "../gleam_stdlib.mjs" "floor"
 }
 
 /// Rounds the value to the nearest whole number as an `Int`.
@@ -167,7 +167,7 @@ if javascript {
   }
 
   external fn js_round(Float) -> Int =
-    "../gleam_stdlib.js" "round"
+    "../gleam_stdlib.mjs" "round"
 }
 
 /// Returns the value as an `Int`, truncating all decimal digits.
@@ -188,7 +188,7 @@ if erlang {
 
 if javascript {
   external fn do_truncate(Float) -> Int =
-    "../gleam_stdlib.js" "truncate"
+    "../gleam_stdlib.mjs" "truncate"
 }
 
 /// Returns the absolute value of the input as a `Float`.
@@ -230,7 +230,7 @@ if erlang {
 
 if javascript {
   external fn do_power(Float, Float) -> Float =
-    "../gleam_stdlib.js" "power"
+    "../gleam_stdlib.mjs" "power"
 }
 
 /// Returns the square root of the input as a `Float`.
