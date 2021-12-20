@@ -153,14 +153,16 @@ pub fn to_base36(int) {
 ///
 /// ## Examples
 ///
-///   > to_float(5)
-///   5.
+/// ```
+/// > to_float(5)
+/// 5.
 ///
-///   > to_float(0)
-///   0.
+/// > to_float(0)
+/// 0.
 ///
-///   > to_float(-3)
-///   -3.
+/// > to_float(-3)
+/// -3.
+/// ```
 ///
 pub fn to_float(int) {
   do_to_float(int)
