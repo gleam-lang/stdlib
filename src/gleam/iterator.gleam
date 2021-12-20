@@ -166,8 +166,10 @@ pub fn run(iterator: Iterator(e)) -> Nil {
 ///
 /// ## Examples
 ///
-///   > [1, 2, 3] |> from_list |> map(fn(x) { x * 2 }) |> to_list
-///   [2, 4, 6]
+/// ```
+/// > [1, 2, 3] |> from_list |> map(fn(x) { x * 2 }) |> to_list
+/// [2, 4, 6]
+/// ```
 ///
 pub fn to_list(iterator: Iterator(element)) -> List(element) {
   iterator
@@ -452,9 +454,9 @@ fn do_find(continuation: fn() -> Action(a), f: fn(a) -> Bool) -> Result(a, Nil) 
 }
 
 /// Finds the first element in a given iterator for which the given function returns
-/// True.
+/// `True`.
 ///
-/// Returns `Error(Nil)` if the function does not return True for any of the
+/// Returns `Error(Nil)` if the function does not return `True` for any of the
 /// elements.
 ///
 /// ## Examples
@@ -781,7 +783,7 @@ fn do_intersperse(
   }
 }
 
-/// Creates an iterator that yields the given element
+/// Creates an iterator that yields the given `elem` element
 /// between elements emitted by the underlying iterator.
 ///
 /// ## Examples
@@ -920,7 +922,7 @@ pub fn group(
 /// This function acts similar to fold, but does not take an initial state.
 /// Instead, it starts from the first yielded element
 /// and combines it with each subsequent element in turn using the given function.
-/// The function is called as f(accumulator, current_element).
+/// The function is called as `f(accumulator, current_element)`.
 ///
 /// Returns `Ok` to indicate a successful run, and `Error` if called on an empty iterator.
 ///
@@ -1043,11 +1045,11 @@ fn do_fold_until(
 }
 
 /// Like `fold`, `fold_until` reduces an iterator of elements into a single value by calling a given
-/// function on each element in turn, but uses a `list.ContinueOrStop` to determine 
+/// function on each element in turn, but uses `list.ContinueOrStop` to determine
 /// whether or not to keep iterating.
 ///
 /// If called on an iterator of infinite length then this function will only ever
-/// return if the give function returns list.Stop.
+/// return if the function returns `list.Stop`.
 ///
 ///
 /// ## Examples

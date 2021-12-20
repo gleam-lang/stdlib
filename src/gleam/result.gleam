@@ -237,7 +237,7 @@ pub fn lazy_or(
 
 /// Combines a list of results into a single result.
 /// If all elements in the list are `Ok` then returns an `Ok` holding the list of values.
-/// If any element is Error `then` returns the first error.
+/// If any element is `Error` then returns the first error.
 ///
 /// ## Examples
 ///    > all([Ok(1), Ok(2)])

@@ -272,7 +272,7 @@ if javascript {
 }
 
 /// Creates a new map from a given map, minus any entries that a given function
-/// returns False for.
+/// returns `False` for.
 ///
 /// ## Examples
 ///

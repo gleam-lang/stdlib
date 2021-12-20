@@ -368,7 +368,7 @@ pub fn split(x: String, on substring: String) -> List(String) {
 
 /// Splits a `String` a single time on the given substring.
 ///
-/// Returns an error if substring not present.
+/// Returns an `Error` if substring not present.
 ///
 /// ## Examples
 ///
@@ -654,7 +654,7 @@ if javascript {
 
 /// Converts an integer to a `UtfCodepoint`.
 ///
-/// Returns an error if the integer does not represent a valid UTF codepoint.
+/// Returns an `Error` if the integer does not represent a valid UTF codepoint.
 ///
 pub fn utf_codepoint(value: Int) -> Result(UtfCodepoint, Nil) {
   case value {

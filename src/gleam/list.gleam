@@ -509,7 +509,7 @@ pub fn flatten(lists: List(List(a))) -> List(a) {
   do_flatten(lists, [])
 }
 
-/// Map and flatten the result
+/// Maps the list with the given function and then flattens the result.
 ///
 /// ## Examples
 ///
@@ -777,7 +777,7 @@ fn do_zip(xs: List(a), ys: List(b), acc: List(#(a, b))) -> List(#(a, b)) {
   }
 }
 
-/// Takes two lists and returns a single list of 2 item tuples.
+/// Takes two lists and returns a single list of 2-element tuples.
 ///
 /// If one of the lists is longer than the other, the remaining elements from
 /// the longer list are not used.
@@ -800,7 +800,7 @@ pub fn zip(xs: List(a), ys: List(b)) -> List(#(a, b)) {
   do_zip(xs, ys, [])
 }
 
-/// Takes two lists and returns a single list of 2 item tuples.
+/// Takes two lists and returns a single list of 2-element tuples.
 ///
 /// If one of the lists is longer than the other, an `Error` is returned.
 ///
@@ -835,7 +835,7 @@ fn do_unzip(input, xs, ys) {
   }
 }
 
-/// Takes a single list of 2 item tuples and returns two lists.
+/// Takes a single list of 2-element tuples and returns two lists.
 ///
 /// ## Examples
 ///
@@ -898,7 +898,7 @@ pub fn at(in list: List(a), get index: Int) -> Result(a, Nil) {
 
 /// Removes any duplicate elements from a given list.
 ///
-/// This function returns in log-linear time (n log n).
+/// This function returns in loglinear time.
 ///
 /// ## Examples
 ///
@@ -1066,7 +1066,7 @@ pub fn split_while(
   do_split_while(list, predicate, [])
 }
 
-/// Given a list of 2 element tuples, finds the first tuple that has a given
+/// Given a list of 2-element tuples, finds the first tuple that has a given
 /// key as the first element and returns the second element.
 ///
 /// If no tuple is found with the given key then `Error(Nil)` is returned.
@@ -1168,7 +1168,7 @@ pub fn pop_map(
   do_pop_map(haystack, is_desired, [])
 }
 
-/// Given a list of 2 element tuples, finds the first tuple that has a given
+/// Given a list of 2-element tuples, finds the first tuple that has a given
 /// key as the first element. This function will return the second element
 /// of the found tuple and list with tuple removed.
 ///
@@ -1201,7 +1201,7 @@ pub fn key_pop(
   )
 }
 
-/// Given a list of 2 element tuples, inserts a key and value into the list.
+/// Given a list of 2-element tuples, inserts a key and value into the list.
 ///
 /// If there was already a tuple with the key then it is replaced, otherwise it
 /// is added to the end of the list.
@@ -1451,7 +1451,7 @@ pub fn sized_chunk(in list: List(a), into count: Int) -> List(List(a)) {
 /// This function acts similar to fold, but does not take an initial state.
 /// Instead, it starts from the first element in the list
 /// and combines it with each subsequent element in turn using the given function.
-/// The function is called as fun(accumulator, current_element).
+/// The function is called as `fun(accumulator, current_element)`.
 ///
 /// Returns `Ok` to indicate a successful run, and `Error` if called on an empty list.
 ///
@@ -1521,7 +1521,7 @@ pub fn last(list: List(a)) -> Result(a, Nil) {
   |> reduce(fn(_, elem) { elem })
 }
 
-/// Return unique combinations of elements in the list
+/// Return unique combinations of elements in the list.
 ///
 /// ## Examples
 ///

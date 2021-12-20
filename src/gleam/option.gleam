@@ -11,7 +11,7 @@ pub type Option(a) {
   None
 }
 
-/// Combines a list of options into a single option.
+/// Combines a list of `Option`s into a single `Option`.
 /// If all elements in the list are `Some` then returns a `Some` holding the list of values.
 /// If any element is `None` then returns`None`.
 ///
@@ -38,7 +38,7 @@ pub fn all(list: List(Option(a))) -> Option(List(a)) {
   )
 }
 
-/// Checks whether the option is a `Some` value.
+/// Checks whether the `Option` is a `Some` value.
 ///
 /// ## Examples
 ///
@@ -52,7 +52,7 @@ pub fn is_some(option: Option(a)) -> Bool {
   option != None
 }
 
-/// Checks whether the option is a `None` value.
+/// Checks whether the `Option` is a `None` value.
 ///
 /// ## Examples
 ///
@@ -98,7 +98,7 @@ pub fn from_result(result: Result(a, e)) -> Option(a) {
   }
 }
 
-/// Extracts the value from an option, returning a default value if there is none.
+/// Extracts the value from an `Option`, returning a default value if there is none.
 ///
 /// ## Examples
 ///
@@ -115,11 +115,11 @@ pub fn unwrap(option: Option(a), or default: a) -> a {
   }
 }
 
-/// Updates a value held within the `Some` of an Option by calling a given function
+/// Updates a value held within the `Some` of an `Option` by calling a given function
 /// on it.
 ///
-/// If the option is a `None` rather than `Some`, the function is not called and the
-/// option stays the same.
+/// If the `Option` is a `None` rather than `Some`, the function is not called and the
+/// `Option` stays the same.
 ///
 /// ## Examples
 ///
@@ -210,7 +210,7 @@ pub fn or(first: Option(a), second: Option(a)) -> Option(a) {
   }
 }
 
-/// Given a list of options,
+/// Given a list of `Option`s,
 /// returns only the values inside `Some`.
 ///
 /// ## Examples
