@@ -8,13 +8,13 @@ import {
   inspect,
   stringBits,
   toBitString,
-} from "./gleam.js";
+} from "./gleam.mjs";
 import {
   CompileError as RegexCompileError,
   Match as RegexMatch,
-} from "./gleam/regex.js";
-import { DecodeError } from "./gleam/dynamic.js";
-import { Some, None } from "./gleam/option.js";
+} from "./gleam/regex.mjs";
+import { DecodeError } from "./gleam/dynamic.mjs";
+import { Some, None } from "./gleam/option.mjs";
 
 const HASHCODE_CACHE = new WeakMap();
 
