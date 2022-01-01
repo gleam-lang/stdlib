@@ -530,8 +530,12 @@ pub fn tuple2(
 ) -> Result(#(a, b), DecodeErrors) {
   try _ = assert_is_tuple(value, 2)
   let #(first, second) = unsafe_coerce(value)
-  try a = decode_first(first)
-  try b = decode_second(second)
+  try a =
+    decode_first(first)
+    |> map_errors(push_path(_, "0"))
+  try b =
+    decode_second(second)
+    |> map_errors(push_path(_, "1"))
   Ok(#(a, b))
 }
 
@@ -554,6 +558,19 @@ fn assert_is_tuple(
 
 fn put_expected(error: DecodeError, expected: String) -> DecodeError {
   DecodeError(..error, expected: expected)
+}
+
+fn push_path(error: DecodeError, name: t) -> DecodeError {
+  let name = from(name)
+  let decoder = any(_, [string, fn(x) { result.map(int(x), int.to_string) }])
+  let name = case decoder(name) {
+    Ok(name) -> name
+    Error(_) ->
+      ["<", classify(name), ">"]
+      |> string_builder.from_strings
+      |> string_builder.to_string
+  }
+  DecodeError(..error, path: [name, ..error.path])
 }
 
 /// Checks to see if a `Dynamic` value is a 3-element tuple containing
@@ -581,9 +598,15 @@ pub fn tuple3(
 ) -> Result(#(a, b, c), DecodeErrors) {
   try _ = assert_is_tuple(value, 3)
   let #(first, second, third) = unsafe_coerce(value)
-  try a = decode_first(first)
-  try b = decode_second(second)
-  try c = decode_third(third)
+  try a =
+    decode_first(first)
+    |> map_errors(push_path(_, "0"))
+  try b =
+    decode_second(second)
+    |> map_errors(push_path(_, "1"))
+  try c =
+    decode_third(third)
+    |> map_errors(push_path(_, "2"))
   Ok(#(a, b, c))
 }
 
@@ -614,10 +637,18 @@ pub fn tuple4(
 ) -> Result(#(a, b, c, d), DecodeErrors) {
   try _ = assert_is_tuple(value, 4)
   let #(first, second, third, fourth) = unsafe_coerce(value)
-  try a = decode_first(first)
-  try b = decode_second(second)
-  try c = decode_third(third)
-  try d = decode_fourth(fourth)
+  try a =
+    decode_first(first)
+    |> map_errors(push_path(_, "0"))
+  try b =
+    decode_second(second)
+    |> map_errors(push_path(_, "1"))
+  try c =
+    decode_third(third)
+    |> map_errors(push_path(_, "2"))
+  try d =
+    decode_fourth(fourth)
+    |> map_errors(push_path(_, "3"))
   Ok(#(a, b, c, d))
 }
 
@@ -648,11 +679,21 @@ pub fn tuple5(
 ) -> Result(#(a, b, c, d, e), DecodeErrors) {
   try _ = assert_is_tuple(value, 5)
   let #(first, second, third, fourth, fifth) = unsafe_coerce(value)
-  try a = decode_first(first)
-  try b = decode_second(second)
-  try c = decode_third(third)
-  try d = decode_fourth(fourth)
-  try e = decode_fifth(fifth)
+  try a =
+    decode_first(first)
+    |> map_errors(push_path(_, "0"))
+  try b =
+    decode_second(second)
+    |> map_errors(push_path(_, "1"))
+  try c =
+    decode_third(third)
+    |> map_errors(push_path(_, "2"))
+  try d =
+    decode_fourth(fourth)
+    |> map_errors(push_path(_, "3"))
+  try e =
+    decode_fifth(fifth)
+    |> map_errors(push_path(_, "4"))
   Ok(#(a, b, c, d, e))
 }
 
@@ -684,12 +725,24 @@ pub fn tuple6(
 ) -> Result(#(a, b, c, d, e, f), DecodeErrors) {
   try _ = assert_is_tuple(value, 6)
   let #(first, second, third, fourth, fifth, sixth) = unsafe_coerce(value)
-  try a = decode_first(first)
-  try b = decode_second(second)
-  try c = decode_third(third)
-  try d = decode_fourth(fourth)
-  try e = decode_fifth(fifth)
-  try f = decode_sixth(sixth)
+  try a =
+    decode_first(first)
+    |> map_errors(push_path(_, "0"))
+  try b =
+    decode_second(second)
+    |> map_errors(push_path(_, "1"))
+  try c =
+    decode_third(third)
+    |> map_errors(push_path(_, "2"))
+  try d =
+    decode_fourth(fourth)
+    |> map_errors(push_path(_, "3"))
+  try e =
+    decode_fifth(fifth)
+    |> map_errors(push_path(_, "4"))
+  try f =
+    decode_sixth(sixth)
+    |> map_errors(push_path(_, "5"))
   Ok(#(a, b, c, d, e, f))
 }
 

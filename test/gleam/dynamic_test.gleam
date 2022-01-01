@@ -380,7 +380,7 @@ pub fn tuple2_test() {
   |> dynamic.from
   |> dynamic.tuple2(dynamic.int, dynamic.int)
   |> should.equal(Error([
-    DecodeError(expected: "Int", found: "String", path: []),
+    DecodeError(expected: "Int", found: "String", path: ["1"]),
   ]))
 
   #(1, 2, 3)
@@ -417,7 +417,7 @@ pub fn tuple3_test() {
   |> dynamic.from
   |> dynamic.tuple3(dynamic.int, dynamic.int, dynamic.int)
   |> should.equal(Error([
-    DecodeError(expected: "Int", found: "String", path: []),
+    DecodeError(expected: "Int", found: "String", path: ["2"]),
   ]))
 
   #(1, 2)
@@ -454,7 +454,7 @@ pub fn tuple4_test() {
   |> dynamic.from
   |> dynamic.tuple4(dynamic.int, dynamic.int, dynamic.int, dynamic.int)
   |> should.equal(Error([
-    DecodeError(expected: "Int", found: "String", path: []),
+    DecodeError(expected: "Int", found: "String", path: ["3"]),
   ]))
 
   #(1, 2)
@@ -509,7 +509,7 @@ pub fn tuple5_test() {
     dynamic.int,
   )
   |> should.equal(Error([
-    DecodeError(expected: "Int", found: "String", path: []),
+    DecodeError(expected: "Int", found: "String", path: ["4"]),
   ]))
 
   #(1, 2)
@@ -579,7 +579,7 @@ pub fn tuple6_test() {
     dynamic.int,
   )
   |> should.equal(Error([
-    DecodeError(expected: "Int", found: "String", path: []),
+    DecodeError(expected: "Int", found: "String", path: ["5"]),
   ]))
 
   #(1, 2)

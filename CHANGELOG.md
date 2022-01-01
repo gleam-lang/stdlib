@@ -12,6 +12,8 @@
 - The `dynamic.typed_tuple*` functions have been renamed to `dynamic.tuple*`.
 - The `dynamic.field` and `dynamic.element` functions now requires the type of
   the field to be specified.
+- The `dynamic.DecodeError` now has a `path` field.
+- The decoder functions of the `dynamic` module now return multiple errors.
 
 ## v0.18.1 - 2021-12-19
 
