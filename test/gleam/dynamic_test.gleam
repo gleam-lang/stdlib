@@ -289,17 +289,22 @@ pub fn element_test() {
 
   ok_one_tuple
   |> dynamic.from
-  |> dynamic.element(0)
-  |> should.equal(Ok(dynamic.from("ok")))
+  |> dynamic.element(0, dynamic.string)
+  |> should.equal(Ok("ok"))
 
   ok_one_tuple
   |> dynamic.from
-  |> dynamic.element(1)
-  |> should.equal(Ok(dynamic.from(1)))
+  |> dynamic.element(1, dynamic.int)
+  |> should.equal(Ok(1))
 
   ok_one_tuple
   |> dynamic.from
-  |> dynamic.element(2)
+  |> dynamic.element(1, dynamic.string)
+  |> should.equal(Error(DecodeError(expected: "String", found: "Int")))
+
+  ok_one_tuple
+  |> dynamic.from
+  |> dynamic.element(2, dynamic.int)
   |> should.equal(Error(DecodeError(
     expected: "Tuple of at least 3 elements",
     found: "Tuple of 2 elements",
@@ -307,12 +312,12 @@ pub fn element_test() {
 
   ok_one_tuple
   |> dynamic.from
-  |> dynamic.element(-1)
-  |> should.equal(Ok(dynamic.from(1)))
+  |> dynamic.element(-1, dynamic.int)
+  |> should.equal(Ok(1))
 
   ok_one_tuple
   |> dynamic.from
-  |> dynamic.element(-3)
+  |> dynamic.element(-3, dynamic.int)
   |> should.equal(Error(DecodeError(
     expected: "Tuple of at least 3 elements",
     found: "Tuple of 2 elements",
@@ -320,18 +325,18 @@ pub fn element_test() {
 
   1
   |> dynamic.from
-  |> dynamic.element(-3)
+  |> dynamic.element(-3, dynamic.int)
   |> should.equal(Error(DecodeError(expected: "Tuple", found: "Int")))
 
   1
   |> dynamic.from
-  |> dynamic.element(0)
+  |> dynamic.element(0, dynamic.int)
   |> should.equal(Error(DecodeError(expected: "Tuple", found: "Int")))
 
   map.new()
   |> map.insert(1, "ok")
   |> dynamic.from
-  |> dynamic.element(0)
+  |> dynamic.element(0, dynamic.int)
   |> should.equal(Error(DecodeError(expected: "Tuple", found: "Map")))
 }
 

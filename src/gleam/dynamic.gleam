@@ -421,11 +421,12 @@ if javascript {
 ///
 pub fn element(
   from data: Dynamic,
-  get index: Int,
-) -> Result(Dynamic, DecodeError) {
+  at index: Int,
+  of inner_type: Decoder(t),
+) -> Result(t, DecodeError) {
   try tuple = decode_tuple(data)
   let size = tuple_size(tuple)
-  case index >= 0 {
+  try data = case index >= 0 {
     True ->
       case index < size {
         True -> tuple_get(tuple, index)
@@ -437,6 +438,7 @@ pub fn element(
         False -> at_least_decode_tuple_error(int.absolute_value(index), data)
       }
   }
+  inner_type(data)
 }
 
 fn exact_decode_tuple_error(size: Int, data: Dynamic) -> Result(a, DecodeError) {
