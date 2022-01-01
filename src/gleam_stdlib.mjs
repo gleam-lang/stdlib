@@ -495,7 +495,9 @@ export function classify_dynamic(data) {
 
 function decoder_error(expected, got) {
   return new Error(
-    new DecodeError(expected, classify_dynamic(got), List.fromArray([]))
+    List.fromArray([
+      new DecodeError(expected, classify_dynamic(got), List.fromArray([])),
+    ])
   );
 }
 
