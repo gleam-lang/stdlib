@@ -11,6 +11,7 @@
 - The `dynamic.any` is now available on JavaScript and has correct information
   in any errors returned.
 - The `dynamic.typed_tuple*` functions have been renamed to `dynamic.tuple*`.
+- The `dynamic.field` function now requires the type of the field to be specified.
 
 ## v0.18.1 - 2021-12-19
 
