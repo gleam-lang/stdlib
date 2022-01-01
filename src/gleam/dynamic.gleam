@@ -58,6 +58,16 @@ if javascript {
     "../gleam_stdlib.mjs" "identity"
 }
 
+/// Converts a `Dynamic` value into a `Dynamic` value.
+///
+/// This function doesn't seem very useful at first, but it can be convenient
+/// when you need to give a decoder function but you don't actually care what
+/// the to-decode value is.
+///
+pub fn dynamic(term: Dynamic) -> Dynamic {
+  unsafe_coerce(term)
+}
+
 /// Checks to see whether a `Dynamic` value is a bit_string, and returns that bit string if
 /// it is.
 ///

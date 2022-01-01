@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- The `dynamic` module gains the `dynamic` function.
 - The `dynamic.list` function has been renamed to `dynamic.shallow_list`.
 - The `dynamic.typed_list` function has been renamed to `dynamic.list`.
 - The `dynamic.result` function has been removed.
