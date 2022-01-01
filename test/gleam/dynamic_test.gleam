@@ -224,17 +224,17 @@ if javascript {
   pub fn javascript_object_field_test() {
     Ok(123)
     |> dynamic.from
-    |> dynamic.field("0")
+    |> dynamic.field("0", dynamic.int)
     |> should.equal(Ok(dynamic.from(123)))
 
     Ok(123)
     |> dynamic.from
-    |> dynamic.field(0)
+    |> dynamic.field(0, dynamic.int)
     |> should.equal(Ok(dynamic.from(123)))
 
     Ok(123)
     |> dynamic.from
-    |> dynamic.field("Nope")
+    |> dynamic.field("Nope", dynamic.int)
     |> should.equal(Error(DecodeError(
       expected: "Value with field \"Nope\"",
       found: "Result",
