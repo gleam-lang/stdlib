@@ -240,26 +240,6 @@ if javascript {
     "../gleam_stdlib.mjs" "decode_list"
 }
 
-/// Checks to see whether a `Dynamic` value is a result, and returns that result if
-/// it is.
-///
-/// ## Examples
-///
-///    > result(from(Ok(1)))
-///    Ok(Ok(from(1)))
-///
-///    > result(from(Error("boom")))
-///    Ok(Error(from("boom")))
-///
-///    > result(from(123))
-///    Error(DecodeError(expected: "2 element tuple", found: "Int"))
-///
-pub fn result(
-  from value: Dynamic,
-) -> Result(Result(Dynamic, Dynamic), DecodeError) {
-  decode_result(value)
-}
-
 if erlang {
   external fn decode_result(Dynamic) -> Result(Result(a, e), DecodeError) =
     "gleam_stdlib" "decode_result"
@@ -278,21 +258,21 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > typed_result(of: from(Ok(1)), ok: int, error: string)
+///    > result(of: from(Ok(1)), ok: int, error: string)
 ///    Ok(Ok(1))
 ///
-///    > typed_result(of: from(Error("boom")), ok: int, error: string)
+///    > result(of: from(Error("boom")), ok: int, error: string)
 ///    Ok(Error("boom"))
 ///
-///    > typed_result(of: from(123), ok: int, error: string)
+///    > result(of: from(123), ok: int, error: string)
 ///    Error(DecodeError(expected: "2 element tuple", found: "Int"))
 ///
-pub fn typed_result(
+pub fn result(
   of dynamic: Dynamic,
   ok decode_ok: Decoder(a),
   error decode_error: Decoder(e),
 ) -> Result(Result(a, e), DecodeError) {
-  try inner_result = result(dynamic)
+  try inner_result = decode_result(dynamic)
 
   case inner_result {
     Ok(raw) ->
