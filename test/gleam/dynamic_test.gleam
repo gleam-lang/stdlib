@@ -225,12 +225,12 @@ if javascript {
     Ok(123)
     |> dynamic.from
     |> dynamic.field("0", dynamic.int)
-    |> should.equal(Ok(dynamic.from(123)))
+    |> should.equal(Ok(123))
 
     Ok(123)
     |> dynamic.from
     |> dynamic.field(0, dynamic.int)
-    |> should.equal(Ok(dynamic.from(123)))
+    |> should.equal(Ok(123))
 
     Ok(123)
     |> dynamic.from
