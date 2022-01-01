@@ -7,6 +7,8 @@
 - The `dynamic.typed_list` function has been renamed to `dynamic.list`.
 - The `dynamic.result` function has been removed.
 - The `dynamic.typed_result` function has been renamed to `dynamic.result`.
+- The `dynamic.any` is now available on JavaScript and has correct information
+  in any errors returned.
 
 ## v0.18.1 - 2021-12-19
 

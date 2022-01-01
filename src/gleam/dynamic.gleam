@@ -486,25 +486,33 @@ if javascript {
     "../gleam_stdlib.mjs" "length"
 }
 
-/// Checks to see if a `Dynamic` value is a 2-element tuple.
-///
-/// If you do not wish to decode all the elements in the tuple use the
-/// `typed_tuple2` function instead.
+/// Checks to see if a `Dynamic` value is a 2 element tuple containing
+/// specifically typed elements.
 ///
 /// ## Examples
 ///
-///    > tuple2(from(#(1, 2)))
-///    Ok(#(from(1), from(2)))
+///    > tuple2(from(#(1, 2)), int, int)
+///    Ok(#(1, 2))
 ///
-///    > tuple2(from(#(1, 2, 3)))
+///    > tuple2(from(#(1, 2.0)), int, float)
+///    Ok(#(1, 2.0))
+///
+///    > tuple2(from(#(1, 2, 3)), int, float)
 ///    Error(DecodeError(expected: "2 element tuple", found: "3 element tuple"))
 ///
-///    > tuple2(from(""))
+///    > tuple2(from(""), int, float)
 ///    Error(DecodeError(expected: "2 element tuple", found: "String"))
 ///
-pub fn tuple2(from value: Dynamic) -> Result(#(Dynamic, Dynamic), DecodeError) {
+pub fn tuple2(
+  from value: Dynamic,
+  first decode_first: Decoder(a),
+  second decode_second: Decoder(b),
+) -> Result(#(a, b), DecodeError) {
   try _ = assert_is_tuple(value, 2)
-  Ok(unsafe_coerce(value))
+  let #(first, second) = unsafe_coerce(value)
+  try a = decode_first(first)
+  try b = decode_second(second)
+  Ok(#(a, b))
 }
 
 fn assert_is_tuple(
@@ -532,37 +540,6 @@ fn put_expected(
     Ok(_) -> result
     Error(e) -> Error(DecodeError(..e, expected: expected))
   }
-}
-
-/// Checks to see if a `Dynamic` value is a 2 element tuple containing
-/// specifically typed elements.
-///
-/// If you wish to decode all the elements in the list use the `typed_tuple2`
-/// instead.
-///
-/// ## Examples
-///
-///    > typed_tuple2(from(#(1, 2)), int, int)
-///    Ok(#(1, 2))
-///
-///    > typed_tuple2(from(#(1, 2.0)), int, float)
-///    Ok(#(1, 2.0))
-///
-///    > typed_tuple2(from(#(1, 2, 3)), int, float)
-///    Error(DecodeError(expected: "2 element tuple", found: "3 element tuple"))
-///
-///    > typed_tuple2(from(""), int, float)
-///    Error(DecodeError(expected: "2 element tuple", found: "String"))
-///
-pub fn typed_tuple2(
-  from tup: Dynamic,
-  first decode_first: Decoder(a),
-  second decode_second: Decoder(b),
-) -> Result(#(a, b), DecodeError) {
-  try #(first, second) = tuple2(tup)
-  try a = decode_first(first)
-  try b = decode_second(second)
-  Ok(#(a, b))
 }
 
 /// Checks to see if the `Dynamic` value is a 3-element tuple.
