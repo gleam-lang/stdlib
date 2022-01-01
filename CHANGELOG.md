@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- The `result`, and `tuple2` functions have been removed from the `dynamic`
+- The `result`, and `tuple*` functions have been removed from the `dynamic`
   module.
 - The `dynamic` module gains the `dynamic` function.
 - The `dynamic.list` function has been renamed to `dynamic.shallow_list`.
