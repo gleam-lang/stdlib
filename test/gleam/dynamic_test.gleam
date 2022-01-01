@@ -1,6 +1,7 @@
 import gleam/should
 import gleam/dynamic.{DecodeError}
 import gleam/bit_string
+import gleam/result
 import gleam/map
 import gleam/option.{None, Some}
 
@@ -792,4 +793,29 @@ pub fn result_test() {
   |> dynamic.from
   |> dynamic.result(ok: dynamic.int, error: dynamic.string)
   |> should.equal(Error(DecodeError(expected: "Result", found: "Int")))
+}
+
+pub fn any_test() {
+  let decoder = dynamic.any(
+    _,
+    [
+      fn(x) { result.map(dynamic.int(x), fn(_) { "int" }) },
+      fn(x) { result.map(dynamic.float(x), fn(_) { "float" }) },
+    ],
+  )
+
+  1
+  |> dynamic.from
+  |> decoder
+  |> should.equal(Ok("int"))
+
+  1.1
+  |> dynamic.from
+  |> decoder
+  |> should.equal(Ok("float"))
+
+  ""
+  |> dynamic.from
+  |> decoder
+  |> should.equal(Error(DecodeError("Float or Int", "String")))
 }

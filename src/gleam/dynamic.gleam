@@ -833,34 +833,52 @@ if javascript {
     "../gleam_stdlib.mjs" "decode_map"
 }
 
-if erlang {
-  /// Joins multiple decoders into one. When run they will each be tried in turn
-  /// until one succeeds, or they all fail.
-  ///
-  /// ## Examples
-  ///
-  ///    > import gleam/result
-  ///    > let bool_or_string = any(_, of: [
-  ///    >   string,
-  ///    >   fn(x) { result.map(bool(x), fn(_) { "a bool" }) }
-  ///    > ])
-  ///    > bool_or_string(from("ok"))
-  ///    Ok("ok")
-  ///
-  ///    > bool_or_string(from(True))
-  ///    Ok("a bool")
-  ///
-  ///    > bool_or_string(from(1))
-  ///    Error(DecodeError(expected: "unknown", found: "unknown"))
-  ///
-  pub fn any(
-    from data: Dynamic,
-    of decoders: List(Decoder(t)),
-  ) -> Result(t, DecodeError) {
-    decoders
-    |> list.find_map(fn(decoder) { decoder(data) })
-    |> result.map_error(fn(_) {
-      DecodeError(expected: "unknown", found: "unknown")
-    })
+/// Joins multiple decoders into one. When run they will each be tried in turn
+/// until one succeeds, or they all fail.
+///
+/// ## Examples
+///
+///    > import gleam/result
+///    > let bool_or_string = any(_, of: [
+///    >   string,
+///    >   fn(x) { result.map(bool(x), fn(_) { "a bool" }) }
+///    > ])
+///    > bool_or_string(from("ok"))
+///    Ok("ok")
+///
+///    > bool_or_string(from(True))
+///    Ok("a bool")
+///
+///    > bool_or_string(from(1))
+///    Error(DecodeError(expected: "unknown", found: "unknown"))
+///
+pub fn any(
+  from data: Dynamic,
+  of decoders: List(Decoder(t)),
+) -> Result(t, DecodeError) {
+  do_any(data, decoders, [])
+}
+
+fn do_any(
+  data: Dynamic,
+  decoders: List(Decoder(a)),
+  failed: List(String),
+) -> Result(a, DecodeError) {
+  case decoders {
+    [] -> {
+      let expected =
+        failed
+        |> list.intersperse(" or ")
+        |> string_builder.from_strings
+        |> string_builder.to_string
+      Error(DecodeError(found: classify(data), expected: expected))
+    }
+
+    [decoder, ..decoders] ->
+      case decoder(data) {
+        Ok(decoded) -> Ok(decoded)
+        Error(DecodeError(expected: expected, ..)) ->
+          do_any(data, decoders, [expected, ..failed])
+      }
   }
 }
