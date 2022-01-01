@@ -175,7 +175,7 @@ pub fn contains(list: List(a), any elem: a) -> Bool {
 pub fn first(list: List(a)) -> Result(a, Nil) {
   case list {
     [] -> Error(Nil)
-    [x, .._] -> Ok(x)
+    [x, ..] -> Ok(x)
   }
 }
 
@@ -1604,7 +1604,7 @@ pub fn transpose(list_of_list: List(List(a))) -> List(List(a)) {
     case list {
       [] -> []
       [f] -> [f]
-      [f, .._rest] -> [f]
+      [f, ..] -> [f]
     }
   }
 

@@ -8,8 +8,7 @@
 - The `dynamic.list` function has been renamed to `dynamic.shallow_list`.
 - The `dynamic.typed_list` function has been renamed to `dynamic.list`.
 - The `dynamic.typed_result` function has been renamed to `dynamic.result`.
-- The `dynamic.any` is now available on JavaScript and has correct information
-  in any errors returned.
+- The `dynamic.any` is now available on JavaScript.
 - The `dynamic.typed_tuple*` functions have been renamed to `dynamic.tuple*`.
 - The `dynamic.field` and `dynamic.element` functions now requires the type of
   the field to be specified.

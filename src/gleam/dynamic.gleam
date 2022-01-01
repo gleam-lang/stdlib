@@ -15,11 +15,14 @@ pub external type Dynamic
 
 /// Error returned when unexpected data is encountered
 pub type DecodeError {
-  DecodeError(expected: String, found: String)
+  DecodeError(expected: String, found: String, path: List(String))
 }
 
+pub type DecodeErrors =
+  List(DecodeError)
+
 pub type Decoder(t) =
-  fn(Dynamic) -> Result(t, DecodeError)
+  fn(Dynamic) -> Result(t, DecodeErrors)
 
 /// Converts any Gleam data into `Dynamic` data.
 ///
@@ -77,19 +80,19 @@ pub fn dynamic(term: Dynamic) -> Dynamic {
 ///    True
 ///
 ///    > bit_string(from(123))
-///    Error(DecodeError(expected: "BitString", found: "Int"))
+///    Error(DecodeError(expected: "BitString", found: "Int", path: []))
 ///
-pub fn bit_string(from data: Dynamic) -> Result(BitString, DecodeError) {
+pub fn bit_string(from data: Dynamic) -> Result(BitString, DecodeErrors) {
   decode_bit_string(data)
 }
 
 if erlang {
-  external fn decode_bit_string(Dynamic) -> Result(BitString, DecodeError) =
+  external fn decode_bit_string(Dynamic) -> Result(BitString, DecodeErrors) =
     "gleam_stdlib" "decode_bit_string"
 }
 
 if javascript {
-  external fn decode_bit_string(Dynamic) -> Result(BitString, DecodeError) =
+  external fn decode_bit_string(Dynamic) -> Result(BitString, DecodeErrors) =
     "../gleam_stdlib.mjs" "decode_bit_string"
 }
 
@@ -102,27 +105,35 @@ if javascript {
 ///    Ok("Hello")
 ///
 ///    > string(from(123))
-///    Error(DecodeError(expected: "String", found: "Int"))
+///    Error(DecodeError(expected: "String", found: "Int", path: []))
 ///
-pub fn string(from data: Dynamic) -> Result(String, DecodeError) {
+pub fn string(from data: Dynamic) -> Result(String, DecodeErrors) {
   decode_string(data)
 }
 
+fn map_errors(
+  result: Result(t, DecodeErrors),
+  f: fn(DecodeError) -> DecodeError,
+) -> Result(t, DecodeErrors) {
+  result.map_error(result, list.map(_, f))
+}
+
 if erlang {
-  fn decode_string(data: Dynamic) -> Result(String, DecodeError) {
+  fn decode_string(data: Dynamic) -> Result(String, DecodeErrors) {
     bit_string(data)
-    |> result.map_error(fn(error) { DecodeError(..error, expected: "String") })
+    |> map_errors(put_expected(_, "String"))
     |> result.then(fn(raw) {
       case bit_string.to_string(raw) {
         Ok(string) -> Ok(string)
-        Error(Nil) -> Error(DecodeError(expected: "String", found: "BitString"))
+        Error(Nil) ->
+          Error([DecodeError(expected: "String", found: "BitString", path: [])])
       }
     })
   }
 }
 
 if javascript {
-  external fn decode_string(Dynamic) -> Result(String, DecodeError) =
+  external fn decode_string(Dynamic) -> Result(String, DecodeErrors) =
     "../gleam_stdlib.mjs" "decode_string"
 }
 
@@ -156,19 +167,19 @@ if javascript {
 ///    Ok(123)
 ///
 ///    > int(from("Hello"))
-///    Error(DecodeError(expected: "Int", found: "String"))
+///    Error(DecodeError(expected: "Int", found: "String", path: []))
 ///
-pub fn int(from data: Dynamic) -> Result(Int, DecodeError) {
+pub fn int(from data: Dynamic) -> Result(Int, DecodeErrors) {
   decode_int(data)
 }
 
 if erlang {
-  external fn decode_int(Dynamic) -> Result(Int, DecodeError) =
+  external fn decode_int(Dynamic) -> Result(Int, DecodeErrors) =
     "gleam_stdlib" "decode_int"
 }
 
 if javascript {
-  external fn decode_int(Dynamic) -> Result(Int, DecodeError) =
+  external fn decode_int(Dynamic) -> Result(Int, DecodeErrors) =
     "../gleam_stdlib.mjs" "decode_int"
 }
 
@@ -181,19 +192,19 @@ if javascript {
 ///    Ok(2.0)
 ///
 ///    > float(from(123))
-///    Error(DecodeError(expected: "Float", found: "Int"))
+///    Error(DecodeError(expected: "Float", found: "Int", path: []))
 ///
-pub fn float(from data: Dynamic) -> Result(Float, DecodeError) {
+pub fn float(from data: Dynamic) -> Result(Float, DecodeErrors) {
   decode_float(data)
 }
 
 if erlang {
-  external fn decode_float(Dynamic) -> Result(Float, DecodeError) =
+  external fn decode_float(Dynamic) -> Result(Float, DecodeErrors) =
     "gleam_stdlib" "decode_float"
 }
 
 if javascript {
-  external fn decode_float(Dynamic) -> Result(Float, DecodeError) =
+  external fn decode_float(Dynamic) -> Result(Float, DecodeErrors) =
     "../gleam_stdlib.mjs" "decode_float"
 }
 
@@ -206,19 +217,19 @@ if javascript {
 ///    Ok(True)
 ///
 ///    > bool(from(123))
-///    Error(DecodeError(expected: "bool", found: "Int"))
+///    Error(DecodeError(expected: "bool", found: "Int", path: []))
 ///
-pub fn bool(from data: Dynamic) -> Result(Bool, DecodeError) {
+pub fn bool(from data: Dynamic) -> Result(Bool, DecodeErrors) {
   decode_bool(data)
 }
 
 if erlang {
-  external fn decode_bool(Dynamic) -> Result(Bool, DecodeError) =
+  external fn decode_bool(Dynamic) -> Result(Bool, DecodeErrors) =
     "gleam_stdlib" "decode_bool"
 }
 
 if javascript {
-  external fn decode_bool(Dynamic) -> Result(Bool, DecodeError) =
+  external fn decode_bool(Dynamic) -> Result(Bool, DecodeErrors) =
     "../gleam_stdlib.mjs" "decode_bool"
 }
 
@@ -234,29 +245,29 @@ if javascript {
 ///    Ok([from("a"), from("b"), from("c")])
 ///
 ///    > shallow_list(1)
-///    Error(DecodeError(expected: "Int", found: "Int"))
+///    Error(DecodeError(expected: "Int", found: "Int", path: []))
 ///
-pub fn shallow_list(from value: Dynamic) -> Result(List(Dynamic), DecodeError) {
+pub fn shallow_list(from value: Dynamic) -> Result(List(Dynamic), DecodeErrors) {
   decode_list(value)
 }
 
 if erlang {
-  external fn decode_list(Dynamic) -> Result(List(Dynamic), DecodeError) =
+  external fn decode_list(Dynamic) -> Result(List(Dynamic), DecodeErrors) =
     "gleam_stdlib" "decode_list"
 }
 
 if javascript {
-  external fn decode_list(Dynamic) -> Result(List(Dynamic), DecodeError) =
+  external fn decode_list(Dynamic) -> Result(List(Dynamic), DecodeErrors) =
     "../gleam_stdlib.mjs" "decode_list"
 }
 
 if erlang {
-  external fn decode_result(Dynamic) -> Result(Result(a, e), DecodeError) =
+  external fn decode_result(Dynamic) -> Result(Result(a, e), DecodeErrors) =
     "gleam_stdlib" "decode_result"
 }
 
 if javascript {
-  external fn decode_result(Dynamic) -> Result(Result(a, e), DecodeError) =
+  external fn decode_result(Dynamic) -> Result(Result(a, e), DecodeErrors) =
     "../gleam_stdlib.mjs" "decode_result"
 }
 
@@ -275,13 +286,13 @@ if javascript {
 ///    Ok(Error("boom"))
 ///
 ///    > result(of: from(123), ok: int, error: string)
-///    Error(DecodeError(expected: "2 element tuple", found: "Int"))
+///    Error(DecodeError(expected: "2 element tuple", found: "Int", path: []))
 ///
 pub fn result(
   of dynamic: Dynamic,
   ok decode_ok: Decoder(a),
   error decode_error: Decoder(e),
-) -> Result(Result(a, e), DecodeError) {
+) -> Result(Result(a, e), DecodeErrors) {
   try inner_result = decode_result(dynamic)
 
   case inner_result {
@@ -312,15 +323,15 @@ pub fn result(
 ///    Ok(["a", "b", "c"])
 ///
 ///    > list(from([1, 2, 3]), of: string)
-///    Error(DecodeError(expected: "String", found: "Int"))
+///    Error(DecodeError(expected: "String", found: "Int", path: []))
 ///
 ///    > list(from("ok"), of: string)
-///    Error(DecodeError(expected: "List", found: "String"))
+///    Error(DecodeError(expected: "List", found: "String", path: []))
 ///
 pub fn list(
   from dynamic: Dynamic,
-  of decoder_type: fn(Dynamic) -> Result(inner, DecodeError),
-) -> Result(List(inner), DecodeError) {
+  of decoder_type: fn(Dynamic) -> Result(inner, DecodeErrors),
+) -> Result(List(inner), DecodeErrors) {
   dynamic
   |> shallow_list
   |> result.then(list.try_map(_, decoder_type))
@@ -347,12 +358,12 @@ pub fn list(
 ///    Ok(None)
 ///
 ///    > option(from(123), string)
-///    Error(DecodeError(expected: "BitString", found: "Int"))
+///    Error(DecodeError(expected: "BitString", found: "Int", path: []))
 ///
 pub fn optional(
   from value: Dynamic,
   of decode: Decoder(inner),
-) -> Result(Option(inner), DecodeError) {
+) -> Result(Option(inner), DecodeErrors) {
   decode_optional(value, decode)
 }
 
@@ -360,7 +371,7 @@ if erlang {
   external fn decode_optional(
     Dynamic,
     Decoder(a),
-  ) -> Result(Option(a), DecodeError) =
+  ) -> Result(Option(a), DecodeErrors) =
     "gleam_stdlib" "decode_option"
 }
 
@@ -368,7 +379,7 @@ if javascript {
   external fn decode_optional(
     Dynamic,
     Decoder(a),
-  ) -> Result(Option(a), DecodeError) =
+  ) -> Result(Option(a), DecodeErrors) =
     "../gleam_stdlib.mjs" "decode_option"
 }
 
@@ -384,24 +395,24 @@ if javascript {
 ///    Ok(Dynamic)
 ///
 ///    > field(from(123), "Hello")
-///    Error(DecodeError(expected: "Map", found: "Int"))
+///    Error(DecodeError(expected: "Map", found: "Int", path: []))
 ///
 pub fn field(
   from value: Dynamic,
   named name: a,
   of inner_type: Decoder(t),
-) -> Result(t, DecodeError) {
+) -> Result(t, DecodeErrors) {
   try value = decode_field(value, name)
   inner_type(value)
 }
 
 if erlang {
-  external fn decode_field(Dynamic, name) -> Result(Dynamic, DecodeError) =
+  external fn decode_field(Dynamic, name) -> Result(Dynamic, DecodeErrors) =
     "gleam_stdlib" "decode_field"
 }
 
 if javascript {
-  external fn decode_field(Dynamic, name) -> Result(Dynamic, DecodeError) =
+  external fn decode_field(Dynamic, name) -> Result(Dynamic, DecodeErrors) =
     "../gleam_stdlib.mjs" "decode_field"
 }
 
@@ -414,16 +425,16 @@ if javascript {
 ///    Ok(from(1))
 ///
 ///    > element(from(#(1, 2)), 2)
-///    Error(DecodeError(expected: "3 element tuple", found: "2 element tuple"))
+///    Error(DecodeError(expected: "3 element tuple", found: "2 element tuple", path: []))
 ///
 ///    > element(from(""), 2)
-///    Error(DecodeError(expected: "Tuple", found: "String"))
+///    Error(DecodeError(expected: "Tuple", found: "String", path: []))
 ///
 pub fn element(
   from data: Dynamic,
   at index: Int,
   of inner_type: Decoder(t),
-) -> Result(t, DecodeError) {
+) -> Result(t, DecodeErrors) {
   try tuple = decode_tuple(data)
   let size = tuple_size(tuple)
   try data = case index >= 0 {
@@ -441,41 +452,43 @@ pub fn element(
   inner_type(data)
 }
 
-fn exact_decode_tuple_error(size: Int, data: Dynamic) -> Result(a, DecodeError) {
+fn exact_decode_tuple_error(size: Int, data: Dynamic) -> Result(a, DecodeErrors) {
   let s = case size {
     0 -> ""
     _ -> "s"
   }
-  ["Tuple of ", int.to_string(size), " element", s]
-  |> string_builder.from_strings
-  |> string_builder.to_string
-  |> DecodeError(found: classify(data))
-  |> Error
+  let error =
+    ["Tuple of ", int.to_string(size), " element", s]
+    |> string_builder.from_strings
+    |> string_builder.to_string
+    |> DecodeError(found: classify(data), path: [])
+  Error([error])
 }
 
 fn at_least_decode_tuple_error(
   size: Int,
   data: Dynamic,
-) -> Result(a, DecodeError) {
+) -> Result(a, DecodeErrors) {
   let s = case size {
     0 -> ""
     _ -> "s"
   }
-  ["Tuple of at least ", int.to_string(size), " element", s]
-  |> string_builder.from_strings
-  |> string_builder.to_string
-  |> DecodeError(found: classify(data))
-  |> Error
+  let error =
+    ["Tuple of at least ", int.to_string(size), " element", s]
+    |> string_builder.from_strings
+    |> string_builder.to_string
+    |> DecodeError(found: classify(data), path: [])
+  Error([error])
 }
 
 // A tuple of unknown size
 external type UnknownTuple
 
 if erlang {
-  external fn decode_tuple(Dynamic) -> Result(UnknownTuple, DecodeError) =
+  external fn decode_tuple(Dynamic) -> Result(UnknownTuple, DecodeErrors) =
     "gleam_stdlib" "decode_tuple"
 
-  external fn tuple_get(UnknownTuple, Int) -> Result(Dynamic, DecodeError) =
+  external fn tuple_get(UnknownTuple, Int) -> Result(Dynamic, DecodeErrors) =
     "gleam_stdlib" "tuple_get"
 
   external fn tuple_size(UnknownTuple) -> Int =
@@ -483,10 +496,10 @@ if erlang {
 }
 
 if javascript {
-  external fn decode_tuple(Dynamic) -> Result(UnknownTuple, DecodeError) =
+  external fn decode_tuple(Dynamic) -> Result(UnknownTuple, DecodeErrors) =
     "../gleam_stdlib.mjs" "decode_tuple"
 
-  external fn tuple_get(UnknownTuple, Int) -> Result(Dynamic, DecodeError) =
+  external fn tuple_get(UnknownTuple, Int) -> Result(Dynamic, DecodeErrors) =
     "../gleam_stdlib.mjs" "tuple_get"
 
   external fn tuple_size(UnknownTuple) -> Int =
@@ -505,16 +518,16 @@ if javascript {
 ///    Ok(#(1, 2.0))
 ///
 ///    > tuple2(from(#(1, 2, 3)), int, float)
-///    Error(DecodeError(expected: "2 element tuple", found: "3 element tuple"))
+///    Error(DecodeError(expected: "2 element tuple", found: "3 element tuple", path: []))
 ///
 ///    > tuple2(from(""), int, float)
-///    Error(DecodeError(expected: "2 element tuple", found: "String"))
+///    Error(DecodeError(expected: "2 element tuple", found: "String", path: []))
 ///
 pub fn tuple2(
   from value: Dynamic,
   first decode_first: Decoder(a),
   second decode_second: Decoder(b),
-) -> Result(#(a, b), DecodeError) {
+) -> Result(#(a, b), DecodeErrors) {
   try _ = assert_is_tuple(value, 2)
   let #(first, second) = unsafe_coerce(value)
   try a = decode_first(first)
@@ -525,28 +538,22 @@ pub fn tuple2(
 fn assert_is_tuple(
   value: Dynamic,
   desired_size: Int,
-) -> Result(Nil, DecodeError) {
+) -> Result(Nil, DecodeErrors) {
   let expected =
     string_builder.to_string(string_builder.from_strings([
       "Tuple of ",
       int.to_string(desired_size),
       " elements",
     ]))
-  try tuple = put_expected(decode_tuple(value), expected)
+  try tuple = map_errors(decode_tuple(value), put_expected(_, expected))
   case tuple_size(tuple) {
     size if size == desired_size -> Ok(Nil)
     _ -> exact_decode_tuple_error(desired_size, value)
   }
 }
 
-fn put_expected(
-  result: Result(a, DecodeError),
-  expected: String,
-) -> Result(a, DecodeError) {
-  case result {
-    Ok(_) -> result
-    Error(e) -> Error(DecodeError(..e, expected: expected))
-  }
+fn put_expected(error: DecodeError, expected: String) -> DecodeError {
+  DecodeError(..error, expected: expected)
 }
 
 /// Checks to see if a `Dynamic` value is a 3-element tuple containing
@@ -561,17 +568,17 @@ fn put_expected(
 ///    Ok(#(1, 2.0, "3"))
 ///
 ///    > tuple3(from(#(1, 2)), int, float, string)
-///    Error(DecodeError(expected: "3 element tuple", found: "2 element tuple"))
+///    Error(DecodeError(expected: "3 element tuple", found: "2 element tuple", path: []))
 ///
 ///    > tuple3(from(""), int, float, string)
-///    Error(DecodeError(expected: "3 element tuple", found: "String"))
+///    Error(DecodeError(expected: "3 element tuple", found: "String", path: []))
 ///
 pub fn tuple3(
   from value: Dynamic,
   first decode_first: Decoder(a),
   second decode_second: Decoder(b),
   third decode_third: Decoder(c),
-) -> Result(#(a, b, c), DecodeError) {
+) -> Result(#(a, b, c), DecodeErrors) {
   try _ = assert_is_tuple(value, 3)
   let #(first, second, third) = unsafe_coerce(value)
   try a = decode_first(first)
@@ -593,10 +600,10 @@ pub fn tuple3(
 ///
 ///    > tuple4(from(#(1, 2)), int, float, string, int)
 ///    Error("Expected a 4 element tuple, found a 2 element tuple")
-///    Error(DecodeError(expected: "4 element tuple", found: "2 element tuple"))
+///    Error(DecodeError(expected: "4 element tuple", found: "2 element tuple", path: []))
 ///
 ///    > tuple4(from(""), int, float, string, int)
-///    Error(DecodeError(expected: "4 element tuple", found: "String"))
+///    Error(DecodeError(expected: "4 element tuple", found: "String", path: []))
 ///
 pub fn tuple4(
   from value: Dynamic,
@@ -604,7 +611,7 @@ pub fn tuple4(
   second decode_second: Decoder(b),
   third decode_third: Decoder(c),
   fourth decode_fourth: Decoder(d),
-) -> Result(#(a, b, c, d), DecodeError) {
+) -> Result(#(a, b, c, d), DecodeErrors) {
   try _ = assert_is_tuple(value, 4)
   let #(first, second, third, fourth) = unsafe_coerce(value)
   try a = decode_first(first)
@@ -626,10 +633,10 @@ pub fn tuple4(
 ///    Ok(#(1, 2.0, "3", 4, 5))
 ///
 ///    > tuple5(from(#(1, 2)), int, float, string, int, int)
-///    Error(DecodeError(expected: "5 element tuple", found: "2 element tuple"))
+///    Error(DecodeError(expected: "5 element tuple", found: "2 element tuple", path: []))
 ///
 ///    > tuple5(from(""), int, float, string, int, int)
-///    Error(DecodeError(expected: "5 element tuple", found: "String"))
+///    Error(DecodeError(expected: "5 element tuple", found: "String", path: []))
 ///
 pub fn tuple5(
   from value: Dynamic,
@@ -638,7 +645,7 @@ pub fn tuple5(
   third decode_third: Decoder(c),
   fourth decode_fourth: Decoder(d),
   fifth decode_fifth: Decoder(e),
-) -> Result(#(a, b, c, d, e), DecodeError) {
+) -> Result(#(a, b, c, d, e), DecodeErrors) {
   try _ = assert_is_tuple(value, 5)
   let #(first, second, third, fourth, fifth) = unsafe_coerce(value)
   try a = decode_first(first)
@@ -661,10 +668,10 @@ pub fn tuple5(
 ///    Ok(#(1, 2.0, "3", 4, 5, 6))
 ///
 ///    > tuple6(from(#(1, 2)), int, float, string, int, int, int)
-///    Error(DecodeError(expected: "6 element tuple", found: "2 element tuple"))
+///    Error(DecodeError(expected: "6 element tuple", found: "2 element tuple", path: []))
 ///
 ///    > tuple6(from(""), int, float, string, int, int, int)
-///    Error(DecodeError(expected: "6 element tuple", found: "String"))
+///    Error(DecodeError(expected: "6 element tuple", found: "String", path: []))
 ///
 pub fn tuple6(
   from value: Dynamic,
@@ -674,7 +681,7 @@ pub fn tuple6(
   fourth decode_fourth: Decoder(d),
   fifth decode_fifth: Decoder(e),
   sixth decode_sixth: Decoder(f),
-) -> Result(#(a, b, c, d, e, f), DecodeError) {
+) -> Result(#(a, b, c, d, e, f), DecodeErrors) {
   try _ = assert_is_tuple(value, 6)
   let #(first, second, third, fourth, fifth, sixth) = unsafe_coerce(value)
   try a = decode_first(first)
@@ -695,22 +702,22 @@ pub fn tuple6(
 ///    Ok(map.new())
 ///
 ///    > map(from(1))
-///    Error(DecodeError(expected: "Map", found: "Int"))
+///    Error(DecodeError(expected: "Map", found: "Int", path: []))
 ///
 ///    > map(from(""))
-///    Error(DecodeError(expected: "Map", found: "String"))
+///    Error(DecodeError(expected: "Map", found: "String", path: []))
 ///
-pub fn map(from value: Dynamic) -> Result(Map(Dynamic, Dynamic), DecodeError) {
+pub fn map(from value: Dynamic) -> Result(Map(Dynamic, Dynamic), DecodeErrors) {
   decode_map(value)
 }
 
 if erlang {
-  external fn decode_map(Dynamic) -> Result(Map(Dynamic, Dynamic), DecodeError) =
+  external fn decode_map(Dynamic) -> Result(Map(Dynamic, Dynamic), DecodeErrors) =
     "gleam_stdlib" "decode_map"
 }
 
 if javascript {
-  external fn decode_map(Dynamic) -> Result(Map(Dynamic, Dynamic), DecodeError) =
+  external fn decode_map(Dynamic) -> Result(Map(Dynamic, Dynamic), DecodeErrors) =
     "../gleam_stdlib.mjs" "decode_map"
 }
 
@@ -731,35 +738,22 @@ if javascript {
 ///    Ok("a bool")
 ///
 ///    > bool_or_string(from(1))
-///    Error(DecodeError(expected: "unknown", found: "unknown"))
+///    Error(DecodeError(expected: "unknown", found: "unknown", path: []))
 ///
 pub fn any(
   from data: Dynamic,
   of decoders: List(Decoder(t)),
-) -> Result(t, DecodeError) {
-  do_any(data, decoders, [])
-}
-
-fn do_any(
-  data: Dynamic,
-  decoders: List(Decoder(a)),
-  failed: List(String),
-) -> Result(a, DecodeError) {
+) -> Result(t, DecodeErrors) {
   case decoders {
-    [] -> {
-      let expected =
-        failed
-        |> list.intersperse(" or ")
-        |> string_builder.from_strings
-        |> string_builder.to_string
-      Error(DecodeError(found: classify(data), expected: expected))
-    }
+    [] ->
+      Error([
+        DecodeError(found: classify(data), expected: "another type", path: []),
+      ])
 
     [decoder, ..decoders] ->
       case decoder(data) {
         Ok(decoded) -> Ok(decoded)
-        Error(DecodeError(expected: expected, ..)) ->
-          do_any(data, decoders, [expected, ..failed])
+        Error(_) -> any(data, decoders)
       }
   }
 }

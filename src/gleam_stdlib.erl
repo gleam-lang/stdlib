@@ -50,7 +50,7 @@ iodata_append(Iodata, String) -> [Iodata, String].
 identity(X) -> X.
 
 decode_error_msg(Expected, Data) ->
-    {error, {decode_error, Expected, classify_dynamic(Data)}}.
+    {error, [{decode_error, Expected, classify_dynamic(Data), []}]}.
 
 classify_dynamic(X) when is_atom(X) -> <<"Atom">>;
 classify_dynamic(X) when is_binary(X) -> <<"String">>;
