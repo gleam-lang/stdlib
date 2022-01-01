@@ -386,8 +386,13 @@ if javascript {
 ///    > field(from(123), "Hello")
 ///    Error(DecodeError(expected: "Map", found: "Int"))
 ///
-pub fn field(from value: Dynamic, named name: a) -> Result(Dynamic, DecodeError) {
-  decode_field(value, name)
+pub fn field(
+  from value: Dynamic,
+  named name: a,
+  of inner_type: Decoder(t),
+) -> Result(t, DecodeError) {
+  try value = decode_field(value, name)
+  inner_type(value)
 }
 
 if erlang {

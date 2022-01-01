@@ -246,29 +246,41 @@ pub fn field_test() {
   map.new()
   |> map.insert("ok", 1)
   |> dynamic.from
-  |> dynamic.field("ok")
-  |> should.equal(Ok(dynamic.from(1)))
+  |> dynamic.field(named: "ok", of: dynamic.int)
+  |> should.equal(Ok(1))
+
+  map.new()
+  |> map.insert("ok", 1.0)
+  |> dynamic.from
+  |> dynamic.field(named: "ok", of: dynamic.float)
+  |> should.equal(Ok(1.0))
 
   map.new()
   |> map.insert("ok", 3)
   |> map.insert("error", 1)
   |> dynamic.from
-  |> dynamic.field("ok")
-  |> should.equal(Ok(dynamic.from(3)))
+  |> dynamic.field("ok", dynamic.int)
+  |> should.equal(Ok(3))
+
+  map.new()
+  |> map.insert("ok", 3)
+  |> dynamic.from
+  |> dynamic.field("ok", dynamic.float)
+  |> should.be_error
 
   map.new()
   |> dynamic.from
-  |> dynamic.field("ok")
+  |> dynamic.field("ok", dynamic.int)
   |> should.be_error
 
   1
   |> dynamic.from
-  |> dynamic.field("ok")
+  |> dynamic.field("ok", dynamic.int)
   |> should.be_error
 
   []
   |> dynamic.from
-  |> dynamic.field([])
+  |> dynamic.field("ok", dynamic.int)
   |> should.be_error
 }
 
