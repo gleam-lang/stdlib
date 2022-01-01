@@ -542,114 +542,64 @@ fn put_expected(
   }
 }
 
-/// Checks to see if the `Dynamic` value is a 3-element tuple.
-///
-/// If you do not wish to decode all the elements in the tuple use the
-/// `typed_tuple3` function instead.
+/// Checks to see if a `Dynamic` value is a 3-element tuple containing
+/// specifically typed elements.
 ///
 /// ## Examples
 ///
-///    > tuple3(from(#(1, 2, 3)))
-///    Ok(#(from(1), from(2), from(3)))
+///    > tuple3(from(#(1, 2, 3)), int, int, int)
+///    Ok(#(1, 2, 3))
 ///
-///    > tuple3(from(#(1, 2)))
-///    Error(DecodeError(expected: "3 element tuple", found: "3 element tuple"))
+///    > tuple3(from(#(1, 2.0, "3")), int, float, string)
+///    Ok(#(1, 2.0, "3"))
 ///
-///    > tuple3(from(""))
+///    > tuple3(from(#(1, 2)), int, float, string)
+///    Error(DecodeError(expected: "3 element tuple", found: "2 element tuple"))
+///
+///    > tuple3(from(""), int, float, string)
 ///    Error(DecodeError(expected: "3 element tuple", found: "String"))
 ///
 pub fn tuple3(
   from value: Dynamic,
-) -> Result(#(Dynamic, Dynamic, Dynamic), DecodeError) {
-  try _ = assert_is_tuple(value, 3)
-  Ok(unsafe_coerce(value))
-}
-
-/// Checks to see if a `Dynamic` value is a 3-element tuple containing
-/// specifically typed elements.
-///
-/// If you wish to decode all the elements in the list use the `typed_tuple3`
-/// instead.
-///
-/// ## Examples
-///
-///    > typed_tuple3(from(#(1, 2, 3)), int, int, int)
-///    Ok(#(1, 2, 3))
-///
-///    > typed_tuple3(from(#(1, 2.0, "3")), int, float, string)
-///    Ok(#(1, 2.0, "3"))
-///
-///    > typed_tuple3(from(#(1, 2)), int, float, string)
-///    Error(DecodeError(expected: "3 element tuple", found: "2 element tuple"))
-///
-///    > typed_tuple3(from(""), int, float, string)
-///    Error(DecodeError(expected: "3 element tuple", found: "String"))
-///
-pub fn typed_tuple3(
-  from tup: Dynamic,
   first decode_first: Decoder(a),
   second decode_second: Decoder(b),
   third decode_third: Decoder(c),
 ) -> Result(#(a, b, c), DecodeError) {
-  try #(first, second, third) = tuple3(tup)
+  try _ = assert_is_tuple(value, 3)
+  let #(first, second, third) = unsafe_coerce(value)
   try a = decode_first(first)
   try b = decode_second(second)
   try c = decode_third(third)
   Ok(#(a, b, c))
 }
 
-/// Checks to see if a `Dynamic` value is a 4-element tuple.
-///
-/// If you do not wish to decode all the elements in the tuple use the
-/// `typed_tuple4` function instead.
+/// Checks to see if a `Dynamic` value is a 4 element tuple containing
+/// specifically typed elements.
 ///
 /// ## Examples
 ///
-///    > tuple4(from(#(1, 2, 3, 4)))
-///    Ok(#(from(1), from(2), from(3), from(4)))
+///    > tuple4(from(#(1, 2, 3, 4)), int, int, int, int)
+///    Ok(#(1, 2, 3, 4))
 ///
-///    > tuple4(from(#(1, 2)))
+///    > tuple4(from(#(1, 2.0, "3", 4)), int, float, string, int)
+///    Ok(#(1, 2.0, "3", 4))
+///
+///    > tuple4(from(#(1, 2)), int, float, string, int)
+///    Error("Expected a 4 element tuple, found a 2 element tuple")
 ///    Error(DecodeError(expected: "4 element tuple", found: "2 element tuple"))
 ///
-///    > tuple4(from(""))
+///    > tuple4(from(""), int, float, string, int)
 ///    Error(DecodeError(expected: "4 element tuple", found: "String"))
 ///
 pub fn tuple4(
   from value: Dynamic,
-) -> Result(#(Dynamic, Dynamic, Dynamic, Dynamic), DecodeError) {
-  try _ = assert_is_tuple(value, 4)
-  Ok(unsafe_coerce(value))
-}
-
-/// Checks to see if a `Dynamic` value is a 4 element tuple containing
-/// specifically typed elements.
-///
-/// If you wish to decode all the elements in the list use the `typed_tuple4`
-/// instead.
-///
-/// ## Examples
-///
-///    > typed_tuple4(from(#(1, 2, 3, 4)), int, int, int, int)
-///    Ok(#(1, 2, 3, 4))
-///
-///    > typed_tuple4(from(#(1, 2.0, "3", 4)), int, float, string, int)
-///    Ok(#(1, 2.0, "3", 4))
-///
-///    > typed_tuple4(from(#(1, 2)), int, float, string, int)
-///    Error("Expected a 4 element tuple, found a 2 element tuple")
-///    Error(DecodeError(expected: "4 element tuple", found: "2 element tuple"))
-///
-///    > typed_tuple4(from(""), int, float, string, int)
-///    Error(DecodeError(expected: "4 element tuple", found: "String"))
-///
-pub fn typed_tuple4(
-  from tup: Dynamic,
   first decode_first: Decoder(a),
   second decode_second: Decoder(b),
   third decode_third: Decoder(c),
   fourth decode_fourth: Decoder(d),
 ) -> Result(#(a, b, c, d), DecodeError) {
-  try #(first, second, third, fourth) = tuple4(tup)
+  try _ = assert_is_tuple(value, 4)
+  let #(first, second, third, fourth) = unsafe_coerce(value)
   try a = decode_first(first)
   try b = decode_second(second)
   try c = decode_third(third)
@@ -657,58 +607,33 @@ pub fn typed_tuple4(
   Ok(#(a, b, c, d))
 }
 
-/// Checks to see if a `Dynamic` value is a 5-element tuple.
-///
-/// If you do not wish to decode all the elements in the tuple use the
-/// `typed_tuple5` function instead.
+/// Checks to see if a `Dynamic` value is a 5-element tuple containing
+/// specifically typed elements.
 ///
 /// ## Examples
 ///
-///    > tuple5(from(#(1, 2, 3, 4, 5)))
-///    Ok(#(from(1), from(2), from(3), from(4), from(5)))
+///    > tuple5(from(#(1, 2, 3, 4, 5)), int, int, int, int, int)
+///    Ok(#(1, 2, 3, 4, 5))
 ///
-///    > tuple5(from(#(1, 2)))
+///    > tuple5(from(#(1, 2.0, "3", 4, 5)), int, float, string, int, int)
+///    Ok(#(1, 2.0, "3", 4, 5))
+///
+///    > tuple5(from(#(1, 2)), int, float, string, int, int)
 ///    Error(DecodeError(expected: "5 element tuple", found: "2 element tuple"))
 ///
-///    > tuple5(from(""))
+///    > tuple5(from(""), int, float, string, int, int)
 ///    Error(DecodeError(expected: "5 element tuple", found: "String"))
 ///
 pub fn tuple5(
   from value: Dynamic,
-) -> Result(#(Dynamic, Dynamic, Dynamic, Dynamic, Dynamic), DecodeError) {
-  try _ = assert_is_tuple(value, 5)
-  Ok(unsafe_coerce(value))
-}
-
-/// Checks to see if a `Dynamic` value is a 5-element tuple containing
-/// specifically typed elements.
-///
-/// If you wish to decode all the elements in the list use the `typed_tuple5`
-/// instead.
-///
-/// ## Examples
-///
-///    > typed_tuple5(from(#(1, 2, 3, 4, 5)), int, int, int, int, int)
-///    Ok(#(1, 2, 3, 4, 5))
-///
-///    > typed_tuple5(from(#(1, 2.0, "3", 4, 5)), int, float, string, int, int)
-///    Ok(#(1, 2.0, "3", 4, 5))
-///
-///    > typed_tuple5(from(#(1, 2)), int, float, string, int, int)
-///    Error(DecodeError(expected: "5 element tuple", found: "2 element tuple"))
-///
-///    > typed_tuple5(from(""), int, float, string, int, int)
-///    Error(DecodeError(expected: "5 element tuple", found: "String"))
-///
-pub fn typed_tuple5(
-  from tup: Dynamic,
   first decode_first: Decoder(a),
   second decode_second: Decoder(b),
   third decode_third: Decoder(c),
   fourth decode_fourth: Decoder(d),
   fifth decode_fifth: Decoder(e),
 ) -> Result(#(a, b, c, d, e), DecodeError) {
-  try #(first, second, third, fourth, fifth) = tuple5(tup)
+  try _ = assert_is_tuple(value, 5)
+  let #(first, second, third, fourth, fifth) = unsafe_coerce(value)
   try a = decode_first(first)
   try b = decode_second(second)
   try c = decode_third(third)
@@ -717,54 +642,25 @@ pub fn typed_tuple5(
   Ok(#(a, b, c, d, e))
 }
 
-/// Checks to see if a `Dynamic` value is a 6-element tuple.
-///
-/// If you do not wish to decode all the elements in the tuple use the
-/// `typed_tuple6` function instead.
+/// Checks to see if a `Dynamic` value is a 6-element tuple containing
+/// specifically typed elements.
 ///
 /// ## Examples
 ///
-///    > tuple6(from(#(1, 2, 3, 4, 5, 6)))
-///    Ok(#(from(1), from(2), from(3), from(4), from(5), from(6)))
+///    > tuple6(from(#(1, 2, 3, 4, 5, 6)), int, int, int, int, int, int)
+///    Ok(#(1, 2, 3, 4, 5, 6))
 ///
-///    > tuple6(from(#(1, 2)))
+///    > tuple6(from(#(1, 2.0, "3", 4, 5, 6)), int, float, string, int, int)
+///    Ok(#(1, 2.0, "3", 4, 5, 6))
+///
+///    > tuple6(from(#(1, 2)), int, float, string, int, int, int)
 ///    Error(DecodeError(expected: "6 element tuple", found: "2 element tuple"))
 ///
-///    > tuple6(from(""))
+///    > tuple6(from(""), int, float, string, int, int, int)
 ///    Error(DecodeError(expected: "6 element tuple", found: "String"))
 ///
 pub fn tuple6(
   from value: Dynamic,
-) -> Result(
-  #(Dynamic, Dynamic, Dynamic, Dynamic, Dynamic, Dynamic),
-  DecodeError,
-) {
-  try _ = assert_is_tuple(value, 6)
-  Ok(unsafe_coerce(value))
-}
-
-/// Checks to see if a `Dynamic` value is a 6-element tuple containing
-/// specifically typed elements.
-///
-/// If you wish to decode all the elements in the list use the `typed_tuple6`
-/// instead.
-///
-/// ## Examples
-///
-///    > typed_tuple6(from(#(1, 2, 3, 4, 5, 6)), int, int, int, int, int, int)
-///    Ok(#(1, 2, 3, 4, 5, 6))
-///
-///    > typed_tuple6(from(#(1, 2.0, "3", 4, 5, 6)), int, float, string, int, int)
-///    Ok(#(1, 2.0, "3", 4, 5, 6))
-///
-///    > typed_tuple6(from(#(1, 2)), int, float, string, int, int, int)
-///    Error(DecodeError(expected: "6 element tuple", found: "2 element tuple"))
-///
-///    > typed_tuple6(from(""), int, float, string, int, int, int)
-///    Error(DecodeError(expected: "6 element tuple", found: "String"))
-///
-pub fn typed_tuple6(
-  from tup: Dynamic,
   first decode_first: Decoder(a),
   second decode_second: Decoder(b),
   third decode_third: Decoder(c),
@@ -772,7 +668,8 @@ pub fn typed_tuple6(
   fifth decode_fifth: Decoder(e),
   sixth decode_sixth: Decoder(f),
 ) -> Result(#(a, b, c, d, e, f), DecodeError) {
-  try #(first, second, third, fourth, fifth, sixth) = tuple6(tup)
+  try _ = assert_is_tuple(value, 6)
+  let #(first, second, third, fourth, fifth, sixth) = unsafe_coerce(value)
   try a = decode_first(first)
   try b = decode_second(second)
   try c = decode_third(third)

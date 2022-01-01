@@ -10,6 +10,7 @@
 - The `dynamic.typed_result` function has been renamed to `dynamic.result`.
 - The `dynamic.any` is now available on JavaScript and has correct information
   in any errors returned.
+- The `dynamic.typed_tuple*` functions have been renamed to `dynamic.tuple*`.
 
 ## v0.18.1 - 2021-12-19
 

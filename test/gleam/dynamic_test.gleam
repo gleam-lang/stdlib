@@ -359,50 +359,22 @@ pub fn tuple2_test() {
 pub fn tuple3_test() {
   #(1, 2, 3)
   |> dynamic.from
-  |> dynamic.tuple3
-  |> should.equal(Ok(#(dynamic.from(1), dynamic.from(2), dynamic.from(3))))
-
-  #(1, "", 3.0)
-  |> dynamic.from
-  |> dynamic.tuple3
-  |> should.equal(Ok(#(dynamic.from(1), dynamic.from(""), dynamic.from(3.0))))
-
-  #(1, 2)
-  |> dynamic.from
-  |> dynamic.tuple3
-  |> should.equal(Error(DecodeError(
-    expected: "Tuple of 3 elements",
-    found: "Tuple of 2 elements",
-  )))
-
-  1
-  |> dynamic.from
-  |> dynamic.tuple3
-  |> should.equal(Error(DecodeError(
-    expected: "Tuple of 3 elements",
-    found: "Int",
-  )))
-}
-
-pub fn typed_tuple3_test() {
-  #(1, 2, 3)
-  |> dynamic.from
-  |> dynamic.typed_tuple3(dynamic.int, dynamic.int, dynamic.int)
+  |> dynamic.tuple3(dynamic.int, dynamic.int, dynamic.int)
   |> should.equal(Ok(#(1, 2, 3)))
 
   #(1, "", 3.0)
   |> dynamic.from
-  |> dynamic.typed_tuple3(dynamic.int, dynamic.string, dynamic.float)
+  |> dynamic.tuple3(dynamic.int, dynamic.string, dynamic.float)
   |> should.equal(Ok(#(1, "", 3.0)))
 
   #(1, 2, "")
   |> dynamic.from
-  |> dynamic.typed_tuple3(dynamic.int, dynamic.int, dynamic.int)
+  |> dynamic.tuple3(dynamic.int, dynamic.int, dynamic.int)
   |> should.equal(Error(DecodeError(expected: "Int", found: "String")))
 
   #(1, 2)
   |> dynamic.from
-  |> dynamic.typed_tuple3(dynamic.int, dynamic.int, dynamic.int)
+  |> dynamic.tuple3(dynamic.int, dynamic.int, dynamic.int)
   |> should.equal(Error(DecodeError(
     expected: "Tuple of 3 elements",
     found: "Tuple of 2 elements",
@@ -410,7 +382,7 @@ pub fn typed_tuple3_test() {
 
   1
   |> dynamic.from
-  |> dynamic.typed_tuple3(dynamic.int, dynamic.int, dynamic.int)
+  |> dynamic.tuple3(dynamic.int, dynamic.int, dynamic.int)
   |> should.equal(Error(DecodeError(
     expected: "Tuple of 3 elements",
     found: "Int",
@@ -420,65 +392,22 @@ pub fn typed_tuple3_test() {
 pub fn tuple4_test() {
   #(1, 2, 3, 4)
   |> dynamic.from
-  |> dynamic.tuple4
-  |> should.equal(Ok(#(
-    dynamic.from(1),
-    dynamic.from(2),
-    dynamic.from(3),
-    dynamic.from(4),
-  )))
-
-  #(1, "", 3.0, 4)
-  |> dynamic.from
-  |> dynamic.tuple4
-  |> should.equal(Ok(#(
-    dynamic.from(1),
-    dynamic.from(""),
-    dynamic.from(3.0),
-    dynamic.from(4),
-  )))
-
-  #(1, 2)
-  |> dynamic.from
-  |> dynamic.tuple4
-  |> should.equal(Error(DecodeError(
-    expected: "Tuple of 4 elements",
-    found: "Tuple of 2 elements",
-  )))
-
-  1
-  |> dynamic.from
-  |> dynamic.tuple4
-  |> should.equal(Error(DecodeError(
-    expected: "Tuple of 4 elements",
-    found: "Int",
-  )))
-}
-
-pub fn typed_tuple4_test() {
-  #(1, 2, 3, 4)
-  |> dynamic.from
-  |> dynamic.typed_tuple4(dynamic.int, dynamic.int, dynamic.int, dynamic.int)
+  |> dynamic.tuple4(dynamic.int, dynamic.int, dynamic.int, dynamic.int)
   |> should.equal(Ok(#(1, 2, 3, 4)))
 
   #(1, "", 3.0, 4)
   |> dynamic.from
-  |> dynamic.typed_tuple4(
-    dynamic.int,
-    dynamic.string,
-    dynamic.float,
-    dynamic.int,
-  )
+  |> dynamic.tuple4(dynamic.int, dynamic.string, dynamic.float, dynamic.int)
   |> should.equal(Ok(#(1, "", 3.0, 4)))
 
   #(1, 2, 3, "")
   |> dynamic.from
-  |> dynamic.typed_tuple4(dynamic.int, dynamic.int, dynamic.int, dynamic.int)
+  |> dynamic.tuple4(dynamic.int, dynamic.int, dynamic.int, dynamic.int)
   |> should.equal(Error(DecodeError(expected: "Int", found: "String")))
 
   #(1, 2)
   |> dynamic.from
-  |> dynamic.typed_tuple4(dynamic.int, dynamic.int, dynamic.int, dynamic.int)
+  |> dynamic.tuple4(dynamic.int, dynamic.int, dynamic.int, dynamic.int)
   |> should.equal(Error(DecodeError(
     expected: "Tuple of 4 elements",
     found: "Tuple of 2 elements",
@@ -486,7 +415,7 @@ pub fn typed_tuple4_test() {
 
   1
   |> dynamic.from
-  |> dynamic.typed_tuple4(dynamic.int, dynamic.int, dynamic.int, dynamic.int)
+  |> dynamic.tuple4(dynamic.int, dynamic.int, dynamic.int, dynamic.int)
   |> should.equal(Error(DecodeError(
     expected: "Tuple of 4 elements",
     found: "Int",
@@ -496,47 +425,7 @@ pub fn typed_tuple4_test() {
 pub fn tuple5_test() {
   #(1, 2, 3, 4, 5)
   |> dynamic.from
-  |> dynamic.tuple5
-  |> should.equal(Ok(#(
-    dynamic.from(1),
-    dynamic.from(2),
-    dynamic.from(3),
-    dynamic.from(4),
-    dynamic.from(5),
-  )))
-
-  #(1, "", 3.0, 4, 5)
-  |> dynamic.from
-  |> dynamic.tuple5
-  |> should.equal(Ok(#(
-    dynamic.from(1),
-    dynamic.from(""),
-    dynamic.from(3.0),
-    dynamic.from(4),
-    dynamic.from(5),
-  )))
-
-  #(1, 2)
-  |> dynamic.from
-  |> dynamic.tuple5
-  |> should.equal(Error(DecodeError(
-    expected: "Tuple of 5 elements",
-    found: "Tuple of 2 elements",
-  )))
-
-  1
-  |> dynamic.from
-  |> dynamic.tuple5
-  |> should.equal(Error(DecodeError(
-    expected: "Tuple of 5 elements",
-    found: "Int",
-  )))
-}
-
-pub fn typed_tuple5_test() {
-  #(1, 2, 3, 4, 5)
-  |> dynamic.from
-  |> dynamic.typed_tuple5(
+  |> dynamic.tuple5(
     dynamic.int,
     dynamic.int,
     dynamic.int,
@@ -547,7 +436,7 @@ pub fn typed_tuple5_test() {
 
   #(1, "", 3.0, 4, 5)
   |> dynamic.from
-  |> dynamic.typed_tuple5(
+  |> dynamic.tuple5(
     dynamic.int,
     dynamic.string,
     dynamic.float,
@@ -558,7 +447,7 @@ pub fn typed_tuple5_test() {
 
   #(1, 2, 3, 4, "")
   |> dynamic.from
-  |> dynamic.typed_tuple5(
+  |> dynamic.tuple5(
     dynamic.int,
     dynamic.int,
     dynamic.int,
@@ -569,7 +458,7 @@ pub fn typed_tuple5_test() {
 
   #(1, 2)
   |> dynamic.from
-  |> dynamic.typed_tuple5(
+  |> dynamic.tuple5(
     dynamic.int,
     dynamic.int,
     dynamic.int,
@@ -583,7 +472,7 @@ pub fn typed_tuple5_test() {
 
   1
   |> dynamic.from
-  |> dynamic.typed_tuple5(
+  |> dynamic.tuple5(
     dynamic.int,
     dynamic.int,
     dynamic.int,
@@ -599,49 +488,7 @@ pub fn typed_tuple5_test() {
 pub fn tuple6_test() {
   #(1, 2, 3, 4, 5, 6)
   |> dynamic.from
-  |> dynamic.tuple6
-  |> should.equal(Ok(#(
-    dynamic.from(1),
-    dynamic.from(2),
-    dynamic.from(3),
-    dynamic.from(4),
-    dynamic.from(5),
-    dynamic.from(6),
-  )))
-
-  #(1, "", 3.0, 4, 5, 6)
-  |> dynamic.from
-  |> dynamic.tuple6
-  |> should.equal(Ok(#(
-    dynamic.from(1),
-    dynamic.from(""),
-    dynamic.from(3.0),
-    dynamic.from(4),
-    dynamic.from(5),
-    dynamic.from(6),
-  )))
-
-  #(1, 2)
-  |> dynamic.from
-  |> dynamic.tuple6
-  |> should.equal(Error(DecodeError(
-    expected: "Tuple of 6 elements",
-    found: "Tuple of 2 elements",
-  )))
-
-  1
-  |> dynamic.from
-  |> dynamic.tuple6
-  |> should.equal(Error(DecodeError(
-    expected: "Tuple of 6 elements",
-    found: "Int",
-  )))
-}
-
-pub fn typed_tuple6_test() {
-  #(1, 2, 3, 4, 5, 6)
-  |> dynamic.from
-  |> dynamic.typed_tuple6(
+  |> dynamic.tuple6(
     dynamic.int,
     dynamic.int,
     dynamic.int,
@@ -653,7 +500,7 @@ pub fn typed_tuple6_test() {
 
   #(1, "", 3.0, 4, 5, 6)
   |> dynamic.from
-  |> dynamic.typed_tuple6(
+  |> dynamic.tuple6(
     dynamic.int,
     dynamic.string,
     dynamic.float,
@@ -665,7 +512,7 @@ pub fn typed_tuple6_test() {
 
   #(1, 2, 3, 4, 5, "")
   |> dynamic.from
-  |> dynamic.typed_tuple6(
+  |> dynamic.tuple6(
     dynamic.int,
     dynamic.int,
     dynamic.int,
@@ -677,7 +524,7 @@ pub fn typed_tuple6_test() {
 
   #(1, 2)
   |> dynamic.from
-  |> dynamic.typed_tuple6(
+  |> dynamic.tuple6(
     dynamic.int,
     dynamic.int,
     dynamic.int,
@@ -692,7 +539,7 @@ pub fn typed_tuple6_test() {
 
   1
   |> dynamic.from
-  |> dynamic.typed_tuple6(
+  |> dynamic.tuple6(
     dynamic.int,
     dynamic.int,
     dynamic.int,
