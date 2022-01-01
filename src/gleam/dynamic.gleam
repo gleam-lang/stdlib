@@ -332,9 +332,10 @@ pub fn list(
   from dynamic: Dynamic,
   of decoder_type: fn(Dynamic) -> Result(inner, DecodeErrors),
 ) -> Result(List(inner), DecodeErrors) {
-  dynamic
-  |> shallow_list
-  |> result.then(list.try_map(_, decoder_type))
+  try list = shallow_list(dynamic)
+  list
+  |> list.try_map(decoder_type)
+  |> map_errors(push_path(_, "*"))
 }
 
 /// Checks to see if a `Dynamic` value is a nullable version of a particular

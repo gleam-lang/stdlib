@@ -198,22 +198,28 @@ pub fn list_test() {
   1
   |> dynamic.from
   |> dynamic.list(dynamic.string)
-  |> should.be_error
+  |> should.equal(Error([DecodeError(expected: "List", found: "Int", path: [])]))
 
-  1.0
+  1.1
   |> dynamic.from
   |> dynamic.list(dynamic.int)
-  |> should.be_error
+  |> should.equal(Error([
+    DecodeError(expected: "List", found: "Float", path: []),
+  ]))
 
   [""]
   |> dynamic.from
   |> dynamic.list(dynamic.int)
-  |> should.be_error
+  |> should.equal(Error([
+    DecodeError(expected: "Int", found: "String", path: ["*"]),
+  ]))
 
   [dynamic.from(1), dynamic.from("not an int")]
   |> dynamic.from
   |> dynamic.list(dynamic.int)
-  |> should.be_error
+  |> should.equal(Error([
+    DecodeError(expected: "Int", found: "String", path: ["*"]),
+  ]))
 }
 
 pub fn optional_test() {
