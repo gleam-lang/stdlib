@@ -155,45 +155,45 @@ pub fn bool_test() {
   |> should.equal(Error(DecodeError(expected: "Bool", found: "List")))
 }
 
-pub fn typed_list_test() {
+pub fn list_test() {
   []
   |> dynamic.from
-  |> dynamic.typed_list(dynamic.string)
+  |> dynamic.list(dynamic.string)
   |> should.equal(Ok([]))
 
   []
   |> dynamic.from
-  |> dynamic.typed_list(dynamic.int)
+  |> dynamic.list(dynamic.int)
   |> should.equal(Ok([]))
 
   [1, 2, 3]
   |> dynamic.from
-  |> dynamic.typed_list(dynamic.int)
+  |> dynamic.list(dynamic.int)
   |> should.equal(Ok([1, 2, 3]))
 
   [[1], [2], [3]]
   |> dynamic.from
-  |> dynamic.typed_list(dynamic.typed_list(_, dynamic.int))
+  |> dynamic.list(dynamic.list(_, dynamic.int))
   |> should.equal(Ok([[1], [2], [3]]))
 
   1
   |> dynamic.from
-  |> dynamic.typed_list(dynamic.string)
+  |> dynamic.list(dynamic.string)
   |> should.be_error
 
   1.0
   |> dynamic.from
-  |> dynamic.typed_list(dynamic.int)
+  |> dynamic.list(dynamic.int)
   |> should.be_error
 
   [""]
   |> dynamic.from
-  |> dynamic.typed_list(dynamic.int)
+  |> dynamic.list(dynamic.int)
   |> should.be_error
 
   [dynamic.from(1), dynamic.from("not an int")]
   |> dynamic.from
-  |> dynamic.typed_list(dynamic.int)
+  |> dynamic.list(dynamic.int)
   |> should.be_error
 }
 
@@ -745,25 +745,25 @@ pub fn map_test() {
   |> should.equal(Error(DecodeError(expected: "Map", found: "Int")))
 }
 
-pub fn list_test() {
+pub fn shallow_list_test() {
   []
   |> dynamic.from
-  |> dynamic.list
+  |> dynamic.shallow_list
   |> should.equal(Ok([]))
 
   [1, 2]
   |> dynamic.from
-  |> dynamic.list
+  |> dynamic.shallow_list
   |> should.equal(Ok([dynamic.from(1), dynamic.from(2)]))
 
   [dynamic.from(1), dynamic.from(2.0)]
   |> dynamic.from
-  |> dynamic.list
+  |> dynamic.shallow_list
   |> should.equal(Ok([dynamic.from(1), dynamic.from(2.0)]))
 
   1
   |> dynamic.from
-  |> dynamic.list
+  |> dynamic.shallow_list
   |> should.equal(Error(DecodeError(expected: "List", found: "Int")))
 }
 

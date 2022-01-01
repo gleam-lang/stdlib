@@ -213,20 +213,20 @@ if javascript {
 }
 
 /// Checks to see whether a `Dynamic` value is a list, and returns that list if it
-/// is.
+/// is. The types of the elements are not checked.
 ///
-/// If you wish to decode all the elements in the list use the `typed_list`
+/// If you wish to decode all the elements in the list use the `list`
 /// instead.
 ///
 /// ## Examples
 ///
-///    > list(from(["a", "b", "c"]))
+///    > shallow_list(from(["a", "b", "c"]))
 ///    Ok([from("a"), from("b"), from("c")])
 ///
-///    > list(1)
+///    > shallow_list(1)
 ///    Error(DecodeError(expected: "Int", found: "Int"))
 ///
-pub fn list(from value: Dynamic) -> Result(List(Dynamic), DecodeError) {
+pub fn shallow_list(from value: Dynamic) -> Result(List(Dynamic), DecodeError) {
   decode_list(value)
 }
 
@@ -318,21 +318,21 @@ pub fn typed_result(
 ///
 /// ## Examples
 ///
-///    > typed_list(from(["a", "b", "c"]), of: string)
+///    > list(from(["a", "b", "c"]), of: string)
 ///    Ok(["a", "b", "c"])
 ///
-///    > typed_list(from([1, 2, 3]), of: string)
+///    > list(from([1, 2, 3]), of: string)
 ///    Error(DecodeError(expected: "String", found: "Int"))
 ///
-///    > typed_list(from("ok"), of: string)
+///    > list(from("ok"), of: string)
 ///    Error(DecodeError(expected: "List", found: "String"))
 ///
-pub fn typed_list(
+pub fn list(
   from dynamic: Dynamic,
   of decoder_type: fn(Dynamic) -> Result(inner, DecodeError),
 ) -> Result(List(inner), DecodeError) {
   dynamic
-  |> list
+  |> shallow_list
   |> result.then(list.try_map(_, decoder_type))
 }
 
