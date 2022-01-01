@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- The `dynamic.list` function has been renamed to `dynamic.shallow_list`.
+- The `dynamic.typed_list` function has been renamed to `dynamic.list`.
+
 ## v0.18.1 - 2021-12-19
 
 - The `function` module gains the `constant` function.
