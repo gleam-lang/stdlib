@@ -4,6 +4,8 @@
 
 - The `dynamic.list` function has been renamed to `dynamic.shallow_list`.
 - The `dynamic.typed_list` function has been renamed to `dynamic.list`.
+- The `dynamic.result` function has been removed.
+- The `dynamic.typed_result` function has been renamed to `dynamic.result`.
 
 ## v0.18.1 - 2021-12-19
 
