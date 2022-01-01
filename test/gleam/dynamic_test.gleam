@@ -254,7 +254,11 @@ if javascript {
     |> dynamic.from
     |> dynamic.field("Nope", dynamic.int)
     |> should.equal(Error([
-      DecodeError(expected: "Value with field \"Nope\"", found: "Result"),
+      DecodeError(
+        expected: "Value with field \"Nope\"",
+        found: "Result",
+        path: [],
+      ),
     ]))
   }
 }
@@ -318,7 +322,7 @@ pub fn element_test() {
   |> dynamic.from
   |> dynamic.element(1, dynamic.string)
   |> should.equal(Error([
-    DecodeError(expected: "String", found: "Int", path: []),
+    DecodeError(expected: "String", found: "Int", path: ["1"]),
   ]))
 
   ok_one_tuple

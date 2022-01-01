@@ -94,7 +94,7 @@ decode_list(Data) -> decode_error_msg(<<"List">>, Data).
 decode_field(Data, Key) ->
     case Data of
         #{Key := Value} -> {ok, Value};
-        _ -> decode_error_msg(io_lib:format("Value with field `~p`", [Key]), Data)
+        _ -> decode_error_msg("object", Data)
     end.
 
 size_of_tuple(Data) -> tuple_size(Data).

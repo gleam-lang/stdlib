@@ -404,6 +404,7 @@ pub fn field(
 ) -> Result(t, DecodeErrors) {
   try value = decode_field(value, name)
   inner_type(value)
+  |> map_errors(push_path(_, name))
 }
 
 if erlang {
@@ -450,6 +451,7 @@ pub fn element(
       }
   }
   inner_type(data)
+  |> map_errors(push_path(_, index))
 }
 
 fn exact_decode_tuple_error(size: Int, data: Dynamic) -> Result(a, DecodeErrors) {
