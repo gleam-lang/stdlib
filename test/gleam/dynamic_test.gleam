@@ -260,11 +260,7 @@ if javascript {
     |> dynamic.from
     |> dynamic.field("Nope", dynamic.int)
     |> should.equal(Error([
-      DecodeError(
-        expected: "Value with field \"Nope\"",
-        found: "Result",
-        path: [],
-      ),
+      DecodeError(expected: "object", found: "Result", path: []),
     ]))
   }
 }
