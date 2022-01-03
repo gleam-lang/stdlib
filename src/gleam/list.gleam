@@ -526,7 +526,7 @@ pub fn flat_map(over list: List(a), with fun: fn(a) -> List(b)) -> List(b) {
 /// Reduces a list of elements into a single value by calling a given function
 /// on each element, going from left to right.
 ///
-/// `fold(0, [1, 2, 3], add)` is the equivalent of `add(3, add(2, add(1, 0)))`.
+/// `fold([1, 2, 3], 0, add)` is the equivalent of `add(add(add(0, 1), 2), 3)`.
 ///
 /// This function runs in linear time.
 ///
@@ -544,8 +544,8 @@ pub fn fold(
 /// Reduces a list of elements into a single value by calling a given function
 /// on each element, going from right to left.
 ///
-/// `fold_right(0, [1, 2, 3], add)` is the equivalent of
-/// `add(1, add(2, add(3, 0)))`.
+/// `fold_right([1, 2, 3], 0, add)` is the equivalent of
+/// `add(add(add(0, 3), 2), 1)`.
 ///
 /// This function runs in linear time.
 ///
