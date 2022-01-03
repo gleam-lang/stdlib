@@ -23,4 +23,4 @@ jobs:
           gleam-version: "0.18.0-rc1"
       - run: gleam test
       - run: npm test
-      - run: gleam format --check src test
+      # - run: gleam format --check src test
