@@ -282,3 +282,37 @@ pub fn product_test() {
   int.product([1, 2, 3])
   |> should.equal(6)
 }
+
+pub fn digits_test() {
+  int.digits(123, 10)
+  |> should.equal(Ok([1, 2, 3]))
+
+  int.digits(-123, 10)
+  |> should.equal(Ok([-1, -2, -3]))
+
+  int.digits(123, 2)
+  |> should.equal(Ok([1, 1, 1, 1, 0, 1, 1]))
+
+  int.digits(123, 1)
+  |> should.equal(Error(int.InvalidBase))
+}
+
+pub fn undigits_test() {
+  int.undigits([], 10)
+  |> should.equal(Ok(0))
+
+  int.undigits([1, 2, 3], 10)
+  |> should.equal(Ok(123))
+
+  int.undigits([-1, -2, -3], 10)
+  |> should.equal(Ok(-123))
+
+  int.undigits([1, 1, 1, 1, 0, 1, 1], 2)
+  |> should.equal(Ok(123))
+
+  int.undigits([1, 2, 3], 1)
+  |> should.equal(Error(int.InvalidBase))
+
+  int.undigits([1, 1, 2], 2)
+  |> should.equal(Error(int.InvalidBase))
+}

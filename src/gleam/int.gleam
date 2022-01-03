@@ -62,7 +62,7 @@ if javascript {
     "../gleam_stdlib.mjs" "to_string"
 }
 
-/// For use in `to_base_string` when base is outside of the allowed range.
+/// Error value when trying to operate with a base out of the allowed range.
 pub type InvalidBase {
   InvalidBase
 }
@@ -321,5 +321,62 @@ fn do_product(numbers: List(Int), initial: Int) -> Int {
   case numbers {
     [] -> initial
     [x, ..rest] -> do_product(rest, x * initial)
+  }
+}
+
+/// Splits an integer into its digit representation in the specified base 
+///
+/// ## Examples
+///
+///    > digits(234, 10)
+///    Ok([2,3,4])
+///
+///    > digits(234, 1)
+///    Error(InvalidBase)
+///
+pub fn digits(number: Int, base: Int) -> Result(List(Int), InvalidBase) {
+  case base < 2 {
+    True -> Error(InvalidBase)
+    False -> Ok(do_digits(number, base, []))
+  }
+}
+
+fn do_digits(number: Int, base: Int, acc: List(Int)) -> List(Int) {
+  case absolute_value(number) < base {
+    True -> [number, ..acc]
+    False -> do_digits(number / base, base, [number % base, ..acc])
+  }
+}
+
+/// Joins a list of digits into a single value.
+/// Returns an error if the base is less than 2 or if the list contains a digit greater than or equal to the specified base.
+///
+/// ## Examples
+///
+///    > undigits([2,3,4], 10)
+///    Ok(234)
+///
+///    > undigits([2,3,4], 1)
+///    Error(InvalidBase)
+///
+///    > undigits([2,3,4], 2)
+///    Error(InvalidBase)
+///
+pub fn undigits(numbers: List(Int), base: Int) -> Result(Int, InvalidBase) {
+  case base < 2 {
+    True -> Error(InvalidBase)
+    False -> do_undigits(numbers, base, 0)
+  }
+}
+
+fn do_undigits(
+  numbers: List(Int),
+  base: Int,
+  acc: Int,
+) -> Result(Int, InvalidBase) {
+  case numbers {
+    [] -> Ok(acc)
+    [digit, .._rest] if digit >= base -> Error(InvalidBase)
+    [digit, ..rest] -> do_undigits(rest, base, acc * base + digit)
   }
 }
