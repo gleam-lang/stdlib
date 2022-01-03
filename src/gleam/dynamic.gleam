@@ -76,11 +76,13 @@ pub fn dynamic(term: Dynamic) -> Dynamic {
 ///
 /// ## Examples
 ///
-///    > bit_string(from("Hello")) == bit_string.from_string("Hello")
-///    True
+/// ```gleam
+/// > bit_string(from("Hello")) == bit_string.from_string("Hello")
+/// True
 ///
-///    > bit_string(from(123))
-///    Error(DecodeError(expected: "BitString", found: "Int", path: []))
+/// > bit_string(from(123))
+/// Error([DecodeError(expected: "BitString", found: "Int", path: [])])
+/// ```
 ///
 pub fn bit_string(from data: Dynamic) -> Result(BitString, DecodeErrors) {
   decode_bit_string(data)
@@ -101,11 +103,13 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > string(from("Hello"))
-///    Ok("Hello")
+/// ```gleam
+/// > string(from("Hello"))
+/// Ok("Hello")
 ///
-///    > string(from(123))
-///    Error(DecodeError(expected: "String", found: "Int", path: []))
+/// > string(from(123))
+/// Error([DecodeError(expected: "String", found: "Int", path: [])])
+/// ```
 ///
 pub fn string(from data: Dynamic) -> Result(String, DecodeErrors) {
   decode_string(data)
@@ -139,7 +143,7 @@ if javascript {
 
 /// Return a string indicating the type of the dynamic value.
 ///
-/// ```
+/// ```gleam
 /// > classify(from("Hello"))
 /// "String"
 /// ```
@@ -163,11 +167,13 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > int(from(123))
-///    Ok(123)
+/// ```gleam
+/// > int(from(123))
+/// Ok(123)
 ///
-///    > int(from("Hello"))
-///    Error(DecodeError(expected: "Int", found: "String", path: []))
+/// > int(from("Hello"))
+/// Error([DecodeError(expected: "Int", found: "String", path: [])])
+/// ```
 ///
 pub fn int(from data: Dynamic) -> Result(Int, DecodeErrors) {
   decode_int(data)
@@ -188,11 +194,13 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > float(from(2.0))
-///    Ok(2.0)
+/// ```gleam
+/// > float(from(2.0))
+/// Ok(2.0)
 ///
-///    > float(from(123))
-///    Error(DecodeError(expected: "Float", found: "Int", path: []))
+/// > float(from(123))
+/// Error([DecodeError(expected: "Float", found: "Int", path: [])])
+/// ```
 ///
 pub fn float(from data: Dynamic) -> Result(Float, DecodeErrors) {
   decode_float(data)
@@ -213,11 +221,13 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > bool(from(True))
-///    Ok(True)
+/// ```gleam
+/// > bool(from(True))
+/// Ok(True)
 ///
-///    > bool(from(123))
-///    Error(DecodeError(expected: "bool", found: "Int", path: []))
+/// > bool(from(123))
+/// Error([DecodeError(expected: "bool", found: "Int", path: [])])
+/// ```
 ///
 pub fn bool(from data: Dynamic) -> Result(Bool, DecodeErrors) {
   decode_bool(data)
@@ -241,11 +251,13 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > shallow_list(from(["a", "b", "c"]))
-///    Ok([from("a"), from("b"), from("c")])
+/// ```gleam
+/// > shallow_list(from(["a", "b", "c"]))
+/// Ok([from("a"), from("b"), from("c")])
 ///
-///    > shallow_list(1)
-///    Error(DecodeError(expected: "Int", found: "Int", path: []))
+/// > shallow_list(1)
+/// Error([DecodeError(expected: "Int", found: "Int", path: [])])
+/// ```
 ///
 pub fn shallow_list(from value: Dynamic) -> Result(List(Dynamic), DecodeErrors) {
   decode_list(value)
@@ -279,14 +291,16 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > result(of: from(Ok(1)), ok: int, error: string)
-///    Ok(Ok(1))
+/// ```gleam
+/// > result(of: from(Ok(1)), ok: int, error: string)
+/// Ok(Ok(1))
 ///
-///    > result(of: from(Error("boom")), ok: int, error: string)
-///    Ok(Error("boom"))
+/// > result(of: from(Error("boom")), ok: int, error: string)
+/// Ok(Error("boom"))
 ///
-///    > result(of: from(123), ok: int, error: string)
-///    Error(DecodeError(expected: "2 element tuple", found: "Int", path: []))
+/// > result(of: from(123), ok: int, error: string)
+/// Error([DecodeError(expected: "2 element tuple", found: "Int", path: [])])
+/// ```
 ///
 pub fn result(
   of dynamic: Dynamic,
@@ -319,14 +333,16 @@ pub fn result(
 ///
 /// ## Examples
 ///
-///    > list(from(["a", "b", "c"]), of: string)
-///    Ok(["a", "b", "c"])
+/// ```gleam
+/// > list(from(["a", "b", "c"]), of: string)
+/// Ok(["a", "b", "c"])
 ///
-///    > list(from([1, 2, 3]), of: string)
-///    Error(DecodeError(expected: "String", found: "Int", path: []))
+/// > list(from([1, 2, 3]), of: string)
+/// Error([DecodeError(expected: "String", found: "Int", path: [])])
 ///
-///    > list(from("ok"), of: string)
-///    Error(DecodeError(expected: "List", found: "String", path: []))
+/// > list(from("ok"), of: string)
+/// Error([DecodeError(expected: "List", found: "String", path: [])])
+/// ```
 ///
 pub fn list(
   from dynamic: Dynamic,
@@ -343,23 +359,25 @@ pub fn list(
 ///
 /// ## Examples
 ///
-///    > option(from("Hello"), string)
-///    Ok(Some("Hello"))
+/// ```gleam
+/// > option(from("Hello"), string)
+/// Ok(Some("Hello"))
 ///
-///    > option(from("Hello"), string)
-///    Ok(Some("Hello"))
+/// > option(from("Hello"), string)
+/// Ok(Some("Hello"))
 ///
-///    > option(from(atom.from_string("null")), string)
-///    Ok(None)
+/// > option(from(atom.from_string("null")), string)
+/// Ok(None)
 ///
-///    > option(from(atom.from_string("nil")), string)
-///    Ok(None)
+/// > option(from(atom.from_string("nil")), string)
+/// Ok(None)
 ///
-///    > option(from(atom.from_string("undefined")), string)
-///    Ok(None)
+/// > option(from(atom.from_string("undefined")), string)
+/// Ok(None)
 ///
-///    > option(from(123), string)
-///    Error(DecodeError(expected: "BitString", found: "Int", path: []))
+/// > option(from(123), string)
+/// Error([DecodeError(expected: "BitString", found: "Int", path: [])])
+/// ```gleam
 ///
 pub fn optional(
   from value: Dynamic,
@@ -391,12 +409,14 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > import gleam/map
-///    > field(from(map.new("Hello", "World")), "Hello")
-///    Ok(Dynamic)
+/// ```gleam
+/// > import gleam/map
+/// > field(from(map.new("Hello", "World")), "Hello")
+/// Ok(Dynamic)
 ///
-///    > field(from(123), "Hello")
-///    Error(DecodeError(expected: "Map", found: "Int", path: []))
+/// > field(from(123), "Hello")
+/// Error([DecodeError(expected: "Map", found: "Int", path: [])])
+/// ```
 ///
 pub fn field(
   from value: Dynamic,
@@ -423,14 +443,20 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > element(from(#(1, 2)), 0)
-///    Ok(from(1))
+/// ```gleam
+/// > element(from(#(1, 2)), 0)
+/// Ok(from(1))
 ///
-///    > element(from(#(1, 2)), 2)
-///    Error(DecodeError(expected: "3 element tuple", found: "2 element tuple", path: []))
+/// > element(from(#(1, 2)), 2)
+/// Error([
+///   DecodeError(expected: "3 element tuple", found: "2 element tuple", path: [])]),
+/// ])
 ///
-///    > element(from(""), 2)
-///    Error(DecodeError(expected: "Tuple", found: "String", path: []))
+/// > element(from(""), 2)
+/// Error([
+///   DecodeError(expected: "Tuple", found: "String", path: [])]),
+/// ])
+/// ```
 ///
 pub fn element(
   from data: Dynamic,
@@ -558,21 +584,25 @@ fn push_path(error: DecodeError, name: t) -> DecodeError {
 ///
 /// ## Examples
 ///
-///    > from(#(1, 2))
-///    > |> tuple2(int, int)
-///    Ok(#(1, 2))
+/// ```gleam
+/// > from(#(1, 2))
+/// > |> tuple2(int, int)
+/// Ok(#(1, 2))
 ///
-///    > from(#(1, 2.0))
-///    > |> tuple2(int, float)
-///    Ok(#(1, 2.0))
+/// > from(#(1, 2.0))
+/// > |> tuple2(int, float)
+/// Ok(#(1, 2.0))
 ///
-///    > from(#(1, 2, 3))
-///    > |> tuple2(int, float)
-///    Error(DecodeError(expected: "2 element tuple", found: "3 element tuple", path: []))
+/// > from(#(1, 2, 3))
+/// > |> tuple2(int, float)
+/// Error([
+///   DecodeError(expected: "2 element tuple", found: "3 element tuple", path: []),
+/// ])
 ///
-///    > from("")
-///    > |> tuple2(int, float)
-///    Error(DecodeError(expected: "2 element tuple", found: "String", path: []))
+/// > from("")
+/// > |> tuple2(int, float)
+/// Error([DecodeError(expected: "2 element tuple", found: "String", path: [])])
+/// ```
 ///
 pub fn tuple2(
   first decode1: Decoder(a),
@@ -596,21 +626,27 @@ pub fn tuple2(
 ///
 /// ## Examples
 ///
-///    > from(#(1, 2, 3))
-///    > |> tuple3(int, int, int)
-///    Ok(#(1, 2, 3))
+/// ```gleam
+/// > from(#(1, 2, 3))
+/// > |> tuple3(int, int, int)
+/// Ok(#(1, 2, 3))
 ///
-///    > from(#(1, 2.0, "3"))
-///    > |> tuple3(int, float, string)
-///    Ok(#(1, 2.0, "3"))
+/// > from(#(1, 2.0, "3"))
+/// > |> tuple3(int, float, string)
+/// Ok(#(1, 2.0, "3"))
 ///
-///    > from(#(1, 2))
-///    > |> tuple3(int, float, string)
-///    Error(DecodeError(expected: "3 element tuple", found: "2 element tuple", path: []))
+/// > from(#(1, 2))
+/// > |> tuple3(int, float, string)
+/// Error([
+///   DecodeError(expected: "3 element tuple", found: "2 element tuple", path: [])),
+/// ])
 ///
-///    > from("")
-///    > |> tuple3(int, float, string)
-///    Error(DecodeError(expected: "3 element tuple", found: "String", path: []))
+/// > from("")
+/// > |> tuple3(int, float, string)
+/// Error([
+///   DecodeError(expected: "3 element tuple", found: "String", path: []),
+/// ])
+/// ```
 ///
 pub fn tuple3(
   first decode1: Decoder(a),
@@ -636,21 +672,27 @@ pub fn tuple3(
 ///
 /// ## Examples
 ///
-///    > from(#(1, 2, 3, 4))
-///    > |> tuple4(int, int, int, int)
-///    Ok(#(1, 2, 3, 4))
+/// ```gleam
+/// > from(#(1, 2, 3, 4))
+/// > |> tuple4(int, int, int, int)
+/// Ok(#(1, 2, 3, 4))
 ///
-///    > from(#(1, 2.0, "3", 4))
-///    > |> tuple4(int, float, string, int)
-///    Ok(#(1, 2.0, "3", 4))
+/// > from(#(1, 2.0, "3", 4))
+/// > |> tuple4(int, float, string, int)
+/// Ok(#(1, 2.0, "3", 4))
 ///
-///    > from(#(1, 2))
-///    > |> tuple4(int, float, string, int)
-///    Error(DecodeError(expected: "4 element tuple", found: "2 element tuple", path: []))
+/// > from(#(1, 2))
+/// > |> tuple4(int, float, string, int)
+/// Error([
+///   DecodeError(expected: "4 element tuple", found: "2 element tuple", path: []),
+/// ])
 ///
-///    > from("")
-///    > |> tuple4(int, float, string, int)
-///    Error(DecodeError(expected: "4 element tuple", found: "String", path: []))
+/// > from("")
+/// > |> tuple4(int, float, string, int)
+/// Error([
+///   DecodeError(expected: "4 element tuple", found: "String", path: []),
+/// ])
+/// ```
 ///
 pub fn tuple4(
   first decode1: Decoder(a),
@@ -678,21 +720,25 @@ pub fn tuple4(
 ///
 /// ## Examples
 ///
-///    > from(#(1, 2, 3, 4, 5))
-///    > |> tuple5(int, int, int, int, int)
-///    Ok(#(1, 2, 3, 4, 5))
+/// ```gleam
+/// > from(#(1, 2, 3, 4, 5))
+/// > |> tuple5(int, int, int, int, int)
+/// Ok(#(1, 2, 3, 4, 5))
 ///
-///    > from(#(1, 2.0, "3", 4, 5))
-///    > |> tuple5(int, float, string, int, int)
-///    Ok(#(1, 2.0, "3", 4, 5))
+/// > from(#(1, 2.0, "3", 4, 5))
+/// > |> tuple5(int, float, string, int, int)
+/// Ok(#(1, 2.0, "3", 4, 5))
 ///
-///    > from(#(1, 2))
-///    > |> tuple5(int, float, string, int, int)
-///    Error(DecodeError(expected: "5 element tuple", found: "2 element tuple", path: []))
+/// > from(#(1, 2))
+/// > |> tuple5(int, float, string, int, int)
+/// Error([
+///   DecodeError(expected: "5 element tuple", found: "2 element tuple", path: [])),
+/// ])
 ///
-///    > from("")
-///    > |> tuple5(int, float, string, int, int)
-///    Error(DecodeError(expected: "5 element tuple", found: "String", path: []))
+/// > from("")
+/// > |> tuple5(int, float, string, int, int)
+/// Error([DecodeError(expected: "5 element tuple", found: "String", path: [])])
+/// ```
 ///
 pub fn tuple5(
   first decode1: Decoder(a),
@@ -722,17 +768,21 @@ pub fn tuple5(
 ///
 /// ## Examples
 ///
-///    > from(#(1, 2, 3, 4, 5, 6)) 
-///    > |> tuple6(int, int, int, int, int, int)
-///    Ok(#(1, 2, 3, 4, 5, 6))
+/// ```gleam
+/// > from(#(1, 2, 3, 4, 5, 6)) 
+/// > |> tuple6(int, int, int, int, int, int)
+/// Ok(#(1, 2, 3, 4, 5, 6))
 ///
-///    > from(#(1, 2.0, "3", 4, 5, 6))
-///    > |> tuple6(int, float, string, int, int)
-///    Ok(#(1, 2.0, "3", 4, 5, 6))
+/// > from(#(1, 2.0, "3", 4, 5, 6))
+/// > |> tuple6(int, float, string, int, int)
+/// Ok(#(1, 2.0, "3", 4, 5, 6))
 ///
-///    > from(#(1, 2))
-///    > |> tuple6(int, float, string, int, int, int)
-///    Error(DecodeError(expected: "6 element tuple", found: "2 element tuple", path: []))
+/// > from(#(1, 2))
+/// > |> tuple6(int, float, string, int, int, int)
+/// Error([
+///   DecodeError(expected: "6 element tuple", found: "2 element tuple", path: []),
+/// ])
+/// ```
 ///
 pub fn tuple6(
   first decode1: Decoder(a),
@@ -763,15 +813,17 @@ pub fn tuple6(
 ///
 /// ## Examples
 ///
-///    > import gleam/map
-///    > map(from(map.new()))
-///    Ok(map.new())
+/// ```gleam
+/// > import gleam/map
+/// > map(from(map.new()))
+/// Ok(map.new())
 ///
-///    > map(from(1))
-///    Error(DecodeError(expected: "Map", found: "Int", path: []))
+/// > map(from(1))
+/// Error(DecodeError(expected: "Map", found: "Int", path: []))
 ///
-///    > map(from(""))
-///    Error(DecodeError(expected: "Map", found: "String", path: []))
+/// > map(from(""))
+/// Error(DecodeError(expected: "Map", found: "String", path: []))
+/// ```
 ///
 pub fn map(from value: Dynamic) -> Result(Map(Dynamic, Dynamic), DecodeErrors) {
   decode_map(value)
@@ -792,19 +844,21 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > import gleam/result
-///    > let bool_or_string = any(_, of: [
-///    >   string,
-///    >   fn(x) { result.map(bool(x), fn(_) { "a bool" }) }
-///    > ])
-///    > bool_or_string(from("ok"))
-///    Ok("ok")
+/// ```gleam
+/// > import gleam/result
+/// > let bool_or_string = any(_, of: [
+/// >   string,
+/// >   fn(x) { result.map(bool(x), fn(_) { "a bool" }) }
+/// > ])
+/// > bool_or_string(from("ok"))
+/// Ok("ok")
 ///
-///    > bool_or_string(from(True))
-///    Ok("a bool")
+/// > bool_or_string(from(True))
+/// Ok("a bool")
 ///
-///    > bool_or_string(from(1))
-///    Error(DecodeError(expected: "unknown", found: "unknown", path: []))
+/// > bool_or_string(from(1))
+/// Error(DecodeError(expected: "unknown", found: "unknown", path: []))
+/// ```
 ///
 pub fn any(
   from data: Dynamic,
