@@ -684,6 +684,18 @@ pub fn tuple6_test() {
   ]))
 }
 
+pub fn nested_tuples_test() {
+  #(1, #(2, #("3", 4)))
+  |> dynamic.from
+  |> dynamic.tuple2(
+    dynamic.int,
+    dynamic.tuple2(_, dynamic.int, dynamic.tuple2(_, dynamic.int, dynamic.int)),
+  )
+  |> should.equal(Error([
+    DecodeError(expected: "Int", found: "String", path: ["1", "1", "0"]),
+  ]))
+}
+
 pub fn map_test() {
   map.new()
   |> dynamic.from
