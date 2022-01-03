@@ -23,7 +23,6 @@
 - The internal `gleam_stdlib.js` module has been renamed to `gleam_stdlib.mjs`.
 
 ## v0.18.0 - 2021-11-23
-
 ## v0.18.0-rc1 - 2021-11-23
 
 - Converted to use the Gleam build tool, not rebar3.
