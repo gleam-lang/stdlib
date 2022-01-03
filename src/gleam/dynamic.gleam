@@ -528,18 +528,28 @@ if javascript {
 ///
 pub fn tuple2(
   from value: Dynamic,
-  first decode_first: Decoder(a),
-  second decode_second: Decoder(b),
+  first decode1: Decoder(a),
+  second decode2: Decoder(b),
 ) -> Result(#(a, b), DecodeErrors) {
   try _ = assert_is_tuple(value, 2)
-  let #(first, second) = unsafe_coerce(value)
-  try a =
-    decode_first(first)
-    |> map_errors(push_path(_, "0"))
-  try b =
-    decode_second(second)
-    |> map_errors(push_path(_, "1"))
-  Ok(#(a, b))
+  let #(a, b) = unsafe_coerce(value)
+  case decode1(a), decode2(b) {
+    Ok(a), Ok(b) -> Ok(#(a, b))
+    a, b ->
+      tuple_errors(a, "0")
+      |> list.append(tuple_errors(b, "1"))
+      |> Error
+  }
+}
+
+fn tuple_errors(
+  result: Result(a, List(DecodeError)),
+  name: String,
+) -> List(DecodeError) {
+  case result {
+    Ok(_) -> []
+    Error(errors) -> list.map(errors, push_path(_, name))
+  }
 }
 
 fn assert_is_tuple(
@@ -595,22 +605,20 @@ fn push_path(error: DecodeError, name: t) -> DecodeError {
 ///
 pub fn tuple3(
   from value: Dynamic,
-  first decode_first: Decoder(a),
-  second decode_second: Decoder(b),
-  third decode_third: Decoder(c),
+  first decode1: Decoder(a),
+  second decode2: Decoder(b),
+  third decode3: Decoder(c),
 ) -> Result(#(a, b, c), DecodeErrors) {
   try _ = assert_is_tuple(value, 3)
-  let #(first, second, third) = unsafe_coerce(value)
-  try a =
-    decode_first(first)
-    |> map_errors(push_path(_, "0"))
-  try b =
-    decode_second(second)
-    |> map_errors(push_path(_, "1"))
-  try c =
-    decode_third(third)
-    |> map_errors(push_path(_, "2"))
-  Ok(#(a, b, c))
+  let #(a, b, c) = unsafe_coerce(value)
+  case decode1(a), decode2(b), decode3(c) {
+    Ok(a), Ok(b), Ok(c) -> Ok(#(a, b, c))
+    a, b, c ->
+      tuple_errors(a, "0")
+      |> list.append(tuple_errors(b, "1"))
+      |> list.append(tuple_errors(c, "2"))
+      |> Error
+  }
 }
 
 /// Checks to see if a `Dynamic` value is a 4 element tuple containing
@@ -633,26 +641,22 @@ pub fn tuple3(
 ///
 pub fn tuple4(
   from value: Dynamic,
-  first decode_first: Decoder(a),
-  second decode_second: Decoder(b),
-  third decode_third: Decoder(c),
-  fourth decode_fourth: Decoder(d),
+  first decode1: Decoder(a),
+  second decode2: Decoder(b),
+  third decode3: Decoder(c),
+  fourth decode4: Decoder(d),
 ) -> Result(#(a, b, c, d), DecodeErrors) {
   try _ = assert_is_tuple(value, 4)
-  let #(first, second, third, fourth) = unsafe_coerce(value)
-  try a =
-    decode_first(first)
-    |> map_errors(push_path(_, "0"))
-  try b =
-    decode_second(second)
-    |> map_errors(push_path(_, "1"))
-  try c =
-    decode_third(third)
-    |> map_errors(push_path(_, "2"))
-  try d =
-    decode_fourth(fourth)
-    |> map_errors(push_path(_, "3"))
-  Ok(#(a, b, c, d))
+  let #(a, b, c, d) = unsafe_coerce(value)
+  case decode1(a), decode2(b), decode3(c), decode4(d) {
+    Ok(a), Ok(b), Ok(c), Ok(d) -> Ok(#(a, b, c, d))
+    a, b, c, d ->
+      tuple_errors(a, "0")
+      |> list.append(tuple_errors(b, "1"))
+      |> list.append(tuple_errors(c, "2"))
+      |> list.append(tuple_errors(d, "3"))
+      |> Error
+  }
 }
 
 /// Checks to see if a `Dynamic` value is a 5-element tuple containing
@@ -674,30 +678,24 @@ pub fn tuple4(
 ///
 pub fn tuple5(
   from value: Dynamic,
-  first decode_first: Decoder(a),
-  second decode_second: Decoder(b),
-  third decode_third: Decoder(c),
-  fourth decode_fourth: Decoder(d),
-  fifth decode_fifth: Decoder(e),
+  first decode1: Decoder(a),
+  second decode2: Decoder(b),
+  third decode3: Decoder(c),
+  fourth decode4: Decoder(d),
+  fifth decode5: Decoder(e),
 ) -> Result(#(a, b, c, d, e), DecodeErrors) {
   try _ = assert_is_tuple(value, 5)
-  let #(first, second, third, fourth, fifth) = unsafe_coerce(value)
-  try a =
-    decode_first(first)
-    |> map_errors(push_path(_, "0"))
-  try b =
-    decode_second(second)
-    |> map_errors(push_path(_, "1"))
-  try c =
-    decode_third(third)
-    |> map_errors(push_path(_, "2"))
-  try d =
-    decode_fourth(fourth)
-    |> map_errors(push_path(_, "3"))
-  try e =
-    decode_fifth(fifth)
-    |> map_errors(push_path(_, "4"))
-  Ok(#(a, b, c, d, e))
+  let #(a, b, c, d, e) = unsafe_coerce(value)
+  case decode1(a), decode2(b), decode3(c), decode4(d), decode5(e) {
+    Ok(a), Ok(b), Ok(c), Ok(d), Ok(e) -> Ok(#(a, b, c, d, e))
+    a, b, c, d, e ->
+      tuple_errors(a, "0")
+      |> list.append(tuple_errors(b, "1"))
+      |> list.append(tuple_errors(c, "2"))
+      |> list.append(tuple_errors(d, "3"))
+      |> list.append(tuple_errors(e, "4"))
+      |> Error
+  }
 }
 
 /// Checks to see if a `Dynamic` value is a 6-element tuple containing
@@ -719,34 +717,26 @@ pub fn tuple5(
 ///
 pub fn tuple6(
   from value: Dynamic,
-  first decode_first: Decoder(a),
-  second decode_second: Decoder(b),
-  third decode_third: Decoder(c),
-  fourth decode_fourth: Decoder(d),
-  fifth decode_fifth: Decoder(e),
-  sixth decode_sixth: Decoder(f),
+  first decode1: Decoder(a),
+  second decode2: Decoder(b),
+  third decode3: Decoder(c),
+  fourth decode4: Decoder(d),
+  fifth decode5: Decoder(e),
+  sixth decode6: Decoder(f),
 ) -> Result(#(a, b, c, d, e, f), DecodeErrors) {
   try _ = assert_is_tuple(value, 6)
-  let #(first, second, third, fourth, fifth, sixth) = unsafe_coerce(value)
-  try a =
-    decode_first(first)
-    |> map_errors(push_path(_, "0"))
-  try b =
-    decode_second(second)
-    |> map_errors(push_path(_, "1"))
-  try c =
-    decode_third(third)
-    |> map_errors(push_path(_, "2"))
-  try d =
-    decode_fourth(fourth)
-    |> map_errors(push_path(_, "3"))
-  try e =
-    decode_fifth(fifth)
-    |> map_errors(push_path(_, "4"))
-  try f =
-    decode_sixth(sixth)
-    |> map_errors(push_path(_, "5"))
-  Ok(#(a, b, c, d, e, f))
+  let #(a, b, c, d, e, f) = unsafe_coerce(value)
+  case decode1(a), decode2(b), decode3(c), decode4(d), decode5(e), decode6(f) {
+    Ok(a), Ok(b), Ok(c), Ok(d), Ok(e), Ok(f) -> Ok(#(a, b, c, d, e, f))
+    a, b, c, d, e, f ->
+      tuple_errors(a, "0")
+      |> list.append(tuple_errors(b, "1"))
+      |> list.append(tuple_errors(c, "2"))
+      |> list.append(tuple_errors(d, "3"))
+      |> list.append(tuple_errors(e, "4"))
+      |> list.append(tuple_errors(f, "5"))
+      |> Error
+  }
 }
 
 /// Checks to see if a `Dynamic` value is a map.
