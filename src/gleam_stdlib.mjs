@@ -494,7 +494,11 @@ export function classify_dynamic(data) {
 }
 
 function decoder_error(expected, got) {
-  return new Error(new DecodeError(expected, classify_dynamic(got)));
+  return new Error(
+    List.fromArray([
+      new DecodeError(expected, classify_dynamic(got), List.fromArray([])),
+    ])
+  );
 }
 
 export function decode_string(data) {
@@ -556,7 +560,7 @@ export function decode_option(data, decoder) {
 }
 
 export function decode_field(value, name) {
-  let error = () => decoder_error(`Value with field ${inspect(name)}`, value);
+  let error = () => decoder_error("object", value);
   if (value instanceof Map) {
     let entry = value.get(name);
     return entry.isOk() ? entry : error();

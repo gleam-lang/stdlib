@@ -2,8 +2,25 @@
 
 ## Unreleased
 
-- The `function` module gains the `constant` function.
+- The `result`, and `tuple*` functions have been removed from the `dynamic`
+  module.
+- The `dynamic` module gains the `dynamic` function.
+- The `dynamic.list` function has been renamed to `dynamic.shallow_list`.
+- The `dynamic.typed_list` function has been renamed to `dynamic.list`.
+- The `dynamic.typed_result` function has been renamed to `dynamic.result`.
+- The `dynamic.any` is now available on JavaScript.
+- The `dynamic.typed_tuple*` functions have been renamed to `dynamic.tuple*`.
+- The `dynamic.field` and `dynamic.element` functions now requires the type of
+  the field to be specified.
+- The `dynamic.DecodeError` now has a `path` field.
+- The decoder functions of the `dynamic` module now return multiple errors.
+- The `dynamic.tuple*` functions are now partially applied.
 - The `int` module gains the `digits` and `undigits` functions.
+
+## v0.18.1 - 2021-12-19
+
+- The `function` module gains the `constant` function.
+- The internal `gleam_stdlib.js` module has been renamed to `gleam_stdlib.mjs`.
 
 ## v0.18.0 - 2021-11-23
 

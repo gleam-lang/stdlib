@@ -38,7 +38,7 @@ if erlang {
 
 if javascript {
   external fn do_parse(String) -> Result(Int, Nil) =
-    "../gleam_stdlib.js" "parse_int"
+    "../gleam_stdlib.mjs" "parse_int"
 }
 
 /// Prints a given int to a string.
@@ -59,7 +59,7 @@ if erlang {
 
 if javascript {
   external fn do_to_string(Int) -> String =
-    "../gleam_stdlib.js" "to_string"
+    "../gleam_stdlib.mjs" "to_string"
 }
 
 /// Error value when trying to operate with a base out of the allowed range.
@@ -102,7 +102,7 @@ if erlang {
 
 if javascript {
   external fn do_to_base_string(Int, Int) -> String =
-    "../gleam_stdlib.js" "int_to_base_string"
+    "../gleam_stdlib.mjs" "int_to_base_string"
 }
 
 /// Prints a given int to a string using base2.
@@ -153,14 +153,16 @@ pub fn to_base36(int) {
 ///
 /// ## Examples
 ///
-///   > to_float(5)
-///   5.
+/// ```
+/// > to_float(5)
+/// 5.
 ///
-///   > to_float(0)
-///   0.
+/// > to_float(0)
+/// 0.
 ///
-///   > to_float(-3)
-///   -3.
+/// > to_float(-3)
+/// -3.
+/// ```
 ///
 pub fn to_float(int) {
   do_to_float(int)
@@ -173,7 +175,7 @@ if erlang {
 
 if javascript {
   external fn do_to_float(a: Int) -> Float =
-    "../gleam_stdlib.js" "identity"
+    "../gleam_stdlib.mjs" "identity"
 }
 
 /// Restricts an int between a lower and upper bound.
