@@ -509,39 +509,6 @@ if javascript {
     "../gleam_stdlib.mjs" "length"
 }
 
-/// Checks to see if a `Dynamic` value is a 2 element tuple containing
-/// specifically typed elements.
-///
-/// ## Examples
-///
-///    > tuple2(from(#(1, 2)), int, int)
-///    Ok(#(1, 2))
-///
-///    > tuple2(from(#(1, 2.0)), int, float)
-///    Ok(#(1, 2.0))
-///
-///    > tuple2(from(#(1, 2, 3)), int, float)
-///    Error(DecodeError(expected: "2 element tuple", found: "3 element tuple", path: []))
-///
-///    > tuple2(from(""), int, float)
-///    Error(DecodeError(expected: "2 element tuple", found: "String", path: []))
-///
-pub fn tuple2(
-  from value: Dynamic,
-  first decode1: Decoder(a),
-  second decode2: Decoder(b),
-) -> Result(#(a, b), DecodeErrors) {
-  try _ = assert_is_tuple(value, 2)
-  let #(a, b) = unsafe_coerce(value)
-  case decode1(a), decode2(b) {
-    Ok(a), Ok(b) -> Ok(#(a, b))
-    a, b ->
-      tuple_errors(a, "0")
-      |> list.append(tuple_errors(b, "1"))
-      |> Error
-  }
-}
-
 fn tuple_errors(
   result: Result(a, List(DecodeError)),
   name: String,
@@ -586,38 +553,81 @@ fn push_path(error: DecodeError, name: t) -> DecodeError {
   DecodeError(..error, path: [name, ..error.path])
 }
 
+/// Checks to see if a `Dynamic` value is a 2 element tuple containing
+/// specifically typed elements.
+///
+/// ## Examples
+///
+///    > from(#(1, 2))
+///    > |> tuple2(int, int)
+///    Ok(#(1, 2))
+///
+///    > from(#(1, 2.0))
+///    > |> tuple2(int, float)
+///    Ok(#(1, 2.0))
+///
+///    > from(#(1, 2, 3))
+///    > |> tuple2(int, float)
+///    Error(DecodeError(expected: "2 element tuple", found: "3 element tuple", path: []))
+///
+///    > from("")
+///    > |> tuple2(int, float)
+///    Error(DecodeError(expected: "2 element tuple", found: "String", path: []))
+///
+pub fn tuple2(
+  first decode1: Decoder(a),
+  second decode2: Decoder(b),
+) -> Decoder(#(a, b)) {
+  fn(value) {
+    try _ = assert_is_tuple(value, 2)
+    let #(a, b) = unsafe_coerce(value)
+    case decode1(a), decode2(b) {
+      Ok(a), Ok(b) -> Ok(#(a, b))
+      a, b ->
+        tuple_errors(a, "0")
+        |> list.append(tuple_errors(b, "1"))
+        |> Error
+    }
+  }
+}
+
 /// Checks to see if a `Dynamic` value is a 3-element tuple containing
 /// specifically typed elements.
 ///
 /// ## Examples
 ///
-///    > tuple3(from(#(1, 2, 3)), int, int, int)
+///    > from(#(1, 2, 3))
+///    > |> tuple3(int, int, int)
 ///    Ok(#(1, 2, 3))
 ///
-///    > tuple3(from(#(1, 2.0, "3")), int, float, string)
+///    > from(#(1, 2.0, "3"))
+///    > |> tuple3(int, float, string)
 ///    Ok(#(1, 2.0, "3"))
 ///
-///    > tuple3(from(#(1, 2)), int, float, string)
+///    > from(#(1, 2))
+///    > |> tuple3(int, float, string)
 ///    Error(DecodeError(expected: "3 element tuple", found: "2 element tuple", path: []))
 ///
-///    > tuple3(from(""), int, float, string)
+///    > from("")
+///    > |> tuple3(int, float, string)
 ///    Error(DecodeError(expected: "3 element tuple", found: "String", path: []))
 ///
 pub fn tuple3(
-  from value: Dynamic,
   first decode1: Decoder(a),
   second decode2: Decoder(b),
   third decode3: Decoder(c),
-) -> Result(#(a, b, c), DecodeErrors) {
-  try _ = assert_is_tuple(value, 3)
-  let #(a, b, c) = unsafe_coerce(value)
-  case decode1(a), decode2(b), decode3(c) {
-    Ok(a), Ok(b), Ok(c) -> Ok(#(a, b, c))
-    a, b, c ->
-      tuple_errors(a, "0")
-      |> list.append(tuple_errors(b, "1"))
-      |> list.append(tuple_errors(c, "2"))
-      |> Error
+) -> Decoder(#(a, b, c)) {
+  fn(value) {
+    try _ = assert_is_tuple(value, 3)
+    let #(a, b, c) = unsafe_coerce(value)
+    case decode1(a), decode2(b), decode3(c) {
+      Ok(a), Ok(b), Ok(c) -> Ok(#(a, b, c))
+      a, b, c ->
+        tuple_errors(a, "0")
+        |> list.append(tuple_errors(b, "1"))
+        |> list.append(tuple_errors(c, "2"))
+        |> Error
+    }
   }
 }
 
@@ -626,36 +636,40 @@ pub fn tuple3(
 ///
 /// ## Examples
 ///
-///    > tuple4(from(#(1, 2, 3, 4)), int, int, int, int)
+///    > from(#(1, 2, 3, 4))
+///    > |> tuple4(int, int, int, int)
 ///    Ok(#(1, 2, 3, 4))
 ///
-///    > tuple4(from(#(1, 2.0, "3", 4)), int, float, string, int)
+///    > from(#(1, 2.0, "3", 4))
+///    > |> tuple4(int, float, string, int)
 ///    Ok(#(1, 2.0, "3", 4))
 ///
-///    > tuple4(from(#(1, 2)), int, float, string, int)
-///    Error("Expected a 4 element tuple, found a 2 element tuple")
+///    > from(#(1, 2))
+///    > |> tuple4(int, float, string, int)
 ///    Error(DecodeError(expected: "4 element tuple", found: "2 element tuple", path: []))
 ///
-///    > tuple4(from(""), int, float, string, int)
+///    > from("")
+///    > |> tuple4(int, float, string, int)
 ///    Error(DecodeError(expected: "4 element tuple", found: "String", path: []))
 ///
 pub fn tuple4(
-  from value: Dynamic,
   first decode1: Decoder(a),
   second decode2: Decoder(b),
   third decode3: Decoder(c),
   fourth decode4: Decoder(d),
-) -> Result(#(a, b, c, d), DecodeErrors) {
-  try _ = assert_is_tuple(value, 4)
-  let #(a, b, c, d) = unsafe_coerce(value)
-  case decode1(a), decode2(b), decode3(c), decode4(d) {
-    Ok(a), Ok(b), Ok(c), Ok(d) -> Ok(#(a, b, c, d))
-    a, b, c, d ->
-      tuple_errors(a, "0")
-      |> list.append(tuple_errors(b, "1"))
-      |> list.append(tuple_errors(c, "2"))
-      |> list.append(tuple_errors(d, "3"))
-      |> Error
+) -> Decoder(#(a, b, c, d)) {
+  fn(value) {
+    try _ = assert_is_tuple(value, 4)
+    let #(a, b, c, d) = unsafe_coerce(value)
+    case decode1(a), decode2(b), decode3(c), decode4(d) {
+      Ok(a), Ok(b), Ok(c), Ok(d) -> Ok(#(a, b, c, d))
+      a, b, c, d ->
+        tuple_errors(a, "0")
+        |> list.append(tuple_errors(b, "1"))
+        |> list.append(tuple_errors(c, "2"))
+        |> list.append(tuple_errors(d, "3"))
+        |> Error
+    }
   }
 }
 
@@ -664,37 +678,42 @@ pub fn tuple4(
 ///
 /// ## Examples
 ///
-///    > tuple5(from(#(1, 2, 3, 4, 5)), int, int, int, int, int)
+///    > from(#(1, 2, 3, 4, 5))
+///    > |> tuple5(int, int, int, int, int)
 ///    Ok(#(1, 2, 3, 4, 5))
 ///
-///    > tuple5(from(#(1, 2.0, "3", 4, 5)), int, float, string, int, int)
+///    > from(#(1, 2.0, "3", 4, 5))
+///    > |> tuple5(int, float, string, int, int)
 ///    Ok(#(1, 2.0, "3", 4, 5))
 ///
-///    > tuple5(from(#(1, 2)), int, float, string, int, int)
+///    > from(#(1, 2))
+///    > |> tuple5(int, float, string, int, int)
 ///    Error(DecodeError(expected: "5 element tuple", found: "2 element tuple", path: []))
 ///
-///    > tuple5(from(""), int, float, string, int, int)
+///    > from("")
+///    > |> tuple5(int, float, string, int, int)
 ///    Error(DecodeError(expected: "5 element tuple", found: "String", path: []))
 ///
 pub fn tuple5(
-  from value: Dynamic,
   first decode1: Decoder(a),
   second decode2: Decoder(b),
   third decode3: Decoder(c),
   fourth decode4: Decoder(d),
   fifth decode5: Decoder(e),
-) -> Result(#(a, b, c, d, e), DecodeErrors) {
-  try _ = assert_is_tuple(value, 5)
-  let #(a, b, c, d, e) = unsafe_coerce(value)
-  case decode1(a), decode2(b), decode3(c), decode4(d), decode5(e) {
-    Ok(a), Ok(b), Ok(c), Ok(d), Ok(e) -> Ok(#(a, b, c, d, e))
-    a, b, c, d, e ->
-      tuple_errors(a, "0")
-      |> list.append(tuple_errors(b, "1"))
-      |> list.append(tuple_errors(c, "2"))
-      |> list.append(tuple_errors(d, "3"))
-      |> list.append(tuple_errors(e, "4"))
-      |> Error
+) -> Decoder(#(a, b, c, d, e)) {
+  fn(value) {
+    try _ = assert_is_tuple(value, 5)
+    let #(a, b, c, d, e) = unsafe_coerce(value)
+    case decode1(a), decode2(b), decode3(c), decode4(d), decode5(e) {
+      Ok(a), Ok(b), Ok(c), Ok(d), Ok(e) -> Ok(#(a, b, c, d, e))
+      a, b, c, d, e ->
+        tuple_errors(a, "0")
+        |> list.append(tuple_errors(b, "1"))
+        |> list.append(tuple_errors(c, "2"))
+        |> list.append(tuple_errors(d, "3"))
+        |> list.append(tuple_errors(e, "4"))
+        |> Error
+    }
   }
 }
 
@@ -703,39 +722,40 @@ pub fn tuple5(
 ///
 /// ## Examples
 ///
-///    > tuple6(from(#(1, 2, 3, 4, 5, 6)), int, int, int, int, int, int)
+///    > from(#(1, 2, 3, 4, 5, 6)) 
+///    > |> tuple6(int, int, int, int, int, int)
 ///    Ok(#(1, 2, 3, 4, 5, 6))
 ///
-///    > tuple6(from(#(1, 2.0, "3", 4, 5, 6)), int, float, string, int, int)
+///    > from(#(1, 2.0, "3", 4, 5, 6))
+///    > |> tuple6(int, float, string, int, int)
 ///    Ok(#(1, 2.0, "3", 4, 5, 6))
 ///
-///    > tuple6(from(#(1, 2)), int, float, string, int, int, int)
+///    > from(#(1, 2))
+///    > |> tuple6(int, float, string, int, int, int)
 ///    Error(DecodeError(expected: "6 element tuple", found: "2 element tuple", path: []))
 ///
-///    > tuple6(from(""), int, float, string, int, int, int)
-///    Error(DecodeError(expected: "6 element tuple", found: "String", path: []))
-///
 pub fn tuple6(
-  from value: Dynamic,
   first decode1: Decoder(a),
   second decode2: Decoder(b),
   third decode3: Decoder(c),
   fourth decode4: Decoder(d),
   fifth decode5: Decoder(e),
   sixth decode6: Decoder(f),
-) -> Result(#(a, b, c, d, e, f), DecodeErrors) {
-  try _ = assert_is_tuple(value, 6)
-  let #(a, b, c, d, e, f) = unsafe_coerce(value)
-  case decode1(a), decode2(b), decode3(c), decode4(d), decode5(e), decode6(f) {
-    Ok(a), Ok(b), Ok(c), Ok(d), Ok(e), Ok(f) -> Ok(#(a, b, c, d, e, f))
-    a, b, c, d, e, f ->
-      tuple_errors(a, "0")
-      |> list.append(tuple_errors(b, "1"))
-      |> list.append(tuple_errors(c, "2"))
-      |> list.append(tuple_errors(d, "3"))
-      |> list.append(tuple_errors(e, "4"))
-      |> list.append(tuple_errors(f, "5"))
-      |> Error
+) -> Decoder(#(a, b, c, d, e, f)) {
+  fn(value) {
+    try _ = assert_is_tuple(value, 6)
+    let #(a, b, c, d, e, f) = unsafe_coerce(value)
+    case decode1(a), decode2(b), decode3(c), decode4(d), decode5(e), decode6(f) {
+      Ok(a), Ok(b), Ok(c), Ok(d), Ok(e), Ok(f) -> Ok(#(a, b, c, d, e, f))
+      a, b, c, d, e, f ->
+        tuple_errors(a, "0")
+        |> list.append(tuple_errors(b, "1"))
+        |> list.append(tuple_errors(c, "2"))
+        |> list.append(tuple_errors(d, "3"))
+        |> list.append(tuple_errors(e, "4"))
+        |> list.append(tuple_errors(f, "5"))
+        |> Error
+    }
   }
 }
 

@@ -14,6 +14,7 @@
   the field to be specified.
 - The `dynamic.DecodeError` now has a `path` field.
 - The decoder functions of the `dynamic` module now return multiple errors.
+- The `dynamic.tuple*` functions are now partially applied.
 
 ## v0.18.1 - 2021-12-19
 

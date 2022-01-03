@@ -689,7 +689,7 @@ pub fn nested_tuples_test() {
   |> dynamic.from
   |> dynamic.tuple2(
     dynamic.int,
-    dynamic.tuple2(_, dynamic.int, dynamic.tuple2(_, dynamic.int, dynamic.int)),
+    dynamic.tuple2(dynamic.int, dynamic.tuple2(dynamic.int, dynamic.int)),
   )
   |> should.equal(Error([
     DecodeError(expected: "Int", found: "String", path: ["1", "1", "0"]),
