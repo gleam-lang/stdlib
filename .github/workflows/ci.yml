@@ -19,6 +19,6 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: "16.0.0"
-      - run: gleam test
-      - run: npm test
-      # - run: gleam format --check src test
+      - run: gleam test --target erlang
+      - run: gleam test --target javascript
+      - run: gleam format --check src test
