@@ -1,17 +1,16 @@
 import { opendir } from "fs/promises";
 
-const dir = "gen/javascript/gleam/";
+const dir = "build/dev/javascript/gleam_stdlib/dist/gleam/";
 
-async function main() {
+export async function main() {
   console.log("Running tests...");
 
   let passes = 0;
   let failures = 0;
 
   for await (let entry of await opendir(dir)) {
-    if (!entry.name.endsWith("_test.js")) continue;
-    let path = "../" + dir + entry.name;
-    let module = await import(path);
+    if (!entry.name.endsWith("_test.mjs")) continue;
+    let module = await import("./gleam/" + entry.name);
 
     for (let fnName of Object.keys(module)) {
       if (!fnName.endsWith("_test")) continue;
@@ -34,5 +33,3 @@ ${passes} passes
 ${failures} failures`);
   process.exit(failures ? 1 : 0);
 }
-
-main();

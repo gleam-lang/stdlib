@@ -22,7 +22,7 @@ if javascript {
   import gleam/string
 
   external fn stringify(anything) -> String =
-    "../gleam.js" "inspect"
+    "../gleam.mjs" "inspect"
 
   external fn crash(String) -> anything =
     "../gleam_stdlib.mjs" "crash"
