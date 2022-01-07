@@ -376,7 +376,7 @@ fn do_undigits(
 ) -> Result(Int, InvalidBase) {
   case numbers {
     [] -> Ok(acc)
-    [digit, .._rest] if digit >= base -> Error(InvalidBase)
+    [digit, ..] if digit >= base -> Error(InvalidBase)
     [digit, ..rest] -> do_undigits(rest, base, acc * base + digit)
   }
 }

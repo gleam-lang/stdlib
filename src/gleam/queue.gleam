@@ -215,8 +215,8 @@ fn check_equal(
         False -> False
         True -> check_equal(xs, x_tail, ys, y_tail, eq)
       }
-    [], [_, .._], _, _ -> check_equal(list.reverse(x_tail), [], ys, y_tail, eq)
-    _, _, [], [_, .._] -> check_equal(xs, x_tail, list.reverse(y_tail), [], eq)
+    [], [_, ..], _, _ -> check_equal(list.reverse(x_tail), [], ys, y_tail, eq)
+    _, _, [], [_, ..] -> check_equal(xs, x_tail, list.reverse(y_tail), [], eq)
     _, _, _, _ -> False
   }
 }
