@@ -115,6 +115,23 @@ pub fn unwrap(option: Option(a), or default: a) -> a {
   }
 }
 
+/// Extracts the value from an `Option`, evaluating the default function if the option is `None`.
+///
+/// ## Examples
+///
+///    > lazy_unwrap(Some(1), fn() { 0 })
+///    1
+///
+///    > lazy_unwrap(None, fn() { 0 })
+///    0
+///
+pub fn lazy_unwrap(option: Option(a), or default: fn() -> a) -> a {
+  case option {
+    Some(x) -> x
+    None -> default()
+  }
+}
+
 /// Updates a value held within the `Some` of an `Option` by calling a given function
 /// on it.
 ///
@@ -207,6 +224,29 @@ pub fn or(first: Option(a), second: Option(a)) -> Option(a) {
   case first {
     Some(_) -> first
     None -> second
+  }
+}
+
+/// Returns the first value if it is `Some`, otherwise evaluates the given function for a fallback value.
+///
+/// ## Examples
+///
+///    > lazy_or(Some(1), fn() { Some(2) })
+///    Some(1)
+///
+///    > lazy_or(Some(1), fn() { None })
+///    Some(1)
+///
+///    > lazy_or(None, fn() { Some(2) })
+///    Some(2)
+///
+///    > lazy_or(None, fn() { None })
+///    None
+///
+pub fn lazy_or(first: Option(a), second: fn() -> Option(a)) -> Option(a) {
+  case first {
+    Some(_) -> first
+    None -> second()
   }
 }
 

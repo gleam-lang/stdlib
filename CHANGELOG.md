@@ -16,6 +16,7 @@
 - The decoder functions of the `dynamic` module now return multiple errors.
 - The `dynamic.tuple*` functions are now partially applied.
 - The `int` module gains the `digits` and `undigits` functions.
+- The `option` module gains the `lazy_or` and `lazy_unwrap` functions.
 
 ## v0.18.1 - 2021-12-19
 
