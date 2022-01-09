@@ -795,20 +795,20 @@ pub fn decode2_test() {
     dynamic.decode2(
       Two,
       dynamic.element(0, dynamic.int),
-      dynamic.element(1, dynamic.float),
+      dynamic.element(1, dynamic.string),
     )
 
-  #(1, 2.0)
+  #(1, "2")
   |> dynamic.from
   |> decoder
-  |> should.equal(Ok(Two(1, 2.0)))
+  |> should.equal(Ok(Two(1, "2")))
 
   #(1.3, 2)
   |> dynamic.from
   |> decoder
   |> should.equal(Error([
     DecodeError(expected: "Int", found: "Float", path: ["0"]),
-    DecodeError(expected: "Float", found: "Int", path: ["1"]),
+    DecodeError(expected: "String", found: "Int", path: ["1"]),
   ]))
 }
 
@@ -821,20 +821,20 @@ pub fn decode3_test() {
     dynamic.decode3(
       Three,
       dynamic.element(0, dynamic.int),
-      dynamic.element(1, dynamic.float),
+      dynamic.element(1, dynamic.string),
       dynamic.element(2, dynamic.int),
     )
 
-  #(1, 2.0, 3)
+  #(1, "2", 3)
   |> dynamic.from
   |> decoder
-  |> should.equal(Ok(Three(1, 2.0, 3)))
+  |> should.equal(Ok(Three(1, "2", 3)))
 
-  #(1.3, 2, 3)
+  #(1.3, 2.1, 3)
   |> dynamic.from
   |> decoder
   |> should.equal(Error([
     DecodeError(expected: "Int", found: "Float", path: ["0"]),
-    DecodeError(expected: "Float", found: "Int", path: ["1"]),
+    DecodeError(expected: "String", found: "Float", path: ["1"]),
   ]))
 }
