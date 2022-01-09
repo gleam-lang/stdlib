@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.19.1 - 2022-01-09
+
+- The `dynamic.dynamic` function now returns a result.
+
 ## v0.19.0 - 2022-01-09
 
 - The `dynamic` module gains the `dynamic` function.

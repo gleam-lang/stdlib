@@ -61,14 +61,14 @@ if javascript {
     "../gleam_stdlib.mjs" "identity"
 }
 
-/// Converts a `Dynamic` value into a `Dynamic` value.
+/// Decodes a `Dynamic` value from a `Dynamic` value.
 ///
 /// This function doesn't seem very useful at first, but it can be convenient
 /// when you need to give a decoder function but you don't actually care what
 /// the to-decode value is.
 ///
-pub fn dynamic(term: Dynamic) -> Dynamic {
-  unsafe_coerce(term)
+pub fn dynamic(term: Dynamic) -> Decoder(Dynamic) {
+  Ok
 }
 
 /// Checks to see whether a `Dynamic` value is a bit_string, and returns that bit string if
@@ -292,32 +292,40 @@ if javascript {
 /// ## Examples
 ///
 /// ```gleam
-/// > result(of: from(Ok(1)), ok: int, error: string)
+/// > from(Ok(1))
+/// > |> result(ok: int, error: string)
 /// Ok(Ok(1))
 ///
-/// > result(of: from(Error("boom")), ok: int, error: string)
+/// > from(Error("boom"))
+/// > |> result(ok: int, error: string)
 /// Ok(Error("boom"))
 ///
-/// > result(of: from(123), ok: int, error: string)
+/// > from(123)
+/// > |> result(ok: int, error: string)
 /// Error([DecodeError(expected: "2 element tuple", found: "Int", path: [])])
 /// ```
 ///
 pub fn result(
-  of dynamic: Dynamic,
   ok decode_ok: Decoder(a),
   error decode_error: Decoder(e),
-) -> Result(Result(a, e), DecodeErrors) {
-  try inner_result = decode_result(dynamic)
+) -> Decoder(Result(a, e)) {
+  fn(value) {
+    try inner_result = decode_result(value)
 
-  case inner_result {
-    Ok(raw) ->
-      raw
-      |> decode_ok
-      |> result.map(Ok)
-    Error(raw) ->
-      raw
-      |> decode_error
-      |> result.map(Error)
+    case inner_result {
+      Ok(raw) -> {
+        try value =
+          decode_ok(raw)
+          |> map_errors(push_path(_, "ok"))
+        Ok(Ok(value))
+      }
+      Error(raw) -> {
+        try value =
+          decode_error(raw)
+          |> map_errors(push_path(_, "error"))
+        Ok(Error(value))
+      }
+    }
   }
 }
 

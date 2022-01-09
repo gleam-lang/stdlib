@@ -745,14 +745,14 @@ pub fn result_test() {
   |> dynamic.from
   |> dynamic.result(ok: dynamic.int, error: dynamic.string)
   |> should.equal(Error([
-    DecodeError(expected: "Int", found: "String", path: []),
+    DecodeError(expected: "Int", found: "String", path: ["ok"]),
   ]))
 
   Error(1)
   |> dynamic.from
   |> dynamic.result(ok: dynamic.int, error: dynamic.string)
   |> should.equal(Error([
-    DecodeError(expected: "String", found: "Int", path: []),
+    DecodeError(expected: "String", found: "Int", path: ["error"]),
   ]))
 
   1
