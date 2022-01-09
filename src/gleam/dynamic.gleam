@@ -841,8 +841,27 @@ pub fn tuple6(
 /// Error(DecodeError(expected: "Map", found: "String", path: []))
 /// ```
 ///
-pub fn map(from value: Dynamic) -> Result(Map(Dynamic, Dynamic), DecodeErrors) {
-  decode_map(value)
+pub fn map(
+  of key_type: Decoder(k),
+  to value_type: Decoder(v),
+) -> Decoder(Map(k, v)) {
+  fn(value) {
+    try map = decode_map(value)
+    try pairs =
+      map
+      |> map.to_list
+      |> list.try_map(fn(pair) {
+        let #(k, v) = pair
+        try k =
+          key_type(k)
+          |> map_errors(push_path(_, "keys"))
+        try v =
+          value_type(v)
+          |> map_errors(push_path(_, "values"))
+        Ok(#(k, v))
+      })
+    Ok(map.from_list(pairs))
+  }
 }
 
 if erlang {

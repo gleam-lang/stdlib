@@ -3,6 +3,8 @@
 ## v0.19.1 - 2022-01-09
 
 - The `dynamic.dynamic` function now returns a result.
+- The `dynamic.map` function is now curried and requires the decoders for keys
+  and values to be supplied.
 - The `dynamic.result`, `dynamic.optional`, `dynamic.field`, and `dynamic.list`
   functions are now partially applied.
 

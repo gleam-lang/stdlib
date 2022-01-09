@@ -699,12 +699,31 @@ pub fn nested_tuples_test() {
 pub fn map_test() {
   map.new()
   |> dynamic.from
-  |> dynamic.map
+  |> dynamic.map(dynamic.string, dynamic.int)
   |> should.equal(Ok(map.new()))
+
+  map.from_list([#("a", 1), #("b", 2)])
+  |> dynamic.from
+  |> dynamic.map(dynamic.string, dynamic.int)
+  |> should.equal(Ok(map.from_list([#("a", 1), #("b", 2)])))
+
+  map.from_list([#("a", 1), #("b", 2)])
+  |> dynamic.from
+  |> dynamic.map(dynamic.int, dynamic.int)
+  |> should.equal(Error([
+    DecodeError(expected: "Int", found: "String", path: ["keys"]),
+  ]))
+
+  map.from_list([#("a", 1), #("b", 2)])
+  |> dynamic.from
+  |> dynamic.map(dynamic.string, dynamic.string)
+  |> should.equal(Error([
+    DecodeError(expected: "String", found: "Int", path: ["values"]),
+  ]))
 
   1
   |> dynamic.from
-  |> dynamic.map
+  |> dynamic.map(dynamic.string, dynamic.int)
   |> should.equal(Error([DecodeError(expected: "Map", found: "Int", path: [])]))
 }
 
