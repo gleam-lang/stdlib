@@ -426,21 +426,21 @@ if javascript {
 ///
 /// ```gleam
 /// > import gleam/map
-/// > field(from(map.new("Hello", "World")), "Hello")
-/// Ok(Dynamic)
+/// > from(map.new("Hello", "World"))
+/// > |> field(named: "Hello", of: string)
+/// Ok("World")
 ///
-/// > field(from(123), "Hello")
+/// > from(123)
+/// > |> field("Hello", string)
 /// Error([DecodeError(expected: "Map", found: "Int", path: [])])
 /// ```
 ///
-pub fn field(
-  from value: Dynamic,
-  named name: a,
-  of inner_type: Decoder(t),
-) -> Result(t, DecodeErrors) {
-  try value = decode_field(value, name)
-  inner_type(value)
-  |> map_errors(push_path(_, name))
+pub fn field(named name: a, of inner_type: Decoder(t)) -> Decoder(t) {
+  fn(value) {
+    try value = decode_field(value, name)
+    inner_type(value)
+    |> map_errors(push_path(_, name))
+  }
 }
 
 if erlang {
