@@ -1178,6 +1178,75 @@ pub fn decode7(
   }
 }
 
+/// Decode 8 values from a `Dynamic` value.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > from(#(1, 2.1, "3", "4", "5", "6", "7", "8"))
+/// > |> decode7(
+/// >   MyRecord,
+/// >   element(0, int),
+/// >   element(1, float),
+/// >   element(2, string),
+/// >   element(3, string),
+/// >   element(4, string),
+/// >   element(5, string),
+/// >   element(6, string),
+/// >   element(7, string),
+/// > )
+/// Ok(MyRecord(1, 2.1, "3", "4", "5", "6", "7", "8"))
+/// ```
+///
+/// ```gleam
+/// > from(#("", "", "", "", "", "", "", ""))
+/// > |> decode7(
+/// >   MyRecord,
+/// >   element(0, int),
+/// >   element(1, float),
+/// >   element(2, string),
+/// >   element(3, string),
+/// >   element(4, string),
+/// >   element(5, string),
+/// >   element(6, string),
+/// >   element(7, string),
+/// > )
+/// Error([
+///   DecodeError(expected: "Int", found: "String", path: ["0"]),
+///   DecodeError(expected: "Float", found: "String", path: ["1"]),
+/// ])
+/// ```
+///
+pub fn decode8(
+  constructor: fn(t1, t2, t3, t4, t5, t6, t7, t8) -> t,
+  t1: Decoder(t1),
+  t2: Decoder(t2),
+  t3: Decoder(t3),
+  t4: Decoder(t4),
+  t5: Decoder(t5),
+  t6: Decoder(t6),
+  t7: Decoder(t7),
+  t8: Decoder(t8),
+) -> Decoder(t) {
+  fn(x: Dynamic) {
+    case t1(x), t2(x), t3(x), t4(x), t5(x), t6(x), t7(x), t8(x) {
+      Ok(a), Ok(b), Ok(c), Ok(d), Ok(e), Ok(f), Ok(g), Ok(h) ->
+        Ok(constructor(a, b, c, d, e, f, g, h))
+      a, b, c, d, e, f, g, h ->
+        Error(list.flatten([
+          all_errors(a),
+          all_errors(b),
+          all_errors(c),
+          all_errors(d),
+          all_errors(e),
+          all_errors(f),
+          all_errors(g),
+          all_errors(h),
+        ]))
+    }
+  }
+}
+
 fn all_errors(result: Result(a, List(DecodeError))) -> List(DecodeError) {
   case result {
     Ok(_) -> []
