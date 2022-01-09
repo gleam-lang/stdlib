@@ -49,6 +49,14 @@ pub fn unwrap_option_test() {
   |> should.equal(0)
 }
 
+pub fn lazy_unwrap_option_test() {
+  option.lazy_unwrap(Some(1), fn() { 0 })
+  |> should.equal(1)
+
+  option.lazy_unwrap(None, fn() { 0 })
+  |> should.equal(0)
+}
+
 pub fn map_option_test() {
   Some(1)
   |> option.map(fn(x) { x + 1 })
@@ -106,6 +114,24 @@ pub fn or_option_test() {
 
   None
   |> option.or(None)
+  |> should.equal(None)
+}
+
+pub fn lazy_or_option_test() {
+  Some(1)
+  |> option.lazy_or(fn() { Some(2) })
+  |> should.equal(Some(1))
+
+  Some(1)
+  |> option.lazy_or(fn() { None })
+  |> should.equal(Some(1))
+
+  None
+  |> option.lazy_or(fn() { Some(2) })
+  |> should.equal(Some(2))
+
+  None
+  |> option.lazy_or(fn() { None })
   |> should.equal(None)
 }
 
