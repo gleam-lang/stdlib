@@ -67,8 +67,8 @@ if javascript {
 /// when you need to give a decoder function but you don't actually care what
 /// the to-decode value is.
 ///
-pub fn dynamic() -> Decoder(Dynamic) {
-  Ok
+pub fn dynamic(value: Dynamic) -> Result(Dynamic, List(DecodeError)) {
+  Ok(value)
 }
 
 /// Checks to see whether a `Dynamic` value is a bit_string, and returns that bit string if

@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.19.2 - 2022-01-09
+
+- The `dynamic.dynamic` function is is no longer a thunk.
+
 ## v0.19.1 - 2022-01-09
 
 - The `dynamic.dynamic` function now returns a result.
