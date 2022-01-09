@@ -9,7 +9,7 @@ Documentation available on [HexDocs](https://hexdocs.pm/gleam_stdlib/).
 
 ## Installation
 
-Add `gleam_stdlib` to your Gleam project
+Add `gleam_stdlib` to your Gleam project.
 
 ```shell
 gleam add gleam_stdlib
