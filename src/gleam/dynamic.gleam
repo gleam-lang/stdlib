@@ -905,10 +905,14 @@ pub fn decode2(
   fn(value) {
     case decode1(value), decode2(value) {
       Ok(a), Ok(b) -> Ok(constructor(a, b))
-      a, b ->
-        tuple_errors(a, "0")
-        |> list.append(tuple_errors(b, "1"))
-        |> Error
+      a, b -> Error(list.flatten([all_errors(a), all_errors(b)]))
     }
+  }
+}
+
+fn all_errors(result: Result(a, List(DecodeError))) -> List(DecodeError) {
+  case result {
+    Ok(_) -> []
+    Error(errors) -> errors
   }
 }

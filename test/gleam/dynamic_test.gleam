@@ -802,4 +802,12 @@ pub fn decode2_test() {
   |> dynamic.from
   |> decoder
   |> should.equal(Ok(Two(1, 2.0)))
+
+  #(1.3, 2)
+  |> dynamic.from
+  |> decoder
+  |> should.equal(Error([
+    DecodeError(expected: "Int", found: "Float", path: ["0"]),
+    DecodeError(expected: "Float", found: "Int", path: ["1"]),
+  ]))
 }

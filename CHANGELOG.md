@@ -15,8 +15,8 @@
   the field to be specified.
 - The `dynamic.DecodeError` now has a `path` field.
 - The decoder functions of the `dynamic` module now return multiple errors.
-- The `dynamic.element` and `dynamic.tuple*` functions are now partially
-  applied.
+- The `dynamic.any`, `dynamic.element` and `dynamic.tuple*` functions are now
+  partially applied.
 - The `dynamic` module gains the `decode2` function.
 - The `int` module gains the `digits` and `undigits` functions.
 
