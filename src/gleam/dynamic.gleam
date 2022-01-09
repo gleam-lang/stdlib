@@ -899,11 +899,11 @@ pub fn any(of decoders: List(Decoder(t))) -> Decoder(t) {
 ///
 pub fn decode2(
   constructor: fn(t1, t2) -> t,
-  decode1: Decoder(t1),
-  decode2: Decoder(t2),
+  t1: Decoder(t1),
+  t2: Decoder(t2),
 ) -> Decoder(t) {
   fn(value) {
-    case decode1(value), decode2(value) {
+    case t1(value), t2(value) {
       Ok(a), Ok(b) -> Ok(constructor(a, b))
       a, b -> Error(list.flatten([all_errors(a), all_errors(b)]))
     }
@@ -916,13 +916,13 @@ pub fn decode2(
 ///
 /// ```gleam
 /// > from(#(1, 2.0, "3"))
-/// > |> decode2(MyRecord, element(0, int), element(1, float), element(2, string))
+/// > |> decode3(MyRecord, element(0, int), element(1, float), element(2, string))
 /// Ok(MyRecord(1, 2.0, "3"))
 /// ```
 ///
 /// ```gleam
 /// > from(#("", "", ""))
-/// > |> decode2(MyRecord, element(0, int), element(1, float), element(2, string))
+/// > |> decode3(MyRecord, element(0, int), element(1, float), element(2, string))
 /// Error([
 ///   DecodeError(expected: "Int", found: "String", path: ["0"]),
 ///   DecodeError(expected: "Float", found: "String", path: ["1"]),
@@ -931,15 +931,67 @@ pub fn decode2(
 ///
 pub fn decode3(
   constructor: fn(t1, t2, t3) -> t,
-  decode1: Decoder(t1),
-  decode2: Decoder(t2),
-  decode3: Decoder(t3),
+  t1: Decoder(t1),
+  t2: Decoder(t2),
+  t3: Decoder(t3),
 ) -> Decoder(t) {
   fn(value) {
-    case decode1(value), decode2(value), decode3(value) {
+    case t1(value), t2(value), t3(value) {
       Ok(a), Ok(b), Ok(c) -> Ok(constructor(a, b, c))
       a, b, c ->
         Error(list.flatten([all_errors(a), all_errors(b), all_errors(c)]))
+    }
+  }
+}
+
+/// Decode 4 values from a `Dynamic` value.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > from(#(1, 2.1, "3", "4"))
+/// > |> decode4(
+/// >   MyRecord,
+/// >   element(0, int),
+/// >   element(1, float),
+/// >   element(2, string),
+/// >   element(3, string),
+/// > )
+/// Ok(MyRecord(1, 2.1, "3", "4"))
+/// ```
+///
+/// ```gleam
+/// > from(#("", "", "", ""))
+/// > |> decode4(
+/// >   MyRecord,
+/// >   element(0, int),
+/// >   element(1, float),
+/// >   element(2, string),
+/// >   element(3, string),
+/// > )
+/// Error([
+///   DecodeError(expected: "Int", found: "String", path: ["0"]),
+///   DecodeError(expected: "Float", found: "String", path: ["1"]),
+/// ])
+/// ```
+///
+pub fn decode4(
+  constructor: fn(t1, t2, t3, t4) -> t,
+  t1: Decoder(t1),
+  t2: Decoder(t2),
+  t3: Decoder(t3),
+  t4: Decoder(t4),
+) -> Decoder(t) {
+  fn(x: Dynamic) {
+    case t1(x), t2(x), t3(x), t4(x) {
+      Ok(a), Ok(b), Ok(c), Ok(d) -> Ok(constructor(a, b, c, d))
+      a, b, c, d ->
+        Error(list.flatten([
+          all_errors(a),
+          all_errors(b),
+          all_errors(c),
+          all_errors(d),
+        ]))
     }
   }
 }

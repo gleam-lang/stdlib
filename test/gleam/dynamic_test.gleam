@@ -838,3 +838,31 @@ pub fn decode3_test() {
     DecodeError(expected: "String", found: "Float", path: ["1"]),
   ]))
 }
+
+type Four(a, b, c, d) {
+  Four(a, b, c, d)
+}
+
+pub fn decode4_test() {
+  let decoder =
+    dynamic.decode4(
+      Four,
+      dynamic.element(0, dynamic.int),
+      dynamic.element(1, dynamic.string),
+      dynamic.element(2, dynamic.int),
+      dynamic.element(3, dynamic.int),
+    )
+
+  #(1, "2", 3, 4)
+  |> dynamic.from
+  |> decoder
+  |> should.equal(Ok(Four(1, "2", 3, 4)))
+
+  #(1.3, 2.1, 3, 4)
+  |> dynamic.from
+  |> decoder
+  |> should.equal(Error([
+    DecodeError(expected: "Int", found: "Float", path: ["0"]),
+    DecodeError(expected: "String", found: "Float", path: ["1"]),
+  ]))
+}
