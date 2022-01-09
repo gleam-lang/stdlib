@@ -1052,6 +1052,67 @@ pub fn decode5(
   }
 }
 
+/// Decode 6 values from a `Dynamic` value.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > from(#(1, 2.1, "3", "4", "5", "6"))
+/// > |> decode6(
+/// >   MyRecord,
+/// >   element(0, int),
+/// >   element(1, float),
+/// >   element(2, string),
+/// >   element(3, string),
+/// >   element(4, string),
+/// >   element(5, string),
+/// > )
+/// Ok(MyRecord(1, 2.1, "3", "4", "5", "6"))
+/// ```
+///
+/// ```gleam
+/// > from(#("", "", "", "", "", ""))
+/// > |> decode6(
+/// >   MyRecord,
+/// >   element(0, int),
+/// >   element(1, float),
+/// >   element(2, string),
+/// >   element(3, string),
+/// >   element(4, string),
+/// >   element(5, string),
+/// > )
+/// Error([
+///   DecodeError(expected: "Int", found: "String", path: ["0"]),
+///   DecodeError(expected: "Float", found: "String", path: ["1"]),
+/// ])
+/// ```
+///
+pub fn decode6(
+  constructor: fn(t1, t2, t3, t4, t5, t6) -> t,
+  t1: Decoder(t1),
+  t2: Decoder(t2),
+  t3: Decoder(t3),
+  t4: Decoder(t4),
+  t5: Decoder(t5),
+  t6: Decoder(t6),
+) -> Decoder(t) {
+  fn(x: Dynamic) {
+    case t1(x), t2(x), t3(x), t4(x), t5(x), t6(x) {
+      Ok(a), Ok(b), Ok(c), Ok(d), Ok(e), Ok(f) ->
+        Ok(constructor(a, b, c, d, e, f))
+      a, b, c, d, e, f ->
+        Error(list.flatten([
+          all_errors(a),
+          all_errors(b),
+          all_errors(c),
+          all_errors(d),
+          all_errors(e),
+          all_errors(f),
+        ]))
+    }
+  }
+}
+
 fn all_errors(result: Result(a, List(DecodeError))) -> List(DecodeError) {
   case result {
     Ok(_) -> []

@@ -895,3 +895,33 @@ pub fn decode5_test() {
     DecodeError(expected: "String", found: "Float", path: ["1"]),
   ]))
 }
+
+type Six(a, b, c, d, e, f) {
+  Six(a, b, c, d, e, f)
+}
+
+pub fn decode6_test() {
+  let decoder =
+    dynamic.decode6(
+      Six,
+      dynamic.element(0, dynamic.int),
+      dynamic.element(1, dynamic.string),
+      dynamic.element(2, dynamic.int),
+      dynamic.element(3, dynamic.int),
+      dynamic.element(4, dynamic.int),
+      dynamic.element(5, dynamic.int),
+    )
+
+  #(1, "2", 3, 4, 5, 6)
+  |> dynamic.from
+  |> decoder
+  |> should.equal(Ok(Six(1, "2", 3, 4, 5, 6)))
+
+  #(1.3, 2.1, 3, 4, 5, 6)
+  |> dynamic.from
+  |> decoder
+  |> should.equal(Error([
+    DecodeError(expected: "Int", found: "Float", path: ["0"]),
+    DecodeError(expected: "String", found: "Float", path: ["1"]),
+  ]))
+}
