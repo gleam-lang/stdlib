@@ -569,7 +569,7 @@ fn put_expected(error: DecodeError, expected: String) -> DecodeError {
 
 fn push_path(error: DecodeError, name: t) -> DecodeError {
   let name = from(name)
-  let decoder = any(_, [string, fn(x) { result.map(int(x), int.to_string) }])
+  let decoder = any([string, fn(x) { result.map(int(x), int.to_string) }])
   let name = case decoder(name) {
     Ok(name) -> name
     Error(_) ->
@@ -847,7 +847,7 @@ if javascript {
 ///
 /// ```gleam
 /// > import gleam/result
-/// > let bool_or_string = any(_, of: [
+/// > let bool_or_string = any(of: [
 /// >   string,
 /// >   fn(x) { result.map(bool(x), fn(_) { "a bool" }) }
 /// > ])
@@ -861,21 +861,20 @@ if javascript {
 /// Error(DecodeError(expected: "unknown", found: "unknown", path: []))
 /// ```
 ///
-pub fn any(
-  from data: Dynamic,
-  of decoders: List(Decoder(t)),
-) -> Result(t, DecodeErrors) {
-  case decoders {
-    [] ->
-      Error([
-        DecodeError(found: classify(data), expected: "another type", path: []),
-      ])
+pub fn any(of decoders: List(Decoder(t))) -> Decoder(t) {
+  fn(data) {
+    case decoders {
+      [] ->
+        Error([
+          DecodeError(found: classify(data), expected: "another type", path: []),
+        ])
 
-    [decoder, ..decoders] ->
-      case decoder(data) {
-        Ok(decoded) -> Ok(decoded)
-        Error(_) -> any(data, decoders)
-      }
+      [decoder, ..decoders] ->
+        case decoder(data) {
+          Ok(decoded) -> Ok(decoded)
+          Error(_) -> any(decoders)(data)
+        }
+    }
   }
 }
 

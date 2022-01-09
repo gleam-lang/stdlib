@@ -764,13 +764,11 @@ pub fn result_test() {
 }
 
 pub fn any_test() {
-  let decoder = dynamic.any(
-    _,
-    [
+  let decoder =
+    dynamic.any([
       fn(x) { result.map(dynamic.int(x), fn(_) { "int" }) },
       fn(x) { result.map(dynamic.float(x), fn(_) { "float" }) },
-    ],
-  )
+    ])
 
   1
   |> dynamic.from
