@@ -67,7 +67,7 @@ if javascript {
 /// when you need to give a decoder function but you don't actually care what
 /// the to-decode value is.
 ///
-pub fn dynamic(term: Dynamic) -> Decoder(Dynamic) {
+pub fn dynamic() -> Decoder(Dynamic) {
   Ok
 }
 
@@ -342,24 +342,28 @@ pub fn result(
 /// ## Examples
 ///
 /// ```gleam
-/// > list(from(["a", "b", "c"]), of: string)
+/// > from(["a", "b", "c"])
+/// > |> list(of: string)
 /// Ok(["a", "b", "c"])
 ///
-/// > list(from([1, 2, 3]), of: string)
+/// > from([1, 2, 3])
+/// > |> list(of: string)
 /// Error([DecodeError(expected: "String", found: "Int", path: [])])
 ///
-/// > list(from("ok"), of: string)
+/// > from("ok")
+/// > |> list(of: string)
 /// Error([DecodeError(expected: "List", found: "String", path: [])])
 /// ```
 ///
 pub fn list(
-  from dynamic: Dynamic,
   of decoder_type: fn(Dynamic) -> Result(inner, DecodeErrors),
-) -> Result(List(inner), DecodeErrors) {
-  try list = shallow_list(dynamic)
-  list
-  |> list.try_map(decoder_type)
-  |> map_errors(push_path(_, "*"))
+) -> Decoder(List(inner)) {
+  fn(dynamic) {
+    try list = shallow_list(dynamic)
+    list
+    |> list.try_map(decoder_type)
+    |> map_errors(push_path(_, "*"))
+  }
 }
 
 /// Checks to see if a `Dynamic` value is a nullable version of a particular

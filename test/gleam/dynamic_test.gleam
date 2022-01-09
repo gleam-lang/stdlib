@@ -192,7 +192,7 @@ pub fn list_test() {
 
   [[1], [2], [3]]
   |> dynamic.from
-  |> dynamic.list(dynamic.list(_, dynamic.int))
+  |> dynamic.list(dynamic.list(dynamic.int))
   |> should.equal(Ok([[1], [2], [3]]))
 
   1
