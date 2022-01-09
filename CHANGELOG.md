@@ -2,10 +2,11 @@
 
 ## Unreleased
 
-- The `result`, and `tuple*` functions have been removed from the `dynamic`
-  module.
 - The `dynamic` module gains the `dynamic` function.
-- The `dynamic.list` function has been renamed to `dynamic.shallow_list`.
+- The shallow `dynamic.list` function has been renamed to
+  `dynamic.shallow_list`.
+- The shallow `result`, and `tuple*` functions have been removed from the
+  `dynamic` module.
 - The `dynamic.typed_list` function has been renamed to `dynamic.list`.
 - The `dynamic.typed_result` function has been renamed to `dynamic.result`.
 - The `dynamic.any` is now available on JavaScript.

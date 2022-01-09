@@ -444,41 +444,42 @@ if javascript {
 /// ## Examples
 ///
 /// ```gleam
-/// > element(from(#(1, 2)), 0)
+/// > from(#(1, 2))
+/// > |> element(0, int)
 /// Ok(from(1))
+/// ```
 ///
-/// > element(from(#(1, 2)), 2)
+/// ```gleam
+/// > from(#(1, 2))
+/// > |> element(2, int)
 /// Error([
-///   DecodeError(expected: "3 element tuple", found: "2 element tuple", path: [])]),
-/// ])
-///
-/// > element(from(""), 2)
-/// Error([
-///   DecodeError(expected: "Tuple", found: "String", path: [])]),
+///   DecodeError(
+///     expected: "Tuple of at least 3 elements",
+///     found: "Tuple of 2 elements",
+///     path: [],
+///   ),
 /// ])
 /// ```
 ///
-pub fn element(
-  from data: Dynamic,
-  at index: Int,
-  of inner_type: Decoder(t),
-) -> Result(t, DecodeErrors) {
-  try tuple = decode_tuple(data)
-  let size = tuple_size(tuple)
-  try data = case index >= 0 {
-    True ->
-      case index < size {
-        True -> tuple_get(tuple, index)
-        False -> at_least_decode_tuple_error(index + 1, data)
-      }
-    False ->
-      case int.absolute_value(index) <= size {
-        True -> tuple_get(tuple, size + index)
-        False -> at_least_decode_tuple_error(int.absolute_value(index), data)
-      }
+pub fn element(at index: Int, of inner_type: Decoder(t)) -> Decoder(t) {
+  fn(data: Dynamic) {
+    try tuple = decode_tuple(data)
+    let size = tuple_size(tuple)
+    try data = case index >= 0 {
+      True ->
+        case index < size {
+          True -> tuple_get(tuple, index)
+          False -> at_least_decode_tuple_error(index + 1, data)
+        }
+      False ->
+        case int.absolute_value(index) <= size {
+          True -> tuple_get(tuple, size + index)
+          False -> at_least_decode_tuple_error(int.absolute_value(index), data)
+        }
+    }
+    inner_type(data)
+    |> map_errors(push_path(_, index))
   }
-  inner_type(data)
-  |> map_errors(push_path(_, index))
 }
 
 fn exact_decode_tuple_error(size: Int, data: Dynamic) -> Result(a, DecodeErrors) {
@@ -875,5 +876,40 @@ pub fn any(
         Ok(decoded) -> Ok(decoded)
         Error(_) -> any(data, decoders)
       }
+  }
+}
+
+/// Decode 2 values from a `Dynamic` value.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > from(#(1, 2.0, "3"))
+/// > |> decode2(MyRecord, element(0, int), element(1, float))
+/// Ok(MyRecord(1, 2.0))
+/// ```
+///
+/// ```gleam
+/// > from(#("", "", ""))
+/// > |> decode2(MyRecord, element(0, int), element(1, float))
+/// Error([
+///   DecodeError(expected: "Int", found: "String", path: ["0"]),
+///   DecodeError(expected: "Float", found: "String", path: ["1"]),
+/// ])
+/// ```
+///
+pub fn decode2(
+  constructor: fn(t1, t2) -> t,
+  decode1: Decoder(t1),
+  decode2: Decoder(t2),
+) -> Decoder(t) {
+  fn(value) {
+    case decode1(value), decode2(value) {
+      Ok(a), Ok(b) -> Ok(constructor(a, b))
+      a, b ->
+        tuple_errors(a, "0")
+        |> list.append(tuple_errors(b, "1"))
+        |> Error
+    }
   }
 }

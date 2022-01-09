@@ -787,3 +787,21 @@ pub fn any_test() {
   |> decoder
   |> should.equal(Error([DecodeError("another type", "String", path: [])]))
 }
+
+type Two(a, b) {
+  Two(a, b)
+}
+
+pub fn decode2_test() {
+  let decoder =
+    dynamic.decode2(
+      Two,
+      dynamic.element(0, dynamic.int),
+      dynamic.element(1, dynamic.float),
+    )
+
+  #(1, 2.0)
+  |> dynamic.from
+  |> decoder
+  |> should.equal(Ok(Two(1, 2.0)))
+}
