@@ -811,3 +811,30 @@ pub fn decode2_test() {
     DecodeError(expected: "Float", found: "Int", path: ["1"]),
   ]))
 }
+
+type Three(a, b, c) {
+  Three(a, b, c)
+}
+
+pub fn decode3_test() {
+  let decoder =
+    dynamic.decode3(
+      Three,
+      dynamic.element(0, dynamic.int),
+      dynamic.element(1, dynamic.float),
+      dynamic.element(2, dynamic.int),
+    )
+
+  #(1, 2.0, 3)
+  |> dynamic.from
+  |> decoder
+  |> should.equal(Ok(Three(1, 2.0, 3)))
+
+  #(1.3, 2, 3)
+  |> dynamic.from
+  |> decoder
+  |> should.equal(Error([
+    DecodeError(expected: "Int", found: "Float", path: ["0"]),
+    DecodeError(expected: "Float", found: "Int", path: ["1"]),
+  ]))
+}

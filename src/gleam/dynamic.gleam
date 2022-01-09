@@ -910,6 +910,40 @@ pub fn decode2(
   }
 }
 
+/// Decode 3 values from a `Dynamic` value.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > from(#(1, 2.0, "3"))
+/// > |> decode2(MyRecord, element(0, int), element(1, float), element(2, string))
+/// Ok(MyRecord(1, 2.0, "3"))
+/// ```
+///
+/// ```gleam
+/// > from(#("", "", ""))
+/// > |> decode2(MyRecord, element(0, int), element(1, float), element(2, string))
+/// Error([
+///   DecodeError(expected: "Int", found: "String", path: ["0"]),
+///   DecodeError(expected: "Float", found: "String", path: ["1"]),
+/// ])
+/// ```
+///
+pub fn decode3(
+  constructor: fn(t1, t2, t3) -> t,
+  decode1: Decoder(t1),
+  decode2: Decoder(t2),
+  decode3: Decoder(t3),
+) -> Decoder(t) {
+  fn(value) {
+    case decode1(value), decode2(value), decode3(value) {
+      Ok(a), Ok(b), Ok(c) -> Ok(constructor(a, b, c))
+      a, b, c ->
+        Error(list.flatten([all_errors(a), all_errors(b), all_errors(c)]))
+    }
+  }
+}
+
 fn all_errors(result: Result(a, List(DecodeError))) -> List(DecodeError) {
   case result {
     Ok(_) -> []
