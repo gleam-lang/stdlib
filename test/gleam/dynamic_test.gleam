@@ -866,3 +866,32 @@ pub fn decode4_test() {
     DecodeError(expected: "String", found: "Float", path: ["1"]),
   ]))
 }
+
+type Five(a, b, c, d, e) {
+  Five(a, b, c, d, e)
+}
+
+pub fn decode5_test() {
+  let decoder =
+    dynamic.decode5(
+      Five,
+      dynamic.element(0, dynamic.int),
+      dynamic.element(1, dynamic.string),
+      dynamic.element(2, dynamic.int),
+      dynamic.element(3, dynamic.int),
+      dynamic.element(4, dynamic.int),
+    )
+
+  #(1, "2", 3, 4, 5)
+  |> dynamic.from
+  |> decoder
+  |> should.equal(Ok(Five(1, "2", 3, 4, 5)))
+
+  #(1.3, 2.1, 3, 4, 5)
+  |> dynamic.from
+  |> decoder
+  |> should.equal(Error([
+    DecodeError(expected: "Int", found: "Float", path: ["0"]),
+    DecodeError(expected: "String", found: "Float", path: ["1"]),
+  ]))
+}
