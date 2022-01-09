@@ -925,3 +925,34 @@ pub fn decode6_test() {
     DecodeError(expected: "String", found: "Float", path: ["1"]),
   ]))
 }
+
+type Seven(a, b, c, d, e, f, g) {
+  Seven(a, b, c, d, e, f, g)
+}
+
+pub fn decode7_test() {
+  let decoder =
+    dynamic.decode7(
+      Seven,
+      dynamic.element(0, dynamic.int),
+      dynamic.element(1, dynamic.string),
+      dynamic.element(2, dynamic.int),
+      dynamic.element(3, dynamic.int),
+      dynamic.element(4, dynamic.int),
+      dynamic.element(5, dynamic.int),
+      dynamic.element(6, dynamic.int),
+    )
+
+  #(1, "2", 3, 4, 5, 6, 7)
+  |> dynamic.from
+  |> decoder
+  |> should.equal(Ok(Seven(1, "2", 3, 4, 5, 6, 7)))
+
+  #(1.3, 2.1, 3, 4, 5, 6, 7)
+  |> dynamic.from
+  |> decoder
+  |> should.equal(Error([
+    DecodeError(expected: "Int", found: "Float", path: ["0"]),
+    DecodeError(expected: "String", found: "Float", path: ["1"]),
+  ]))
+}

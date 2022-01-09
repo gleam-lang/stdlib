@@ -17,8 +17,8 @@
 - The decoder functions of the `dynamic` module now return multiple errors.
 - The `dynamic.any`, `dynamic.element` and `dynamic.tuple*` functions are now
   partially applied.
-- The `dynamic` module gains the `decode2`, `decode3`, `decode4`, `decode5`
-  functions.
+- The `dynamic` module gains the `decode2`, `decode3`, `decode4`, `decode5`,
+  `decode6`, `decode7` functions.
 - The `int` module gains the `digits` and `undigits` functions.
 
 ## v0.18.1 - 2021-12-19
