@@ -3,7 +3,7 @@
 ## v0.19.1 - 2022-01-09
 
 - The `dynamic.dynamic` function now returns a result.
-- The `dynamic.result` function is now partially applied.
+- The `dynamic.result` and `dynamic.list` functions are now partially applied.
 
 ## v0.19.0 - 2022-01-09
 

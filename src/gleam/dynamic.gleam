@@ -372,30 +372,33 @@ pub fn list(
 /// ## Examples
 ///
 /// ```gleam
-/// > option(from("Hello"), string)
+/// > from("Hello")
+/// > |> option(string)
 /// Ok(Some("Hello"))
 ///
-/// > option(from("Hello"), string)
+/// > from("Hello")
+/// > |> option(string)
 /// Ok(Some("Hello"))
 ///
-/// > option(from(atom.from_string("null")), string)
+/// > from(atom.from_string("null"))
+/// > |> option(string)
 /// Ok(None)
 ///
-/// > option(from(atom.from_string("nil")), string)
+/// > from(atom.from_string("nil"))
+/// > |> option(string)
 /// Ok(None)
 ///
-/// > option(from(atom.from_string("undefined")), string)
+/// > from(atom.from_string("undefined"))
+/// > |> option(string)
 /// Ok(None)
 ///
-/// > option(from(123), string)
+/// > from(123)
+/// > |> option(string)
 /// Error([DecodeError(expected: "BitString", found: "Int", path: [])])
 /// ```gleam
 ///
-pub fn optional(
-  from value: Dynamic,
-  of decode: Decoder(inner),
-) -> Result(Option(inner), DecodeErrors) {
-  decode_optional(value, decode)
+pub fn optional(of decode: Decoder(inner)) -> Decoder(Option(inner)) {
+  fn(value) { decode_optional(value, decode) }
 }
 
 if erlang {
