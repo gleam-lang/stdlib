@@ -260,7 +260,7 @@ if javascript {
     |> dynamic.from
     |> dynamic.field("Nope", dynamic.int)
     |> should.equal(Error([
-      DecodeError(expected: "object", found: "Result", path: []),
+      DecodeError(expected: "field", found: "nothing", path: ["Nope"]),
     ]))
   }
 }
@@ -289,22 +289,30 @@ pub fn field_test() {
   |> map.insert("ok", 3)
   |> dynamic.from
   |> dynamic.field("ok", dynamic.string)
-  |> should.be_error
+  |> should.equal(Error([
+    DecodeError(expected: "String", found: "Int", path: ["ok"]),
+  ]))
 
   map.new()
   |> dynamic.from
   |> dynamic.field("ok", dynamic.int)
-  |> should.be_error
+  |> should.equal(Error([
+    DecodeError(expected: "field", found: "nothing", path: ["ok"]),
+  ]))
 
   1
   |> dynamic.from
   |> dynamic.field("ok", dynamic.int)
-  |> should.be_error
+  |> should.equal(Error([
+    DecodeError(expected: "field", found: "nothing", path: ["ok"]),
+  ]))
 
   []
   |> dynamic.from
   |> dynamic.field("ok", dynamic.int)
-  |> should.be_error
+  |> should.equal(Error([
+    DecodeError(expected: "field", found: "nothing", path: ["ok"]),
+  ]))
 }
 
 pub fn element_test() {

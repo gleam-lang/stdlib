@@ -437,8 +437,9 @@ if javascript {
 ///
 pub fn field(named name: a, of inner_type: Decoder(t)) -> Decoder(t) {
   fn(value) {
-    try value = decode_field(value, name)
-    inner_type(value)
+    value
+    |> decode_field(name)
+    |> result.then(inner_type)
     |> map_errors(push_path(_, name))
   }
 }
