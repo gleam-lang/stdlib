@@ -4,6 +4,8 @@
 
 - Fixed a bug where `io.print` and `io.println` may print unicode characters
   incorrectly.
+- Fixed a bug where the `dynamic.field` function would return an incorrect error
+  value.
 
 ## v0.19.2 - 2022-01-09
 
