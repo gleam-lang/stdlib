@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Fixed a bug where `io.print` and `io.println` may print unicode characters
+  incorrectly.
+
 ## v0.19.2 - 2022-01-09
 
 - The `dynamic.dynamic` function is is no longer a thunk.
