@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.19.3 - 2022-01-14
 
 - Fixed a bug where `io.print` and `io.println` may print unicode characters
   incorrectly.
