@@ -15,10 +15,8 @@ pub fn print(string: String) -> Nil {
 }
 
 if erlang {
-  fn do_print(string: String) -> Nil {
-    erl_print("~s", [string])
-    Nil
-  }
+  external fn do_print(string: String) -> Nil =
+    "gleam_stdlib" "print"
 }
 
 if javascript {
@@ -39,10 +37,8 @@ pub fn println(string: String) -> Nil {
 }
 
 if erlang {
-  fn do_println(string: String) -> Nil {
-    erl_print("~ts\n", [string])
-    Nil
-  }
+  external fn do_println(string: String) -> Nil =
+    "gleam_stdlib" "println"
 }
 
 if javascript {
@@ -79,7 +75,7 @@ pub fn debug(term: anything) -> anything {
 
 if erlang {
   fn debug_print(term: anything) -> DoNotLeak {
-    erl_print("~tp\n", [term])
+    erlang_fwrite("~tp\n", [term])
   }
 }
 
@@ -91,6 +87,6 @@ if javascript {
 if erlang {
   external type DoNotLeak
 
-  external fn erl_print(String, List(a)) -> DoNotLeak =
+  external fn erlang_fwrite(String, List(a)) -> DoNotLeak =
     "io" "fwrite"
 }

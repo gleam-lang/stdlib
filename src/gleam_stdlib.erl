@@ -11,7 +11,7 @@
          bit_string_slice/3, decode_bit_string/1, compile_regex/2, regex_scan/2,
          percent_encode/1, percent_decode/1, regex_check/2, regex_split/2,
          base_decode64/1, parse_query/1, bit_string_concat/1, size_of_tuple/1,
-         decode_tuple/1, tuple_get/2, classify_dynamic/1]).
+         decode_tuple/1, tuple_get/2, classify_dynamic/1, print/1, println/1]).
 
 %% Taken from OTP's uri_string module
 -define(DEC2HEX(X),
@@ -303,17 +303,6 @@ uri_parse(String) ->
     case uri_string:parse(String) of
         {error, _, _} -> {error, nil};
         Uri ->
-        % #{
-        %     host := Host, path := Path, port := Port, query := Query, 
-        %     scheme := Scheme, userinfo := Userinfo
-        % } ->
-    % scheme: Option(String),
-    % userinfo: Option(String),
-    % host: Option(String),
-    % port: Option(Int),
-    % path: String,
-    % query: Option(String),
-    % fragment: Option(String),
             {ok, {uri,
                 maps_get_optional(Uri, scheme),
                 maps_get_optional(Uri, userinfo),
@@ -334,3 +323,11 @@ maps_get_or(Map, Key, Default) ->
     try maps:get(Key, Map)
     catch _:_ -> Default
     end.
+
+print(String) ->
+    io:put_chars(String),
+    nil.
+
+println(String) ->
+    io:put_chars([String, $\n]),
+    nil.
