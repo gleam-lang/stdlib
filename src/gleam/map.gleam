@@ -437,10 +437,10 @@ pub fn drop(from map: Map(k, v), drop disallowed_keys: List(k)) -> Map(k, v) {
 ///    > }
 ///    > let map = from_list([#("a", 0)])
 ///    >
-///    > update(map, "a" increment)
+///    > update(map, "a", increment)
 ///    from_list([#("a", 1)])
 ///
-///    > update(map, "b" increment)
+///    > update(map, "b", increment)
 ///    from_list([#("a", 0), #("b", 0)])
 ///
 pub fn update(
