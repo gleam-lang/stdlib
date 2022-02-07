@@ -675,8 +675,8 @@ pub fn utf_codepoint(value: Int) -> Result(UtfCodepoint, Nil) {
 /// ```
 ///
 /// ```gleam
-/// > to_option("")
-/// None
+/// > to_option("hats")
+/// Some("hats")
 /// ```
 ///
 pub fn to_option(s: String) -> Option(String) {
