@@ -246,7 +246,7 @@ if javascript {
 /// Checks to see whether a `Dynamic` value is a list, and returns that list if it
 /// is. The types of the elements are not checked.
 ///
-/// If you wish to decode all the elements in the list use the `list`
+/// If you wish to decode all the elements in the list use the `list` function
 /// instead.
 ///
 /// ## Examples
@@ -336,7 +336,7 @@ pub fn result(
 /// the list. The list is only decoded if all elements in the list can be
 /// successfully decoded using this function.
 ///
-/// If you do not wish to decode all the elements in the list use the `list`
+/// If you do not wish to decode all the elements in the list use the `shallow_list`
 /// function instead.
 ///
 /// ## Examples
