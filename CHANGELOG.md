@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- The `float` module gains the `loosely_compare` function.
+
 ## v0.19.3 - 2022-01-14
 
 - Fixed a bug where `io.print` and `io.println` may print unicode characters

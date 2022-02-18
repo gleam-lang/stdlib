@@ -77,6 +77,26 @@ pub fn compare_test() {
   |> should.equal(order.Gt)
 }
 
+pub fn loosely_compare_test() {
+  float.loosely_compare(10.2, 10.5, tolerating: 0.)
+  |> should.equal(order.Lt)
+
+  float.loosely_compare(10.2, with: 10.5, tolerating: 0.31)
+  |> should.equal(order.Eq)
+
+  float.loosely_compare(10.5, 10.2, 0.31)
+  |> should.equal(order.Eq)
+
+  float.loosely_compare(10.2, 10.5, 0.29)
+  |> should.equal(order.Lt)
+
+  float.loosely_compare(10.5, 10.2, 0.29)
+  |> should.equal(order.Gt)
+
+  float.loosely_compare(-10.2, -10.5, 0.31)
+  |> should.equal(order.Eq)
+}
+
 pub fn ceiling_test() {
   8.1
   |> float.ceiling
