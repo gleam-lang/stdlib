@@ -832,13 +832,14 @@ pub fn tuple6(
 ///
 /// ```gleam
 /// > import gleam/map
-/// > map(from(map.new()))
+///
+/// > map.new() |> from |> map(string, int)
 /// Ok(map.new())
 ///
-/// > map(from(1))
+/// > from(1) |> map(string, int)
 /// Error(DecodeError(expected: "Map", found: "Int", path: []))
 ///
-/// > map(from(""))
+/// > from("") |> map(string, int)
 /// Error(DecodeError(expected: "Map", found: "String", path: []))
 /// ```
 ///
