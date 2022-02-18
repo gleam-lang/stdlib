@@ -21,6 +21,10 @@ pub fn append_test() {
   <<1, 2>>
   |> bit_string.append(<<3, 4>>)
   |> should.equal(<<1, 2, 3, 4>>)
+
+  <<1, 2:4>>
+  |> bit_string.append(<<>>)
+  |> should.equal(<<1, 2:4>>)
 }
 
 pub fn concat_test() {
@@ -31,6 +35,10 @@ pub fn concat_test() {
   [<<1, 2>>, <<3>>, <<4>>]
   |> bit_string.concat
   |> should.equal(<<1, 2, 3, 4>>)
+
+  [<<1, 2:4>>]
+  |> bit_string.concat
+  |> should.equal(<<1, 2:4>>)
 }
 
 pub fn slice_test() {
