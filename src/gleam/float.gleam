@@ -69,6 +69,26 @@ pub fn compare(a: Float, with b: Float) -> Order {
   }
 }
 
+/// Compares two `Float`s within a tolerance.
+/// Keep in mind that as this are floats the tolerance won't be exact
+/// e.g. 5.3 - 5.0 is not exactly 0.3 in a float
+///
+/// ## Examples
+///    > loosely_compare(5.0, with: 5.3, tolerating: 0.5)
+///    Eq
+///
+pub fn loosely_compare(
+  a: Float,
+  with b: Float,
+  tolerating tolerance: Float,
+) -> Order {
+  let diff = absolute_value(a -. b)
+  case diff <=. tolerance {
+    True -> order.Eq
+    False -> compare(a, b)
+  }
+}
+
 /// Compares two `Float`s, returning the smaller of the two.
 ///
 /// ## Examples
