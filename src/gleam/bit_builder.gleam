@@ -31,7 +31,7 @@ if javascript {
 /// Create an empty `BitBuilder`. Useful as the start of a pipe chaning many
 /// builders together.
 ///
-pub fn new () -> BitBuilder {
+pub fn new() -> BitBuilder {
   do_concat([])
 }
 
