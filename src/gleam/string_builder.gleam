@@ -288,10 +288,10 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > from_strings(["a", "b"]) == new("ab")
+///    > from_strings(["a", "b"]) == from_string("ab")
 ///    False
 ///
-///    > is_equal(from_strings(["a", "b"]), new("ab"))
+///    > is_equal(from_strings(["a", "b"]), from_string("ab"))
 ///    True
 ///
 ///
@@ -313,10 +313,10 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > new("ok") |> is_empty
+///    > from_string("ok") |> is_empty
 ///    False
 ///
-///    > new("") |> is_empty
+///    > from_string("") |> is_empty
 ///    True
 ///
 ///    > from_strings([]) |> is_empty
