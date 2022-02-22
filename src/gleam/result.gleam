@@ -202,6 +202,28 @@ pub fn unwrap_error(result: Result(a, e), or default: e) -> e {
   }
 }
 
+/// Extracts the inner value from a result. Both the value and error must be of
+/// the same type.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > unwrap_both(Error(1))
+/// 1
+/// ```
+///
+/// ```gleam
+/// > unwrap_both(Ok(2))
+/// 2
+/// ```
+///
+pub fn unwrap_both(result: Result(a, a)) -> a {
+  case result {
+    Ok(a) -> a
+    Error(a) -> a
+  }
+}
+
 /// Transforms any error into `Error(Nil)`.
 ///
 /// ## Examples

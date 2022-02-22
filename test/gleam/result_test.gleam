@@ -97,6 +97,16 @@ pub fn unwrap_error_test() {
   |> should.equal(50)
 }
 
+pub fn unwrap_both_test() {
+  Error(1)
+  |> result.unwrap_both
+  |> should.equal(1)
+
+  Ok("yup")
+  |> result.unwrap_both
+  |> should.equal("yup")
+}
+
 pub fn lazy_unwrap_test() {
   Ok(1)
   |> result.lazy_unwrap(fn() { 50 })
