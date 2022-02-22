@@ -163,6 +163,24 @@ pub fn replace_error_test() {
   |> should.equal(Error("Invalid"))
 }
 
+pub fn replace_error_with_ok_test() {
+  Ok(Nil)
+  |> result.replace_error("Invalid")
+  |> should.equal(Ok(Nil))
+}
+
+pub fn replace_test() {
+  Ok(Nil)
+  |> result.replace("OK")
+  |> should.equal(Ok("OK"))
+}
+
+pub fn replace_with_ok_test() {
+  Error(Nil)
+  |> result.replace("Invalid")
+  |> should.equal(Error(Nil))
+}
+
 pub fn values_test() {
   result.values([Ok(1), Error(""), Ok(3)])
   |> should.equal([1, 3])

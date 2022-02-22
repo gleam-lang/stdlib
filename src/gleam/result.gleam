@@ -240,18 +240,61 @@ pub fn lazy_or(
 /// If any element is `Error` then returns the first error.
 ///
 /// ## Examples
-///    > all([Ok(1), Ok(2)])
-///    Ok([1, 2])
 ///
-///    > all([Ok(1), Error("e")])
-///    Error("e")
+/// ```gleam
+/// > all([Ok(1), Ok(2)])
+/// Ok([1, 2])
+/// ```
+///
+/// ```gleam
+/// > all([Ok(1), Error("e")])
+/// Error("e")
+/// ```gleam
+///
 pub fn all(results: List(Result(a, e))) -> Result(List(a), e) {
   list.try_map(results, fn(x) { x })
 }
 
+/// Replace the value within a result
+///
+/// ## Examples
+///
+/// ```gleam
+/// > replace(Ok(1), Nil)
+/// Ok(Nil)
+/// ```
+///
+/// ```gleam
+/// > replace(Error(1), Nil)
+/// Error(1)
+/// ```
+///
+pub fn replace(result: Result(a, e), value: b) -> Result(b, e) {
+  case result {
+    Ok(_) -> Ok(value)
+    Error(error) -> Error(error)
+  }
+}
+
+/// Replace the error within a result
+///
+/// ## Examples
+///
+/// ```gleam
+/// > replace_error(Error(1), Nil)
+/// Error(Nil)
+/// ```
+///
+/// ```gleam
+/// > replace_error(Ok(1), Nil)
+/// Ok(1)
+/// ```
+///
 pub fn replace_error(result: Result(a, e1), error: e2) -> Result(a, e2) {
-  result
-  |> map_error(fn(_) { error })
+  case result {
+    Ok(x) -> Ok(x)
+    Error(_) -> Error(error)
+  }
 }
 
 /// Given a list of results, returns only the values inside `Ok`.
