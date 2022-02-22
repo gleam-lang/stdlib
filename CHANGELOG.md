@@ -3,7 +3,7 @@
 ## Unreleased
 
 - The `float` module gains the `loosely_compare` function.
-- The `result` module gains the `replace` function.
+- The `result` module gains the `replace` and `unwrap_error` functions.
 
 ## v0.19.3 - 2022-01-14
 
