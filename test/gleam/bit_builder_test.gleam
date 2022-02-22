@@ -73,3 +73,9 @@ pub fn from_string_test() {
   |> bit_builder.to_bit_string
   |> should.equal(<<>>)
 }
+
+pub fn new_test() {
+  bit_builder.new()
+  |> bit_builder.to_bit_string
+  |> should.equal(<<>>)
+}

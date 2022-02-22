@@ -100,3 +100,9 @@ pub fn is_empty_test() {
   |> string_builder.is_empty
   |> should.be_true
 }
+
+pub fn new_test() {
+  string_builder.new()
+  |> string_builder.to_string
+  |> should.equal("")
+}
