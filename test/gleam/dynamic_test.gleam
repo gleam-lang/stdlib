@@ -1015,3 +1015,36 @@ pub fn decode8_test() {
     DecodeError(expected: "String", found: "Float", path: ["1"]),
   ]))
 }
+
+type Nine(a, b, c, d, e, f, g, h, i) {
+  Nine(a, b, c, d, e, f, g, h, i)
+}
+
+pub fn decode9_test() {
+  let decoder =
+    dynamic.decode9(
+      Nine,
+      dynamic.element(0, dynamic.int),
+      dynamic.element(1, dynamic.string),
+      dynamic.element(2, dynamic.int),
+      dynamic.element(3, dynamic.int),
+      dynamic.element(4, dynamic.int),
+      dynamic.element(5, dynamic.int),
+      dynamic.element(6, dynamic.int),
+      dynamic.element(7, dynamic.int),
+      dynamic.element(8, dynamic.int),
+    )
+
+  #(1, "2", 3, 4, 5, 6, 7, 8, 9)
+  |> dynamic.from
+  |> decoder
+  |> should.equal(Ok(Nine(1, "2", 3, 4, 5, 6, 7, 8, 9)))
+
+  #(1.3, 2.1, 3, 4, 5, 6, 7, 8, 9)
+  |> dynamic.from
+  |> decoder
+  |> should.equal(Error([
+    DecodeError(expected: "Int", found: "Float", path: ["0"]),
+    DecodeError(expected: "String", found: "Float", path: ["1"]),
+  ]))
+}
