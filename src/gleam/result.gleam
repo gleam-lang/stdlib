@@ -301,7 +301,7 @@ pub fn lazy_or(
 /// ```gleam
 /// > all([Ok(1), Error("e")])
 /// Error("e")
-/// ```gleam
+/// ```
 ///
 pub fn all(results: List(Result(a, e))) -> Result(List(a), e) {
   list.try_map(results, fn(x) { x })
