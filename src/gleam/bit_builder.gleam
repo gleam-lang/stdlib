@@ -28,6 +28,13 @@ if javascript {
   }
 }
 
+/// Create an empty `BitBuilder`. Useful as the start of a pipe chaning many
+/// builders together.
+///
+pub fn new () -> BitBuilder {
+  do_concat([])
+}
+
 /// Prepends a bit string to the start of a builder.
 ///
 /// Runs in constant time.
