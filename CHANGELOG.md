@@ -4,6 +4,8 @@
 
 - The `dynamic` module gains the `decode9` function.
 - The `float` module gains the `loosely_compare` function.
+- The `string_builder` module gains the `new` function.
+- The `bit_builder` module gains the `new` function.
 - The `result` module gains the `replace`, `unwrap_both` and `unwrap_error`
   functions.
 
