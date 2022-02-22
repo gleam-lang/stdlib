@@ -14,6 +14,13 @@
 ///
 pub external type StringBuilder
 
+/// Create an empty `StringBuilder`. Useful as the start of a pipe chaning many
+/// builders together.
+///
+pub fn new() -> StringBuilder {
+  do_from_strings([])
+}
+
 /// Prepends a `String` onto the start of some `StringBuilder`.
 ///
 /// Runs in constant time.
