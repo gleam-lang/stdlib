@@ -141,11 +141,15 @@ pub fn then(
 ///
 /// ## Examples
 ///
-///    > unwrap(Ok(1), 0)
-///    1
+/// ```gleam
+/// > unwrap(Ok(1), 0)
+/// 1
+/// ```
 ///
-///    > unwrap(Error(""), 0)
-///    0
+/// ```gleam
+/// > unwrap(Error(""), 0)
+/// 0
+/// ```
 ///
 pub fn unwrap(result: Result(a, e), or default: a) -> a {
   case result {
@@ -159,16 +163,42 @@ pub fn unwrap(result: Result(a, e), or default: a) -> a {
 ///
 /// ## Examples
 ///
-///    > lazy_unwrap(Ok(1), fn() { 0 })
-///    1
+/// ```gleam
+/// > lazy_unwrap(Ok(1), fn() { 0 })
+/// 1
+/// ```
 ///
-///    > lazy_unwrap(Error(""), fn() { 0 })
-///    0
+/// ```gleam
+/// > lazy_unwrap(Error(""), fn() { 0 })
+/// 0
+/// ```
 ///
 pub fn lazy_unwrap(result: Result(a, e), or default: fn() -> a) -> a {
   case result {
     Ok(v) -> v
     Error(_) -> default()
+  }
+}
+
+/// Extracts the `Error` value from a result, returning a default value if the result
+/// is an `Ok`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > unwrap_error(Error(1), 0)
+/// 1
+/// ```
+///
+/// ```gleam
+/// > unwrap_error(Ok(""), 0)
+/// 0
+/// ```
+///
+pub fn unwrap_error(result: Result(a, e), or default: e) -> e {
+  case result {
+    Ok(_) -> default
+    Error(e) -> e
   }
 }
 
