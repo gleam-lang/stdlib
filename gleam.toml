@@ -1,5 +1,5 @@
 name = "gleam_stdlib"
-version = "0.19.3"
+version = "0.20.0"
 licences = ["Apache-2.0"]
 description = "A standard library for the Gleam programming language"
 
