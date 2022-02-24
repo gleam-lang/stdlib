@@ -395,7 +395,7 @@ pub fn list(
 /// > from(123)
 /// > |> option(string)
 /// Error([DecodeError(expected: "BitString", found: "Int", path: [])])
-/// ```gleam
+/// ```
 ///
 pub fn optional(of decode: Decoder(inner)) -> Decoder(Option(inner)) {
   fn(value) { decode_optional(value, decode) }
