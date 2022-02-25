@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Fixed a bug where the `string.length` function would cause a JavaScript error
+  for empty strings.
+
 ## v0.20.0 - 2022-02-22
 
 - The `dynamic` module gains the `decode9` function.

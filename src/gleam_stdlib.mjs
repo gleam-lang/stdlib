@@ -66,6 +66,9 @@ export function string_reverse(string) {
 }
 
 export function string_length(string) {
+  if (string === "") {
+    return 0;
+  }
   let iterator = graphemes_iterator(string);
   if (iterator) {
     let i = 0;
