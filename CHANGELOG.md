@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Fixed a bug where record-based map keys would clash in JavaScript.
 - The `eunit` Erlang headers are no longer required to compile this package.
 - Fixed a bug where the `string.length` function would cause a JavaScript error
   for empty strings on older JavaScript runtimes.

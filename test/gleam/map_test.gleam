@@ -46,6 +46,12 @@ pub fn new_test() {
   |> should.equal([])
 }
 
+type Key {
+  A
+  B
+  C
+}
+
 pub fn get_test() {
   let proplist = [#(4, 0), #(1, 1)]
   let m = map.from_list(proplist)
@@ -60,6 +66,21 @@ pub fn get_test() {
 
   m
   |> map.get(2)
+  |> should.equal(Error(Nil))
+
+  let proplist = [#(A, 0), #(B, 1)]
+  let m = map.from_list(proplist)
+
+  m
+  |> map.get(A)
+  |> should.equal(Ok(0))
+
+  m
+  |> map.get(B)
+  |> should.equal(Ok(1))
+
+  m
+  |> map.get(C)
   |> should.equal(Error(Nil))
 }
 

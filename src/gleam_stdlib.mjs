@@ -279,7 +279,7 @@ class Map {
     if (existing) {
       return existing;
     } else if (value instanceof Object) {
-      let hashcode = JSON.stringify(value);
+      let hashcode = inspect(value);
       HASHCODE_CACHE.set(value, hashcode);
       return hashcode;
     } else {
