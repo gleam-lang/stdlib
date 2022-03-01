@@ -1,8 +1,6 @@
 -module(gleam_stdlib).
--include_lib("eunit/include/eunit.hrl").
 
--export([should_equal/2, should_not_equal/2, should_be_ok/1, should_be_error/1,
-         map_get/2, iodata_append/2, identity/1, decode_int/1, decode_bool/1,
+-export([map_get/2, iodata_append/2, identity/1, decode_int/1, decode_bool/1,
          decode_float/1, decode_thunk/1, decode_list/1, decode_option/2,
          decode_field/2, parse_int/1, parse_float/1, less_than/2,
          string_pop_grapheme/1, string_starts_with/2, wrap_list/1,
@@ -25,19 +23,6 @@
            ((X) >= $A) andalso ((X) =< $F) -> (X) - $A + 10;
            ((X) >= $a) andalso ((X) =< $f) -> (X) - $a + 10
         end).
-
-should_equal(Actual, Expected) -> 
-    ?assertEqual(Expected, Actual),
-    nil.
-should_not_equal(Actual, Expected) -> 
-    ?assertNotEqual(Expected, Actual),
-    nil.
-should_be_ok(A) -> 
-    ?assertMatch({ok, _}, A),
-    nil.
-should_be_error(A) -> 
-    ?assertMatch({error, _}, A),
-    nil.
 
 map_get(Map, Key) ->
     case maps:find(Key, Map) of

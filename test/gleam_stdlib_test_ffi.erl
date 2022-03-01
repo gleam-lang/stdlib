@@ -1,6 +1,11 @@
 -module(gleam_stdlib_test_ffi).
 
--export([main/0]).
+-export([
+    main/0, should_equal/2, should_not_equal/2, should_be_ok/1,
+    should_be_error/1
+]).
+
+-include_lib("eunit/include/eunit.hrl").
 
 main() ->
     Options = [
@@ -20,3 +25,16 @@ filepath_to_module(Path0) ->
     Path4 = string:replace(Path3, "/", "@", all),
     Path5 = list_to_binary(Path4),
     binary_to_atom(Path5).
+
+should_equal(Actual, Expected) -> 
+    ?assertEqual(Expected, Actual),
+    nil.
+should_not_equal(Actual, Expected) -> 
+    ?assertNotEqual(Expected, Actual),
+    nil.
+should_be_ok(A) -> 
+    ?assertMatch({ok, _}, A),
+    nil.
+should_be_error(A) -> 
+    ?assertMatch({error, _}, A),
+    nil.

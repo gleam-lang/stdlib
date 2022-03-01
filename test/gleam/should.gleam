@@ -6,16 +6,16 @@
 
 if erlang {
   pub external fn equal(a, a) -> Nil =
-    "gleam_stdlib" "should_equal"
+    "gleam_stdlib_test_ffi" "should_equal"
 
   pub external fn not_equal(a, a) -> Nil =
-    "gleam_stdlib" "should_not_equal"
+    "gleam_stdlib_test_ffi" "should_not_equal"
 
   pub external fn be_ok(Result(a, b)) -> Nil =
-    "gleam_stdlib" "should_be_ok"
+    "gleam_stdlib_test_ffi" "should_be_ok"
 
   pub external fn be_error(Result(a, b)) -> Nil =
-    "gleam_stdlib" "should_be_error"
+    "gleam_stdlib_test_ffi" "should_be_error"
 }
 
 if javascript {
