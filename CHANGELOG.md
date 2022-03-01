@@ -2,8 +2,9 @@
 
 ## Unreleased
 
+- The `eunit` Erlang headers are no longer required to compile this package.
 - Fixed a bug where the `string.length` function would cause a JavaScript error
-  for empty strings.
+  for empty strings on older JavaScript runtimes.
 
 ## v0.20.0 - 2022-02-22
 
