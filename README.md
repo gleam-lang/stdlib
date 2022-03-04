@@ -11,7 +11,7 @@ Documentation available on [HexDocs](https://hexdocs.pm/gleam_stdlib/).
 
 Add `gleam_stdlib` to your Gleam project.
 
-```shell
+```sh
 gleam add gleam_stdlib
 ```
 
@@ -19,7 +19,7 @@ gleam add gleam_stdlib
 
 Import the modules you want to use and write some code!
 
-```rust
+```gleam
 import gleam/string
 import gleam/list.{contains}
 
