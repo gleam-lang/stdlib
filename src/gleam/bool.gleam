@@ -200,3 +200,20 @@ pub fn to_int(bool: Bool) -> Int {
     True -> 1
   }
 }
+
+/// Returns a string representation of the given bool.
+///
+/// ## Examples
+///
+///    > to_string(True)
+///    "True"
+///
+///    > to_string(False)
+///    "False"
+///
+pub fn to_string(bool: Bool) -> String {
+  case bool {
+    False -> "False"
+    True -> "True"
+  }
+}
