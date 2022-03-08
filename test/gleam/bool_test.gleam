@@ -115,3 +115,11 @@ pub fn to_int_test() {
   bool.to_int(False)
   |> should.equal(0)
 }
+
+pub fn to_string_test() {
+  bool.to_string(True)
+  |> should.equal("True")
+
+  bool.to_string(False)
+  |> should.equal("False")
+}
