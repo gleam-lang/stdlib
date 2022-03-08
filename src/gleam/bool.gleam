@@ -211,6 +211,14 @@ pub fn to_int(bool: Bool) -> Int {
 ///    > to_string(False)
 ///    "False"
 ///
+///    > import gleam/string
+///    > string.lowercase(to_string(True))
+///    "true"
+///
+///    > import gleam/string
+///    > string.lowercase(to_string(False))
+///    "false"
+///
 pub fn to_string(bool: Bool) -> String {
   case bool {
     False -> "False"
