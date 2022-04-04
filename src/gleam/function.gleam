@@ -52,9 +52,18 @@ pub fn identity(x: a) -> a {
   x
 }
 
-/// A function that takes a single argument and returns a new function that
+/// Takes a single argument and returns a new function that
 /// ignores its argument and always returns the input value.
 ///
 pub fn constant(value: a) -> fn(b) -> a {
   fn(_) { value }
+}
+
+/// Takes a function with a single argument
+/// calls that function with that argument 
+/// and returns that argument instead of the function return value.
+/// Useful for running synchronous side effects in a pipeline.
+pub fn tap (arg, effect: fn (a) -> b) -> a {
+  effect(arg)
+  arg
 }
