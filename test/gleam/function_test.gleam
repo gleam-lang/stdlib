@@ -109,7 +109,7 @@ pub fn identity_test() {
   |> should.equal(#(1, 2.0))
 }
 
-pub fn always_test() {
+pub fn constant_test() {
   #(1, 2)
   |> pair.map_first(function.constant(42))
   |> should.equal(#(42, 2))
