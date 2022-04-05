@@ -7,6 +7,7 @@
 - Fixed a bug where the `string.length` function would cause a JavaScript error
   for empty strings on older JavaScript runtimes.
 - The `bool` module gains the `to_string` function.
+- The `function` module gains the `tap` function.
 
 ## v0.20.0 - 2022-02-22
 
@@ -64,6 +65,7 @@
 - The internal `gleam_stdlib.js` module has been renamed to `gleam_stdlib.mjs`.
 
 ## v0.18.0 - 2021-11-23
+
 ## v0.18.0-rc1 - 2021-11-23
 
 - Converted to use the Gleam build tool, not rebar3.

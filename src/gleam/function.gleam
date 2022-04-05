@@ -63,7 +63,7 @@ pub fn constant(value: a) -> fn(b) -> a {
 /// calls that function with that argument 
 /// and returns that argument instead of the function return value.
 /// Useful for running synchronous side effects in a pipeline.
-pub fn tap (arg: a, effect: fn (a) -> b) -> a {
+pub fn tap(arg: a, effect: fn(a) -> b) -> a {
   effect(arg)
   arg
 }
