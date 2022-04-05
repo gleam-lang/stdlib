@@ -6,6 +6,7 @@ import gleam/pair
 import gleam/list
 import gleam/result
 import gleam/string
+import gleam/io
 
 pub fn compose_test() {
   let add_two = fn(int: Int) { int + 2 }
@@ -113,4 +114,10 @@ pub fn constant_test() {
   #(1, 2)
   |> pair.map_first(function.constant(42))
   |> should.equal(#(42, 2))
+}
+
+pub fn tap_test() {
+  "Thanks Joe & Louis"
+  |> function.tap(io.print)
+  |> should.equal("Thanks Joe & Louis")
 }
