@@ -488,6 +488,15 @@ if javascript {
   }
 }
 
+/// Prefixes an item to a list. This can also be done using the dedicated
+/// syntax instead
+///
+///    let new_list = [1, ..existing_list]
+///
+pub fn prepend(to list: List(a), item: a) -> List(a) {
+  [item, ..list]
+}
+
 fn do_flatten(lists: List(List(a)), acc: List(a)) -> List(a) {
   case lists {
     [] -> acc
