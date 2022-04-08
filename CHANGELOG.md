@@ -11,7 +11,7 @@
 - The `float` module gains the `random` function.
 - The `int` module gains the `random` function.
 - The JavaScript target implementation of the `string.replace` received
-  fallback code for NodeJS 14 compatibility.
+- The `list` module gains a `prepend` function. (#284)
 
 ## v0.20.0 - 2022-02-22
 
