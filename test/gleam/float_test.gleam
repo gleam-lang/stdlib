@@ -302,11 +302,22 @@ pub fn product_test() {
 }
 
 pub fn random_test() {
-  let random = float.random()
-
-  { random >=. 0. }
+  { float.random() >=. 0. }
   |> should.be_true()
+}
 
-  { random <. 1. }
-  |> should.be_true()
+if erlang {
+  pub fn random_test2() {
+    { float.random() <. 1. }
+    |> should.be_true()
+  }
+}
+
+if javascript {
+  // Due to IEEE 754 floating point numbers
+  // the ceiling may be rounded to 1.0 even if it should not
+  pub fn random_test2() {
+    { float.random() <=. 1. }
+    |> should.be_true()
+  }
 }
