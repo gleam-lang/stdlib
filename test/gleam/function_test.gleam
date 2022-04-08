@@ -118,6 +118,9 @@ pub fn constant_test() {
 
 pub fn tap_test() {
   "Thanks Joe & Louis"
-  |> function.tap(io.print)
+  |> function.tap(fn(s: String) {
+    string.append(s, "... and Jose!")
+    Nil
+  })
   |> should.equal("Thanks Joe & Louis")
 }
