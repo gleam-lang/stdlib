@@ -301,12 +301,12 @@ pub fn product_test() {
   |> should.equal(33.6)
 }
 
-pub fn random_seed_test() {
-  let random_seed = float.random_seed()
+pub fn random_test() {
+  let random = float.random()
 
-  { random_seed >=. 0.0 }
-  |> should.be_true
+  { random >=. 0. }
+  |> should.be_true()
 
-  { random_seed <. 1.0 }
-  |> should.be_true
+  { random <. 1. }
+  |> should.be_true()
 }

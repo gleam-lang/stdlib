@@ -321,18 +321,18 @@ fn do_product(numbers: List(Float), initial: Float) -> Float {
   }
 }
 
-/// Returns a random seed where 0.0 =< random_seed < 1.0
+/// Returns a random value where 0.0 =< value < 1.0
 ///
-pub fn random_seed() -> Float {
-  do_random_seed()
+pub fn random() -> Float {
+  do_random()
 }
 
 if erlang {
+  // Returns a random float uniformly distributed in the value range
   // 0.0 =< X < 1.0 and updates the state in the process dictionary.
-  /// Returns a random float uniformly distributed in the value range
   /// See: <https://www.erlang.org/doc/man/rand.html#uniform-0>
   ///
-  external fn do_random_seed() -> Float =
+  external fn do_random() -> Float =
     "rand" "uniform"
 }
 
@@ -344,6 +344,6 @@ if javascript {
   /// Note that as numbers in JavaScript are IEEE 754 floating point numbers
   /// See: <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random>
   ///
-  external fn do_random_seed() -> Float =
-    "math" "random"
+  external fn do_random() -> Float =
+    "../gleam_stdlib.mjs" "random"
 }
