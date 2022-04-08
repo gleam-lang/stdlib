@@ -300,3 +300,13 @@ pub fn product_test() {
   float.product([2.5, 3.2, 4.2])
   |> should.equal(33.6)
 }
+
+pub fn random_seed_test() {
+  let random_seed = float.random_seed()
+
+  { random_seed >=. 0.0 }
+  |> should.be_true
+
+  { random_seed <. 1.0 }
+  |> should.be_true
+}
