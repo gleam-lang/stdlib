@@ -301,13 +301,13 @@ pub fn product_test() {
   |> should.equal(33.6)
 }
 
-pub fn random_test() {
+pub fn random_lower_boundary_test() {
   { float.random() >=. 0. }
   |> should.be_true()
 }
 
 if erlang {
-  pub fn random_test2() {
+  pub fn random_upper_boundary_test() {
     { float.random() <. 1. }
     |> should.be_true()
   }
@@ -316,7 +316,7 @@ if erlang {
 if javascript {
   // Due to IEEE 754 floating point numbers
   // the ceiling may be rounded to 1.0 even if it should not
-  pub fn random_test2() {
+  pub fn random_upper_boundary_test() {
     { float.random() <=. 1. }
     |> should.be_true()
   }
