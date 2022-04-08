@@ -320,3 +320,30 @@ fn do_product(numbers: List(Float), initial: Float) -> Float {
     [x, ..rest] -> do_product(rest, x *. initial)
   }
 }
+
+/// Returns a random seed where 0.0 =< random_seed < 1.0
+///
+pub fn random_seed() -> Float {
+  do_random_seed()
+}
+
+if erlang {
+  // 0.0 =< X < 1.0 and updates the state in the process dictionary.
+  /// Returns a random float uniformly distributed in the value range
+  /// See: <https://www.erlang.org/doc/man/rand.html#uniform-0>
+  ///
+  external fn do_random_seed() -> Float =
+    "rand" "uniform"
+}
+
+if javascript {
+  // with round-to-nearest-even behavior, the ranges claimed for the functions below
+  // (excluding the one for Math.random() itself) aren't exact.
+  // If extremely large bounds are chosen (2^53 or higher),
+  // it's possible in extremely rare cases to calculate the usually-excluded upper bound.
+  /// Note that as numbers in JavaScript are IEEE 754 floating point numbers
+  /// See: <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random>
+  ///
+  external fn do_random_seed() -> Float =
+    "math" "random"
+}
