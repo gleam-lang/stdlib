@@ -9,7 +9,7 @@
 - The `bool` module gains the `to_string` function.
 - The `function` module gains the `tap` function.
 - The JavaScript target implementation of the `string.replace` received
-  fallback code for NodeJS 14 compatibility.
+- The `list` module gains a `prepend` function. (#284)
 
 ## v0.20.0 - 2022-02-22
 
