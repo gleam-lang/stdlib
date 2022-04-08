@@ -246,6 +246,10 @@ export function power(base, exponent) {
   return Math.pow(base, exponent);
 }
 
+export function random() {
+  return Math.random();
+}
+
 export function bit_string_slice(bits, position, length) {
   let start = Math.min(position, position + length);
   let end = Math.max(position, position + length);
