@@ -304,12 +304,16 @@ pub fn product_test() {
 pub fn random_lower_boundary_test() {
   { float.random() >=. 0. }
   |> should.be_true()
+  { float.random() <. 0. }
+  |> should.be_false()
 }
 
 if erlang {
   pub fn random_upper_boundary_test() {
     { float.random() <. 1. }
     |> should.be_true()
+    { float.random() >=. 1. }
+    |> should.be_false()
   }
 }
 
@@ -319,5 +323,7 @@ if javascript {
   pub fn random_upper_boundary_test() {
     { float.random() <=. 1. }
     |> should.be_true()
+    { float.random() >. 1. }
+    |> should.be_false()
   }
 }
