@@ -329,8 +329,8 @@ pub fn random_uniform() -> Float {
 }
 
 if erlang {
-  // Returns a random float uniformly distributed in the value range
-  // 0.0 =< X < 1.0 and updates the state in the process dictionary.
+  /// Returns a random float uniformly distributed in the value range
+  /// 0.0 =< X < 1.0 and updates the state in the process dictionary.
   /// See: <https://www.erlang.org/doc/man/rand.html#uniform-0>
   ///
   external fn do_random_uniform() -> Float =
@@ -338,10 +338,10 @@ if erlang {
 }
 
 if javascript {
-  // with round-to-nearest-even behavior, the ranges claimed for the functions below
-  // (excluding the one for Math.random() itself) aren't exact.
-  // If extremely large bounds are chosen (2^53 or higher),
-  // it's possible in extremely rare cases to calculate the usually-excluded upper bound.
+  /// With round-to-nearest-even behavior, the ranges claimed for the functions below
+  /// (excluding the one for Math.random() itself) aren't exact.
+  /// If extremely large bounds are chosen (2^53 or higher),
+  /// it's possible in extremely rare cases to calculate the usually-excluded upper bound.
   /// Note that as numbers in JavaScript are IEEE 754 floating point numbers
   /// See: <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random>
   ///
@@ -354,5 +354,6 @@ pub fn random_between(min: Float, max: Float) -> Float {
   // return Math.floor(Math.random() * (max - min + 1) + min); // The maximum is/should-be exclusive
   // ```
   // See: <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#getting_a_random_number_between_two_values>
+  //
   random_uniform() *. { max -. min } +. min
 }
