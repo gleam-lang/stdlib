@@ -391,7 +391,7 @@ pub fn random_below(max: Int) -> Int {
   float.random_uniform() *. to_float(max)
   |> float.floor()
   |> float.round()
-  // Does `float.round() `affect random distribution uniformity?
+  // TODO: Does `float.round() `affect random distribution uniformity?
 }
 
 pub fn random_between(min: Int, max: Int) -> Int {
@@ -404,5 +404,5 @@ pub fn random_between(min: Int, max: Int) -> Int {
   float.random_between(to_float(min), to_float(max))
   |> float.floor()
   |> float.round()
-  // Does float.round() affect random distribution uniformity?
+  // TODO: Does float.round() affect random distribution uniformity?
 }
