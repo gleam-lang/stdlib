@@ -302,18 +302,29 @@ pub fn product_test() {
 }
 
 pub fn random_lower_boundary_test() {
-  { float.random_uniform() >=. 0. }
-  |> should.be_true()
-  { float.random_uniform() <. 0. }
-  |> should.be_false()
+  let one_random_lower_boundary_test_set = {
+    { float.random_uniform() >=. 0. }
+    |> should.be_true()
+    { float.random_uniform() <. 0. }
+    |> should.be_false()
+  }
+  list.range(0, 100)
+  |> iterator.from_list
+  |> iterator.fold(Nil, one_random_lower_boundary_test_set)
 }
 
 if erlang {
   pub fn random_upper_boundary_test() {
-    { float.random_uniform() <. 1. }
-    |> should.be_true()
-    { float.random_uniform() >=. 1. }
-    |> should.be_false()
+    let one_random_upper_boundary_test_set = fn(_acc, _e) {
+      { float.random_uniform() <. 1. }
+      |> should.be_true()
+      { float.random_uniform() >=. 1. }
+      |> should.be_false()
+    }
+
+    list.range(0, 100)
+    |> iterator.from_list
+    |> iterator.fold(Nil, one_random_upper_boundary_test_set)
   }
 }
 
@@ -321,9 +332,15 @@ if javascript {
   // Due to IEEE 754 floating point numbers
   // the ceiling may be rounded to 1.0 even if it should not
   pub fn random_upper_boundary_test() {
-    { float.random_uniform() <=. 1. }
-    |> should.be_true()
-    { float.random_uniform() >. 1. }
-    |> should.be_false()
+    let one_random_upper_boundary_test_set = fn(_acc, _e) {
+      { float.random_uniform() <=. 1. }
+      |> should.be_true()
+      { float.random_uniform() >. 1. }
+      |> should.be_false()
+    }
+
+    list.range(0, 100)
+    |> iterator.from_list
+    |> iterator.fold(Nil, one_random_upper_boundary_test_set)
   }
 }
