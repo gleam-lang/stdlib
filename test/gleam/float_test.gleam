@@ -302,17 +302,17 @@ pub fn product_test() {
 }
 
 pub fn random_lower_boundary_test() {
-  { float.random() >=. 0. }
+  { float.random_uniform() >=. 0. }
   |> should.be_true()
-  { float.random() <. 0. }
+  { float.random_uniform() <. 0. }
   |> should.be_false()
 }
 
 if erlang {
   pub fn random_upper_boundary_test() {
-    { float.random() <. 1. }
+    { float.random_uniform() <. 1. }
     |> should.be_true()
-    { float.random() >=. 1. }
+    { float.random_uniform() >=. 1. }
     |> should.be_false()
   }
 }
@@ -321,9 +321,9 @@ if javascript {
   // Due to IEEE 754 floating point numbers
   // the ceiling may be rounded to 1.0 even if it should not
   pub fn random_upper_boundary_test() {
-    { float.random() <=. 1. }
+    { float.random_uniform() <=. 1. }
     |> should.be_true()
-    { float.random() >. 1. }
+    { float.random_uniform() >. 1. }
     |> should.be_false()
   }
 }

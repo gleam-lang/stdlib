@@ -1,6 +1,8 @@
 import gleam/should
 import gleam/int
 import gleam/order
+import gleam/list
+import gleam/iterator.{repeat}
 
 pub fn absolute_value_test() {
   123
@@ -315,4 +317,56 @@ pub fn undigits_test() {
 
   int.undigits([1, 1, 2], 2)
   |> should.equal(Error(int.InvalidBase))
+}
+
+pub fn random_below_test() {
+  let do_random_below_test = fn(_acc, _e) {
+    int.random_below(0)
+    |> should.equal(0)
+
+    int.random_below(-1)
+    |> list.contains([-1], _)
+    |> should.be_true
+
+    int.random_below(1)
+    |> list.contains([0], _)
+    |> should.be_true
+
+    int.random_below(2)
+    |> list.contains([0, 1], _)
+    |> should.be_true
+
+    int.random_below(3)
+    |> list.contains([0, 1, 2], _)
+    |> should.be_true
+
+    int.random_below(4)
+    |> list.contains([0, 1, 2, 3], _)
+    |> should.be_true
+  }
+  list.range(0, 100)
+  |> iterator.from_list
+  |> iterator.fold(Nil, do_random_below_test)
+}
+
+pub fn random_between_test() {
+  let do_random_between_test = fn(_acc, _e) {
+    int.random_between(0, 0)
+    |> should.equal(0)
+
+    int.random_between(-1, 0)
+    |> list.contains([-1, 0], _)
+    |> should.be_true
+
+    int.random_between(-1, 1)
+    |> list.contains([-1, 0], _)
+    |> should.be_true
+
+    int.random_between(-1, 2)
+    |> list.contains([-1, 0, 1], _)
+    |> should.be_true
+  }
+  list.range(0, 100)
+  |> iterator.from_list
+  |> iterator.fold(Nil, do_random_between_test)
 }
