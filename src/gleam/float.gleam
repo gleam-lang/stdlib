@@ -321,10 +321,11 @@ fn do_product(numbers: List(Float), initial: Float) -> Float {
   }
 }
 
-/// Returns a random value where 0.0 =< value < 1.0
+/// Returns a uniform random number
+/// Thus where 0.0 =< value < 1.0
 ///
-pub fn random() -> Float {
-  do_random()
+pub fn random_uniform() -> Float {
+  do_random_uniform()
 }
 
 if erlang {
@@ -332,7 +333,7 @@ if erlang {
   // 0.0 =< X < 1.0 and updates the state in the process dictionary.
   /// See: <https://www.erlang.org/doc/man/rand.html#uniform-0>
   ///
-  external fn do_random() -> Float =
+  external fn do_random_uniform() -> Float =
     "rand" "uniform"
 }
 
@@ -344,6 +345,14 @@ if javascript {
   /// Note that as numbers in JavaScript are IEEE 754 floating point numbers
   /// See: <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random>
   ///
-  external fn do_random() -> Float =
-    "../gleam_stdlib.mjs" "random"
+  external fn do_random_uniform() -> Float =
+    "../gleam_stdlib.mjs" "random_uniform"
+}
+
+pub fn random_between(min: Float, max: Float) -> Float {
+  // ```javascript
+  // return Math.floor(Math.random() * (max - min + 1) + min); // The maximum is/shuould-be exclusive
+  // ```
+  // See: <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#getting_a_random_number_between_two_values>
+  random_uniform() *. { max -. min } +. min
 }

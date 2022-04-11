@@ -1,4 +1,6 @@
 import gleam/order.{Order}
+// import gleam/float.{floor, parse, random}
+import gleam/float
 
 /// Returns the absolute value of the input.
 ///
@@ -324,7 +326,7 @@ fn do_product(numbers: List(Int), initial: Int) -> Int {
   }
 }
 
-/// Splits an integer into its digit representation in the specified base 
+/// Splits an integer into its digit representation in the specified base
 ///
 /// ## Examples
 ///
@@ -379,4 +381,28 @@ fn do_undigits(
     [digit, ..] if digit >= base -> Error(InvalidBase)
     [digit, ..rest] -> do_undigits(rest, base, acc * base + digit)
   }
+}
+
+pub fn random_below(max: Int) -> Int {
+  // ```javascript
+  // return Math.floor(rand * max);
+  // ```
+  // See: <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random>
+  float.random_uniform() *. to_float(max)
+  |> float.floor()
+  |> float.round()
+  // Does `float.round() `affect random distribution uniformity?
+}
+
+pub fn random_between(min: Int, max: Int) -> Int {
+  // ```javascript
+  // min = Math.ceil(min);
+  // max = Math.floor(max);
+  // return Math.floor(Math.random() * (max - min + 1) + min); //The maximum is
+  // ```
+  // See: <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#getting_a_random_integer_between_two_values>
+  float.random_between(to_float(min), to_float(max))
+  |> float.floor()
+  |> float.round()
+  // Does float.round() affect random distribution uniformity?
 }

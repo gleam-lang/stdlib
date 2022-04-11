@@ -246,7 +246,7 @@ export function power(base, exponent) {
   return Math.pow(base, exponent);
 }
 
-export function random() {
+export function random_uniform() {
   return Math.random();
 }
 
