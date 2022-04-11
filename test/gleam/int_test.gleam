@@ -320,7 +320,7 @@ pub fn undigits_test() {
 }
 
 pub fn random_below_test() {
-  let do_random_below_test = fn(_acc, _e) {
+  let one_random_below_test_set = fn(_acc, _e) {
     int.random_below(0)
     |> should.equal(0)
 
@@ -344,13 +344,14 @@ pub fn random_below_test() {
     |> list.contains([0, 1, 2, 3], _)
     |> should.be_true
   }
+
   list.range(0, 100)
   |> iterator.from_list
-  |> iterator.fold(Nil, do_random_below_test)
+  |> iterator.fold(Nil, one_random_below_test_set)
 }
 
 pub fn random_between_test() {
-  let do_random_between_test = fn(_acc, _e) {
+  let one_random_between_test_set = fn(_acc, _e) {
     int.random_between(0, 0)
     |> should.equal(0)
 
@@ -366,7 +367,8 @@ pub fn random_between_test() {
     |> list.contains([-1, 0, 1], _)
     |> should.be_true
   }
+
   list.range(0, 100)
   |> iterator.from_list
-  |> iterator.fold(Nil, do_random_between_test)
+  |> iterator.fold(Nil, one_random_between_test_set)
 }
