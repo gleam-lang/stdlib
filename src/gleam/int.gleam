@@ -1,5 +1,4 @@
 import gleam/order.{Order}
-// import gleam/float.{floor, parse, random}
 import gleam/float
 
 /// Returns the absolute value of the input.
@@ -383,26 +382,25 @@ fn do_undigits(
   }
 }
 
-pub fn random_below(max: Int) -> Int {
-  // ```javascript
-  // return Math.floor(rand * max);
-  // ```
-  // See: <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random>
-  float.random_uniform() *. to_float(max)
-  |> float.floor()
-  |> float.round()
-  // TODO: Does `float.round() `affect random distribution uniformity?
-}
-
 pub fn random_between(min: Int, max: Int) -> Int {
   // ```javascript
   // min = Math.ceil(min);
   // max = Math.floor(max);
-  // return Math.floor(Math.random() * (max - min + 1) + min); //The maximum is inclusive and the minimum is inclusive
+  // return Math.floor(Math.random() * (max - min) + min); // The minimum is inclusive and the maximum is exclusive
   // ```
   // See: <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#getting_a_random_integer_between_two_values>
-  float.random_between(to_float(min), to_float(max))
+  let min =
+    to_float(min)
+    |> float.ceiling()
+  let max =
+    to_float(max)
+    |> float.floor()
+
+  float.random_between(min, max)
   |> float.floor()
   |> float.round()
-  // TODO: Does float.round() affect random distribution uniformity?
+}
+
+pub fn random_below(max: Int) -> Int {
+  random_between(0, max)
 }
