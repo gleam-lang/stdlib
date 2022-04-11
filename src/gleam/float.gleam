@@ -338,22 +338,19 @@ if erlang {
 }
 
 if javascript {
-  /// With round-to-nearest-even behavior, the ranges claimed for the functions below
-  /// (excluding the one for Math.random() itself) aren't exact.
-  /// If extremely large bounds are chosen (2^53 or higher),
-  /// it's possible in extremely rare cases to calculate the usually-excluded upper bound.
-  /// Note that as numbers in JavaScript are IEEE 754 floating point numbers
-  /// See: <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random>
-  ///
   external fn do_random_uniform() -> Float =
     "../gleam_stdlib.mjs" "random_uniform"
 }
 
 pub fn random_between(min: Float, max: Float) -> Float {
   // ```javascript
-  // return Math.floor(Math.random() * (max - min + 1) + min); // The maximum is/should-be exclusive
+  // return Math.random() * (max - min) + min; // The minimum is inclusive and the maximum is exclusive
   // ```
   // See: <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#getting_a_random_number_between_two_values>
   //
   random_uniform() *. { max -. min } +. min
+}
+
+pub fn random_below(max: Float) -> Float {
+  random_uniform() *. max
 }
