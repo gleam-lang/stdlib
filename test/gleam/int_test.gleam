@@ -2,7 +2,7 @@ import gleam/should
 import gleam/int
 import gleam/order
 import gleam/list
-import gleam/iterator.{repeat}
+import gleam/iterator
 
 pub fn absolute_value_test() {
   123

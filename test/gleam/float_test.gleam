@@ -1,6 +1,8 @@
 import gleam/should
 import gleam/float
 import gleam/order
+import gleam/list
+import gleam/iterator
 
 pub fn parse_test() {
   "1.23"
@@ -302,11 +304,12 @@ pub fn product_test() {
 }
 
 pub fn random_lower_boundary_test() {
-  let one_random_lower_boundary_test_set = {
+  let one_random_lower_boundary_test_set = fn(_acc, _e) {
     { float.random_uniform() >=. 0. }
     |> should.be_true()
     { float.random_uniform() <. 0. }
     |> should.be_false()
+    Nil
   }
   list.range(0, 100)
   |> iterator.from_list
@@ -320,6 +323,7 @@ if erlang {
       |> should.be_true()
       { float.random_uniform() >=. 1. }
       |> should.be_false()
+      Nil
     }
 
     list.range(0, 100)
@@ -337,6 +341,7 @@ if javascript {
       |> should.be_true()
       { float.random_uniform() >. 1. }
       |> should.be_false()
+      Nil
     }
 
     list.range(0, 100)
