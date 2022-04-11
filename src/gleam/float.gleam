@@ -342,15 +342,42 @@ if javascript {
     "../gleam_stdlib.mjs" "random_uniform"
 }
 
-pub fn random_between(min: Float, max: Float) -> Float {
+import gleam/io
+
+pub fn random_between(boundary_a: Float, boundary_b: Float) -> Float {
   // ```javascript
   // return Math.random() * (max - min) + min; // The minimum is inclusive and the maximum is exclusive
   // ```
   // See: <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#getting_a_random_number_between_two_values>
   //
-  random_uniform() *. { max -. min } +. min
+  case boundary_a, boundary_b {
+    a, b if a <. 0.0 && b == 0.0 -> {
+      io.debug("a is neg, b is 0.0")
+      let a = absolute_value(a)
+      // a1 prohibits variable 'A@1' is unbound {A, B} when (A@1 < 0.0) andalso (B@1 =:= 0.0) ->
+      let a = absolute_value(b)
+      random_uniform() *. a
+      |> negate()
+    }
+    a, b if a == 0.0 && b <. 0.0 -> {
+      io.debug("a 0.0, b is neg")
+      let a1 = absolute_value(a)
+      let b1 = absolute_value(b)
+      random_uniform() *. { a1 -. b1 } +. a1
+      |> negate()
+    }
+    a, b if a <. b -> {
+      io.debug("a is smaller than b")
+      random_uniform() *. { b -. a } +. b
+    }
+    a, b if a >. b -> {
+      io.debug("b is smaller than a")
+      random_uniform() *. { a -. b } +. a
+    }
+    a, b if a == b -> a
+  }
 }
 
-pub fn random_below(max: Float) -> Float {
-  random_uniform() *. max
+pub fn random_to(exclusive_boundary: Float) -> Float {
+  random_uniform() *. exclusive_boundary
 }

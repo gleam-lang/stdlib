@@ -401,6 +401,6 @@ pub fn random_between(min: Int, max: Int) -> Int {
   |> float.round()
 }
 
-pub fn random_below(max: Int) -> Int {
+pub fn random_to(max: Int) -> Int {
   random_between(0, max)
 }
