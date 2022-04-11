@@ -8,7 +8,8 @@
   for empty strings on older JavaScript runtimes.
 - The `bool` module gains the `to_string` function.
 - The `function` module gains the `tap` function.
-- The JavaScript target implementation of the `string.replace` received fallback code for NodeJS 14 compatibility.
+- The JavaScript target implementation of the `string.replace` received
+  fallback code for NodeJS 14 compatibility.
 
 ## v0.20.0 - 2022-02-22
 
