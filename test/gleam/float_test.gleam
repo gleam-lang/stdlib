@@ -3,6 +3,8 @@ import gleam/float
 import gleam/order
 import gleam/list
 import gleam/iterator
+import gleam/function
+import gleam/io
 
 pub fn parse_test() {
   "1.23"
@@ -307,11 +309,13 @@ pub fn random_uniform_test() {
   let one_random_uniform_test_set = fn(_acc, _e) {
     { float.random_uniform() >=. 0. }
     |> should.be_true()
+
     { float.random_uniform() <. 0. }
     |> should.be_false()
 
     { float.random_uniform() <. 1. }
     |> should.be_true()
+
     { float.random_uniform() >=. 1. }
     |> should.be_false()
 
@@ -321,3 +325,56 @@ pub fn random_uniform_test() {
   |> iterator.from_list
   |> iterator.fold(Nil, one_random_uniform_test_set)
 }
+
+pub fn random_between_test() {
+  // let one_random_between_test_set = fn(_acc, _e) {
+  //   float.random_between(0.0, 0.0)
+  //   |> should.equal(0.0)
+  // }
+  float.random_between(-1.0, 0.0)
+  |> function.tap(io.debug)
+  // |> function.tap(fn(x) {
+  //   fn(x) { x >=. -1.0 }(x)
+  //   |> should.be_true
+  // })
+  |> function.tap(fn(x) {
+    fn(x) { x <. 0.0 }(x)
+    |> should.be_true
+  })
+  // float.random_between(0.0, -1.0)
+  // |> fn(x) { x >=. -1.0 && x <. 0.0 }
+  // |> should.be_true
+  // float.random_between(-1.0, 1.0)
+  // |> fn(x) { x >=. -1.0 && x <. 1.0 }
+  // |> should.be_true
+  // float.random_between(1.0, -1.0)
+  // |> fn(x) { x >=. -1.0 && x <. 1.0 }
+  // |> should.be_true
+  // float.random_between(-1.0, 2.0)
+  // |> fn(x) { x >=. -1.0 && x <. 2.0 }
+  // |> should.be_true
+  // float.random_between(2.0, -1.0)
+  // |> fn(x) { x >=. -1.0 && x <. 2.0 }
+  // |> should.be_true
+  // list.range(0, 1)
+  // |> iterator.from_list
+  // |> iterator.fold(Nil, one_random_between_test_set)
+}
+// pub fn random_to_test() {
+//   let one_random_to_test_set = fn(_acc, _e) {
+//     float.random_to(0.0)
+//     |> should.equal(0.0)
+//     float.random_to(-1.0)
+//     |> fn(x) { x >=. -1.0 && x <. 0.0 }
+//     |> should.be_true
+//     float.random_to(1.0)
+//     |> fn(x) { x >=. 0.0 && x <. 1.0 }
+//     |> should.be_true
+//     float.random_to(2.0)
+//     |> fn(x) { x >=. 0.0 && x <. 2.0 }
+//     |> should.be_true
+//   }
+//   list.range(0, 100)
+//   |> iterator.from_list
+//   |> iterator.fold(Nil, one_random_to_test_set)
+// }
