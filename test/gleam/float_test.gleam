@@ -353,26 +353,29 @@ pub fn random_uniform_test() {
 
 pub fn random_between_test() {
   let test_boundaries = fn(_acc, _e) {
-    float.random_between(-10.0, 0.0)
-    |> fn(x) { x >=. -10.0 && x <. 0.0 }
-    |> should.be_true
     float.random_between(0.0, 0.0)
     |> should.equal(0.0)
+
     float.random_between(0.0, 10.0)
     |> fn(x) { x >=. 0.0 && x <. 10.0 }
     |> should.be_true
+
     float.random_between(10.0, 0.0)
     |> fn(x) { x >=. 0.0 && x <. 10.0 }
     |> should.be_true
+
     float.random_between(0.0, -10.0)
     |> fn(x) { x >=. -10.0 && x <. 0.0 }
     |> should.be_true
+
     float.random_between(-10.0, 0.0)
     |> fn(x) { x >=. -10.0 && x <. 0.0 }
     |> should.be_true
+
     float.random_between(-10.0, 10.0)
     |> fn(x) { x >=. -10.0 && x <. 10.0 }
     |> should.be_true
+
     float.random_between(10.0, -10.0)
     |> fn(x) { x >=. -10.0 && x <. 10.0 }
     |> should.be_true
@@ -395,7 +398,6 @@ pub fn random_between_test() {
       with: fn(acc, _element) { acc +. float.random_between(min, max) },
     )
     |> fn(sum) { sum /. int.to_float(iterations) }
-    // |> function.tap(fn(sum) { should.equal(sum, expected_average) })
     |> float.loosely_compare(expected_average, tolerance)
     |> should.equal(order.Eq)
   }
