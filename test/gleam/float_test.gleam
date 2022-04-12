@@ -382,7 +382,7 @@ pub fn random_between_test() {
   |> iterator.from_list()
   |> iterator.fold(Nil, test_boundary)
 
-  let mean_test = fn(iterations: Int, min: Float, max: Float) {
+  let run_mean_tests = fn(iterations: Int, min: Float, max: Float) {
     let expected_average = float.sum([min, max]) /. 2.0
     list.range(0, iterations)
     |> iterator.from_list()
@@ -394,9 +394,9 @@ pub fn random_between_test() {
     |> float.loosely_compare(expected_average, 0.1)
     |> should.equal(order.Eq)
   }
-  mean_test(100_000, 0.0, 0.0)
-  mean_test(100_000, 0.0, 10.0)
-  mean_test(100_000, -10.0, 10.0)
-  mean_test(100_000, -10.0, 0.0)
-  mean_test(100_000, 0.0, -10.0)
+  run_mean_tests(100_000, 0.0, 0.0)
+  run_mean_tests(100_000, 0.0, 10.0)
+  run_mean_tests(100_000, -10.0, 10.0)
+  run_mean_tests(100_000, -10.0, 0.0)
+  run_mean_tests(100_000, 0.0, -10.0)
 }
