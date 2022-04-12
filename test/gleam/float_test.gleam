@@ -4,7 +4,7 @@ import gleam/order
 import gleam/list
 import gleam/iterator
 import gleam/function
-import gleam/io
+import gleam/int
 
 pub fn parse_test() {
   "1.23"
@@ -244,6 +244,32 @@ pub fn absolute_value_test() {
   |> should.equal(25.2)
 }
 
+pub fn distance_test() {
+  float.distance(0.0, 0.0)
+  |> should.equal(0.0)
+
+  float.distance(1.0, 2.0)
+  |> should.equal(1.0)
+
+  float.distance(2.0, 1.0)
+  |> should.equal(1.0)
+
+  float.distance(-1.0, 0.0)
+  |> should.equal(1.0)
+
+  float.distance(0.0, -1.0)
+  |> should.equal(1.0)
+
+  float.distance(10.0, 20.0)
+  |> should.equal(10.0)
+
+  float.distance(-10.0, -20.0)
+  |> should.equal(10.0)
+
+  float.distance(-10.0, 10.0)
+  |> should.equal(20.0)
+}
+
 pub fn power_test() {
   float.power(2.0, 2.0)
   |> should.equal(4.0)
@@ -327,71 +353,50 @@ pub fn random_uniform_test() {
 }
 
 pub fn random_between_test() {
-  let one_random_between_test_set = fn(_acc, _e) {
-    float.random_between(0.0, 0.0)
-    |> should.equal(0.0)
-
-    float.random_between(0.0, 1.0)
-    |> fn(x) { x >=. 0.0 && x <. 1.0 }
-    |> should.be_true
-
-    float.random_between(1.0, 0.0)
-    |> fn(x) { x >=. 0.0 && x <. 1.0 }
-    |> should.be_true
-
-    float.random_between(0.0, -1.0)
-    |> function.tap(io.debug)
-    |> fn(x) { x >=. -1.0 && x <. 0.0 }
-    |> should.be_true
-
-    float.random_between(-1.0, 0.0)
-    |> fn(x) { x >=. -1.0 && x <. 0.0 }
-    |> should.be_true
-
-    float.random_between(0.0, -10.0)
-    |> fn(x) { x >=. -10.0 && x <. 0.0 }
-    |> should.be_true
-
+  let test_boundary = fn(_acc, _e) {
     float.random_between(-10.0, 0.0)
     |> fn(x) { x >=. -10.0 && x <. 0.0 }
     |> should.be_true
-
-    float.random_between(-10.0, 10.0)
-    |> fn(x) { x >=. -10.0 && x <. 10.0 }
-    |> should.be_true
-
-    float.random_between(-10.0, 10.0)
-    |> fn(x) { x >=. -10.0 && x <. 10.0 }
-    |> should.be_true
-  }
-
-  list.range(0, 100)
-  |> iterator.from_list
-  |> iterator.fold(Nil, one_random_between_test_set)
-}
-
-pub fn random_to_test() {
-  let one_random_to_test_set = fn(_acc, _e) {
-    float.random_to(0.0)
+    float.random_between(0.0, 0.0)
     |> should.equal(0.0)
-
-    float.random_to(-1.0)
-    |> fn(x) { x >=. -1.0 && x <. 0.0 }
-    |> should.be_true
-
-    float.random_to(1.0)
-    |> fn(x) { x >=. 0.0 && x <. 1.0 }
-    |> should.be_true
-
-    float.random_to(10.0)
+    float.random_between(0.0, 10.0)
     |> fn(x) { x >=. 0.0 && x <. 10.0 }
     |> should.be_true
-
-    float.random_to(-10.0)
+    float.random_between(10.0, 0.0)
+    |> fn(x) { x >=. 0.0 && x <. 10.0 }
+    |> should.be_true
+    float.random_between(0.0, -10.0)
     |> fn(x) { x >=. -10.0 && x <. 0.0 }
+    |> should.be_true
+    float.random_between(-10.0, 0.0)
+    |> fn(x) { x >=. -10.0 && x <. 0.0 }
+    |> should.be_true
+    float.random_between(-10.0, 10.0)
+    |> fn(x) { x >=. -10.0 && x <. 10.0 }
+    |> should.be_true
+    float.random_between(10.0, -10.0)
+    |> fn(x) { x >=. -10.0 && x <. 10.0 }
     |> should.be_true
   }
   list.range(0, 100)
-  |> iterator.from_list
-  |> iterator.fold(Nil, one_random_to_test_set)
+  |> iterator.from_list()
+  |> iterator.fold(Nil, test_boundary)
+
+  let mean_test = fn(iterations: Int, min: Float, max: Float) {
+    let expected_average = float.sum([min, max]) /. 2.0
+    list.range(0, iterations)
+    |> iterator.from_list()
+    |> iterator.fold(
+      from: 0.0,
+      with: fn(acc, _element) { acc +. float.random_between(min, max) },
+    )
+    |> fn(sum) { sum /. int.to_float(iterations) }
+    |> float.loosely_compare(expected_average, 0.1)
+    |> should.equal(order.Eq)
+  }
+  mean_test(100_000, 0.0, 0.0)
+  mean_test(100_000, 0.0, 10.0)
+  mean_test(100_000, -10.0, 10.0)
+  mean_test(100_000, -10.0, 0.0)
+  mean_test(100_000, 0.0, -10.0)
 }
