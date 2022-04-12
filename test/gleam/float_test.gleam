@@ -335,7 +335,12 @@ pub fn random_between_test() {
     |> fn(x) { x >=. 0.0 && x <. 1.0 }
     |> should.be_true
 
+    float.random_between(1.0, 0.0)
+    |> fn(x) { x >=. 0.0 && x <. 1.0 }
+    |> should.be_true
+
     float.random_between(0.0, -1.0)
+    |> function.tap(io.debug)
     |> fn(x) { x >=. -1.0 && x <. 0.0 }
     |> should.be_true
 
@@ -343,12 +348,20 @@ pub fn random_between_test() {
     |> fn(x) { x >=. -1.0 && x <. 0.0 }
     |> should.be_true
 
-    float.random_between(0.0, -2.0)
-    |> fn(x) { x >=. -2.0 && x <. 0.0 }
+    float.random_between(0.0, -10.0)
+    |> fn(x) { x >=. -10.0 && x <. 0.0 }
     |> should.be_true
 
-    float.random_between(-2.0, 0.0)
-    |> fn(x) { x >=. -2.0 && x <. 0.0 }
+    float.random_between(-10.0, 0.0)
+    |> fn(x) { x >=. -10.0 && x <. 0.0 }
+    |> should.be_true
+
+    float.random_between(-10.0, 10.0)
+    |> fn(x) { x >=. -10.0 && x <. 10.0 }
+    |> should.be_true
+
+    float.random_between(-10.0, 10.0)
+    |> fn(x) { x >=. -10.0 && x <. 10.0 }
     |> should.be_true
   }
 
@@ -370,11 +383,14 @@ pub fn random_to_test() {
     |> fn(x) { x >=. 0.0 && x <. 1.0 }
     |> should.be_true
 
-    float.random_to(2.0)
-    |> fn(x) { x >=. 0.0 && x <. 2.0 }
+    float.random_to(10.0)
+    |> fn(x) { x >=. 0.0 && x <. 10.0 }
+    |> should.be_true
+
+    float.random_to(-10.0)
+    |> fn(x) { x >=. -10.0 && x <. 0.0 }
     |> should.be_true
   }
-
   list.range(0, 100)
   |> iterator.from_list
   |> iterator.fold(Nil, one_random_to_test_set)

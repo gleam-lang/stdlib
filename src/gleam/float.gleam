@@ -228,6 +228,13 @@ pub fn absolute_value(float: Float) -> Float {
   }
 }
 
+/// Returns the absolute distance of the inputs as a positive Float
+///
+pub fn distance(a: Float, b: Float) -> Float {
+  absolute_value(a) -. absolute_value(b)
+  |> absolute_value()
+}
+
 /// Returns the results of the base being raised to the power of the
 /// exponent, as a `Float`.
 ///
@@ -344,62 +351,37 @@ if javascript {
 
 import gleam/io
 
+/// Based on:
+/// ```javascript
+/// return Math.random() * (max - min) + min; // The minimum is inclusive and the maximum is exclusive
+/// ```
+/// See: <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#getting_a_random_number_between_two_values>
+///
 pub fn random_between(boundary_a: Float, boundary_b: Float) -> Float {
-  // ```javascript
-  // return Math.random() * (max - min) + min; // The minimum is inclusive and the maximum is exclusive
-  // ```
-  // See: <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#getting_a_random_number_between_two_values>
-  //
-  case boundary_a, boundary_b {
-    a, b if a <. 0.0 && b == 0.0 ->
-      //io.debug("-a, b=0")
-      random_uniform() *. a
-    a, b if a == 0.0 && b <. 0.0 ->
-      //io.debug("a=0, -b")
-      random_uniform() *. b
-    a, b if a <. 0.0 && b <. 0.0 && a <. b -> {
-      //io.debug("-a, -b, a < b")
-      let a1 = absolute_value(a)
-      let b1 = absolute_value(b)
-      random_uniform() *. { b1 -. a1 } +. b1
-      |> negate()
+  let #(min, max) = case boundary_a, boundary_b {
+    a, b if a <=. b -> #(a, b)
+    a, b if a >. b -> #(b, a)
+  }
+  case min, max {
+    min, max if min >=. 0.0 && max >. 0.0 -> {
+      // io.debug("min >=. 0.0 && max >. 0.0 ")
+      let range = distance(min, max)
+      random_uniform() *. range +. min
     }
-    a, b if a <. 0.0 && b <. 0.0 && a >. b -> {
-      //io.debug("-a, -b, a > b")
-      let a1 = absolute_value(a)
-      let b1 = absolute_value(b)
-      random_uniform() *. { a1 -. b1 } +. a1
-      |> negate()
+    min, max if min <. 0.0 && max <=. 0.0 -> {
+      // io.debug("min <. 0.0 && max <=. 0.0")
+      let range = distance(min, max)
+      random_uniform() *. range +. min
     }
-    a, b if a >=. 0.0 && a <. b ->
-      //io.debug("+a < +b")
-      random_uniform() *. { b -. a } +. a
-    a, b if a >=. 0.0 && a >. b ->
-      //io.debug("+a > +b")
-      random_uniform() *. { a -. b } +. b
-    a, b if a <. 0.0 && b >. 0.0 -> {
-      //io.debug("a < 0.0, b > 0.0")
-      let range =
-        absolute_value(a) -. absolute_value(b)
-        |> absolute_value()
-      let offset =
-        absolute_value(a)
-        |> negate()
-      random_uniform() *. range +. offset
+    min, max if min <. 0.0 && max >. 0.0 -> {
+      // io.debug("min <. 0.0 && max >. 0.0")
+      let range = distance(min, max)
+      random_uniform() *. range +. min
     }
-    a, b if a >. 0.0 && b <. 0.0 -> {
-      //io.debug("a > 0.0, b < 0.0")
-      let range =
-        absolute_value(a) -. absolute_value(b)
-        |> absolute_value()
-      let offset =
-        absolute_value(b)
-        |> negate()
-      random_uniform() *. range +. offset
+    min, _max if min == max -> {
+      io.debug("min == max")
+      min
     }
-    a, b if a == b ->
-      //io.debug("a == b noop")
-      a
   }
 }
 
