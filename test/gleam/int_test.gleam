@@ -350,12 +350,15 @@ pub fn random_between_test() {
   let test_boundaries = fn(_acc, _e) {
     int.random_between(0, 0)
     |> should.equal(0)
+
     int.random_between(-1, 0)
     |> list.contains([-1, 0], _)
     |> should.be_true
+
     int.random_between(-1, 1)
     |> list.contains([-1, 0], _)
     |> should.be_true
+
     int.random_between(-1, 2)
     |> list.contains([-1, 0, 1], _)
     |> should.be_true
@@ -373,7 +376,6 @@ pub fn random_between_test() {
       with: fn(acc, _element) { acc + int.random_between(min, max) },
     )
     |> fn(sum) { sum / iterations }
-    // |> function.tap(fn(sum) { should.equal(sum, expected_average) })
     |> fn(sum) {
       sum - tolerance <= expected_average || sum + tolerance >= expected_average
     }
