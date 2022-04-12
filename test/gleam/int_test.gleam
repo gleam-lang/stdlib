@@ -15,6 +15,32 @@ pub fn absolute_value_test() {
   |> should.equal(123)
 }
 
+pub fn distance_test() {
+  int.distance(0, 0)
+  |> should.equal(0)
+
+  int.distance(1, 2)
+  |> should.equal(1)
+
+  int.distance(2, 1)
+  |> should.equal(1)
+
+  int.distance(-1, 0)
+  |> should.equal(1)
+
+  int.distance(0, -1)
+  |> should.equal(1)
+
+  int.distance(10, 20)
+  |> should.equal(10)
+
+  int.distance(-10, -20)
+  |> should.equal(10)
+
+  int.distance(-10, 10)
+  |> should.equal(20)
+}
+
 pub fn clamp_test() {
   int.clamp(40, min: 30, max: 50)
   |> should.equal(40)

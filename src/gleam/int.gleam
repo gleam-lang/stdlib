@@ -18,6 +18,21 @@ pub fn absolute_value(num: Int) -> Int {
   }
 }
 
+/// Returns the absolute distance of the inputs as a positive Int
+///
+/// ## Examples
+///
+///    > distance(-10, 10)
+///    20
+///
+///    > distance(0.0, -2)
+///    2
+///
+pub fn distance(a: Int, b: Int) -> Int {
+  a - b
+  |> absolute_value()
+}
+
 /// Parses a given string as an int if possible.
 ///
 /// ## Examples
