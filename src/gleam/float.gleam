@@ -349,8 +349,7 @@ if javascript {
     "../gleam_stdlib.mjs" "random_uniform"
 }
 
-import gleam/io
-
+/// Returns 0.0 if boundary_a and boundary_b are equal
 /// Based on:
 /// ```javascript
 /// return Math.random() * (max - min) + min; // The minimum is inclusive and the maximum is exclusive
@@ -363,31 +362,14 @@ pub fn random_between(boundary_a: Float, boundary_b: Float) -> Float {
     a, b if a >. b -> #(b, a)
   }
   case min, max {
-    min, max if min >=. 0.0 && max >. 0.0 -> {
-      // io.debug("min >=. 0.0 && max >. 0.0 ")
-      let range = distance(min, max)
-      random_uniform() *. range +. min
-    }
-    min, max if min <. 0.0 && max <=. 0.0 -> {
-      // io.debug("min <. 0.0 && max <=. 0.0")
-      let range = distance(min, max)
-      random_uniform() *. range +. min
-    }
-    min, max if min <. 0.0 && max >. 0.0 -> {
-      // io.debug("min <. 0.0 && max >. 0.0")
-      let range = distance(min, max)
-      random_uniform() *. range +. min
-    }
-    min, _max if min == max -> {
-      io.debug("min == max")
-      min
-    }
+    min, _max if min == max -> min
+    min, max -> random_uniform() *. distance(min, max) +. min
   }
 }
 
-/// If 0.0 it will yield `0.0`.
-/// If negative, it will yield `-x < 0 `
-/// If positive, it will yield `0 < x `
+/// If boundary is `0.0` this will yield `0.0`.
+/// If negative, this will yield `-x < 0 `
+/// If positive, this will yield `0 < x `
 ///
 pub fn random_to(boundary: Float) -> Float {
   random_uniform() *. boundary
