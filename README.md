@@ -32,3 +32,14 @@ fn more_usage() {
   |> contains(any: 2)
 }
 ```
+
+## Targets
+
+Gleam's standard library supports both targets: Erlang and Javascript.
+
+### Compatibility
+
+- For Erlang the minimum required OTP version is 22.
+- For NodeJS the minium required version is the oldest **Maintenance LTS** not marked as *end-of-life* as specified on <https://nodejs.org/en/about/releases/>.
+
+Most of the standard library will run on older versions, but there are no garantuees.
