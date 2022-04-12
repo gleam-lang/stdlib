@@ -3,7 +3,6 @@ import gleam/float
 import gleam/order
 import gleam/list
 import gleam/iterator
-import gleam/function
 import gleam/int
 
 pub fn parse_test() {
