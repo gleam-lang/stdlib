@@ -353,7 +353,7 @@ pub fn random_uniform_test() {
 }
 
 pub fn random_between_test() {
-  let test_boundary = fn(_acc, _e) {
+  let test_boundaries = fn(_acc, _e) {
     float.random_between(-10.0, 0.0)
     |> fn(x) { x >=. -10.0 && x <. 0.0 }
     |> should.be_true
@@ -380,9 +380,14 @@ pub fn random_between_test() {
   }
   list.range(0, 100)
   |> iterator.from_list()
-  |> iterator.fold(Nil, test_boundary)
+  |> iterator.fold(Nil, test_boundaries)
 
-  let run_mean_tests = fn(iterations: Int, min: Float, max: Float) {
+  let run_mean_tests = fn(
+    iterations: Int,
+    min: Float,
+    max: Float,
+    tolerance: Float,
+  ) {
     let expected_average = float.sum([min, max]) /. 2.0
     list.range(0, iterations)
     |> iterator.from_list()
@@ -392,12 +397,12 @@ pub fn random_between_test() {
     )
     |> fn(sum) { sum /. int.to_float(iterations) }
     // |> function.tap(fn(sum) { should.equal(sum, expected_average) })
-    |> float.loosely_compare(expected_average, 3.0)
+    |> float.loosely_compare(expected_average, tolerance)
     |> should.equal(order.Eq)
   }
-  run_mean_tests(100, 0.0, 0.0)
-  run_mean_tests(1000, 0.0, 100.0)
-  run_mean_tests(1000, -100.0, 100.0)
-  run_mean_tests(1000, -100.0, 0.0)
-  run_mean_tests(1000, 0.0, -100.0)
+  run_mean_tests(100, 0.0, 0.0, 5.0)
+  run_mean_tests(1_000, 0.0, 100.0, 5.0)
+  run_mean_tests(1_000, -100.0, 100.0, 5.0)
+  run_mean_tests(1_000, -100.0, 0.0, 5.0)
+  run_mean_tests(1_000, 0.0, -100.0, 5.0)
 }
