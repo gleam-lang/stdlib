@@ -337,28 +337,3 @@ pub fn random_between_test() {
   |> iterator.from_list
   |> iterator.fold(Nil, one_random_between_test_set)
 }
-
-pub fn random_to_test() {
-  let one_random_to_test_set = fn(_acc, _e) {
-    int.random_to(0)
-    |> should.equal(0)
-    int.random_to(-1)
-    |> list.contains([-1], _)
-    |> should.be_true
-    int.random_to(1)
-    |> list.contains([0], _)
-    |> should.be_true
-    int.random_to(2)
-    |> list.contains([0, 1], _)
-    |> should.be_true
-    int.random_to(3)
-    |> list.contains([0, 1, 2], _)
-    |> should.be_true
-    int.random_to(4)
-    |> list.contains([0, 1, 2, 3], _)
-    |> should.be_true
-  }
-  list.range(0, 100)
-  |> iterator.from_list
-  |> iterator.fold(Nil, one_random_to_test_set)
-}

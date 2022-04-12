@@ -230,8 +230,16 @@ pub fn absolute_value(float: Float) -> Float {
 
 /// Returns the absolute distance of the inputs as a positive Float
 ///
+/// ## Examples
+///
+///    > distance(-10.0, 10.0)
+///    20.0
+///
+///    > distance(0.0, -2.0)
+///    2.0
+///
 pub fn distance(a: Float, b: Float) -> Float {
-  absolute_value(a) -. absolute_value(b)
+  a -. b
   |> absolute_value()
 }
 
