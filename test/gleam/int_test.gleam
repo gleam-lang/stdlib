@@ -3,6 +3,8 @@ import gleam/int
 import gleam/order
 import gleam/list
 import gleam/iterator
+import gleam/float
+import gleam/function
 
 pub fn absolute_value_test() {
   123
@@ -320,7 +322,7 @@ pub fn undigits_test() {
 }
 
 pub fn random_between_test() {
-  let one_random_between_test_set = fn(_acc, _e) {
+  let test_boundaries = fn(_acc, _e) {
     int.random_between(0, 0)
     |> should.equal(0)
     int.random_between(-1, 0)
@@ -335,5 +337,26 @@ pub fn random_between_test() {
   }
   list.range(0, 100)
   |> iterator.from_list
-  |> iterator.fold(Nil, one_random_between_test_set)
+  |> iterator.fold(Nil, test_boundaries)
+
+  let run_mean_tests = fn(iterations: Int, min: Int, max: Int, tolerance: Int) {
+    let expected_average = int.sum([min, max]) / 2
+    list.range(0, iterations)
+    |> iterator.from_list
+    |> iterator.fold(
+      from: 0,
+      with: fn(acc, _element) { acc + int.random_between(min, max) },
+    )
+    |> fn(sum) { sum / iterations }
+    // |> function.tap(fn(sum) { should.equal(sum, expected_average) })
+    |> fn(sum) {
+      sum - tolerance <= expected_average || sum + tolerance >= expected_average
+    }
+    |> should.be_true
+  }
+  run_mean_tests(100, 0, 0, 5)
+  run_mean_tests(1_000, 0, 100, 5)
+  run_mean_tests(1_000, -100, 100, 5)
+  run_mean_tests(1_000, -100, 0, 5)
+  run_mean_tests(1_000, 0, -100, 5)
 }
