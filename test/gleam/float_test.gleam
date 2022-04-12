@@ -391,12 +391,13 @@ pub fn random_between_test() {
       with: fn(acc, _element) { acc +. float.random_between(min, max) },
     )
     |> fn(sum) { sum /. int.to_float(iterations) }
-    |> float.loosely_compare(expected_average, 0.1)
+    // |> function.tap(fn(sum) { should.equal(sum, expected_average) })
+    |> float.loosely_compare(expected_average, 3.0)
     |> should.equal(order.Eq)
   }
-  run_mean_tests(100_000, 0.0, 0.0)
-  run_mean_tests(100_000, 0.0, 10.0)
-  run_mean_tests(100_000, -10.0, 10.0)
-  run_mean_tests(100_000, -10.0, 0.0)
-  run_mean_tests(100_000, 0.0, -10.0)
+  run_mean_tests(100, 0.0, 0.0)
+  run_mean_tests(1000, 0.0, 100.0)
+  run_mean_tests(1000, -100.0, 100.0)
+  run_mean_tests(1000, -100.0, 0.0)
+  run_mean_tests(1000, 0.0, -100.0)
 }
