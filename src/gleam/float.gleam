@@ -351,33 +351,62 @@ pub fn random_between(boundary_a: Float, boundary_b: Float) -> Float {
   // See: <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#getting_a_random_number_between_two_values>
   //
   case boundary_a, boundary_b {
-    a, b if a <. 0.0 && b == 0.0 -> {
-      io.debug("a is neg, b is 0.0")
-      let a = absolute_value(a)
-      // a1 prohibits variable 'A@1' is unbound {A, B} when (A@1 < 0.0) andalso (B@1 =:= 0.0) ->
-      let a = absolute_value(b)
+    a, b if a <. 0.0 && b == 0.0 ->
+      //io.debug("-a, b=0")
       random_uniform() *. a
+    a, b if a == 0.0 && b <. 0.0 ->
+      //io.debug("a=0, -b")
+      random_uniform() *. b
+    a, b if a <. 0.0 && b <. 0.0 && a <. b -> {
+      //io.debug("-a, -b, a < b")
+      let a1 = absolute_value(a)
+      let b1 = absolute_value(b)
+      random_uniform() *. { b1 -. a1 } +. b1
       |> negate()
     }
-    a, b if a == 0.0 && b <. 0.0 -> {
-      io.debug("a 0.0, b is neg")
+    a, b if a <. 0.0 && b <. 0.0 && a >. b -> {
+      //io.debug("-a, -b, a > b")
       let a1 = absolute_value(a)
       let b1 = absolute_value(b)
       random_uniform() *. { a1 -. b1 } +. a1
       |> negate()
     }
-    a, b if a <. b -> {
-      io.debug("a is smaller than b")
-      random_uniform() *. { b -. a } +. b
+    a, b if a >=. 0.0 && a <. b ->
+      //io.debug("+a < +b")
+      random_uniform() *. { b -. a } +. a
+    a, b if a >=. 0.0 && a >. b ->
+      //io.debug("+a > +b")
+      random_uniform() *. { a -. b } +. b
+    a, b if a <. 0.0 && b >. 0.0 -> {
+      //io.debug("a < 0.0, b > 0.0")
+      let range =
+        absolute_value(a) -. absolute_value(b)
+        |> absolute_value()
+      let offset =
+        absolute_value(a)
+        |> negate()
+      random_uniform() *. range +. offset
     }
-    a, b if a >. b -> {
-      io.debug("b is smaller than a")
-      random_uniform() *. { a -. b } +. a
+    a, b if a >. 0.0 && b <. 0.0 -> {
+      //io.debug("a > 0.0, b < 0.0")
+      let range =
+        absolute_value(a) -. absolute_value(b)
+        |> absolute_value()
+      let offset =
+        absolute_value(b)
+        |> negate()
+      random_uniform() *. range +. offset
     }
-    a, b if a == b -> a
+    a, b if a == b ->
+      //io.debug("a == b noop")
+      a
   }
 }
 
-pub fn random_to(exclusive_boundary: Float) -> Float {
-  random_uniform() *. exclusive_boundary
+/// If 0.0 it will yield `0.0`.
+/// If negative, it will yield `-x < 0 `
+/// If positive, it will yield `0 < x `
+///
+pub fn random_to(boundary: Float) -> Float {
+  random_uniform() *. boundary
 }
