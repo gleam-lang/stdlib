@@ -247,17 +247,17 @@ export function power(base, exponent) {
 }
 
 export function random_uniform() {
-	let random_uniform_result = Math.random();
-	// With round-to-nearest-even behavior, the ranges claimed for the functions below
+  let random_uniform_result = Math.random();
+  // With round-to-nearest-even behavior, the ranges claimed for the functions below
   // (excluding the one for Math.random() itself) aren't exact.
   // If extremely large bounds are chosen (2^53 or higher),
   // it's possible in extremely rare cases to calculate the usually-excluded upper bound.
   // Note that as numbers in JavaScript are IEEE 754 floating point numbers
   // See: <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random>
-	// Because of this, we just loop 'until' we get a valid result where 0.0 <= x < 1.0:
-	if (random_uniform_result === 1.0) {
-		return random_uniform();
-	}
+  // Because of this, we just loop 'until' we get a valid result where 0.0 <= x < 1.0:
+  if (random_uniform_result === 1.0) {
+    return random_uniform();
+  }
   return random_uniform_result;
 }
 
