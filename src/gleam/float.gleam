@@ -336,11 +336,22 @@ fn do_product(numbers: List(Float), initial: Float) -> Float {
   }
 }
 
-/// Returns a uniform random number
-/// Thus where 0.0 =< value < 1.0
+/// Returns 0.0 if boundary_a and boundary_b are equal
+/// Based on:
+/// ```javascript
+/// return Math.random() * (max - min) + min; // The minimum is inclusive and the maximum is exclusive
+/// ```
+/// See: <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#getting_a_random_number_between_two_values>
 ///
-pub fn random_uniform() -> Float {
-  do_random_uniform()
+pub fn random(boundary_a: Float, boundary_b: Float) -> Float {
+  let #(min, max) = case boundary_a, boundary_b {
+    a, b if a <=. b -> #(a, b)
+    a, b if a >. b -> #(b, a)
+  }
+  case min, max {
+    min, _max if min == max -> min
+    min, max -> do_random_uniform() *. absolute_difference(min, max) +. min
+  }
 }
 
 if erlang {
@@ -355,22 +366,4 @@ if erlang {
 if javascript {
   external fn do_random_uniform() -> Float =
     "../gleam_stdlib.mjs" "random_uniform"
-}
-
-/// Returns 0.0 if boundary_a and boundary_b are equal
-/// Based on:
-/// ```javascript
-/// return Math.random() * (max - min) + min; // The minimum is inclusive and the maximum is exclusive
-/// ```
-/// See: <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#getting_a_random_number_between_two_values>
-///
-pub fn random_between(boundary_a: Float, boundary_b: Float) -> Float {
-  let #(min, max) = case boundary_a, boundary_b {
-    a, b if a <=. b -> #(a, b)
-    a, b if a >. b -> #(b, a)
-  }
-  case min, max {
-    min, _max if min == max -> min
-    min, max -> random_uniform() *. absolute_difference(min, max) +. min
-  }
 }

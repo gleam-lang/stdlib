@@ -397,7 +397,7 @@ fn do_undigits(
   }
 }
 
-pub fn random_between(min: Int, max: Int) -> Int {
+pub fn random(min: Int, max: Int) -> Int {
   // ```javascript
   // min = Math.ceil(min);
   // max = Math.floor(max);
@@ -411,7 +411,7 @@ pub fn random_between(min: Int, max: Int) -> Int {
     to_float(max)
     |> float.floor()
 
-  float.random_between(min, max)
+  float.random(min, max)
   |> float.floor()
   |> float.round()
 }
