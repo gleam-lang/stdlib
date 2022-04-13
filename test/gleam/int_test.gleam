@@ -15,29 +15,29 @@ pub fn absolute_value_test() {
   |> should.equal(123)
 }
 
-pub fn distance_test() {
-  int.distance(0, 0)
+pub fn absolute_difference_test() {
+  int.absolute_difference(0, 0)
   |> should.equal(0)
 
-  int.distance(1, 2)
+  int.absolute_difference(1, 2)
   |> should.equal(1)
 
-  int.distance(2, 1)
+  int.absolute_difference(2, 1)
   |> should.equal(1)
 
-  int.distance(-1, 0)
+  int.absolute_difference(-1, 0)
   |> should.equal(1)
 
-  int.distance(0, -1)
+  int.absolute_difference(0, -1)
   |> should.equal(1)
 
-  int.distance(10, 20)
+  int.absolute_difference(10, 20)
   |> should.equal(10)
 
-  int.distance(-10, -20)
+  int.absolute_difference(-10, -20)
   |> should.equal(10)
 
-  int.distance(-10, 10)
+  int.absolute_difference(-10, 10)
   |> should.equal(20)
 }
 

@@ -18,17 +18,17 @@ pub fn absolute_value(num: Int) -> Int {
   }
 }
 
-/// Returns the absolute distance of the inputs as a positive Int
+/// Returns the absolute difference of the inputs as a positive Int
 ///
 /// ## Examples
 ///
-///    > distance(-10, 10)
+///    > absolute_difference(-10, 10)
 ///    20
 ///
-///    > distance(0.0, -2)
+///    > absolute_difference(0.0, -2)
 ///    2
 ///
-pub fn distance(a: Int, b: Int) -> Int {
+pub fn absolute_difference(a: Int, b: Int) -> Int {
   a - b
   |> absolute_value()
 }
@@ -414,8 +414,4 @@ pub fn random_between(min: Int, max: Int) -> Int {
   float.random_between(min, max)
   |> float.floor()
   |> float.round()
-}
-
-pub fn random_to(max: Int) -> Int {
-  random_between(0, max)
 }

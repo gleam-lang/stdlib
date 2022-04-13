@@ -228,17 +228,17 @@ pub fn absolute_value(float: Float) -> Float {
   }
 }
 
-/// Returns the absolute distance of the inputs as a positive Float
+/// Returns the absolute difference of the inputs as a positive Float
 ///
 /// ## Examples
 ///
-///    > distance(-10.0, 10.0)
+///    > absolute_difference(-10.0, 10.0)
 ///    20.0
 ///
-///    > distance(0.0, -2.0)
+///    > absolute_difference(0.0, -2.0)
 ///    2.0
 ///
-pub fn distance(a: Float, b: Float) -> Float {
+pub fn absolute_difference(a: Float, b: Float) -> Float {
   a -. b
   |> absolute_value()
 }
@@ -371,14 +371,6 @@ pub fn random_between(boundary_a: Float, boundary_b: Float) -> Float {
   }
   case min, max {
     min, _max if min == max -> min
-    min, max -> random_uniform() *. distance(min, max) +. min
+    min, max -> random_uniform() *. absolute_difference(min, max) +. min
   }
-}
-
-/// If boundary is `0.0` this will yield `0.0`.
-/// If negative, this will yield `-x < 0 `
-/// If positive, this will yield `0 < x `
-///
-pub fn random_to(boundary: Float) -> Float {
-  random_uniform() *. boundary
 }
