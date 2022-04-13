@@ -330,53 +330,32 @@ pub fn product_test() {
   |> should.equal(33.6)
 }
 
-pub fn random_uniform_test() {
-  let one_random_uniform_test_set = fn(_acc, _e) {
-    { float.random_uniform() >=. 0. }
-    |> should.be_true()
-
-    { float.random_uniform() <. 0. }
-    |> should.be_false()
-
-    { float.random_uniform() <. 1. }
-    |> should.be_true()
-
-    { float.random_uniform() >=. 1. }
-    |> should.be_false()
-
-    Nil
-  }
-  list.range(0, 100)
-  |> iterator.from_list
-  |> iterator.fold(Nil, one_random_uniform_test_set)
-}
-
-pub fn random_between_test() {
+pub fn random_test() {
   let test_boundaries = fn(_acc, _e) {
-    float.random_between(0.0, 0.0)
+    float.random(0.0, 0.0)
     |> should.equal(0.0)
 
-    float.random_between(0.0, 10.0)
+    float.random(0.0, 10.0)
     |> fn(x) { x >=. 0.0 && x <. 10.0 }
     |> should.be_true
 
-    float.random_between(10.0, 0.0)
+    float.random(10.0, 0.0)
     |> fn(x) { x >=. 0.0 && x <. 10.0 }
     |> should.be_true
 
-    float.random_between(0.0, -10.0)
+    float.random(0.0, -10.0)
     |> fn(x) { x >=. -10.0 && x <. 0.0 }
     |> should.be_true
 
-    float.random_between(-10.0, 0.0)
+    float.random(-10.0, 0.0)
     |> fn(x) { x >=. -10.0 && x <. 0.0 }
     |> should.be_true
 
-    float.random_between(-10.0, 10.0)
+    float.random(-10.0, 10.0)
     |> fn(x) { x >=. -10.0 && x <. 10.0 }
     |> should.be_true
 
-    float.random_between(10.0, -10.0)
+    float.random(10.0, -10.0)
     |> fn(x) { x >=. -10.0 && x <. 10.0 }
     |> should.be_true
   }
@@ -395,7 +374,7 @@ pub fn random_between_test() {
     |> iterator.from_list()
     |> iterator.fold(
       from: 0.0,
-      with: fn(acc, _element) { acc +. float.random_between(min, max) },
+      with: fn(acc, _element) { acc +. float.random(min, max) },
     )
     |> fn(sum) { sum /. int.to_float(iterations) }
     |> float.loosely_compare(expected_average, tolerance)
