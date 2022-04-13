@@ -397,13 +397,18 @@ fn do_undigits(
   }
 }
 
-pub fn random(min: Int, max: Int) -> Int {
+pub fn random(boundary_a: Int, boundary_b: Int) -> Int {
   // ```javascript
   // min = Math.ceil(min);
   // max = Math.floor(max);
   // return Math.floor(Math.random() * (max - min) + min); // The minimum is inclusive and the maximum is exclusive
   // ```
   // See: <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#getting_a_random_integer_between_two_values>
+  let #(min, max) = case boundary_a, boundary_b {
+    a, b if a <= b -> #(a, b)
+    a, b if a > b -> #(b, a)
+  }
+
   let min =
     to_float(min)
     |> float.ceiling()
