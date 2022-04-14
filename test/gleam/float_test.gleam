@@ -305,7 +305,7 @@ pub fn product_test() {
 }
 
 pub fn random_test() {
-  let test_boundaries = fn(_acc, _e) {
+  let test_boundaries = fn(_accumulator, _element) {
     float.random(0.0, 0.0)
     |> should.equal(0.0)
 
@@ -348,7 +348,7 @@ pub fn random_test() {
     |> iterator.from_list()
     |> iterator.fold(
       from: 0.0,
-      with: fn(acc, _element) { acc +. float.random(min, max) },
+      with: fn(accumulator, _element) { accumulator +. float.random(min, max) },
     )
     |> fn(sum) { sum /. int.to_float(iterations) }
     |> float.loosely_compare(expected_average, tolerance)

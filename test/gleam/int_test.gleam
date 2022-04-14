@@ -321,7 +321,7 @@ pub fn undigits_test() {
 }
 
 pub fn random_test() {
-  let test_boundaries = fn(_acc, _e) {
+  let test_boundaries = fn(_accumulator, _element) {
     int.random(0, 0)
     |> should.equal(0)
 
@@ -347,7 +347,7 @@ pub fn random_test() {
     |> iterator.from_list
     |> iterator.fold(
       from: 0,
-      with: fn(acc, _element) { acc + int.random(min, max) },
+      with: fn(accumulator, _element) { accumulator + int.random(min, max) },
     )
     |> fn(sum) { sum / iterations }
     |> fn(sum) {
