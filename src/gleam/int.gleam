@@ -18,21 +18,6 @@ pub fn absolute_value(num: Int) -> Int {
   }
 }
 
-/// Returns the absolute difference of the inputs as a positive Int
-///
-/// ## Examples
-///
-///    > absolute_difference(-10, 10)
-///    20
-///
-///    > absolute_difference(0.0, -2)
-///    2
-///
-pub fn absolute_difference(a: Int, b: Int) -> Int {
-  a - b
-  |> absolute_value()
-}
-
 /// Parses a given string as an int if possible.
 ///
 /// ## Examples
