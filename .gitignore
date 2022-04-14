@@ -18,5 +18,6 @@ _build
 *.iml
 rebar3.crashdump
 doc
+.tool-versions
 build
 manifest.toml
