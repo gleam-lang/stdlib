@@ -243,32 +243,6 @@ pub fn absolute_value_test() {
   |> should.equal(25.2)
 }
 
-pub fn absolute_difference_test() {
-  float.absolute_difference(0.0, 0.0)
-  |> should.equal(0.0)
-
-  float.absolute_difference(1.0, 2.0)
-  |> should.equal(1.0)
-
-  float.absolute_difference(2.0, 1.0)
-  |> should.equal(1.0)
-
-  float.absolute_difference(-1.0, 0.0)
-  |> should.equal(1.0)
-
-  float.absolute_difference(0.0, -1.0)
-  |> should.equal(1.0)
-
-  float.absolute_difference(10.0, 20.0)
-  |> should.equal(10.0)
-
-  float.absolute_difference(-10.0, -20.0)
-  |> should.equal(10.0)
-
-  float.absolute_difference(-10.0, 10.0)
-  |> should.equal(20.0)
-}
-
 pub fn power_test() {
   float.power(2.0, 2.0)
   |> should.equal(4.0)

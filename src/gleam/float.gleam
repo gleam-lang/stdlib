@@ -228,21 +228,6 @@ pub fn absolute_value(float: Float) -> Float {
   }
 }
 
-/// Returns the absolute difference of the inputs as a positive Float
-///
-/// ## Examples
-///
-///    > absolute_difference(-10.0, 10.0)
-///    20.0
-///
-///    > absolute_difference(0.0, -2.0)
-///    2.0
-///
-pub fn absolute_difference(a: Float, b: Float) -> Float {
-  a -. b
-  |> absolute_value()
-}
-
 /// Returns the results of the base being raised to the power of the
 /// exponent, as a `Float`.
 ///
@@ -350,7 +335,7 @@ pub fn random(boundary_a: Float, boundary_b: Float) -> Float {
   }
   case min, max {
     min, _max if min == max -> min
-    min, max -> do_random_uniform() *. absolute_difference(min, max) +. min
+    min, max -> do_random_uniform() *. { max -. min } +. min
   }
 }
 
