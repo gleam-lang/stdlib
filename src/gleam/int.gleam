@@ -5,11 +5,13 @@ import gleam/float
 ///
 /// ## Examples
 ///
-///    > absolute_value(-12)
-///    12
+/// ```gleam
+/// > absolute_value(-12)
+/// 12
 ///
-///    > absolute_value(10)
-///    10
+/// > absolute_value(10)
+/// 10
+/// ```
 ///
 pub fn absolute_value(num: Int) -> Int {
   case num >= 0 {
@@ -22,11 +24,13 @@ pub fn absolute_value(num: Int) -> Int {
 ///
 /// ## Examples
 ///
-///    > parse("2")
-///    Ok(2)
+/// ```gleam
+/// > parse("2")
+/// Ok(2)
 ///
-///    > parse("ABC")
-///    Error(Nil)
+/// > parse("ABC")
+/// Error(Nil)
+/// ```
 ///
 pub fn parse(string) {
   do_parse(string)
@@ -46,8 +50,10 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > to_string(2)
-///    "2"
+/// ```gleam
+/// > to_string(2)
+/// "2"
+/// ```
 ///
 pub fn to_string(int) {
   do_to_string(int)
@@ -74,20 +80,22 @@ pub type InvalidBase {
 ///
 /// ## Examples
 ///
-///    > to_base_string(2, 2)
-///    Ok("10")
+/// ```gleam
+/// > to_base_string(2, 2)
+/// Ok("10")
 ///
-///    > to_base_string(48, 16)
-///    Ok("30")
+/// > to_base_string(48, 16)
+/// Ok("30")
 ///
-///    > to_base_string(48, 36)
-///    Ok("1C")
+/// > to_base_string(48, 36)
+/// Ok("1C")
 ///
-///    > to_base_string(48, 1)
-///    Error(InvalidBase)
+/// > to_base_string(48, 1)
+/// Error(InvalidBase)
 ///
-///    > to_base_string(48, 37)
-///    Error(InvalidBase)
+/// > to_base_string(48, 37)
+/// Error(InvalidBase)
+/// ```
 ///
 pub fn to_base_string(int, base) -> Result(String, InvalidBase) {
   case base >= 2 && base <= 36 {
@@ -110,8 +118,10 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > to_base2(2)
-///    "10"
+/// ```gleam
+/// > to_base2(2)
+/// "10"
+/// ```
 ///
 pub fn to_base2(int) {
   do_to_base_string(int, 2)
@@ -121,8 +131,10 @@ pub fn to_base2(int) {
 ///
 /// ## Examples
 ///
-///    > to_base8(15)
-///    "17"
+/// ```gleam
+/// > to_base8(15)
+/// "17"
+/// ```
 ///
 pub fn to_base8(int) {
   do_to_base_string(int, 8)
@@ -132,8 +144,10 @@ pub fn to_base8(int) {
 ///
 /// ## Examples
 ///
-///    > to_base16(48)
-///    "30"
+/// ```gleam
+/// > to_base16(48)
+/// "30"
+/// ```
 ///
 pub fn to_base16(int) {
   do_to_base_string(int, 16)
@@ -143,8 +157,10 @@ pub fn to_base16(int) {
 ///
 /// ## Examples
 ///
-///    > to_base36(48)
-///    "1C"
+/// ```gleam
+/// > to_base36(48)
+/// "1C"
+/// ```
 ///
 pub fn to_base36(int) {
   do_to_base_string(int, 36)
@@ -198,14 +214,16 @@ pub fn clamp(n: Int, min min_bound: Int, max max_bound: Int) -> Int {
 ///
 /// ## Examples
 ///
-///    > compare(2, 3)
-///    Lt
+/// ```gleam
+/// > compare(2, 3)
+/// Lt
 ///
-///    > compare(4, 3)
-///    Gt
+/// > compare(4, 3)
+/// Gt
 ///
-///    > compare(3, 3)
-///    Eq
+/// > compare(3, 3)
+/// Eq
+/// ```
 ///
 pub fn compare(a: Int, with b: Int) -> Order {
   case a == b {
@@ -222,8 +240,10 @@ pub fn compare(a: Int, with b: Int) -> Order {
 ///
 /// ## Examples
 ///
-///    > min(2, 3)
-///    2
+/// ```gleam
+/// > min(2, 3)
+/// 2
+/// ```
 ///
 pub fn min(a: Int, b: Int) -> Int {
   case a < b {
@@ -236,8 +256,10 @@ pub fn min(a: Int, b: Int) -> Int {
 ///
 /// ## Examples
 ///
-///    > max(2, 3)
-///    3
+/// ```gleam
+/// > max(2, 3)
+/// 3
+/// ```
 ///
 pub fn max(a: Int, b: Int) -> Int {
   case a > b {
@@ -250,11 +272,13 @@ pub fn max(a: Int, b: Int) -> Int {
 ///
 /// ## Examples
 ///
-///    > is_even(2)
-///    True
+/// ```gleam
+/// > is_even(2)
+/// True
 ///
-///    > is_even(3)
-///    False
+/// > is_even(3)
+/// False
+/// ```
 ///
 pub fn is_even(x: Int) -> Bool {
   x % 2 == 0
@@ -264,11 +288,13 @@ pub fn is_even(x: Int) -> Bool {
 ///
 /// ## Examples
 ///
-///    > is_odd(3)
-///    True
+/// ```gleam
+/// > is_odd(3)
+/// True
 ///
-///    > is_odd(2)
-///    False
+/// > is_odd(2)
+/// False
+/// ```
 ///
 pub fn is_odd(x: Int) -> Bool {
   x % 2 != 0
@@ -278,8 +304,10 @@ pub fn is_odd(x: Int) -> Bool {
 ///
 /// ## Examples
 ///
-///    > negate(1)
-///    -1
+/// ```gleam
+/// > negate(1)
+/// -1
+/// ```
 ///
 pub fn negate(x: Int) -> Int {
   -1 * x
@@ -289,8 +317,10 @@ pub fn negate(x: Int) -> Int {
 ///
 /// ## Example
 ///
-///    > sum([1, 2, 3])
-///    6
+/// ```gleam
+/// > sum([1, 2, 3])
+/// 6
+/// ```
 ///
 pub fn sum(numbers: List(Int)) -> Int {
   numbers
@@ -308,8 +338,10 @@ fn do_sum(numbers: List(Int), initial: Int) -> Int {
 ///
 /// ## Example
 ///
-///    > product([2, 3, 4])
-///    24
+/// ```gleam
+/// > product([2, 3, 4])
+/// 24
+/// ```
 ///
 pub fn product(numbers: List(Int)) -> Int {
   case numbers {
@@ -329,11 +361,13 @@ fn do_product(numbers: List(Int), initial: Int) -> Int {
 ///
 /// ## Examples
 ///
-///    > digits(234, 10)
-///    Ok([2,3,4])
+/// ```gleam
+/// > digits(234, 10)
+/// Ok([2,3,4])
 ///
-///    > digits(234, 1)
-///    Error(InvalidBase)
+/// > digits(234, 1)
+/// Error(InvalidBase)
+/// ```
 ///
 pub fn digits(number: Int, base: Int) -> Result(List(Int), InvalidBase) {
   case base < 2 {
@@ -354,14 +388,16 @@ fn do_digits(number: Int, base: Int, acc: List(Int)) -> List(Int) {
 ///
 /// ## Examples
 ///
-///    > undigits([2,3,4], 10)
-///    Ok(234)
+/// ```gleam
+/// > undigits([2,3,4], 10)
+/// Ok(234)
 ///
-///    > undigits([2,3,4], 1)
-///    Error(InvalidBase)
+/// > undigits([2,3,4], 1)
+/// Error(InvalidBase)
 ///
-///    > undigits([2,3,4], 2)
-///    Error(InvalidBase)
+/// > undigits([2,3,4], 2)
+/// Error(InvalidBase)
+/// ```
 ///
 pub fn undigits(numbers: List(Int), base: Int) -> Result(Int, InvalidBase) {
   case base < 2 {

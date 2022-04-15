@@ -16,11 +16,13 @@ if erlang {
 ///
 /// ## Examples
 ///
-///    > is_empty("")
-///    True
+/// ```gleam
+/// > is_empty("")
+/// True
 ///
-///    > is_empty("the world")
-///    False
+/// > is_empty("the world")
+/// False
+/// ```
 ///
 pub fn is_empty(str: String) -> Bool {
   str == ""
@@ -33,14 +35,16 @@ pub fn is_empty(str: String) -> Bool {
 ///
 /// ## Examples
 ///
-///    > length("Gleam")
-///    5
+/// ```gleam
+/// > length("Gleam")
+/// 5
 ///
-///    > length("ß↑e̊")
-///    3
+/// > length("ß↑e̊")
+/// 3
 ///
-///    > length("")
-///    0
+/// > length("")
+/// 0
+/// ```
 ///
 pub fn length(string: String) -> Int {
   do_length(string)
@@ -63,8 +67,10 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > reverse("stressed")
-///    "desserts"
+/// ```gleam
+/// > reverse("stressed")
+/// "desserts"
+/// ```
 ///
 pub fn reverse(string: String) -> String {
   string
@@ -77,11 +83,13 @@ pub fn reverse(string: String) -> String {
 ///
 /// ## Examples
 ///
-///    > replace("www.example.com", each: ".", with: "-")
-///    "www-example-com"
+/// ```gleam
+/// > replace("www.example.com", each: ".", with: "-")
+/// "www-example-com"
 ///
-///    > replace("a,b,c,d,e", each: ",", with: "/")
-///    "a/b/c/d/e"
+/// > replace("a,b,c,d,e", each: ",", with: "/")
+/// "a/b/c/d/e"
+/// ```
 ///
 pub fn replace(
   in string: String,
@@ -101,8 +109,10 @@ pub fn replace(
 ///
 /// ## Examples
 ///
-///    > lowercase("X-FILES")
-///    "x-files"
+/// ```gleam
+/// > lowercase("X-FILES")
+/// "x-files"
+/// ```
 ///
 pub fn lowercase(string: String) -> String {
   do_lowercase(string)
@@ -125,8 +135,10 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > uppercase("skinner")
-///    "SKINNER"
+/// ```gleam
+/// > uppercase("skinner")
+/// "SKINNER"
+/// ```
 ///
 pub fn uppercase(string: String) -> String {
   do_uppercase(string)
@@ -148,11 +160,13 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > compare("Anthony", "Anthony")
-///    order.Eq
+/// ```gleam
+/// > compare("Anthony", "Anthony")
+/// order.Eq
 ///
-///    > compare("A", "B")
-///    order.Lt
+/// > compare("A", "B")
+/// order.Lt
+/// ```
 ///
 pub fn compare(a: String, b: String) -> order.Order {
   case a == b {
@@ -179,20 +193,22 @@ if javascript {
 /// are taken starting from the *end* of the list.
 ///
 /// ## Examples
-///    > slice(from: "gleam", at_index: 1, length: 2)
-///    "le"
+/// ```gleam
+/// > slice(from: "gleam", at_index: 1, length: 2)
+/// "le"
 ///
-///    > slice(from: "gleam", at_index: 1, length: 10)
-///    "leam"
+/// > slice(from: "gleam", at_index: 1, length: 10)
+/// "leam"
 ///
-///    > slice(from: "gleam", at_index: 10, length: 3)
-///    ""
+/// > slice(from: "gleam", at_index: 10, length: 3)
+/// ""
 ///
-///    > slice(from: "gleam", at_index: -2, length: 2)
-///    "am"
+/// > slice(from: "gleam", at_index: -2, length: 2)
+/// "am"
 ///
-///    > slice(from: "gleam", at_index: -12, length: 2)
-///    ""
+/// > slice(from: "gleam", at_index: -12, length: 2)
+/// ""
+/// ```
 ///
 pub fn slice(from string: String, at_index idx: Int, length len: Int) -> String {
   case len < 0 {
@@ -225,8 +241,10 @@ if javascript {
 /// If the `from` string does not contain the `before` string, `from` is returned unchanged.
 ///
 /// ## Examples
-///    > crop(from: "The Lone Gunmen", before: "Lone")
-///    "Lone Gunmen"
+/// ```gleam
+/// > crop(from: "The Lone Gunmen", before: "Lone")
+/// "Lone Gunmen"
+/// ```
 ///
 pub fn crop(from string: String, before substring: String) -> String {
   do_crop(string, substring)
@@ -252,8 +270,10 @@ if javascript {
 /// Drops *n* graphemes from the left side of a `String`.
 ///
 /// ## Examples
-///    > drop_left(from: "The Lone Gunmen", up_to: 2)
-///    "e Lone Gunmen"
+/// ```gleam
+/// > drop_left(from: "The Lone Gunmen", up_to: 2)
+/// "e Lone Gunmen"
+/// ```
 ///
 pub fn drop_left(from string: String, up_to num_graphemes: Int) -> String {
   case num_graphemes < 0 {
@@ -265,8 +285,10 @@ pub fn drop_left(from string: String, up_to num_graphemes: Int) -> String {
 /// Drops *n* graphemes from the right side of a `String`.
 ///
 /// ## Examples
-///    > drop_right(from: "Cigarette Smoking Man", up_to: 2)
-///    "Cigarette Smoking M"
+/// ```gleam
+/// > drop_right(from: "Cigarette Smoking Man", up_to: 2)
+/// "Cigarette Smoking M"
+/// ```
 ///
 pub fn drop_right(from string: String, up_to num_graphemes: Int) -> String {
   case num_graphemes < 0 {
@@ -279,14 +301,16 @@ pub fn drop_right(from string: String, up_to num_graphemes: Int) -> String {
 ///
 /// ## Examples
 ///
-///    > contains(does: "theory", contain: "ory")
-///    True
+/// ```gleam
+/// > contains(does: "theory", contain: "ory")
+/// True
 ///
-///    > contains(does: "theory", contain: "the")
-///    True
+/// > contains(does: "theory", contain: "the")
+/// True
 ///
-///    > contains(does: "theory", contain: "THE")
-///    False
+/// > contains(does: "theory", contain: "THE")
+/// False
+/// ```
 ///
 pub fn contains(does haystack: String, contain needle: String) -> Bool {
   do_contains(haystack, needle)
@@ -314,8 +338,10 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > starts_with("theory", "ory")
-///    False
+/// ```gleam
+/// > starts_with("theory", "ory")
+/// False
+/// ```
 ///
 pub fn starts_with(string: String, prefix: String) -> Bool {
   do_starts_with(string, prefix)
@@ -335,8 +361,10 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > ends_with("theory", "ory")
-///    True
+/// ```gleam
+/// > ends_with("theory", "ory")
+/// True
+/// ```
 ///
 pub fn ends_with(string: String, suffix: String) -> Bool {
   do_ends_with(string, suffix)
@@ -356,8 +384,10 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > split("home/gleam/desktop/", on: "/")
-///    ["home", "gleam", "desktop", ""]
+/// ```gleam
+/// > split("home/gleam/desktop/", on: "/")
+/// ["home", "gleam", "desktop", ""]
+/// ```
 ///
 pub fn split(x: String, on substring: String) -> List(String) {
   x
@@ -372,11 +402,13 @@ pub fn split(x: String, on substring: String) -> List(String) {
 ///
 /// ## Examples
 ///
-///    > split_once("home/gleam/desktop/", on: "/")
-///    Ok(#("home", "gleam/desktop/"))
+/// ```gleam
+/// > split_once("home/gleam/desktop/", on: "/")
+/// Ok(#("home", "gleam/desktop/"))
 ///
-///    > split_once("home/gleam/desktop/", on: "?")
-///    Error(Nil)
+/// > split_once("home/gleam/desktop/", on: "?")
+/// Error(Nil)
+/// ```
 ///
 pub fn split_once(
   x: String,
@@ -416,8 +448,10 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > append(to: "butter", suffix: "fly")
-///    "butterfly"
+/// ```gleam
+/// > append(to: "butter", suffix: "fly")
+/// "butterfly"
+/// ```
 ///
 pub fn append(to first: String, suffix second: String) -> String {
   first
@@ -434,8 +468,10 @@ pub fn append(to first: String, suffix second: String) -> String {
 ///
 /// ## Examples
 ///
-///    > concat(["never", "the", "less"])
-///    "nevertheless"
+/// ```gleam
+/// > concat(["never", "the", "less"])
+/// "nevertheless"
+/// ```
 ///
 pub fn concat(strings: List(String)) -> String {
   strings
@@ -449,8 +485,10 @@ pub fn concat(strings: List(String)) -> String {
 ///
 /// ## Examples
 ///
-///    > repeat("ha", times: 3)
-///    "hahaha"
+/// ```gleam
+/// > repeat("ha", times: 3)
+/// "hahaha"
+/// ```
 ///
 pub fn repeat(string: String, times times: Int) -> String {
   iterator.repeat(string)
@@ -465,8 +503,10 @@ pub fn repeat(string: String, times times: Int) -> String {
 ///
 /// ## Examples
 ///
-///    > join(["home","evan","Desktop"], with: "/")
-///    "home/evan/Desktop"
+/// ```gleam
+/// > join(["home","evan","Desktop"], with: "/")
+/// "home/evan/Desktop"
+/// ```
 ///
 pub fn join(strings: List(String), with separator: String) -> String {
   strings
@@ -478,14 +518,16 @@ pub fn join(strings: List(String), with separator: String) -> String {
 ///
 /// ## Examples
 ///
-///    > pad_left("121", to: 5, with: ".")
-///    "..121"
+/// ```gleam
+/// > pad_left("121", to: 5, with: ".")
+/// "..121"
 ///
-///    > pad_left("121", to: 3, with: ".")
-///    "121"
+/// > pad_left("121", to: 3, with: ".")
+/// "121"
 ///
-///    > pad_left("121", to: 2, with: ".")
-///    "121"
+/// > pad_left("121", to: 2, with: ".")
+/// "121"
+/// ```
 ///
 pub fn pad_left(string: String, to desired_length: Int, with pad_string: String) {
   let current_length = length(string)
@@ -500,14 +542,16 @@ pub fn pad_left(string: String, to desired_length: Int, with pad_string: String)
 ///
 /// ## Examples
 ///
-///    > pad_right("121", to: 5, with: ".")
-///    "121.."
+/// ```gleam
+/// > pad_right("121", to: 5, with: ".")
+/// "121.."
 ///
-///    > pad_right("121", to: 3, with: ".")
-///    "121"
+/// > pad_right("121", to: 3, with: ".")
+/// "121"
 ///
-///    > pad_right("121", to: 2, with: ".")
-///    "121"
+/// > pad_right("121", to: 2, with: ".")
+/// "121"
+/// ```
 ///
 pub fn pad_right(
   string: String,
@@ -535,8 +579,10 @@ fn padding(size: Int, pad_string: String) -> Iterator(String) {
 ///
 /// ## Examples
 ///
-///    > trim("  hats  \n")
-///    "hats"
+/// ```gleam
+/// > trim("  hats  \n")
+/// "hats"
+/// ```
 ///
 pub fn trim(string: String) -> String {
   do_trim(string)
@@ -566,8 +612,10 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > trim_left("  hats  \n")
-///    "hats  \n"
+/// ```gleam
+/// > trim_left("  hats  \n")
+/// "hats  \n"
+/// ```
 ///
 pub fn trim_left(string: String) -> String {
   do_trim_left(string)
@@ -588,8 +636,10 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > trim_right("  hats  \n")
-///    "  hats"
+/// ```gleam
+/// > trim_right("  hats  \n")
+/// "  hats"
+/// ```
 ///
 pub fn trim_right(string: String) -> String {
   do_trim_right(string)
@@ -610,11 +660,13 @@ if javascript {
 /// pattern match on `String`s exactly as you would with lists.
 ///
 /// ## Examples
-///    > pop_grapheme("gleam")
-///    Ok(#("g", "leam"))
+/// ```gleam
+/// > pop_grapheme("gleam")
+/// Ok(#("g", "leam"))
 ///
-///    > pop_grapheme("")
-///    Error(Nil)
+/// > pop_grapheme("")
+/// Error(Nil)
+/// ```
 ///
 pub fn pop_grapheme(string: String) -> Result(#(String, String), Nil) {
   do_pop_grapheme(string)
@@ -632,8 +684,10 @@ if javascript {
 
 /// Converts a `String` to a list of graphemes.
 ///
-///    > to_graphemes("abc")
-///    ["a", "b", "c"]
+/// ```gleam
+/// > to_graphemes("abc")
+/// ["a", "b", "c"]
+/// ```
 ///
 pub fn to_graphemes(string: String) -> List(String) {
   case pop_grapheme(string) {

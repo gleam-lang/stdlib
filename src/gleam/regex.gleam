@@ -38,15 +38,17 @@ pub type Options {
 ///
 /// ## Examples
 ///
-///    > let options = Options(case_insensitive: False, multi_line: True)
-///    > assert Ok(re) = compile("^[0-9]", with: options)
-///    > match(re, "abc\n123")
-///    True
+/// ```gleam
+/// > let options = Options(case_insensitive: False, multi_line: True)
+/// > assert Ok(re) = compile("^[0-9]", with: options)
+/// > match(re, "abc\n123")
+/// True
 ///
-///    > let options = Options(case_insensitive: True, multi_line: False)
-///    > assert Ok(re) = compile("[A-Z]", with: options)
-///    > match(re, "abc123")
-///    True
+/// > let options = Options(case_insensitive: True, multi_line: False)
+/// > assert Ok(re) = compile("[A-Z]", with: options)
+/// > match(re, "abc123")
+/// True
+/// ```
 ///
 pub fn compile(
   pattern: String,
@@ -69,20 +71,22 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > assert Ok(re) = from_string("[0-9]")
-///    > match(re, "abc123")
-///    True
+/// ```gleam
+/// > assert Ok(re) = from_string("[0-9]")
+/// > match(re, "abc123")
+/// True
 ///
-///    > match(re, "abcxyz")
-///    False
+/// > match(re, "abcxyz")
+/// False
 ///
-///    > from_string("[0-9")
-///    Error(
-///      CompileError(
-///        error: "missing terminating ] for character class",
-///        byte_index: 4
-///      )
-///    )
+/// > from_string("[0-9")
+/// Error(
+///   CompileError(
+///     error: "missing terminating ] for character class",
+///     byte_index: 4
+///   )
+/// )
+/// ```
 ///
 pub fn from_string(pattern: String) -> Result(Regex, CompileError) {
   compile(pattern, Options(case_insensitive: False, multi_line: False))
@@ -92,12 +96,14 @@ pub fn from_string(pattern: String) -> Result(Regex, CompileError) {
 ///
 /// ## Examples
 ///
-///    > assert Ok(re) = from_string("^f.o.?")
-///    > check(with: re, content: "foo")
-///    True
+/// ```gleam
+/// > assert Ok(re) = from_string("^f.o.?")
+/// > check(with: re, content: "foo")
+/// True
 ///
-///    > check(with: re, content: "boo")
-///    False
+/// > check(with: re, content: "boo")
+/// False
+/// ```
 ///
 pub fn check(with regex: Regex, content content: String) -> Bool {
   do_check(regex, content)
@@ -117,9 +123,11 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > assert Ok(re) = from_string(" *, *")
-///    > split(with: re, content: "foo,32, 4, 9  ,0")
-///    ["foo", "32", "4", "9", "0"]
+/// ```gleam
+/// > assert Ok(re) = from_string(" *, *")
+/// > split(with: re, content: "foo,32, 4, 9  ,0")
+/// ["foo", "32", "4", "9", "0"]
+/// ```
 ///
 pub fn split(with regex: Regex, content string: String) -> List(String) {
   do_split(regex, string)
@@ -143,18 +151,20 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > assert Ok(re) = regex.from_string("[oi]n a (\\w+)")
-///    > regex.scan(with: re, content: "I am on a boat in a lake.")
-///    [
-///      Match(
-///        content: "on a boat",
-///        submatches: [Some("boat")]
-///      ),
-///      Match(
-///        content: "in a lake",
-///        submatches: [Some("lake")]
-///      )
-///    ]
+/// ```gleam
+/// > assert Ok(re) = regex.from_string("[oi]n a (\\w+)")
+/// > regex.scan(with: re, content: "I am on a boat in a lake.")
+/// [
+///   Match(
+///     content: "on a boat",
+///     submatches: [Some("boat")]
+///   ),
+///   Match(
+///     content: "in a lake",
+///     submatches: [Some("lake")]
+///   )
+/// ]
+/// ```
 ///
 pub fn scan(with regex: Regex, content string: String) -> List(Match) {
   do_scan(regex, string)

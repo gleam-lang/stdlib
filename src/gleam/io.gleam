@@ -28,9 +28,11 @@ if javascript {
 ///
 /// ## Example
 ///
-///    > io.println("Hi mum")
-///    // -> Hi mum
-///    Nil
+/// ```gleam
+/// > io.println("Hi mum")
+/// // -> Hi mum
+/// Nil
+/// ```
 ///
 pub fn println(string: String) -> Nil {
   do_println(string)
@@ -52,21 +54,23 @@ if javascript {
 ///
 /// ## Example
 ///
-///    > io.debug("Hi mum")
-///    // -> <<"Hi mum">>
-///    "Hi mum"
+/// ```gleam
+/// > io.debug("Hi mum")
+/// // -> <<"Hi mum">>
+/// "Hi mum"
 ///
-///    > io.debug(Ok(1))
-///    // -> {ok, 1}
-///    Ok(1)
+/// > io.debug(Ok(1))
+/// // -> {ok, 1}
+/// Ok(1)
 ///
-///    > import list
-///    > [1, 2]
-///    > |> list.map(fn(x) { x + 1 })
-///    > |> io.debug
-///    > |> list.map(fn(x) { x * 2 })
-///    // -> [2, 3]
-///    [4, 6]
+/// > import list
+/// > [1, 2]
+/// > |> list.map(fn(x) { x + 1 })
+/// > |> io.debug
+/// > |> list.map(fn(x) { x * 2 })
+/// // -> [2, 3]
+/// [4, 6]
+/// ```
 ///
 pub fn debug(term: anything) -> anything {
   debug_print(term)

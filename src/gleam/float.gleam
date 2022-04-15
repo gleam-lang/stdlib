@@ -5,11 +5,13 @@ import gleam/string_builder
 /// possible.
 ///
 /// ## Examples
-///    > parse("2.3")
-///    Ok(2.3)
+/// ```gleam
+/// > parse("2.3")
+/// Ok(2.3)
 ///
-///    > parse("ABC")
-///    Error(Nil)
+/// > parse("ABC")
+/// Error(Nil)
+/// ```
 ///
 pub fn parse(string: String) -> Result(Float, Nil) {
   do_parse(string)
@@ -28,8 +30,10 @@ if javascript {
 /// Returns the string representation of the provided `Float`.
 ///
 /// ## Examples
-///    > to_string(2.3)
-///    "2.3"
+/// ```gleam
+/// > to_string(2.3)
+/// "2.3"
+/// ```
 ///
 pub fn to_string(f: Float) -> String {
   f
@@ -55,8 +59,10 @@ pub fn clamp(n: Float, min min_bound: Float, max max_bound: Float) -> Float {
 /// Compares two `Float`s, returning an order.
 ///
 /// ## Examples
-///    > compare(2.0, 2.3)
-///    Lt
+/// ```gleam
+/// > compare(2.0, 2.3)
+/// Lt
+/// ```
 ///
 pub fn compare(a: Float, with b: Float) -> Order {
   case a == b {
@@ -74,8 +80,10 @@ pub fn compare(a: Float, with b: Float) -> Order {
 /// e.g. 5.3 - 5.0 is not exactly 0.3 in a float
 ///
 /// ## Examples
-///    > loosely_compare(5.0, with: 5.3, tolerating: 0.5)
-///    Eq
+/// ```gleam
+/// > loosely_compare(5.0, with: 5.3, tolerating: 0.5)
+/// Eq
+/// ```
 ///
 pub fn loosely_compare(
   a: Float,
@@ -93,8 +101,10 @@ pub fn loosely_compare(
 ///
 /// ## Examples
 ///
-///    > min(2.0, 2.3)
-///    2.0
+/// ```gleam
+/// > min(2.0, 2.3)
+/// 2.0
+/// ```
 ///
 pub fn min(a: Float, b: Float) -> Float {
   case a <. b {
@@ -107,8 +117,10 @@ pub fn min(a: Float, b: Float) -> Float {
 ///
 /// ## Examples
 ///
-///    > max(2.0, 2.3)
-///    2.3
+/// ```gleam
+/// > max(2.0, 2.3)
+/// 2.3
+/// ```
 ///
 pub fn max(a: Float, b: Float) -> Float {
   case a >. b {
@@ -121,8 +133,10 @@ pub fn max(a: Float, b: Float) -> Float {
 ///
 /// ## Examples
 ///
-///    > ceiling(2.3)
-///    3.0
+/// ```gleam
+/// > ceiling(2.3)
+/// 3.0
+/// ```
 ///
 pub fn ceiling(float: Float) -> Float {
   do_ceiling(float)
@@ -142,8 +156,10 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > floor(2.3)
-///    2.0
+/// ```gleam
+/// > floor(2.3)
+/// 2.0
+/// ```
 ///
 pub fn floor(float: Float) -> Float {
   do_floor(float)
@@ -163,11 +179,13 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > round(2.3)
-///    2
+/// ```gleam
+/// > round(2.3)
+/// 2
 ///
-///    > round(2.5)
-///    3
+/// > round(2.5)
+/// 3
+/// ```
 ///
 pub fn round(float: Float) -> Int {
   do_round(float)
@@ -194,8 +212,10 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > truncate(2.4343434847383438)
-///    2
+/// ```gleam
+/// > truncate(2.4343434847383438)
+/// 2
+/// ```
 ///
 pub fn truncate(float: Float) -> Int {
   do_truncate(float)
@@ -215,11 +235,13 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > absolute_value(-12.5)
-///    12.5
+/// ```gleam
+/// > absolute_value(-12.5)
+/// 12.5
 ///
-///    > absolute_value(10.2)
-///    10.2
+/// > absolute_value(10.2)
+/// 10.2
+/// ```
 ///
 pub fn absolute_value(float: Float) -> Float {
   case float >=. 0. {
@@ -233,11 +255,13 @@ pub fn absolute_value(float: Float) -> Float {
 ///
 /// ## Examples
 ///
-///    > power(2.0, 2.0)
-///    4.0
+/// ```gleam
+/// > power(2.0, 2.0)
+/// 4.0
 ///
-///    > power(8.0, 1.5)
-///    22.627416997969522
+/// > power(8.0, 1.5)
+/// 22.627416997969522
+/// ```
 ///
 pub fn power(base: Float, exponent: Float) -> Float {
   do_power(base, exponent)
@@ -257,11 +281,13 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > square_root(4.0)
-///    Ok(2.0)
+/// ```gleam
+/// > square_root(4.0)
+/// Ok(2.0)
 ///
-///    > square_root(-16.0)
-///    Error(Nil)
+/// > square_root(-16.0)
+/// Error(Nil)
+/// ```
 ///
 pub fn square_root(number: Float) -> Result(Float, Nil) {
   case number <. 0.0 {
@@ -274,8 +300,10 @@ pub fn square_root(number: Float) -> Result(Float, Nil) {
 ///
 /// ## Examples
 ///
-///    > negate(1.)
-///    -1.
+/// ```gleam
+/// > negate(1.)
+/// -1.
+/// ```
 ///
 pub fn negate(x: Float) -> Float {
   -1. *. x
@@ -285,8 +313,10 @@ pub fn negate(x: Float) -> Float {
 ///
 /// ## Example
 ///
-///    > sum([1.0, 2.2, 3.3])
-///    6.5
+/// ```gleam
+/// > sum([1.0, 2.2, 3.3])
+/// 6.5
+/// ```
 ///
 pub fn sum(numbers: List(Float)) -> Float {
   numbers
@@ -304,8 +334,10 @@ fn do_sum(numbers: List(Float), initial: Float) -> Float {
 ///
 /// ## Example
 ///
-///    > product([2.5, 3.2, 4.2])
-///    33.6
+/// ```gleam
+/// > product([2.5, 3.2, 4.2])
+/// 33.6
+/// ```
 ///
 pub fn product(numbers: List(Float)) -> Float {
   case numbers {

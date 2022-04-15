@@ -38,8 +38,10 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > append(to: from_string("butter"), suffix: from_string("fly"))
-///    from_string("butterfly")
+/// ```gleam
+/// > append(to: from_string("butter"), suffix: from_string("fly"))
+/// from_string("butterfly")
+/// ```
 ///
 pub fn append(to first: BitString, suffix second: BitString) -> BitString {
   concat([first, second])
@@ -133,8 +135,10 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > concat([from_string("butter"), from_string("fly")])
-///    from_string("butterfly")
+/// ```gleam
+/// > concat([from_string("butter"), from_string("fly")])
+/// from_string("butterfly")
+/// ```
 ///
 pub fn concat(bit_strings: List(BitString)) -> BitString {
   do_concat(bit_strings)

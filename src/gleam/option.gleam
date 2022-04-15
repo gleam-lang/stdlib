@@ -18,11 +18,11 @@ pub type Option(a) {
 /// ## Examples
 ///
 /// ```
-///    > all([Some(1), Some(2)])
-///    Some([1, 2])
+/// > all([Some(1), Some(2)])
+/// Some([1, 2])
 ///
-///    > all([Some(1), None])
-///    None
+/// > all([Some(1), None])
+/// None
 /// ```
 ///
 pub fn all(list: List(Option(a))) -> Option(List(a)) {
@@ -42,11 +42,13 @@ pub fn all(list: List(Option(a))) -> Option(List(a)) {
 ///
 /// ## Examples
 ///
-///    > is_some(Some(1))
-///    True
+/// ```gleam
+/// > is_some(Some(1))
+/// True
 ///
-///    > is_some(None)
-///    False
+/// > is_some(None)
+/// False
+/// ```
 ///
 pub fn is_some(option: Option(a)) -> Bool {
   option != None
@@ -56,11 +58,13 @@ pub fn is_some(option: Option(a)) -> Bool {
 ///
 /// ## Examples
 ///
-///    > is_none(Some(1))
-///    False
+/// ```gleam
+/// > is_none(Some(1))
+/// False
 ///
-///    > is_none(None)
-///    True
+/// > is_none(None)
+/// True
+/// ```
 ///
 pub fn is_none(option: Option(a)) -> Bool {
   option == None
@@ -70,10 +74,12 @@ pub fn is_none(option: Option(a)) -> Bool {
 ///
 /// ## Examples
 ///
-///    > to_result(Some(1), "some_error")
-///    Ok(1)
-///    > to_result(None, "some_error")
-///    Error("some_error")
+/// ```gleam
+/// > to_result(Some(1), "some_error")
+/// Ok(1)
+/// > to_result(None, "some_error")
+/// Error("some_error")
+/// ```
 ///
 pub fn to_result(option: Option(a), e) -> Result(a, e) {
   case option {
@@ -86,10 +92,12 @@ pub fn to_result(option: Option(a), e) -> Result(a, e) {
 ///
 /// ## Examples
 ///
-///    > from_result(Ok(1))
-///    Some(1)
-///    > from_result(Error("some_error"))
-///    None
+/// ```gleam
+/// > from_result(Ok(1))
+/// Some(1)
+/// > from_result(Error("some_error"))
+/// None
+/// ```
 ///
 pub fn from_result(result: Result(a, e)) -> Option(a) {
   case result {
@@ -102,11 +110,13 @@ pub fn from_result(result: Result(a, e)) -> Option(a) {
 ///
 /// ## Examples
 ///
-///    > unwrap(Some(1), 0)
-///    1
+/// ```gleam
+/// > unwrap(Some(1), 0)
+/// 1
 ///
-///    > unwrap(None, 0)
-///    0
+/// > unwrap(None, 0)
+/// 0
+/// ```
 ///
 pub fn unwrap(option: Option(a), or default: a) -> a {
   case option {
@@ -119,11 +129,13 @@ pub fn unwrap(option: Option(a), or default: a) -> a {
 ///
 /// ## Examples
 ///
-///    > lazy_unwrap(Some(1), fn() { 0 })
-///    1
+/// ```gleam
+/// > lazy_unwrap(Some(1), fn() { 0 })
+/// 1
 ///
-///    > lazy_unwrap(None, fn() { 0 })
-///    0
+/// > lazy_unwrap(None, fn() { 0 })
+/// 0
+/// ```
 ///
 pub fn lazy_unwrap(option: Option(a), or default: fn() -> a) -> a {
   case option {
@@ -140,11 +152,13 @@ pub fn lazy_unwrap(option: Option(a), or default: fn() -> a) -> a {
 ///
 /// ## Examples
 ///
-///    > map(over: Some(1), with: fn(x) { x + 1 })
-///    Some(2)
+/// ```gleam
+/// > map(over: Some(1), with: fn(x) { x + 1 })
+/// Some(2)
 ///
-///    > map(over: None, with: fn(x) { x + 1 })
-///    None
+/// > map(over: None, with: fn(x) { x + 1 })
+/// None
+/// ```
 ///
 pub fn map(over option: Option(a), with fun: fn(a) -> b) -> Option(b) {
   case option {
@@ -157,14 +171,16 @@ pub fn map(over option: Option(a), with fun: fn(a) -> b) -> Option(b) {
 ///
 /// ## Examples
 ///
-///    > flatten(Some(Some(1)))
-///    Some(1)
+/// ```gleam
+/// > flatten(Some(Some(1)))
+/// Some(1)
 ///
-///    > flatten(Some(None))
-///    None
+/// > flatten(Some(None))
+/// None
 ///
-///    > flatten(None)
-///    None
+/// > flatten(None)
+/// None
+/// ```
 ///
 pub fn flatten(option: Option(Option(a))) -> Option(a) {
   case option {
@@ -185,17 +201,19 @@ pub fn flatten(option: Option(Option(a))) -> Option(a) {
 ///
 /// ## Examples
 ///
-///    > then(Some(1), fn(x) { Some(x + 1) })
-///    Some(2)
+/// ```gleam
+/// > then(Some(1), fn(x) { Some(x + 1) })
+/// Some(2)
 ///
-///    > then(Some(1), fn(x) { Some(#("a", x)) })
-///    Some(#("a", 1))
+/// > then(Some(1), fn(x) { Some(#("a", x)) })
+/// Some(#("a", 1))
 ///
-///    > then(Some(1), fn(_) { None })
-///    None
+/// > then(Some(1), fn(_) { None })
+/// None
 ///
-///    > then(None, fn(x) { Some(x + 1) })
-///    None
+/// > then(None, fn(x) { Some(x + 1) })
+/// None
+/// ```
 ///
 pub fn then(option: Option(a), apply fun: fn(a) -> Option(b)) -> Option(b) {
   case option {
@@ -208,17 +226,19 @@ pub fn then(option: Option(a), apply fun: fn(a) -> Option(b)) -> Option(b) {
 ///
 /// ## Examples
 ///
-///    > or(Some(1), Some(2))
-///    Some(1)
+/// ```gleam
+/// > or(Some(1), Some(2))
+/// Some(1)
 ///
-///    > or(Some(1), None)
-///    Some(1)
+/// > or(Some(1), None)
+/// Some(1)
 ///
-///    > or(None, Some(2))
-///    Some(2)
+/// > or(None, Some(2))
+/// Some(2)
 ///
-///    > or(None, None)
-///    None
+/// > or(None, None)
+/// None
+/// ```
 ///
 pub fn or(first: Option(a), second: Option(a)) -> Option(a) {
   case first {
@@ -231,17 +251,19 @@ pub fn or(first: Option(a), second: Option(a)) -> Option(a) {
 ///
 /// ## Examples
 ///
-///    > lazy_or(Some(1), fn() { Some(2) })
-///    Some(1)
+/// ```gleam
+/// > lazy_or(Some(1), fn() { Some(2) })
+/// Some(1)
 ///
-///    > lazy_or(Some(1), fn() { None })
-///    Some(1)
+/// > lazy_or(Some(1), fn() { None })
+/// Some(1)
 ///
-///    > lazy_or(None, fn() { Some(2) })
-///    Some(2)
+/// > lazy_or(None, fn() { Some(2) })
+/// Some(2)
 ///
-///    > lazy_or(None, fn() { None })
-///    None
+/// > lazy_or(None, fn() { None })
+/// None
+/// ```
 ///
 pub fn lazy_or(first: Option(a), second: fn() -> Option(a)) -> Option(a) {
   case first {
