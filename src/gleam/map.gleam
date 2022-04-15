@@ -24,11 +24,13 @@ pub external type Map(key, value)
 ///
 /// ## Examples
 ///
-///    > new() |> size()
-///    0
+/// ```gleam
+/// > new() |> size()
+/// 0
 ///
-///    > new() |> insert("key", "value") |> size()
-///    1
+/// > new() |> insert("key", "value") |> size()
+/// 1
+/// ```
 ///
 ///
 pub fn size(map: Map(k, v)) -> Int {
@@ -52,11 +54,13 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > new() |> to_list()
-///    []
+/// ```gleam
+/// > new() |> to_list()
+/// []
 ///
-///    > new() |> insert("key", 0) |> to_list()
-///    [#("key", 0)]
+/// > new() |> insert("key", 0) |> to_list()
+/// [#("key", 0)]
+/// ```
 ///
 pub fn to_list(map: Map(key, value)) -> List(#(key, value)) {
   do_to_list(map)
@@ -96,11 +100,13 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > new() |> insert("a", 0) |> has_key("a")
-///    True
+/// ```gleam
+/// > new() |> insert("a", 0) |> has_key("a")
+/// True
 ///
-///    > new() |> insert("a", 0) |> has_key("b")
-///    False
+/// > new() |> insert("a", 0) |> has_key("b")
+/// False
+/// ```
 ///
 pub fn has_key(map: Map(k, v), key: k) -> Bool {
   do_has_key(key, map)
@@ -140,11 +146,13 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > new() |> insert("a", 0) |> get("a")
-///    Ok(0)
+/// ```gleam
+/// > new() |> insert("a", 0) |> get("a")
+/// Ok(0)
 ///
-///    > new() |> insert("a", 0) |> get("b")
-///    Error(Nil)
+/// > new() |> insert("a", 0) |> get("b")
+/// Error(Nil)
+/// ```
 ///
 pub fn get(from: Map(key, value), get: key) -> Result(value, Nil) {
   do_get(from, get)
@@ -167,11 +175,13 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > new() |> insert("a", 0) |> to_list
-///    [#("a", 0)]
+/// ```gleam
+/// > new() |> insert("a", 0) |> to_list
+/// [#("a", 0)]
 ///
-///    > new() |> insert("a", 0) |> insert("a", 5) |> to_list
-///    [#("a", 5)]
+/// > new() |> insert("a", 0) |> insert("a", 5) |> to_list
+/// [#("a", 5)]
+/// ```
 ///
 pub fn insert(into map: Map(k, v), for key: k, insert value: v) -> Map(k, v) {
   do_insert(key, value, map)
@@ -192,10 +202,12 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > [#(3, 3), #(2, 4)]
-///    > |> from_list
-///    > |> map_values(fn(key, value) { key * value })
-///    [#(3, 9), #(2, 8)]
+/// ```gleam
+/// > [#(3, 3), #(2, 4)]
+/// > |> from_list
+/// > |> map_values(fn(key, value) { key * value })
+/// [#(3, 9), #(2, 8)]
+/// ```
 ///
 ///
 pub fn map_values(in map: Map(k, v), with fun: fn(k, v) -> w) -> Map(k, w) {
@@ -223,8 +235,10 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > keys([#("a", 0), #("b", 1)])
-///    ["a", "b"]
+/// ```gleam
+/// > keys([#("a", 0), #("b", 1)])
+/// ["a", "b"]
+/// ```
 ///
 pub fn keys(map: Map(keys, v)) -> List(keys) {
   do_keys(map)
@@ -251,8 +265,10 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > keys(from_list([#("a", 0), #("b", 1)]))
-///    [0, 1]
+/// ```gleam
+/// > keys(from_list([#("a", 0), #("b", 1)]))
+/// [0, 1]
+/// ```
 ///
 pub fn values(map: Map(k, values)) -> List(values) {
   do_values(map)
@@ -276,13 +292,15 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > from_list([#("a", 0), #("b", 1)])
-///    > |> filter(fn(key, value) { value != 0 })
-///    from_list([#("b", 1)])
+/// ```gleam
+/// > from_list([#("a", 0), #("b", 1)])
+/// > |> filter(fn(key, value) { value != 0 })
+/// from_list([#("b", 1)])
 ///
-///    > from_list([#("a", 0), #("b", 1)])
-///    > |> filter(fn(key, value) { True })
-///    from_list([#("a", 0), #("b", 1)])
+/// > from_list([#("a", 0), #("b", 1)])
+/// > |> filter(fn(key, value) { True })
+/// from_list([#("a", 0), #("b", 1)])
+/// ```
 ///
 pub fn filter(in map: Map(k, v), for property: fn(k, v) -> Bool) -> Map(k, v) {
   do_filter(property, map)
@@ -317,13 +335,15 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > from_list([#("a", 0), #("b", 1)])
-///    > |> take(["b"])
-///    from_list([#("b", 1)])
+/// ```gleam
+/// > from_list([#("a", 0), #("b", 1)])
+/// > |> take(["b"])
+/// from_list([#("b", 1)])
 ///
-///    > from_list([#("a", 0), #("b", 1)])
-///    > |> take(["a", "b", "c"])
-///    from_list([#("a", 0), #("b", 1)])
+/// > from_list([#("a", 0), #("b", 1)])
+/// > |> take(["a", "b", "c"])
+/// from_list([#("a", 0), #("b", 1)])
+/// ```
 ///
 pub fn take(from map: Map(k, v), keeping desired_keys: List(k)) -> Map(k, v) {
   do_take(desired_keys, map)
@@ -353,10 +373,12 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > let a = from_list([#("a", 0), #("b", 1)])
-///    > let b = from_list([#("b", 2), #("c", 3)])
-///    > merge(a, b)
-///    from_list([#("a", 0), #("b", 2), #("c", 3)])
+/// ```gleam
+/// > let a = from_list([#("a", 0), #("b", 1)])
+/// > let b = from_list([#("b", 2), #("c", 3)])
+/// > merge(a, b)
+/// from_list([#("a", 0), #("b", 2), #("c", 3)])
+/// ```
 ///
 pub fn merge(into map: Map(k, v), from new_entries: Map(k, v)) -> Map(k, v) {
   do_merge(map, new_entries)
@@ -384,11 +406,13 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > delete([#("a", 0), #("b", 1)], "a")
-///    from_list([#("b", 1)])
+/// ```gleam
+/// > delete([#("a", 0), #("b", 1)], "a")
+/// from_list([#("b", 1)])
 ///
-///    > delete([#("a", 0), #("b", 1)], "c")
-///    from_list([#("a", 0), #("b", 1)])
+/// > delete([#("a", 0), #("b", 1)], "c")
+/// from_list([#("a", 0), #("b", 1)])
+/// ```
 ///
 pub fn delete(from map: Map(k, v), delete key: k) -> Map(k, v) {
   do_delete(key, map)
@@ -409,14 +433,16 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > drop([#("a", 0), #("b", 1)], ["a"])
-///    from_list([#("b", 2)])
+/// ```gleam
+/// > drop([#("a", 0), #("b", 1)], ["a"])
+/// from_list([#("b", 2)])
 ///
-///    > delete([#("a", 0), #("b", 1)], ["c"])
-///    from_list([#("a", 0), #("b", 1)])
+/// > delete([#("a", 0), #("b", 1)], ["c"])
+/// from_list([#("a", 0), #("b", 1)])
 ///
-///    > drop([#("a", 0), #("b", 1)], ["a", "b", "c"])
-///    from_list([])
+/// > drop([#("a", 0), #("b", 1)], ["a", "b", "c"])
+/// from_list([])
+/// ```
 ///
 pub fn drop(from map: Map(k, v), drop disallowed_keys: List(k)) -> Map(k, v) {
   list.fold(over: disallowed_keys, from: map, with: delete)
@@ -429,19 +455,21 @@ pub fn drop(from map: Map(k, v), drop disallowed_keys: List(k)) -> Map(k, v) {
 ///
 /// ## Example
 ///
-///    > let increment = fn(x) {
-///    >   case x {
-///    >     Some(i) -> i + 1
-///    >     None -> 0
-///    >   }
-///    > }
-///    > let map = from_list([#("a", 0)])
-///    >
-///    > update(map, "a", increment)
-///    from_list([#("a", 1)])
+/// ```gleam
+/// > let increment = fn(x) {
+/// >   case x {
+/// >     Some(i) -> i + 1
+/// >     None -> 0
+/// >   }
+/// > }
+/// > let map = from_list([#("a", 0)])
+/// >
+/// > update(map, "a", increment)
+/// from_list([#("a", 1)])
 ///
-///    > update(map, "b", increment)
-///    from_list([#("a", 0), #("b", 0)])
+/// > update(map, "b", increment)
+/// from_list([#("a", 0), #("b", 0)])
+/// ```
 ///
 pub fn update(
   in map: Map(k, v),
@@ -471,13 +499,15 @@ fn do_fold(list: List(#(k, v)), initial: acc, fun: fn(acc, k, v) -> acc) -> acc 
 ///
 /// # Examples
 ///
-///    > let map = from_list([#("a", 1), #("b", 3), #("c", 9)])
-///    > fold(map, 0, fn(accumulator, key, value) { accumulator + value })
-///    13
+/// ```gleam
+/// > let map = from_list([#("a", 1), #("b", 3), #("c", 9)])
+/// > fold(map, 0, fn(accumulator, key, value) { accumulator + value })
+/// 13
 ///
-///    > import gleam/string.{append}
-///    > fold(map, "", fn(accumulator, key, value) { append(accumulator, key) })
-///    "abc"
+/// > import gleam/string.{append}
+/// > fold(map, "", fn(accumulator, key, value) { append(accumulator, key) })
+/// "abc"
+/// ```
 ///
 pub fn fold(
   over map: Map(k, v),

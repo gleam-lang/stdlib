@@ -2,8 +2,10 @@
 ///
 /// ## Examples
 ///
-///    > first(#(1, 2))
-///    1
+/// ```gleam
+/// > first(#(1, 2))
+/// 1
+/// ```
 ///
 pub fn first(pair: #(a, b)) -> a {
   let #(a, _) = pair
@@ -14,8 +16,10 @@ pub fn first(pair: #(a, b)) -> a {
 ///
 /// ## Examples
 ///
-///    > second(#(1, 2))
-///    2
+/// ```gleam
+/// > second(#(1, 2))
+/// 2
+/// ```
 ///
 pub fn second(pair: #(a, b)) -> b {
   let #(_, a) = pair
@@ -26,8 +30,10 @@ pub fn second(pair: #(a, b)) -> b {
 ///
 /// ## Examples
 ///
-///    > swap(#(1, 2))
-///    #(2, 1)
+/// ```gleam
+/// > swap(#(1, 2))
+/// #(2, 1)
+/// ```
 ///
 pub fn swap(pair: #(a, b)) -> #(b, a) {
   let #(a, b) = pair
@@ -39,8 +45,10 @@ pub fn swap(pair: #(a, b)) -> #(b, a) {
 ///
 /// ## Examples
 ///
-///    > #(1, 2) |> map_first(fn(n) { n * 2 })
-///    #(2, 2)
+/// ```gleam
+/// > #(1, 2) |> map_first(fn(n) { n * 2 })
+/// #(2, 2)
+/// ```
 ///
 pub fn map_first(of pair: #(a, b), with fun: fn(a) -> c) -> #(c, b) {
   let #(a, b) = pair
@@ -52,8 +60,10 @@ pub fn map_first(of pair: #(a, b), with fun: fn(a) -> c) -> #(c, b) {
 ///
 /// ## Examples
 ///
-///    > #(1, 2) |> map_second(fn(n) { n * 2 })
-///    #(1, 4)
+/// ```gleam
+/// > #(1, 2) |> map_second(fn(n) { n * 2 })
+/// #(1, 4)
+/// ```
 ///
 pub fn map_second(of pair: #(a, b), with fun: fn(b) -> c) -> #(a, c) {
   let #(a, b) = pair

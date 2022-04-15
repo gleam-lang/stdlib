@@ -295,11 +295,13 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > from_strings(["a", "b"]) == from_string("ab")
-///    False
+/// ```gleam
+/// > from_strings(["a", "b"]) == from_string("ab")
+/// False
 ///
-///    > is_equal(from_strings(["a", "b"]), from_string("ab"))
-///    True
+/// > is_equal(from_strings(["a", "b"]), from_string("ab"))
+/// True
+/// ```
 ///
 ///
 pub fn is_equal(a: StringBuilder, b: StringBuilder) -> Bool {
@@ -320,14 +322,16 @@ if javascript {
 ///
 /// ## Examples
 ///
-///    > from_string("ok") |> is_empty
-///    False
+/// ```gleam
+/// > from_string("ok") |> is_empty
+/// False
 ///
-///    > from_string("") |> is_empty
-///    True
+/// > from_string("") |> is_empty
+/// True
 ///
-///    > from_strings([]) |> is_empty
-///    True
+/// > from_strings([]) |> is_empty
+/// True
+/// ```
 ///
 ///
 pub fn is_empty(builder: StringBuilder) -> Bool {

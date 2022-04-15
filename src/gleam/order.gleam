@@ -17,14 +17,16 @@ pub type Order {
 ///
 /// ## Examples
 ///
-///    > reverse(Lt)
-///    Gt
+/// ```gleam
+/// > reverse(Lt)
+/// Gt
 ///
-///    > reverse(Eq)
-///    Eq
+/// > reverse(Eq)
+/// Eq
 ///
-///    > reverse(Lt)
-///    Gt
+/// > reverse(Lt)
+/// Gt
+/// ```
 ///
 pub fn reverse(order: Order) -> Order {
   case order {
@@ -38,14 +40,16 @@ pub fn reverse(order: Order) -> Order {
 ///
 /// ## Examples
 ///
-///    > to_int(Lt)
-///    -1
+/// ```gleam
+/// > to_int(Lt)
+/// -1
 ///
-///    > to_int(Eq)
-///    0
+/// > to_int(Eq)
+/// 0
 ///
-///    > to_int(Gt)
-///    1
+/// > to_int(Gt)
+/// 1
+/// ```
 ///
 pub fn to_int(order: Order) -> Int {
   case order {
@@ -59,8 +63,10 @@ pub fn to_int(order: Order) -> Int {
 ///
 /// ## Examples
 ///
-///    > compare(Eq, with: Lt)
-///    Gt
+/// ```gleam
+/// > compare(Eq, with: Lt)
+/// Gt
+/// ```
 ///
 pub fn compare(a: Order, with b: Order) -> Order {
   case a, b {
@@ -74,8 +80,10 @@ pub fn compare(a: Order, with b: Order) -> Order {
 ///
 /// ## Examples
 ///
-///    > max(Eq, Lt)
-///    Eq
+/// ```gleam
+/// > max(Eq, Lt)
+/// Eq
+/// ```
 ///
 pub fn max(a: Order, b: Order) -> Order {
   case a, b {
@@ -89,8 +97,10 @@ pub fn max(a: Order, b: Order) -> Order {
 ///
 /// ## Examples
 ///
-///    > min(Eq, Lt)
-///    Lt
+/// ```gleam
+/// > min(Eq, Lt)
+/// Lt
+/// ```
 ///
 pub fn min(a: Order, b: Order) -> Order {
   case a, b {

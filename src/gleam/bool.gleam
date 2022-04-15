@@ -14,11 +14,13 @@ import gleam/order.{Order}
 ///
 /// ## Examples
 ///
-///    > negate(True)
-///    False
+/// ```gleam
+/// > negate(True)
+/// False
 ///
-///    > negate(False)
-///    True
+/// > negate(False)
+/// True
+/// ```
 ///
 pub fn negate(bool: Bool) -> Bool {
   case bool {
@@ -31,17 +33,19 @@ pub fn negate(bool: Bool) -> Bool {
 ///
 /// ## Examples
 ///
-///    > nor(False, False)
-///    True
+/// ```gleam
+/// > nor(False, False)
+/// True
 ///
-///    > nor(False, True)
-///    False
+/// > nor(False, True)
+/// False
 ///
-///    > nor(True, False)
-///    False
+/// > nor(True, False)
+/// False
 ///
-///    > nor(True, True)
-///    False
+/// > nor(True, True)
+/// False
+/// ```
 ///
 pub fn nor(a: Bool, b: Bool) -> Bool {
   case a, b {
@@ -56,17 +60,19 @@ pub fn nor(a: Bool, b: Bool) -> Bool {
 ///
 /// ## Examples
 ///
-///    > nand(False, False)
-///    True
+/// ```gleam
+/// > nand(False, False)
+/// True
 ///
-///    > nand(False, True)
-///    True
+/// > nand(False, True)
+/// True
 ///
-///    > nand(True, False)
-///    True
+/// > nand(True, False)
+/// True
 ///
-///    > nand(True, True)
-///    False
+/// > nand(True, True)
+/// False
+/// ```
 ///
 pub fn nand(a: Bool, b: Bool) -> Bool {
   case a, b {
@@ -81,17 +87,19 @@ pub fn nand(a: Bool, b: Bool) -> Bool {
 ///
 /// ## Examples
 ///
-///    > exclusive_or(False, False)
-///    False
+/// ```gleam
+/// > exclusive_or(False, False)
+/// False
 ///
-///    > exclusive_or(False, True)
-///    True
+/// > exclusive_or(False, True)
+/// True
 ///
-///    > exclusive_or(True, False)
-///    True
+/// > exclusive_or(True, False)
+/// True
 ///
-///    > exclusive_or(True, True)
-///    False
+/// > exclusive_or(True, True)
+/// False
+/// ```
 ///
 pub fn exclusive_or(a: Bool, b: Bool) -> Bool {
   case a, b {
@@ -106,17 +114,19 @@ pub fn exclusive_or(a: Bool, b: Bool) -> Bool {
 ///
 /// ## Examples
 ///
-///    > exclusive_nor(False, False)
-///    True
+/// ```gleam
+/// > exclusive_nor(False, False)
+/// True
 ///
-///    > exclusive_nor(False, True)
-///    False
+/// > exclusive_nor(False, True)
+/// False
 ///
-///    > exclusive_nor(True, False)
-///    False
+/// > exclusive_nor(True, False)
+/// False
 ///
-///    > exclusive_nor(True, True)
-///    True
+/// > exclusive_nor(True, True)
+/// True
+/// ```
 ///
 pub fn exclusive_nor(a: Bool, b: Bool) -> Bool {
   case a, b {
@@ -131,9 +141,11 @@ pub fn exclusive_nor(a: Bool, b: Bool) -> Bool {
 ///
 /// ## Examples
 ///
-///    > import gleam/order
-///    > compare(True, False)
-///    order.Gt
+/// ```gleam
+/// > import gleam/order
+/// > compare(True, False)
+/// order.Gt
+/// ```
 ///
 pub fn compare(a: Bool, with b: Bool) -> Order {
   case a, b {
@@ -148,14 +160,16 @@ pub fn compare(a: Bool, with b: Bool) -> Order {
 ///
 /// ## Examples
 ///
-///    > max(True, False)
-///    True
+/// ```gleam
+/// > max(True, False)
+/// True
 ///
-///    > max(False, True)
-///    True
+/// > max(False, True)
+/// True
 ///
-///    > max(False, False)
-///    False
+/// > max(False, False)
+/// False
+/// ```
 ///
 pub fn max(a: Bool, b: Bool) -> Bool {
   case a {
@@ -168,14 +182,16 @@ pub fn max(a: Bool, b: Bool) -> Bool {
 ///
 /// ## Examples
 ///
-///    > min(True, False)
-///    False
+/// ```gleam
+/// > min(True, False)
+/// False
 ///
-///    > min(False, True)
-///    False
+/// > min(False, True)
+/// False
 ///
-///    > min(False, False)
-///    False
+/// > min(False, False)
+/// False
+/// ```
 ///
 pub fn min(a: Bool, b: Bool) -> Bool {
   case a {
@@ -188,11 +204,13 @@ pub fn min(a: Bool, b: Bool) -> Bool {
 ///
 /// ## Examples
 ///
-///    > to_int(True)
-///    1
+/// ```gleam
+/// > to_int(True)
+/// 1
 ///
-///    > to_int(False)
-///    0
+/// > to_int(False)
+/// 0
+/// ```
 ///
 pub fn to_int(bool: Bool) -> Int {
   case bool {
@@ -205,11 +223,13 @@ pub fn to_int(bool: Bool) -> Int {
 ///
 /// ## Examples
 ///
-///    > to_string(True)
-///    "True"
+/// ```gleam
+/// > to_string(True)
+/// "True"
 ///
-///    > to_string(False)
-///    "False"
+/// > to_string(False)
+/// "False"
+/// ```
 ///
 pub fn to_string(bool: Bool) -> String {
   case bool {

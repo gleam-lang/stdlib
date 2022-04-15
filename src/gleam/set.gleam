@@ -39,8 +39,10 @@ pub fn new() -> Set(member) {
 ///
 /// ## Examples
 ///
-///    > new() |> insert(1) |> insert(2) |> size
-///    2
+/// ```gleam
+/// > new() |> insert(1) |> insert(2) |> size
+/// 2
+/// ```
 ///
 pub fn size(set: Set(member)) -> Int {
   map.size(set.map)
@@ -52,8 +54,10 @@ pub fn size(set: Set(member)) -> Int {
 ///
 /// ## Examples
 ///
-///    > new() |> insert(1) |> insert(2) |> size
-///    2
+/// ```gleam
+/// > new() |> insert(1) |> insert(2) |> size
+/// 2
+/// ```
 ///
 pub fn insert(into set: Set(member), this member: member) -> Set(member) {
   Set(map: map.insert(set.map, member, token))
@@ -65,11 +69,13 @@ pub fn insert(into set: Set(member), this member: member) -> Set(member) {
 ///
 /// ## Examples
 ///
-///    > new() |> insert(2) |> contains(2)
-///    True
+/// ```gleam
+/// > new() |> insert(2) |> contains(2)
+/// True
 ///
-///    > new() |> insert(2) |> contains(1)
-///    False
+/// > new() |> insert(2) |> contains(1)
+/// False
+/// ```
 ///
 pub fn contains(in set: Set(member), this member: member) -> Bool {
   set.map
@@ -84,8 +90,10 @@ pub fn contains(in set: Set(member), this member: member) -> Bool {
 ///
 /// ## Examples
 ///
-///    > new() |> insert(2) |> delete(2) |> contains(1)
-///    False
+/// ```gleam
+/// > new() |> insert(2) |> delete(2) |> contains(1)
+/// False
+/// ```
 ///
 pub fn delete(from set: Set(member), this member: member) -> Set(member) {
   Set(map: map.delete(set.map, member))
@@ -100,8 +108,10 @@ pub fn delete(from set: Set(member), this member: member) -> Set(member) {
 ///
 /// ## Examples
 ///
-///    > new() |> insert(2) |> to_list
-///    [2]
+/// ```gleam
+/// > new() |> insert(2) |> to_list
+/// [2]
+/// ```
 ///
 pub fn to_list(set: Set(member)) -> List(member) {
   map.keys(set.map)
@@ -113,9 +123,11 @@ pub fn to_list(set: Set(member)) -> List(member) {
 ///
 /// ## Examples
 ///
-///    > import gleam/list
-///    > [1, 1, 2, 4, 3, 2] |> from_list |> to_list |> list.sort
-///    [1, 3, 3, 4]
+/// ```gleam
+/// > import gleam/list
+/// > [1, 1, 2, 4, 3, 2] |> from_list |> to_list |> list.sort
+/// [1, 3, 3, 4]
+/// ```
 ///
 pub fn from_list(members: List(member)) -> Set(member) {
   let map =
@@ -136,9 +148,11 @@ pub fn from_list(members: List(member)) -> Set(member) {
 ///
 /// # Examples
 ///
-///    > from_list([1, 3, 9])
-///    > |> fold(0, fn(member, accumulator) { accumulator + member })
-///    13
+/// ```gleam
+/// > from_list([1, 3, 9])
+/// > |> fold(0, fn(member, accumulator) { accumulator + member })
+/// 13
+/// ```
 ///
 pub fn fold(
   over set: Set(member),
@@ -155,11 +169,13 @@ pub fn fold(
 ///
 /// ## Examples
 ///
-///    > import gleam/int
-///    > from_list([1, 4, 6, 3, 675, 44, 67])
-///    > |> filter(for: int.is_even)
-///    > |> to_list
-///    [4, 6, 44]
+/// ```gleam
+/// > import gleam/int
+/// > from_list([1, 4, 6, 3, 675, 44, 67])
+/// > |> filter(for: int.is_even)
+/// > |> to_list
+/// [4, 6, 44]
+/// ```
 ///
 pub fn filter(
   in set: Set(member),
@@ -175,8 +191,10 @@ pub fn filter(
 ///
 /// ## Examples
 ///
-///    > from_list([1, 2, 3]) |> take([1, 3, 5]) |> to_list
-///    [1, 3]
+/// ```gleam
+/// > from_list([1, 2, 3]) |> take([1, 3, 5]) |> to_list
+/// [1, 3]
+/// ```
 ///
 pub fn take(from set: Set(member), keeping desired: List(member)) -> Set(member) {
   Set(map.take(from: set.map, keeping: desired))
@@ -195,8 +213,10 @@ fn order(first: Set(member), second: Set(member)) -> #(Set(member), Set(member))
 ///
 /// ## Examples
 ///
-///     > union(from_list([1, 2]), from_list([2, 3])) |> to_list
-///     [1, 2, 3]
+/// ```gleam
+///  > union(from_list([1, 2]), from_list([2, 3])) |> to_list
+///  [1, 2, 3]
+/// ```
 ///
 pub fn union(of first: Set(member), and second: Set(member)) -> Set(member) {
   let #(larger, smaller) = order(first, second)
@@ -209,8 +229,10 @@ pub fn union(of first: Set(member), and second: Set(member)) -> Set(member) {
 ///
 /// ## Examples
 ///
-///     > intersection(from_list([1, 2]), from_list([2, 3])) |> to_list
-///     [2]
+/// ```gleam
+///  > intersection(from_list([1, 2]), from_list([2, 3])) |> to_list
+///  [2]
+/// ```
 ///
 pub fn intersection(
   of first: Set(member),

@@ -30,8 +30,10 @@ pub fn new() -> Queue(a) {
 ///
 /// # Examples
 ///
-///    > [1, 2, 3] |> from_list |> length
-///    3
+/// ```gleam
+/// > [1, 2, 3] |> from_list |> length
+/// 3
+/// ```
 ///
 pub fn from_list(list: List(a)) -> Queue(a) {
   Queue(in: [], out: list)
@@ -44,8 +46,10 @@ pub fn from_list(list: List(a)) -> Queue(a) {
 ///
 /// # Examples
 ///
-///    > new() |> push_back(1) |> push_back(2) |> to_list
-///    [1, 2]
+/// ```gleam
+/// > new() |> push_back(1) |> push_back(2) |> to_list
+/// [1, 2]
+/// ```
 ///
 pub fn to_list(queue: Queue(a)) -> List(a) {
   queue.out
@@ -58,14 +62,16 @@ pub fn to_list(queue: Queue(a)) -> List(a) {
 ///
 /// ## Examples
 ///
-///    > [] |> from_list |> is_empty
-///    True
+/// ```gleam
+/// > [] |> from_list |> is_empty
+/// True
 ///
-///    > [1] |> from_list |> is_empty
-///    False
+/// > [1] |> from_list |> is_empty
+/// False
 ///
-///    > [1, 2] |> from_list |> is_empty
-///    False
+/// > [1, 2] |> from_list |> is_empty
+/// False
+/// ```
 ///
 pub fn is_empty(queue: Queue(a)) -> Bool {
   queue.in == [] && queue.out == []
@@ -78,14 +84,16 @@ pub fn is_empty(queue: Queue(a)) -> Bool {
 ///
 /// ## Examples
 ///
-///    > length(from_list([]))
-///    0
+/// ```gleam
+/// > length(from_list([]))
+/// 0
 ///
-///    > length(from_list([1]))
-///    1
+/// > length(from_list([1]))
+/// 1
 ///
-///    > length(from_list([1, 2]))
-///    2
+/// > length(from_list([1, 2]))
+/// 2
+/// ```
 ///
 pub fn length(queue: Queue(a)) -> Int {
   list.length(queue.in) + list.length(queue.out)
@@ -95,8 +103,10 @@ pub fn length(queue: Queue(a)) -> Int {
 ///
 /// # Examples
 ///
-///    > [1, 2] |> from_list |> push_back(3) |> to_list
-///    [1, 2, 3]
+/// ```gleam
+/// > [1, 2] |> from_list |> push_back(3) |> to_list
+/// [1, 2, 3]
+/// ```
 ///
 pub fn push_back(onto queue: Queue(a), this item: a) -> Queue(a) {
   Queue(in: [item, ..queue.in], out: queue.out)
@@ -106,8 +116,10 @@ pub fn push_back(onto queue: Queue(a), this item: a) -> Queue(a) {
 ///
 /// # Examples
 ///
-///    > [0, 0] |> from_list |> push_front(1) |> to_list
-///    [1, 0, 0]
+/// ```gleam
+/// > [0, 0] |> from_list |> push_front(1) |> to_list
+/// [1, 0, 0]
+/// ```
 ///
 pub fn push_front(onto queue: Queue(a), this item: a) -> Queue(a) {
   Queue(in: queue.in, out: [item, ..queue.out])
@@ -121,20 +133,22 @@ pub fn push_front(onto queue: Queue(a), this item: a) -> Queue(a) {
 ///
 /// # Examples
 ///
-///    > queue.new()
-///    > |> queue.push_back(0)
-///    > |> queue.push_back(1)
-///    > |> queue.pop_back()
-///    Ok(#(1, queue.push_front(queue.new(), 0)))
+/// ```gleam
+/// > queue.new()
+/// > |> queue.push_back(0)
+/// > |> queue.push_back(1)
+/// > |> queue.pop_back()
+/// Ok(#(1, queue.push_front(queue.new(), 0)))
 ///
-///    > queue.new()
-///    > |> queue.push_front(0)
-///    > |> queue.pop_back()
-///    Ok(#(0, queue.new()))
+/// > queue.new()
+/// > |> queue.push_front(0)
+/// > |> queue.pop_back()
+/// Ok(#(0, queue.new()))
 ///
-///    > queue.new()
-///    > |> queue.pop_back()
-///    Error(Nil)
+/// > queue.new()
+/// > |> queue.pop_back()
+/// Error(Nil)
+/// ```
 ///
 pub fn pop_back(from queue: Queue(a)) -> Result(#(a, Queue(a)), Nil) {
   case queue {
@@ -155,20 +169,22 @@ pub fn pop_back(from queue: Queue(a)) -> Result(#(a, Queue(a)), Nil) {
 ///
 /// # Examples
 ///
-///    > queue.new()
-///    > |> queue.push_front(1)
-///    > |> queue.push_front(0)
-///    > |> queue.pop_front()
-///    Ok(#(0, queue.push_back(queue.new(), 1)))
+/// ```gleam
+/// > queue.new()
+/// > |> queue.push_front(1)
+/// > |> queue.push_front(0)
+/// > |> queue.pop_front()
+/// Ok(#(0, queue.push_back(queue.new(), 1)))
 ///
-///    > queue.new()
-///    > |> queue.push_back(0)
-///    > |> queue.pop_front()
-///    Ok(#(0, queue.new()))
+/// > queue.new()
+/// > |> queue.push_back(0)
+/// > |> queue.pop_front()
+/// Ok(#(0, queue.new()))
 ///
-///    > queue.new()
-///    > |> queue.pop_back()
-///    Error(Nil)
+/// > queue.new()
+/// > |> queue.pop_back()
+/// Error(Nil)
+/// ```
 ///
 pub fn pop_front(from queue: Queue(a)) -> Result(#(a, Queue(a)), Nil) {
   case queue {
@@ -188,14 +204,16 @@ pub fn pop_front(from queue: Queue(a)) -> Result(#(a, Queue(a)), Nil) {
 ///
 /// ## Examples
 ///
-///    > [] |> from_list |> reverse |> to_list
-///    []
+/// ```gleam
+/// > [] |> from_list |> reverse |> to_list
+/// []
 ///
-///    > [1] |> from_list |> reverse |> to_list
-///    [1]
+/// > [1] |> from_list |> reverse |> to_list
+/// [1]
 ///
-///    > [1, 2] |> from_list |> reverse |> to_list
-///    [2, 1]
+/// > [1, 2] |> from_list |> reverse |> to_list
+/// [2, 1]
+/// ```
 ///
 pub fn reverse(queue: Queue(a)) -> Queue(a) {
   Queue(in: queue.out, out: queue.in)

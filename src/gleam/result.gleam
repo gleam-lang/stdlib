@@ -7,11 +7,13 @@ import gleam/list
 ///
 /// ## Examples
 ///
-///    > is_ok(Ok(1))
-///    True
+/// ```gleam
+/// > is_ok(Ok(1))
+/// True
 ///
-///    > is_ok(Error(Nil))
-///    False
+/// > is_ok(Error(Nil))
+/// False
+/// ```
 ///
 pub fn is_ok(result: Result(a, e)) -> Bool {
   case result {
@@ -24,11 +26,13 @@ pub fn is_ok(result: Result(a, e)) -> Bool {
 ///
 /// ## Examples
 ///
-///    > is_error(Ok(1))
-///    False
+/// ```gleam
+/// > is_error(Ok(1))
+/// False
 ///
-///    > is_error(Error(Nil))
-///    True
+/// > is_error(Error(Nil))
+/// True
+/// ```
 ///
 pub fn is_error(result: Result(a, e)) -> Bool {
   case result {
@@ -45,11 +49,13 @@ pub fn is_error(result: Result(a, e)) -> Bool {
 ///
 /// ## Examples
 ///
-///    > map(over: Ok(1), with: fn(x) { x + 1 })
-///    Ok(2)
+/// ```gleam
+/// > map(over: Ok(1), with: fn(x) { x + 1 })
+/// Ok(2)
 ///
-///    > map(over: Error(1), with: fn(x) { x + 1 })
-///    Error(1)
+/// > map(over: Error(1), with: fn(x) { x + 1 })
+/// Error(1)
+/// ```
 ///
 pub fn map(over result: Result(a, e), with fun: fn(a) -> b) -> Result(b, e) {
   case result {
@@ -66,11 +72,13 @@ pub fn map(over result: Result(a, e), with fun: fn(a) -> b) -> Result(b, e) {
 ///
 /// ## Examples
 ///
-///    > map_error(over: Error(1), with: fn(x) { x + 1 })
-///    Error(2)
+/// ```gleam
+/// > map_error(over: Error(1), with: fn(x) { x + 1 })
+/// Error(2)
 ///
-///    > map_error(over: Ok(1), with: fn(x) { x + 1 })
-///    Ok(1)
+/// > map_error(over: Ok(1), with: fn(x) { x + 1 })
+/// Ok(1)
+/// ```
 ///
 pub fn map_error(
   over result: Result(a, e),
@@ -86,14 +94,16 @@ pub fn map_error(
 ///
 /// ## Examples
 ///
-///    > flatten(Ok(Ok(1)))
-///    Ok(1)
+/// ```gleam
+/// > flatten(Ok(Ok(1)))
+/// Ok(1)
 ///
-///    > flatten(Ok(Error("")))
-///    Error("")
+/// > flatten(Ok(Error("")))
+/// Error("")
 ///
-///    > flatten(Error(Nil))
-///    Error(Nil)
+/// > flatten(Error(Nil))
+/// Error(Nil)
+/// ```
 ///
 pub fn flatten(result: Result(Result(a, e), e)) -> Result(a, e) {
   case result {
@@ -114,17 +124,19 @@ pub fn flatten(result: Result(Result(a, e), e)) -> Result(a, e) {
 ///
 /// ## Examples
 ///
-///    > then(Ok(1), fn(x) { Ok(x + 1) })
-///    Ok(2)
+/// ```gleam
+/// > then(Ok(1), fn(x) { Ok(x + 1) })
+/// Ok(2)
 ///
-///    > then(Ok(1), fn(x) { Ok(#("a", x)) })
-///    Ok(#("a", 1))
+/// > then(Ok(1), fn(x) { Ok(#("a", x)) })
+/// Ok(#("a", 1))
 ///
-///    > then(Ok(1), fn(_) { Error("Oh no") })
-///    Error("Oh no")
+/// > then(Ok(1), fn(_) { Error("Oh no") })
+/// Error("Oh no")
 ///
-///    > then(Error(Nil), fn(x) { Ok(x + 1) })
-///    Error(Nil)
+/// > then(Error(Nil), fn(x) { Ok(x + 1) })
+/// Error(Nil)
+/// ```
 ///
 pub fn then(
   result: Result(a, e),
@@ -228,11 +240,13 @@ pub fn unwrap_both(result: Result(a, a)) -> a {
 ///
 /// ## Examples
 ///
-///    > nil_error(Error(1))
-///    Error(Nil)
+/// ```gleam
+/// > nil_error(Error(1))
+/// Error(Nil)
 ///
-///    > nil_error(Ok(1))
-///    Ok(1)
+/// > nil_error(Ok(1))
+/// Ok(1)
+/// ```
 ///
 pub fn nil_error(result: Result(a, e)) -> Result(a, Nil) {
   map_error(result, fn(_) { Nil })
@@ -242,17 +256,19 @@ pub fn nil_error(result: Result(a, e)) -> Result(a, Nil) {
 ///
 /// ## Examples
 ///
-///    > or(Ok(1), Ok(2))
-///    Ok(1)
+/// ```gleam
+/// > or(Ok(1), Ok(2))
+/// Ok(1)
 ///
-///    > or(Ok(1), Error("Error 2"))
-///    Ok(1)
+/// > or(Ok(1), Error("Error 2"))
+/// Ok(1)
 ///
-///    > or(Error("Error 1"), Ok(2))
-///    Ok(2)
+/// > or(Error("Error 1"), Ok(2))
+/// Ok(2)
 ///
-///    > or(Error("Error 1"), Error("Error 2"))
-///    Error("Error 2")
+/// > or(Error("Error 1"), Error("Error 2"))
+/// Error("Error 2")
+/// ```
 ///
 pub fn or(first: Result(a, e), second: Result(a, e)) -> Result(a, e) {
   case first {
@@ -265,17 +281,19 @@ pub fn or(first: Result(a, e), second: Result(a, e)) -> Result(a, e) {
 ///
 /// ## Examples
 ///
-///    > lazy_or(Ok(1), fn() { Ok(2) })
-///    Ok(1)
+/// ```gleam
+/// > lazy_or(Ok(1), fn() { Ok(2) })
+/// Ok(1)
 ///
-///    > lazy_or(Ok(1), fn() { Error("Error 2") })
-///    Ok(1)
+/// > lazy_or(Ok(1), fn() { Error("Error 2") })
+/// Ok(1)
 ///
-///    > lazy_or(Error("Error 1"), fn() { Ok(2) })
-///    Ok(2)
+/// > lazy_or(Error("Error 1"), fn() { Ok(2) })
+/// Ok(2)
 ///
-///    > lazy_or(Error("Error 1"), fn() { Error("Error 2") })
-///    Error("Error 2")
+/// > lazy_or(Error("Error 1"), fn() { Error("Error 2") })
+/// Error("Error 2")
+/// ```
 ///
 pub fn lazy_or(
   first: Result(a, e),
