@@ -1,8 +1,8 @@
-import gleam/queue
 import gleam/int
 import gleam/list
-import gleam/should
 import gleam/pair
+import gleam/queue
+import gleam/should
 
 pub fn from_and_to_list_test() {
   queue.from_list([])

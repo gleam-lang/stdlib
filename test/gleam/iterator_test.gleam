@@ -1,7 +1,7 @@
-import gleam/should
 import gleam/iterator.{Done, Next}
 import gleam/list
 import gleam/map
+import gleam/should
 
 // a |> from_list |> to_list == a
 pub fn to_from_list_test() {

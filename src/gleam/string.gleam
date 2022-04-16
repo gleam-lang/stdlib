@@ -1,11 +1,11 @@
 //// Strings in Gleam are UTF-8 binaries. They can be written in your code as
 //// text surrounded by `"double quotes"`.
 
-import gleam/string_builder
 import gleam/iterator.{Iterator}
 import gleam/list
-import gleam/order
 import gleam/option.{None, Option, Some}
+import gleam/order
+import gleam/string_builder
 
 if erlang {
   import gleam/result

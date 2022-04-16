@@ -1,5 +1,5 @@
-import gleam/should
 import gleam/bit_builder
+import gleam/should
 
 pub fn builder_test() {
   let data =

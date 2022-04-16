@@ -1,9 +1,9 @@
-import gleam/should
 import gleam/float
-import gleam/order
-import gleam/list
-import gleam/iterator
 import gleam/int
+import gleam/iterator
+import gleam/list
+import gleam/order
+import gleam/should
 
 pub fn parse_test() {
   "1.23"

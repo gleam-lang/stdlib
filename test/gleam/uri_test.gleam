@@ -1,10 +1,10 @@
 // TODO: IPv6 URI parse tests
 // https://github.com/elixir-lang/elixir/blob/2d43b9670f54c4d8e0be1ee4d2ee8f99d7378480/lib/elixir/test/elixir/uri_test.exs
-import gleam/uri
-import gleam/should
-import gleam/option.{None, Some}
-import gleam/string
 import gleam/list
+import gleam/option.{None, Some}
+import gleam/should
+import gleam/string
+import gleam/uri
 
 pub fn full_parse_test() {
   assert Ok(parsed) =

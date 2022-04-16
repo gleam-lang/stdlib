@@ -1,7 +1,7 @@
-import gleam/string
-import gleam/should
-import gleam/order
 import gleam/option.{None, Some}
+import gleam/order
+import gleam/should
+import gleam/string
 
 pub fn length_test() {
   string.length("ß↑e̊")

@@ -7,11 +7,11 @@
 //// Query encoding (Form encoding) is defined in the w3c specification.
 //// https://www.w3.org/TR/html52/sec-forms.html#urlencoded-form-data
 
-import gleam/string_builder.{StringBuilder}
 import gleam/int
 import gleam/list
 import gleam/option.{None, Option, Some}
 import gleam/string
+import gleam/string_builder.{StringBuilder}
 
 if javascript {
   import gleam/pair
@@ -60,7 +60,7 @@ if javascript {
   fn do_parse(uri_string: String) -> Result(Uri, Nil) {
     // From https://tools.ietf.org/html/rfc3986#appendix-B
     let pattern =
-      //    12                        3  4          5       6  7        8 
+      //    12                        3  4          5       6  7        8
       "^(([a-z][a-z0-9\\+\\-\\.]*):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#.*)?"
     let matches =
       pattern

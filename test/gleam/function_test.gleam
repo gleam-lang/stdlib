@@ -1,9 +1,9 @@
-import gleam/should
 import gleam/function
 import gleam/int
-import gleam/pair
 import gleam/list
+import gleam/pair
 import gleam/result
+import gleam/should
 import gleam/string
 
 pub fn compose_test() {

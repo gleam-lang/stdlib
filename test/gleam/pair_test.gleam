@@ -1,5 +1,5 @@
-import gleam/should
 import gleam/pair
+import gleam/should
 
 pub fn first_test() {
   #(1, 2)

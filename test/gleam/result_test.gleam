@@ -1,5 +1,5 @@
-import gleam/should
 import gleam/result
+import gleam/should
 
 pub fn is_ok_test() {
   result.is_ok(Ok(1))
