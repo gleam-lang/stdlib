@@ -2,8 +2,6 @@ import gleam/should
 import gleam/list
 import gleam/int
 import gleam/float
-import gleam/string
-import gleam/pair
 
 pub fn length_test() {
   list.length([])

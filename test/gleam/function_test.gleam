@@ -1,12 +1,10 @@
 import gleam/should
-import gleam/dynamic
 import gleam/function
 import gleam/int
 import gleam/pair
 import gleam/list
 import gleam/result
 import gleam/string
-import gleam/io
 
 pub fn compose_test() {
   let add_two = fn(int: Int) { int + 2 }

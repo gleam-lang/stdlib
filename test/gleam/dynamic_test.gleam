@@ -1,6 +1,5 @@
 import gleam/should
 import gleam/dynamic.{DecodeError}
-import gleam/bit_string
 import gleam/result
 import gleam/map
 import gleam/option.{None, Some}

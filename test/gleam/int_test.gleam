@@ -3,7 +3,6 @@ import gleam/int
 import gleam/order
 import gleam/list
 import gleam/iterator
-import gleam/float
 
 pub fn absolute_value_test() {
   123

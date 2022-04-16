@@ -13,8 +13,11 @@
 //// On Erlang this type is compatible with Erlang's iolists.
 
 import gleam/string_builder.{StringBuilder}
-import gleam/bit_string
-import gleam/list
+
+if javascript {
+  import gleam/list
+  import gleam/bit_string
+}
 
 if erlang {
   pub external type BitBuilder

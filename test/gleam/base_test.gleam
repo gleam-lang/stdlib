@@ -1,5 +1,4 @@
 import gleam/base
-import gleam/list
 import gleam/should
 
 pub fn encode64_test() {

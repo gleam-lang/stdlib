@@ -2,8 +2,6 @@ import gleam/string
 import gleam/should
 import gleam/order
 import gleam/option.{None, Some}
-import gleam/io
-import gleam/bit_string
 
 pub fn length_test() {
   string.length("ß↑e̊")

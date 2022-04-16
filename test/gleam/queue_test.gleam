@@ -3,7 +3,6 @@ import gleam/int
 import gleam/list
 import gleam/should
 import gleam/pair
-import gleam/io
 
 pub fn from_and_to_list_test() {
   queue.from_list([])

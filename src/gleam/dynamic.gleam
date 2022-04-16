@@ -1,12 +1,14 @@
-import gleam/bit_string
 import gleam/list
 import gleam/map
 import gleam/int
-import gleam/option
 import gleam/result
 import gleam/string_builder
 import gleam/map.{Map}
 import gleam/option.{Option}
+
+if erlang {
+  import gleam/bit_string
+}
 
 /// `Dynamic` data is data that we don't know the type of yet.
 /// We likely get data like this from interop with Erlang, or from

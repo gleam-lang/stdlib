@@ -1,7 +1,9 @@
-import gleam/result
 import gleam/option.{Option}
 import gleam/list
-import gleam/pair
+
+if javascript {
+  import gleam/pair
+}
 
 /// A dictionary of keys and values.
 ///

@@ -5,10 +5,10 @@ import gleam/string_builder
 import gleam/iterator.{Iterator}
 import gleam/list
 import gleam/order
-import gleam/result
 import gleam/option.{None, Option, Some}
 
 if erlang {
+  import gleam/result
   import gleam/dynamic.{Dynamic}
 }
 

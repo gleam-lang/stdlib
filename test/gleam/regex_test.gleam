@@ -1,6 +1,5 @@
 import gleam/regex.{Match, Options}
 import gleam/should
-import gleam/io
 import gleam/option.{None, Some}
 
 pub fn from_string_test() {

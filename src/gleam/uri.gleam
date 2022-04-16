@@ -7,16 +7,17 @@
 //// Query encoding (Form encoding) is defined in the w3c specification.
 //// https://www.w3.org/TR/html52/sec-forms.html#urlencoded-form-data
 
-import gleam/function
 import gleam/string_builder.{StringBuilder}
 import gleam/int
 import gleam/list
-import gleam/map
 import gleam/option.{None, Option, Some}
-import gleam/pair
-import gleam/regex
-import gleam/result
 import gleam/string
+
+if javascript {
+  import gleam/pair
+  import gleam/regex
+  import gleam/result
+}
 
 /// Type representing holding the parsed components of an URI.
 /// All components of a URI are optional, except the path.

@@ -5,7 +5,6 @@ import gleam/should
 import gleam/option.{None, Some}
 import gleam/string
 import gleam/list
-import gleam/io
 
 pub fn full_parse_test() {
   assert Ok(parsed) =
