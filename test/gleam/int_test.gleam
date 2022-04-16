@@ -340,7 +340,7 @@ pub fn random_test() {
   |> iterator.from_list
   |> iterator.fold(Nil, test_boundaries)
 
-  let run_mean_tests = fn(iterations: Int, min: Int, max: Int, tolerance: Int) {
+  let test_average = fn(iterations: Int, min: Int, max: Int, tolerance: Int) {
     let expected_average = int.sum([min, max]) / 2
     list.range(0, iterations)
     |> iterator.from_list
@@ -354,9 +354,9 @@ pub fn random_test() {
     }
     |> should.be_true
   }
-  run_mean_tests(100, 0, 0, 5)
-  run_mean_tests(1_000, 0, 100, 5)
-  run_mean_tests(1_000, -100, 100, 5)
-  run_mean_tests(1_000, -100, 0, 5)
-  run_mean_tests(1_000, 0, -100, 5)
+  test_average(100, 0, 0, 5)
+  test_average(1_000, 0, 100, 5)
+  test_average(1_000, -100, 100, 5)
+  test_average(1_000, -100, 0, 5)
+  test_average(1_000, 0, -100, 5)
 }
