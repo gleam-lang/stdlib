@@ -349,8 +349,8 @@ pub fn random_test() {
       with: fn(accumulator, _element) { accumulator + int.random(min, max) },
     )
     |> fn(sum) { sum / iterations }
-    |> fn(sum) {
-      sum - tolerance <= expected_average || sum + tolerance >= expected_average
+    |> fn(average) {
+      average - tolerance <= expected_average || average + tolerance >= expected_average
     }
     |> should.be_true
   }
