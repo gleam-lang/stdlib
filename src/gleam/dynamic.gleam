@@ -1,10 +1,10 @@
+import gleam/int
 import gleam/list
 import gleam/map
-import gleam/int
-import gleam/result
-import gleam/string_builder
 import gleam/map.{Map}
 import gleam/option.{Option}
+import gleam/result
+import gleam/string_builder
 
 if erlang {
   import gleam/bit_string
@@ -788,7 +788,7 @@ pub fn tuple5(
 /// ## Examples
 ///
 /// ```gleam
-/// > from(#(1, 2, 3, 4, 5, 6)) 
+/// > from(#(1, 2, 3, 4, 5, 6))
 /// > |> tuple6(int, int, int, int, int, int)
 /// Ok(#(1, 2, 3, 4, 5, 6))
 ///

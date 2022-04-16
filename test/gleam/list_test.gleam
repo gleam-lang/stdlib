@@ -1,7 +1,7 @@
-import gleam/should
-import gleam/list
-import gleam/int
 import gleam/float
+import gleam/int
+import gleam/list
+import gleam/should
 
 pub fn length_test() {
   list.length([])

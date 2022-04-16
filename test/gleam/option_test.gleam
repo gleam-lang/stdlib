@@ -1,5 +1,5 @@
-import gleam/should
 import gleam/option.{None, Some}
+import gleam/should
 
 pub fn all_test() {
   option.all([Some(1), Some(2), Some(3)])

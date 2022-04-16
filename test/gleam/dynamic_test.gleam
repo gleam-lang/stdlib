@@ -1,8 +1,8 @@
-import gleam/should
 import gleam/dynamic.{DecodeError}
-import gleam/result
 import gleam/map
 import gleam/option.{None, Some}
+import gleam/result
+import gleam/should
 
 pub fn bit_string_test() {
   <<>>

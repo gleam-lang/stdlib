@@ -1,6 +1,6 @@
+import gleam/option.{None, Some}
 import gleam/regex.{Match, Options}
 import gleam/should
-import gleam/option.{None, Some}
 
 pub fn from_string_test() {
   assert Ok(re) = regex.from_string("[0-9]")

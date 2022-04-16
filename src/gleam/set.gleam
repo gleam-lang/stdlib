@@ -1,6 +1,6 @@
+import gleam/list
 import gleam/map.{Map}
 import gleam/result
-import gleam/list
 
 if erlang {
   // A list is used as the map value as an empty list has the smallest

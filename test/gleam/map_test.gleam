@@ -1,7 +1,7 @@
-import gleam/string
-import gleam/should
 import gleam/map
 import gleam/option.{None, Some}
+import gleam/should
+import gleam/string
 
 pub fn from_list_test() {
   [#(4, 0), #(1, 0)]

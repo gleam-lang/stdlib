@@ -1,5 +1,5 @@
-import gleam/option.{Option}
 import gleam/list
+import gleam/option.{Option}
 
 if javascript {
   import gleam/pair

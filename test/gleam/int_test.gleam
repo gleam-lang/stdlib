@@ -1,8 +1,8 @@
-import gleam/should
 import gleam/int
-import gleam/order
-import gleam/list
 import gleam/iterator
+import gleam/list
+import gleam/order
+import gleam/should
 
 pub fn absolute_value_test() {
   123

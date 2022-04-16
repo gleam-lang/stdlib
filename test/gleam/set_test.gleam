@@ -1,7 +1,7 @@
-import gleam/should
-import gleam/set
-import gleam/list
 import gleam/int
+import gleam/list
+import gleam/set
+import gleam/should
 
 pub fn size_test() {
   set.new()

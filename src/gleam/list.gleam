@@ -23,8 +23,8 @@
 ////
 
 import gleam/int
-import gleam/pair
 import gleam/order.{Order}
+import gleam/pair
 
 /// An error value returned by the `strict_zip` function.
 ///

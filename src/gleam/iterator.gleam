@@ -1,6 +1,6 @@
 import gleam/list
-import gleam/option.{None, Option, Some}
 import gleam/map.{Map}
+import gleam/option.{None, Option, Some}
 
 // Internal private representation of an Iterator
 type Action(element) {
@@ -1127,7 +1127,7 @@ fn do_fold_until(
 /// >
 /// > [1, 2, 3, 4]
 /// > |> from_list
-/// > |> iterator.fold_until(from: acc, with: f) 
+/// > |> iterator.fold_until(from: acc, with: f)
 /// 6
 /// ```
 ///
@@ -1155,7 +1155,7 @@ fn do_try_fold(
 }
 
 /// A variant of fold that might fail.
-/// 
+///
 ///
 /// The folding function should return `Result(accumulator, error)`.
 /// If the returned value is `Ok(accumulator)` try_fold will try the next value in the iterator.
