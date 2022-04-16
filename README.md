@@ -35,7 +35,7 @@ fn more_usage() {
 
 ## Targets
 
-Gleam's standard library supports both targets: Erlang and Javascript.
+Gleam's standard library supports both targets: Erlang and JavaScript.
 
 ### Compatibility
 
