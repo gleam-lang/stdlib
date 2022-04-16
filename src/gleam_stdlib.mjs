@@ -68,7 +68,7 @@ export function string_replace(string, target, substitute) {
   // aka <https://nodejs.org/en/about/releases/> on or after 2024-04-30
   return string.replace(
     // $& means the whole matched string
-    new RegExp(target.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
+    new RegExp(target.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"),
     substitute
   );
 }
