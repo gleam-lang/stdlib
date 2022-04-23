@@ -309,9 +309,9 @@ pub fn map(list: List(a), with fun: fn(a) -> b) -> List(b) {
 /// > map_fold(
 ///     over: [1, 2, 3],
 ///     from: 100,
-///     with: fn(memo, i) { #(i * 2, memo + i) }
+///     with: fn(memo, i) { #(memo + i, i * 2) }
 ///  )
-///  #([2, 4, 6], 106)
+///  #(106, [2, 4, 6])
 /// ```
 ///
 pub fn map_fold(
