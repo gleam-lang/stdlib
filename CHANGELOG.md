@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.21.0 - 2022-04-24
 
 - Fixed a bug where record-based map keys would clash in JavaScript.
 - The `eunit` Erlang headers are no longer required to compile this package.
