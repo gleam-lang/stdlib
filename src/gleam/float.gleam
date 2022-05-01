@@ -384,3 +384,17 @@ if javascript {
   external fn do_random_uniform() -> Float =
     "../gleam_stdlib.mjs" "random_uniform"
 }
+
+pub type DivisionByZero {
+  DivisionByZero
+}
+
+pub fn divide(
+  divident divident: Float,
+  divisor divisor: Float,
+) -> Result(Float, DivisionByZero) {
+  case divisor {
+    0.0 -> Error(DivisionByZero)
+    divisor -> Ok(divident /. divisor)
+  }
+}

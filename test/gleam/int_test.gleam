@@ -1,4 +1,5 @@
 import gleam/int
+import gleam/int.{DivisionByZero}
 import gleam/iterator
 import gleam/list
 import gleam/order
@@ -359,4 +360,12 @@ pub fn random_test() {
   test_average(1_000, -100, 100, 5)
   test_average(1_000, -100, 0, 5)
   test_average(1_000, 0, -100, 5)
+}
+
+pub fn divide_test() {
+  assert Ok(1) = int.divide(1, 1)
+  assert Error(DivisionByZero) = int.divide(1, 0)
+
+  assert Ok(0) = int.divide(divident: 0, divisor: 1)
+  assert Error(DivisionByZero) = int.divide(divident: 1, divisor: 0)
 }

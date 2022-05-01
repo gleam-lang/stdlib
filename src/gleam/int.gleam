@@ -441,3 +441,17 @@ pub fn random(boundary_a: Int, boundary_b: Int) -> Int {
   |> float.floor()
   |> float.round()
 }
+
+pub type DivisionByZero {
+  DivisionByZero
+}
+
+pub fn divide(
+  divident divident: Int,
+  divisor divisor: Int,
+) -> Result(Int, DivisionByZero) {
+  case divisor {
+    0 -> Error(DivisionByZero)
+    divisor -> Ok(divident / divisor)
+  }
+}
