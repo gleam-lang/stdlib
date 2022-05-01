@@ -785,3 +785,24 @@ pub fn last(s: String) -> Option(String) {
     _ -> Some(slice(s, length(s) - 1, 1))
   }
 }
+
+/// Creates a new `String` with the first grapheme in the input `String`
+/// converted to uppercase and the remaining graphemes to lowercase.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > capitalize("mamouna")
+/// "Mamouna"
+/// ```
+///
+pub fn capitalize(s: String) -> String {
+  let first =
+    slice(s, 0, 1)
+    |> uppercase
+  let rest =
+    slice(s, 1, length(s))
+    |> lowercase
+
+  append(to: first, suffix: rest)
+}
