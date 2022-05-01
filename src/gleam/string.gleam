@@ -739,3 +739,26 @@ pub fn to_option(s: String) -> Option(String) {
     _ -> Some(s)
   }
 }
+
+/// Returns the first element in a grapheme and wraps it in an `Option(String)`.
+/// If the `String` is empty, it returns `None`. Otherwise, it returns
+/// `Some(String)`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > first("")
+/// None
+/// ```
+///
+/// ```gleam
+/// > first("icecream")
+/// Some("i")
+/// ```
+///
+pub fn first(s: String) -> Option(String) {
+  case length(s) {
+    0 -> None
+    _ -> Some(slice(s, 0, 1))
+  }
+}
