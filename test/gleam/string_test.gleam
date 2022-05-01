@@ -364,3 +364,13 @@ pub fn to_option_test() {
   |> string.to_option
   |> should.equal(Some("ok"))
 }
+
+pub fn first_test() {
+  ""
+  |> string.first
+  |> should.equal(None)
+
+  "gleam"
+  |> string.first
+  |> should.equal(Some("g"))
+}
