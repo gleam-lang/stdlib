@@ -374,3 +374,17 @@ pub fn first_test() {
   |> string.first
   |> should.equal(Some("g"))
 }
+
+pub fn last_test() {
+  ""
+  |> string.last
+  |> should.equal(None)
+
+  "gleam"
+  |> string.last
+  |> should.equal(Some("m"))
+
+  "gleam "
+  |> string.last
+  |> should.equal(Some(" "))
+}
