@@ -762,3 +762,26 @@ pub fn first(s: String) -> Option(String) {
     _ -> Some(slice(s, 0, 1))
   }
 }
+
+/// Returns the last element in a grapheme and wraps it in an `Option(String)`.
+/// If the `String` is empty, it returns `None`. Otherwise, it returns
+/// `Some(String)`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > last("")
+/// None
+/// ```
+///
+/// ```gleam
+/// > last("icecream")
+/// Some("m")
+/// ```
+///
+pub fn last(s: String) -> Option(String) {
+  case length(s) {
+    0 -> None
+    _ -> Some(slice(s, length(s) - 1, 1))
+  }
+}
