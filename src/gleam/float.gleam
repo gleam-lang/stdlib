@@ -50,11 +50,7 @@ pub fn to_string(x: Float) -> String {
 /// 1.4
 /// ```
 ///
-pub fn clamp(
-  number x: Float,
-  min min_bound: Float,
-  max max_bound: Float,
-) -> Float {
+pub fn clamp(x: Float, min min_bound: Float, max max_bound: Float) -> Float {
   x
   |> min(max_bound)
   |> max(min_bound)
@@ -90,7 +86,7 @@ pub fn compare(a: Float, with b: Float) -> Order {
 /// ```
 ///
 pub fn loosely_compare(
-  number a: Float,
+  a: Float,
   with b: Float,
   tolerating tolerance: Float,
 ) -> Order {
@@ -267,7 +263,7 @@ pub fn absolute_value(x: Float) -> Float {
 /// 22.627416997969522
 /// ```
 ///
-pub fn power(base base: Float, exponent exponent: Float) -> Float {
+pub fn power(base: Float, exponent exponent: Float) -> Float {
   do_power(base, exponent)
 }
 

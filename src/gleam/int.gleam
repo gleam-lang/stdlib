@@ -13,7 +13,7 @@ import gleam/order.{Order}
 /// 10
 /// ```
 ///
-pub fn absolute_value(number x: Int) -> Int {
+pub fn absolute_value(x: Int) -> Int {
   case x >= 0 {
     True -> x
     False -> x * -1
@@ -32,7 +32,7 @@ pub fn absolute_value(number x: Int) -> Int {
 /// Error(Nil)
 /// ```
 ///
-pub fn parse(string) {
+pub fn parse(string: String) -> Result(Int, Nil) {
   do_parse(string)
 }
 
@@ -97,10 +97,7 @@ pub type InvalidBase {
 /// Error(InvalidBase)
 /// ```
 ///
-pub fn to_base_string(
-  number x: Int,
-  base base: Int,
-) -> Result(String, InvalidBase) {
+pub fn to_base_string(x: Int, base base: Int) -> Result(String, InvalidBase) {
   case base >= 2 && base <= 36 {
     True -> Ok(do_to_base_string(x, base))
     False -> Error(InvalidBase)
@@ -189,12 +186,12 @@ pub fn to_float(x: Int) -> Float {
 }
 
 if erlang {
-  external fn do_to_float(x: Int) -> Float =
+  external fn do_to_float(Int) -> Float =
     "erlang" "float"
 }
 
 if javascript {
-  external fn do_to_float(x: Int) -> Float =
+  external fn do_to_float(Int) -> Float =
     "../gleam_stdlib.mjs" "identity"
 }
 
@@ -207,7 +204,7 @@ if javascript {
 /// 50
 /// ```
 ///
-pub fn clamp(number x: Int, min min_bound: Int, max max_bound: Int) -> Int {
+pub fn clamp(x: Int, min min_bound: Int, max max_bound: Int) -> Int {
   x
   |> min(max_bound)
   |> max(min_bound)
@@ -372,7 +369,7 @@ fn do_product(numbers: List(Int), initial: Int) -> Int {
 /// Error(InvalidBase)
 /// ```
 ///
-pub fn digits(number x: Int, base base: Int) -> Result(List(Int), InvalidBase) {
+pub fn digits(x: Int, base base: Int) -> Result(List(Int), InvalidBase) {
   case base < 2 {
     True -> Error(InvalidBase)
     False -> Ok(do_digits(x, base, []))
@@ -402,10 +399,7 @@ fn do_digits(x: Int, base: Int, acc: List(Int)) -> List(Int) {
 /// Error(InvalidBase)
 /// ```
 ///
-pub fn undigits(
-  numbers numbers: List(Int),
-  base base: Int,
-) -> Result(Int, InvalidBase) {
+pub fn undigits(numbers: List(Int), base base: Int) -> Result(Int, InvalidBase) {
   case base < 2 {
     True -> Error(InvalidBase)
     False -> do_undigits(numbers, base, 0)
