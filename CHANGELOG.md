@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- The `int` module gains the `power` function.
+- The `int` module gains the `square_root` function.
+
 ## v0.21.0 - 2022-04-24
 
 - Fixed a bug where record-based map keys would clash in JavaScript.
