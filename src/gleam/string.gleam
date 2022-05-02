@@ -740,26 +740,26 @@ pub fn to_option(s: String) -> Option(String) {
   }
 }
 
-/// Returns the first element in a grapheme and wraps it in an `Option(String)`.
-/// If the `String` is empty, it returns `None`. Otherwise, it returns
-/// `Some(String)`.
+/// Returns the first grapheme cluster in a given `String` and wraps it in a
+/// `Result(String, Nil)`. If the `String` is empty, it returns `Error(Nil)`.
+/// Otherwise, it returns `Ok(String)`.
 ///
 /// ## Examples
 ///
 /// ```gleam
 /// > first("")
-/// None
+/// Error(Nil)
 /// ```
 ///
 /// ```gleam
 /// > first("icecream")
-/// Some("i")
+/// Ok("i")
 /// ```
 ///
-pub fn first(s: String) -> Option(String) {
-  case length(s) {
-    0 -> None
-    _ -> Some(slice(s, 0, 1))
+pub fn first(s: String) -> Result(String, Nil) {
+  case pop_grapheme(s) {
+    Ok(#(first, _)) -> Ok(first)
+    Error(e) -> Error(e)
   }
 }
 

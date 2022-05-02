@@ -368,15 +368,15 @@ pub fn to_option_test() {
 pub fn first_test() {
   ""
   |> string.first
-  |> should.equal(None)
+  |> should.be_error
 
   "gleam"
   |> string.first
-  |> should.equal(Some("g"))
+  |> should.equal(Ok("g"))
 
   "⭐️ Gleam"
   |> string.first
-  |> should.equal(Some("⭐️"))
+  |> should.equal(Ok("⭐️"))
 }
 
 pub fn last_test() {
