@@ -286,6 +286,17 @@ pub fn square_root_test() {
   |> should.equal(Error(Nil))
 }
 
+pub fn negate_test() {
+  int.negate(-1)
+  |> should.equal(1)
+
+  int.negate(2)
+  |> should.equal(-2)
+
+  int.negate(0)
+  |> should.equal(0)
+}
+
 pub fn sum_test() {
   int.sum([])
   |> should.equal(0)
