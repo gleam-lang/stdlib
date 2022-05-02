@@ -739,3 +739,20 @@ pub fn to_option(s: String) -> Option(String) {
     _ -> Some(s)
   }
 }
+
+pub fn from(anything) {
+  do_from(anything)
+}
+
+if javascript {
+  external fn do_from(anything) -> String =
+    "../gleam.mjs" "inspect"
+}
+
+if erlang {
+  // external fn do_from(anything) -> String =
+  fn do_from(anything) {
+    anything
+    todo
+  }
+}

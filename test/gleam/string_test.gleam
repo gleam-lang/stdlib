@@ -364,3 +364,104 @@ pub fn to_option_test() {
   |> string.to_option
   |> should.equal(Some("ok"))
 }
+
+if javascript {
+  type TypeOfIntForStringFromTest {
+    TypeOfIntForStringFromTest(Int)
+  }
+
+  type TypeOfListOfIntForStringFromTest {
+    TypeOfListOfIntForStringFromTest(List(Int))
+  }
+
+  type TypeOfStringForStringFromTest {
+    TypeOfStringForStringFromTest(String)
+  }
+
+  type TypeOfListOfStringForStringFromTest {
+    TypeOfListOfStringForStringFromTest(List(String))
+  }
+
+  type TypeOfTupleOfListOfStringForStringFromTest {
+    TypeOfTupleOfListOfStringForStringFromTest(#(List(Int), String))
+  }
+
+  // fn fun() {
+  //   Nil
+  // }
+  pub fn from_test() {
+    string.from(True)
+    |> should.equal("True")
+
+    string.from(False)
+    |> should.equal("False")
+
+    string.from(1)
+    |> should.equal("1")
+
+    string.from("1")
+    |> should.equal("\"1\"")
+
+    string.from([])
+    |> should.equal("[]")
+
+    string.from([1])
+    |> should.equal("[1]")
+
+    string.from(["1"])
+    |> should.equal("[\"1\"]")
+
+    string.from(#())
+    |> should.equal("#()")
+
+    string.from(#(1))
+    |> should.equal("#(1)")
+
+    string.from(#("1"))
+    |> should.equal("#(\"1\")")
+
+    string.from(TypeOfIntForStringFromTest(1))
+    |> should.equal("TypeOfIntForStringFromTest(1)")
+
+    string.from(TypeOfListOfIntForStringFromTest([1]))
+    |> should.equal("TypeOfListOfIntForStringFromTest([1])")
+
+    string.from(TypeOfStringForStringFromTest("1"))
+    |> should.equal("TypeOfStringForStringFromTest(\"1\")")
+
+    string.from(TypeOfListOfStringForStringFromTest(["1"]))
+    |> should.equal("TypeOfListOfStringForStringFromTest([\"1\"])")
+
+    string.from(TypeOfTupleOfListOfStringForStringFromTest(#([1], "a")))
+    |> should.equal("TypeOfTupleOfListOfStringForStringFromTest(#([1], \"a\"))")
+
+    string.from(#([1, 2, 3], ["1", "2", "3"], #(1, "1", True)))
+    |> should.equal("#([1, 2, 3], [\"1\", \"2\", \"3\"], #(1, \"1\", True))")
+    //
+    // TODO: These do not succeed?
+    //
+    // string.from(TypeOfTupleOfListOfStringForStringFromTest)
+    // |> should.equal("TypeOfTupleOfListOfStringForStringFromTest")
+    //
+    // string.from(fun)
+    // |> should.equal("fun")
+    //
+    // let anon_fun = fn() { Nil }
+    //
+    // string.from(anon_fun)
+    // |> should.equal("anon_fun")
+    //
+    // These cannot succeed on JavaScript, probably due to Javascript's Number type?
+    // https://stackoverflow.com/questions/3885817/how-do-i-check-that-a-number-is-float-or-integer/20779354#comment71111945_20779354
+    //
+    // string.from(1.0)
+    // |> should.equal("1.0")
+    //
+    // string.from([1.0])
+    // |> should.equal("[1.0]")
+    //
+    // string.from(#(1.0))
+    // |> should.equal("#(1.0)")
+    //
+  }
+}
