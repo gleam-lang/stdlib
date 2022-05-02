@@ -360,8 +360,8 @@ fn do_product(numbers: List(Float), initial: Float) -> Float {
   }
 }
 
-/// Returns 0.0 if boundary_a and boundary_b are equal
-/// Otherwise returns a Float x where: lower_boundary =< x < upper_boundary
+/// Returns 0.0 if boundary_a and boundary_b are equal,
+/// otherwise returns a Float x where: lower_boundary =< x < upper_boundary.
 ///
 /// ## Examples
 ///
