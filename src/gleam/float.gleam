@@ -385,6 +385,18 @@ if javascript {
     "../gleam_stdlib.mjs" "random_uniform"
 }
 
+/// Returns division of the inputs as a `Result`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > divide(0.0, 1.0)
+/// Ok(1.0)
+///
+/// > divide(1.0, 0.0)
+/// Error(Nil)
+/// ```
+///
 pub fn divide(number a: Float, by b: Float) -> Result(Float, Nil) {
   case b {
     0.0 -> Error(Nil)

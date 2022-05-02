@@ -442,6 +442,18 @@ pub fn random(boundary_a: Int, boundary_b: Int) -> Int {
   |> float.round()
 }
 
+/// Returns division of the inputs as a `Result`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > divide(0, 1)
+/// Ok(1)
+///
+/// > divide(1, 0)
+/// Error(Nil)
+/// ```
+///
 pub fn divide(number a: Int, by b: Int) -> Result(Int, Nil) {
   case b {
     0 -> Error(Nil)
