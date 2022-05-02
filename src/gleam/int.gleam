@@ -97,7 +97,7 @@ pub type InvalidBase {
 /// Error(InvalidBase)
 /// ```
 ///
-pub fn to_base_string(x: Int, base base: Int) -> Result(String, InvalidBase) {
+pub fn to_base_string(x: Int, to base: Int) -> Result(String, InvalidBase) {
   case base >= 2 && base <= 36 {
     True -> Ok(do_to_base_string(x, base))
     False -> Error(InvalidBase)
@@ -369,7 +369,7 @@ fn do_product(numbers: List(Int), initial: Int) -> Int {
 /// Error(InvalidBase)
 /// ```
 ///
-pub fn digits(x: Int, base base: Int) -> Result(List(Int), InvalidBase) {
+pub fn digits(x: Int, to base: Int) -> Result(List(Int), InvalidBase) {
   case base < 2 {
     True -> Error(InvalidBase)
     False -> Ok(do_digits(x, base, []))
