@@ -398,38 +398,3 @@ if javascript {
   external fn do_random_uniform() -> Float =
     "../gleam_stdlib.mjs" "random_uniform"
 }
-
-/// Adds two floats
-/// Useful for piping
-///
-pub fn add(a: Float, b: Float) -> Float {
-  a +. b
-}
-
-/// Multiplies two floats
-/// Useful for piping
-///
-pub fn multiply(a: Float, b: Float) -> Float {
-  a *. b
-}
-
-/// Subtracts two floats
-/// Useful for piping
-/// You may pipe into the minuend or the subtrahend of the substraction:
-///
-/// ## Examples
-///
-/// ```gleam
-/// > 0. |> subtract(1.)
-/// -1.
-///
-/// > 0. |> subtract(subtrahend: 1.)
-/// -1.
-///
-/// > 0. |> subtract(minuend: 1.)
-/// 1.
-/// ```
-///
-pub fn subtract(minuend a: Float, subtrahend b: Float) -> Float {
-  a -. b
-}

@@ -460,38 +460,3 @@ pub fn random(boundary_a: Int, boundary_b: Int) -> Int {
   |> float.floor()
   |> float.round()
 }
-
-/// Adds two integers
-/// Useful for piping
-///
-pub fn add(a: Int, b: Int) -> Int {
-  a + b
-}
-
-/// Multiplies two integers
-/// Useful for piping
-///
-pub fn multiply(a: Int, b: Int) -> Int {
-  a * b
-}
-
-/// Subtracts two integers
-/// Useful for piping
-/// You may pipe into the minuend or the subtrahend of the substraction:
-///
-/// ## Examples
-///
-/// ```gleam
-/// > 0 |> subtract(1)
-/// -1
-///
-/// > 0 |> subtract(subtrahend: 1)
-/// -1
-///
-/// > 0 |> subtract(minuend: 1)
-/// 1
-/// ```
-///
-pub fn subtract(minuend a: Int, subtrahend b: Int) -> Int {
-  a - b
-}
