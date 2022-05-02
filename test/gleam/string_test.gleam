@@ -373,6 +373,10 @@ pub fn first_test() {
   "gleam"
   |> string.first
   |> should.equal(Some("g"))
+
+  "⭐️ Gleam"
+  |> string.first
+  |> should.equal(Some("⭐️"))
 }
 
 pub fn last_test() {
@@ -387,6 +391,10 @@ pub fn last_test() {
   "gleam "
   |> string.last
   |> should.equal(Some(" "))
+
+  "եոգլի"
+  |> string.last
+  |> should.equal(Some("ի"))
 }
 
 pub fn capitalize_test() {
@@ -417,4 +425,8 @@ pub fn capitalize_test() {
   " gLeAm1"
   |> string.capitalize
   |> should.equal(" gleam1")
+
+  "る"
+  |> string.capitalize
+  |> should.equal("る")
 }
