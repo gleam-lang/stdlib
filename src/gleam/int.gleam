@@ -399,7 +399,7 @@ fn do_digits(x: Int, base: Int, acc: List(Int)) -> List(Int) {
 /// Error(InvalidBase)
 /// ```
 ///
-pub fn undigits(numbers: List(Int), base base: Int) -> Result(Int, InvalidBase) {
+pub fn undigits(numbers: List(Int), to base: Int) -> Result(Int, InvalidBase) {
   case base < 2 {
     True -> Error(InvalidBase)
     False -> do_undigits(numbers, base, 0)
