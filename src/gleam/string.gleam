@@ -763,26 +763,26 @@ pub fn first(s: String) -> Result(String, Nil) {
   }
 }
 
-/// Returns the last element in a grapheme and wraps it in an `Option(String)`.
-/// If the `String` is empty, it returns `None`. Otherwise, it returns
-/// `Some(String)`.
+/// Returns the last grapheme cluster in a given `String` and wraps it in a
+/// `Result(String, Nil)`. If the `String` is empty, it returns `Error(Nil)`.
+/// Otherwise, it returns `Ok(String)`.
 ///
 /// ## Examples
 ///
 /// ```gleam
 /// > last("")
-/// None
+/// Error(Nil)
 /// ```
 ///
 /// ```gleam
 /// > last("icecream")
-/// Some("m")
+/// Ok("m")
 /// ```
 ///
-pub fn last(s: String) -> Option(String) {
-  case length(s) {
-    0 -> None
-    _ -> Some(slice(s, -1, 1))
+pub fn last(s: String) -> Result(String, Nil) {
+  case pop_grapheme(s) {
+    Ok(#(_, rest)) -> Ok(slice(rest, -1, 1))
+    Error(e) -> Error(e)
   }
 }
 
