@@ -361,6 +361,6 @@ pub fn divide_test() {
   assert Ok(0.0) = float.divide(0.0, 1.0)
   assert Error(DivisionByZero) = float.divide(1.0, 0.0)
 
-  assert Ok(0.0) = float.divide(divident: 0.0, divisor: 1.0)
-  assert Error(DivisionByZero) = float.divide(divident: 1.0, divisor: 0.0)
+  assert Ok(0.0) = float.divide(dividend: 0.0, divisor: 1.0)
+  assert Error(DivisionByZero) = float.divide(dividend: 1.0, divisor: 0.0)
 }

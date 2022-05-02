@@ -366,6 +366,6 @@ pub fn divide_test() {
   assert Ok(1) = int.divide(1, 1)
   assert Error(DivisionByZero) = int.divide(1, 0)
 
-  assert Ok(0) = int.divide(divident: 0, divisor: 1)
-  assert Error(DivisionByZero) = int.divide(divident: 1, divisor: 0)
+  assert Ok(0) = int.divide(dividend: 0, divisor: 1)
+  assert Error(DivisionByZero) = int.divide(dividend: 1, divisor: 0)
 }

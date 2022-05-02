@@ -447,11 +447,11 @@ pub type DivisionByZero {
 }
 
 pub fn divide(
-  divident divident: Int,
+  dividend dividend: Int,
   divisor divisor: Int,
 ) -> Result(Int, DivisionByZero) {
   case divisor {
     0 -> Error(DivisionByZero)
-    divisor -> Ok(divident / divisor)
+    divisor -> Ok(dividend / divisor)
   }
 }

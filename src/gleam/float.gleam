@@ -390,11 +390,11 @@ pub type DivisionByZero {
 }
 
 pub fn divide(
-  divident divident: Float,
+  dividend dividend: Float,
   divisor divisor: Float,
 ) -> Result(Float, DivisionByZero) {
   case divisor {
     0.0 -> Error(DivisionByZero)
-    divisor -> Ok(divident /. divisor)
+    divisor -> Ok(dividend /. divisor)
   }
 }
