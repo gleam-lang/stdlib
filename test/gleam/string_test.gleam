@@ -382,19 +382,19 @@ pub fn first_test() {
 pub fn last_test() {
   ""
   |> string.last
-  |> should.equal(None)
+  |> should.be_error
 
   "gleam"
   |> string.last
-  |> should.equal(Some("m"))
+  |> should.equal(Ok("m"))
 
   "gleam "
   |> string.last
-  |> should.equal(Some(" "))
+  |> should.equal(Ok(" "))
 
   "եոգլի"
   |> string.last
-  |> should.equal(Some("ի"))
+  |> should.equal(Ok("ի"))
 }
 
 pub fn capitalize_test() {
