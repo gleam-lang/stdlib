@@ -388,3 +388,15 @@ if javascript {
   external fn do_random_uniform() -> Float =
     "../gleam_stdlib.mjs" "random_uniform"
 }
+
+pub fn add(a: Float, b: Float) -> Float {
+  a +. b
+}
+
+pub fn multiply(a: Float, b: Float) -> Float {
+  a *. b
+}
+
+pub fn subtract(minuend a: Float, subtrahend b: Float) -> Float {
+  a -. b
+}

@@ -447,3 +447,15 @@ pub fn random(boundary_a: Int, boundary_b: Int) -> Int {
   |> float.floor()
   |> float.round()
 }
+
+pub fn add(a: Int, b: Int) -> Int {
+  a + b
+}
+
+pub fn multiply(a: Int, b: Int) -> Int {
+  a * b
+}
+
+pub fn subtract(minuend a: Int, subtrahend b: Int) -> Int {
+  a - b
+}
