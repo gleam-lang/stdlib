@@ -1,5 +1,4 @@
 import gleam/float
-import gleam/float.{DivisionByZero}
 import gleam/int
 import gleam/iterator
 import gleam/list
@@ -358,9 +357,13 @@ pub fn random_test() {
 }
 
 pub fn divide_test() {
-  assert Ok(0.0) = float.divide(0.0, 1.0)
-  assert Error(DivisionByZero) = float.divide(1.0, 0.0)
+  float.divide(1.0, 1.0)
+  |> should.equal(Ok(1.0))
+  float.divide(1.0, 0.0)
+  |> should.equal(Error(Nil))
 
-  assert Ok(0.0) = float.divide(dividend: 0.0, divisor: 1.0)
-  assert Error(DivisionByZero) = float.divide(dividend: 1.0, divisor: 0.0)
+  float.divide(number: 0.0, by: 1.0)
+  |> should.equal(Ok(0.0))
+  float.divide(number: 1.0, by: 0.0)
+  |> should.equal(Error(Nil))
 }

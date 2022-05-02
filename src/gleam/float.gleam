@@ -385,16 +385,9 @@ if javascript {
     "../gleam_stdlib.mjs" "random_uniform"
 }
 
-pub type DivisionByZero {
-  DivisionByZero
-}
-
-pub fn divide(
-  dividend dividend: Float,
-  divisor divisor: Float,
-) -> Result(Float, DivisionByZero) {
-  case divisor {
-    0.0 -> Error(DivisionByZero)
-    divisor -> Ok(dividend /. divisor)
+pub fn divide(number a: Float, by b: Float) -> Result(Float, Nil) {
+  case b {
+    0.0 -> Error(Nil)
+    b -> Ok(a /. b)
   }
 }

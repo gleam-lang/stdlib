@@ -1,5 +1,4 @@
 import gleam/int
-import gleam/int.{DivisionByZero}
 import gleam/iterator
 import gleam/list
 import gleam/order
@@ -363,9 +362,13 @@ pub fn random_test() {
 }
 
 pub fn divide_test() {
-  assert Ok(1) = int.divide(1, 1)
-  assert Error(DivisionByZero) = int.divide(1, 0)
+  int.divide(1, 1)
+  |> should.equal(Ok(1))
+  int.divide(1, 0)
+  |> should.equal(Error(Nil))
 
-  assert Ok(0) = int.divide(dividend: 0, divisor: 1)
-  assert Error(DivisionByZero) = int.divide(dividend: 1, divisor: 0)
+  int.divide(number: 0, by: 1)
+  |> should.equal(Ok(0))
+  int.divide(number: 1, by: 0)
+  |> should.equal(Error(Nil))
 }
