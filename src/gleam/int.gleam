@@ -454,7 +454,7 @@ pub fn random(boundary_a: Int, boundary_b: Int) -> Int {
 /// Error(Nil)
 /// ```
 ///
-pub fn divide(number a: Int, by b: Int) -> Result(Int, Nil) {
+pub fn divide(a: Int, by b: Int) -> Result(Int, Nil) {
   case b {
     0 -> Error(Nil)
     b -> Ok(a / b)

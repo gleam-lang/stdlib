@@ -367,8 +367,8 @@ pub fn divide_test() {
   int.divide(1, 0)
   |> should.equal(Error(Nil))
 
-  int.divide(number: 0, by: 1)
+  int.divide(0, by: 1)
   |> should.equal(Ok(0))
-  int.divide(number: 1, by: 0)
+  int.divide(1, by: 0)
   |> should.equal(Error(Nil))
 }
