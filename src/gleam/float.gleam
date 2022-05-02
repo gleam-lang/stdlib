@@ -263,7 +263,7 @@ pub fn absolute_value(x: Float) -> Float {
 /// 22.627416997969522
 /// ```
 ///
-pub fn power(base: Float, exponent exponent: Float) -> Float {
+pub fn power(base: Float, to exponent: Float) -> Float {
   do_power(base, exponent)
 }
 
