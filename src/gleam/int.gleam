@@ -13,10 +13,10 @@ import gleam/order.{Order}
 /// 10
 /// ```
 ///
-pub fn absolute_value(num: Int) -> Int {
-  case num >= 0 {
-    True -> num
-    False -> num * -1
+pub fn absolute_value(number x: Int) -> Int {
+  case x >= 0 {
+    True -> x
+    False -> x * -1
   }
 }
 
@@ -55,8 +55,8 @@ if javascript {
 /// "2"
 /// ```
 ///
-pub fn to_string(int) {
-  do_to_string(int)
+pub fn to_string(x: Int) {
+  do_to_string(x)
 }
 
 if erlang {
@@ -97,9 +97,12 @@ pub type InvalidBase {
 /// Error(InvalidBase)
 /// ```
 ///
-pub fn to_base_string(int, base) -> Result(String, InvalidBase) {
+pub fn to_base_string(
+  number x: Int,
+  base base: Int,
+) -> Result(String, InvalidBase) {
   case base >= 2 && base <= 36 {
-    True -> Ok(do_to_base_string(int, base))
+    True -> Ok(do_to_base_string(x, base))
     False -> Error(InvalidBase)
   }
 }
@@ -123,8 +126,8 @@ if javascript {
 /// "10"
 /// ```
 ///
-pub fn to_base2(int) {
-  do_to_base_string(int, 2)
+pub fn to_base2(x: Int) -> String {
+  do_to_base_string(x, 2)
 }
 
 /// Prints a given int to a string using base8.
@@ -136,8 +139,8 @@ pub fn to_base2(int) {
 /// "17"
 /// ```
 ///
-pub fn to_base8(int) {
-  do_to_base_string(int, 8)
+pub fn to_base8(x: Int) -> String {
+  do_to_base_string(x, 8)
 }
 
 /// Prints a given int to a string using base16.
@@ -149,8 +152,8 @@ pub fn to_base8(int) {
 /// "30"
 /// ```
 ///
-pub fn to_base16(int) {
-  do_to_base_string(int, 16)
+pub fn to_base16(x: Int) -> String {
+  do_to_base_string(x, 16)
 }
 
 /// Prints a given int to a string using base16.
@@ -162,8 +165,8 @@ pub fn to_base16(int) {
 /// "1C"
 /// ```
 ///
-pub fn to_base36(int) {
-  do_to_base_string(int, 36)
+pub fn to_base36(x: Int) -> String {
+  do_to_base_string(x, 36)
 }
 
 /// Takes an int and returns its value as a float.
@@ -181,17 +184,17 @@ pub fn to_base36(int) {
 /// -3.
 /// ```
 ///
-pub fn to_float(int) {
-  do_to_float(int)
+pub fn to_float(x: Int) -> Float {
+  do_to_float(x)
 }
 
 if erlang {
-  external fn do_to_float(a: Int) -> Float =
+  external fn do_to_float(x: Int) -> Float =
     "erlang" "float"
 }
 
 if javascript {
-  external fn do_to_float(a: Int) -> Float =
+  external fn do_to_float(x: Int) -> Float =
     "../gleam_stdlib.mjs" "identity"
 }
 
@@ -204,8 +207,8 @@ if javascript {
 /// 50
 /// ```
 ///
-pub fn clamp(n: Int, min min_bound: Int, max max_bound: Int) -> Int {
-  n
+pub fn clamp(number x: Int, min min_bound: Int, max max_bound: Int) -> Int {
+  x
   |> min(max_bound)
   |> max(min_bound)
 }
@@ -369,17 +372,17 @@ fn do_product(numbers: List(Int), initial: Int) -> Int {
 /// Error(InvalidBase)
 /// ```
 ///
-pub fn digits(number: Int, base: Int) -> Result(List(Int), InvalidBase) {
+pub fn digits(number x: Int, base base: Int) -> Result(List(Int), InvalidBase) {
   case base < 2 {
     True -> Error(InvalidBase)
-    False -> Ok(do_digits(number, base, []))
+    False -> Ok(do_digits(x, base, []))
   }
 }
 
-fn do_digits(number: Int, base: Int, acc: List(Int)) -> List(Int) {
-  case absolute_value(number) < base {
-    True -> [number, ..acc]
-    False -> do_digits(number / base, base, [number % base, ..acc])
+fn do_digits(x: Int, base: Int, acc: List(Int)) -> List(Int) {
+  case absolute_value(x) < base {
+    True -> [x, ..acc]
+    False -> do_digits(x / base, base, [x % base, ..acc])
   }
 }
 
@@ -399,7 +402,10 @@ fn do_digits(number: Int, base: Int, acc: List(Int)) -> List(Int) {
 /// Error(InvalidBase)
 /// ```
 ///
-pub fn undigits(numbers: List(Int), base: Int) -> Result(Int, InvalidBase) {
+pub fn undigits(
+  numbers numbers: List(Int),
+  base base: Int,
+) -> Result(Int, InvalidBase) {
   case base < 2 {
     True -> Error(InvalidBase)
     False -> do_undigits(numbers, base, 0)

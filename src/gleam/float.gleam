@@ -35,8 +35,8 @@ if javascript {
 /// "2.3"
 /// ```
 ///
-pub fn to_string(f: Float) -> String {
-  f
+pub fn to_string(x: Float) -> String {
+  x
   |> string_builder.from_float
   |> string_builder.to_string
 }
@@ -50,8 +50,12 @@ pub fn to_string(f: Float) -> String {
 /// 1.4
 /// ```
 ///
-pub fn clamp(n: Float, min min_bound: Float, max max_bound: Float) -> Float {
-  n
+pub fn clamp(
+  number x: Float,
+  min min_bound: Float,
+  max max_bound: Float,
+) -> Float {
+  x
   |> min(max_bound)
   |> max(min_bound)
 }
@@ -86,7 +90,7 @@ pub fn compare(a: Float, with b: Float) -> Order {
 /// ```
 ///
 pub fn loosely_compare(
-  a: Float,
+  number a: Float,
   with b: Float,
   tolerating tolerance: Float,
 ) -> Order {
@@ -138,8 +142,8 @@ pub fn max(a: Float, b: Float) -> Float {
 /// 3.0
 /// ```
 ///
-pub fn ceiling(float: Float) -> Float {
-  do_ceiling(float)
+pub fn ceiling(x: Float) -> Float {
+  do_ceiling(x)
 }
 
 if erlang {
@@ -161,8 +165,8 @@ if javascript {
 /// 2.0
 /// ```
 ///
-pub fn floor(float: Float) -> Float {
-  do_floor(float)
+pub fn floor(x: Float) -> Float {
+  do_floor(x)
 }
 
 if erlang {
@@ -187,8 +191,8 @@ if javascript {
 /// 3
 /// ```
 ///
-pub fn round(float: Float) -> Int {
-  do_round(float)
+pub fn round(x: Float) -> Int {
+  do_round(x)
 }
 
 if erlang {
@@ -197,10 +201,10 @@ if erlang {
 }
 
 if javascript {
-  fn do_round(float: Float) -> Int {
-    case float >=. 0.0 {
-      True -> js_round(float)
-      _ -> 0 - js_round(negate(float))
+  fn do_round(x: Float) -> Int {
+    case x >=. 0.0 {
+      True -> js_round(x)
+      _ -> 0 - js_round(negate(x))
     }
   }
 
@@ -217,8 +221,8 @@ if javascript {
 /// 2
 /// ```
 ///
-pub fn truncate(float: Float) -> Int {
-  do_truncate(float)
+pub fn truncate(x: Float) -> Int {
+  do_truncate(x)
 }
 
 if erlang {
@@ -243,10 +247,10 @@ if javascript {
 /// 10.2
 /// ```
 ///
-pub fn absolute_value(float: Float) -> Float {
-  case float >=. 0. {
-    True -> float
-    _ -> 0. -. float
+pub fn absolute_value(x: Float) -> Float {
+  case x >=. 0. {
+    True -> x
+    _ -> 0. -. x
   }
 }
 
@@ -263,7 +267,7 @@ pub fn absolute_value(float: Float) -> Float {
 /// 22.627416997969522
 /// ```
 ///
-pub fn power(base: Float, exponent: Float) -> Float {
+pub fn power(base base: Float, exponent exponent: Float) -> Float {
   do_power(base, exponent)
 }
 
@@ -289,10 +293,10 @@ if javascript {
 /// Error(Nil)
 /// ```
 ///
-pub fn square_root(number: Float) -> Result(Float, Nil) {
-  case number <. 0.0 {
+pub fn square_root(x: Float) -> Result(Float, Nil) {
+  case x <. 0.0 {
     True -> Error(Nil)
-    False -> Ok(power(number, 0.5))
+    False -> Ok(power(x, 0.5))
   }
 }
 
