@@ -797,12 +797,8 @@ pub fn last(s: String) -> Option(String) {
 /// ```
 ///
 pub fn capitalize(s: String) -> String {
-  let first =
-    slice(s, 0, 1)
-    |> uppercase
-  let rest =
-    slice(s, 1, length(s))
-    |> lowercase
-
-  append(to: first, suffix: rest)
+  case pop_grapheme(s) {
+    Ok(#(first, rest)) -> append(to: uppercase(first), suffix: lowercase(rest))
+    _ -> ""
+  }
 }
