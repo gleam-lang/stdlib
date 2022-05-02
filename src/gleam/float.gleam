@@ -256,14 +256,21 @@ pub fn absolute_value(x: Float) -> Float {
 /// ## Examples
 ///
 /// ```gleam
+/// > power(2.0, -1.0)
+/// 0.5
+///
+/// ```gleam
 /// > power(2.0, 2.0)
 /// 4.0
 ///
 /// > power(8.0, 1.5)
 /// 22.627416997969522
+///
+/// > 4.0 |> power(of: 2.0)
+/// 16.0
 /// ```
 ///
-pub fn power(base: Float, to exponent: Float) -> Float {
+pub fn power(base: Float, of exponent: Float) -> Float {
   do_power(base, exponent)
 }
 

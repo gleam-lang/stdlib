@@ -20,6 +20,49 @@ pub fn absolute_value(x: Int) -> Int {
   }
 }
 
+/// Returns the results of the base being raised to the power of the
+/// exponent, as a `Float`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > power(2, -1.0)
+/// 0.5
+///
+/// > power(2, 2.0)
+/// 4
+///
+/// > power(8, 1.5)
+/// 22.627416997969522
+///
+/// > 4 |> power(of: 2.0)
+/// 16.0
+/// ```
+///
+pub fn power(base: Int, of exponent: Float) -> Float {
+  base
+  |> to_float()
+  |> float.power(exponent)
+}
+
+/// Returns the square root of the input as a `Float`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > square_root(4)
+/// Ok(2.0)
+///
+/// > square_root(-16)
+/// Error(Nil)
+/// ```
+///
+pub fn square_root(x: Int) -> Result(Float, Nil) {
+  x
+  |> to_float()
+  |> float.square_root()
+}
+
 /// Parses a given string as an int if possible.
 ///
 /// ## Examples
@@ -97,7 +140,7 @@ pub type InvalidBase {
 /// Error(InvalidBase)
 /// ```
 ///
-pub fn to_base_string(x: Int, to base: Int) -> Result(String, InvalidBase) {
+pub fn to_base_string(x: Int, base: Int) -> Result(String, InvalidBase) {
   case base >= 2 && base <= 36 {
     True -> Ok(do_to_base_string(x, base))
     False -> Error(InvalidBase)
@@ -369,7 +412,7 @@ fn do_product(numbers: List(Int), initial: Int) -> Int {
 /// Error(InvalidBase)
 /// ```
 ///
-pub fn digits(x: Int, to base: Int) -> Result(List(Int), InvalidBase) {
+pub fn digits(x: Int, base: Int) -> Result(List(Int), InvalidBase) {
   case base < 2 {
     True -> Error(InvalidBase)
     False -> Ok(do_digits(x, base, []))
@@ -399,7 +442,7 @@ fn do_digits(x: Int, base: Int, acc: List(Int)) -> List(Int) {
 /// Error(InvalidBase)
 /// ```
 ///
-pub fn undigits(numbers: List(Int), to base: Int) -> Result(Int, InvalidBase) {
+pub fn undigits(numbers: List(Int), base: Int) -> Result(Int, InvalidBase) {
   case base < 2 {
     True -> Error(InvalidBase)
     False -> do_undigits(numbers, base, 0)
