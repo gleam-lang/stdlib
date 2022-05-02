@@ -113,6 +113,7 @@ if javascript {
 }
 
 /// Error value when trying to operate with a base out of the allowed range.
+///
 pub type InvalidBase {
   InvalidBase
 }
