@@ -358,13 +358,23 @@ fn do_product(numbers: List(Float), initial: Float) -> Float {
 }
 
 /// Returns 0.0 if boundary_a and boundary_b are equal
-/// Based on:
-/// ```javascript
-/// return Math.random() * (max - min) + min; // The minimum is inclusive and the maximum is exclusive
+/// Otherwise returns a Float x where: lower_boundary =< x < upper_boundary
+///
+/// ## Examples
+///
+/// ```gleam
+/// > random(1.0, 5.0)
+/// 2.646355926896028
 /// ```
-/// See: <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#getting_a_random_number_between_two_values>
 ///
 pub fn random(boundary_a: Float, boundary_b: Float) -> Float {
+  // Based on:
+  //
+  // ```javascript
+  // return Math.random() * (max - min) + min; // The minimum is inclusive and the maximum is exclusive
+  // ```
+  //
+  // See: <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#getting_a_random_number_between_two_values>
   let #(min, max) = case boundary_a, boundary_b {
     a, b if a <=. b -> #(a, b)
     a, b if a >. b -> #(b, a)
@@ -389,14 +399,37 @@ if javascript {
     "../gleam_stdlib.mjs" "random_uniform"
 }
 
+/// Adds two floats
+/// Useful for piping
+///
 pub fn add(a: Float, b: Float) -> Float {
   a +. b
 }
 
+/// Multiplies two floats
+/// Useful for piping
+///
 pub fn multiply(a: Float, b: Float) -> Float {
   a *. b
 }
 
+/// Subtracts two floats
+/// Useful for piping
+/// You may pipe into the minuend or the subtrahend of the substraction:
+///
+/// ## Examples
+///
+/// ```gleam
+/// > 0. |> subtract(1.)
+/// -1.
+///
+/// > 0. |> subtract(subtrahend: 1.)
+/// -1.
+///
+/// > 0. |> subtract(minuend: 1.)
+/// 1.
+/// ```
+///
 pub fn subtract(minuend a: Float, subtrahend b: Float) -> Float {
   a -. b
 }

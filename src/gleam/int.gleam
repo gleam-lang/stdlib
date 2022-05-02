@@ -424,12 +424,25 @@ fn do_undigits(
   }
 }
 
+/// Returns 0 if boundary_a and boundary_b are equal
+/// Otherwise returns an Int x where: lower_boundary =< x < upper_boundary
+///
+/// ## Examples
+///
+/// ```gleam
+/// > random(1, 5)
+/// 2
+/// ```
+///
 pub fn random(boundary_a: Int, boundary_b: Int) -> Int {
+  // Based on:
+  //
   // ```javascript
   // min = Math.ceil(min);
   // max = Math.floor(max);
   // return Math.floor(Math.random() * (max - min) + min); // The minimum is inclusive and the maximum is exclusive
   // ```
+  //
   // See: <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#getting_a_random_integer_between_two_values>
   let #(min, max) = case boundary_a, boundary_b {
     a, b if a <= b -> #(a, b)
@@ -448,14 +461,37 @@ pub fn random(boundary_a: Int, boundary_b: Int) -> Int {
   |> float.round()
 }
 
+/// Adds two integers
+/// Useful for piping
+///
 pub fn add(a: Int, b: Int) -> Int {
   a + b
 }
 
+/// Multiplies two integers
+/// Useful for piping
+///
 pub fn multiply(a: Int, b: Int) -> Int {
   a * b
 }
 
+/// Subtracts two integers
+/// Useful for piping
+/// You may pipe into the minuend or the subtrahend of the substraction:
+///
+/// ## Examples
+///
+/// ```gleam
+/// > 0 |> subtract(1)
+/// -1
+///
+/// > 0 |> subtract(subtrahend: 1)
+/// -1
+///
+/// > 0 |> subtract(minuend: 1)
+/// 1
+/// ```
+///
 pub fn subtract(minuend a: Int, subtrahend b: Int) -> Int {
   a - b
 }
