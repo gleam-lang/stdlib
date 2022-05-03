@@ -377,6 +377,10 @@ pub fn first_test() {
   "⭐️ Gleam"
   |> string.first
   |> should.equal(Ok("⭐️"))
+
+  "a"
+  |> string.first
+  |> should.equal(Ok("a"))
 }
 
 pub fn last_test() {
@@ -395,6 +399,10 @@ pub fn last_test() {
   "եոգլի"
   |> string.last
   |> should.equal(Ok("ի"))
+
+  "a"
+  |> string.last
+  |> should.equal(Ok("a"))
 }
 
 pub fn capitalize_test() {
