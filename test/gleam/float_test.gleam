@@ -362,8 +362,8 @@ pub fn divide_test() {
   float.divide(1.0, 0.0)
   |> should.equal(Error(Nil))
 
-  float.divide(number: 0.0, by: 1.0)
+  float.divide(0.0, by: 1.0)
   |> should.equal(Ok(0.0))
-  float.divide(number: 1.0, by: 0.0)
+  float.divide(1.0, by: 0.0)
   |> should.equal(Error(Nil))
 }
