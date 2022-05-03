@@ -781,6 +781,7 @@ pub fn first(s: String) -> Result(String, Nil) {
 ///
 pub fn last(s: String) -> Result(String, Nil) {
   case pop_grapheme(s) {
+    Ok(#(first, "")) -> Ok(first)
     Ok(#(_, rest)) -> Ok(slice(rest, -1, 1))
     Error(e) -> Error(e)
   }
