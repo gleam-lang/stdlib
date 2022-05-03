@@ -476,7 +476,8 @@ if javascript {
 }
 
 if javascript {
-  // Due to JS' Number type Floats without digits return as Ints
+  /// Due to JavaScript's `Number` type `Float`s without digits return as `Int`s.
+  ///
   pub fn target_from_test() {
     string.from(-1.0)
     |> should.equal("-1")
@@ -496,7 +497,8 @@ if javascript {
 }
 
 if erlang {
-  // For any other plattform, the issue Javascript has with its Number Type does not exist
+  /// For any other platform, the issue JavaScript has with its `Number` type does not exist.
+  ///
   pub fn target_from_test() {
     string.from(-1.0)
     |> should.equal("-1.0")
