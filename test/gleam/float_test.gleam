@@ -355,3 +355,15 @@ pub fn random_test() {
   test_mean(1_000, -100.0, 0.0, 5.0)
   test_mean(1_000, 0.0, -100.0, 5.0)
 }
+
+pub fn divide_test() {
+  float.divide(1.0, 1.0)
+  |> should.equal(Ok(1.0))
+  float.divide(1.0, 0.0)
+  |> should.equal(Error(Nil))
+
+  float.divide(0.0, by: 1.0)
+  |> should.equal(Ok(0.0))
+  float.divide(1.0, by: 0.0)
+  |> should.equal(Error(Nil))
+}

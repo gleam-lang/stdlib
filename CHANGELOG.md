@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- The `float` module gains the `divide` function.
+- The `int` module gains the `divide` function.
 - The `int` module gains the `power` function.
 - The `int` module gains the `square_root` function.
 

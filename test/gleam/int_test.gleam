@@ -391,3 +391,15 @@ pub fn random_test() {
   test_average(1_000, -100, 0, 5)
   test_average(1_000, 0, -100, 5)
 }
+
+pub fn divide_test() {
+  int.divide(1, 1)
+  |> should.equal(Ok(1))
+  int.divide(1, 0)
+  |> should.equal(Error(Nil))
+
+  int.divide(0, by: 1)
+  |> should.equal(Ok(0))
+  int.divide(1, by: 0)
+  |> should.equal(Error(Nil))
+}
