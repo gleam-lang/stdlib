@@ -35,8 +35,8 @@ if javascript {
 /// "2.3"
 /// ```
 ///
-pub fn to_string(f: Float) -> String {
-  f
+pub fn to_string(x: Float) -> String {
+  x
   |> string_builder.from_float
   |> string_builder.to_string
 }
@@ -50,8 +50,8 @@ pub fn to_string(f: Float) -> String {
 /// 1.4
 /// ```
 ///
-pub fn clamp(n: Float, min min_bound: Float, max max_bound: Float) -> Float {
-  n
+pub fn clamp(x: Float, min min_bound: Float, max max_bound: Float) -> Float {
+  x
   |> min(max_bound)
   |> max(min_bound)
 }
@@ -138,8 +138,8 @@ pub fn max(a: Float, b: Float) -> Float {
 /// 3.0
 /// ```
 ///
-pub fn ceiling(float: Float) -> Float {
-  do_ceiling(float)
+pub fn ceiling(x: Float) -> Float {
+  do_ceiling(x)
 }
 
 if erlang {
@@ -161,8 +161,8 @@ if javascript {
 /// 2.0
 /// ```
 ///
-pub fn floor(float: Float) -> Float {
-  do_floor(float)
+pub fn floor(x: Float) -> Float {
+  do_floor(x)
 }
 
 if erlang {
@@ -187,8 +187,8 @@ if javascript {
 /// 3
 /// ```
 ///
-pub fn round(float: Float) -> Int {
-  do_round(float)
+pub fn round(x: Float) -> Int {
+  do_round(x)
 }
 
 if erlang {
@@ -197,10 +197,10 @@ if erlang {
 }
 
 if javascript {
-  fn do_round(float: Float) -> Int {
-    case float >=. 0.0 {
-      True -> js_round(float)
-      _ -> 0 - js_round(negate(float))
+  fn do_round(x: Float) -> Int {
+    case x >=. 0.0 {
+      True -> js_round(x)
+      _ -> 0 - js_round(negate(x))
     }
   }
 
@@ -217,8 +217,8 @@ if javascript {
 /// 2
 /// ```
 ///
-pub fn truncate(float: Float) -> Int {
-  do_truncate(float)
+pub fn truncate(x: Float) -> Int {
+  do_truncate(x)
 }
 
 if erlang {
@@ -243,10 +243,10 @@ if javascript {
 /// 10.2
 /// ```
 ///
-pub fn absolute_value(float: Float) -> Float {
-  case float >=. 0. {
-    True -> float
-    _ -> 0. -. float
+pub fn absolute_value(x: Float) -> Float {
+  case x >=. 0. {
+    True -> x
+    _ -> 0. -. x
   }
 }
 
@@ -256,14 +256,21 @@ pub fn absolute_value(float: Float) -> Float {
 /// ## Examples
 ///
 /// ```gleam
+/// > power(2.0, -1.0)
+/// 0.5
+///
+/// ```gleam
 /// > power(2.0, 2.0)
 /// 4.0
 ///
 /// > power(8.0, 1.5)
 /// 22.627416997969522
+///
+/// > 4.0 |> power(of: 2.0)
+/// 16.0
 /// ```
 ///
-pub fn power(base: Float, exponent: Float) -> Float {
+pub fn power(base: Float, of exponent: Float) -> Float {
   do_power(base, exponent)
 }
 
@@ -289,10 +296,10 @@ if javascript {
 /// Error(Nil)
 /// ```
 ///
-pub fn square_root(number: Float) -> Result(Float, Nil) {
-  case number <. 0.0 {
+pub fn square_root(x: Float) -> Result(Float, Nil) {
+  case x <. 0.0 {
     True -> Error(Nil)
-    False -> Ok(power(number, 0.5))
+    False -> Ok(power(x, 0.5))
   }
 }
 
@@ -353,14 +360,24 @@ fn do_product(numbers: List(Float), initial: Float) -> Float {
   }
 }
 
-/// Returns 0.0 if boundary_a and boundary_b are equal
-/// Based on:
-/// ```javascript
-/// return Math.random() * (max - min) + min; // The minimum is inclusive and the maximum is exclusive
+/// Returns 0.0 if boundary_a and boundary_b are equal,
+/// otherwise returns a Float x where: lower_boundary =< x < upper_boundary.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > random(1.0, 5.0)
+/// 2.646355926896028
 /// ```
-/// See: <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#getting_a_random_number_between_two_values>
 ///
 pub fn random(boundary_a: Float, boundary_b: Float) -> Float {
+  // Based on:
+  //
+  // ```javascript
+  // return Math.random() * (max - min) + min; // The minimum is inclusive and the maximum is exclusive
+  // ```
+  //
+  // See: <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#getting_a_random_number_between_two_values>
   let #(min, max) = case boundary_a, boundary_b {
     a, b if a <=. b -> #(a, b)
     a, b if a >. b -> #(b, a)
