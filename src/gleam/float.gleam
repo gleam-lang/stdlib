@@ -414,7 +414,7 @@ if javascript {
 /// Error(Nil)
 /// ```
 ///
-pub fn divide(number a: Float, by b: Float) -> Result(Float, Nil) {
+pub fn divide(a: Float, by b: Float) -> Result(Float, Nil) {
   case b {
     0.0 -> Error(Nil)
     b -> Ok(a /. b)
