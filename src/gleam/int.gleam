@@ -13,11 +13,54 @@ import gleam/order.{Order}
 /// 10
 /// ```
 ///
-pub fn absolute_value(num: Int) -> Int {
-  case num >= 0 {
-    True -> num
-    False -> num * -1
+pub fn absolute_value(x: Int) -> Int {
+  case x >= 0 {
+    True -> x
+    False -> x * -1
   }
+}
+
+/// Returns the results of the base being raised to the power of the
+/// exponent, as a `Float`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > power(2, -1.0)
+/// 0.5
+///
+/// > power(2, 2.0)
+/// 4
+///
+/// > power(8, 1.5)
+/// 22.627416997969522
+///
+/// > 4 |> power(of: 2.0)
+/// 16.0
+/// ```
+///
+pub fn power(base: Int, of exponent: Float) -> Float {
+  base
+  |> to_float()
+  |> float.power(exponent)
+}
+
+/// Returns the square root of the input as a `Float`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > square_root(4)
+/// Ok(2.0)
+///
+/// > square_root(-16)
+/// Error(Nil)
+/// ```
+///
+pub fn square_root(x: Int) -> Result(Float, Nil) {
+  x
+  |> to_float()
+  |> float.square_root()
 }
 
 /// Parses a given string as an int if possible.
@@ -32,7 +75,7 @@ pub fn absolute_value(num: Int) -> Int {
 /// Error(Nil)
 /// ```
 ///
-pub fn parse(string) {
+pub fn parse(string: String) -> Result(Int, Nil) {
   do_parse(string)
 }
 
@@ -55,8 +98,8 @@ if javascript {
 /// "2"
 /// ```
 ///
-pub fn to_string(int) {
-  do_to_string(int)
+pub fn to_string(x: Int) {
+  do_to_string(x)
 }
 
 if erlang {
@@ -70,6 +113,7 @@ if javascript {
 }
 
 /// Error value when trying to operate with a base out of the allowed range.
+///
 pub type InvalidBase {
   InvalidBase
 }
@@ -97,9 +141,9 @@ pub type InvalidBase {
 /// Error(InvalidBase)
 /// ```
 ///
-pub fn to_base_string(int, base) -> Result(String, InvalidBase) {
+pub fn to_base_string(x: Int, base: Int) -> Result(String, InvalidBase) {
   case base >= 2 && base <= 36 {
-    True -> Ok(do_to_base_string(int, base))
+    True -> Ok(do_to_base_string(x, base))
     False -> Error(InvalidBase)
   }
 }
@@ -123,8 +167,8 @@ if javascript {
 /// "10"
 /// ```
 ///
-pub fn to_base2(int) {
-  do_to_base_string(int, 2)
+pub fn to_base2(x: Int) -> String {
+  do_to_base_string(x, 2)
 }
 
 /// Prints a given int to a string using base8.
@@ -136,8 +180,8 @@ pub fn to_base2(int) {
 /// "17"
 /// ```
 ///
-pub fn to_base8(int) {
-  do_to_base_string(int, 8)
+pub fn to_base8(x: Int) -> String {
+  do_to_base_string(x, 8)
 }
 
 /// Prints a given int to a string using base16.
@@ -149,8 +193,8 @@ pub fn to_base8(int) {
 /// "30"
 /// ```
 ///
-pub fn to_base16(int) {
-  do_to_base_string(int, 16)
+pub fn to_base16(x: Int) -> String {
+  do_to_base_string(x, 16)
 }
 
 /// Prints a given int to a string using base16.
@@ -162,8 +206,8 @@ pub fn to_base16(int) {
 /// "1C"
 /// ```
 ///
-pub fn to_base36(int) {
-  do_to_base_string(int, 36)
+pub fn to_base36(x: Int) -> String {
+  do_to_base_string(x, 36)
 }
 
 /// Takes an int and returns its value as a float.
@@ -181,17 +225,17 @@ pub fn to_base36(int) {
 /// -3.
 /// ```
 ///
-pub fn to_float(int) {
-  do_to_float(int)
+pub fn to_float(x: Int) -> Float {
+  do_to_float(x)
 }
 
 if erlang {
-  external fn do_to_float(a: Int) -> Float =
+  external fn do_to_float(Int) -> Float =
     "erlang" "float"
 }
 
 if javascript {
-  external fn do_to_float(a: Int) -> Float =
+  external fn do_to_float(Int) -> Float =
     "../gleam_stdlib.mjs" "identity"
 }
 
@@ -204,8 +248,8 @@ if javascript {
 /// 50
 /// ```
 ///
-pub fn clamp(n: Int, min min_bound: Int, max max_bound: Int) -> Int {
-  n
+pub fn clamp(x: Int, min min_bound: Int, max max_bound: Int) -> Int {
+  x
   |> min(max_bound)
   |> max(min_bound)
 }
@@ -369,17 +413,17 @@ fn do_product(numbers: List(Int), initial: Int) -> Int {
 /// Error(InvalidBase)
 /// ```
 ///
-pub fn digits(number: Int, base: Int) -> Result(List(Int), InvalidBase) {
+pub fn digits(x: Int, base: Int) -> Result(List(Int), InvalidBase) {
   case base < 2 {
     True -> Error(InvalidBase)
-    False -> Ok(do_digits(number, base, []))
+    False -> Ok(do_digits(x, base, []))
   }
 }
 
-fn do_digits(number: Int, base: Int, acc: List(Int)) -> List(Int) {
-  case absolute_value(number) < base {
-    True -> [number, ..acc]
-    False -> do_digits(number / base, base, [number % base, ..acc])
+fn do_digits(x: Int, base: Int, acc: List(Int)) -> List(Int) {
+  case absolute_value(x) < base {
+    True -> [x, ..acc]
+    False -> do_digits(x / base, base, [x % base, ..acc])
   }
 }
 
@@ -418,12 +462,25 @@ fn do_undigits(
   }
 }
 
+/// Returns 0 if boundary_a and boundary_b are equal,
+/// otherwise returns an Int x where: lower_boundary =< x < upper_boundary.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > random(1, 5)
+/// 2
+/// ```
+///
 pub fn random(boundary_a: Int, boundary_b: Int) -> Int {
+  // Based on:
+  //
   // ```javascript
   // min = Math.ceil(min);
   // max = Math.floor(max);
   // return Math.floor(Math.random() * (max - min) + min); // The minimum is inclusive and the maximum is exclusive
   // ```
+  //
   // See: <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#getting_a_random_integer_between_two_values>
   let #(min, max) = case boundary_a, boundary_b {
     a, b if a <= b -> #(a, b)

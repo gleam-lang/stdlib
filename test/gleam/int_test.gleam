@@ -255,6 +255,37 @@ pub fn is_odd_test() {
   |> should.be_true
 }
 
+pub fn power_test() {
+  int.power(2, 2.0)
+  |> should.equal(4.0)
+
+  int.power(-5, 3.0)
+  |> should.equal(-125.0)
+
+  int.power(10, 0.0)
+  |> should.equal(1.0)
+
+  int.power(16, 0.5)
+  |> should.equal(4.0)
+
+  int.power(2, -1.0)
+  |> should.equal(0.5)
+}
+
+pub fn square_root_test() {
+  int.square_root(4)
+  |> should.equal(Ok(2.0))
+
+  int.square_root(16)
+  |> should.equal(Ok(4.0))
+
+  int.square_root(0)
+  |> should.equal(Ok(0.0))
+
+  int.square_root(-4)
+  |> should.equal(Error(Nil))
+}
+
 pub fn negate_test() {
   int.negate(-1)
   |> should.equal(1)
