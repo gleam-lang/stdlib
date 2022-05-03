@@ -366,6 +366,10 @@ pub fn to_option_test() {
 }
 
 if javascript {
+  type TypeForStringFromTest {
+    TypeForStringFromTest
+  }
+
   type TypeOfIntForStringFromTest {
     TypeOfIntForStringFromTest(Int)
   }
@@ -386,15 +390,22 @@ if javascript {
     TypeOfTupleOfListOfStringForStringFromTest(#(List(Int), String))
   }
 
-  // fn fun() {
-  //   Nil
-  // }
+  fn fun_for_from_test() {
+    Nil
+  }
+
   pub fn from_test() {
     string.from(True)
     |> should.equal("True")
 
     string.from(False)
     |> should.equal("False")
+
+    string.from(-1)
+    |> should.equal("-1")
+
+    string.from(0)
+    |> should.equal("0")
 
     string.from(1)
     |> should.equal("1")
@@ -437,31 +448,69 @@ if javascript {
 
     string.from(#([1, 2, 3], ["1", "2", "3"], #(1, "1", True)))
     |> should.equal("#([1, 2, 3], [\"1\", \"2\", \"3\"], #(1, \"1\", True))")
-    //
-    // TODO: These do not succeed?
-    //
-    // string.from(TypeOfTupleOfListOfStringForStringFromTest)
-    // |> should.equal("TypeOfTupleOfListOfStringForStringFromTest")
-    //
-    // string.from(fun)
-    // |> should.equal("fun")
-    //
-    // let anon_fun = fn() { Nil }
-    //
-    // string.from(anon_fun)
-    // |> should.equal("anon_fun")
-    //
-    // These cannot succeed on JavaScript, probably due to Javascript's Number type?
-    // https://stackoverflow.com/questions/3885817/how-do-i-check-that-a-number-is-float-or-integer/20779354#comment71111945_20779354
-    //
-    // string.from(1.0)
-    // |> should.equal("1.0")
-    //
-    // string.from([1.0])
-    // |> should.equal("[1.0]")
-    //
-    // string.from(#(1.0))
-    // |> should.equal("#(1.0)")
-    //
+
+    string.from(TypeForStringFromTest)
+    |> should.equal("TypeForStringFromTest")
+
+    string.from(TypeOfTupleOfListOfStringForStringFromTest)
+    |> should.equal("//fn(a) { ... }")
+
+    string.from(fun_for_from_test)
+    |> should.equal("//fn() { ... }")
+
+    string.from(fn() { Nil })
+    |> should.equal("//fn() { ... }")
+
+    string.from(-1.5)
+    |> should.equal("-1.5")
+
+    string.from(1.5)
+    |> should.equal("1.5")
+
+    string.from([1.5])
+    |> should.equal("[1.5]")
+
+    string.from(#(1.5))
+    |> should.equal("#(1.5)")
+  }
+}
+
+if javascript {
+  // Due to JS' Number type Floats without digits return as Ints
+  pub fn target_from_test() {
+    string.from(-1.0)
+    |> should.equal("-1")
+
+    string.from(0.0)
+    |> should.equal("0")
+
+    string.from(1.0)
+    |> should.equal("1")
+
+    string.from([1.0])
+    |> should.equal("[1]")
+
+    string.from(#(1.0))
+    |> should.equal("#(1)")
+  }
+}
+
+if erlang {
+  // For any other plattform, the issue Javascript has with its Number Type does not exist
+  pub fn target_from_test() {
+    string.from(-1.0)
+    |> should.equal("-1.0")
+
+    string.from(0.0)
+    |> should.equal("0.0")
+
+    string.from(1.0)
+    |> should.equal("1.0")
+
+    string.from([1.0])
+    |> should.equal("[1.0]")
+
+    string.from(#(1.0))
+    |> should.equal("#(1.0)")
   }
 }

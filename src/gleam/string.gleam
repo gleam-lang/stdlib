@@ -751,8 +751,7 @@ if javascript {
 
 if erlang {
   // external fn do_from(anything) -> String =
-  fn do_from(anything) {
-    anything
+  fn do_from(_anything) {
     todo
   }
 }
