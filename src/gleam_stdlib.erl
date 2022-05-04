@@ -325,7 +325,7 @@ inspect(Any) when Any == true ->
 inspect(Any) when Any == false ->
     <<"False">>;
 inspect(Any) when is_atom(Any) ->
-		[LeadingLetter | Rest] = atom_to_list(Any),
+    [LeadingLetter | Rest] = atom_to_list(Any),
     iolist_to_binary(string:uppercase([LeadingLetter]) ++ Rest);
 inspect(Any) when is_integer(Any) ->
     % Taken from Elixir's Integer.to_string()
