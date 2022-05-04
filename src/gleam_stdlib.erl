@@ -381,12 +381,12 @@ inspect(Any) when is_tuple(Any) ->
             <<"#(", Elems/binary, ")">>
     end;
 inspect(Any) when is_function(Any) ->
-		logdebug(Any),
+		log_to_debug_log(Any),
 		<<"//fn(a) { ... }">>;
 inspect(Any) ->
-		logdebug(Any).
+		log_to_debug_log(Any).
 
-logdebug(Value) ->
+log_to_debug_log(Value) ->
 		{ok, S} = file:open("debug.log", [append]),
 		file:pwrite(S, 8, io_lib:write(Value)),
 		file:pwrite(S, 8, ["\n"]).
