@@ -547,6 +547,24 @@ pub fn from_test() {
   |> should.equal("//fn(a) { ... }")
   string.from(Error)
   |> should.equal("//fn(a) { ... }")
+
+  string.from(Ok(1))
+  |> should.equal("Ok(1)")
+  string.from(Ok(True))
+  |> should.equal("Ok(True)")
+  string.from(Ok(False))
+  |> should.equal("Ok(False)")
+  string.from(Ok(Nil))
+  |> should.equal("Ok(Nil)")
+
+  string.from(Error(2))
+  |> should.equal("Error(2)")
+  string.from(Error(True))
+  |> should.equal("Error(True)")
+  string.from(Error(False))
+  |> should.equal("Error(False)")
+  string.from(Error(Nil))
+  |> should.equal("Error(Nil)")
 }
 
 fn fun_for_from_test() {
