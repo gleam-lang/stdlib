@@ -334,16 +334,14 @@ inspect(Any) when is_float(Any) ->
     % Taken from Elixir's Float.to_string()
     iolist_to_binary(io_lib_format:fwrite_g(Any));
 inspect(Any) when is_tuple(Any) ->
-    Open = <<"#(">>,
-    Value = iolist_to_binary(
+    Elems = iolist_to_binary(
         lists:join(<<", ">>,
             lists:map(fun(Item) ->
                 inspect(Item)
             end, tuple_to_list(Any))
         )
     ),
-    Close = <<")">>,
-    <<Open/binary, Value/binary, Close/binary>>;
+    <<"#(", Elems/binary, ")">>;
 inspect(Any) when is_binary(Any) andalso Any == <<"">> ->
     <<"\"\"">>;
 inspect(Any) when is_binary(Any) ->
@@ -351,15 +349,13 @@ inspect(Any) when is_binary(Any) ->
 inspect(Any) when is_list(Any) andalso Any == [] ->
     <<"[]">>;
 inspect(Any) when is_list(Any) ->
-    Open = <<"[">>,
-    Value = iolist_to_binary(
+    Elems = iolist_to_binary(
         lists:join(<<", ">>,
             lists:map(fun(Item) ->
                 inspect(Item)
             end, Any)
         )
     ),
-    Close = <<"]">>,
-    <<Open/binary, Value/binary, Close/binary>>
+    <<"[", Elems/binary, "]">>
 .
 
