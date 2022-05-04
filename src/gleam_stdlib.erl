@@ -330,8 +330,6 @@ inspect(Any) when is_tuple(Any) ->
     Open = <<"#(">>,
     Value = iolist_to_binary(
         lists:foldl(fun(Item, Acc) ->
-            % Item2 = inspect(Item),
-            % <<Acc/binary, Item2/binary>>
             <<Acc/binary, (inspect(Item))/binary>>
         end, <<"">>, tuple_to_list(Any))
     ),
@@ -341,8 +339,6 @@ inspect(Any) when is_list(Any) ->
     Open = <<"[">>,
     Value = iolist_to_binary(
         lists:foldl(fun(Item, Acc) ->
-            % Item2 = inspect(Item),
-            % <<Acc/binary, Item2/binary>>
             <<Acc/binary, (inspect(Item))/binary>>
         end, <<"">>, Any)
     ),
