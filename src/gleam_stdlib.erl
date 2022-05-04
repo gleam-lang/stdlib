@@ -321,28 +321,30 @@ println(String) ->
     nil.
 
 inspect(Any) when is_binary(Any) ->
-	Any;
+    Any;
 inspect(Any) when is_integer(Any) ->
-	integer_to_binary(Any);
+    % Taken from Elixir's Integer.to_string()
+    integer_to_binary(Any);
 inspect(Any) when is_float(Any) ->
-	iolist_to_binary(io_lib_format:fwrite_g(Any));
+    % Taken from Elixir's Float.to_string()
+    iolist_to_binary(io_lib_format:fwrite_g(Any));
 inspect(Any) when is_tuple(Any) ->
-	Open = <<"#(">>,
-	Value = iolist_to_binary(
-		lists:foldl(fun(Item, Acc) ->
-			ItemB = inspect(Item),
-			<<Acc/binary, ItemB/binary>>
-		end, <<"">>, tuple_to_list(Any))
-	),
-	Close = <<")">>,
-	<<Open/binary, Value/binary, Close/binary>>;
+    Open = <<"#(">>,
+    Value = iolist_to_binary(
+        lists:foldl(fun(Item, Acc) ->
+            ItemB = inspect(Item),
+            <<Acc/binary, ItemB/binary>>
+        end, <<"">>, tuple_to_list(Any))
+    ),
+    Close = <<")">>,
+    <<Open/binary, Value/binary, Close/binary>>;
 inspect(Any) when is_list(Any) ->
-	Open = <<"[">>,
-	Value = iolist_to_binary(
-		lists:foldl(fun(Item, Acc) ->
-			ItemB = inspect(Item),
-			<<Acc/binary, ItemB/binary>>
-		end, <<"">>, Any)
-	),
-	Close = <<"]">>,
-	<<Open/binary, Value/binary, Close/binary>>.
+    Open = <<"[">>,
+    Value = iolist_to_binary(
+        lists:foldl(fun(Item, Acc) ->
+            ItemB = inspect(Item),
+            <<Acc/binary, ItemB/binary>>
+        end, <<"">>, Any)
+    ),
+    Close = <<"]">>,
+    <<Open/binary, Value/binary, Close/binary>>.
