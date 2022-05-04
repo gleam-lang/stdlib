@@ -335,15 +335,22 @@ inspect(Any) when is_float(Any) ->
     iolist_to_binary(io_lib_format:fwrite_g(Any));
 inspect(Any) when is_binary(Any) ->
     <<"\"", Any/binary, "\"">>;
+inspect(Any) when is_list(Any) andalso Any == [] ->
+    <<"[]">>;
 inspect(Any) when is_list(Any) ->
-    Elems = iolist_to_binary(
-        lists:join(<<", ">>,
-            lists:map(fun(Item) ->
-                inspect(Item)
-            end, Any)
-        )
-    ),
-    <<"[", Elems/binary, "]">>;
+    [MaybeHash | _Rest] = Any,
+    case MaybeHash == "#" of
+      true -> iolist_to_binary("Foo");
+      false ->
+          Elems = iolist_to_binary(
+              lists:join(<<", ">>,
+                  lists:map(fun(Item) ->
+                      inspect(Item)
+                  end, Any)
+              )
+          ),
+          <<"[", Elems/binary, "]">>
+      end;
 inspect(Any) when is_tuple(Any) andalso Any == {} ->
     <<"#()">>;
 inspect(Any) when is_tuple(Any) ->
@@ -373,10 +380,20 @@ inspect(Any) when is_tuple(Any) ->
             ),
             <<"#(", Elems/binary, ")">>
     end;
+inspect(Any) when is_function(Any) ->
+		logdebug(Any),
+		<<"//fn(a) { ... }">>;
 inspect(Any) ->
-    io_lib:format("~p", [Any]).
+		logdebug(Any).
+
+logdebug(Value) ->
+		{ok, S} = file:open("debug.log", [append]),
+		file:pwrite(S, 8, io_lib:write(Value)),
+		file:pwrite(S, 8, ["\n"]).
 
 % camel_case() implementation from <https://github.com/tomas-abrahamsson/gpb/>
+% TODO: This needs to be reimplemented possibly based on:
+% <https://github.com/elixir-lang/elixir/blob/main/lib/elixir/lib/macro.ex#L1938-L1954>
 capitalize_letter(C) ->
     C + ($A - $a).
 -define(is_lower_case(C), $a =< C, C =< $z).

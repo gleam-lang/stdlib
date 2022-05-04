@@ -393,10 +393,6 @@ type TypeOfTupleOfListOfStringForStringFromTest {
   TypeOfTupleOfListOfStringForStringFromTest(#(List(Int), String))
 }
 
-fn fun_for_from_test() {
-  Nil
-}
-
 pub fn from_test() {
   string.from(True)
   |> should.equal("True")
@@ -471,19 +467,26 @@ pub fn from_test() {
   |> should.equal("TypeOfListOfStringForStringFromTest([\"1\"])")
   string.from(TypeOfTupleOfListOfStringForStringFromTest(#([1], "a")))
   |> should.equal("TypeOfTupleOfListOfStringForStringFromTest(#([1], \"a\"))")
-  //
-  // THESE CRASH ON ERLANG:
-  //
-  // string.from(TypeOfTupleOfListOfStringForStringFromTest)
-  // |> should.equal("//fn(a) { ... }")
-  // string.from(Ok)
-  // |> should.equal("//fn(a) { ... }")
-  // string.from(Error)
-  // |> should.equal("//fn(a) { ... }")
-  // string.from(fun_for_from_test)
-  // |> should.equal("//fn() { ... }")
-  // string.from(fn() { Nil })
-  // |> should.equal("//fn() { ... }")
+  string.from(TypeOfTupleOfListOfStringForStringFromTest)
+  |> should.equal("//fn(a) { ... }")
+  string.from(Ok)
+  |> should.equal("//fn(a) { ... }")
+  string.from(Error)
+  |> should.equal("//fn(a) { ... }")
+}
+
+fn fun_for_from_test() {
+  Nil
+}
+
+pub fn from_fun_test() {
+  string.from(fun_for_from_test)
+  |> should.equal("//fn() { ... }")
+}
+
+pub fn from_anon_fun_test() {
+  string.from(fn() { Nil })
+  |> should.equal("//fn() { ... }")
 }
 
 if javascript {
