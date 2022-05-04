@@ -740,7 +740,7 @@ pub fn to_option(s: String) -> Option(String) {
   }
 }
 
-pub fn from(anything) {
+pub fn from(anything) -> String {
   do_from(anything)
 }
 
