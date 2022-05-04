@@ -449,12 +449,10 @@ pub fn from_test() {
   |> should.equal("\"💜 Gleam\"")
   string.from(#([1, 2, 3], "🌈", #(1, "1", True)))
   |> should.equal("#([1, 2, 3], \"🌈\", #(1, \"1\", True))")
-  //
-  // THIS CRASHES on Erlang:
   string.from(Nil)
   |> should.equal("Nil")
   //
-  // These will as well:
+  // THESE CRASH ON ERLANG:
   //
   // string.from(Ok)
   // |> should.equal("//fn(a) { ... }")
