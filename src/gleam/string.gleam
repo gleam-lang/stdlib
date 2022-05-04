@@ -750,8 +750,6 @@ if javascript {
 }
 
 if erlang {
-  // external fn do_from(anything) -> String =
-  fn do_from(_anything) {
-    todo
-  }
+  external fn do_from(anything) -> String =
+    "gleam" "inspect"
 }
