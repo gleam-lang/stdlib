@@ -395,6 +395,12 @@ if javascript {
   }
 
   pub fn from_test() {
+    string.from("Hello Joe!")
+    |> should.equal("\"Hello Joe!\"")
+
+    string.from("💜 Gleam")
+    |> should.equal("\"💜 Gleam\"")
+
     string.from(True)
     |> should.equal("True")
 
@@ -418,6 +424,9 @@ if javascript {
 
     string.from([1])
     |> should.equal("[1]")
+
+    string.from([1, [1]])
+    |> should.equal("[1, [1]]")
 
     string.from(["1"])
     |> should.equal("[\"1\"]")

@@ -751,5 +751,5 @@ if javascript {
 
 if erlang {
   external fn do_from(anything) -> String =
-    "gleam" "inspect"
+    "gleam_stdlib" "inspect"
 }

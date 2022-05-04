@@ -9,7 +9,7 @@
          bit_string_slice/3, decode_bit_string/1, compile_regex/2, regex_scan/2,
          percent_encode/1, percent_decode/1, regex_check/2, regex_split/2,
          base_decode64/1, parse_query/1, bit_string_concat/1, size_of_tuple/1,
-         decode_tuple/1, tuple_get/2, classify_dynamic/1, print/1, println/1]).
+         decode_tuple/1, tuple_get/2, classify_dynamic/1, print/1, println/1, inspect/1]).
 
 %% Taken from OTP's uri_string module
 -define(DEC2HEX(X),
@@ -47,9 +47,9 @@ classify_dynamic(X) when is_float(X) -> <<"Float">>;
 classify_dynamic(X) when is_list(X) -> <<"List">>;
 classify_dynamic(X) when is_boolean(X) -> <<"Bool">>;
 classify_dynamic(X) when is_map(X) -> <<"Map">>;
-classify_dynamic(X) when is_tuple(X) -> 
+classify_dynamic(X) when is_tuple(X) ->
     iolist_to_binary(["Tuple of ", integer_to_list(tuple_size(X)), " elements"]);
-classify_dynamic(X) when 
+classify_dynamic(X) when
     is_function(X, 0) orelse is_function(X, 1) orelse is_function(X, 2) orelse
     is_function(X, 3) orelse is_function(X, 4) orelse is_function(X, 5) orelse
     is_function(X, 6) orelse is_function(X, 7) orelse is_function(X, 8) orelse
@@ -81,7 +81,7 @@ decode_list(Data) -> decode_error_msg(<<"List">>, Data).
 decode_field(Data, Key) ->
     case Data of
         #{Key := Value} -> {ok, Value};
-        _ -> 
+        _ ->
             decode_error(<<"field"/utf8>>, <<"nothing"/utf8>>)
     end.
 
@@ -227,7 +227,7 @@ wrap_list(X) -> [X].
 parse_query(Query) ->
     case uri_string:dissect_query(Query) of
         {error, _, _} -> {error, nil};
-        Pairs -> 
+        Pairs ->
             Pairs1 = lists:map(fun
                 ({K, true}) -> {K, <<"">>};
                 (Pair) -> Pair
@@ -296,7 +296,7 @@ uri_parse(String) ->
                 maps_get_optional(Uri, userinfo),
                 maps_get_optional(Uri, host),
                 maps_get_optional(Uri, port),
-                maps_get_or(Uri, path, <<>>), 
+                maps_get_or(Uri, path, <<>>),
                 maps_get_optional(Uri, query),
                 maps_get_optional(Uri, fragment)
             }}
@@ -319,3 +319,30 @@ print(String) ->
 println(String) ->
     io:put_chars([String, $\n]),
     nil.
+
+inspect(Any) when is_binary(Any) ->
+	Any;
+inspect(Any) when is_integer(Any) ->
+	integer_to_binary(Any);
+inspect(Any) when is_float(Any) ->
+	iolist_to_binary(io_lib_format:fwrite_g(Any));
+inspect(Any) when is_tuple(Any) ->
+	Open = <<"#(">>,
+	Value = iolist_to_binary(
+		lists:foldl(fun(Item, Acc) ->
+			ItemB = inspect(Item),
+			<<Acc/binary, ItemB/binary>>
+		end, <<"">>, tuple_to_list(Any))
+	),
+	Close = <<")">>,
+	<<Open/binary, Value/binary, Close/binary>>;
+inspect(Any) when is_list(Any) ->
+	Open = <<"[">>,
+	Value = iolist_to_binary(
+		lists:foldl(fun(Item, Acc) ->
+			ItemB = inspect(Item),
+			<<Acc/binary, ItemB/binary>>
+		end, <<"">>, Any)
+	),
+	Close = <<"]">>,
+	<<Open/binary, Value/binary, Close/binary>>.
