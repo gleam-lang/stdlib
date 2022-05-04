@@ -321,9 +321,9 @@ println(String) ->
     nil.
 
 inspect(Any) when Any == true ->
-  <<"True">>;
+    <<"True">>;
 inspect(Any) when Any == false ->
-  <<"False">>;
+    <<"False">>;
 inspect(Any) when is_integer(Any) ->
     % Taken from Elixir's Integer.to_string()
     integer_to_binary(Any);
