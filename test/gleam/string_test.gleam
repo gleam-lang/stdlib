@@ -450,6 +450,16 @@ pub fn from_test() {
   string.from(#([1, 2, 3], "🌈", #(1, "1", True)))
   |> should.equal("#([1, 2, 3], \"🌈\", #(1, \"1\", True))")
   //
+  // THIS CRASHES on Erlang:
+  string.from(Nil)
+  |> should.equal("Nil")
+  //
+  // These will as well:
+  //
+  // string.from(Ok)
+  // |> should.equal("//fn(a) { ... }")
+  // string.from(Error)
+  // |> should.equal("//fn(a) { ... }")
   // string.from(TypeOfIntForStringFromTest(1))
   // |> should.equal("TypeOfIntForStringFromTest(1)")
   // string.from(TypeOfListOfIntForStringFromTest([1]))

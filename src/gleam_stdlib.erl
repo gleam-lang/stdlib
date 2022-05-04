@@ -342,12 +342,8 @@ inspect(Any) when is_tuple(Any) ->
         )
     ),
     <<"#(", Elems/binary, ")">>;
-inspect(Any) when is_binary(Any) andalso Any == <<"">> ->
-    <<"\"\"">>;
 inspect(Any) when is_binary(Any) ->
     <<"\"", Any/binary, "\"">>;
-inspect(Any) when is_list(Any) andalso Any == [] ->
-    <<"[]">>;
 inspect(Any) when is_list(Any) ->
     Elems = iolist_to_binary(
         lists:join(<<", ">>,
@@ -356,6 +352,5 @@ inspect(Any) when is_list(Any) ->
             end, Any)
         )
     ),
-    <<"[", Elems/binary, "]">>
-.
+    <<"[", Elems/binary, "]">>.
 
