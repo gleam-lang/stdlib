@@ -394,12 +394,6 @@ fn fun_for_from_test() {
 }
 
 pub fn from_test() {
-  string.from("Hello Joe!")
-  |> should.equal("\"Hello Joe!\"")
-
-  string.from("💜 Gleam")
-  |> should.equal("\"💜 Gleam\"")
-
   string.from(True)
   |> should.equal("True")
 
@@ -415,74 +409,65 @@ pub fn from_test() {
   string.from(1)
   |> should.equal("1")
 
-  string.from("1")
-  |> should.equal("\"1\"")
+  string.from("")
+  |> should.equal("\"\"")
 
   string.from([])
   |> should.equal("[]")
 
+  string.from("1")
+  |> should.equal("\"1\"")
+
   string.from([1])
   |> should.equal("[1]")
 
+  string.from([1, 2])
+  |> should.equal("[1, 2]")
   string.from([[1], [1]])
   |> should.equal("[[1], [1]]")
-
   string.from([#(1, 2, 3), #(1, 2, 3)])
   |> should.equal("[#(1, 2, 3), #(1, 2, 3)]")
-
   string.from(["1"])
   |> should.equal("[\"1\"]")
-
   string.from(#())
   |> should.equal("#()")
-
   string.from(#(1))
   |> should.equal("#(1)")
-
   string.from(#("1"))
   |> should.equal("#(\"1\")")
-
-  string.from(TypeOfIntForStringFromTest(1))
-  |> should.equal("TypeOfIntForStringFromTest(1)")
-
-  string.from(TypeOfListOfIntForStringFromTest([1]))
-  |> should.equal("TypeOfListOfIntForStringFromTest([1])")
-
-  string.from(TypeOfStringForStringFromTest("1"))
-  |> should.equal("TypeOfStringForStringFromTest(\"1\")")
-
-  string.from(TypeOfListOfStringForStringFromTest(["1"]))
-  |> should.equal("TypeOfListOfStringForStringFromTest([\"1\"])")
-
-  string.from(TypeOfTupleOfListOfStringForStringFromTest(#([1], "a")))
-  |> should.equal("TypeOfTupleOfListOfStringForStringFromTest(#([1], \"a\"))")
-
-  string.from(#([1, 2, 3], ["1", "2", "3"], #(1, "1", True)))
-  |> should.equal("#([1, 2, 3], [\"1\", \"2\", \"3\"], #(1, \"1\", True))")
-
-  string.from(TypeForStringFromTest)
-  |> should.equal("TypeForStringFromTest")
-
-  string.from(TypeOfTupleOfListOfStringForStringFromTest)
-  |> should.equal("//fn(a) { ... }")
-
-  string.from(fun_for_from_test)
-  |> should.equal("//fn() { ... }")
-
-  string.from(fn() { Nil })
-  |> should.equal("//fn() { ... }")
-
   string.from(-1.5)
   |> should.equal("-1.5")
-
   string.from(1.5)
   |> should.equal("1.5")
-
   string.from([1.5])
   |> should.equal("[1.5]")
-
   string.from(#(1.5))
   |> should.equal("#(1.5)")
+  string.from("Hello Joe!")
+  |> should.equal("\"Hello Joe!\"")
+  string.from("💜 Gleam")
+  |> should.equal("\"💜 Gleam\"")
+  string.from(#([1, 2, 3], "🌈", #(1, "1", True)))
+  |> should.equal("#([1, 2, 3], \"🌈\", #(1, \"1\", True))")
+  //
+  // string.from(TypeOfIntForStringFromTest(1))
+  // |> should.equal("TypeOfIntForStringFromTest(1)")
+  // string.from(TypeOfListOfIntForStringFromTest([1]))
+  // |> should.equal("TypeOfListOfIntForStringFromTest([1])")
+  // string.from(TypeOfStringForStringFromTest("1"))
+  // |> should.equal("TypeOfStringForStringFromTest(\"1\")")
+  // string.from(TypeOfListOfStringForStringFromTest(["1"]))
+  // |> should.equal("TypeOfListOfStringForStringFromTest([\"1\"])")
+  // string.from(TypeOfTupleOfListOfStringForStringFromTest(#([1], "a")))
+  // |> should.equal("TypeOfTupleOfListOfStringForStringFromTest(#([1], \"a\"))")
+  // string.from(TypeForStringFromTest)
+  // |> should.equal("TypeForStringFromTest")
+  // string.from(TypeOfTupleOfListOfStringForStringFromTest)
+  // |> should.equal("//fn(a) { ... }")
+  // string.from(fun_for_from_test)
+  // |> should.equal("//fn() { ... }")
+  // string.from(fn() { Nil })
+  // |> should.equal("//fn() { ... }")
 }
 
 if javascript {

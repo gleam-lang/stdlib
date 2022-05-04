@@ -320,6 +320,13 @@ println(String) ->
     io:put_chars([String, $\n]),
     nil.
 
+inspect(Any) when is_boolean(Any) ->
+    case Any of
+        true ->
+            <<"True">>;
+        false ->
+            <<"False">>
+    end;
 inspect(Any) when is_integer(Any) ->
     % Taken from Elixir's Integer.to_string()
     integer_to_binary(Any);
@@ -329,20 +336,30 @@ inspect(Any) when is_float(Any) ->
 inspect(Any) when is_tuple(Any) ->
     Open = <<"#(">>,
     Value = iolist_to_binary(
-        lists:foldl(fun(Item, Acc) ->
-            <<Acc/binary, (inspect(Item))/binary>>
-        end, <<"">>, tuple_to_list(Any))
+        lists:join(<<", ">>,
+            lists:map(fun(Item) ->
+                inspect(Item)
+            end, tuple_to_list(Any))
+        )
     ),
     Close = <<")">>,
     <<Open/binary, Value/binary, Close/binary>>;
+inspect(Any) when is_binary(Any) andalso Any == <<"">> ->
+    <<"\"\"">>;
+inspect(Any) when is_binary(Any) ->
+    <<"\"", Any/binary, "\"">>;
+inspect(Any) when is_list(Any) andalso Any == [] ->
+    <<"[]">>;
 inspect(Any) when is_list(Any) ->
     Open = <<"[">>,
     Value = iolist_to_binary(
-        lists:foldl(fun(Item, Acc) ->
-            <<Acc/binary, (inspect(Item))/binary>>
-        end, <<"">>, Any)
+        lists:join(<<", ">>,
+            lists:map(fun(Item) ->
+                inspect(Item)
+            end, Any)
+        )
     ),
     Close = <<"]">>,
-    <<Open/binary, Value/binary, Close/binary>>;
-inspect(Any) when is_binary(Any) ->
-    <<Any>>.
+    <<Open/binary, Value/binary, Close/binary>>
+.
+
