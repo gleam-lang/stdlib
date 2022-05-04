@@ -324,6 +324,9 @@ inspect(Any) when Any == true ->
     <<"True">>;
 inspect(Any) when Any == false ->
     <<"False">>;
+inspect(Any) when is_atom(Any) ->
+		[LeadingLetter | Rest] = atom_to_list(Any),
+    iolist_to_binary(string:uppercase([LeadingLetter]) ++ Rest);
 inspect(Any) when is_integer(Any) ->
     % Taken from Elixir's Integer.to_string()
     integer_to_binary(Any);
@@ -349,5 +352,6 @@ inspect(Any) when is_tuple(Any) ->
             end, tuple_to_list(Any))
         )
     ),
-    <<"#(", Elems/binary, ")">>.
-
+    <<"#(", Elems/binary, ")">>;
+inspect(Any) ->
+    Any.
