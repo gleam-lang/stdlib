@@ -428,6 +428,9 @@ if javascript {
     string.from([[1], [1]])
     |> should.equal("[[1], [1]]")
 
+    string.from([#(1, 2, 3), #(1, 2, 3)])
+    |> should.equal("[#(1, 2, 3), #(1, 2, 3)]")
+
     string.from(["1"])
     |> should.equal("[\"1\"]")
 
