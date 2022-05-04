@@ -9,7 +9,8 @@
          bit_string_slice/3, decode_bit_string/1, compile_regex/2, regex_scan/2,
          percent_encode/1, percent_decode/1, regex_check/2, regex_split/2,
          base_decode64/1, parse_query/1, bit_string_concat/1, size_of_tuple/1,
-         decode_tuple/1, tuple_get/2, classify_dynamic/1, print/1, println/1, inspect/1]).
+         decode_tuple/1, tuple_get/2, classify_dynamic/1, print/1, println/1,
+         inspect/1, camel_case/2]).
 
 %% Taken from OTP's uri_string module
 -define(DEC2HEX(X),
@@ -325,8 +326,7 @@ inspect(Any) when Any == true ->
 inspect(Any) when Any == false ->
     <<"False">>;
 inspect(Any) when is_atom(Any) ->
-    [LeadingLetter | Rest] = atom_to_list(Any),
-    iolist_to_binary(string:uppercase([LeadingLetter]) ++ Rest);
+    iolist_to_binary(camel_case(atom_to_list(Any), true));
 inspect(Any) when is_integer(Any) ->
     % Taken from Elixir's Integer.to_string()
     integer_to_binary(Any);
@@ -344,14 +344,55 @@ inspect(Any) when is_list(Any) ->
         )
     ),
     <<"[", Elems/binary, "]">>;
+inspect(Any) when is_tuple(Any) andalso Any == {} ->
+    <<"#()">>;
 inspect(Any) when is_tuple(Any) ->
-    Elems = iolist_to_binary(
-        lists:join(<<", ">>,
-            lists:map(fun(Item) ->
-                inspect(Item)
-            end, tuple_to_list(Any))
-        )
-    ),
-    <<"#(", Elems/binary, ")">>;
+    TupleList = tuple_to_list(Any),
+    [MaybeAtom | MaybeArgs] = TupleList,
+    case is_atom(MaybeAtom) of
+        true ->
+            Args = iolist_to_binary(
+                case is_list(MaybeArgs) of
+                    true ->
+                        iolist_to_binary(
+                            lists:join(<<", ">>,
+                                lists:map(fun(Item) ->
+                                    inspect(Item)
+                                end, MaybeArgs)
+                            )
+                        );
+                    false -> "()"
+                end
+            ),
+            <<(inspect(MaybeAtom))/binary, "(", Args/binary, ")">>;
+        false ->
+            Elems = iolist_to_binary(
+                lists:join(<<", ">>,
+                    lists:map(fun(Item) ->
+                        inspect(Item)
+                    end, TupleList)
+                )
+            ),
+            <<"#(", Elems/binary, ")">>
+    end;
 inspect(Any) ->
-    Any.
+    io_lib:format("~p", [Any]).
+
+% camel_case() implementation from <https://github.com/tomas-abrahamsson/gpb/>
+capitalize_letter(C) ->
+    C + ($A - $a).
+-define(is_lower_case(C), $a =< C, C =< $z).
+-define(is_upper_case(C), $A =< C, C =< $Z).
+-define(is_digit(C),      $0 =< C, C =< $9).
+camel_case([LC | Tl], CapNextLetter) when ?is_lower_case(LC) ->
+    if CapNextLetter      -> [capitalize_letter(LC) | camel_case(Tl, false)];
+        not CapNextLetter -> [LC | camel_case(Tl, false)]
+    end;
+camel_case([UC | Tl], _) when ?is_upper_case(UC) ->
+    [UC | camel_case(Tl, false)];
+camel_case([D | Tl], _) when ?is_digit(D) ->
+    [D | camel_case(Tl, true)];
+camel_case([_ | Tl], _) -> %% underscore and possibly more
+    camel_case(Tl, true);
+camel_case([], _) ->
+    [].

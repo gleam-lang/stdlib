@@ -373,6 +373,10 @@ type TypeOfIntForStringFromTest {
   TypeOfIntForStringFromTest(Int)
 }
 
+type TypeOfIntx2ForStringFromTest {
+  TypeOfIntx2ForStringFromTest(Int, Int)
+}
+
 type TypeOfListOfIntForStringFromTest {
   TypeOfListOfIntForStringFromTest(List(Int))
 }
@@ -451,26 +455,30 @@ pub fn from_test() {
   |> should.equal("#([1, 2, 3], \"🌈\", #(1, \"1\", True))")
   string.from(Nil)
   |> should.equal("Nil")
+  string.from(#())
+  |> should.equal("#()")
+  string.from(TypeForStringFromTest)
+  |> should.equal("TypeForStringFromTest")
+  string.from(TypeOfIntForStringFromTest(1))
+  |> should.equal("TypeOfIntForStringFromTest(1)")
+  string.from(TypeOfIntx2ForStringFromTest(1, 2))
+  |> should.equal("TypeOfIntx2ForStringFromTest(1, 2)")
+  string.from(TypeOfListOfIntForStringFromTest([1]))
+  |> should.equal("TypeOfListOfIntForStringFromTest([1])")
+  string.from(TypeOfStringForStringFromTest("1"))
+  |> should.equal("TypeOfStringForStringFromTest(\"1\")")
+  string.from(TypeOfListOfStringForStringFromTest(["1"]))
+  |> should.equal("TypeOfListOfStringForStringFromTest([\"1\"])")
+  string.from(TypeOfTupleOfListOfStringForStringFromTest(#([1], "a")))
+  |> should.equal("TypeOfTupleOfListOfStringForStringFromTest(#([1], \"a\"))")
   //
   // THESE CRASH ON ERLANG:
   //
+  // string.from(TypeOfTupleOfListOfStringForStringFromTest)
+  // |> should.equal("//fn(a) { ... }")
   // string.from(Ok)
   // |> should.equal("//fn(a) { ... }")
   // string.from(Error)
-  // |> should.equal("//fn(a) { ... }")
-  // string.from(TypeOfIntForStringFromTest(1))
-  // |> should.equal("TypeOfIntForStringFromTest(1)")
-  // string.from(TypeOfListOfIntForStringFromTest([1]))
-  // |> should.equal("TypeOfListOfIntForStringFromTest([1])")
-  // string.from(TypeOfStringForStringFromTest("1"))
-  // |> should.equal("TypeOfStringForStringFromTest(\"1\")")
-  // string.from(TypeOfListOfStringForStringFromTest(["1"]))
-  // |> should.equal("TypeOfListOfStringForStringFromTest([\"1\"])")
-  // string.from(TypeOfTupleOfListOfStringForStringFromTest(#([1], "a")))
-  // |> should.equal("TypeOfTupleOfListOfStringForStringFromTest(#([1], \"a\"))")
-  // string.from(TypeForStringFromTest)
-  // |> should.equal("TypeForStringFromTest")
-  // string.from(TypeOfTupleOfListOfStringForStringFromTest)
   // |> should.equal("//fn(a) { ... }")
   // string.from(fun_for_from_test)
   // |> should.equal("//fn() { ... }")
