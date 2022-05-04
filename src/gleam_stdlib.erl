@@ -345,12 +345,12 @@ inspect(Any) when is_list(Any) ->
     ),
     <<"[", Elems/binary, "]">>;
 inspect(Any) when is_tuple(Any) ->
-  Elems = iolist_to_binary(
-      lists:join(<<", ">>,
-          lists:map(fun(Item) ->
-              inspect(Item)
-          end, tuple_to_list(Any))
-      )
-  ),
-  <<"#(", Elems/binary, ")">>.
+    Elems = iolist_to_binary(
+        lists:join(<<", ">>,
+            lists:map(fun(Item) ->
+                inspect(Item)
+            end, tuple_to_list(Any))
+        )
+    ),
+    <<"#(", Elems/binary, ")">>.
 
