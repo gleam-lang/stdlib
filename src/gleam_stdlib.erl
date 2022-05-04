@@ -320,13 +320,10 @@ println(String) ->
     io:put_chars([String, $\n]),
     nil.
 
-inspect(Any) when is_boolean(Any) ->
-    case Any of
-        true ->
-            <<"True">>;
-        false ->
-            <<"False">>
-    end;
+inspect(Any) when Any == true ->
+  <<"True">>;
+inspect(Any) when Any == false ->
+  <<"False">>;
 inspect(Any) when is_integer(Any) ->
     % Taken from Elixir's Integer.to_string()
     integer_to_binary(Any);
