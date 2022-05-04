@@ -320,8 +320,6 @@ println(String) ->
     io:put_chars([String, $\n]),
     nil.
 
-inspect(Any) when is_binary(Any) ->
-    Any;
 inspect(Any) when is_integer(Any) ->
     % Taken from Elixir's Integer.to_string()
     integer_to_binary(Any);
@@ -347,4 +345,6 @@ inspect(Any) when is_list(Any) ->
         end, <<"">>, Any)
     ),
     Close = <<"]">>,
-    <<Open/binary, Value/binary, Close/binary>>.
+    <<Open/binary, Value/binary, Close/binary>>;
+inspect(Any) when is_binary(Any) ->
+    Any.
