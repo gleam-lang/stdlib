@@ -425,8 +425,8 @@ if javascript {
     string.from([1])
     |> should.equal("[1]")
 
-    string.from([1, [1]])
-    |> should.equal("[1, [1]]")
+    string.from([[1], [1]])
+    |> should.equal("[[1], [1]]")
 
     string.from(["1"])
     |> should.equal("[\"1\"]")
