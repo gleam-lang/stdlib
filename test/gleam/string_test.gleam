@@ -365,6 +365,80 @@ pub fn to_option_test() {
   |> should.equal(Some("ok"))
 }
 
+pub fn first_test() {
+  ""
+  |> string.first
+  |> should.be_error
+
+  "gleam"
+  |> string.first
+  |> should.equal(Ok("g"))
+
+  "⭐️ Gleam"
+  |> string.first
+  |> should.equal(Ok("⭐️"))
+
+  "a"
+  |> string.first
+  |> should.equal(Ok("a"))
+}
+
+pub fn last_test() {
+  ""
+  |> string.last
+  |> should.be_error
+
+  "gleam"
+  |> string.last
+  |> should.equal(Ok("m"))
+
+  "gleam "
+  |> string.last
+  |> should.equal(Ok(" "))
+
+  "եոգլի"
+  |> string.last
+  |> should.equal(Ok("ի"))
+
+  "a"
+  |> string.last
+  |> should.equal(Ok("a"))
+}
+
+pub fn capitalize_test() {
+  ""
+  |> string.capitalize
+  |> should.equal("")
+
+  "gleam"
+  |> string.capitalize
+  |> should.equal("Gleam")
+
+  "GLEAM"
+  |> string.capitalize
+  |> should.equal("Gleam")
+
+  "g l e a m"
+  |> string.capitalize
+  |> should.equal("G l e a m")
+
+  "1GLEAM"
+  |> string.capitalize
+  |> should.equal("1gleam")
+
+  "_gLeAm1"
+  |> string.capitalize
+  |> should.equal("_gleam1")
+
+  " gLeAm1"
+  |> string.capitalize
+  |> should.equal(" gleam1")
+
+  "る"
+  |> string.capitalize
+  |> should.equal("る")
+}
+
 type TypeForStringFromTest {
   TypeForStringFromTest
 }

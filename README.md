@@ -39,7 +39,7 @@ Gleam's standard library supports both targets: Erlang and JavaScript.
 
 ### Compatibility
 
-- For Erlang the minimum required OTP version is 22.
-- For NodeJS the minium required version is the oldest **Maintenance LTS** not marked as *end-of-life* as specified on <https://nodejs.org/en/about/releases/>.
-
-Most of the standard library will run on older versions, but there are no garantuees.
+This library is compatible with all versions of Erlang/OTP, NodeJS, and
+major browsers that are currently supported by their maintainers. If you
+have a compatibility issue with any platform open an issue and we'll see
+what we can do to help.

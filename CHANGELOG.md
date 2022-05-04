@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- The `float` module gains the `divide` function.
+- The `int` module gains the `divide`, `power`, and `square_root` functions.
+- The `string` module gains the `first`, `last`, `capitalize` and `from` functions.
+
 ## v0.21.0 - 2022-04-24
 
 - Fixed a bug where record-based map keys would clash in JavaScript.

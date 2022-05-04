@@ -740,6 +740,70 @@ pub fn to_option(s: String) -> Option(String) {
   }
 }
 
+/// Returns the first grapheme cluster in a given `String` and wraps it in a
+/// `Result(String, Nil)`. If the `String` is empty, it returns `Error(Nil)`.
+/// Otherwise, it returns `Ok(String)`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > first("")
+/// Error(Nil)
+/// ```
+///
+/// ```gleam
+/// > first("icecream")
+/// Ok("i")
+/// ```
+///
+pub fn first(s: String) -> Result(String, Nil) {
+  case pop_grapheme(s) {
+    Ok(#(first, _)) -> Ok(first)
+    Error(e) -> Error(e)
+  }
+}
+
+/// Returns the last grapheme cluster in a given `String` and wraps it in a
+/// `Result(String, Nil)`. If the `String` is empty, it returns `Error(Nil)`.
+/// Otherwise, it returns `Ok(String)`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > last("")
+/// Error(Nil)
+/// ```
+///
+/// ```gleam
+/// > last("icecream")
+/// Ok("m")
+/// ```
+///
+pub fn last(s: String) -> Result(String, Nil) {
+  case pop_grapheme(s) {
+    Ok(#(first, "")) -> Ok(first)
+    Ok(#(_, rest)) -> Ok(slice(rest, -1, 1))
+    Error(e) -> Error(e)
+  }
+}
+
+/// Creates a new `String` with the first grapheme in the input `String`
+/// converted to uppercase and the remaining graphemes to lowercase.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > capitalize("mamouna")
+/// "Mamouna"
+/// ```
+///
+pub fn capitalize(s: String) -> String {
+  case pop_grapheme(s) {
+    Ok(#(first, rest)) -> append(to: uppercase(first), suffix: lowercase(rest))
+    _ -> ""
+  }
+}
+
 pub fn from(anything) -> String {
   do_from(anything)
 }
