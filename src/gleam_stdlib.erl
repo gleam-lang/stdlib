@@ -10,7 +10,7 @@
          percent_encode/1, percent_decode/1, regex_check/2, regex_split/2,
          base_decode64/1, parse_query/1, bit_string_concat/1, size_of_tuple/1,
          decode_tuple/1, tuple_get/2, classify_dynamic/1, print/1, println/1,
-         inspect/1, camel_case/2]).
+         inspect/1]).
 
 %% Taken from OTP's uri_string module
 -define(DEC2HEX(X),
@@ -326,7 +326,7 @@ inspect(Any) when Any == true ->
 inspect(Any) when Any == false ->
     <<"False">>;
 inspect(Any) when is_atom(Any) ->
-    iolist_to_binary(camel_case(atom_to_list(Any), true));
+    iolist_to_binary(underscored_to_camel_caps(atom_to_list(Any)));
 inspect(Any) when is_integer(Any) ->
     % Taken from Elixir's Integer.to_string()
     integer_to_binary(Any);
@@ -382,30 +382,19 @@ inspect(Any) when is_function(Any) ->
 inspect(Any) ->
     throw({inspect_exception, "Unexpected data given", Any}).
 
-% Debugging tool:
-% to_debug_log(Value) ->
-%     {ok, S} = file:open("debug.log", [append]),
-%     file:pwrite(S, 8, io_lib:write(Value)),
-%     file:pwrite(S, 8, ["\n"]),
-%     file:close(S).
-
-% camel_case() implementation from <https://github.com/tomas-abrahamsson/gpb/>
-% TODO: This needs to be reimplemented possibly based on:
-% <https://github.com/elixir-lang/elixir/blob/main/lib/elixir/lib/macro.ex#L1938-L1954>
-capitalize_letter(C) ->
-    C + ($A - $a).
--define(is_lower_case(C), $a =< C, C =< $z).
--define(is_upper_case(C), $A =< C, C =< $Z).
--define(is_digit(C),      $0 =< C, C =< $9).
-camel_case([LC | Tl], CapNextLetter) when ?is_lower_case(LC) ->
-    if CapNextLetter      -> [capitalize_letter(LC) | camel_case(Tl, false)];
-        not CapNextLetter -> [LC | camel_case(Tl, false)]
-    end;
-camel_case([UC | Tl], _) when ?is_upper_case(UC) ->
-    [UC | camel_case(Tl, false)];
-camel_case([D | Tl], _) when ?is_digit(D) ->
-    [D | camel_case(Tl, true)];
-camel_case([_ | Tl], _) -> %% underscore and possibly more
-    camel_case(Tl, true);
-camel_case([], _) ->
-    [].
+underscored_to_camel_caps(IoList) when is_list(IoList) ->
+    IoList2 = string:trim(IoList, both, "_"),
+    IoList3 = string:replace(IoList2, " ", "_", all),
+    iolist_to_binary(
+        lists:map(fun(Part) ->
+                [Head | Tail] = string:next_grapheme(
+                  unicode:characters_to_binary(Part)
+                ),
+                <<
+                  (iolist_to_binary(string:uppercase([Head])))/binary,
+                  Tail/binary
+                >>
+            end,
+            re:split(IoList3, "_+", [{return, binary}])
+        )
+    ).
