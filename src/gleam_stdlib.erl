@@ -338,19 +338,14 @@ inspect(Any) when is_binary(Any) ->
 inspect(Any) when is_list(Any) andalso Any == [] ->
     <<"[]">>;
 inspect(Any) when is_list(Any) ->
-    [MaybeHash | _Rest] = Any,
-    case MaybeHash == "#" of
-      true -> iolist_to_binary("Foo");
-      false ->
-          Elems = iolist_to_binary(
-              lists:join(<<", ">>,
-                  lists:map(fun(Item) ->
-                      inspect(Item)
-                  end, Any)
-              )
-          ),
-          <<"[", Elems/binary, "]">>
-      end;
+    Elems = iolist_to_binary(
+        lists:join(<<", ">>,
+            lists:map(fun(Item) ->
+                inspect(Item)
+            end, Any)
+        )
+    ),
+    <<"[", Elems/binary, "]">>;
 inspect(Any) when is_tuple(Any) andalso Any == {} ->
     <<"#()">>;
 inspect(Any) when is_tuple(Any) ->
