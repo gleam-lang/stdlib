@@ -377,8 +377,7 @@ inspect(Any) when is_tuple(Any) ->
     end;
 inspect(Any) when is_function(Any) ->
     {arity, Arity} = erlang:fun_info(Any, arity),
-    % a = ASCII 97
-    ArgsAsciiCodes = lists:seq(97, 97 + Arity - 1),
+    ArgsAsciiCodes = lists:seq(97, 97 + Arity - 1), % a = ASCII 97
     Args = iolist_to_binary(lists:join(<<", ">>,
         lists:map(fun(Arg) ->
             <<Arg>>
