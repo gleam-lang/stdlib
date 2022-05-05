@@ -391,10 +391,8 @@ underscored_to_camel_caps(IoList) when is_list(IoList) ->
                 [Head | Tail] = string:next_grapheme(
                     unicode:characters_to_binary(Part)
                 ),
-                <<
-                    (iolist_to_binary(string:uppercase([Head])))/binary,
-                    Tail/binary
-                >>
+                Head2 = iolist_to_binary(string:uppercase([Head])),
+                <<Head2/binary, Tail/binary>>
             end,
             re:split(IoList3, "_+", [{return, binary}])
         )
