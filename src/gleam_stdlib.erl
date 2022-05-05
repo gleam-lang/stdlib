@@ -383,8 +383,8 @@ inspect(Any) ->
     throw({inspect_exception, "Unexpected data given", Any}).
 
 underscored_to_camel_caps(IoList) when is_list(IoList) ->
-    IoList2 = string:trim(IoList, both, "_"),
-    IoList3 = string:replace(IoList2, " ", "_", all),
+    IoList2 = string:replace(IoList, " ", "_", all),
+    IoList3 = string:trim(IoList2, both, "_"),
     iolist_to_binary(
         lists:map(
             fun(Part) ->
