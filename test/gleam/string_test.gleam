@@ -693,6 +693,33 @@ pub fn from_anon_fun_with_2_other_args_test() {
   |> should.equal("//fn(a, b) { ... }")
 }
 
+const for_from_const_test_const_a = Nil
+
+const for_from_const_test_const_b = False
+
+const for_from_const_test_const_c = True
+
+const for_from_const_test_const_d = 1
+
+const for_from_const_test_const_e = "1"
+
+pub fn from_const_test() {
+  string.from(for_from_const_test_const_a)
+  |> should.equal("Nil")
+
+  string.from(for_from_const_test_const_b)
+  |> should.equal("False")
+
+  string.from(for_from_const_test_const_c)
+  |> should.equal("True")
+
+  string.from(for_from_const_test_const_d)
+  |> should.equal("1")
+
+  string.from(for_from_const_test_const_e)
+  |> should.equal("\"1\"")
+}
+
 if javascript {
   /// Due to JavaScript's `Number` type `Float`s without digits return as `Int`s.
   ///
