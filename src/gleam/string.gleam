@@ -803,3 +803,17 @@ pub fn capitalize(s: String) -> String {
     _ -> ""
   }
 }
+
+pub fn from(anything) -> String {
+  do_from(anything)
+}
+
+if javascript {
+  external fn do_from(anything) -> String =
+    "../gleam.mjs" "inspect"
+}
+
+if erlang {
+  external fn do_from(anything) -> String =
+    "gleam_stdlib" "inspect"
+}

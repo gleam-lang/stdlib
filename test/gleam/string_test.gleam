@@ -438,3 +438,372 @@ pub fn capitalize_test() {
   |> string.capitalize
   |> should.equal("る")
 }
+
+type TypeForStringFromTest {
+  TypeForStringFromTest
+}
+
+type TypeOfIntForStringFromTest {
+  TypeOfIntForStringFromTest(Int)
+}
+
+type TypeOfIntx2ForStringFromTest {
+  TypeOfIntx2ForStringFromTest(Int, Int)
+}
+
+type TypeOfListOfIntForStringFromTest {
+  TypeOfListOfIntForStringFromTest(List(Int))
+}
+
+type TypeOfStringForStringFromTest {
+  TypeOfStringForStringFromTest(String)
+}
+
+type TypeOfListOfStringForStringFromTest {
+  TypeOfListOfStringForStringFromTest(List(String))
+}
+
+type TypeOfTupleOfListOfStringForStringFromTest {
+  TypeOfTupleOfListOfStringForStringFromTest(#(List(Int), String))
+}
+
+pub fn from_test() {
+  string.from(True)
+  |> should.equal("True")
+
+  string.from(False)
+  |> should.equal("False")
+
+  string.from([True, False])
+  |> should.equal("[True, False]")
+
+  string.from([False, False])
+  |> should.equal("[False, False]")
+
+  string.from([True, True])
+  |> should.equal("[True, True]")
+
+  string.from([Nil, Nil])
+  |> should.equal("[Nil, Nil]")
+
+  string.from(#(True, False))
+  |> should.equal("#(True, False)")
+
+  string.from(#(False, False))
+  |> should.equal("#(False, False)")
+
+  string.from(#(True, True))
+  |> should.equal("#(True, True)")
+
+  string.from(#(Nil, True))
+  |> should.equal("#(Nil, True)")
+
+  string.from(#(Nil, False))
+  |> should.equal("#(Nil, False)")
+
+  string.from(#(True, Nil))
+  |> should.equal("#(True, Nil)")
+
+  string.from(#(False, Nil))
+  |> should.equal("#(False, Nil)")
+
+  string.from(-1)
+  |> should.equal("-1")
+
+  string.from(0)
+  |> should.equal("0")
+
+  string.from(1)
+  |> should.equal("1")
+
+  string.from([])
+  |> should.equal("[]")
+
+  string.from([1])
+  |> should.equal("[1]")
+
+  string.from([1, 2])
+  |> should.equal("[1, 2]")
+
+  string.from([[1], [1]])
+  |> should.equal("[[1], [1]]")
+
+  string.from(-1.5)
+  |> should.equal("-1.5")
+
+  string.from(1.5)
+  |> should.equal("1.5")
+
+  string.from([1.5])
+  |> should.equal("[1.5]")
+
+  string.from("")
+  |> should.equal("\"\"")
+
+  string.from("1")
+  |> should.equal("\"1\"")
+
+  string.from("Hello Joe!")
+  |> should.equal("\"Hello Joe!\"")
+
+  string.from("Hello \"Manuel\"!")
+  |> should.equal("\"Hello \\\"Manuel\\\"!\"")
+
+  string.from("💜 Gleam")
+  |> should.equal("\"💜 Gleam\"")
+
+  string.from(["1"])
+  |> should.equal("[\"1\"]")
+
+  string.from(#())
+  |> should.equal("#()")
+
+  string.from(#(1))
+  |> should.equal("#(1)")
+
+  string.from(#("1"))
+  |> should.equal("#(\"1\")")
+
+  string.from(#(1.5))
+  |> should.equal("#(1.5)")
+
+  string.from([#(1, 2, 3), #(1, 2, 3)])
+  |> should.equal("[#(1, 2, 3), #(1, 2, 3)]")
+
+  string.from(#([1, 2, 3], "🌈", #(1, "1", True)))
+  |> should.equal("#([1, 2, 3], \"🌈\", #(1, \"1\", True))")
+
+  string.from(Nil)
+  |> should.equal("Nil")
+
+  string.from(Ok(1))
+  |> should.equal("Ok(1)")
+
+  string.from(Ok(True))
+  |> should.equal("Ok(True)")
+
+  string.from(Ok(False))
+  |> should.equal("Ok(False)")
+
+  string.from(Ok(Nil))
+  |> should.equal("Ok(Nil)")
+
+  string.from(Error(2))
+  |> should.equal("Error(2)")
+
+  string.from(Error(True))
+  |> should.equal("Error(True)")
+
+  string.from(Error(False))
+  |> should.equal("Error(False)")
+
+  string.from(Error(Nil))
+  |> should.equal("Error(Nil)")
+
+  string.from(TypeForStringFromTest)
+  |> should.equal("TypeForStringFromTest")
+
+  string.from(TypeOfIntForStringFromTest(1))
+  |> should.equal("TypeOfIntForStringFromTest(1)")
+
+  string.from(TypeOfIntx2ForStringFromTest(1, 2))
+  |> should.equal("TypeOfIntx2ForStringFromTest(1, 2)")
+
+  string.from(TypeOfListOfIntForStringFromTest([1]))
+  |> should.equal("TypeOfListOfIntForStringFromTest([1])")
+
+  string.from(TypeOfStringForStringFromTest("1"))
+  |> should.equal("TypeOfStringForStringFromTest(\"1\")")
+
+  string.from(TypeOfListOfStringForStringFromTest(["1"]))
+  |> should.equal("TypeOfListOfStringForStringFromTest([\"1\"])")
+
+  string.from(TypeOfTupleOfListOfStringForStringFromTest(#([1], "a")))
+  |> should.equal("TypeOfTupleOfListOfStringForStringFromTest(#([1], \"a\"))")
+
+  string.from(TypeOfTupleOfListOfStringForStringFromTest)
+  |> should.equal("//fn(a) { ... }")
+}
+
+pub fn from_fun_ok_type_test() {
+  string.from(Ok)
+  |> should.equal("//fn(a) { ... }")
+}
+
+pub fn from_fun_error_type_test() {
+  string.from(Error)
+  |> should.equal("//fn(a) { ... }")
+}
+
+fn fun_for_from_test() {
+  Nil
+}
+
+pub fn from_fun_test() {
+  string.from(fun_for_from_test)
+  |> should.equal("//fn() { ... }")
+}
+
+fn fun_for_from_with_1_arg_test(arg) {
+  arg
+  Nil
+}
+
+pub fn from_with_1_arg_test() {
+  string.from(fun_for_from_with_1_arg_test)
+  |> should.equal("//fn(a) { ... }")
+}
+
+fn fun_for_from_with_2_args_test(a, b) {
+  a
+  b
+  Nil
+}
+
+pub fn from_with_2_args_test() {
+  string.from(fun_for_from_with_2_args_test)
+  |> should.equal("//fn(a, b) { ... }")
+}
+
+fn fun_for_from_fully_typed_test(with foo: Int, what bar: String) -> Bool {
+  foo
+  bar
+  False
+}
+
+pub fn from_fun_fully_typed_test() {
+  string.from(fun_for_from_fully_typed_test)
+  |> should.equal("//fn(a, b) { ... }")
+}
+
+pub fn from_anon_fun_test() {
+  string.from(fn() { Nil })
+  |> should.equal("//fn() { ... }")
+}
+
+pub fn from_anon_fun_with_1_arg_test() {
+  string.from(fn(a) {
+    a
+    Nil
+  })
+  |> should.equal("//fn(a) { ... }")
+}
+
+pub fn from_anon_fun_with_2_args_test() {
+  string.from(fn(a, b) {
+    a
+    b
+    Nil
+  })
+  |> should.equal("//fn(a, b) { ... }")
+}
+
+pub fn from_anon_fun_with_2_other_args_test() {
+  string.from(fn(x, y) {
+    x
+    y
+    Nil
+  })
+  |> should.equal("//fn(a, b) { ... }")
+}
+
+pub fn from_anon_fun_fully_typed_test() {
+  let anon_fun_for_from_fully_typed_test = fn(foo: Int, bar: String) -> Bool {
+    foo
+    bar
+    False
+  }
+
+  string.from(anon_fun_for_from_fully_typed_test)
+  |> should.equal("//fn(a, b) { ... }")
+}
+
+const for_from_const_test_const_a = Nil
+
+const for_from_const_test_const_b = False
+
+const for_from_const_test_const_c = True
+
+const for_from_const_test_const_d = 1
+
+const for_from_const_test_const_e = "1"
+
+pub fn from_const_test() {
+  string.from(for_from_const_test_const_a)
+  |> should.equal("Nil")
+
+  string.from(for_from_const_test_const_b)
+  |> should.equal("False")
+
+  string.from(for_from_const_test_const_c)
+  |> should.equal("True")
+
+  string.from(for_from_const_test_const_d)
+  |> should.equal("1")
+
+  string.from(for_from_const_test_const_e)
+  |> should.equal("\"1\"")
+}
+
+pub type Atom {
+  One
+  Two
+}
+
+pub type Record {
+  Three(Atom)
+}
+
+if javascript {
+  pub fn from_one_two_test() {
+    string.from(#(One, Two))
+    |> should.equal("#(One, Two)")
+    // On Erlang we will receive this instead:
+    // |> should.equal("One(Two)")
+  }
+
+  /// Due to JavaScript's `Number` type `Float`s without digits return as `Int`s.
+  ///
+  pub fn target_from_test() {
+    string.from(-1.0)
+    |> should.equal("-1")
+
+    string.from(0.0)
+    |> should.equal("0")
+
+    string.from(1.0)
+    |> should.equal("1")
+
+    string.from([1.0])
+    |> should.equal("[1]")
+
+    string.from(#(1.0))
+    |> should.equal("#(1)")
+  }
+}
+
+if erlang {
+  pub fn from_one_two_test() {
+    string.from(#(One, Two))
+    |> should.equal("One(Two)")
+    // Erlang's internal representation does not allow a correct differentiation
+    // |> should.equal("#(One, Two)")
+  }
+
+  pub fn target_from_test() {
+    string.from(-1.0)
+    |> should.equal("-1.0")
+
+    string.from(0.0)
+    |> should.equal("0.0")
+
+    string.from(1.0)
+    |> should.equal("1.0")
+
+    string.from([1.0])
+    |> should.equal("[1.0]")
+
+    string.from(#(1.0))
+    |> should.equal("#(1.0)")
+  }
+}
