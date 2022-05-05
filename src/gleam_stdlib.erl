@@ -386,13 +386,14 @@ underscored_to_camel_caps(IoList) when is_list(IoList) ->
     IoList2 = string:trim(IoList, both, "_"),
     IoList3 = string:replace(IoList2, " ", "_", all),
     iolist_to_binary(
-        lists:map(fun(Part) ->
+        lists:map(
+            fun(Part) ->
                 [Head | Tail] = string:next_grapheme(
-                  unicode:characters_to_binary(Part)
+                    unicode:characters_to_binary(Part)
                 ),
                 <<
-                  (iolist_to_binary(string:uppercase([Head])))/binary,
-                  Tail/binary
+                    (iolist_to_binary(string:uppercase([Head])))/binary,
+                    Tail/binary
                 >>
             end,
             re:split(IoList3, "_+", [{return, binary}])
