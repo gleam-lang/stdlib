@@ -573,9 +573,6 @@ pub fn from_test() {
   string.from(Nil)
   |> should.equal("Nil")
 
-  string.from(Ok)
-  |> should.equal("//fn(a) { ... }")
-
   string.from(Ok(1))
   |> should.equal("Ok(1)")
 
@@ -587,9 +584,6 @@ pub fn from_test() {
 
   string.from(Ok(Nil))
   |> should.equal("Ok(Nil)")
-
-  string.from(Error)
-  |> should.equal("//fn(a) { ... }")
 
   string.from(Error(2))
   |> should.equal("Error(2)")
@@ -628,6 +622,16 @@ pub fn from_test() {
   |> should.equal("//fn(a) { ... }")
 }
 
+pub fn from_fun_ok_type_test() {
+  string.from(Ok)
+  |> should.equal("//fn(a) { ... }")
+}
+
+pub fn from_fun_error_type_test() {
+  string.from(Error)
+  |> should.equal("//fn(a) { ... }")
+}
+
 fn fun_for_from_test() {
   Nil
 }
@@ -637,9 +641,56 @@ pub fn from_fun_test() {
   |> should.equal("//fn() { ... }")
 }
 
+fn fun_for_from_with_1_arg_test(arg) {
+  arg
+  Nil
+}
+
+pub fn from_with_1_arg_test() {
+  string.from(fun_for_from_with_1_arg_test)
+  |> should.equal("//fn(a) { ... }")
+}
+
+fn fun_for_from_with_2_args_test(a, b) {
+  a
+  b
+  Nil
+}
+
+pub fn from_with_2_args_test() {
+  string.from(fun_for_from_with_2_args_test)
+  |> should.equal("//fn(a, b) { ... }")
+}
+
 pub fn from_anon_fun_test() {
   string.from(fn() { Nil })
   |> should.equal("//fn() { ... }")
+}
+
+pub fn from_anon_fun_with_1_arg_test() {
+  string.from(fn(a) {
+    a
+    Nil
+  })
+  |> should.equal("//fn(a) { ... }")
+}
+
+pub fn from_anon_fun_with_2_args_test() {
+  string.from(fn(a, b) {
+    a
+    b
+    Nil
+  })
+  |> should.equal("//fn(a, b) { ... }")
+}
+
+pub fn from_anon_fun_with_2_other_args_test() {
+  string.from(fn(x, y) {
+    x
+    y
+    Nil
+  })
+  |> should.equal("//fn(a, b) { ... }")
 }
 
 if javascript {
