@@ -547,7 +547,7 @@ pub fn from_test() {
   |> should.equal("\"Hello Joe!\"")
 
   string.from("Hello \"Manuel\"!")
-  |> should.equal("\"Hello \"Manuel\"!\"")
+  |> should.equal("\"Hello \\\"Manuel\\\"!\"")
 
   string.from("💜 Gleam")
   |> should.equal("\"💜 Gleam\"")
@@ -665,6 +665,17 @@ pub fn from_with_2_args_test() {
   |> should.equal("//fn(a, b) { ... }")
 }
 
+fn fun_for_from_fully_typed_test(with foo: Int, what bar: String) -> Bool {
+  foo
+  bar
+  False
+}
+
+pub fn from_fun_fully_typed_test() {
+  string.from(fun_for_from_fully_typed_test)
+  |> should.equal("//fn(a, b) { ... }")
+}
+
 pub fn from_anon_fun_test() {
   string.from(fn() { Nil })
   |> should.equal("//fn() { ... }")
@@ -696,6 +707,17 @@ pub fn from_anon_fun_with_2_other_args_test() {
   |> should.equal("//fn(a, b) { ... }")
 }
 
+pub fn from_anon_fun_fully_typed_test() {
+  let anon_fun_for_from_fully_typed_test = fn(foo: Int, bar: String) -> Bool {
+    foo
+    bar
+    False
+  }
+
+  string.from(anon_fun_for_from_fully_typed_test)
+  |> should.equal("//fn(a, b) { ... }")
+}
+
 const for_from_const_test_const_a = Nil
 
 const for_from_const_test_const_b = False
@@ -723,7 +745,23 @@ pub fn from_const_test() {
   |> should.equal("\"1\"")
 }
 
+pub type Atom {
+  One
+  Two
+}
+
+pub type Record {
+  Three(Atom)
+}
+
 if javascript {
+  pub fn from_one_two_test() {
+    string.from(#(One, Two))
+    |> should.equal("#(One, Two)")
+    // On Erlang we will receive this instead:
+    // |> should.equal("One(Two)")
+  }
+
   /// Due to JavaScript's `Number` type `Float`s without digits return as `Int`s.
   ///
   pub fn target_from_test() {
@@ -745,8 +783,13 @@ if javascript {
 }
 
 if erlang {
-  /// For any other platform, the issue JavaScript has with its `Number` type does not exist.
-  ///
+  pub fn from_one_two_test() {
+    string.from(#(One, Two))
+    |> should.equal("One(Two)")
+    // Erlang's internal representation does not allow a correct differentiation
+    // |> should.equal("#(One, Two)")
+  }
+
   pub fn target_from_test() {
     string.from(-1.0)
     |> should.equal("-1.0")

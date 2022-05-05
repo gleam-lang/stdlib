@@ -336,7 +336,7 @@ inspect(Any) when is_float(Any) ->
 inspect(Any) when is_binary(Any) ->
     Pattern = [$"] = "\"",
     Replacement = [$\\, $\\, $"] = "\\\\\"",
-    Escaped = iolist_to_binary(re:replace(Any, Pattern, Replacement, [{return, list}, global])),
+    Escaped = re:replace(Any, Pattern, Replacement, [{return, binary}, global]),
     <<"\"", Escaped/binary, "\"">>;
 inspect(Any) when is_list(Any) andalso Any == [] ->
     <<"[]">>;
