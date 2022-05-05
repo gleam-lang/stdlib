@@ -334,7 +334,10 @@ inspect(Any) when is_float(Any) ->
     % Taken from Elixir's Float.to_string()
     iolist_to_binary(io_lib_format:fwrite_g(Any));
 inspect(Any) when is_binary(Any) ->
-    <<"\"", Any/binary, "\"">>;
+    Pattern = [$"] = "\"",
+    Replacement = [$\\, $\\, $"] = "\\\\\"",
+    Escaped = iolist_to_binary(re:replace(Any, Pattern, Replacement, [{return, list}, global])),
+    <<"\"", Escaped/binary, "\"">>;
 inspect(Any) when is_list(Any) andalso Any == [] ->
     <<"[]">>;
 inspect(Any) when is_list(Any) ->
@@ -349,30 +352,30 @@ inspect(Any) when is_list(Any) ->
 inspect(Any) when is_tuple(Any) andalso Any == {} ->
     <<"#()">>;
 inspect(Any) when is_tuple(Any) % Type constructors
-	andalso is_atom(element(1, Any))
-	andalso element(1, Any) =/= false
-	andalso element(1, Any) =/= true
-	andalso element(1, Any) =/= nil
+  andalso is_atom(element(1, Any))
+  andalso element(1, Any) =/= false
+  andalso element(1, Any) =/= true
+  andalso element(1, Any) =/= nil
 ->
-		[Atom | MaybeArgs] = tuple_to_list(Any),
-			Args = iolist_to_binary(
-				lists:join(<<", ">>,
-						lists:map(fun(Item) ->
-								inspect(Item)
-						end, MaybeArgs)
-				)
-		),
-		<<(inspect(Atom))/binary, "(", Args/binary, ")">>
+    [Atom | MaybeArgs] = tuple_to_list(Any),
+      Args = iolist_to_binary(
+        lists:join(<<", ">>,
+            lists:map(fun(Item) ->
+                inspect(Item)
+            end, MaybeArgs)
+        )
+    ),
+    <<(inspect(Atom))/binary, "(", Args/binary, ")">>
 ;
 inspect(Any) when is_tuple(Any) ->
-		Elems = iolist_to_binary(
-				lists:join(<<", ">>,
-						lists:map(fun(Item) ->
-								inspect(Item)
-						end, tuple_to_list(Any))
-				)
-		),
-		<<"#(", Elems/binary, ")">>;
+    Elems = iolist_to_binary(
+        lists:join(<<", ">>,
+            lists:map(fun(Item) ->
+                inspect(Item)
+            end, tuple_to_list(Any))
+        )
+    ),
+    <<"#(", Elems/binary, ")">>;
 inspect(Any) when is_function(Any) ->
     {arity, Arity} = erlang:fun_info(Any, arity),
     ArgsAsciiCodes = lists:seq(97, 97 + Arity - 1), % a = ASCII 97
