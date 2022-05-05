@@ -480,11 +480,32 @@ pub fn from_test() {
   string.from([False, False])
   |> should.equal("[False, False]")
 
+  string.from([True, True])
+  |> should.equal("[True, True]")
+
+  string.from([Nil, Nil])
+  |> should.equal("[Nil, Nil]")
+
   string.from(#(True, False))
-  |> should.equal("#(True)")
+  |> should.equal("#(True, False)")
 
   string.from(#(False, False))
   |> should.equal("#(False, False)")
+
+  string.from(#(True, True))
+  |> should.equal("#(True, True)")
+
+  string.from(#(Nil, True))
+  |> should.equal("#(Nil, True)")
+
+  string.from(#(Nil, False))
+  |> should.equal("#(Nil, False)")
+
+  string.from(#(True, Nil))
+  |> should.equal("#(True, Nil)")
+
+  string.from(#(False, Nil))
+  |> should.equal("#(False, Nil)")
 
   string.from(-1)
   |> should.equal("-1")

@@ -356,7 +356,11 @@ inspect(Any) when is_tuple(Any) andalso Any == {} ->
 inspect(Any) when is_tuple(Any) ->
     TupleList = tuple_to_list(Any),
     [MaybeAtom | MaybeArgs] = TupleList,
-    case is_atom(MaybeAtom) of
+    case is_atom(MaybeAtom)
+        andalso MaybeAtom =/= true
+        andalso MaybeAtom =/= false
+        andalso MaybeAtom =/= nil
+    of
         true ->
             Args = iolist_to_binary(
                 case is_list(MaybeArgs) of
@@ -381,16 +385,16 @@ inspect(Any) when is_tuple(Any) ->
             <<"#(", Elems/binary, ")">>
     end;
 inspect(Any) when is_function(Any) ->
-		to_debug_log(Any),
-		<<"//fn(a) { ... }">>;
+    to_debug_log(Any),
+    <<"//fn() { ... }">>;
 inspect(Any) ->
-		to_debug_log(Any).
+    to_debug_log(Any).
 
 to_debug_log(Value) ->
-		{ok, S} = file:open("debug.log", [append]),
-		file:pwrite(S, 8, io_lib:write(Value)),
-		file:pwrite(S, 8, ["\n"]),
-		file:close(S).
+    {ok, S} = file:open("debug.log", [append]),
+    file:pwrite(S, 8, io_lib:write(Value)),
+    file:pwrite(S, 8, ["\n"]),
+    file:close(S).
 
 % camel_case() implementation from <https://github.com/tomas-abrahamsson/gpb/>
 % TODO: This needs to be reimplemented possibly based on:
