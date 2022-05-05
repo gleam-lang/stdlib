@@ -546,6 +546,9 @@ pub fn from_test() {
   string.from("Hello Joe!")
   |> should.equal("\"Hello Joe!\"")
 
+  string.from("Hello \"Manuel\"!")
+  |> should.equal("\"Hello \"Manuel\"!\"")
+
   string.from("💜 Gleam")
   |> should.equal("\"💜 Gleam\"")
 
