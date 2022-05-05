@@ -385,37 +385,14 @@ inspect(Any) when is_tuple(Any) ->
             <<"#(", Elems/binary, ")">>
     end;
 inspect(Any) when is_function(Any) ->
-    % to_debug_log(erlang:fun_info(Any)),
     {arity, Arity} = erlang:fun_info(Any, arity),
-    % {name, Name} = erlang:fun_info(Any, name),
-    % to_debug_log({Name, Arity}),
-		Args = lists:seq(97, 97 + Arity - 1), % Why? -1
-		% to_debug_log(Args),
-		ArgList = iolist_to_binary(lists:join(<<", ">>,
+		ArgsAsciiCodes = lists:seq(97, 97 + Arity - 1), % Why? -1
+		Args = iolist_to_binary(lists:join(<<", ">>,
 				lists:map(fun(Arg) ->
 						<<Arg>>
-				end, Args)
+				end, ArgsAsciiCodes)
 		)),
-    % to_debug_log(ArgList),
-		% for(N,Term) when N > 0 ->
-		%  io:fwrite("Hello~n"),
-		% [Term|for(N-1,Term)].
-		%           Args = iolist_to_binary(
-		%           case is_list(MaybeArgs) of
-		%               true ->
-		%                   lists:join(<<", ">>,
-		%                       lists:map(fun(Item) ->
-		%                           inspect(Item)
-		%                       end, MaybeArgs)
-		%                   );
-		%               false -> "()"
-		%           end
-		%       ),
-		<<"//fn(", ArgList/binary, ") { ... }">>;
-    % case Arity of
-    %     0 -> <<"//fn(", ArgList, ") { ... }">>;
-    %     _n -> <<"//fn(a) { ... }">>
-    % end;
+		<<"//fn(", Args/binary, ") { ... }">>;
 inspect(Any) ->
     to_debug_log(Any).
 
