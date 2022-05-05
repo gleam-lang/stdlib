@@ -386,21 +386,22 @@ inspect(Any) when is_tuple(Any) ->
     end;
 inspect(Any) when is_function(Any) ->
     {arity, Arity} = erlang:fun_info(Any, arity),
-		ArgsAsciiCodes = lists:seq(97, 97 + Arity - 1),
-		Args = iolist_to_binary(lists:join(<<", ">>,
-				lists:map(fun(Arg) ->
-						<<Arg>>
-				end, ArgsAsciiCodes)
-		)),
-		<<"//fn(", Args/binary, ") { ... }">>;
+    ArgsAsciiCodes = lists:seq(97, 97 + Arity - 1),
+    Args = iolist_to_binary(lists:join(<<", ">>,
+        lists:map(fun(Arg) ->
+            <<Arg>>
+        end, ArgsAsciiCodes)
+    )),
+    <<"//fn(", Args/binary, ") { ... }">>;
 inspect(Any) ->
-    to_debug_log(Any).
+    throw({inspect_exception, "Unexpected data given", Any}).
 
-to_debug_log(Value) ->
-    {ok, S} = file:open("debug.log", [append]),
-    file:pwrite(S, 8, io_lib:write(Value)),
-    file:pwrite(S, 8, ["\n"]),
-    file:close(S).
+% Debugging tool:
+% to_debug_log(Value) ->
+%     {ok, S} = file:open("debug.log", [append]),
+%     file:pwrite(S, 8, io_lib:write(Value)),
+%     file:pwrite(S, 8, ["\n"]),
+%     file:close(S).
 
 % camel_case() implementation from <https://github.com/tomas-abrahamsson/gpb/>
 % TODO: This needs to be reimplemented possibly based on:
