@@ -358,15 +358,11 @@ inspect(Any) when is_tuple(Any) ->
     of
         true ->
             Args = iolist_to_binary(
-                case is_list(MaybeArgs) of
-                    true ->
-                        lists:join(<<", ">>,
-                            lists:map(fun(Item) ->
-                                inspect(Item)
-                            end, MaybeArgs)
-                        );
-                    false -> "()"
-                end
+                lists:join(<<", ">>,
+                    lists:map(fun(Item) ->
+                        inspect(Item)
+                    end, MaybeArgs)
+                )
             ),
             <<(inspect(MaybeAtom))/binary, "(", Args/binary, ")">>;
         false ->
