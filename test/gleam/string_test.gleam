@@ -475,7 +475,7 @@ pub fn from_test() {
   |> should.equal("False")
 
   string.from([True, False])
-  |> should.equal("[True]")
+  |> should.equal("[True, False]")
 
   string.from([False, False])
   |> should.equal("[False, False]")

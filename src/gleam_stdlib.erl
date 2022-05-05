@@ -381,15 +381,16 @@ inspect(Any) when is_tuple(Any) ->
             <<"#(", Elems/binary, ")">>
     end;
 inspect(Any) when is_function(Any) ->
-		log_to_debug_log(Any),
+		to_debug_log(Any),
 		<<"//fn(a) { ... }">>;
 inspect(Any) ->
-		log_to_debug_log(Any).
+		to_debug_log(Any).
 
-log_to_debug_log(Value) ->
+to_debug_log(Value) ->
 		{ok, S} = file:open("debug.log", [append]),
 		file:pwrite(S, 8, io_lib:write(Value)),
-		file:pwrite(S, 8, ["\n"]).
+		file:pwrite(S, 8, ["\n"]),
+		file:close(S).
 
 % camel_case() implementation from <https://github.com/tomas-abrahamsson/gpb/>
 % TODO: This needs to be reimplemented possibly based on:
