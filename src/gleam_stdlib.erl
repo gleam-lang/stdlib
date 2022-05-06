@@ -380,7 +380,7 @@ inspect(Any) when is_function(Any) ->
     ),
     <<"//fn(", Args/binary, ") { ... }">>;
 inspect(Any) ->
-    throw({inspect_exception, "Unexpected data given", Any}).
+    throw({inspect_exception, "No Gleam representation available for given Erlang value", Any}).
 
 underscored_to_camel_caps(IoList) when is_list(IoList) ->
     IoList2 = string:replace(IoList, " ", "_", all),
