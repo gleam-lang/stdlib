@@ -321,21 +321,19 @@ println(String) ->
     io:put_chars([String, $\n]),
     nil.
 
-inspect(Any) when Any == true ->
+inspect(true) ->
     <<"True">>;
-inspect(Any) when Any == false ->
+inspect(false) ->
     <<"False">>;
 inspect(Any) when is_atom(Any) ->
     iolist_to_binary(underscored_to_camel_caps(atom_to_list(Any)));
 inspect(Any) when is_integer(Any) ->
-    % Taken from Elixir's Integer.to_string()
     integer_to_binary(Any);
 inspect(Any) when is_float(Any) ->
-    % Taken from Elixir's Float.to_string()
     iolist_to_binary(io_lib_format:fwrite_g(Any));
 inspect(Any) when is_binary(Any) ->
-    Pattern = [$"] = "\"",
-    Replacement = [$\\, $\\, $"] = "\\\\\"",
+    Pattern = [$"],
+    Replacement = [$\\, $\\, $"],
     Escaped = re:replace(Any, Pattern, Replacement, [{return, binary}, global]),
     <<"\"", Escaped/binary, "\"">>;
 inspect(Any) when is_list(Any) andalso Any == [] ->
@@ -379,12 +377,12 @@ inspect(Any) when is_function(Any) ->
         )
     ),
     <<"//fn(", Args/binary, ") { ... }">>;
-inspect(Any) ->
-    throw({inspect_exception, "No Gleam representation available for given Erlang value", Any}).
+inspect(_Any) ->
+    % throw({inspect_exception, "No Gleam representation available for given Erlang value", Any}).
+    {current_function, {Module, Function, Arity}} = process_info(self(), current_function),
+    iolist_to_binary(lists:join(".", [atom_to_list(Module), atom_to_list(Function), integer_to_list(Arity)])).
 
 underscored_to_camel_caps(IoList) when is_list(IoList) ->
-    IoList2 = string:replace(IoList, " ", "_", all),
-    IoList3 = string:trim(IoList2, both, "_"),
     iolist_to_binary(
         lists:map(
             fun(Part) ->
@@ -394,6 +392,6 @@ underscored_to_camel_caps(IoList) when is_list(IoList) ->
                 Head2 = iolist_to_binary(string:uppercase([Head])),
                 <<Head2/binary, Tail/binary>>
             end,
-            re:split(IoList3, "_+", [{return, binary}])
+            re:split(IoList, "_+", [{return, binary}])
         )
     ).

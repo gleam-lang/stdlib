@@ -804,16 +804,16 @@ pub fn capitalize(s: String) -> String {
   }
 }
 
-pub fn from(anything) -> String {
-  do_from(anything)
+pub fn inspect(anything) -> String {
+  do_inspect(anything)
 }
 
 if javascript {
-  external fn do_from(anything) -> String =
+  external fn do_inspect(anything) -> String =
     "../gleam.mjs" "inspect"
 }
 
 if erlang {
-  external fn do_from(anything) -> String =
+  external fn do_inspect(anything) -> String =
     "gleam_stdlib" "inspect"
 }

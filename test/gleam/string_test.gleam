@@ -439,371 +439,259 @@ pub fn capitalize_test() {
   |> should.equal("る")
 }
 
-type TypeForStringFromTest {
-  TypeForStringFromTest
+type InspectType(a, b) {
+  InspectTypeZero
+  InspectTypeOne(a)
+  InspectTypeTwo(a, b)
 }
 
-type TypeOfIntForStringFromTest {
-  TypeOfIntForStringFromTest(Int)
-}
-
-type TypeOfIntx2ForStringFromTest {
-  TypeOfIntx2ForStringFromTest(Int, Int)
-}
-
-type TypeOfListOfIntForStringFromTest {
-  TypeOfListOfIntForStringFromTest(List(Int))
-}
-
-type TypeOfStringForStringFromTest {
-  TypeOfStringForStringFromTest(String)
-}
-
-type TypeOfListOfStringForStringFromTest {
-  TypeOfListOfStringForStringFromTest(List(String))
-}
-
-type TypeOfTupleOfListOfStringForStringFromTest {
-  TypeOfTupleOfListOfStringForStringFromTest(#(List(Int), String))
-}
-
-pub fn from_test() {
-  string.from(True)
+pub fn inspect_test() {
+  string.inspect(True)
   |> should.equal("True")
 
-  string.from(False)
+  string.inspect(False)
   |> should.equal("False")
 
-  string.from([True, False])
+  string.inspect([True, False])
   |> should.equal("[True, False]")
 
-  string.from([False, False])
+  string.inspect([False, False])
   |> should.equal("[False, False]")
 
-  string.from([True, True])
+  string.inspect([True, True])
   |> should.equal("[True, True]")
 
-  string.from([Nil, Nil])
+  string.inspect([Nil, Nil])
   |> should.equal("[Nil, Nil]")
 
-  string.from(#(True, False))
+  string.inspect(#(True, False))
   |> should.equal("#(True, False)")
 
-  string.from(#(False, False))
+  string.inspect(#(False, False))
   |> should.equal("#(False, False)")
 
-  string.from(#(True, True))
+  string.inspect(#(True, True))
   |> should.equal("#(True, True)")
 
-  string.from(#(Nil, True))
+  string.inspect(#(Nil, True))
   |> should.equal("#(Nil, True)")
 
-  string.from(#(Nil, False))
+  string.inspect(#(Nil, False))
   |> should.equal("#(Nil, False)")
 
-  string.from(#(True, Nil))
+  string.inspect(#(True, Nil))
   |> should.equal("#(True, Nil)")
 
-  string.from(#(False, Nil))
+  string.inspect(#(False, Nil))
   |> should.equal("#(False, Nil)")
 
-  string.from(-1)
+  string.inspect(-1)
   |> should.equal("-1")
 
-  string.from(0)
+  string.inspect(0)
   |> should.equal("0")
 
-  string.from(1)
+  string.inspect(1)
   |> should.equal("1")
 
-  string.from([])
+  string.inspect([])
   |> should.equal("[]")
 
-  string.from([1])
+  string.inspect([1])
   |> should.equal("[1]")
 
-  string.from([1, 2])
+  string.inspect([1, 2])
   |> should.equal("[1, 2]")
 
-  string.from([[1], [1]])
+  string.inspect([[1], [1]])
   |> should.equal("[[1], [1]]")
 
-  string.from(-1.5)
+  string.inspect(-1.5)
   |> should.equal("-1.5")
 
-  string.from(1.5)
+  string.inspect(1.5)
   |> should.equal("1.5")
 
-  string.from([1.5])
+  string.inspect([1.5])
   |> should.equal("[1.5]")
 
-  string.from("")
+  string.inspect("")
   |> should.equal("\"\"")
 
-  string.from("1")
+  string.inspect("1")
   |> should.equal("\"1\"")
 
-  string.from("Hello Joe!")
+  string.inspect("Hello Joe!")
   |> should.equal("\"Hello Joe!\"")
 
-  string.from("Hello \"Manuel\"!")
+  string.inspect("Hello \"Manuel\"!")
   |> should.equal("\"Hello \\\"Manuel\\\"!\"")
 
-  string.from("💜 Gleam")
+  string.inspect("💜 Gleam")
   |> should.equal("\"💜 Gleam\"")
 
-  string.from(["1"])
+  string.inspect(["1"])
   |> should.equal("[\"1\"]")
 
-  string.from(#())
+  string.inspect(#())
   |> should.equal("#()")
 
-  string.from(#(1))
+  string.inspect(#(1))
   |> should.equal("#(1)")
 
-  string.from(#("1"))
+  string.inspect(#("1"))
   |> should.equal("#(\"1\")")
 
-  string.from(#(1.5))
+  string.inspect(#(1.5))
   |> should.equal("#(1.5)")
 
-  string.from([#(1, 2, 3), #(1, 2, 3)])
+  string.inspect([#(1, 2, 3), #(1, 2, 3)])
   |> should.equal("[#(1, 2, 3), #(1, 2, 3)]")
 
-  string.from(#([1, 2, 3], "🌈", #(1, "1", True)))
+  string.inspect(#([1, 2, 3], "🌈", #(1, "1", True)))
   |> should.equal("#([1, 2, 3], \"🌈\", #(1, \"1\", True))")
 
-  string.from(Nil)
+  string.inspect(Nil)
   |> should.equal("Nil")
 
-  string.from(Ok(1))
+  string.inspect(Ok(1))
   |> should.equal("Ok(1)")
 
-  string.from(Ok(True))
+  string.inspect(Ok(True))
   |> should.equal("Ok(True)")
 
-  string.from(Ok(False))
+  string.inspect(Ok(False))
   |> should.equal("Ok(False)")
 
-  string.from(Ok(Nil))
+  string.inspect(Ok(Nil))
   |> should.equal("Ok(Nil)")
 
-  string.from(Error(2))
+  string.inspect(Error(2))
   |> should.equal("Error(2)")
 
-  string.from(Error(True))
+  string.inspect(Error(True))
   |> should.equal("Error(True)")
 
-  string.from(Error(False))
+  string.inspect(Error(False))
   |> should.equal("Error(False)")
 
-  string.from(Error(Nil))
+  string.inspect(Error(Nil))
   |> should.equal("Error(Nil)")
 
-  string.from(TypeForStringFromTest)
-  |> should.equal("TypeForStringFromTest")
+  string.inspect(InspectTypeZero)
+  |> should.equal("InspectTypeZero")
 
-  string.from(TypeOfIntForStringFromTest(1))
-  |> should.equal("TypeOfIntForStringFromTest(1)")
+  string.inspect(InspectTypeOne(1))
+  |> should.equal("InspectTypeOne(1)")
 
-  string.from(TypeOfIntx2ForStringFromTest(1, 2))
-  |> should.equal("TypeOfIntx2ForStringFromTest(1, 2)")
+  string.inspect(InspectTypeTwo(1, 2))
+  |> should.equal("InspectTypeTwo(1, 2)")
 
-  string.from(TypeOfListOfIntForStringFromTest([1]))
-  |> should.equal("TypeOfListOfIntForStringFromTest([1])")
+  string.inspect(InspectTypeOne([1]))
+  |> should.equal("InspectTypeOne([1])")
 
-  string.from(TypeOfStringForStringFromTest("1"))
-  |> should.equal("TypeOfStringForStringFromTest(\"1\")")
+  string.inspect(InspectTypeOne("1"))
+  |> should.equal("InspectTypeOne(\"1\")")
 
-  string.from(TypeOfListOfStringForStringFromTest(["1"]))
-  |> should.equal("TypeOfListOfStringForStringFromTest([\"1\"])")
+  string.inspect(InspectTypeOne(["1"]))
+  |> should.equal("InspectTypeOne([\"1\"])")
 
-  string.from(TypeOfTupleOfListOfStringForStringFromTest(#([1], "a")))
-  |> should.equal("TypeOfTupleOfListOfStringForStringFromTest(#([1], \"a\"))")
+  string.inspect(InspectTypeOne(#([1], "a")))
+  |> should.equal("InspectTypeOne(#([1], \"a\"))")
 
-  string.from(TypeOfTupleOfListOfStringForStringFromTest)
+  string.inspect(Ok)
   |> should.equal("//fn(a) { ... }")
-}
 
-pub fn from_fun_ok_type_test() {
-  string.from(Ok)
+  string.inspect(Error)
   |> should.equal("//fn(a) { ... }")
-}
 
-pub fn from_fun_error_type_test() {
-  string.from(Error)
-  |> should.equal("//fn(a) { ... }")
-}
-
-fn fun_for_from_test() {
-  Nil
-}
-
-pub fn from_fun_test() {
-  string.from(fun_for_from_test)
+  string.inspect(fn() { Nil })
   |> should.equal("//fn() { ... }")
-}
 
-fn fun_for_from_with_1_arg_test(arg) {
-  arg
-  Nil
-}
-
-pub fn from_with_1_arg_test() {
-  string.from(fun_for_from_with_1_arg_test)
-  |> should.equal("//fn(a) { ... }")
-}
-
-fn fun_for_from_with_2_args_test(a, b) {
-  a
-  b
-  Nil
-}
-
-pub fn from_with_2_args_test() {
-  string.from(fun_for_from_with_2_args_test)
-  |> should.equal("//fn(a, b) { ... }")
-}
-
-fn fun_for_from_fully_typed_test(with foo: Int, what bar: String) -> Bool {
-  foo
-  bar
-  False
-}
-
-pub fn from_fun_fully_typed_test() {
-  string.from(fun_for_from_fully_typed_test)
-  |> should.equal("//fn(a, b) { ... }")
-}
-
-pub fn from_anon_fun_test() {
-  string.from(fn() { Nil })
-  |> should.equal("//fn() { ... }")
-}
-
-pub fn from_anon_fun_with_1_arg_test() {
-  string.from(fn(a) {
+  string.inspect(fn(a) {
     a
     Nil
   })
   |> should.equal("//fn(a) { ... }")
-}
 
-pub fn from_anon_fun_with_2_args_test() {
-  string.from(fn(a, b) {
+  string.inspect(fn(a, b) {
     a
     b
     Nil
   })
   |> should.equal("//fn(a, b) { ... }")
-}
 
-pub fn from_anon_fun_with_2_other_args_test() {
-  string.from(fn(x, y) {
+  string.inspect(fn(x, y) {
     x
     y
     Nil
   })
   |> should.equal("//fn(a, b) { ... }")
-}
 
-pub fn from_anon_fun_fully_typed_test() {
-  let anon_fun_for_from_fully_typed_test = fn(foo: Int, bar: String) -> Bool {
+  string.inspect(fn(foo: Int, bar: String) -> Bool {
     foo
     bar
     False
-  }
-
-  string.from(anon_fun_for_from_fully_typed_test)
+  })
   |> should.equal("//fn(a, b) { ... }")
-}
 
-const for_from_const_test_const_a = Nil
+  string.inspect(#(InspectTypeOne, InspectTypeTwo))
+  |> should.equal("#(//fn(a) { ... }, //fn(a, b) { ... })")
 
-const for_from_const_test_const_b = False
-
-const for_from_const_test_const_c = True
-
-const for_from_const_test_const_d = 1
-
-const for_from_const_test_const_e = "1"
-
-pub fn from_const_test() {
-  string.from(for_from_const_test_const_a)
-  |> should.equal("Nil")
-
-  string.from(for_from_const_test_const_b)
-  |> should.equal("False")
-
-  string.from(for_from_const_test_const_c)
-  |> should.equal("True")
-
-  string.from(for_from_const_test_const_d)
-  |> should.equal("1")
-
-  string.from(for_from_const_test_const_e)
-  |> should.equal("\"1\"")
-}
-
-pub type Atom {
-  One
-  Two
-}
-
-pub type Record {
-  Three(Atom)
+  string.inspect(InspectTypeOne(InspectTypeZero))
+  |> should.equal("InspectTypeOne(InspectTypeZero)")
 }
 
 if javascript {
-  pub fn from_one_two_test() {
-    string.from(#(One, Two))
-    |> should.equal("#(One, Two)")
-    // On Erlang we will receive this instead:
-    // |> should.equal("One(Two)")
-  }
+  pub fn target_inspect_test() {
+    // Due to Erlang's internal representation, on Erlang this will pass, instead:
+    // |> should.equal("InspectTypeZero(InspectTypeZero)")
+    //
+    string.inspect(#(InspectTypeZero, InspectTypeZero))
+    |> should.equal("#(InspectTypeZero, InspectTypeZero)")
 
-  /// Due to JavaScript's `Number` type `Float`s without digits return as `Int`s.
-  ///
-  pub fn target_from_test() {
-    string.from(-1.0)
+    // Due to JavaScript's `Number` type `Float`s without digits return as `Int`s.
+    //
+    string.inspect(-1.0)
     |> should.equal("-1")
 
-    string.from(0.0)
+    string.inspect(0.0)
     |> should.equal("0")
 
-    string.from(1.0)
+    string.inspect(1.0)
     |> should.equal("1")
 
-    string.from([1.0])
+    string.inspect([1.0])
     |> should.equal("[1]")
 
-    string.from(#(1.0))
+    string.inspect(#(1.0))
     |> should.equal("#(1)")
   }
 }
 
 if erlang {
-  pub fn from_one_two_test() {
-    string.from(#(One, Two))
-    |> should.equal("One(Two)")
+  pub fn target_inspect_test() {
     // Erlang's internal representation does not allow a correct differentiation
-    // |> should.equal("#(One, Two)")
-  }
+    // |> should.equal("#(InspectTypeZero, InspectTypeZero)")
+    //
+    string.inspect(#(InspectTypeZero, InspectTypeZero))
+    |> should.equal("InspectTypeZero(InspectTypeZero)")
 
-  pub fn target_from_test() {
-    string.from(-1.0)
+    // Unlike JavaScript, Erlang correctly differentiates between 1 and 1.0
+    //
+    string.inspect(-1.0)
     |> should.equal("-1.0")
 
-    string.from(0.0)
+    string.inspect(0.0)
     |> should.equal("0.0")
 
-    string.from(1.0)
+    string.inspect(1.0)
     |> should.equal("1.0")
 
-    string.from([1.0])
+    string.inspect([1.0])
     |> should.equal("[1.0]")
 
-    string.from(#(1.0))
+    string.inspect(#(1.0))
     |> should.equal("#(1.0)")
   }
 }
