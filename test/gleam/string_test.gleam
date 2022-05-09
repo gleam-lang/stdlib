@@ -405,36 +405,36 @@ pub fn last_test() {
   |> should.equal(Ok("a"))
 }
 
-pub fn capitalize_test() {
+pub fn capitalise_test() {
   ""
-  |> string.capitalize
+  |> string.capitalise
   |> should.equal("")
 
   "gleam"
-  |> string.capitalize
+  |> string.capitalise
   |> should.equal("Gleam")
 
   "GLEAM"
-  |> string.capitalize
+  |> string.capitalise
   |> should.equal("Gleam")
 
   "g l e a m"
-  |> string.capitalize
+  |> string.capitalise
   |> should.equal("G l e a m")
 
   "1GLEAM"
-  |> string.capitalize
+  |> string.capitalise
   |> should.equal("1gleam")
 
   "_gLeAm1"
-  |> string.capitalize
+  |> string.capitalise
   |> should.equal("_gleam1")
 
   " gLeAm1"
-  |> string.capitalize
+  |> string.capitalise
   |> should.equal(" gleam1")
 
   "る"
-  |> string.capitalize
+  |> string.capitalise
   |> should.equal("る")
 }

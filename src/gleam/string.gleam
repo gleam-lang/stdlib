@@ -793,11 +793,11 @@ pub fn last(s: String) -> Result(String, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// > capitalize("mamouna")
+/// > capitalise("mamouna")
 /// "Mamouna"
 /// ```
 ///
-pub fn capitalize(s: String) -> String {
+pub fn capitalise(s: String) -> String {
   case pop_grapheme(s) {
     Ok(#(first, rest)) -> append(to: uppercase(first), suffix: lowercase(rest))
     _ -> ""
