@@ -326,7 +326,13 @@ inspect(true) ->
 inspect(false) ->
     "False";
 inspect(Any) when is_atom(Any) ->
-    underscored_to_camel_caps(atom_to_list(Any));
+    lists:map(
+        fun(Part) ->
+            [Head | Tail] = string:next_grapheme(unicode:characters_to_binary(Part)),
+            [string:uppercase([Head]), Tail]
+        end,
+        re:split(atom_to_list(Any), "_+", [{return, iodata}])
+    );
 inspect(Any) when is_integer(Any) ->
     integer_to_list(Any);
 inspect(Any) when is_float(Any) ->
@@ -372,12 +378,3 @@ inspect(_Any) ->
     % throw({inspect_exception, "No Gleam representation available for given Erlang value", Any}).
     {current_function, {Module, Function, Arity}} = process_info(self(), current_function),
     lists:join(".", [atom_to_list(Module), atom_to_list(Function), integer_to_list(Arity)]).
-
-underscored_to_camel_caps(IoList) when is_list(IoList) ->
-    lists:map(
-        fun(Part) ->
-            [Head | Tail] = string:next_grapheme(unicode:characters_to_binary(Part)),
-            [string:uppercase([Head]), Tail]
-        end,
-        re:split(IoList, "_+", [{return, iodata}])
-    ).
