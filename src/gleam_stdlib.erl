@@ -376,11 +376,8 @@ inspect(_Any) ->
 underscored_to_camel_caps(IoList) when is_list(IoList) ->
     lists:map(
         fun(Part) ->
-            [Head | Tail] = string:next_grapheme(
-                unicode:characters_to_binary(Part)
-            ),
-            Head2 = iolist_to_binary(string:uppercase([Head])),
-            <<Head2/binary, Tail/binary>>
+            [Head | Tail] = string:next_grapheme(unicode:characters_to_binary(Part)),
+            [string:uppercase([Head]), Tail]
         end,
-        re:split(IoList, "_+", [{return, binary}])
+        re:split(IoList, "_+", [{return, iodata}])
     ).
