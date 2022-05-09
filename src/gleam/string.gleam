@@ -814,6 +814,11 @@ if javascript {
 }
 
 if erlang {
-  external fn do_inspect(anything) -> String =
+  fn do_inspect(anything) -> String {
+    do_build_inspect(anything)
+    |> string_builder.to_string
+  }
+
+  external fn do_build_inspect(anything) -> string_builder.StringBuilder =
     "gleam_stdlib" "inspect"
 }

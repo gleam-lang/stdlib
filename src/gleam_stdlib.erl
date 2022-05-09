@@ -322,76 +322,65 @@ println(String) ->
     nil.
 
 inspect(true) ->
-    <<"True">>;
+    "True";
 inspect(false) ->
-    <<"False">>;
+    "False";
 inspect(Any) when is_atom(Any) ->
-    iolist_to_binary(underscored_to_camel_caps(atom_to_list(Any)));
+    underscored_to_camel_caps(atom_to_list(Any));
 inspect(Any) when is_integer(Any) ->
-    integer_to_binary(Any);
+    integer_to_list(Any);
 inspect(Any) when is_float(Any) ->
-    iolist_to_binary(io_lib_format:fwrite_g(Any));
+    io_lib_format:fwrite_g(Any);
 inspect(Any) when is_binary(Any) ->
     Pattern = [$"],
     Replacement = [$\\, $\\, $"],
     Escaped = re:replace(Any, Pattern, Replacement, [{return, binary}, global]),
-    <<"\"", Escaped/binary, "\"">>;
-inspect(Any) when is_list(Any) andalso Any == [] ->
-    <<"[]">>;
+    ["\"", Escaped, "\""];
 inspect(Any) when is_list(Any) ->
-    Elems = iolist_to_binary(
+    ["[",
         lists:join(<<", ">>,
             lists:map(fun inspect/1, Any)
-        )
-    ),
-    <<"[", Elems/binary, "]">>;
-inspect(Any) when is_tuple(Any) andalso Any == {} ->
-    <<"#()">>;
+        ),
+    "]"];
 inspect(Any) when is_tuple(Any) % Type constructors
   andalso is_atom(element(1, Any))
   andalso element(1, Any) =/= false
   andalso element(1, Any) =/= true
   andalso element(1, Any) =/= nil
 ->
-    [Atom | MaybeArgs] = tuple_to_list(Any),
-      Args = iolist_to_binary(
+    [Atom | ArgsList] = tuple_to_list(Any),
+    Args =
         lists:join(<<", ">>,
-            lists:map(fun inspect/1, MaybeArgs)
-        )
+            lists:map(fun inspect/1, ArgsList)
     ),
-    <<(inspect(Atom))/binary, "(", Args/binary, ")">>
+    [(inspect(Atom)), "(", Args, ")"]
 ;
 inspect(Any) when is_tuple(Any) ->
-    Elems = iolist_to_binary(
+    ["#(",
         lists:join(<<", ">>,
             lists:map(fun inspect/1, tuple_to_list(Any))
-        )
-    ),
-    <<"#(", Elems/binary, ")">>;
+        ),
+    ")"];
 inspect(Any) when is_function(Any) ->
     {arity, Arity} = erlang:fun_info(Any, arity),
     ArgsAsciiCodes = lists:seq(97, 97 + Arity - 1), % a = ASCII 97
-    Args = iolist_to_binary(
-        lists:join(<<", ">>,
-            lists:map(fun(Arg) -> <<Arg>> end, ArgsAsciiCodes)
-        )
+    Args = lists:join(<<", ">>,
+        lists:map(fun(Arg) -> <<Arg>> end, ArgsAsciiCodes)
     ),
-    <<"//fn(", Args/binary, ") { ... }">>;
+    ["//fn(", Args, ") { ... }"];
 inspect(_Any) ->
     % throw({inspect_exception, "No Gleam representation available for given Erlang value", Any}).
     {current_function, {Module, Function, Arity}} = process_info(self(), current_function),
-    iolist_to_binary(lists:join(".", [atom_to_list(Module), atom_to_list(Function), integer_to_list(Arity)])).
+    lists:join(".", [atom_to_list(Module), atom_to_list(Function), integer_to_list(Arity)]).
 
 underscored_to_camel_caps(IoList) when is_list(IoList) ->
-    iolist_to_binary(
-        lists:map(
-            fun(Part) ->
-                [Head | Tail] = string:next_grapheme(
-                    unicode:characters_to_binary(Part)
-                ),
-                Head2 = iolist_to_binary(string:uppercase([Head])),
-                <<Head2/binary, Tail/binary>>
-            end,
-            re:split(IoList, "_+", [{return, binary}])
-        )
+    lists:map(
+        fun(Part) ->
+            [Head | Tail] = string:next_grapheme(
+                unicode:characters_to_binary(Part)
+            ),
+            Head2 = iolist_to_binary(string:uppercase([Head])),
+            <<Head2/binary, Tail/binary>>
+        end,
+        re:split(IoList, "_+", [{return, binary}])
     ).
