@@ -375,9 +375,4 @@ inspect(Any) when is_function(Any) ->
     ),
     ["//fn(", Args, ") { ... }"];
 inspect(_Any) ->
-    ["//erl("] ++ [self()] ++ [")"].
-    % throw({inspect_exception, "No Gleam representation available for given Erlang value", Any}).
-    % {current_function, {Module, Function, Arity}} = process_info(self(), current_function),
-    % ["//erl(<"]
-    %     ++ lists:join(".", [atom_to_list(Module), atom_to_list(Function), integer_to_list(Arity)])
-    % ++ [">)"].
+    ["//erl("] ++ pid_to_list(self()) ++ [")"].
