@@ -819,6 +819,6 @@ if erlang {
     |> string_builder.to_string
   }
 
-  external fn do_build_inspect(value: any) -> string_builder.StringBuilder =
+  external fn do_build_inspect(value: a) -> string_builder.StringBuilder =
     "gleam_stdlib" "inspect"
 }
