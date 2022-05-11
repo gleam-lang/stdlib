@@ -331,10 +331,10 @@ inspect(Any) when is_atom(Any) ->
             [Head | Tail] = string:next_grapheme(unicode:characters_to_binary(Part)),
             [string:uppercase([Head]), Tail]
         end,
-        re:split(atom_to_list(Any), "_+", [{return, iodata}])
+        re:split(erlang:atom_to_list(Any), "_+", [{return, iodata}])
     );
 inspect(Any) when is_integer(Any) ->
-    integer_to_list(Any);
+    erlang:integer_to_list(Any);
 inspect(Any) when is_float(Any) ->
     io_lib_format:fwrite_g(Any);
 inspect(Any) when is_binary(Any) ->
@@ -354,7 +354,7 @@ inspect(Any) when is_tuple(Any) % Type constructors
   andalso element(1, Any) =/= true
   andalso element(1, Any) =/= nil
 ->
-    [Atom | ArgsList] = tuple_to_list(Any),
+    [Atom | ArgsList] = erlang:tuple_to_list(Any),
     Args =
         lists:join(<<", ">>,
             lists:map(fun inspect/1, ArgsList)
@@ -364,7 +364,7 @@ inspect(Any) when is_tuple(Any) % Type constructors
 inspect(Any) when is_tuple(Any) ->
     ["#(",
         lists:join(<<", ">>,
-            lists:map(fun inspect/1, tuple_to_list(Any))
+            lists:map(fun inspect/1, erlang:tuple_to_list(Any))
         ),
     ")"];
 inspect(Any) when is_function(Any) ->
@@ -375,4 +375,4 @@ inspect(Any) when is_function(Any) ->
     ),
     ["//fn(", Args, ") { ... }"];
 inspect(_Any) ->
-    ["//erl("] ++ pid_to_list(self()) ++ [")"].
+    ["//erl("] ++ erlang:pid_to_list(erlang:self()) ++ [")"].
