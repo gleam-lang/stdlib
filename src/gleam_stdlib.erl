@@ -359,8 +359,7 @@ inspect(Any) when is_tuple(Any) % Type constructors
         lists:join(<<", ">>,
             lists:map(fun inspect/1, ArgsList)
     ),
-    [(inspect(Atom)), "(", Args, ")"]
-;
+    [(inspect(Atom)), "(", Args, ")"];
 inspect(Any) when is_tuple(Any) ->
     ["#(",
         lists:join(<<", ">>,
