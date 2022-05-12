@@ -368,10 +368,10 @@ inspect(Any) when is_tuple(Any) ->
     ")"];
 inspect(Any) when is_function(Any) ->
     {arity, Arity} = erlang:fun_info(Any, arity),
-    ArgsAsciiCodes = lists:seq(97, 97 + Arity - 1), % a = ASCII 97
+    ArgsAsciiCodes = lists:seq($a, $a + Arity - 1),
     Args = lists:join(<<", ">>,
         lists:map(fun(Arg) -> <<Arg>> end, ArgsAsciiCodes)
     ),
     ["//fn(", Args, ") { ... }"];
-inspect(_Any) ->
-    ["//erl("] ++ erlang:pid_to_list(erlang:self()) ++ [")"].
+inspect(Any) ->
+    ["//erl(", io_lib:format("~p", [Any]), ")"].
