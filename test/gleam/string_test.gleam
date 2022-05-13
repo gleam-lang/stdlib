@@ -360,7 +360,6 @@ pub fn to_graphemes_test() {
   |> string.to_graphemes()
   |> should.equal(["a", "b", "c"])
 
-  // Tests borrowed from <https://github.com/flmnt/graphemer#examples>
   "🌷🎁💩😜👍🏳️‍🌈"
   |> string.to_graphemes()
   |> should.equal(["🌷", "🎁", "💩", "😜", "👍", "🏳️‍🌈"])
