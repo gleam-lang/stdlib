@@ -248,8 +248,13 @@ if erlang {
 }
 
 if javascript {
-  external fn do_slice(String, Int, Int) -> String =
-    "../gleam_stdlib.mjs" "slice_string"
+  fn do_slice(from string: String, at_index idx: Int, length len: Int) -> String {
+    string
+    |> to_graphemes
+    |> list.drop(idx)
+    |> list.take(len)
+    |> concat
+  }
 }
 
 /// Drops contents of the first `String` that occur before the second `String`.
