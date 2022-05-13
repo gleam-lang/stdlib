@@ -73,10 +73,25 @@ if javascript {
 /// ```
 ///
 pub fn reverse(string: String) -> String {
-  string
-  |> string_builder.from_string
-  |> string_builder.reverse
-  |> string_builder.to_string
+  do_reverse(string)
+}
+
+if erlang {
+  fn do_reverse(string: String) -> String {
+    string
+    |> string_builder.from_string
+    |> string_builder.reverse
+    |> string_builder.to_string
+  }
+}
+
+if javascript {
+  fn do_reverse(string: String) -> String {
+    string
+    |> to_graphemes
+    |> list.reverse
+    |> concat
+  }
 }
 
 /// Creates a new `String` by replacing all occurrences of a given substring.

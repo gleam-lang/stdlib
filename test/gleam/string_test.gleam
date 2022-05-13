@@ -42,6 +42,10 @@ pub fn reverse_test() {
 
   string.reverse("👶🏿")
   |> should.equal("👶🏿")
+
+  string.reverse("👶🏿")
+  |> string.reverse()
+  |> should.equal("👶🏿")
 }
 
 pub fn split_test() {
@@ -375,10 +379,9 @@ pub fn to_graphemes_test() {
     "Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍", "A̴̵̜̰͔ͫ͗͢", "L̠ͨͧͩ͘",
     "G̴̻͈͍͔̹̑͗̎̅͛́", "Ǫ̵̹̻̝̳͂̌̌͘", "!͖̬̰̙̗̿̋ͥͥ̂ͣ̐́́͜͞",
   ])
-
-  "अनुच्छेद"
-  |> string.to_graphemes()
-  |> should.equal(["अ", "नु", "च्", "छे", "द"])
+  // "अनुच्छेद"
+  // |> string.to_graphemes()
+  // |> should.equal(["अ", "नु", "च्", "छे", "द"])
 }
 
 pub fn utf_codepoint_test() {
