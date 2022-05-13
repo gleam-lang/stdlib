@@ -366,16 +366,16 @@ pub fn to_graphemes_test() {
   |> string.to_graphemes()
   |> should.equal(["뎌", "쉐"])
 
-  "अनुच्छेद"
-  |> string.to_graphemes()
-  |> should.equal(["अ", "नु", "च्", "छे", "द"])
-
   "Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍A̴̵̜̰͔ͫ͗͢L̠ͨͧͩ͘G̴̻͈͍͔̹̑͗̎̅͛́Ǫ̵̹̻̝̳͂̌̌͘!͖̬̰̙̗̿̋ͥͥ̂ͣ̐́́͜͞"
   |> string.to_graphemes()
   |> should.equal([
     "Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍", "A̴̵̜̰͔ͫ͗͢", "L̠ͨͧͩ͘",
     "G̴̻͈͍͔̹̑͗̎̅͛́", "Ǫ̵̹̻̝̳͂̌̌͘", "!͖̬̰̙̗̿̋ͥͥ̂ͣ̐́́͜͞",
   ])
+
+  "अनुच्छेद"
+  |> string.to_graphemes()
+  |> should.equal(["अ", "नु", "च्", "छे", "द"])
 }
 
 pub fn utf_codepoint_test() {
