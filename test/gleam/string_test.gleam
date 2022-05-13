@@ -337,6 +337,10 @@ pub fn to_graphemes_test() {
   ""
   |> string.to_graphemes()
   |> should.equal([])
+
+  "अनुच्छेद"
+  |> string.to_graphemes()
+  |> should.equal(["अ", "नु", "च्", "छे", "द"])
 }
 
 pub fn utf_codepoint_test() {
