@@ -37,6 +37,9 @@ pub fn reverse_test() {
   string.reverse("👍")
   |> should.equal("👍")
 
+  string.reverse("ÅÄÖ")
+  |> should.equal("ÖÄÅ")
+
   string.reverse("👶🏿")
   |> should.equal("👶🏿")
 }
