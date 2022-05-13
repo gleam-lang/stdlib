@@ -248,7 +248,7 @@ if erlang {
 }
 
 if javascript {
-  fn do_slice(from string: String, at_index idx: Int, length len: Int) -> String {
+  fn do_slice(string: String, idx: Int, len: Int) -> String {
     string
     |> to_graphemes
     |> list.drop(idx)
