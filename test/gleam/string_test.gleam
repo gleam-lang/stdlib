@@ -215,6 +215,10 @@ pub fn slice_test() {
   "gleam"
   |> string.slice(at_index: 2, length: -3)
   |> should.equal("")
+
+  "👶🏿"
+  |> string.slice(at_index: 0, length: 3)
+  |> should.equal("👶🏿")
 }
 
 pub fn crop_test() {
