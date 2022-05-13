@@ -337,17 +337,45 @@ pub fn pop_grapheme_test() {
 }
 
 pub fn to_graphemes_test() {
-  "abc"
+  ""
   |> string.to_graphemes()
-  |> should.equal(["a", "b", "c"])
+  |> should.equal([])
+
+  "\n\t\r\"\\"
+  |> string.to_graphemes()
+  |> should.equal(["\n", "\t", "\r", "\"", "\\"])
 
   "a"
   |> string.to_graphemes()
   |> should.equal(["a"])
 
-  ""
+  "abc"
   |> string.to_graphemes()
-  |> should.equal([])
+  |> should.equal(["a", "b", "c"])
+
+  // Tests borrowed from <https://github.com/flmnt/graphemer#examples>
+  "🌷🎁💩😜👍🏳️‍🌈"
+  |> string.to_graphemes()
+  |> should.equal(["🌷", "🎁", "💩", "😜", "👍", "🏳️‍🌈"])
+
+  "Ĺo͂řȩm̅"
+  |> string.to_graphemes()
+  |> should.equal(["Ĺ", "o͂", "ř", "ȩ", "m̅"])
+
+  "뎌쉐"
+  |> string.to_graphemes()
+  |> should.equal(["뎌", "쉐"])
+
+  "अनुच्छेद"
+  |> string.to_graphemes()
+  |> should.equal(["अ", "नु", "च्", "छे", "द"])
+
+  "Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍A̴̵̜̰͔ͫ͗͢L̠ͨͧͩ͘G̴̻͈͍͔̹̑͗̎̅͛́Ǫ̵̹̻̝̳͂̌̌͘!͖̬̰̙̗̿̋ͥͥ̂ͣ̐́́͜͞"
+  |> string.to_graphemes()
+  |> should.equal([
+    "Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍", "A̴̵̜̰͔ͫ͗͢", "L̠ͨͧͩ͘",
+    "G̴̻͈͍͔̹̑͗̎̅͛́", "Ǫ̵̹̻̝̳͂̌̌͘", "!͖̬̰̙̗̿̋ͥͥ̂ͣ̐́́͜͞",
+  ])
 }
 
 pub fn utf_codepoint_test() {
