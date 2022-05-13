@@ -27,11 +27,18 @@ pub fn uppercase_test() {
 pub fn reverse_test() {
   string.reverse("Gleam")
   |> should.equal("maelG")
-}
 
-pub fn unicode_reverse_test() {
+  string.reverse(" Gleam")
+  |> should.equal("maelG ")
+
   string.reverse("👍 OK")
   |> should.equal("KO 👍")
+
+  string.reverse("👍")
+  |> should.equal("👍")
+
+  string.reverse("👶🏿")
+  |> should.equal("👶🏿")
 }
 
 pub fn split_test() {
