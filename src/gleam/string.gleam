@@ -804,21 +804,17 @@ pub fn capitalise(s: String) -> String {
   }
 }
 
-if javascript {
-  pub fn inspect(value: a) -> String {
-    do_inspect(value)
-  }
+pub fn inspect(value: a) -> String {
+  do_inspect(value)
+  |> string_builder.to_string
+}
 
-  external fn do_inspect(value: a) -> String =
+if javascript {
+  external fn do_inspect(value: a) -> string_builder.StringBuilder =
     "../gleam.mjs" "inspect"
 }
 
 if erlang {
-  pub fn inspect(value: a) -> String {
-    do_inspect(value)
-    |> string_builder.to_string
-  }
-
   external fn do_inspect(value: a) -> string_builder.StringBuilder =
     "gleam_stdlib" "inspect"
 }
