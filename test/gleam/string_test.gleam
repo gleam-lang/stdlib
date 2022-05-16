@@ -2,7 +2,6 @@ import gleam/option.{None, Some}
 import gleam/order
 import gleam/should
 import gleam/string
-import gleam/regex
 
 pub fn length_test() {
   string.length("ß↑e̊")
@@ -671,6 +670,8 @@ if javascript {
 }
 
 if erlang {
+  import gleam/regex
+
   external fn create_erlang_pid() -> String =
     "erlang" "self"
 
