@@ -2,6 +2,7 @@ import gleam/option.{None, Some}
 import gleam/order
 import gleam/should
 import gleam/string
+import gleam/regex
 
 pub fn length_test() {
   string.length("ß↑e̊")
@@ -670,6 +671,12 @@ if javascript {
 }
 
 if erlang {
+  external fn create_erlang_pid() -> String =
+    "erlang" "self"
+
+  external fn create_erlang_reference() -> String =
+    "erlang" "make_ref"
+
   pub fn target_inspect_test() {
     // Erlang's internal representation does not allow a correct differentiation
     // |> should.equal("#(InspectTypeZero, InspectTypeZero)")
@@ -693,5 +700,21 @@ if erlang {
 
     string.inspect(#(1.0))
     |> should.equal("#(1.0)")
+
+    // Looks like `//erl(<0.83.0>)`
+    assert Ok(regular_expression) =
+      regex.from_string("^\\/\\/erl\\(<[0-9]\\.[0-9]+\\.[0-9]>\\)$")
+    string.inspect(create_erlang_pid())
+    |> regex.check(regular_expression, _)
+    |> should.equal(True)
+
+    // Looks like: `//erl(#Ref<0.1809744150.4035444737.100468>)`
+    assert Ok(regular_expression) =
+      regex.from_string(
+        "^\\/\\/erl\\(#Ref<[0-9]\\.[0-9]+\\.[0-9]+\\.[0-9]+>\\)$",
+      )
+    string.inspect(create_erlang_reference())
+    |> regex.check(regular_expression, _)
+    |> should.equal(True)
   }
 }
