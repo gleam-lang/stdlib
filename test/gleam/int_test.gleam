@@ -272,8 +272,8 @@ pub fn power_test() {
   |> should.equal(Ok(0.5))
 
   // int.power(-1, 0.5) is equivalent to int.square_root(-1)
-  // and should return an error as an imaginary should otherwise be 
-  // returned 
+  // and should return an error as an imaginary number should otherwise
+  // be returned 
   int.power(-1, 0.5)
   |> should.equal(Error(Nil))
 }

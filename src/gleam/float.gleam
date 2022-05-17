@@ -268,6 +268,9 @@ pub fn absolute_value(x: Float) -> Float {
 ///
 /// > 4.0 |> power(of: 2.0)
 /// 16.0
+///
+/// > power(-1.0, 0.5)
+/// Error(Nil)
 /// ```
 ///
 pub fn power(base: Float, of exponent: Float) -> Result(Float, Nil) {
