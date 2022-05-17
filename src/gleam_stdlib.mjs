@@ -246,7 +246,7 @@ export function power(base, exponent) {
   let value = Math.pow(base, exponent)
   // A NaN will be returned if the base is negative and the exponent is 
   // fractional (between 0 and 1).
-  if (isNaN(NaN)) {
+  if (isNaN(value)) {
     return new Error(Nil);
   } else {
     return new Ok(value);

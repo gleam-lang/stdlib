@@ -274,21 +274,25 @@ pub fn absolute_value(x: Float) -> Float {
 /// ```
 ///
 pub fn power(base: Float, of exponent: Float) -> Result(Float, Nil) {
-  // If the base is negative and the exponent is fractional then 
-  // return an error as it will otherwise be an imaginary number
-  case base <. 0.0 && { exponent >. 0.0 && exponent <. 1.0 } {
-    True -> Error(Nil)
-    False -> Ok(do_power(base, exponent))
-  }
+  do_power(base, exponent)
 }
 
 if erlang {
-  external fn do_power(Float, Float) -> Float =
+  external fn erl_power(Float, Float) -> Float =
     "math" "pow"
+
+  fn do_power(base: Float, of exponent: Float) -> Result(Float, Nil) {
+    // If the base is negative and the exponent is fractional then 
+    // return an error as it will otherwise be an imaginary number
+    case base <. 0.0 && { exponent >. 0.0 && exponent <. 1.0 } {
+      True -> Error(Nil)
+      False -> Ok(erl_power(base, exponent))
+    }
+  }
 }
 
 if javascript {
-  external fn do_power(Float, Float) -> Float =
+  external fn do_power(Float, Float) -> Result(Float, Nil) =
     "../gleam_stdlib.mjs" "power"
 }
 
