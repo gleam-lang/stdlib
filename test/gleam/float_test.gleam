@@ -263,10 +263,19 @@ pub fn power_test() {
   |> should.equal(Ok(0.5))
 
   // float.power(-1.0, 0.5) is equivalent to float.square_root(-1.0)
-  // and should return an error as an imaginary number should otherwise
-  // be returned 
+  // and should return an error as an imaginary number would otherwise
+  // have to be returned 
   float.power(-1.0, 0.5)
   |> should.equal(Error(Nil))
+
+  // Check another case with a negative base and fractional exponent
+  float.power(-1.5, 1.5)
+  |> should.equal(Error(Nil))
+
+  // Check that a negative base and exponent is fine as long as the 
+  // exponent is not fractional
+  float.power(-2.0, -1.0)
+  |> should.equal(Ok(-0.5))
 }
 
 pub fn square_root_test() {

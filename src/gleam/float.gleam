@@ -1,5 +1,6 @@
 import gleam/order.{Order}
 import gleam/string_builder
+import gleam/io
 
 /// Attempts to parse a string as a `Float`, returning `Error(Nil)` if it was not
 /// possible.
@@ -274,9 +275,10 @@ pub fn absolute_value(x: Float) -> Float {
 /// ```
 ///
 pub fn power(base: Float, of exponent: Float) -> Result(Float, Nil) {
+  let fractional: Bool = ceiling(exponent) -. exponent >. 0.
   // If the base is negative and the exponent is fractional then 
   // return an error as it will otherwise be an imaginary number
-  case base <. 0.0 && { exponent >. 0.0 && exponent <. 1.0 } {
+  case base <. 0. && fractional {
     True -> Error(Nil)
     False -> Ok(do_power(base, exponent))
   }
