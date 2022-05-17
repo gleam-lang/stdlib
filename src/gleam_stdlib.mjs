@@ -243,14 +243,10 @@ export function truncate(float) {
 }
 
 export function power(base, exponent) {
-  let value = Math.pow(base, exponent)
-  // A NaN will be returned if the base is negative and the exponent is 
-  // fractional (between 0 and 1).
-  if (isNaN(value)) {
-    return new Error(Nil);
-  } else {
-    return new Ok(value);
-  }
+  // It is checked in gleam that the base is non-negative and that the exponent is 
+  // not fractional (between 0 and 1). It can thus be assumed that valid input is
+  // passed to the Math.pow function and a NaN value will not be produced.
+  return Math.pow(base, exponent)
 }
 
 export function random_uniform() {
