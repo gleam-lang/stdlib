@@ -348,7 +348,7 @@ inspect(Any) when is_list(Any) ->
             lists:map(fun inspect/1, Any)
         ),
     "]"];
-inspect(Any) when is_tuple(Any) % Type constructors
+inspect(Any) when is_tuple(Any) % Record constructors
   andalso is_atom(element(1, Any))
   andalso element(1, Any) =/= false
   andalso element(1, Any) =/= true
@@ -359,7 +359,7 @@ inspect(Any) when is_tuple(Any) % Type constructors
         lists:join(<<", ">>,
             lists:map(fun inspect/1, ArgsList)
     ),
-    [(inspect(Atom)), "(", Args, ")"];
+    [inspect(Atom), "(", Args, ")"];
 inspect(Any) when is_tuple(Any) ->
     ["#(",
         lists:join(<<", ">>,
