@@ -25,13 +25,34 @@ pub fn uppercase_test() {
 }
 
 pub fn reverse_test() {
-  string.reverse("Gleam")
+  "Gleam"
+  |> string.reverse
   |> should.equal("maelG")
-}
 
-pub fn unicode_reverse_test() {
-  string.reverse("👍 OK")
+  " Gleam"
+  |> string.reverse
+  |> should.equal("maelG ")
+
+  "👍 OK"
+  |> string.reverse
   |> should.equal("KO 👍")
+
+  "👍"
+  |> string.reverse
+  |> should.equal("👍")
+
+  "ÅÄÖ"
+  |> string.reverse
+  |> should.equal("ÖÄÅ")
+
+  "👶🏿"
+  |> string.reverse
+  |> should.equal("👶🏿")
+
+  "👶🏿"
+  |> string.reverse
+  |> string.reverse
+  |> should.equal("👶🏿")
 }
 
 pub fn split_test() {
@@ -132,19 +153,19 @@ pub fn join_test() {
 
 pub fn trim_test() {
   "  hats  \n"
-  |> string.trim()
+  |> string.trim
   |> should.equal("hats")
 }
 
 pub fn trim_left_test() {
   "  hats  \n"
-  |> string.trim_left()
+  |> string.trim_left
   |> should.equal("hats  \n")
 }
 
 pub fn trim_right_test() {
   "  hats  \n"
-  |> string.trim_right()
+  |> string.trim_right
   |> should.equal("  hats")
 }
 
@@ -208,6 +229,10 @@ pub fn slice_test() {
   "gleam"
   |> string.slice(at_index: 2, length: -3)
   |> should.equal("")
+
+  "👶🏿"
+  |> string.slice(at_index: 0, length: 3)
+  |> should.equal("👶🏿")
 }
 
 pub fn crop_test() {
@@ -313,30 +338,53 @@ pub fn pad_right_test() {
 
 pub fn pop_grapheme_test() {
   "gleam"
-  |> string.pop_grapheme()
+  |> string.pop_grapheme
   |> should.equal(Ok(#("g", "leam")))
 
   "g"
-  |> string.pop_grapheme()
+  |> string.pop_grapheme
   |> should.equal(Ok(#("g", "")))
 
   ""
-  |> string.pop_grapheme()
+  |> string.pop_grapheme
   |> should.equal(Error(Nil))
 }
 
 pub fn to_graphemes_test() {
-  "abc"
-  |> string.to_graphemes()
-  |> should.equal(["a", "b", "c"])
+  ""
+  |> string.to_graphemes
+  |> should.equal([])
+
+  "\n\t\r\"\\"
+  |> string.to_graphemes
+  |> should.equal(["\n", "\t", "\r", "\"", "\\"])
 
   "a"
-  |> string.to_graphemes()
+  |> string.to_graphemes
   |> should.equal(["a"])
 
-  ""
-  |> string.to_graphemes()
-  |> should.equal([])
+  "abc"
+  |> string.to_graphemes
+  |> should.equal(["a", "b", "c"])
+
+  "🌷🎁💩😜👍🏳️‍🌈"
+  |> string.to_graphemes
+  |> should.equal(["🌷", "🎁", "💩", "😜", "👍", "🏳️‍🌈"])
+
+  "Ĺo͂řȩm̅"
+  |> string.to_graphemes
+  |> should.equal(["Ĺ", "o͂", "ř", "ȩ", "m̅"])
+
+  "뎌쉐"
+  |> string.to_graphemes
+  |> should.equal(["뎌", "쉐"])
+
+  "Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍A̴̵̜̰͔ͫ͗͢L̠ͨͧͩ͘G̴̻͈͍͔̹̑͗̎̅͛́Ǫ̵̹̻̝̳͂̌̌͘!͖̬̰̙̗̿̋ͥͥ̂ͣ̐́́͜͞"
+  |> string.to_graphemes
+  |> should.equal([
+    "Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍", "A̴̵̜̰͔ͫ͗͢", "L̠ͨͧͩ͘",
+    "G̴̻͈͍͔̹̑͗̎̅͛́", "Ǫ̵̹̻̝̳͂̌̌͘", "!͖̬̰̙̗̿̋ͥͥ̂ͣ̐́́͜͞",
+  ])
 }
 
 pub fn utf_codepoint_test() {
