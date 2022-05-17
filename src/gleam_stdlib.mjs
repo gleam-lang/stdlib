@@ -214,7 +214,7 @@ export function bit_string_to_string(bit_string) {
     let decoder = new TextDecoder("utf-8", { fatal: true });
     return new Ok(decoder.decode(bit_string.buffer));
   } catch (_error) {
-    return new Error(undefined);
+    return new Error(Nil);
   }
 }
 
@@ -243,7 +243,14 @@ export function truncate(float) {
 }
 
 export function power(base, exponent) {
-  return Math.pow(base, exponent);
+  let value = Math.pow(base, exponent)
+  // A NaN will be returned if the base is negative and the exponent is 
+  // fractional (between 0 and 1)
+  if (isNaN(NaN)) {
+    return new Error(Nil);
+  } else {
+    return new Ok(value);
+  }
 }
 
 export function random_uniform() {

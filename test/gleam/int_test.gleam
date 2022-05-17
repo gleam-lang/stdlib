@@ -257,19 +257,25 @@ pub fn is_odd_test() {
 
 pub fn power_test() {
   int.power(2, 2.0)
-  |> should.equal(4.0)
+  |> should.equal(Ok(4.0))
 
   int.power(-5, 3.0)
-  |> should.equal(-125.0)
+  |> should.equal(Ok(-125.0))
 
   int.power(10, 0.0)
-  |> should.equal(1.0)
+  |> should.equal(Ok(1.0))
 
   int.power(16, 0.5)
-  |> should.equal(4.0)
+  |> should.equal(Ok(4.0))
 
   int.power(2, -1.0)
-  |> should.equal(0.5)
+  |> should.equal(Ok(0.5))
+
+  // int.power(-1, 0.5) is equivalent to int.square_root(-1)
+  // and should return an error as an imaginary should otherwise be 
+  // returned 
+  int.power(-1, 0.5)
+  |> should.equal(Error(Nil))
 }
 
 pub fn square_root_test() {

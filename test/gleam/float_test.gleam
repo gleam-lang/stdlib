@@ -245,19 +245,28 @@ pub fn absolute_value_test() {
 
 pub fn power_test() {
   float.power(2.0, 2.0)
-  |> should.equal(4.0)
+  |> should.equal(Ok(4.0))
 
   float.power(-5.0, 3.0)
-  |> should.equal(-125.0)
+  |> should.equal(Ok(-125.0))
 
   float.power(10.5, 0.0)
-  |> should.equal(1.0)
+  |> should.equal(Ok(1.0))
 
   float.power(16.0, 0.5)
-  |> should.equal(4.0)
+  |> should.equal(Ok(4.0))
 
   float.power(2.0, -1.0)
-  |> should.equal(0.5)
+  |> should.equal(Ok(0.5))
+
+  float.power(2.0, -1.0)
+  |> should.equal(Ok(0.5))
+
+  // float.power(-1.0, 0.5) is equivalent to float.square_root(-1.0)
+  // and should return an error as an imaginary should otherwise be 
+  //returned 
+  float.power(-1.0, 0.5)
+  |> should.equal(Error(Nil))
 }
 
 pub fn square_root_test() {

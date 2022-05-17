@@ -39,7 +39,7 @@ pub fn absolute_value(x: Int) -> Int {
 /// 16.0
 /// ```
 ///
-pub fn power(base: Int, of exponent: Float) -> Float {
+pub fn power(base: Int, of exponent: Float) -> Result(Float, Nil) {
   base
   |> to_float()
   |> float.power(exponent)
