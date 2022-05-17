@@ -47,6 +47,22 @@ pub fn to_string_test() {
   -8.1
   |> float.to_string
   |> should.equal("-8.1")
+
+  -1.0
+  |> float.to_string
+  |> should.equal("-1.0")
+
+  0.0
+  |> float.to_string
+  |> should.equal("0.0")
+
+  1.0
+  |> float.to_string
+  |> should.equal("1.0")
+
+  9007199254740991.0
+  |> float.to_string
+  |> should.equal("9007199254740991.0")
 }
 
 pub fn clamp_test() {

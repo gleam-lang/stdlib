@@ -311,50 +311,6 @@ pub fn pad_right_test() {
   |> should.equal("121XYX")
 }
 
-pub fn pop_grapheme_test() {
-  "gleam"
-  |> string.pop_grapheme()
-  |> should.equal(Ok(#("g", "leam")))
-
-  "g"
-  |> string.pop_grapheme()
-  |> should.equal(Ok(#("g", "")))
-
-  ""
-  |> string.pop_grapheme()
-  |> should.equal(Error(Nil))
-}
-
-pub fn to_graphemes_test() {
-  "abc"
-  |> string.to_graphemes()
-  |> should.equal(["a", "b", "c"])
-
-  "a"
-  |> string.to_graphemes()
-  |> should.equal(["a"])
-
-  ""
-  |> string.to_graphemes()
-  |> should.equal([])
-}
-
-pub fn utf_codepoint_test() {
-  string.utf_codepoint(1114444)
-  |> should.be_error
-
-  string.utf_codepoint(65534)
-  |> should.be_error
-
-  string.utf_codepoint(55296)
-  |> should.be_error
-}
-
-pub fn bit_string_utf_codepoint_test() {
-  assert Ok(snake) = string.utf_codepoint(128013)
-  should.equal(<<snake:utf8_codepoint>>, <<"🐍":utf8>>)
-}
-
 pub fn to_option_test() {
   ""
   |> string.to_option

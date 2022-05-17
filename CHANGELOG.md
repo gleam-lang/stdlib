@@ -5,6 +5,7 @@
 - The `float` module gains the `divide` function.
 - The `int` module gains the `divide`, `power`, and `square_root` functions.
 - The `string` module gains the `first`, `last`, and `capitalise` functions.
+- Fixed a bug where `string_builder.reverse` would break utf8 on target JavaScript.
 
 ## v0.21.0 - 2022-04-24
 
