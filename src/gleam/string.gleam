@@ -823,3 +823,18 @@ pub fn capitalise(s: String) -> String {
     _ -> ""
   }
 }
+
+pub fn inspect(value: a) -> String {
+  do_inspect(value)
+  |> string_builder.to_string
+}
+
+if javascript {
+  external fn do_inspect(value: a) -> string_builder.StringBuilder =
+    "../gleam.mjs" "inspect"
+}
+
+if erlang {
+  external fn do_inspect(value: a) -> string_builder.StringBuilder =
+    "gleam_stdlib" "inspect"
+}

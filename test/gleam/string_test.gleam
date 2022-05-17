@@ -486,3 +486,284 @@ pub fn capitalise_test() {
   |> string.capitalise
   |> should.equal("る")
 }
+
+type InspectType(a, b) {
+  InspectTypeZero
+  InspectTypeOne(a)
+  InspectTypeTwo(a, b)
+}
+
+pub fn inspect_test() {
+  string.inspect(True)
+  |> should.equal("True")
+
+  string.inspect(False)
+  |> should.equal("False")
+
+  string.inspect([True, False])
+  |> should.equal("[True, False]")
+
+  string.inspect([False, False])
+  |> should.equal("[False, False]")
+
+  string.inspect([True, True])
+  |> should.equal("[True, True]")
+
+  string.inspect([Nil, Nil])
+  |> should.equal("[Nil, Nil]")
+
+  string.inspect(#(True, False))
+  |> should.equal("#(True, False)")
+
+  string.inspect(#(False, False))
+  |> should.equal("#(False, False)")
+
+  string.inspect(#(True, True))
+  |> should.equal("#(True, True)")
+
+  string.inspect(#(Nil, True))
+  |> should.equal("#(Nil, True)")
+
+  string.inspect(#(Nil, False))
+  |> should.equal("#(Nil, False)")
+
+  string.inspect(#(True, Nil))
+  |> should.equal("#(True, Nil)")
+
+  string.inspect(#(False, Nil))
+  |> should.equal("#(False, Nil)")
+
+  string.inspect(-1)
+  |> should.equal("-1")
+
+  string.inspect(0)
+  |> should.equal("0")
+
+  string.inspect(1)
+  |> should.equal("1")
+
+  string.inspect([])
+  |> should.equal("[]")
+
+  string.inspect([1])
+  |> should.equal("[1]")
+
+  string.inspect([1, 2])
+  |> should.equal("[1, 2]")
+
+  string.inspect([[1], [1]])
+  |> should.equal("[[1], [1]]")
+
+  string.inspect(-1.5)
+  |> should.equal("-1.5")
+
+  string.inspect(1.5)
+  |> should.equal("1.5")
+
+  string.inspect([1.5])
+  |> should.equal("[1.5]")
+
+  string.inspect("")
+  |> should.equal("\"\"")
+
+  string.inspect("1")
+  |> should.equal("\"1\"")
+
+  string.inspect("Hello Joe!")
+  |> should.equal("\"Hello Joe!\"")
+
+  string.inspect("Hello \"Manuel\"!")
+  |> should.equal("\"Hello \\\"Manuel\\\"!\"")
+
+  string.inspect("💜 Gleam")
+  |> should.equal("\"💜 Gleam\"")
+
+  string.inspect(["1"])
+  |> should.equal("[\"1\"]")
+
+  string.inspect(#())
+  |> should.equal("#()")
+
+  string.inspect(#(1))
+  |> should.equal("#(1)")
+
+  string.inspect(#("1"))
+  |> should.equal("#(\"1\")")
+
+  string.inspect(#(1.5))
+  |> should.equal("#(1.5)")
+
+  string.inspect([#(1, 2, 3), #(1, 2, 3)])
+  |> should.equal("[#(1, 2, 3), #(1, 2, 3)]")
+
+  string.inspect(#([1, 2, 3], "🌈", #(1, "1", True)))
+  |> should.equal("#([1, 2, 3], \"🌈\", #(1, \"1\", True))")
+
+  string.inspect(Nil)
+  |> should.equal("Nil")
+
+  string.inspect(Ok(1))
+  |> should.equal("Ok(1)")
+
+  string.inspect(Ok(True))
+  |> should.equal("Ok(True)")
+
+  string.inspect(Ok(False))
+  |> should.equal("Ok(False)")
+
+  string.inspect(Ok(Nil))
+  |> should.equal("Ok(Nil)")
+
+  string.inspect(Error(2))
+  |> should.equal("Error(2)")
+
+  string.inspect(Error(True))
+  |> should.equal("Error(True)")
+
+  string.inspect(Error(False))
+  |> should.equal("Error(False)")
+
+  string.inspect(Error(Nil))
+  |> should.equal("Error(Nil)")
+
+  string.inspect(InspectTypeZero)
+  |> should.equal("InspectTypeZero")
+
+  string.inspect(InspectTypeOne(1))
+  |> should.equal("InspectTypeOne(1)")
+
+  string.inspect(InspectTypeTwo(1, 2))
+  |> should.equal("InspectTypeTwo(1, 2)")
+
+  string.inspect(InspectTypeOne([1]))
+  |> should.equal("InspectTypeOne([1])")
+
+  string.inspect(InspectTypeOne("1"))
+  |> should.equal("InspectTypeOne(\"1\")")
+
+  string.inspect(InspectTypeOne(["1"]))
+  |> should.equal("InspectTypeOne([\"1\"])")
+
+  string.inspect(InspectTypeOne(#([1], "a")))
+  |> should.equal("InspectTypeOne(#([1], \"a\"))")
+
+  string.inspect(Ok)
+  |> should.equal("//fn(a) { ... }")
+
+  string.inspect(Error)
+  |> should.equal("//fn(a) { ... }")
+
+  string.inspect(fn() { Nil })
+  |> should.equal("//fn() { ... }")
+
+  string.inspect(fn(a) {
+    a
+    Nil
+  })
+  |> should.equal("//fn(a) { ... }")
+
+  string.inspect(fn(a, b) {
+    a
+    b
+    Nil
+  })
+  |> should.equal("//fn(a, b) { ... }")
+
+  string.inspect(fn(x, y) {
+    x
+    y
+    Nil
+  })
+  |> should.equal("//fn(a, b) { ... }")
+
+  string.inspect(fn(foo: Int, bar: String) -> Bool {
+    foo
+    bar
+    False
+  })
+  |> should.equal("//fn(a, b) { ... }")
+
+  string.inspect(#(InspectTypeOne, InspectTypeTwo))
+  |> should.equal("#(//fn(a) { ... }, //fn(a, b) { ... })")
+
+  string.inspect(InspectTypeOne(InspectTypeZero))
+  |> should.equal("InspectTypeOne(InspectTypeZero)")
+}
+
+if javascript {
+  pub fn target_inspect_test() {
+    // Due to Erlang's internal representation, on Erlang this will pass, instead:
+    // |> should.equal("InspectTypeZero(InspectTypeZero)")
+    //
+    string.inspect(#(InspectTypeZero, InspectTypeZero))
+    |> should.equal("#(InspectTypeZero, InspectTypeZero)")
+
+    // Due to JavaScript's `Number` type `Float`s without digits return as `Int`s.
+    //
+    string.inspect(-1.0)
+    |> should.equal("-1")
+
+    string.inspect(0.0)
+    |> should.equal("0")
+
+    string.inspect(1.0)
+    |> should.equal("1")
+
+    string.inspect([1.0])
+    |> should.equal("[1]")
+
+    string.inspect(#(1.0))
+    |> should.equal("#(1)")
+  }
+}
+
+if erlang {
+  import gleam/regex
+
+  external fn create_erlang_pid() -> String =
+    "erlang" "self"
+
+  external fn create_erlang_reference() -> String =
+    "erlang" "make_ref"
+
+  pub fn target_inspect_test() {
+    // Erlang's internal representation does not allow a correct differentiation
+    // |> should.equal("#(InspectTypeZero, InspectTypeZero)")
+    //
+    string.inspect(#(InspectTypeZero, InspectTypeZero))
+    |> should.equal("InspectTypeZero(InspectTypeZero)")
+
+    // Unlike JavaScript, Erlang correctly differentiates between 1 and 1.0
+    //
+    string.inspect(-1.0)
+    |> should.equal("-1.0")
+
+    string.inspect(0.0)
+    |> should.equal("0.0")
+
+    string.inspect(1.0)
+    |> should.equal("1.0")
+
+    string.inspect([1.0])
+    |> should.equal("[1.0]")
+
+    string.inspect(#(1.0))
+    |> should.equal("#(1.0)")
+
+    // Looks like `//erl(<0.83.0>)`
+    assert Ok(regular_expression) =
+      regex.from_string("^\\/\\/erl\\(<[0-9]+\\.[0-9]+\\.[0-9]+>\\)$")
+    string.inspect(create_erlang_pid())
+    |> regex.check(regular_expression, _)
+    |> should.equal(True)
+
+    // Looks like: `//erl(#Ref<0.1809744150.4035444737.100468>)`
+    assert Ok(regular_expression) =
+      regex.from_string(
+        "^\\/\\/erl\\(#Ref<[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+>\\)$",
+      )
+    string.inspect(create_erlang_reference())
+    |> regex.check(regular_expression, _)
+    |> should.equal(True)
+  }
+}
