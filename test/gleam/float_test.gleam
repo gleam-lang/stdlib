@@ -272,6 +272,11 @@ pub fn power_test() {
   float.power(-1.5, 1.5)
   |> should.equal(Error(Nil))
 
+  // float.power(0.0, -1.0) is equivalent to 1. /. 0 and is expected
+  // to be an error
+  float.power(0.0, -1.0)
+  |> should.equal(Error(Nil))
+
   // Check that a negative base and exponent is fine as long as the 
   // exponent is not fractional
   float.power(-2.0, -1.0)
