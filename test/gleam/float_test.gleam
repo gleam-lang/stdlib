@@ -367,3 +367,89 @@ pub fn divide_test() {
   float.divide(1.0, by: 0.0)
   |> should.equal(Error(Nil))
 }
+
+pub fn math_sin_test() {
+  todo
+}
+
+pub fn math_asin_test() {
+  todo
+}
+
+pub fn math_asinh_test() {
+  todo
+}
+
+pub fn math_cos_test() {
+  todo
+}
+
+pub fn math_acos_test() {
+  todo
+}
+
+pub fn math_cosh_test() {
+  todo
+}
+
+pub fn math_acosh_test() {
+  todo
+}
+
+pub fn math_tan_test() {
+  todo
+}
+
+pub fn math_atan_test() {
+  todo
+}
+
+pub fn math_tanh_test() {
+  todo
+}
+
+pub fn math_atan2_test() {
+  todo
+}
+
+pub fn math_exp_test() {
+  float.exp(0.0)
+  |> should.equal(1.0)
+
+  // Eulers number
+  float.exp(1.0)
+  |> should.equal(2.718281828459045)
+}
+
+pub fn math_log_test() {
+  float.log(1.0)
+  |> should.equal(Ok(0.0))
+
+  float.log(float.exp(1.0))
+  |> should.equal(Ok(1.0))
+
+  float.log(-1.0)
+  |> should.equal(Error(Nil))
+}
+
+pub fn math_log2_test() {
+  float.log2(1.0)
+  |> should.equal(Ok(0.0))
+
+  float.log2(2.0)
+  |> should.equal(Ok(1.0))
+
+  float.log2(-1.0)
+  |> should.equal(Error(Nil))
+}
+
+pub fn math_log10_test() {
+  float.log10(1.0)
+  |> should.equal(Ok(0.0))
+
+  float.log10(10.0)
+  |> should.equal(Ok(1.0))
+
+  float.log10(-1.0)
+  |> should.equal(Error(Nil))
+}
