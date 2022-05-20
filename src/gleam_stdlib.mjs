@@ -94,11 +94,9 @@ export function string_length(string) {
 }
 
 export function graphemes(string) {
-  let segment_iterator = new Intl.Segmenter("en-gb").segment(string)[Symbol.iterator]()
-  let graphemes = Array
-    .from(segment_iterator)
-    .map(((item) => item.segment ));
-  return List.fromArray(graphemes);
+  return List.fromArray(
+    Array.from(graphemes_iterator(string)).map(((item) => item.segment ))
+  );
 }
 
 function graphemes_iterator(string) {
