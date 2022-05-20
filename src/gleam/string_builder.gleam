@@ -220,27 +220,16 @@ if erlang {
 if javascript {
   import gleam/list
 
-  fn pop_grapheme(string: String) -> Result(#(String, String), Nil) {
-    do_pop_grapheme(string)
-  }
-
-  external fn do_pop_grapheme(string: String) -> Result(#(String, String), Nil) =
-    "../gleam_stdlib.mjs" "pop_grapheme"
-
-  fn graphemes(string: String) -> List(String) {
-    case pop_grapheme(string) {
-      Ok(#(grapheme, rest)) -> [grapheme, ..graphemes(rest)]
-      _ -> []
-    }
-  }
-
   fn do_reverse(builder: StringBuilder) -> StringBuilder {
     builder
     |> to_string
-    |> graphemes
+    |> do_to_graphemes
     |> list.reverse
     |> from_strings
   }
+
+  external fn do_to_graphemes(string: String) -> List(String) =
+    "../gleam_stdlib.mjs" "graphemes"
 }
 
 /// Splits a builder on a given pattern into a list of builders.

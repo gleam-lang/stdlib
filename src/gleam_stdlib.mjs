@@ -93,6 +93,14 @@ export function string_length(string) {
   }
 }
 
+export function graphemes(string) {
+	let segment_iterator = new Intl.Segmenter("en-gb").segment(string)[Symbol.iterator]()
+	let graphemes = Array
+		.from(segment_iterator)
+		.map(((item) => item.segment ));
+	return List.fromArray(graphemes);
+}
+
 function graphemes_iterator(string) {
   if (Intl && Intl.Segmenter) {
     return new Intl.Segmenter("en-gb").segment(string)[Symbol.iterator]();
