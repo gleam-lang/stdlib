@@ -388,44 +388,44 @@ pub fn last_test() {
 
 pub fn pop_grapheme_test() {
   "gleam"
-  |> utf.pop_grapheme()
+  |> string.pop_grapheme()
   |> should.equal(Ok(#("g", "leam")))
 
   "g"
-  |> utf.pop_grapheme()
+  |> string.pop_grapheme()
   |> should.equal(Ok(#("g", "")))
 
   ""
-  |> utf.pop_grapheme()
+  |> string.pop_grapheme()
   |> should.equal(Error(Nil))
 }
 
 pub fn to_graphemes_test() {
   "abc"
-  |> utf.graphemes()
+  |> string.to_graphemes()
   |> should.equal(["a", "b", "c"])
 
   "a"
-  |> utf.graphemes()
+  |> string.to_graphemes()
   |> should.equal(["a"])
 
   ""
-  |> utf.graphemes()
+  |> string.to_graphemes()
   |> should.equal([])
 }
 
 pub fn utf_codepoint_test() {
-  utf.codepoint(1114444)
+  string.utf_codepoint(1114444)
   |> should.be_error
 
-  utf.codepoint(65534)
+  string.utf_codepoint(65534)
   |> should.be_error
 
-  utf.codepoint(55296)
+  string.utf_codepoint(55296)
   |> should.be_error
 
   // bit string utf codepoint test
-  assert Ok(snake) = utf.codepoint(128013)
+  assert Ok(snake) = string.utf_codepoint(128013)
   <<snake:utf8_codepoint>>
   |> should.equal(<<"🐍":utf8>>)
 }
