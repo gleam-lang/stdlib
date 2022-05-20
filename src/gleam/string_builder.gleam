@@ -219,12 +219,25 @@ if erlang {
 
 if javascript {
   import gleam/list
-  import gleam/utf
+
+  external fn do_pop_grapheme(string: String) -> Result(#(String, String), Nil) =
+    "../gleam_stdlib.mjs" "pop_grapheme"
 
   fn do_reverse(builder: StringBuilder) -> StringBuilder {
+    let pop_grapheme = fn(string: String) -> Result(#(String, String), Nil) {
+      do_pop_grapheme(string)
+    }
+
+    let graphemes = fn(string: String) -> List(String) {
+      case pop_grapheme(string) {
+        Ok(#(grapheme, rest)) -> [grapheme, ..graphemes(rest)]
+        _ -> []
+      }
+    }
+
     builder
     |> to_string
-    |> utf.graphemes
+    |> graphemes
     |> list.reverse
     |> from_strings
   }
