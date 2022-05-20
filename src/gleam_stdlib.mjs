@@ -94,14 +94,8 @@ export function string_length(string) {
 }
 
 function graphemes_iterator(string) {
-  let env_locale = () => {
-    if (typeof navigator.language !== "undefined") {
-      return navigator.language;
-    }
-    return Intl.DateTimeFormat().resolvedOptions().locale;
-  };
   if (Intl && Intl.Segmenter) {
-    return new Intl.Segmenter(env_locale).segment(string)[Symbol.iterator]();
+    return new Intl.Segmenter().segment(string)[Symbol.iterator]();
   }
 }
 
