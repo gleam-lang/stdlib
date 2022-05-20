@@ -336,6 +336,73 @@ pub fn pad_right_test() {
   |> should.equal("121XYX")
 }
 
+pub fn pop_grapheme_test() {
+  "gleam"
+  |> string.pop_grapheme
+  |> should.equal(Ok(#("g", "leam")))
+
+  "g"
+  |> string.pop_grapheme
+  |> should.equal(Ok(#("g", "")))
+
+  ""
+  |> string.pop_grapheme
+  |> should.equal(Error(Nil))
+}
+
+pub fn to_graphemes_test() {
+  ""
+  |> string.to_graphemes
+  |> should.equal([])
+
+  "\n\t\r\"\\"
+  |> string.to_graphemes
+  |> should.equal(["\n", "\t", "\r", "\"", "\\"])
+
+  "a"
+  |> string.to_graphemes
+  |> should.equal(["a"])
+
+  "abc"
+  |> string.to_graphemes
+  |> should.equal(["a", "b", "c"])
+
+  "🌷🎁💩😜👍🏳️‍🌈"
+  |> string.to_graphemes
+  |> should.equal(["🌷", "🎁", "💩", "😜", "👍", "🏳️‍🌈"])
+
+  "Ĺo͂řȩm̅"
+  |> string.to_graphemes
+  |> should.equal(["Ĺ", "o͂", "ř", "ȩ", "m̅"])
+
+  "뎌쉐"
+  |> string.to_graphemes
+  |> should.equal(["뎌", "쉐"])
+
+  "Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍A̴̵̜̰͔ͫ͗͢L̠ͨͧͩ͘G̴̻͈͍͔̹̑͗̎̅͛́Ǫ̵̹̻̝̳͂̌̌͘!͖̬̰̙̗̿̋ͥͥ̂ͣ̐́́͜͞"
+  |> string.to_graphemes
+  |> should.equal([
+    "Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍", "A̴̵̜̰͔ͫ͗͢", "L̠ͨͧͩ͘",
+    "G̴̻͈͍͔̹̑͗̎̅͛́", "Ǫ̵̹̻̝̳͂̌̌͘", "!͖̬̰̙̗̿̋ͥͥ̂ͣ̐́́͜͞",
+  ])
+}
+
+pub fn utf_codepoint_test() {
+  string.utf_codepoint(1114444)
+  |> should.be_error
+
+  string.utf_codepoint(65534)
+  |> should.be_error
+
+  string.utf_codepoint(55296)
+  |> should.be_error
+}
+
+pub fn bit_string_utf_codepoint_test() {
+  assert Ok(snake) = string.utf_codepoint(128013)
+  should.equal(<<snake:utf8_codepoint>>, <<"🐍":utf8>>)
+}
+
 pub fn to_option_test() {
   ""
   |> string.to_option
@@ -384,50 +451,6 @@ pub fn last_test() {
   "a"
   |> string.last
   |> should.equal(Ok("a"))
-}
-
-pub fn pop_grapheme_test() {
-  "gleam"
-  |> string.pop_grapheme()
-  |> should.equal(Ok(#("g", "leam")))
-
-  "g"
-  |> string.pop_grapheme()
-  |> should.equal(Ok(#("g", "")))
-
-  ""
-  |> string.pop_grapheme()
-  |> should.equal(Error(Nil))
-}
-
-pub fn to_graphemes_test() {
-  "abc"
-  |> string.to_graphemes()
-  |> should.equal(["a", "b", "c"])
-
-  "a"
-  |> string.to_graphemes()
-  |> should.equal(["a"])
-
-  ""
-  |> string.to_graphemes()
-  |> should.equal([])
-}
-
-pub fn utf_codepoint_test() {
-  string.utf_codepoint(1114444)
-  |> should.be_error
-
-  string.utf_codepoint(65534)
-  |> should.be_error
-
-  string.utf_codepoint(55296)
-  |> should.be_error
-
-  // bit string utf codepoint test
-  assert Ok(snake) = string.utf_codepoint(128013)
-  <<snake:utf8_codepoint>>
-  |> should.equal(<<"🐍":utf8>>)
 }
 
 pub fn capitalise_test() {
