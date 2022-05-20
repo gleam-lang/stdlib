@@ -73,10 +73,25 @@ if javascript {
 /// ```
 ///
 pub fn reverse(string: String) -> String {
-  string
-  |> string_builder.from_string
-  |> string_builder.reverse
-  |> string_builder.to_string
+  do_reverse(string)
+}
+
+if erlang {
+  fn do_reverse(string: String) -> String {
+    string
+    |> string_builder.from_string
+    |> string_builder.reverse
+    |> string_builder.to_string
+  }
+}
+
+if javascript {
+  fn do_reverse(string: String) -> String {
+    string
+    |> to_graphemes
+    |> list.reverse
+    |> concat
+  }
 }
 
 /// Creates a new `String` by replacing all occurrences of a given substring.
@@ -233,8 +248,13 @@ if erlang {
 }
 
 if javascript {
-  external fn do_slice(String, Int, Int) -> String =
-    "../gleam_stdlib.mjs" "slice_string"
+  fn do_slice(string: String, idx: Int, len: Int) -> String {
+    string
+    |> to_graphemes
+    |> list.drop(idx)
+    |> list.take(len)
+    |> concat
+  }
 }
 
 /// Drops contents of the first `String` that occur before the second `String`.
@@ -793,13 +813,28 @@ pub fn last(s: String) -> Result(String, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// > capitalize("mamouna")
+/// > capitalise("mamouna")
 /// "Mamouna"
 /// ```
 ///
-pub fn capitalize(s: String) -> String {
+pub fn capitalise(s: String) -> String {
   case pop_grapheme(s) {
     Ok(#(first, rest)) -> append(to: uppercase(first), suffix: lowercase(rest))
     _ -> ""
   }
+}
+
+pub fn inspect(value: a) -> String {
+  do_inspect(value)
+  |> string_builder.to_string
+}
+
+if javascript {
+  external fn do_inspect(value: a) -> string_builder.StringBuilder =
+    "../gleam.mjs" "inspect"
+}
+
+if erlang {
+  external fn do_inspect(value: a) -> string_builder.StringBuilder =
+    "gleam_stdlib" "inspect"
 }
