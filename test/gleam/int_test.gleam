@@ -30,18 +30,6 @@ pub fn clamp_test() {
 }
 
 pub fn to_string_test() {
-  -1
-  |> int.to_string
-  |> should.equal("-1")
-
-  0
-  |> int.to_string
-  |> should.equal("0")
-
-  1
-  |> int.to_string
-  |> should.equal("1")
-
   123
   |> int.to_string
   |> should.equal("123")
@@ -53,10 +41,6 @@ pub fn to_string_test() {
   123
   |> int.to_string
   |> should.equal("123")
-
-  90071992547409900
-  |> int.to_string
-  |> should.equal("90071992547409900")
 }
 
 pub fn parse_test() {
