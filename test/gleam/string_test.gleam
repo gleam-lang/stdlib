@@ -338,9 +338,32 @@ pub fn to_graphemes_test() {
   |> string.to_graphemes()
   |> should.equal([])
 
+  "👨‍👩‍👦‍👦"
+  |> string.to_graphemes()
+  |> should.equal(["👨‍👩‍👦‍👦"])
+
+  "ごん゙に゙ぢば"
+  |> string.to_graphemes()
+  |> should.equal(["ご", "ん゙", "に゙", "ぢ", "ば"])
+
+  "パピプペポ"
+  |> string.to_graphemes()
+  |> should.equal(["パ", "ピ", "プ", "ペ", "ポ"])
+
+  // Passes on Erlang OTP 25RC3:
   "अनुच्छेद"
   |> string.to_graphemes()
   |> should.equal(["अ", "नु", "च्", "छे", "द"])
+
+  // Passes on NodeJS18:
+  "अनुच्छेद"
+  |> string.to_graphemes()
+  |> should.equal(["अ", "नु", "च्छे", "द"])
+
+  // Fails on Erlang/OTP25RC3 and NodeJS18, test ok?:
+  "ប៉ុស្ដិ៍"
+  |> string.to_graphemes()
+  |> should.equal(["ប៉ុ", "ស្ដិ៍"])
 }
 
 pub fn utf_codepoint_test() {
