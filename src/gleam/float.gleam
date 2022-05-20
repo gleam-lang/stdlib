@@ -433,12 +433,16 @@ pub fn divide(a: Float, by b: Float) -> Result(Float, Nil) {
 ///
 pub fn pi() -> Float {
   do_pi()
-  |> io.debug()
 }
 
 if erlang {
   external fn do_pi() -> Float =
     "math" "pi"
+}
+
+if javascript {
+  external fn do_pi() -> Float =
+    "../gleam_stdlib.mjs" "pi"
 }
 
 /// The sine function. The function takes a number (an angle in radians) as 
@@ -450,7 +454,7 @@ if erlang {
 /// > sin(0.0)
 /// 0.0
 ///
-/// > sin(0.5 * pi())
+/// > sin(0.5 *. pi())
 /// 1.0
 /// ```
 ///
@@ -466,11 +470,6 @@ if erlang {
 if javascript {
   external fn do_sin(Float) -> Float =
     "../gleam_stdlib.mjs" "sin"
-}
-
-if javascript {
-  external fn do_pi() -> Float =
-    "../gleam_stdlib.mjs" "pi"
 }
 
 /// The inverse sine function. The function takes a number in the range [-1, 1] 
@@ -548,7 +547,7 @@ if erlang {
 }
 
 if javascript {
-  external fn do_sinh(Float) -> Float =
+  external fn do_asinh(Float) -> Float =
     "../gleam_stdlib.mjs" "asinh"
 }
 
@@ -585,7 +584,7 @@ if javascript {
 /// ## Examples
 ///
 /// ```gleam
-/// > acos(0.0)
+/// > acos(1.0)
 /// Ok(0.0)
 ///
 /// > acos(1.1)
@@ -771,7 +770,7 @@ if erlang {
 
 if javascript {
   external fn do_atanh(Float) -> Float =
-    "../gleam_stdlib.mjs" "tanh"
+    "../gleam_stdlib.mjs" "atanh"
 }
 
 /// The inverse 2-argument tangent function. The function returns the angle
@@ -807,9 +806,6 @@ if javascript {
 /// ```gleam
 /// > exp(0.0)
 /// 1.0
-///
-/// > exp(1)
-/// 2.718281828459045
 /// ```
 ///
 pub fn exp(x: Float) -> Float {

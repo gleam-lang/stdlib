@@ -4,6 +4,7 @@ import gleam/iterator
 import gleam/list
 import gleam/order
 import gleam/should
+import gleam/io
 
 pub fn parse_test() {
   "1.23"
@@ -359,66 +360,202 @@ pub fn random_test() {
 pub fn divide_test() {
   float.divide(1.0, 1.0)
   |> should.equal(Ok(1.0))
+
   float.divide(1.0, 0.0)
   |> should.equal(Error(Nil))
 
   float.divide(0.0, by: 1.0)
   |> should.equal(Ok(0.0))
+
   float.divide(1.0, by: 0.0)
   |> should.equal(Error(Nil))
 }
 
 pub fn math_sin_test() {
-  todo
+  float.sin(0.0)
+  |> should.equal(0.0)
+
+  float.sin(0.5 *. float.pi())
+  |> should.equal(1.0)
+
+  float.sin(0.5)
+  |> float.loosely_compare(0.479425, float.power(-10., -6.))
+  |> should.equal(order.Eq)
 }
 
 pub fn math_asin_test() {
-  todo
+  float.asin(0.0)
+  |> should.equal(Ok(0.0))
+
+  assert Ok(result) = float.asin(0.5)
+  result
+  |> float.loosely_compare(0.523598, float.power(-10., -6.))
+  |> should.equal(order.Eq)
+
+  float.asin(1.1)
+  |> should.equal(Error(Nil))
+
+  float.asin(-1.1)
+  |> should.equal(Error(Nil))
+}
+
+pub fn math_sinh_test() {
+  float.sinh(0.0)
+  |> should.equal(0.0)
+
+  float.sinh(0.5)
+  |> float.loosely_compare(0.521095, float.power(-10., -6.))
+  |> should.equal(order.Eq)
 }
 
 pub fn math_asinh_test() {
-  todo
+  float.asinh(0.0)
+  |> should.equal(0.0)
+
+  float.asinh(0.5)
+  |> float.loosely_compare(0.481211, float.power(-10., -6.))
+  |> should.equal(order.Eq)
 }
 
 pub fn math_cos_test() {
-  todo
+  float.cos(0.0)
+  |> should.equal(1.0)
+
+  float.cos(float.pi())
+  |> should.equal(-1.0)
+
+  float.cos(0.5)
+  |> float.loosely_compare(0.877582, float.power(-10., -6.))
+  |> should.equal(order.Eq)
 }
 
 pub fn math_acos_test() {
-  todo
+  float.acos(1.0)
+  |> should.equal(Ok(0.0))
+
+  assert Ok(result) = float.acos(0.5)
+  result
+  |> float.loosely_compare(1.047197, float.power(-10., -6.))
+  |> should.equal(order.Eq)
+
+  float.acos(1.1)
+  |> should.equal(Error(Nil))
+
+  float.acos(-1.1)
+  |> should.equal(Error(Nil))
 }
 
 pub fn math_cosh_test() {
-  todo
+  float.cosh(0.0)
+  |> should.equal(1.0)
+
+  float.cosh(0.5)
+  |> float.loosely_compare(1.127625, float.power(-10., -6.))
+  |> should.equal(order.Eq)
 }
 
 pub fn math_acosh_test() {
-  todo
+  float.acosh(1.0)
+  |> should.equal(Ok(0.0))
+
+  assert Ok(result) = float.acosh(5.)
+  result
+  |> float.loosely_compare(2.292431, float.power(-10., -6.))
+  |> should.equal(order.Eq)
+
+  float.acosh(0.0)
+  |> should.equal(Error(Nil))
 }
 
 pub fn math_tan_test() {
-  todo
+  float.tan(0.0)
+  |> should.equal(0.0)
+
+  float.tan(0.5)
+  |> float.loosely_compare(0.546302, float.power(-10., -6.))
+  |> should.equal(order.Eq)
 }
 
 pub fn math_atan_test() {
-  todo
+  float.atan(0.0)
+  |> should.equal(0.0)
+
+  float.atan(0.5)
+  |> float.loosely_compare(0.463647, float.power(-10., -6.))
+  |> should.equal(order.Eq)
 }
 
 pub fn math_tanh_test() {
-  todo
+  float.tanh(0.0)
+  |> should.equal(0.0)
+
+  float.tanh(25.0)
+  |> should.equal(1.0)
+
+  float.tanh(-25.0)
+  |> should.equal(-1.0)
+
+  float.tanh(0.5)
+  |> float.loosely_compare(0.462117, float.power(-10., -6.))
+  |> should.equal(order.Eq)
+}
+
+pub fn math_atanh_test() {
+  float.atanh(0.0)
+  |> should.equal(Ok(0.0))
+
+  assert Ok(result) = float.atanh(0.5)
+  result
+  |> float.loosely_compare(0.549306, float.power(-10., -6.))
+  |> should.equal(order.Eq)
+
+  float.atanh(1.0)
+  |> should.equal(Error(Nil))
+
+  float.atanh(-1.0)
+  |> should.equal(Error(Nil))
 }
 
 pub fn math_atan2_test() {
-  todo
+  float.atan2(0.0, 0.0)
+  |> should.equal(0.0)
+
+  float.atan2(0.0, 1.0)
+  |> should.equal(0.0)
+
+  // Check identity atan2(y=1.0, x=0.5) == atan(y / x) 
+  // for any x > 0 and any y
+  float.atan2(1.0, 0.5)
+  |> should.equal(float.atan(1.0 /. 0.5))
+
+  // Check identity atan2(y=2.0, x=-1.5) == pi + atan(y / x) 
+  // for any x < 0 and y >= 0
+  float.atan2(2.0, -1.5)
+  |> should.equal(float.pi() +. float.atan(2.0 /. -1.5))
+
+  // Check identity atan2(y=-2.0, x=-1.5) == atan(y / x) - pi  
+  // for any x < 0 and y < 0
+  float.atan2(-2.0, -1.5)
+  |> should.equal(float.atan(-2.0 /. -1.5) -. float.pi())
+
+  // Check identity atan2(y=1.5, x=0.0) == pi/2 
+  // for x = 0 and any y > 0
+  float.atan2(1.5, 0.0)
+  |> should.equal(float.pi() /. 2.)
+
+  // Check identity atan2(y=-1.5, x=0.0) == -pi/2 
+  // for x = 0 and any y < 0
+  float.atan2(-1.5, 0.0)
+  |> should.equal(-1. *. float.pi() /. 2.)
 }
 
 pub fn math_exp_test() {
   float.exp(0.0)
   |> should.equal(1.0)
 
-  // Eulers number
-  float.exp(1.0)
-  |> should.equal(2.718281828459045)
+  float.exp(0.5)
+  |> float.loosely_compare(1.648721, float.power(-10., -6.))
+  |> should.equal(order.Eq)
 }
 
 pub fn math_log_test() {
@@ -427,6 +564,11 @@ pub fn math_log_test() {
 
   float.log(float.exp(1.0))
   |> should.equal(Ok(1.0))
+
+  assert Ok(result) = float.log(0.5)
+  result
+  |> float.loosely_compare(-0.693147, float.power(-10., -6.))
+  |> should.equal(order.Eq)
 
   float.log(-1.0)
   |> should.equal(Error(Nil))
@@ -439,6 +581,11 @@ pub fn math_log2_test() {
   float.log2(2.0)
   |> should.equal(Ok(1.0))
 
+  assert Ok(result) = float.log2(5.)
+  result
+  |> float.loosely_compare(2.321928, float.power(-10., -6.))
+  |> should.equal(order.Eq)
+
   float.log2(-1.0)
   |> should.equal(Error(Nil))
 }
@@ -449,6 +596,11 @@ pub fn math_log10_test() {
 
   float.log10(10.0)
   |> should.equal(Ok(1.0))
+
+  assert Ok(result) = float.log10(50.)
+  result
+  |> float.loosely_compare(1.698970, float.power(-10., -6.))
+  |> should.equal(order.Eq)
 
   float.log10(-1.0)
   |> should.equal(Error(Nil))
