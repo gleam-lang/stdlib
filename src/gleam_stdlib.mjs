@@ -608,12 +608,13 @@ export function unix_timestamp() {
 // Returns an locale in the form of:
 // "ab_CD", "ab-CD", "ab_cd", or "ab-cd".
 export function get_locale() {
-	let locale = (() => {
+	let locale = system_locale = (() => {
 		if (typeof navigator !== "undefined") {
 			return navigator.language.substring(0, 5);
 		} else {
 			return Intl.DateTimeFormat().resolvedOptions().locale.substring(0, 5);
 		}
 	})();
-	return [locale, locale];
+	// If NodeJS ever return encoding such as "en_US.UTF-8", this should be in systemlocale
+	return [locale, system_locale];
 }
