@@ -2,6 +2,8 @@ import gleam/should
 import gleam/runtime
 import gleam/int
 import gleam/regex
+import gleam/string
+import gleam/io
 
 pub fn unix_timestamp_test() {
   let unix_timestamp = runtime.unix_timestamp()
@@ -21,6 +23,9 @@ pub fn unix_timestamp_test() {
 
 pub fn get_locale_test() {
   let locale = runtime.get_locale()
+
+  string.inspect(locale)
+  |> io.debug()
 
   // Implementation must return a lower case language code
   let language = locale.0
