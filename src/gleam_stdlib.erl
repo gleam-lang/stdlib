@@ -10,7 +10,7 @@
          percent_encode/1, percent_decode/1, regex_check/2, regex_split/2,
          base_decode64/1, parse_query/1, bit_string_concat/1, size_of_tuple/1,
          decode_tuple/1, tuple_get/2, classify_dynamic/1, print/1, println/1,
-         inspect/1]).
+         inspect/1, unix_timestamp/0, locale/0]).
 
 %% Taken from OTP's uri_string module
 -define(DEC2HEX(X),
@@ -375,3 +375,18 @@ inspect(Any) when is_function(Any) ->
     ["//fn(", Args, ") { ... }"];
 inspect(Any) ->
     ["//erl(", io_lib:format("~p", [Any]), ")"].
+
+unix_timestamp() ->
+    {MegaSecs, Secs, _MicroSecs} = erlang:timestamp(),
+    MegaSecs * 1000000 + Secs.
+
+% Returns an locale in the form of:
+% "ab_CD", "ab-CD", "ab_cd", or "ab-cd".
+locale() ->
+    string:slice(
+        os:getenv(
+            "LANGUAGE",
+            os:getenv("LC_ALL", os:getenv("LANG", "C"))
+        ),
+        0, 5
+    ).

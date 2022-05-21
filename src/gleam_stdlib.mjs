@@ -599,3 +599,17 @@ export function decode_field(value, name) {
     return error();
   }
 }
+
+// From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#get_the_number_of_seconds_since_the_ecmascript_epoch
+export function unix_timestamp() {
+  return Math.floor(Date.now() / 1000);
+}
+
+// Returns an locale in the form of:
+// "ab_CD", "ab-CD", "ab_cd", or "ab-cd".
+export function locale() {
+  if (typeof navigator !== "undefined") {
+    return navigator.language.substring(0, 5);
+  }
+  return Intl.DateTimeFormat().resolvedOptions().locale.substring(0, 5);
+}

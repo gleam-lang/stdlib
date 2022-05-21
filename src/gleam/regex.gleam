@@ -41,12 +41,12 @@ pub type Options {
 /// ```gleam
 /// > let options = Options(case_insensitive: False, multi_line: True)
 /// > assert Ok(re) = compile("^[0-9]", with: options)
-/// > match(re, "abc\n123")
+/// > check(re, "abc\n123")
 /// True
 ///
 /// > let options = Options(case_insensitive: True, multi_line: False)
 /// > assert Ok(re) = compile("[A-Z]", with: options)
-/// > match(re, "abc123")
+/// > check(re, "abc123")
 /// True
 /// ```
 ///
@@ -73,10 +73,10 @@ if javascript {
 ///
 /// ```gleam
 /// > assert Ok(re) = from_string("[0-9]")
-/// > match(re, "abc123")
+/// > check(re, "abc123")
 /// True
 ///
-/// > match(re, "abcxyz")
+/// > check(re, "abcxyz")
 /// False
 ///
 /// > from_string("[0-9")
