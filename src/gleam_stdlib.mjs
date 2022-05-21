@@ -607,7 +607,7 @@ export function unix_timestamp() {
 
 // Returns an locale in the form of:
 // "ab_CD", "ab-CD", "ab_cd", or "ab-cd".
-export function locale() {
+export function get_locale() {
   if (typeof navigator !== "undefined") {
     return navigator.language.substring(0, 5);
   }

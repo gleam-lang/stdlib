@@ -10,7 +10,7 @@
          percent_encode/1, percent_decode/1, regex_check/2, regex_split/2,
          base_decode64/1, parse_query/1, bit_string_concat/1, size_of_tuple/1,
          decode_tuple/1, tuple_get/2, classify_dynamic/1, print/1, println/1,
-         inspect/1, unix_timestamp/0, locale/0]).
+         inspect/1, unix_timestamp/0, get_locale/0]).
 
 %% Taken from OTP's uri_string module
 -define(DEC2HEX(X),
@@ -382,7 +382,7 @@ unix_timestamp() ->
 
 % Returns an locale in the form of:
 % "ab_CD", "ab-CD", "ab_cd", or "ab-cd".
-locale() ->
+get_locale() ->
     string:slice(
         os:getenv(
             "LANGUAGE",

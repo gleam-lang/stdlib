@@ -3,7 +3,7 @@ import gleam/runtime
 import gleam/int
 import gleam/regex
 
-pub fn do_unix_timestamp_test() {
+pub fn unix_timestamp_test() {
   let unix_timestamp = runtime.unix_timestamp()
 
   // Implementation must return an integer
@@ -19,8 +19,8 @@ pub fn do_unix_timestamp_test() {
   |> should.be_true
 }
 
-pub fn do_locale_test() {
-  let locale = runtime.locale()
+pub fn get_locale_test() {
+  let locale = runtime.get_locale()
 
   // Implementation must return a lower case language code
   let language = locale.0
