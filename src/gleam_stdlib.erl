@@ -387,7 +387,7 @@ get_locale() ->
         os:getenv("LC_ALL", os:getenv("LANG", "C"))
     ),
     case string:uppercase(string:slice(Locale, 0, 2)) of
-        "C" -> {"en_US", Locale};
-        "C." -> {"en_US", Locale};
+        "C" -> {"en_GB", Locale};
+        "C." -> {"en_GB", Locale};
         _ -> {string:slice(Locale, 0, 5), Locale}
     end.
