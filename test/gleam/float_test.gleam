@@ -372,6 +372,8 @@ pub fn divide_test() {
 }
 
 pub fn math_sin_test() {
+  // Check that the function agrees, at some arbitrary input 
+  // points, with known function values
   float.sin(0.0)
   |> should.equal(0.0)
 
@@ -384,6 +386,8 @@ pub fn math_sin_test() {
 }
 
 pub fn math_asin_test() {
+  // Check that the function agrees, at some arbitrary input 
+  // points, with known function values
   float.asin(0.0)
   |> should.equal(Ok(0.0))
 
@@ -392,6 +396,8 @@ pub fn math_asin_test() {
   |> float.loosely_compare(0.523598, float.power(-10., -6.))
   |> should.equal(order.Eq)
 
+  // Check that we get an error when the function is evaluated
+  // outside its domain 
   float.asin(1.1)
   |> should.equal(Error(Nil))
 
@@ -400,15 +406,25 @@ pub fn math_asin_test() {
 }
 
 pub fn math_sinh_test() {
+  // Check that the function agrees, at some arbitrary input 
+  // points, with known function values
   float.sinh(0.0)
-  |> should.equal(0.0)
+  |> should.equal(Ok(0.0))
 
-  float.sinh(0.5)
+  assert Ok(result) = float.sinh(0.5)
+  result
   |> float.loosely_compare(0.521095, float.power(-10., -6.))
   |> should.equal(order.Eq)
+
+  // Check that we get an (overflow) error when given an input
+  // value that will result in a too large output value 
+  float.sinh(1000.0)
+  |> should.equal(Error(Nil))
 }
 
 pub fn math_asinh_test() {
+  // Check that the function agrees, at some arbitrary input 
+  // points, with known function values
   float.asinh(0.0)
   |> should.equal(0.0)
 
@@ -418,6 +434,8 @@ pub fn math_asinh_test() {
 }
 
 pub fn math_cos_test() {
+  // Check that the function agrees, at some arbitrary input 
+  // points, with known function values
   float.cos(0.0)
   |> should.equal(1.0)
 
@@ -430,6 +448,8 @@ pub fn math_cos_test() {
 }
 
 pub fn math_acos_test() {
+  // Check that the function agrees, at some arbitrary input 
+  // points, with known function values
   float.acos(1.0)
   |> should.equal(Ok(0.0))
 
@@ -438,6 +458,8 @@ pub fn math_acos_test() {
   |> float.loosely_compare(1.047197, float.power(-10., -6.))
   |> should.equal(order.Eq)
 
+  // Check that we get an error when the function is evaluated
+  // outside its domain 
   float.acos(1.1)
   |> should.equal(Error(Nil))
 
@@ -446,15 +468,25 @@ pub fn math_acos_test() {
 }
 
 pub fn math_cosh_test() {
+  // Check that the function agrees, at some arbitrary input 
+  // points, with known function values
   float.cosh(0.0)
-  |> should.equal(1.0)
+  |> should.equal(Ok(1.0))
 
-  float.cosh(0.5)
+  assert Ok(result) = float.cosh(0.5)
+  result
   |> float.loosely_compare(1.127625, float.power(-10., -6.))
   |> should.equal(order.Eq)
+
+  // Check that we get an (overflow) error when given an input
+  // value that will result in a too large output value 
+  float.cosh(1000.0)
+  |> should.equal(Error(Nil))
 }
 
 pub fn math_acosh_test() {
+  // Check that the function agrees, at some arbitrary input 
+  // points, with known function values
   float.acosh(1.0)
   |> should.equal(Ok(0.0))
 
@@ -463,11 +495,15 @@ pub fn math_acosh_test() {
   |> float.loosely_compare(2.292431, float.power(-10., -6.))
   |> should.equal(order.Eq)
 
+  // Check that we get an error when the function is evaluated
+  // outside its domain 
   float.acosh(0.0)
   |> should.equal(Error(Nil))
 }
 
 pub fn math_tan_test() {
+  // Check that the function agrees, at some arbitrary input 
+  // points, with known function values
   float.tan(0.0)
   |> should.equal(0.0)
 
@@ -477,6 +513,8 @@ pub fn math_tan_test() {
 }
 
 pub fn math_atan_test() {
+  // Check that the function agrees, at some arbitrary input 
+  // points, with known function values
   float.atan(0.0)
   |> should.equal(0.0)
 
@@ -486,6 +524,8 @@ pub fn math_atan_test() {
 }
 
 pub fn math_tanh_test() {
+  // Check that the function agrees, at some arbitrary input 
+  // points, with known function values
   float.tanh(0.0)
   |> should.equal(0.0)
 
@@ -501,6 +541,8 @@ pub fn math_tanh_test() {
 }
 
 pub fn math_atanh_test() {
+  // Check that the function agrees, at some arbitrary input 
+  // points, with known function values
   float.atanh(0.0)
   |> should.equal(Ok(0.0))
 
@@ -509,72 +551,92 @@ pub fn math_atanh_test() {
   |> float.loosely_compare(0.549306, float.power(-10., -6.))
   |> should.equal(order.Eq)
 
+  // Check that we get an error when the function is evaluated
+  // outside its domain 
   float.atanh(1.0)
   |> should.equal(Error(Nil))
 
-  float.atanh(-1.0)
+  float.atanh(2.0)
+  |> should.equal(Error(Nil))
+
+  float.atanh(1.0)
+  |> should.equal(Error(Nil))
+
+  float.atanh(-2.0)
   |> should.equal(Error(Nil))
 }
 
 pub fn math_atan2_test() {
+  // Check that the function agrees, at some arbitrary input 
+  // points, with known function values
   float.atan2(0.0, 0.0)
   |> should.equal(0.0)
-
   float.atan2(0.0, 1.0)
   |> should.equal(0.0)
 
-  // Check identity atan2(y=1.0, x=0.5) == atan(y / x) 
-  // for any x > 0 and any y
+  // Check atan2(y=1.0, x=0.5)
+  // Should be equal to atan(y / x) for any x > 0 and any y
   float.atan2(1.0, 0.5)
   |> should.equal(float.atan(1.0 /. 0.5))
 
-  // Check identity atan2(y=2.0, x=-1.5) == pi + atan(y / x) 
-  // for any x < 0 and y >= 0
+  // Check atan2(y=2.0, x=-1.5) 
+  // Should be equal to pi + atan(y / x) for any x < 0 and y >= 0
   float.atan2(2.0, -1.5)
   |> should.equal(float.pi() +. float.atan(2.0 /. -1.5))
 
-  // Check identity atan2(y=-2.0, x=-1.5) == atan(y / x) - pi  
-  // for any x < 0 and y < 0
+  // Check atan2(y=-2.0, x=-1.5)
+  // Should be equal to atan(y / x) - pi for any x < 0 and y < 0
   float.atan2(-2.0, -1.5)
   |> should.equal(float.atan(-2.0 /. -1.5) -. float.pi())
 
-  // Check identity atan2(y=1.5, x=0.0) == pi/2 
-  // for x = 0 and any y > 0
+  // Check atan2(y=1.5, x=0.0) 
+  // Should be equal to pi/2 for x = 0 and any y > 0
   float.atan2(1.5, 0.0)
   |> should.equal(float.pi() /. 2.)
 
-  // Check identity atan2(y=-1.5, x=0.0) == -pi/2 
-  // for x = 0 and any y < 0
+  // Check atan2(y=-1.5, x=0.0)
+  // Should be equal to -pi/2 for x = 0 and any y < 0
   float.atan2(-1.5, 0.0)
   |> should.equal(-1. *. float.pi() /. 2.)
 }
 
 pub fn math_exp_test() {
+  // Check that the function agrees, at some arbitrary input 
+  // points, with known function values
   float.exp(0.0)
-  |> should.equal(1.0)
+  |> should.equal(Ok(1.0))
 
-  float.exp(0.5)
+  assert Ok(result) = float.exp(0.5)
+  result
   |> float.loosely_compare(1.648721, float.power(-10., -6.))
   |> should.equal(order.Eq)
+
+  // Check that we get an (overflow) error when given an input
+  // value that will result in a too large output value 
+  float.exp(1000.0)
+  |> should.equal(Error(Nil))
 }
 
 pub fn math_log_test() {
+  // Check that the function agrees, at some arbitrary input 
+  // points, with known function values
   float.log(1.0)
   |> should.equal(Ok(0.0))
-
-  float.log(float.exp(1.0))
-  |> should.equal(Ok(1.0))
 
   assert Ok(result) = float.log(0.5)
   result
   |> float.loosely_compare(-0.693147, float.power(-10., -6.))
   |> should.equal(order.Eq)
 
+  // Check that we get an error when the function is evaluated
+  // outside its domain 
   float.log(-1.0)
   |> should.equal(Error(Nil))
 }
 
 pub fn math_log2_test() {
+  // Check that the function agrees, at some arbitrary input 
+  // points, with known function values
   float.log2(1.0)
   |> should.equal(Ok(0.0))
 
@@ -586,11 +648,15 @@ pub fn math_log2_test() {
   |> float.loosely_compare(2.321928, float.power(-10., -6.))
   |> should.equal(order.Eq)
 
+  // Check that we get an error when the function is evaluated
+  // outside its domain 
   float.log2(-1.0)
   |> should.equal(Error(Nil))
 }
 
 pub fn math_log10_test() {
+  // Check that the function agrees, at some arbitrary input 
+  // points, with known function values
   float.log10(1.0)
   |> should.equal(Ok(0.0))
 
@@ -602,6 +668,8 @@ pub fn math_log10_test() {
   |> float.loosely_compare(1.698970, float.power(-10., -6.))
   |> should.equal(order.Eq)
 
+  // Check that we get an error when the function is evaluated
+  // outside its domain 
   float.log10(-1.0)
   |> should.equal(Error(Nil))
 }

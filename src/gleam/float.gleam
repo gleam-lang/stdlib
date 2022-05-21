@@ -446,7 +446,7 @@ if javascript {
 }
 
 /// The sine function. The function takes a number (an angle in radians) as 
-/// input and returns a numeric value between -1 and 1.
+/// input and returns a numeric value in the range [-1, 1].
 ///
 /// ## Examples
 ///
@@ -473,7 +473,8 @@ if javascript {
 }
 
 /// The inverse sine function. The function takes a number in the range [-1, 1] 
-/// as input and returns a numeric value (an angle in radians).
+/// as input and returns a numeric value (an angle in radians). If the input
+/// value is outside the domain of the function an error is returned.
 ///
 /// ## Examples
 ///
@@ -489,46 +490,49 @@ if javascript {
 /// ```
 ///
 pub fn asin(x: Float) -> Result(Float, Nil) {
-  case x >=. -1.0 && x <=. 1.0 {
-    True -> Ok(do_asin(x))
-    False -> Error(Nil)
-  }
+  do_asin(x)
 }
 
 if erlang {
-  external fn do_asin(Float) -> Float =
-    "math" "asin"
+  external fn do_asin(Float) -> Result(Float, Nil) =
+    "gleam_stdlib" "asin"
 }
 
 if javascript {
-  external fn do_asin(Float) -> Float =
+  external fn do_asin(Float) -> Result(Float, Nil) =
     "../gleam_stdlib.mjs" "asin"
 }
 
-/// The hyperbolic sine function.
+/// The hyperbolic sine function. The function takes a number (an angle in 
+/// radians) as input and returns a numeric value. If the input value is too
+/// large an overflow error might occur and an error is returned.
 ///
 /// ## Examples
 ///
 /// ```gleam
 /// > sinh(0.0)
-/// 0.0
+/// Ok(0.0)
+///
+/// > sinh(1000.0)
+/// Error(Nil)
 /// ```
 ///
-pub fn sinh(x: Float) -> Float {
+pub fn sinh(x: Float) -> Result(Float, Nil) {
   do_sinh(x)
 }
 
 if erlang {
-  external fn do_sinh(Float) -> Float =
-    "math" "sinh"
+  external fn do_sinh(Float) -> Result(Float, Nil) =
+    "gleam_stdlib" "sinh"
 }
 
 if javascript {
-  external fn do_sinh(Float) -> Float =
+  external fn do_sinh(Float) -> Result(Float, Nil) =
     "../gleam_stdlib.mjs" "sinh"
 }
 
-/// The inverse hyperbolic sine function.
+/// The inverse hyperbolic sine function. The function takes a number as input 
+/// and returns a numeric value (an angle in radians).
 ///
 /// ## Examples
 ///
@@ -579,7 +583,8 @@ if javascript {
 }
 
 /// The inverse cosine function. The function takes a number in the range [-1, 1] 
-/// as input and returns a numeric value (an angle in radians).
+/// as input and returns a numeric value (an angle in radians). If the input
+/// value is outside the domain of the function an error is returned.
 ///
 /// ## Examples
 ///
@@ -595,47 +600,50 @@ if javascript {
 /// ```
 ///
 pub fn acos(x: Float) -> Result(Float, Nil) {
-  case x >=. -1.0 && x <=. 1.0 {
-    True -> Ok(do_acos(x))
-    False -> Error(Nil)
-  }
+  do_acos(x)
 }
 
 if erlang {
-  external fn do_acos(Float) -> Float =
-    "math" "acos"
+  external fn do_acos(Float) -> Result(Float, Nil) =
+    "gleam_stdlib" "acos"
 }
 
 if javascript {
-  external fn do_acos(Float) -> Float =
+  external fn do_acos(Float) -> Result(Float, Nil) =
     "../gleam_stdlib.mjs" "acos"
 }
 
-/// The hyperbolic cosine function.
+/// The hyperbolic cosine function. The function takes a number (an angle in 
+/// radians) as input and returns a numeric value. If the input value is too
+/// large an overflow error might occur and an error is returned.
 ///
 /// ## Examples
 ///
 /// ```gleam
 /// > cosh(0.0)
-/// 1.0
+/// Ok(1.0)
+///
+/// > cosh(1000.0)
+/// Error(Nil)
 /// ```
 ///
-pub fn cosh(x: Float) -> Float {
+pub fn cosh(x: Float) -> Result(Float, Nil) {
   do_cosh(x)
 }
 
 if erlang {
-  external fn do_cosh(Float) -> Float =
-    "math" "cosh"
+  external fn do_cosh(Float) -> Result(Float, Nil) =
+    "gleam_stdlib" "cosh"
 }
 
 if javascript {
-  external fn do_cosh(Float) -> Float =
+  external fn do_cosh(Float) -> Result(Float, Nil) =
     "../gleam_stdlib.mjs" "cosh"
 }
 
 /// The inverse hyperbolic cosine function. The function takes a number 
-/// >= 1 as input and returns a numeric value >= 0.
+/// >= 1 as input and returns a numeric value >= 0. If the input value is 
+/// outside the domain of the function an error is returned.
 ///
 /// ## Examples
 ///
@@ -648,19 +656,16 @@ if javascript {
 /// ```
 ///
 pub fn acosh(x: Float) -> Result(Float, Nil) {
-  case x >=. 1.0 {
-    True -> Ok(do_acosh(x))
-    False -> Error(Nil)
-  }
+  do_acosh(x)
 }
 
 if erlang {
-  external fn do_acosh(Float) -> Float =
-    "math" "acosh"
+  external fn do_acosh(Float) -> Result(Float, Nil) =
+    "gleam_stdlib" "acosh"
 }
 
 if javascript {
-  external fn do_acosh(Float) -> Float =
+  external fn do_acosh(Float) -> Result(Float, Nil) =
     "../gleam_stdlib.mjs" "acosh"
 }
 
@@ -712,7 +717,8 @@ if javascript {
     "../gleam_stdlib.mjs" "atan"
 }
 
-/// The hyperbolic tangent function.
+/// The hyperbolic tangent function. The function takes a number (an angle in 
+/// radians) as input and returns a numeric value in the range [-1, 1].
 ///
 /// ## Examples
 ///
@@ -741,7 +747,9 @@ if javascript {
     "../gleam_stdlib.mjs" "tanh"
 }
 
-/// The inverse hyperbolic tangent function.
+/// The inverse hyperbolic tangent function. The function takes a number in the
+/// range (-1, 1) as input and returns a numeric value. If the input value is 
+/// outside the domain of the function an error is returned.
 ///
 /// ## Examples
 ///
@@ -757,19 +765,16 @@ if javascript {
 /// ```
 ///
 pub fn atanh(x: Float) -> Result(Float, Nil) {
-  case x >. -1. && x <. 1. {
-    True -> Ok(do_atanh(x))
-    False -> Error(Nil)
-  }
+  do_atanh(x)
 }
 
 if erlang {
-  external fn do_atanh(Float) -> Float =
-    "math" "atanh"
+  external fn do_atanh(Float) -> Result(Float, Nil) =
+    "gleam_stdlib" "atanh"
 }
 
 if javascript {
-  external fn do_atanh(Float) -> Float =
+  external fn do_atanh(Float) -> Result(Float, Nil) =
     "../gleam_stdlib.mjs" "atanh"
 }
 
@@ -799,30 +804,36 @@ if javascript {
     "../gleam_stdlib.mjs" "atan2"
 }
 
-/// The exponential function.
+/// The exponential function. If the input value is too large an overflow error
+/// might occur and an error is returned.
 ///
 /// ## Examples
 ///
 /// ```gleam
 /// > exp(0.0)
-/// 1.0
+/// Ok(1.0)
+///
+/// > exp(1000.0)
+/// Error(Nil)
 /// ```
 ///
-pub fn exp(x: Float) -> Float {
+pub fn exp(x: Float) -> Result(Float, Nil) {
   do_exp(x)
 }
 
 if erlang {
-  external fn do_exp(Float) -> Float =
-    "math" "exp"
+  external fn do_exp(Float) -> Result(Float, Nil) =
+    "gleam_stdlib" "exp"
 }
 
 if javascript {
-  external fn do_exp(Float) -> Float =
+  external fn do_exp(Float) -> Result(Float, Nil) =
     "../gleam_stdlib.mjs" "exp"
 }
 
-/// The natural logarithm function.
+/// The natural logarithm function. The function takes a number > 0 as input and
+/// returns a numeric value. If the input value is outside the domain of the 
+/// function an error is returned.
 ///
 /// ## Examples
 ///
@@ -830,31 +841,27 @@ if javascript {
 /// > log(1.0)
 /// Ok(0.0)
 ///
-/// > log(exp(1.0))
-/// Ok(1.0)
-///
 /// > log(-1.0)
 /// Error(Nil)
 /// ```
 ///
 pub fn log(x: Float) -> Result(Float, Nil) {
-  case x >. 0. {
-    True -> Ok(do_log(x))
-    False -> Error(Nil)
-  }
+  do_log(x)
 }
 
 if erlang {
-  external fn do_log(Float) -> Float =
-    "math" "log"
+  external fn do_log(Float) -> Result(Float, Nil) =
+    "gleam_stdlib" "log"
 }
 
 if javascript {
-  external fn do_log(Float) -> Float =
+  external fn do_log(Float) -> Result(Float, Nil) =
     "../gleam_stdlib.mjs" "log"
 }
 
-/// The base-2 logarithm function. 
+/// The base-2 logarithm function. The function takes a number > 0 as input and
+/// returns a numeric value. If the input value is outside the domain of the 
+/// function an error is returned.
 ///
 /// ## Examples
 ///
@@ -870,23 +877,22 @@ if javascript {
 /// ```
 ///  
 pub fn log2(x: Float) -> Result(Float, Nil) {
-  case x >. 0. {
-    True -> Ok(do_log2(x))
-    False -> Error(Nil)
-  }
+  do_log2(x)
 }
 
 if erlang {
-  external fn do_log2(Float) -> Float =
-    "math" "log2"
+  external fn do_log2(Float) -> Result(Float, Nil) =
+    "gleam_stdlib" "log2"
 }
 
 if javascript {
-  external fn do_log2(Float) -> Float =
+  external fn do_log2(Float) -> Result(Float, Nil) =
     "../gleam_stdlib.mjs" "log2"
 }
 
-/// The base-10 logarithm function. 
+/// The base-10 logarithm function. The function takes a number > 0 as input and
+/// returns a numeric value. If the input value is outside the domain of the 
+/// function an error is returned.
 ///
 /// ## Examples
 ///
@@ -902,18 +908,15 @@ if javascript {
 /// ```
 ///
 pub fn log10(x: Float) -> Result(Float, Nil) {
-  case x >. 0. {
-    True -> Ok(do_log10(x))
-    False -> Error(Nil)
-  }
+  do_log10(x)
 }
 
 if erlang {
-  external fn do_log10(Float) -> Float =
-    "math" "log10"
+  external fn do_log10(Float) -> Result(Float, Nil) =
+    "gleam_stdlib" "log10"
 }
 
 if javascript {
-  external fn do_log10(Float) -> Float =
+  external fn do_log10(Float) -> Result(Float, Nil) =
     "../gleam_stdlib.mjs" "log10"
 }

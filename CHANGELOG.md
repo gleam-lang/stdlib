@@ -2,7 +2,9 @@
 
 ## Unreleased
 
-- The `float` module gains the `divide` function.
+- The `float` module gains the `divide` function, along with several common math
+  functions: `sin`, `asin`, `sinh`, `asinh`, `cos`, `acos`, `cosh`, `acosh`, `tan`,
+  `atan`, `tanh`, `atanh`, `exp`, `log`, `log2` and `log10`.
 - The `int` module gains the `divide`, `power`, and `square_root` functions.
 - The `string` module gains the `first`, `last`, `capitalise` and `inspect` functions.
 - The `string` module gains the `first`, `last`, and `capitalise` functions.

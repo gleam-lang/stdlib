@@ -197,10 +197,6 @@ export function bit_string_concat(bit_strings) {
   return toBitString(bit_strings.toArray().map((b) => b.buffer));
 }
 
-export function log(term) {
-  console.log(term);
-}
-
 export function debug(term) {
   console.log(inspect(term));
 }
@@ -601,5 +597,151 @@ export function decode_field(value, name) {
     return name in value ? new Ok(value[name]) : error();
   } catch {
     return error();
+  }
+}
+
+export function pi() {
+  return Math.PI
+}
+
+export function sin(float) {
+  return Math.sin(float)
+}
+
+export function asin(float) {
+  // The inverse sine function is defined on the closed domain [-1, 1].
+  // If the given input 'float' is outside the domain then 'NaN' is produced.
+  let result = Math.asin(float)
+  if (isNaN(result)) {
+    return new Error(Nil) 
+  } else {
+    return new Ok(result)
+  }
+}
+
+export function sinh(float) {
+  // The hyperbolic sine function is defined on the open domain (-inf, inf).
+  // If the given input 'float' is too large an overflow error might occur and 
+  // 'Infinity' is produced.
+  let result = Math.sinh(float)
+  if (result === Infinity) {
+    return new Error(Nil) 
+  } else {
+    return new Ok(result)
+  }
+}
+
+export function asinh(float) {
+  return Math.asinh(float)
+}
+
+
+export function cos(float) {
+  return Math.cos(float)
+}
+
+export function acos(float) {
+  // The inverse cosine function is defined on the closed domain [-1, 1].
+  // If the given input 'float' is outside the domain then 'NaN' is produced.
+  let result = Math.acos(float)
+  if (isNaN(result)) {
+    return new Error(Nil) 
+  } else {
+    return new Ok(result)
+  }
+}
+
+export function cosh(float) {
+  // The hyperbolic cosine function is defined on the open domain (-inf, inf).
+  // If the given input 'float' is too large an overflow error might occur
+  // and 'Infinity' is produced.
+  let result = Math.cosh(float)
+  if (result === Infinity) {
+    return new Error(Nil) 
+  } else {
+    return new Ok(result)
+  }
+}
+
+export function acosh(float) {
+  // The hyperbolic cosine function is defined on the half-open domain [1, inf).
+  // If the given input 'float' is outside the domain then 'NaN' is produced.
+  let result = Math.acosh(float)
+  if (isNaN(result)) {
+    return new Error(Nil) 
+  } else {
+    return new Ok(result)
+  }
+}
+
+export function tan(float) {
+  return Math.tan(float)
+}
+
+export function atan(float) {
+  return Math.atan(float)
+}
+
+export function tanh(float) {
+  return Math.tanh(float)
+}
+
+export function atanh(float) {
+  // The inverse hyperbolic tangent function is defined on the open domain (-1, 1).
+  // If the given input 'float' is equal to either -1 or -1 then 'Infinity' is produced.
+  // Otherwise, if the given input 'float' is < -1 or > 1 then 'NaN' is produced.
+  let result = Math.atanh(float)
+  if (result === Infinity || isNaN(result)) {
+    return new Error(Nil) 
+  } else {
+    return new Ok(result)
+  }
+}
+
+export function atan2(floaty, floatx) {
+  return Math.atan2(floaty, floatx)
+}
+
+export function exp(float) {
+  // The exponential function. If the given input 'float' is too large an overflow
+  // error might occur and 'Infinity' is produced.
+  let result = Math.exp(float)
+  if (result === Infinity) {
+      return new Error(Nil) 
+  } else {
+    return new Ok(result)
+  }
+}
+
+export function log(float) {
+  // The natural logarithm function is defined on the open domain (0, inf).
+  // If the given input 'float' is outside the domain then 'NaN' is produced.
+  let result = Math.log(float)
+  if (isNaN(result)) {
+    return new Error(Nil) 
+  } else {
+    return new Ok(result)
+  }
+}
+
+export function log2(float) {
+  // The 2-logarithm function is defined on the open domain (0, inf).
+  // If the given input 'float' is outside the domain then 'NaN' is produced.
+  let result = Math.log2(float)
+  if (isNaN(result)) {
+    return new Error(Nil) 
+  } else {
+    return new Ok(result)
+  }
+}
+
+export function log10(float) {
+  // The 10-logarithm function is defined on the open domain (0, inf).
+  // If the given input 'float' is outside the domain then 'NaN' is produced.
+  let result = Math.log10(float)
+  if (isNaN(result)) {
+    return new Error(Nil) 
+  } else {
+    return new Ok(result)
   }
 }

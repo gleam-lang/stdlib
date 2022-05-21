@@ -10,7 +10,8 @@
          percent_encode/1, percent_decode/1, regex_check/2, regex_split/2,
          base_decode64/1, parse_query/1, bit_string_concat/1, size_of_tuple/1,
          decode_tuple/1, tuple_get/2, classify_dynamic/1, print/1, println/1,
-         inspect/1]).
+         inspect/1, asin/1, sinh/1, acos/1, cosh/1, acosh/1, atanh/1, exp/1, 
+         log/1, log2/1, log10/1]).
 
 %% Taken from OTP's uri_string module
 -define(DEC2HEX(X),
@@ -375,3 +376,53 @@ inspect(Any) when is_function(Any) ->
     ["//fn(", Args, ") { ... }"];
 inspect(Any) ->
     ["//erl(", io_lib:format("~p", [Any]), ")"].
+
+asin(X) ->
+    try {ok, math:asin(X)}
+    catch error:badarith -> {error, nil}
+    end.
+
+sinh(X) ->
+    try {ok, math:sinh(X)}
+    catch error:badarith -> {error, nil}
+    end.
+
+acos(X) ->
+    try {ok, math:acos(X)}
+    catch error:badarith -> {error, nil}
+    end.
+
+cosh(X) ->
+    try {ok, math:cosh(X)}
+    catch error:badarith -> {error, nil}
+    end.
+
+acosh(X) ->
+    try {ok, math:acosh(X)}
+    catch error:badarith -> {error, nil}
+    end.
+
+atanh(X) ->
+    try {ok, math:atanh(X)}
+    catch error:badarith -> {error, nil}
+    end.
+
+exp(X) ->
+    try {ok, math:exp(X)}
+    catch error:badarith -> {error, nil}
+    end.
+
+log(X) ->
+    try {ok, math:log(X)}
+    catch error:badarith -> {error, nil}
+    end.
+
+log2(X) ->
+    try {ok, math:log2(X)}
+    catch error:badarith -> {error, nil}
+    end.
+
+log10(X) ->
+    try {ok, math:log10(X)}
+    catch error:badarith -> {error, nil}
+    end.
