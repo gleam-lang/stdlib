@@ -146,10 +146,6 @@ export function length(data) {
   return data.length;
 }
 
-export function slice_string(string, from, length) {
-  return string.slice(from, from + length);
-}
-
 export function crop_string(string, substring) {
   return string.substring(string.indexOf(substring));
 }
