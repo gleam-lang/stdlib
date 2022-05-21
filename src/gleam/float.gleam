@@ -250,6 +250,27 @@ pub fn absolute_value(x: Float) -> Float {
   }
 }
 
+// pub fn power(base: Float, of exponent: Float) -> Result(Float, Nil) {
+//   let fractional: Bool = ceiling(exponent) -. exponent >. 0.
+//   // In the following check:
+//   // 1. If the base is negative and the exponent is fractional then 
+//   //    return an error as it will otherwise be an imaginary number
+//   // 2. If the base is 0 and the exponent is negative then the expression
+//   //    is equivalent to the exponent divided by 0 and an error should be 
+//   //    returned
+//   case base <. 0. && fractional || base == 0. && exponent <. 0. {
+//     True -> Error(Nil)
+//     False -> Ok(do_power(base, exponent))
+//   }
+// }
+// if erlang {
+//   external fn do_power(Float, Float) -> Float =
+//     "math" "pow"
+// }
+// if javascript {
+//   external fn do_power(Float, Float) -> Float =
+//     "../gleam_stdlib.mjs" "power"
+// }
 /// Returns the results of the base being raised to the power of the
 /// exponent, as a `Float`.
 ///
@@ -274,26 +295,16 @@ pub fn absolute_value(x: Float) -> Float {
 /// ```
 ///
 pub fn power(base: Float, of exponent: Float) -> Result(Float, Nil) {
-  let fractional: Bool = ceiling(exponent) -. exponent >. 0.
-  // In the following check:
-  // 1. If the base is negative and the exponent is fractional then 
-  //    return an error as it will otherwise be an imaginary number
-  // 2. If the base is 0 and the exponent is negative then the expression
-  //    is equivalent to the exponent divided by 0 and an error should be 
-  //    returned
-  case base <. 0. && fractional || base == 0. && exponent <. 0. {
-    True -> Error(Nil)
-    False -> Ok(do_power(base, exponent))
-  }
+  do_power(base, exponent)
 }
 
 if erlang {
-  external fn do_power(Float, Float) -> Float =
-    "math" "pow"
+  external fn do_power(Float, Float) -> Result(Float, Nil) =
+    "gleam_stdlib" "pow"
 }
 
 if javascript {
-  external fn do_power(Float, Float) -> Float =
+  external fn do_power(Float, Float) -> Result(Float, Nil) =
     "../gleam_stdlib.mjs" "power"
 }
 

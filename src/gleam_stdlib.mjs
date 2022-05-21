@@ -239,10 +239,20 @@ export function truncate(float) {
 }
 
 export function power(base, exponent) {
-  // It is checked in gleam that the base is non-negative and that the exponent is 
-  // not fractional. It can thus be assumed that valid input is passed to the Math.pow
-  // function and a NaN value will not be produced.
-  return Math.pow(base, exponent)
+  // To be consistent with the Erlang target handle the following cases by
+  // returning an Error:
+  // - If the 'base' is negative and the 'exponent' is fractional a 'NaN' will
+  //   be produced (as the function will otherwise need to return an imaginary
+  //   number).
+  // - If 'base' is 0 and 'exponent' is negative 'Infinity' will be produced. 
+  // - If 'base' is > 1 and 'exponent' is very large 'Infinity' will be produced
+  //   due to overflow.
+  let result = Math.pow(base, exponent)
+  if (isNaN(result) || result === Infinity) {
+    return new Error(Nil)
+  } else {
+    return new Ok(result)
+  }
 }
 
 export function random_uniform() {
