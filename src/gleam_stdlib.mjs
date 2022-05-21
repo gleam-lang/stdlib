@@ -193,6 +193,9 @@ export function bit_string_concat(bit_strings) {
   return toBitString(bit_strings.toArray().map((b) => b.buffer));
 }
 
+export function log(term) {
+  console.log(term);
+}
 export function debug(term) {
   console.log(inspect(term));
 }
@@ -709,7 +712,7 @@ export function exp(float) {
   }
 }
 
-export function log(float) {
+export function math_log(float) {
   // The natural logarithm function is defined on the open domain (0, inf).
   // If the given input 'float' is outside the domain then 'NaN' is produced.
   let result = Math.log(float)

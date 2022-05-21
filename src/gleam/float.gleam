@@ -855,7 +855,7 @@ if erlang {
 
 if javascript {
   external fn do_log(Float) -> Result(Float, Nil) =
-    "../gleam_stdlib.mjs" "log"
+    "../gleam_stdlib.mjs" "math_log"
 }
 
 /// The base-2 logarithm function. The function takes a number > 0 as input and
