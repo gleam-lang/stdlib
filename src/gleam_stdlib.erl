@@ -380,13 +380,14 @@ unix_timestamp() ->
     {MegaSecs, Secs, _MicroSecs} = erlang:timestamp(),
     MegaSecs * 1000000 + Secs.
 
-% Returns an locale in the form of:
-% "ab_CD", "ab-CD", "ab_cd", or "ab-cd".
+% Returns locale information
 get_locale() ->
-    string:slice(
-        os:getenv(
-            "LANGUAGE",
-            os:getenv("LC_ALL", os:getenv("LANG", "C"))
-        ),
-        0, 5
-    ).
+	Locale = os:getenv(
+		"LANGUAGE",
+		os:getenv("LC_ALL", os:getenv("LANG", "C"))
+	),
+	case string:uppercase(string:slice(Locale, 0, 2)) of
+		"C" -> {"en_US", Locale};
+		"C." -> {"en_US", Locale};
+		_ -> {string:slice(Locale, 0, 5), Locale}
+   	end.

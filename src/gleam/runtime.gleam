@@ -21,25 +21,25 @@ if erlang {
 /// Returns a Tuple of normalized Strings containing:
 /// 1. ISO-639 language code in lowercase
 /// 2. ISO-3166 country code in uppercase
-/// 3. System string
+/// 3. System locale String
 ///
 pub fn get_locale() -> #(String, String, String) {
   let runtime_locale = do_get_locale()
   let language_code =
-    string.slice(from: runtime_locale, at_index: 0, length: 2)
+    string.slice(from: runtime_locale.0, at_index: 0, length: 2)
     |> string.lowercase
   let country_code =
-    string.slice(from: runtime_locale, at_index: 0, length: 2)
+    string.slice(from: runtime_locale.0, at_index: 0, length: 2)
     |> string.uppercase
-  #(language_code, country_code, runtime_locale)
+  #(language_code, country_code, runtime_locale.1)
 }
 
 if javascript {
-  external fn do_get_locale() -> String =
+  external fn do_get_locale() -> #(String, String) =
     "../gleam_stdlib.mjs" "get_locale"
 }
 
 if erlang {
-  external fn do_get_locale() -> String =
+  external fn do_get_locale() -> #(String, String) =
     "gleam_stdlib" "get_locale"
 }
