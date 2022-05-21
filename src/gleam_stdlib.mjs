@@ -615,6 +615,6 @@ export function get_locale() {
 			return Intl.DateTimeFormat().resolvedOptions().locale.substring(0, 5);
 		}
 	})();
-	// If NodeJS ever return encoding such as "en_US.UTF-8", this should be in systemlocale
+	// If the given JavaScript runtime ever returns encodings such as "en_US.UTF-8", this should be in `system_locale`.
 	return [locale, system_locale];
 }
