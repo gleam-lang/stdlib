@@ -1,6 +1,5 @@
 import gleam/order.{Order}
 import gleam/string_builder
-import gleam/io
 
 /// Attempts to parse a string as a `Float`, returning `Error(Nil)` if it was not
 /// possible.

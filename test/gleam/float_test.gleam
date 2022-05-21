@@ -4,7 +4,6 @@ import gleam/iterator
 import gleam/list
 import gleam/order
 import gleam/should
-import gleam/io
 
 pub fn parse_test() {
   "1.23"
