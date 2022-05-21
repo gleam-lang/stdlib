@@ -27,11 +27,8 @@ pub fn get_locale_test() {
   // string.inspect(locale)
   // |> should.equal("no-match-1")
   //
-  locale.0
-  |> should.equal("no-match-2")
-
-  locale.1
-  |> should.equal("no-match-3")
+  locale.2
+  |> should.equal("no-match")
 
   // Implementation must return a lower case language code
   let language = locale.0

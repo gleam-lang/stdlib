@@ -21,8 +21,9 @@ if erlang {
 /// Returns a Tuple of normalized Strings containing:
 /// 1. ISO-639 language code in lowercase
 /// 2. ISO-3166 country code in uppercase
+/// 3. System string
 ///
-pub fn get_locale() -> #(String, String) {
+pub fn get_locale() -> #(String, String, String) {
   let runtime_locale = do_get_locale()
   let language_code =
     string.slice(from: runtime_locale, at_index: 0, length: 2)
@@ -30,7 +31,7 @@ pub fn get_locale() -> #(String, String) {
   let country_code =
     string.slice(from: runtime_locale, at_index: 0, length: 2)
     |> string.uppercase
-  #(language_code, country_code)
+  #(language_code, country_code, runtime_locale)
 }
 
 if javascript {
