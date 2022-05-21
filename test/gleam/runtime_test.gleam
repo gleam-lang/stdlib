@@ -24,9 +24,9 @@ pub fn unix_timestamp_test() {
 pub fn get_locale_test() {
   let locale = runtime.get_locale()
 
-  string.inspect(locale)
-  |> should.equal("no-match-1")
-
+  // string.inspect(locale)
+  // |> should.equal("no-match-1")
+  //
   string.inspect(locale.0)
   |> should.equal("no-match-2")
 
