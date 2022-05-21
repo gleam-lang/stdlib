@@ -2,8 +2,14 @@ import gleam/option.{None, Some}
 import gleam/order
 import gleam/should
 import gleam/string
+import gleam_stdlib_test
 
 pub fn length_test() {
+  // Demo
+  gleam_stdlib_test.stdout("Hello World!")
+  gleam_stdlib_test.stdout(42)
+  gleam_stdlib_test.stdout(False)
+
   string.length("ß↑e̊")
   |> should.equal(3)
 
