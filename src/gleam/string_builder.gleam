@@ -1,5 +1,3 @@
-import gleam/float
-
 /// `StringBuilder` is a type used for efficiently building strings.
 ///
 /// When we append one string to another the strings must be copied to a
@@ -161,15 +159,6 @@ if erlang {
 if javascript {
   external fn do_byte_size(StringBuilder) -> Int =
     "../gleam_stdlib.mjs" "length"
-}
-
-/// DEPRECATED: Use `float.to_string()` instead.
-///
-/// Creates a builder containing the textual representation of a given float.
-///
-pub fn from_float(f: Float) -> StringBuilder {
-  float.to_string(f)
-  |> from_string
 }
 
 /// Converts a builder to a new builder where the contents have been

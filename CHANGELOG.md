@@ -8,6 +8,7 @@
 - Fixed a bug where `string_builder.reverse` would break utf8 strings on target JavaScript.
 - Fixed a bug where `string.reverse` would break utf8 strings on target JavaScript.
 - Fixed a bug where `string.slice` would break utf8 strings on target JavaScript.
+- The `string_builder` module loses the `from_float` function. Use `float.to_string` instead.
 
 ## v0.21.0 - 2022-04-24
 
