@@ -95,7 +95,7 @@ export function string_length(string) {
 
 function graphemes_iterator(string) {
   if (Intl && Intl.Segmenter) {
-    return new Intl.Segmenter("en-gb").segment(string)[Symbol.iterator]();
+    return new Intl.Segmenter().segment(string)[Symbol.iterator]();
   }
 }
 
