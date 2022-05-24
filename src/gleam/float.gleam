@@ -259,7 +259,6 @@ pub fn absolute_value(x: Float) -> Float {
 /// > power(2.0, -1.0)
 /// Ok(0.5)
 ///
-/// ```gleam
 /// > power(2.0, 2.0)
 /// Ok(4.0)
 ///
