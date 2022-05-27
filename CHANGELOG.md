@@ -9,6 +9,8 @@
 - Fixed a bug where `string.reverse` would break utf8 strings on target JavaScript.
 - Fixed a bug where `string.slice` would break utf8 strings on target JavaScript.
 - The grapheme iterator used by `string.graphemes` is now locale independent on target JavaScript.
+- Unified `io.debug` to yield Gleam syntax to standard output (stdout) not just on JavaScript but also Erlang.
+- The `io` module gains `debug_raw` which yields the runtime's syntax of a given value to the standard output (stdout).
 
 ## v0.21.0 - 2022-04-24
 
