@@ -48,7 +48,7 @@ if javascript {
     "../gleam_stdlib.mjs" "log"
 }
 
-/// Prints a value to standard output using Erlang syntax.
+/// Prints a value to standard output (stdout) yielding Gleam syntax.
 ///
 /// The value is returned after being printed so it can be used in pipelines.
 ///
@@ -73,24 +73,39 @@ if javascript {
 /// ```
 ///
 pub fn debug(term: anything) -> anything {
-  debug_print(term)
+  do_debug(term)
   term
 }
 
 if erlang {
-  fn debug_print(term: anything) -> DoNotLeak {
-    erlang_fwrite("~tp\n", [term])
-  }
+  external fn do_debug(term: anything) -> Nil =
+    "buggy_ffi" "debug"
 }
 
 if javascript {
-  external fn debug_print(anything) -> Nil =
+  external fn do_debug(anything) -> Nil =
     "../gleam_stdlib.mjs" "debug"
 }
 
+/// Prints a value to standard output (stdout) yielding Erlang or JavaScript syntax.
+///
+pub fn debug_raw(term: anything) -> anything {
+  do_debug_raw(term)
+  term
+}
+
 if erlang {
+  fn do_debug_raw(term: anything) -> DoNotLeak {
+    erlang_fwrite("~tp\n", [term])
+  }
+
   external type DoNotLeak
 
   external fn erlang_fwrite(String, List(a)) -> DoNotLeak =
     "io" "fwrite"
+}
+
+if javascript {
+  external fn do_debug_raw(anything) -> Nil =
+    "../gleam_stdlib.mjs" "debug_raw"
 }

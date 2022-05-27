@@ -201,6 +201,10 @@ export function debug(term) {
   console.log(inspect(term));
 }
 
+export function debug_raw(term) {
+  console.log(term);
+}
+
 export function crash(message) {
   throw new globalThis.Error(message);
 }
