@@ -824,17 +824,19 @@ pub fn capitalise(s: String) -> String {
   }
 }
 
-pub fn inspect(value: a) -> String {
-  do_inspect(value)
+/// Creates a String representative of gleam values.
+///
+pub fn inspect(term: anything) -> String {
+  do_inspect(term)
   |> string_builder.to_string
 }
 
 if javascript {
-  external fn do_inspect(value: a) -> string_builder.StringBuilder =
+  external fn do_inspect(term: anything) -> string_builder.StringBuilder =
     "../gleam.mjs" "inspect"
 }
 
 if erlang {
-  external fn do_inspect(value: a) -> string_builder.StringBuilder =
+  external fn do_inspect(term: anything) -> string_builder.StringBuilder =
     "gleam_stdlib" "inspect"
 }

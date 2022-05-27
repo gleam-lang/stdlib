@@ -79,11 +79,11 @@ pub fn debug(term: anything) -> anything {
 
 if erlang {
   external fn do_debug(term: anything) -> Nil =
-    "buggy_ffi" "debug"
+    "gleam_stdlib" "debug"
 }
 
 if javascript {
-  external fn do_debug(anything) -> Nil =
+  external fn do_debug(term: anything) -> Nil =
     "../gleam_stdlib.mjs" "debug"
 }
 
@@ -106,6 +106,6 @@ if erlang {
 }
 
 if javascript {
-  external fn do_debug_raw(anything) -> Nil =
+  external fn do_debug_raw(term: anything) -> Nil =
     "../gleam_stdlib.mjs" "debug_raw"
 }
