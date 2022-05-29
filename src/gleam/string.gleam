@@ -825,7 +825,7 @@ pub fn capitalise(s: String) -> String {
   }
 }
 
-/// Creates a String representative of gleam values.
+/// Returns a String representation of values in Gleam syntax.
 ///
 pub fn inspect(term: anything) -> String {
   do_inspect(term)
