@@ -1,3 +1,5 @@
+import gleam/string_builder.{StringBuilder}
+
 /// Writes a string to standard output.
 ///
 /// If you want your output to be printed on its own line see `println`.
@@ -73,18 +75,20 @@ if javascript {
 /// ```
 ///
 pub fn debug(term: anything) -> anything {
-  do_debug(term)
+  do_inspect(term)
+  |> string_builder.to_string
+  |> println
   term
 }
 
 if erlang {
-  external fn do_debug(term: anything) -> Nil =
-    "gleam_stdlib" "debug"
+  external fn do_inspect(term: anything) -> StringBuilder =
+    "gleam_stdlib" "inspect"
 }
 
 if javascript {
-  external fn do_debug(term: anything) -> Nil =
-    "../gleam_stdlib.mjs" "debug"
+  external fn do_inspect(term: anything) -> StringBuilder =
+    "../gleam_stdlib.mjs" "inspect"
 }
 
 /// Prints a value to standard output (stdout) yielding Erlang or JavaScript syntax.

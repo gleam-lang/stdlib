@@ -10,7 +10,7 @@
          percent_encode/1, percent_decode/1, regex_check/2, regex_split/2,
          base_decode64/1, parse_query/1, bit_string_concat/1, size_of_tuple/1,
          decode_tuple/1, tuple_get/2, classify_dynamic/1, print/1, println/1,
-         inspect/1, debug/1]).
+         inspect/1]).
 
 %% Taken from OTP's uri_string module
 -define(DEC2HEX(X),
@@ -375,7 +375,3 @@ inspect(Any) when is_function(Any) ->
     ["//fn(", Args, ") { ... }"];
 inspect(Any) ->
     ["//erl(", io_lib:format("~p", [Any]), ")"].
-
-debug(Any) ->
-    println(inspect(Any)),
-    nil.

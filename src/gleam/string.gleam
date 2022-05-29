@@ -6,6 +6,7 @@ import gleam/list
 import gleam/option.{None, Option, Some}
 import gleam/order
 import gleam/string_builder
+import gleam/string_builder.{StringBuilder}
 
 if erlang {
   import gleam/result
@@ -832,11 +833,11 @@ pub fn inspect(term: anything) -> String {
 }
 
 if javascript {
-  external fn do_inspect(term: anything) -> string_builder.StringBuilder =
+  external fn do_inspect(term: anything) -> StringBuilder =
     "../gleam.mjs" "inspect"
 }
 
 if erlang {
-  external fn do_inspect(term: anything) -> string_builder.StringBuilder =
+  external fn do_inspect(term: anything) -> StringBuilder =
     "gleam_stdlib" "inspect"
 }
