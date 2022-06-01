@@ -2,7 +2,6 @@ import gleam/option.{None, Some}
 import gleam/order
 import gleam/should
 import gleam/string
-import gleam/bit_string
 
 pub fn length_test() {
   string.length("ß↑e̊")
@@ -781,9 +780,13 @@ if erlang {
   }
 }
 
-pub fn inspect_bit_string_test() {
-  "Hello from Gleam!"
-  |> bit_string.from_string()
-  |> string.inspect()
-  |> should.equal("Hello from Gleam!")
+if javascript {
+  import gleam/bit_string
+
+  pub fn inspect_bit_string_test() {
+    "Hello from Gleam!"
+    |> bit_string.from_string()
+    |> string.inspect()
+    |> should.equal("Hello from Gleam!")
+  }
 }
