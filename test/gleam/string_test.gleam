@@ -781,7 +781,7 @@ if erlang {
   }
 }
 
-pub fn inspect_bitstring_test() {
+pub fn inspect_bit_string_test() {
   "Hello from Gleam!"
   |> bit_string.from_string()
   |> string.inspect()
