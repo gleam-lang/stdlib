@@ -1,5 +1,4 @@
 import gleam/order.{Order}
-import gleam/string_builder
 
 /// Attempts to parse a string as a `Float`, returning `Error(Nil)` if it was not
 /// possible.
@@ -36,9 +35,17 @@ if javascript {
 /// ```
 ///
 pub fn to_string(x: Float) -> String {
-  x
-  |> string_builder.from_float
-  |> string_builder.to_string
+  do_to_string(x)
+}
+
+if erlang {
+  external fn do_to_string(Float) -> String =
+    "gleam_stdlib" "float_to_string"
+}
+
+if javascript {
+  external fn do_to_string(Float) -> String =
+    "../gleam_stdlib.mjs" "float_to_string"
 }
 
 /// Restricts a `Float` between a lower and upper bound.

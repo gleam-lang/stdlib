@@ -5,9 +5,10 @@
 - The `float` module gains the `divide` function.
 - The `int` module gains the `divide`, `power`, and `square_root` functions.
 - The `string` module gains the `first`, `last`, `capitalise` and `inspect` functions.
-- The `string` module gains the `first`, `last`, and `capitalise` functions.
+- Fixed a bug where `string_builder.reverse` would break utf8 strings on target JavaScript.
 - Fixed a bug where `string.reverse` would break utf8 strings on target JavaScript.
 - Fixed a bug where `string.slice` would break utf8 strings on target JavaScript.
+- The `string_builder` module loses the `from_float` function. Use `float.to_string` instead.
 - Fixed the `int.power` and `float.power` functions by properly handling error cases.
 - The grapheme iterator used by `string.graphemes` is now locale independent on target JavaScript.
 

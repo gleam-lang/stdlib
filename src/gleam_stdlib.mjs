@@ -93,6 +93,12 @@ export function string_length(string) {
   }
 }
 
+export function graphemes(string) {
+  return List.fromArray(
+    Array.from(graphemes_iterator(string)).map(((item) => item.segment ))
+  );
+}
+
 function graphemes_iterator(string) {
   if (Intl && Intl.Segmenter) {
     return new Intl.Segmenter().segment(string)[Symbol.iterator]();
