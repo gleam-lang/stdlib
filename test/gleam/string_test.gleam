@@ -781,11 +781,8 @@ if erlang {
 }
 
 if javascript {
-  import gleam/bit_string
-
   pub fn inspect_bit_string_test() {
-    "Hello from Gleam!"
-    |> bit_string.from_string()
+    <<"Hello from Gleam!":utf8>>
     |> string.inspect()
     |> should.equal("Hello from Gleam!")
   }
