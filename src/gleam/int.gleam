@@ -27,19 +27,22 @@ pub fn absolute_value(x: Int) -> Int {
 ///
 /// ```gleam
 /// > power(2, -1.0)
-/// 0.5
+/// Ok(0.5)
 ///
 /// > power(2, 2.0)
-/// 4
+/// Ok(4.0)
 ///
 /// > power(8, 1.5)
-/// 22.627416997969522
+/// Ok(22.627416997969522)
 ///
 /// > 4 |> power(of: 2.0)
-/// 16.0
+/// Ok(16.0)
+///
+/// > power(-1, 0.5)
+/// Error(Nil)
 /// ```
 ///
-pub fn power(base: Int, of exponent: Float) -> Float {
+pub fn power(base: Int, of exponent: Float) -> Result(Float, Nil) {
   base
   |> to_float()
   |> float.power(exponent)

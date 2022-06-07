@@ -8,6 +8,7 @@
 - The `string` module gains the `first`, `last`, and `capitalise` functions.
 - Fixed a bug where `string.reverse` would break utf8 strings on target JavaScript.
 - Fixed a bug where `string.slice` would break utf8 strings on target JavaScript.
+- Fixed the `int.power` and `float.power` functions by properly handling error cases.
 - The grapheme iterator used by `string.graphemes` is now locale independent on target JavaScript.
 
 ## v0.21.0 - 2022-04-24

@@ -257,21 +257,33 @@ pub fn absolute_value(x: Float) -> Float {
 ///
 /// ```gleam
 /// > power(2.0, -1.0)
-/// 0.5
+/// Ok(0.5)
 ///
-/// ```gleam
 /// > power(2.0, 2.0)
-/// 4.0
+/// Ok(4.0)
 ///
 /// > power(8.0, 1.5)
-/// 22.627416997969522
+/// Ok(22.627416997969522)
 ///
 /// > 4.0 |> power(of: 2.0)
-/// 16.0
+/// Ok(16.0)
+///
+/// > power(-1.0, 0.5)
+/// Error(Nil)
 /// ```
 ///
-pub fn power(base: Float, of exponent: Float) -> Float {
-  do_power(base, exponent)
+pub fn power(base: Float, of exponent: Float) -> Result(Float, Nil) {
+  let fractional: Bool = ceiling(exponent) -. exponent >. 0.
+  // In the following check:
+  // 1. If the base is negative and the exponent is fractional then 
+  //    return an error as it will otherwise be an imaginary number
+  // 2. If the base is 0 and the exponent is negative then the expression
+  //    is equivalent to the exponent divided by 0 and an error should be 
+  //    returned
+  case base <. 0. && fractional || base == 0. && exponent <. 0. {
+    True -> Error(Nil)
+    False -> Ok(do_power(base, exponent))
+  }
 }
 
 if erlang {
@@ -297,10 +309,7 @@ if javascript {
 /// ```
 ///
 pub fn square_root(x: Float) -> Result(Float, Nil) {
-  case x <. 0.0 {
-    True -> Error(Nil)
-    False -> Ok(power(x, 0.5))
-  }
+  power(x, 0.5)
 }
 
 /// Returns the negative of the value provided.

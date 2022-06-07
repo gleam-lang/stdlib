@@ -257,19 +257,39 @@ pub fn is_odd_test() {
 
 pub fn power_test() {
   int.power(2, 2.0)
-  |> should.equal(4.0)
+  |> should.equal(Ok(4.0))
 
   int.power(-5, 3.0)
-  |> should.equal(-125.0)
+  |> should.equal(Ok(-125.0))
 
   int.power(10, 0.0)
-  |> should.equal(1.0)
+  |> should.equal(Ok(1.0))
 
   int.power(16, 0.5)
-  |> should.equal(4.0)
+  |> should.equal(Ok(4.0))
 
   int.power(2, -1.0)
-  |> should.equal(0.5)
+  |> should.equal(Ok(0.5))
+
+  // int.power(-1, 0.5) is equivalent to int.square_root(-1) and should
+  // return an error as an imaginary number would otherwise have to be
+  // returned 
+  int.power(-1, 0.5)
+  |> should.equal(Error(Nil))
+
+  // Check another case with a negative base and fractional exponent
+  int.power(-1, 1.5)
+  |> should.equal(Error(Nil))
+
+  // float.power(0, -1) is equivalent to 1 / 0 and is expected
+  // to be an error
+  int.power(0, -1.0)
+  |> should.equal(Error(Nil))
+
+  // Check that a negative base and exponent is fine as long as the 
+  // exponent is not fractional
+  int.power(-2, -1.0)
+  |> should.equal(Ok(-0.5))
 }
 
 pub fn square_root_test() {
