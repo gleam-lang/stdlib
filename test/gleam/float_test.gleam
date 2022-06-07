@@ -245,19 +245,42 @@ pub fn absolute_value_test() {
 
 pub fn power_test() {
   float.power(2.0, 2.0)
-  |> should.equal(4.0)
+  |> should.equal(Ok(4.0))
 
   float.power(-5.0, 3.0)
-  |> should.equal(-125.0)
+  |> should.equal(Ok(-125.0))
 
   float.power(10.5, 0.0)
-  |> should.equal(1.0)
+  |> should.equal(Ok(1.0))
 
   float.power(16.0, 0.5)
-  |> should.equal(4.0)
+  |> should.equal(Ok(4.0))
 
   float.power(2.0, -1.0)
-  |> should.equal(0.5)
+  |> should.equal(Ok(0.5))
+
+  float.power(2.0, -1.0)
+  |> should.equal(Ok(0.5))
+
+  // float.power(-1.0, 0.5) is equivalent to float.square_root(-1.0)
+  // and should return an error as an imaginary number would otherwise
+  // have to be returned 
+  float.power(-1.0, 0.5)
+  |> should.equal(Error(Nil))
+
+  // Check another case with a negative base and fractional exponent
+  float.power(-1.5, 1.5)
+  |> should.equal(Error(Nil))
+
+  // float.power(0.0, -1.0) is equivalent to 1. /. 0 and is expected
+  // to be an error
+  float.power(0.0, -1.0)
+  |> should.equal(Error(Nil))
+
+  // Check that a negative base and exponent is fine as long as the 
+  // exponent is not fractional
+  float.power(-2.0, -1.0)
+  |> should.equal(Ok(-0.5))
 }
 
 pub fn square_root_test() {
