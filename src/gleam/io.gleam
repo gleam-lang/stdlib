@@ -1,4 +1,4 @@
-import gleam/string_builder.{StringBuilder}
+import gleam/string
 
 /// Writes a string to standard output.
 ///
@@ -75,18 +75,9 @@ if javascript {
 /// ```
 ///
 pub fn debug(term: anything) -> anything {
-  do_inspect(term)
-  |> string_builder.to_string
-  |> println
   term
-}
+  |> string.inspect
+  |> println
 
-if erlang {
-  external fn do_inspect(term: anything) -> StringBuilder =
-    "gleam_stdlib" "inspect"
-}
-
-if javascript {
-  external fn do_inspect(term: anything) -> StringBuilder =
-    "../gleam_stdlib.mjs" "inspect"
+  term
 }
