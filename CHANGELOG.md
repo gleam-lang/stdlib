@@ -11,6 +11,7 @@
 - The `string_builder` module loses the `from_float` function. Use `float.to_string` instead.
 - Fixed the `int.power` and `float.power` functions by properly handling error cases.
 - The grapheme iterator used by `string.graphemes` is now locale independent on target JavaScript.
+- Unified `io.debug` to yield Gleam syntax to standard output (stdout) not just on JavaScript but also Erlang.
 
 ## v0.21.0 - 2022-04-24
 

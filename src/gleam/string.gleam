@@ -6,6 +6,7 @@ import gleam/list
 import gleam/option.{None, Option, Some}
 import gleam/order
 import gleam/string_builder
+import gleam/string_builder.{StringBuilder}
 
 if erlang {
   import gleam/result
@@ -824,17 +825,19 @@ pub fn capitalise(s: String) -> String {
   }
 }
 
-pub fn inspect(value: a) -> String {
-  do_inspect(value)
+/// Returns a `String` representation of values in Gleam syntax.
+///
+pub fn inspect(term: anything) -> String {
+  do_inspect(term)
   |> string_builder.to_string
 }
 
 if javascript {
-  external fn do_inspect(value: a) -> string_builder.StringBuilder =
+  external fn do_inspect(term: anything) -> StringBuilder =
     "../gleam.mjs" "inspect"
 }
 
 if erlang {
-  external fn do_inspect(value: a) -> string_builder.StringBuilder =
+  external fn do_inspect(term: anything) -> StringBuilder =
     "gleam_stdlib" "inspect"
 }
