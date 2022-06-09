@@ -1,3 +1,5 @@
+import gleam/string
+
 /// Writes a string to standard output.
 ///
 /// If you want your output to be printed on its own line see `println`.
@@ -48,7 +50,7 @@ if javascript {
     "../gleam_stdlib.mjs" "log"
 }
 
-/// Prints a value to standard output using Erlang syntax.
+/// Prints a value to standard output (stdout) yielding Gleam syntax.
 ///
 /// The value is returned after being printed so it can be used in pipelines.
 ///
@@ -73,24 +75,9 @@ if javascript {
 /// ```
 ///
 pub fn debug(term: anything) -> anything {
-  debug_print(term)
   term
-}
+  |> string.inspect
+  |> println
 
-if erlang {
-  fn debug_print(term: anything) -> DoNotLeak {
-    erlang_fwrite("~tp\n", [term])
-  }
-}
-
-if javascript {
-  external fn debug_print(anything) -> Nil =
-    "../gleam_stdlib.mjs" "debug"
-}
-
-if erlang {
-  external type DoNotLeak
-
-  external fn erlang_fwrite(String, List(a)) -> DoNotLeak =
-    "io" "fwrite"
+  term
 }

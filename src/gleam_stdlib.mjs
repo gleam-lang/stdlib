@@ -93,6 +93,12 @@ export function string_length(string) {
   }
 }
 
+export function graphemes(string) {
+  return List.fromArray(
+    Array.from(graphemes_iterator(string)).map(((item) => item.segment ))
+  );
+}
+
 function graphemes_iterator(string) {
   let env_locale = () => {
     if (typeof navigator.language !== "undefined") {
@@ -101,7 +107,7 @@ function graphemes_iterator(string) {
     return Intl.DateTimeFormat().resolvedOptions().locale;
   };
   if (Intl && Intl.Segmenter) {
-    return new Intl.Segmenter(env_locale).segment(string)[Symbol.iterator]();
+    return new Intl.Segmenter().segment(string)[Symbol.iterator]();
   }
 }
 
@@ -216,7 +222,7 @@ export function bit_string_to_string(bit_string) {
     let decoder = new TextDecoder("utf-8", { fatal: true });
     return new Ok(decoder.decode(bit_string.buffer));
   } catch (_error) {
-    return new Error(undefined);
+    return new Error(Nil);
   }
 }
 
@@ -245,7 +251,13 @@ export function truncate(float) {
 }
 
 export function power(base, exponent) {
-  return Math.pow(base, exponent);
+  // It is checked in Gleam that:
+  // - The base is non-negative and that the exponent is not fractional.
+  // - The base is not zero and the exponent is not negative (otherwise 
+  //   the result will essentially be divion by zero). 
+  // It can thus be assumed that valid input is passed to the Math.pow
+  // function and a NaN or Infinity value will not be produced.
+  return Math.pow(base, exponent)
 }
 
 export function random_uniform() {

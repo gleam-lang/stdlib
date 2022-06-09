@@ -34,6 +34,34 @@ pub fn string_builder_test() {
   |> should.equal(13)
 }
 
+pub fn reverse_test() {
+  "Ĺo͂řȩm̅"
+  |> string_builder.from_string
+  |> string_builder.reverse
+  |> string_builder.reverse
+  |> string_builder.to_string
+  |> should.equal("Ĺo͂řȩm̅")
+
+  "Ĺo͂řȩm̅"
+  |> string_builder.from_string
+  |> string_builder.reverse
+  |> string_builder.to_string
+  |> should.equal("m̅ȩřo͂Ĺ")
+
+  "👶🏿"
+  |> string_builder.from_string
+  |> string_builder.reverse
+  |> string_builder.reverse
+  |> string_builder.to_string
+  |> should.equal("👶🏿")
+
+  "👶🏿"
+  |> string_builder.from_string
+  |> string_builder.reverse
+  |> string_builder.to_string
+  |> should.equal("👶🏿")
+}
+
 pub fn lowercase_test() {
   ["Gleam", "Gleam"]
   |> string_builder.from_strings

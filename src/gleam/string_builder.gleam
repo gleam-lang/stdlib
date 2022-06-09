@@ -14,7 +14,7 @@
 ///
 pub external type StringBuilder
 
-/// Create an empty `StringBuilder`. Useful as the start of a pipe chaning many
+/// Create an empty `StringBuilder`. Useful as the start of a pipe chaining many
 /// builders together.
 ///
 pub fn new() -> StringBuilder {
@@ -161,22 +161,6 @@ if javascript {
     "../gleam_stdlib.mjs" "length"
 }
 
-/// Creates a builder containing the textual representation of a given float.
-///
-pub fn from_float(f: Float) -> StringBuilder {
-  do_from_float(f)
-}
-
-if erlang {
-  external fn do_from_float(Float) -> StringBuilder =
-    "io_lib_format" "fwrite_g"
-}
-
-if javascript {
-  external fn do_from_float(Float) -> StringBuilder =
-    "../gleam_stdlib.mjs" "float_to_string"
-}
-
 /// Converts a builder to a new builder where the contents have been
 /// lowercased.
 ///
@@ -223,8 +207,18 @@ if erlang {
 }
 
 if javascript {
-  external fn do_reverse(StringBuilder) -> StringBuilder =
-    "../gleam_stdlib.mjs" "string_reverse"
+  import gleam/list
+
+  fn do_reverse(builder: StringBuilder) -> StringBuilder {
+    builder
+    |> to_string
+    |> do_to_graphemes
+    |> list.reverse
+    |> from_strings
+  }
+
+  external fn do_to_graphemes(string: String) -> List(String) =
+    "../gleam_stdlib.mjs" "graphemes"
 }
 
 /// Splits a builder on a given pattern into a list of builders.
@@ -303,7 +297,6 @@ if javascript {
 /// True
 /// ```
 ///
-///
 pub fn is_equal(a: StringBuilder, b: StringBuilder) -> Bool {
   do_is_equal(a, b)
 }
@@ -332,7 +325,6 @@ if javascript {
 /// > from_strings([]) |> is_empty
 /// True
 /// ```
-///
 ///
 pub fn is_empty(builder: StringBuilder) -> Bool {
   do_is_empty(builder)
