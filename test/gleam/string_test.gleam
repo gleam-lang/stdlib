@@ -727,7 +727,7 @@ if javascript {
     string.inspect(#(1.0))
     |> should.equal("#(1)")
 
-    // Unlike Erlang, on JavaScript `BitString` and `String` do have a different runtime representation.
+    // Unlike on Erlang, on JavaScript `BitString` and `String` do have a different runtime representation.
     <<"abc":utf8>>
     |> string.inspect()
     |> should.equal("<<97, 98, 99>>")
