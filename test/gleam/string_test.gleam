@@ -726,6 +726,11 @@ if javascript {
 
     string.inspect(#(1.0))
     |> should.equal("#(1)")
+
+    // Unlike Erlang, on JavaScript BitStrings and Strings have a different runtime representation.
+    <<"abc":utf8>>
+    |> string.inspect()
+    |> should.equal("<<97, 98, 99>>")
   }
 }
 
@@ -739,13 +744,13 @@ if erlang {
     "erlang" "make_ref"
 
   pub fn target_inspect_test() {
-    // Erlang's internal representation does not allow a correct differentiation
+    // Erlang's internal representation does not allow a correct differentiation.
     // |> should.equal("#(InspectTypeZero, InspectTypeZero)")
     //
     string.inspect(#(InspectTypeZero, InspectTypeZero))
     |> should.equal("InspectTypeZero(InspectTypeZero)")
 
-    // Unlike JavaScript, Erlang correctly differentiates between 1 and 1.0
+    // Unlike JavaScript, Erlang correctly differentiates between 1 and 1.0.
     //
     string.inspect(-1.0)
     |> should.equal("-1.0")
@@ -762,14 +767,14 @@ if erlang {
     string.inspect(#(1.0))
     |> should.equal("#(1.0)")
 
-    // Looks like `//erl(<0.83.0>)`
+    // Looks like `//erl(<0.83.0>)`.
     assert Ok(regular_expression) =
       regex.from_string("^\\/\\/erl\\(<[0-9]+\\.[0-9]+\\.[0-9]+>\\)$")
     string.inspect(create_erlang_pid())
     |> regex.check(regular_expression, _)
     |> should.equal(True)
 
-    // Looks like: `//erl(#Ref<0.1809744150.4035444737.100468>)`
+    // Looks like: `//erl(#Ref<0.1809744150.4035444737.100468>)`.
     assert Ok(regular_expression) =
       regex.from_string(
         "^\\/\\/erl\\(#Ref<[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+>\\)$",
@@ -777,13 +782,10 @@ if erlang {
     string.inspect(create_erlang_reference())
     |> regex.check(regular_expression, _)
     |> should.equal(True)
-  }
-}
 
-if erlang {
-  pub fn inspect_bit_string_test() {
-    <<"Hello from Gleam!":utf8>>
+    // On Erlang the runtime representation for String and BitString is indistinguishable.
+    <<"abc":utf8>>
     |> string.inspect()
-    |> should.equal("Hello from Gleam!")
+    |> should.equal("\"abc\"")
   }
 }
