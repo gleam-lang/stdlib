@@ -727,7 +727,7 @@ if javascript {
     string.inspect(#(1.0))
     |> should.equal("#(1)")
 
-    // Unlike Erlang, on JavaScript BitStrings and Strings have a different runtime representation.
+    // Unlike Erlang, on JavaScript `BitString` and `String` do have a different runtime representation.
     <<"abc":utf8>>
     |> string.inspect()
     |> should.equal("<<97, 98, 99>>")
@@ -750,7 +750,7 @@ if erlang {
     string.inspect(#(InspectTypeZero, InspectTypeZero))
     |> should.equal("InspectTypeZero(InspectTypeZero)")
 
-    // Unlike JavaScript, Erlang correctly differentiates between 1 and 1.0.
+    // Unlike JavaScript, Erlang correctly differentiates between `1` and `1.0`.
     //
     string.inspect(-1.0)
     |> should.equal("-1.0")
@@ -783,7 +783,7 @@ if erlang {
     |> regex.check(regular_expression, _)
     |> should.equal(True)
 
-    // On Erlang the runtime representation for String and BitString is indistinguishable.
+    // On Erlang the runtime representation for `String` and `BitString` is indistinguishable.
     <<"abc":utf8>>
     |> string.inspect()
     |> should.equal("\"abc\"")
