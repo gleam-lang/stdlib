@@ -700,6 +700,9 @@ pub fn inspect_test() {
 
   string.inspect(InspectTypeOne(InspectTypeZero))
   |> should.equal("InspectTypeOne(InspectTypeZero)")
+
+  string.inspect(<<255, 2, 0>>)
+  |> should.equal("<<255, 2, 0>>")
 }
 
 if javascript {

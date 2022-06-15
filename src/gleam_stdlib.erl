@@ -337,17 +337,20 @@ inspect(Any) when is_integer(Any) ->
     erlang:integer_to_list(Any);
 inspect(Any) when is_float(Any) ->
     io_lib_format:fwrite_g(Any);
-inspect(Any) when is_binary(Any) ->
-    Pattern = [$"],
-    Replacement = [$\\, $\\, $"],
-    Escaped = re:replace(Any, Pattern, Replacement, [{return, binary}, global]),
-    ["\"", Escaped, "\""];
-inspect(Any) when is_list(Any) ->
-    ["[",
-        lists:join(<<", ">>,
-            lists:map(fun inspect/1, Any)
-        ),
-    "]"];
+inspect(Binary) when is_binary(Binary) ->
+    case gleam@bit_string:is_utf8(Binary) of
+        true ->
+            Pattern = [$"],
+            Replacement = [$\\, $\\, $"],
+            Escaped = re:replace(Binary, Pattern, Replacement, [{return, binary}, global]),
+            ["\"", Escaped, "\""];
+        false ->
+            Segments = [erlang:integer_to_list(X) || <<X>> <= Binary],
+            ["<<", lists:join(", ", Segments), ">>"]
+    end;
+inspect(List) when is_list(List) ->
+    Elements = lists:join(<<", ">>, lists:map(fun inspect/1, List)),
+    ["[", Elements, "]"];
 inspect(Any) when is_tuple(Any) % Record constructors
   andalso is_atom(element(1, Any))
   andalso element(1, Any) =/= false
@@ -355,17 +358,13 @@ inspect(Any) when is_tuple(Any) % Record constructors
   andalso element(1, Any) =/= nil
 ->
     [Atom | ArgsList] = erlang:tuple_to_list(Any),
-    Args =
-        lists:join(<<", ">>,
-            lists:map(fun inspect/1, ArgsList)
+    Args = lists:join(<<", ">>,
+        lists:map(fun inspect/1, ArgsList)
     ),
     [inspect(Atom), "(", Args, ")"];
-inspect(Any) when is_tuple(Any) ->
-    ["#(",
-        lists:join(<<", ">>,
-            lists:map(fun inspect/1, erlang:tuple_to_list(Any))
-        ),
-    ")"];
+inspect(Tuple) when is_tuple(Tuple) ->
+    Elements = lists:map(fun inspect/1, erlang:tuple_to_list(Tuple)),
+    ["#(", lists:join(", ", Elements), ")"];
 inspect(Any) when is_function(Any) ->
     {arity, Arity} = erlang:fun_info(Any, arity),
     ArgsAsciiCodes = lists:seq($a, $a + Arity - 1),
