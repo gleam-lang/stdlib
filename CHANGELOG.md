@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Fixed a bug in `big_string.concat`, it now uses `erlang:list_to_bitstring`
+
 ## v0.22.0 - 2022-06-15
 
 - The `float` module gains the `divide` function.
