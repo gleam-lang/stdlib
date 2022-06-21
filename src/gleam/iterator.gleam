@@ -1140,6 +1140,53 @@ pub fn fold_until(
   |> do_fold_until(f, initial)
 }
 
+fn do_fold_until_error(
+  continuation: fn() -> Action(e),
+  f: fn(acc, e) -> Result(acc, err),
+  accumulator: acc,
+) -> acc {
+  case continuation() {
+    Stop -> accumulator
+    Continue(elem, next) ->
+      case f(accumulator, elem) {
+        Ok(accumulator) -> do_fold_until_error(next, f, accumulator)
+        Error(_) -> accumulator
+      }
+  }
+}
+
+/// Like `fold_until`, `fold_until_error` reduces an iterator of elements into a single value by calling a given
+/// function on each element in turn, but instead of using `list.ContinueOrStop` it uses `Result` to determine
+/// whether or not to keep iterating.
+///
+/// If called on an iterator of infinite length then this function will only ever
+/// return if the function returns `Error`.
+///
+///
+/// ## Examples
+/// ```gleam
+/// > let f = fn(acc, e) {
+/// >   case acc + e {
+/// >     acc if acc < 10 -> Ok(acc)
+/// >     _ -> Error(Nil)
+/// >   }
+/// > }
+/// >
+/// > [1, 2, 3, 4]
+/// > |> from_list
+/// > |> iterator.fold_until_error(from: acc, with: f)
+/// 6
+/// ```
+///
+pub fn fold_until_error(
+  over iterator: Iterator(e),
+  from initial: acc,
+  with f: fn(acc, e) -> Result(acc, err),
+) -> acc {
+  iterator.continuation
+  |> do_fold_until_error(f, initial)
+}
+
 fn do_try_fold(
   over continuation: fn() -> Action(a),
   with f: fn(acc, a) -> Result(acc, err),

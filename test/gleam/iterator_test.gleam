@@ -451,6 +451,31 @@ pub fn fold_until_test() {
   |> should.equal([5, 4, 3, 2, 1])
 }
 
+pub fn fold_until_error_test() {
+  let test = fn(subject, acc, f) {
+    subject
+    |> iterator.from_list()
+    |> iterator.fold_until_error(acc, f)
+    |> should.equal(list.fold_until_error(subject, acc, f))
+  }
+
+  let f = fn(acc, e) {
+    case acc + e {
+      acc if acc < 12 -> Ok(acc)
+      _ -> Error(Nil)
+    }
+  }
+  test([], 0, f)
+  test([1], 0, f)
+  test([1, 2, 3], 0, f)
+  test([1, 2, 3, 4, 5, 6, 7, 8], 0, f)
+
+  [1, 2, 3, 4, 5, 6, 7, 8]
+  |> iterator.from_list()
+  |> iterator.fold_until_error(0, f)
+  |> should.equal(10)
+}
+
 // a |> from_list |> try_fold(acc, f) == a |> list.try_fold(acc, f)
 pub fn try_fold_test() {
   let test = fn(subject, acc, fun) {

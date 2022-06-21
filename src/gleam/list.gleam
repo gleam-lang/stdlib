@@ -706,6 +706,42 @@ pub fn fold_until(
   }
 }
 
+/// A variant of fold_until that stops folding earlier when the provided function returns an Error.
+///
+/// The folding function should return `Result(accumulator, _)`.
+/// If the returned value is `Ok(accumulator)` fold_until_error will try the next value in the list.
+/// If the returned value is `Error(_)` fold_until_error will stop and return the previous accumulator value.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > [1, 2, 3, 4]
+/// > |> fold_until_error(0, fn(acc, i) {
+/// >   let sum = acc + i
+/// >   case sum < 10 {
+/// >     True -> Ok(sum)
+/// >     False -> Error(Nil)
+/// >   }
+/// > })
+/// 6 
+///
+/// ```
+///
+pub fn fold_until_error(
+  over collection: List(a),
+  from accumulator: acc,
+  with fun: fn(acc, a) -> Result(acc, err),
+) -> acc {
+  case collection {
+    [] -> accumulator
+    [first, ..rest] ->
+      case fun(accumulator, first) {
+        Ok(next_accumulator) -> fold_until_error(rest, next_accumulator, fun)
+        Error(_) -> accumulator
+      }
+  }
+}
+
 /// Finds the first element in a given list for which the given function returns
 /// `True`.
 ///

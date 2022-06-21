@@ -228,6 +228,20 @@ pub fn fold_until_test() {
   |> should.equal(6)
 }
 
+pub fn fold_until_error_test() {
+  [1, 2, 3, 4]
+  |> list.fold_until_error(
+    from: 0,
+    with: fn(acc, n) {
+      case acc + n {
+        acc if acc < 10 -> Ok(acc)
+        _ -> Error(Nil)
+      }
+    },
+  )
+  |> should.equal(6)
+}
+
 pub fn try_fold_test() {
   [1, 2, 3]
   |> list.try_fold(
