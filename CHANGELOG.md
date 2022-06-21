@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- The `list` module gains the `fold_until_error` function.
+- The `iterator` module gains the `fold_until_error` function.
+
 ## v0.22.0 - 2022-06-15
 
 - The `float` module gains the `divide` function.
