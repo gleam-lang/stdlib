@@ -9,7 +9,7 @@
 /// using minimal memory, and then can be efficiently converted to a string
 /// using the `to_string` function.
 ///
-/// On Erlang this type is compatible with Erlang's iolists. On JavaScript this
+/// On Erlang this type is compatible with Erlang's iodata. On JavaScript this
 /// type is compatible with normal strings.
 ///
 pub external type StringBuilder

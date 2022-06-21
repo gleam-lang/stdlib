@@ -1,4 +1,6 @@
 import gleam/bit_builder
+import gleam/bit_string
+import gleam/string_builder
 import gleam/should
 
 pub fn builder_test() {
@@ -84,4 +86,10 @@ pub fn new_test() {
   bit_builder.new()
   |> bit_builder.to_bit_string
   |> should.equal(<<>>)
+}
+
+pub fn from_string_builder_test() {
+  string_builder.from_string("hello")
+  |> bit_builder.from_string_builder
+  |> should.equal(bit_builder.from_string("hello"))
 }

@@ -179,7 +179,7 @@ pub fn from_string_builder(builder: StringBuilder) -> BitBuilder {
 
 if erlang {
   external fn do_from_string_builder(StringBuilder) -> BitBuilder =
-    "gleam_stdlib" "identity"
+    "gleam_stdlib" "wrap_list"
 }
 
 if javascript {
