@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.22.0 - 2022-06-15
 
 - The `float` module gains the `divide` function.
 - The `int` module gains the `divide`, `power`, and `square_root` functions.
