@@ -186,6 +186,25 @@ if javascript {
   }
 }
 
+/// Creates a new builder from a list of bit strings.
+///
+/// Runs in constant time.
+///
+pub fn from_bit_strings(bits: List(BitString)) -> BitBuilder {
+  do_from_bit_strings(bits)
+}
+
+if erlang {
+  external fn do_from_bit_strings(List(BitString)) -> BitBuilder =
+    "gleam_stdlib" "identity"
+}
+
+if javascript {
+  fn do_from_bit_strings(bits: List(BitString)) -> BitBuilder {
+    Many(bits)
+  }
+}
+
 /// Turns an builder into a bit string.
 ///
 /// Runs in linear time.

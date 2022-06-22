@@ -67,6 +67,12 @@ pub fn from_bit_string_test() {
   |> should.equal(<<>>)
 }
 
+pub fn from_bit_strings_test() {
+  bit_builder.from_bit_strings([<<"h":utf8>>, <<"e":utf8>>, <<"y":utf8>>])
+  |> bit_builder.to_bit_string
+  |> should.equal(<<"hey":utf8>>)
+}
+
 pub fn from_string_test() {
   // Regression test: no additional modification of the builder
   bit_builder.from_string("")
