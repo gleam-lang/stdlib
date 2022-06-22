@@ -1,5 +1,7 @@
 # Changelog
 
+- The `bit_builder` module gains the `from_bit_strings` function.
+
 ## v0.22.0 - 2022-06-15
 
 - The `float` module gains the `divide` function.
