@@ -108,7 +108,7 @@ pub fn append_string(to: BitBuilder, suffix: String) -> BitBuilder {
   append_builder(to, from_string(suffix))
 }
 
-/// Joins a list of builders into a single builders.
+/// Joins a list of builders into a single builder.
 ///
 /// Runs in constant time.
 ///
@@ -124,6 +124,27 @@ if erlang {
 if javascript {
   fn do_concat(builders: List(BitBuilder)) -> BitBuilder {
     Many(builders)
+  }
+}
+
+/// Joins a list of bit strings into a single builder.
+///
+/// Runs in constant time.
+///
+pub fn concat_bit_strings(bits: List(BitString)) -> BitBuilder {
+  do_concat_bit_strings(bits)
+}
+
+if erlang {
+  external fn do_concat_bit_strings(List(BitString)) -> BitBuilder =
+    "gleam_stdlib" "identity"
+}
+
+if javascript {
+  fn do_concat_bit_strings(bits: List(BitString)) -> BitBuilder {
+    bits
+    |> list.map(fn(b) { from_bit_string(b) })
+    |> concat()
   }
 }
 

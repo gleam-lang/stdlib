@@ -60,6 +60,12 @@ pub fn concat_test() {
   |> should.equal(<<1, 2, 3, 4, 5, 6>>)
 }
 
+pub fn concat_bit_strings_test() {
+  bit_builder.concat_bit_strings([<<"h":utf8>>, <<"e":utf8>>, <<"y":utf8>>])
+  |> bit_builder.to_bit_string
+  |> should.equal(<<"hey":utf8>>)
+}
+
 pub fn from_bit_string_test() {
   // Regression test: no additional modification of the builder
   bit_builder.from_bit_string(<<>>)
