@@ -790,7 +790,19 @@ pub fn find_map(
 pub fn all(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
   case list {
     [] -> True
-    [x, ..rest] -> predicate(x) && all(rest, predicate)
+    list -> all_tail_recursive(list, predicate, True)
+  }
+}
+
+fn all_tail_recursive(
+  list: List(a),
+  predicate: fn(a) -> Bool,
+  accumulator: Bool,
+) -> Bool {
+  case list {
+    [] -> accumulator
+    [x, ..rest] ->
+      all_tail_recursive(rest, predicate, accumulator && predicate(x))
   }
 }
 
