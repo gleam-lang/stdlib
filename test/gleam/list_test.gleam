@@ -301,6 +301,10 @@ pub fn all_test() {
   list.all([], fn(_) { False })
   |> should.equal(True)
 
+  list.repeat(False, 16999)
+  |> list.all(fn(_item) { False })
+  |> should.equal(False)
+
   list.repeat(True, 16999)
   |> list.all(fn(_item) { True })
   |> should.equal(True)
@@ -319,6 +323,10 @@ pub fn any_test() {
   list.repeat(True, 16999)
   |> list.any(fn(_item) { True })
   |> should.equal(True)
+
+  list.repeat(False, 16999)
+  |> list.any(fn(_item) { False })
+  |> should.equal(False)
 }
 
 pub fn zip_test() {
