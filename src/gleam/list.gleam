@@ -839,6 +839,7 @@ fn any_tail_recursive(
   accumulator: Bool,
 ) -> Bool {
   case list {
+    _ if accumulator == True -> True
     [] -> accumulator
     [x, ..rest] ->
       any_tail_recursive(rest, predicate, accumulator || predicate(x))
