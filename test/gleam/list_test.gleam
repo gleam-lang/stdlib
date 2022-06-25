@@ -302,11 +302,11 @@ pub fn all_test() {
   |> should.equal(True)
 
   list.repeat(False, 16999)
-  |> list.all(fn(_item) { False })
+  |> list.all(fn(item) { item })
   |> should.equal(False)
 
   list.repeat(True, 16999)
-  |> list.all(fn(_item) { True })
+  |> list.all(fn(item) { item })
   |> should.equal(True)
 }
 
@@ -321,11 +321,11 @@ pub fn any_test() {
   |> should.equal(False)
 
   list.repeat(True, 16999)
-  |> list.any(fn(_item) { True })
+  |> list.any(fn(item) { item })
   |> should.equal(True)
 
   list.repeat(False, 16999)
-  |> list.any(fn(_item) { False })
+  |> list.any(fn(item) { item })
   |> should.equal(False)
 }
 
