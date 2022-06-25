@@ -9,6 +9,7 @@
 
 - Fixed a bug where `big_string.concat` could crash.
 - The `bit_builder` module gains the `from_bit_strings` function.
+- Changed `list.any` and `list.all` so that Gleam can do tail call optimization which fixes stack overflow crashes on NodeJS, Chrome and Firefox (#322).
 
 ## v0.22.0 - 2022-06-15
 
