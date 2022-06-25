@@ -829,7 +829,19 @@ fn all_tail_recursive(
 pub fn any(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
   case list {
     [] -> False
-    [x, ..rest] -> predicate(x) || any(rest, predicate)
+    list -> any_tail_recursive(list, predicate, False)
+  }
+}
+
+fn any_tail_recursive(
+  list: List(a),
+  predicate: fn(a) -> Bool,
+  accumulator: Bool,
+) -> Bool {
+  case list {
+    [] -> accumulator
+    [x, ..rest] ->
+      any_tail_recursive(rest, predicate, accumulator || predicate(x))
   }
 }
 
