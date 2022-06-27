@@ -796,9 +796,9 @@ pub fn all(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
 
 fn do_all(list: List(a), predicate: fn(a) -> Bool, accumulator: Bool) -> Bool {
   case list {
-    // _ if accumulator == False -> False
+    _ if accumulator == False -> False
     [] -> accumulator
-    [x, ..rest] -> do_all(rest, predicate, accumulator && predicate(x))
+    [x, ..rest] -> do_all(rest, predicate, predicate(x) && accumulator)
   }
 }
 
@@ -831,9 +831,9 @@ pub fn any(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
 
 fn do_any(list: List(a), predicate: fn(a) -> Bool, accumulator: Bool) -> Bool {
   case list {
-    // _ if accumulator == True -> True
+    _ if accumulator == True -> True
     [] -> accumulator
-    [x, ..rest] -> do_any(rest, predicate, accumulator || predicate(x))
+    [x, ..rest] -> do_any(rest, predicate, predicate(x) || accumulator)
   }
 }
 
