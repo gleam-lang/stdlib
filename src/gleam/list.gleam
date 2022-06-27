@@ -167,7 +167,15 @@ pub fn is_empty(list: List(a)) -> Bool {
 pub fn contains(list: List(a), any elem: a) -> Bool {
   case list {
     [] -> False
-    [head, ..rest] -> head == elem || contains(rest, elem)
+    list -> do_contains(list, elem, False)
+  }
+}
+
+fn do_contains(list: List(a), any elem: a, accumulator: Bool) -> Bool {
+  case list {
+    _ if accumulator == True -> True
+    [] -> accumulator
+    [head, ..rest] -> do_contains(rest, elem, head == elem || accumulator)
   }
 }
 

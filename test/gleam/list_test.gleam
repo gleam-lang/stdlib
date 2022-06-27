@@ -45,6 +45,10 @@ pub fn contains_test() {
   |> should.be_false
   list.contains([], 1)
   |> should.be_false
+
+  list.repeat(0, 16999)
+  |> list.contains(1)
+  |> should.equal(False)
 }
 
 pub fn first_test() {
