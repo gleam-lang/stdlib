@@ -790,19 +790,15 @@ pub fn find_map(
 pub fn all(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
   case list {
     [] -> True
-    list -> all_tail_recursive(list, predicate, True)
+    list -> do_all(list, predicate, True)
   }
 }
 
-fn all_tail_recursive(
-  list: List(a),
-  predicate: fn(a) -> Bool,
-  accumulator: Bool,
-) -> Bool {
+fn do_all(list: List(a), predicate: fn(a) -> Bool, accumulator: Bool) -> Bool {
   case list {
+    // _ if accumulator == False -> False
     [] -> accumulator
-    [x, ..rest] ->
-      all_tail_recursive(rest, predicate, accumulator && predicate(x))
+    [x, ..rest] -> do_all(rest, predicate, accumulator && predicate(x))
   }
 }
 
@@ -829,20 +825,15 @@ fn all_tail_recursive(
 pub fn any(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
   case list {
     [] -> False
-    list -> any_tail_recursive(list, predicate, False)
+    list -> do_any(list, predicate, False)
   }
 }
 
-fn any_tail_recursive(
-  list: List(a),
-  predicate: fn(a) -> Bool,
-  accumulator: Bool,
-) -> Bool {
+fn do_any(list: List(a), predicate: fn(a) -> Bool, accumulator: Bool) -> Bool {
   case list {
-    _ if accumulator == True -> True
+    // _ if accumulator == True -> True
     [] -> accumulator
-    [x, ..rest] ->
-      any_tail_recursive(rest, predicate, accumulator || predicate(x))
+    [x, ..rest] -> do_any(rest, predicate, accumulator || predicate(x))
   }
 }
 

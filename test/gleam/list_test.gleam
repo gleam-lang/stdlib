@@ -308,6 +308,18 @@ pub fn all_test() {
   list.repeat(True, 16999)
   |> list.all(fn(item) { item })
   |> should.equal(True)
+
+  [1, 2, 3]
+  |> list.all(fn(x) {
+    case x {
+      1 -> True
+      2 -> False
+      // Crash to ensure we short-circuit
+      _ -> {
+        assert True = False
+      }
+    }
+  })
 }
 
 pub fn any_test() {
@@ -327,6 +339,18 @@ pub fn any_test() {
   list.repeat(False, 16999)
   |> list.any(fn(item) { item })
   |> should.equal(False)
+
+  [1, 2, 3]
+  |> list.any(fn(x) {
+    case x {
+      1 -> False
+      2 -> True
+      // Crash to ensure we short-circuit
+      _ -> {
+        assert True = False
+      }
+    }
+  })
 }
 
 pub fn zip_test() {
