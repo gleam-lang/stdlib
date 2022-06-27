@@ -314,7 +314,7 @@ pub fn all_test() {
     case x {
       1 -> True
       2 -> False
-      // Crash to ensure we short-circuit
+      // Crash if no short-circuit
       _ -> {
         assert True = False
       }
@@ -345,7 +345,7 @@ pub fn any_test() {
     case x {
       1 -> False
       2 -> True
-      // Crash to ensure we short-circuit
+      // Crash if no short-circuit
       _ -> {
         assert True = False
       }
