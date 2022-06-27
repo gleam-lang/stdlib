@@ -756,6 +756,20 @@ pub fn shallow_list_test() {
   |> should.equal(Error([DecodeError(expected: "List", found: "Int", path: [])]))
 }
 
+if javascript {
+  pub fn array_on_js_is_also_list_test() {
+    #()
+    |> dynamic.from
+    |> dynamic.shallow_list
+    |> should.equal(Ok([]))
+
+    #(1, 2)
+    |> dynamic.from
+    |> dynamic.list(of: dynamic.int)
+    |> should.equal(Ok([1, 2]))
+  }
+}
+
 pub fn result_test() {
   Ok(1)
   |> dynamic.from
