@@ -1,7 +1,9 @@
 # Changelog
 
 ## Unreleased
-- Fixed a bug where decoding a `List` from a `Dynamic` `Array` would fail.
+
+- The list dynamic decoding functions can now decode JavaScript arrays into
+  Gleam lists.
 
 ## v0.22.1 - 2022-06-27
 
