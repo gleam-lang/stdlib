@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+- Fixed a bug where decoding a `List` from a `Dynamic` `Array` would fail.
+
 ## v0.22.1 - 2022-06-27
 
 - Fixed a bug where `big_string.concat` could crash.

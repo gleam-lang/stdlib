@@ -576,6 +576,9 @@ export function tuple_get(data, index) {
 }
 
 export function decode_list(data) {
+  if (Array.isArray(data)) {
+    return new Ok(List.fromArray(data));
+  }
   return List.isList(data) ? new Ok(data) : decoder_error("List", data);
 }
 
