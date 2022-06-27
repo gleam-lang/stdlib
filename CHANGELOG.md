@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+
+- Fixed a bug in `big_string.concat`, it now uses `erlang:list_to_bitstring`
 - The `bit_builder` module gains the `from_bit_strings` function.
 
 ## v0.22.0 - 2022-06-15

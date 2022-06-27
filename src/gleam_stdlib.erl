@@ -163,7 +163,7 @@ string_pop_grapheme(String) ->
     end.
 
 bit_string_concat(BitStrings) ->
-    iolist_to_binary(BitStrings).
+    list_to_bitstring(BitStrings).
 
 bit_string_slice(Bin, Pos, Len) ->
     try {ok, binary:part(Bin, Pos, Len)}
