@@ -34,6 +34,7 @@ pub fn reverse_test() {
 pub fn is_empty_test() {
   list.is_empty([])
   |> should.be_true
+
   list.is_empty([1])
   |> should.be_false
 }
@@ -41,8 +42,10 @@ pub fn is_empty_test() {
 pub fn contains_test() {
   list.contains([0, 4, 5, 1], 1)
   |> should.be_true
+
   list.contains([0, 4, 5, 7], 1)
   |> should.be_false
+
   list.contains([], 1)
   |> should.be_false
 
@@ -145,6 +148,7 @@ pub fn take_test() {
   []
   |> list.take(5)
   |> should.equal([])
+
   [1, 2, 3, 4, 5, 6, 7, 8]
   |> list.take(5)
   |> should.equal([1, 2, 3, 4, 5])
