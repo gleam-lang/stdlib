@@ -167,15 +167,8 @@ pub fn is_empty(list: List(a)) -> Bool {
 pub fn contains(list: List(a), any elem: a) -> Bool {
   case list {
     [] -> False
-    list -> do_contains(list, elem, False)
-  }
-}
-
-fn do_contains(list: List(a), any elem: a, accumulator: Bool) -> Bool {
-  case list {
-    _ if accumulator == True -> True
-    [] -> accumulator
-    [head, ..rest] -> do_contains(rest, elem, head == elem || accumulator)
+    [head, ..] if head == elem -> True
+    [_, ..tail] -> contains(tail, elem)
   }
 }
 
@@ -798,15 +791,11 @@ pub fn find_map(
 pub fn all(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
   case list {
     [] -> True
-    list -> do_all(list, predicate, True)
-  }
-}
-
-fn do_all(list: List(a), predicate: fn(a) -> Bool, accumulator: Bool) -> Bool {
-  case list {
-    _ if accumulator == False -> False
-    [] -> accumulator
-    [x, ..rest] -> do_all(rest, predicate, predicate(x) && accumulator)
+    [head, ..tail] ->
+      case predicate(head) {
+        True -> all(tail, predicate)
+        False -> False
+      }
   }
 }
 
@@ -833,15 +822,11 @@ fn do_all(list: List(a), predicate: fn(a) -> Bool, accumulator: Bool) -> Bool {
 pub fn any(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
   case list {
     [] -> False
-    list -> do_any(list, predicate, False)
-  }
-}
-
-fn do_any(list: List(a), predicate: fn(a) -> Bool, accumulator: Bool) -> Bool {
-  case list {
-    _ if accumulator == True -> True
-    [] -> accumulator
-    [x, ..rest] -> do_any(rest, predicate, predicate(x) || accumulator)
+    [head, ..tail] ->
+      case predicate(head) {
+        True -> True
+        False -> any(tail, predicate)
+      }
   }
 }
 
