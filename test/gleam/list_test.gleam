@@ -403,6 +403,23 @@ pub fn unzip_test() {
   |> should.equal(#([], []))
 }
 
+pub fn group_test() {
+  [Ok(1), Error("Wrong"), Ok(200), Ok(1)]
+  |> list.group(fn(i) {
+    case i {
+      Ok(_) -> "Successful"
+      Error(_) -> "Failed"
+    }
+  })
+  |> should.equal([
+    #("Failed", [Error("Wrong")]),
+    #("Successful", [Ok(1), Ok(200), Ok(1)]),
+  ])
+
+  list.group([1, 2, 3, 4, 5], fn(i) { i - i / 3 * 3 })
+  |> should.equal([#(0, [3]), #(1, [1, 4]), #(2, [2, 5])])
+}
+
 pub fn intersperse_test() {
   list.intersperse([1, 2, 3], 4)
   |> should.equal([1, 4, 2, 4, 3])
