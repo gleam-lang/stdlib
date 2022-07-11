@@ -1,5 +1,5 @@
 import gleam/list
-import gleam/option.{Option}
+import gleam/option.{None, Option, Some}
 
 if javascript {
   import gleam/pair
@@ -227,6 +227,56 @@ if javascript {
     map
     |> fold(from: new(), with: f)
   }
+}
+
+/// A List of Groups
+pub type Groups(k, v) =
+  Map(k, List(v))
+
+fn insert_to_group(
+  groups: Groups(k, v),
+  new_key: k,
+  new_value: v,
+) -> Groups(k, v) {
+  update(
+    groups,
+    new_key,
+    fn(v) {
+      case v {
+        Some(value) -> [new_value, ..value]
+        None -> [new_value]
+      }
+    },
+  )
+}
+
+/// Takes a lists and groups the values by a key
+/// which is build from a key_selector function
+/// and the values are stored in a new List.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > [Ok(3), Error("Wrong"), Ok(200), Ok(73)]
+///   |> group(with: fn(i) {
+///     case i {
+///       Ok(_) -> "Successful"
+///       Error(_) -> "Failed"
+///     }
+///   })
+///
+/// [
+///   #("Failed", [Error("Wrong")]),
+///   #("Successful", [Ok(3), Ok(200), Ok(73)])
+/// ]
+///
+/// > group(from: [1,2,3,4,5], with: fn(i) {fn(i) { i - i / 3 * 3 }})
+/// [#(0, [3]), #(1, [1, 4]), #(2, [2, 5])]
+/// ```
+///
+pub fn group(from list: List(v), with key_selector: fn(v) -> k) -> Groups(k, v) {
+  list.map(list, fn(x) { #(key_selector(x), x) })
+  |> do_fold_right(new(), insert_to_group)
 }
 
 /// Gets a list of all keys in a given map.
@@ -519,4 +569,15 @@ pub fn fold(
   map
   |> to_list
   |> do_fold(initial, fun)
+}
+
+fn do_fold_right(
+  list: List(#(k, v)),
+  initial: acc,
+  fun: fn(acc, k, v) -> acc,
+) -> acc {
+  case list {
+    [] -> initial
+    [#(k, v), ..tail] -> fun(do_fold_right(tail, initial, fun), k, v)
+  }
 }

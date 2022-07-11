@@ -199,3 +199,22 @@ pub fn fold_test() {
   |> map.fold(0, add)
   |> should.equal(0)
 }
+
+pub fn group_test() {
+  [Ok(1), Error("Wrong"), Ok(200), Ok(10)]
+  |> map.group(fn(i) {
+    case i {
+      Ok(_) -> "Successful"
+      Error(_) -> "Failed"
+    }
+  })
+  |> map.to_list
+  |> should.equal([
+    #("Failed", [Error("Wrong")]),
+    #("Successful", [Ok(1), Ok(200), Ok(10)]),
+  ])
+
+  map.group([1, 2, 3, 4, 5], fn(i) { i - i / 3 * 3 })
+  |> map.to_list
+  |> should.equal([#(0, [3]), #(1, [1, 4]), #(2, [2, 5])])
+}
