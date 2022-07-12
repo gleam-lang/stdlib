@@ -1,5 +1,4 @@
 import gleam/bit_builder
-import gleam/bit_string
 import gleam/string_builder
 import gleam/should
 
