@@ -306,13 +306,13 @@ pub fn map(list: List(a), with fun: fn(a) -> b) -> List(b) {
 ///
 /// ## Examples
 ///
-/// ```
+/// ```gleam
 /// > map_fold(
 ///     over: [1, 2, 3],
 ///     from: 100,
 ///     with: fn(memo, i) { #(memo + i, i * 2) }
-///  )
-///  #(106, [2, 4, 6])
+///   )
+/// #(106, [2, 4, 6])
 /// ```
 ///
 pub fn map_fold(
@@ -557,7 +557,7 @@ pub fn flatten(lists: List(List(a))) -> List(a) {
 ///
 /// ## Examples
 ///
-/// ```
+/// ```gleam
 /// > flat_map([2, 4, 6], fn(x) { [x, x + 1] })
 /// [2, 3, 4, 5, 6, 7]
 /// ```
@@ -570,7 +570,8 @@ pub fn flat_map(over list: List(a), with fun: fn(a) -> List(b)) -> List(b) {
 /// Reduces a list of elements into a single value by calling a given function
 /// on each element, going from left to right.
 ///
-/// `fold([1, 2, 3], 0, add)` is the equivalent of `add(add(add(0, 1), 2), 3)`.
+/// `fold([1, 2, 3], 0, add)` is the equivalent of
+/// `add(add(add(0, 1), 2), 3)`.
 ///
 /// This function runs in linear time.
 ///
@@ -624,7 +625,7 @@ fn do_index_fold(
 ///
 /// ## Examples
 ///
-/// ```
+/// ```gleam
 /// ["a", "b", "c"]
 /// |> list.index_fold([], fn(acc, item, index) { ... })
 /// ```
@@ -645,7 +646,7 @@ pub fn index_fold(
 ///
 /// ## Examples
 ///
-/// ```
+/// ```gleam
 /// [1, 2, 3, 4]
 /// |> try_fold(0, fn(acc, i) {
 ///   case i < 3 {
@@ -682,7 +683,7 @@ pub type ContinueOrStop(a) {
 ///
 /// ## Examples
 ///
-/// ```
+/// ```gleam
 /// [1, 2, 3, 4]
 /// |> fold_until(0, fn(acc, i) {
 ///   case i < 3 {
@@ -984,14 +985,14 @@ pub fn unique(list: List(a)) -> List(a) {
   }
 }
 
-fn merge_sort(a: List(a), b: List(a), compare: fn(a, a) -> Order) -> List(a) {
+fn do_merge_sort(a: List(a), b: List(a), compare: fn(a, a) -> Order) -> List(a) {
   case a, b {
     [], _ -> b
     _, [] -> a
     [ax, ..ar], [bx, ..br] ->
       case compare(ax, bx) {
-        order.Lt -> [ax, ..merge_sort(ar, b, compare)]
-        _ -> [bx, ..merge_sort(a, br, compare)]
+        order.Lt -> [ax, ..do_merge_sort(ar, b, compare)]
+        _ -> [bx, ..do_merge_sort(a, br, compare)]
       }
   }
 }
@@ -1007,7 +1008,7 @@ fn do_sort(
       let split_length = list_length / 2
       let a_list = take(list, split_length)
       let b_list = drop(list, split_length)
-      merge_sort(
+      do_merge_sort(
         do_sort(a_list, compare, split_length),
         do_sort(b_list, compare, list_length - split_length),
         compare,
@@ -1338,6 +1339,16 @@ fn do_partition(list, categorise, trues, falses) {
   }
 }
 
+/// Partitions a list into a tuple/pair of lists
+/// by a given categorisation function.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > [1, 2, 3, 4, 5] |> list.partition(int.is_odd)
+/// #([1, 3, 5], [2, 4])
+/// ```
+///
 pub fn partition(
   list: List(a),
   with categorise: fn(a) -> Bool,
@@ -1384,7 +1395,7 @@ fn do_window(acc: List(List(a)), l: List(a), n: Int) -> List(List(a)) {
 ///
 /// ## Examples
 ///
-/// ```
+/// ```gleam
 /// > window([1,2,3,4,5], 3)
 /// [[1, 2, 3], [2, 3, 4], [3, 4, 5]]
 ///
@@ -1401,7 +1412,7 @@ pub fn window(l: List(a), by n: Int) -> List(List(a)) {
 ///
 /// ## Examples
 ///
-/// ```
+/// ```gleam
 /// > window_by_2([1,2,3,4])
 /// [#(1, 2), #(2, 3), #(3, 4)]
 ///
@@ -1633,7 +1644,7 @@ pub fn last(list: List(a)) -> Result(a, Nil) {
 ///
 /// ## Examples
 ///
-/// ```
+/// ```gleam
 /// > combinations([1, 2, 3], 2)
 /// [[1, 2], [1, 3], [2, 3]]
 ///
@@ -1675,7 +1686,7 @@ fn do_combination_pairs(items: List(a)) -> List(List(#(a, a))) {
 ///
 /// ## Examples
 ///
-/// ```
+/// ```gleam
 /// > combination_pairs([1, 2, 3])
 /// [#(1, 2), #(1, 3), #(2, 3)]
 /// ```
@@ -1689,7 +1700,7 @@ pub fn combination_pairs(items: List(a)) -> List(#(a, a)) {
 ///
 /// ## Examples
 ///
-/// ```
+/// ```gleam
 /// > list.interleave([[1, 2], [101, 102], [201, 202]])
 /// [1, 101, 201, 2, 102, 202]
 /// ```
@@ -1703,10 +1714,11 @@ pub fn interleave(list: List(List(a))) -> List(a) {
 ///
 /// ## Examples
 ///
-/// ```
+/// ```gleam
 /// > transpose([[1, 2, 3], [101, 102, 103]])
 /// [[1, 101], [2, 102], [3, 103]]
 /// ```
+///
 pub fn transpose(list_of_list: List(List(a))) -> List(List(a)) {
   let take_first = fn(list) {
     case list {
