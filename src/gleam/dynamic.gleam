@@ -375,27 +375,27 @@ pub fn list(
 ///
 /// ```gleam
 /// > from("Hello")
-/// > |> option(string)
+/// > |> optional(string)
 /// Ok(Some("Hello"))
 ///
 /// > from("Hello")
-/// > |> option(string)
+/// > |> optional(string)
 /// Ok(Some("Hello"))
 ///
 /// > from(atom.from_string("null"))
-/// > |> option(string)
+/// > |> optional(string)
 /// Ok(None)
 ///
 /// > from(atom.from_string("nil"))
-/// > |> option(string)
+/// > |> optional(string)
 /// Ok(None)
 ///
 /// > from(atom.from_string("undefined"))
-/// > |> option(string)
+/// > |> optional(string)
 /// Ok(None)
 ///
 /// > from(123)
-/// > |> option(string)
+/// > |> optional(string)
 /// Error([DecodeError(expected: "BitString", found: "Int", path: [])])
 /// ```
 ///
