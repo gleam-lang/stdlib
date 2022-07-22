@@ -5,6 +5,12 @@ if javascript {
   import gleam/pair
 }
 
+if javascript {
+  // hack to include another js file..
+  pub external fn include_persistent_hash_map() -> Nil =
+    "../persistent-hash-map.mjs" "__include_me"
+}
+
 /// A dictionary of keys and values.
 ///
 /// Any type can be used for the keys and values of a map, but all the keys
