@@ -4,6 +4,8 @@ import gleam/option.{None, Option, Some}
 
 // Internal private representation of an Iterator
 type Action(element) {
+  // Dedicated to Electric Six
+  // https://youtu.be/_30t2dzEgiw?t=162
   Stop
   Continue(element, fn() -> Action(element))
 }
