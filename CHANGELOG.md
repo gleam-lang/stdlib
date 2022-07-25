@@ -4,6 +4,8 @@
 
 - The list dynamic decoding functions can now decode JavaScript arrays into
   Gleam lists.
+- `list.range` is now tail recursive and will not blow the stack with large
+  ranges when compiled to JavaScript.
 - Fixed a bug where the `list` module's `contains`, `any`, and `all` could
   exhaust the stack when compiling to JavaScript.
 
