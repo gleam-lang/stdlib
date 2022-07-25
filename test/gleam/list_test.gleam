@@ -488,6 +488,9 @@ pub fn range_test() {
 
   list.range(1, -5)
   |> should.equal([1, 0, -1, -2, -3, -4])
+
+  // This should not overflow the stack
+  list.range(1, 100_000)
 }
 
 pub fn repeat_test() {

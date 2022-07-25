@@ -1048,10 +1048,14 @@ pub fn sort(list: List(a), by compare: fn(a, a) -> Order) -> List(a) {
 /// ```
 ///
 pub fn range(from start: Int, to stop: Int) -> List(Int) {
+  tail_recursive_range(start, stop, [])
+}
+
+fn tail_recursive_range(start: Int, stop: Int, acc: List(Int)) -> List(Int) {
   case int.compare(start, stop) {
-    order.Eq -> []
-    order.Gt -> [start, ..range(start - 1, stop)]
-    order.Lt -> [start, ..range(start + 1, stop)]
+    order.Eq -> reverse(acc)
+    order.Gt -> tail_recursive_range(start - 1, stop, [start, ..acc])
+    order.Lt -> tail_recursive_range(start + 1, stop, [start, ..acc])
   }
 }
 
