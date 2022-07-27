@@ -8,6 +8,7 @@
   ranges when compiled to JavaScript.
 - Fixed a bug where the `list` module's `contains`, `any`, and `all` could
   exhaust the stack when compiling to JavaScript.
+- `list.range` and `iterator.range` return values are now inclusive of both start and end bounds. 
 
 ## v0.22.1 - 2022-06-27
 

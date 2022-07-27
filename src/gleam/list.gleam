@@ -1038,13 +1038,13 @@ pub fn sort(list: List(a), by compare: fn(a, a) -> Order) -> List(a) {
 ///
 /// ```gleam
 /// > range(0, 0)
-/// []
+/// [0]
 ///
 /// > range(0, 5)
-/// [0, 1, 2, 3, 4]
+/// [0, 1, 2, 3, 4, 5]
 ///
 /// > range(1, -5)
-/// [1, 0, -1, -2, -3, -4]
+/// [1, 0, -1, -2, -3, -4, -5]
 /// ```
 ///
 pub fn range(from start: Int, to stop: Int) -> List(Int) {
@@ -1053,7 +1053,7 @@ pub fn range(from start: Int, to stop: Int) -> List(Int) {
 
 fn tail_recursive_range(start: Int, stop: Int, acc: List(Int)) -> List(Int) {
   case int.compare(start, stop) {
-    order.Eq -> reverse(acc)
+    order.Eq -> reverse([stop, ..acc])
     order.Gt -> tail_recursive_range(start - 1, stop, [start, ..acc])
     order.Lt -> tail_recursive_range(start + 1, stop, [start, ..acc])
   }
