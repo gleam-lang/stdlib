@@ -1,6 +1,8 @@
+import gleam/int
 import gleam/list
 import gleam/map.{Map}
 import gleam/option.{None, Option, Some}
+import gleam/order
 
 // Internal private representation of an Iterator
 type Action(element) {
@@ -447,29 +449,40 @@ pub fn cycle(iterator: Iterator(a)) -> Iterator(a) {
 ///
 /// ```gleam
 /// > range(from: 1, to: 5) |> to_list
-/// [1, 2, 3, 4]
+/// [1, 2, 3, 4, 5]
 ///
 /// > range(from: 1, to: -2) |> to_list
-/// [1, 0, -1]
+/// [1, 0, -1, -2]
 ///
 /// > range(from: 0, to: 0) |> to_list
-/// []
+/// [0]
 /// ```
 ///
 pub fn range(from start: Int, to stop: Int) -> Iterator(Int) {
-  let increment = case start < stop {
-    True -> 1
-    False -> -1
-  }
+  case int.compare(start, stop) {
+    order.Eq -> once(fn() { start })
+    order.Gt ->
+      unfold(
+        from: start,
+        with: fn(current) {
+          case current < stop {
+            False -> Next(current, current - 1)
+            True -> Done
+          }
+        },
+      )
 
-  let next_step = fn(current) {
-    case current == stop {
-      True -> Done
-      False -> Next(current, current + increment)
-    }
+    order.Lt ->
+      unfold(
+        from: start,
+        with: fn(current) {
+          case current > stop {
+            False -> Next(current, current + 1)
+            True -> Done
+          }
+        },
+      )
   }
-
-  unfold(start, next_step)
 }
 
 fn do_find(continuation: fn() -> Action(a), f: fn(a) -> Bool) -> Result(a, Nil) {

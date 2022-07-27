@@ -472,22 +472,22 @@ pub fn index_map_test() {
 
 pub fn range_test() {
   list.range(0, 0)
-  |> should.equal([])
-
-  list.range(1, 1)
-  |> should.equal([])
-
-  list.range(-1, -1)
-  |> should.equal([])
-
-  list.range(0, 1)
   |> should.equal([0])
 
+  list.range(1, 1)
+  |> should.equal([1])
+
+  list.range(-1, -1)
+  |> should.equal([-1])
+
+  list.range(0, 1)
+  |> should.equal([0, 1])
+
   list.range(0, 5)
-  |> should.equal([0, 1, 2, 3, 4])
+  |> should.equal([0, 1, 2, 3, 4, 5])
 
   list.range(1, -5)
-  |> should.equal([1, 0, -1, -2, -3, -4])
+  |> should.equal([1, 0, -1, -2, -3, -4, -5])
 
   // This should not overflow the stack
   list.range(1, 100_000)
