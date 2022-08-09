@@ -1,4 +1,4 @@
-import gleam/int
+	import gleam/int
 import gleam/list
 import gleam/map
 import gleam/map.{Map}
