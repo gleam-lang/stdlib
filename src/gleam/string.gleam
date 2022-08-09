@@ -5,7 +5,6 @@ import gleam/iterator.{Iterator}
 import gleam/list
 import gleam/option.{None, Option, Some}
 import gleam/order
-import gleam/string_builder
 import gleam/string_builder.{StringBuilder}
 
 if erlang {
