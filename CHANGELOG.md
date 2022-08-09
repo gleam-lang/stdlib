@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.22.3 - 2022-08-09
+
+- Removed a duplicate import.
+
 ## v0.22.2 - 2022-08-09
 
 - The list dynamic decoding functions can now decode JavaScript arrays into
