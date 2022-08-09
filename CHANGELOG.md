@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Fixed `string.inspect` and `io.debug` crashing on improper Erlang lists.
+- Fixed `string.inspect` and `io.debug` crashing on improper Erlang lists (#333).
 
 ## v0.22.3 - 2022-08-09
 
@@ -49,7 +49,7 @@
 - The `int` module gains the `random` function.
 - The JavaScript target implementation of the `string.replace` received a bug
   fix.
-- The `list` module gains a `prepend` function. (#284)
+- The `list` module gains a `prepend` function (#284).
 
 ## v0.20.0 - 2022-02-22
 
