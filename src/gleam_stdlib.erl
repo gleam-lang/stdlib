@@ -376,12 +376,12 @@ inspect(Any) ->
     ["//erl(", io_lib:format("~p", [Any]), ")"].
 
 do_map_listish(_Fn, [])  ->
-	[];
+    [];
 do_map_listish(Fn, List) when is_list(List) ->
-	[Head | Tail] = List,
-	[Fn(Head) | do_map_listish(Fn, Tail)];
+    [Head | Tail] = List,
+    [Fn(Head) | do_map_listish(Fn, Tail)];
 do_map_listish(Fn, Tail) when not is_list(Tail) ->
-	[Fn(Tail)].
+    [Fn(Tail)].
 
 float_to_string(Float) when is_float(Float) ->
     erlang:iolist_to_binary(io_lib_format:fwrite_g(Float)).
