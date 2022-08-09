@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Fixed `string.inspect` and `io.debug` crashing on improper Erlang lists.
+
 ## v0.22.3 - 2022-08-09
 
 - Removed a duplicate import.
@@ -12,7 +16,7 @@
   ranges when compiled to JavaScript.
 - Fixed a bug where the `list` module's `contains`, `any`, and `all` could
   exhaust the stack when compiling to JavaScript.
-- `list.range` and `iterator.range` return values are now inclusive of both start and end bounds. 
+- `list.range` and `iterator.range` return values are now inclusive of both start and end bounds.
 
 ## v0.22.1 - 2022-06-27
 
