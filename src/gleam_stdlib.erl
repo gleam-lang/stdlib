@@ -349,7 +349,7 @@ inspect(Binary) when is_binary(Binary) ->
             ["<<", lists:join(", ", Segments), ">>"]
     end;
 inspect(List) when is_list(List) ->
-    Elements = lists:join(<<", ">>, lists:map(fun inspect/1, List)),
+    Elements = lists:join(<<", ">>, do_map_listish(fun inspect/1, List)),
     ["[", Elements, "]"];
 inspect(Any) when is_tuple(Any) % Record constructors
   andalso is_atom(element(1, Any))
@@ -374,6 +374,14 @@ inspect(Any) when is_function(Any) ->
     ["//fn(", Args, ") { ... }"];
 inspect(Any) ->
     ["//erl(", io_lib:format("~p", [Any]), ")"].
+
+do_map_listish(_Fn, [])  ->
+	[];
+do_map_listish(Fn, List) when is_list(List) ->
+	[Head | Tail] = List,
+	[Fn(Head) | do_map_listish(Fn, Tail)];
+do_map_listish(Fn, Tail) when not is_list(Tail) ->
+	[Fn(Tail)].
 
 float_to_string(Float) when is_float(Float) ->
     erlang:iolist_to_binary(io_lib_format:fwrite_g(Float)).
