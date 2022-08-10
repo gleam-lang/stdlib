@@ -795,7 +795,7 @@ if erlang {
 
 pub fn improper_list_inspect_test() {
   let list = improper_list_append(1, 2)
-  assert "[1, ...2]" = string.inspect(list)
+  assert "[1, ..2]" = string.inspect(list)
 }
 
 // Warning: The type of this function is incorrect
