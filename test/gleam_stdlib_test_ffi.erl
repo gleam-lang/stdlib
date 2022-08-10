@@ -39,5 +39,5 @@ should_be_error(A) ->
     ?assertMatch({error, _}, A),
     nil.
 
-improper_list_append(ItemA, ItemB, ImproperItem) ->
-    [ItemA, ItemB | ImproperItem].
+improper_list_append(ItemA, ItemB, ImproperTail) ->
+    [ItemA, ItemB | ImproperTail].
