@@ -813,7 +813,14 @@ pub fn tuple6(
   fn(value) {
     try _ = assert_is_tuple(value, 6)
     let #(a, b, c, d, e, f) = unsafe_coerce(value)
-    case decode1(a), decode2(b), decode3(c), decode4(d), decode5(e), decode6(f) {
+    case
+      decode1(a),
+      decode2(b),
+      decode3(c),
+      decode4(d),
+      decode5(e),
+      decode6(f)
+    {
       Ok(a), Ok(b), Ok(c), Ok(d), Ok(e), Ok(f) -> Ok(#(a, b, c, d, e, f))
       a, b, c, d, e, f ->
         tuple_errors(a, "0")
