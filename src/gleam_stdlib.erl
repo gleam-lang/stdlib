@@ -348,10 +348,10 @@ inspect(Binary) when is_binary(Binary) ->
             Segments = [erlang:integer_to_list(X) || <<X>> <= Binary],
             ["<<", lists:join(", ", Segments), ">>"]
     end;
-inspect(Elements) when is_list(Elements) ->
-    case is_proper_list(Elements) of
-        true -> ["[", inspect_proper_list(Elements), "]"];
-        false -> ["//erl[", inspect_improper_list(Elements), "] %% improper list"]
+inspect(List) when is_list(List) ->
+    case inspect_list(firstCall, properList, List) of
+        {properList, Elements} -> ["[", Elements, "]"];
+        {improperList, Elements} -> ["//erl[", Elements, "] %% improper list"]
     end;
 inspect(Any) when is_tuple(Any) % Record constructors
   andalso is_atom(element(1, Any))
@@ -377,25 +377,18 @@ inspect(Any) when is_function(Any) ->
 inspect(Any) ->
     ["//erl(", io_lib:format("~p", [Any]), ")"].
 
-is_proper_list([])  ->
-    true;
-is_proper_list([_Head | Tail]) ->
-  is_proper_list(Tail);
-is_proper_list(ImproperTail) when not is_list(ImproperTail) ->
-    false.
-
-inspect_proper_list(List) ->
-    lists:join(<<", ">>, lists:map(fun inspect/1, List)).
-
-inspect_improper_list(Elements) ->
-	do_inspect_improper_list(firstCall, Elements).
-
-do_inspect_improper_list(firstCall, [First | Rest]) ->
-    [inspect(First) | do_inspect_improper_list(nthCall, Rest)];
-do_inspect_improper_list(nthCall, [First | Rest]) ->
-    [ <<",">>, inspect(First) | do_inspect_improper_list(nthCall, Rest)];
-do_inspect_improper_list(nthCall, ImproperTail) ->
-    [<<"|">>, inspect(ImproperTail)].
+inspect_list(_recursionCount, properList, []) ->
+    {properList, []};
+inspect_list(firstCall, properList, [Head]) ->
+    {properList, [inspect(Head)]};
+inspect_list(firstCall, properList, [First | Rest]) ->
+    {ListKind, Elements} = inspect_list(nthCall, properList, Rest),
+    {ListKind, [inspect(First) | Elements]};
+inspect_list(nthCall, properList, [First | Rest]) ->
+    {ListKind, Elements} = inspect_list(nthCall, properList, Rest),
+    {ListKind, [<<", ">>, inspect(First) | Elements]};
+inspect_list(nthCall, properList, ImproperTail) ->
+    {improperList, [<<" | ">>, inspect(ImproperTail)]}.
 
 float_to_string(Float) when is_float(Float) ->
     erlang:iolist_to_binary(io_lib_format:fwrite_g(Float)).

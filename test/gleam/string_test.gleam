@@ -791,12 +791,10 @@ if erlang {
     |> string.inspect()
     |> should.equal("\"abc\"")
   }
-}
 
-if erlang {
   pub fn improper_list_inspect_test() {
     let list = improper_list_append(1, 2, 3)
-    assert "//erl[1,2|3] %% improper list" = string.inspect(list)
+    assert "//erl[1, 2 | 3] %% improper list" = string.inspect(list)
   }
 
   // Warning: The type of this function is incorrect
