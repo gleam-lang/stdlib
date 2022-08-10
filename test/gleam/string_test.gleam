@@ -801,9 +801,9 @@ if erlang {
 
   // Warning: The type of this function is incorrect
   external fn improper_list_append(
-    anything1,
-    anything2,
-    anything3,
+    item_a,
+    item_b,
+    improper_item,
   ) -> List(anything) =
     "gleam_stdlib_test_ffi" "improper_list_append"
 }
