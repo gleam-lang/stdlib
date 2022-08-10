@@ -390,8 +390,6 @@ inspect_proper_list(List) ->
 inspect_improper_list(Elements) ->
 	do_inspect_improper_list(firstCall, Elements).
 
-do_inspect_improper_list(_NthCall, []) ->
-    [];
 do_inspect_improper_list(firstCall, [First | Rest]) ->
     [inspect(First) | do_inspect_improper_list(nthCall, Rest)];
 do_inspect_improper_list(nthCall, [First | Rest]) ->
