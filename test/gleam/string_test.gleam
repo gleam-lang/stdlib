@@ -793,11 +793,13 @@ if erlang {
   }
 }
 
-pub fn improper_list_inspect_test() {
-  let list = improper_list_append(1, 2)
-  assert "[1, ..2]" = string.inspect(list)
-}
+if erlang {
+  pub fn improper_list_inspect_test() {
+    let list = improper_list_append(1, 2)
+    assert "[1, ..2]" = string.inspect(list)
+  }
 
-// Warning: The type of this function is incorrect
-external fn improper_list_append(anything1, anything2) -> List(anything) =
-  "gleam_stdlib_test_ffi" "improper_list_append"
+  // Warning: The type of this function is incorrect
+  external fn improper_list_append(anything1, anything2) -> List(anything) =
+    "gleam_stdlib_test_ffi" "improper_list_append"
+}
