@@ -2,7 +2,7 @@
 
 -export([
     main/0, should_equal/2, should_not_equal/2, should_be_ok/1,
-    should_be_error/1
+    should_be_error/1, improper_list_append/2
 ]).
 
 -include_lib("eunit/include/eunit.hrl").
@@ -38,3 +38,6 @@ should_be_ok(A) ->
 should_be_error(A) -> 
     ?assertMatch({error, _}, A),
     nil.
+
+improper_list_append(X, Y) ->
+    [X | Y].
