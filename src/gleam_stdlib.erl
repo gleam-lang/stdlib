@@ -374,7 +374,6 @@ inspect(Any) when is_function(Any) ->
 inspect(Any) ->
     ["//erl(", io_lib:format("~p", [Any]), ")"].
 
-
 inspect_list([])  ->
     [];
 inspect_list([Head]) ->
@@ -382,7 +381,7 @@ inspect_list([Head]) ->
 inspect_list([First | Rest]) ->
     [inspect(First), <<", ">> | inspect_list(Rest)];
 inspect_list(ImproperTail) ->
-    [<<"...">>, inspect(ImproperTail)].
+    [<<"..">>, inspect(ImproperTail)].
 
 float_to_string(Float) when is_float(Float) ->
     erlang:iolist_to_binary(io_lib_format:fwrite_g(Float)).
