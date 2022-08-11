@@ -551,7 +551,7 @@ export function classify_dynamic(data) {
     return `Tuple of ${data.length} elements`;
   } else if (BitString.isBitString(data)) {
     return "BitString";
-  } else if (data instanceof pmap.Map) {
+  } else if (data instanceof pmap.PMap) {
     return "Map";
   } else if (typeof data === "number") {
     return "Float";
@@ -621,7 +621,7 @@ export function decode_result(data) {
 }
 
 export function decode_map(data) {
-  return data instanceof pmap.Map ? new Ok(data) : decoder_error("Map", data);
+  return data instanceof pmap.PMap ? new Ok(data) : decoder_error("Map", data);
 }
 
 export function decode_option(data, decoder) {
@@ -638,7 +638,7 @@ export function decode_option(data, decoder) {
 
 export function decode_field(value, name) {
   let error = () => decoder_error_no_classify("field", "nothing");
-  if (value instanceof pmap.Map) {
+  if (value instanceof pmap.PMap) {
     let entry = map_get(value, name);
     return entry.isOk() ? entry : error();
   }

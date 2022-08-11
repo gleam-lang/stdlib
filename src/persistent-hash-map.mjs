@@ -1,13 +1,108 @@
-import { inspect, isEqual } from "./gleam.mjs";
-function getHash(s) {
-  if (typeof s === "number") return s;
-  if (typeof s !== "string") s = inspect(s);
+import { isEqual } from "./gleam.mjs";
+
+const referenceMap = new WeakMap();
+let referenceUID = 1;
+
+/** hash the object by reference using a weak map and incrementing uid */
+function hashByReference(o) {
+  const known = referenceMap.get(o);
+  if (known !== undefined) {
+    return known;
+  }
+  const hash = hashInteger(referenceUID++);
+  if (referenceUID === 0x7fffffff) {
+    referenceUID = 1;
+  }
+  referenceMap.set(o, hash);
+  return hash;
+}
+/** taken from immutable.js */
+function hashMerge(a, b) {
+  return (a ^ (b + 0x9e3779b9 + (a << 6) + (a >> 2))) | 0;
+}
+/** scrambles an integer to make it more randomly distributed */
+function hashInteger(i) {
+  i = Math.imul(0x45d9f3b, (i >>> 16) ^ i);
+  i = Math.imul(0x45d9f3b, (i >>> 16) ^ i);
+  i = (i >>> 16) ^ i;
+  return i;
+}
+/** standard string hash popularised by java + hashInteger at the end */
+function hashString(s) {
   let hash = 0;
   const len = s.length;
   for (let i = 0; i < len; i++) {
     hash = (Math.imul(31, hash) + s.charCodeAt(i)) | 0;
   }
-  return hash;
+  return hashInteger(hash);
+}
+/** convert number to string and hash, seems to be better and faster than anything else */
+function hashNumber(n) {
+  return hashString(n.toString());
+}
+/** hash any js object */
+function hashObject(o) {
+  const proto = Object.getPrototypeOf(o);
+  if (proto !== null && typeof proto.hashCode === "function") {
+    try {
+      return o.hashCode(o);
+    } catch {}
+  }
+  if (o instanceof Promise || o instanceof WeakSet || o instanceof WeakMap) {
+    return hashByReference(o);
+  }
+  if (o instanceof Date) {
+    return hashNumber(o.getTime());
+  }
+  let h = 0;
+  if (Array.isArray(o)) {
+    for (let i = 0; i < o.length; i++) {
+      h = (Math.imul(31, h) + getHash(o[i])) | 0;
+    }
+  } else if (o instanceof Set) {
+    o.forEach((v) => {
+      h = (h + getHash(v)) | 0;
+    });
+  } else if (o instanceof Map) {
+    o.forEach((v, k) => {
+      h = (h + hashMerge(getHash(v), getHash(k))) | 0;
+    });
+  } else if (o instanceof ArrayBuffer) {
+    const view = new Uint8Array(o);
+    for (let i = 0; i < view.length; i++) {
+      h = (Math.imul(31, h) + getHash(view[i])) | 0;
+    }
+  } else {
+    const keys = Object.keys(o);
+    for (let i = 0; i < keys.length; i++) {
+      const k = keys[i];
+      const v = o[k];
+      h = (h + hashMerge(getHash(v), hashString(k))) | 0;
+    }
+  }
+  return h;
+}
+/** hash any js value */
+export function getHash(u) {
+  if (u == null) {
+    return u === null ? 0x42108422 : 0x42108423;
+  }
+  switch (typeof u) {
+    case "number":
+      return hashNumber(u);
+    case "string":
+      return hashString(u);
+    case "boolean":
+      return u ? 0x42108421 : 0x42108420;
+    case "bigint":
+      return hashNumber(u);
+    case "object":
+      return hashObject(u);
+    case "symbol":
+      return hashByReference(u);
+    case "function":
+      return hashByReference(u);
+  }
 }
 const SHIFT = 5; // number of bits you need to shift by to get the next bucket
 const BUCKET_SIZE = Math.pow(2, SHIFT);
@@ -491,15 +586,15 @@ function toArray(root, result) {
     toArray(item, result);
   }
 }
-export class Map {
+/** Extra wrapper to keep track of map size */
+export class PMap {
   constructor(root, size) {
     this.root = root;
     this.size = size;
   }
 }
-/** Extra wrapper to keep track of map size */
 export function create() {
-  return new Map(undefined, 0);
+  return new PMap(undefined, 0);
 }
 export function get(map, key) {
   if (map.root === undefined) {
@@ -524,7 +619,7 @@ export function set(map, key, val) {
   if (newRoot === map.root) {
     return map;
   }
-  return new Map(newRoot, addedLeaf.val ? map.size + 1 : map.size);
+  return new PMap(newRoot, addedLeaf.val ? map.size + 1 : map.size);
 }
 export function remove(map, key) {
   if (map.root === undefined) {
@@ -537,7 +632,7 @@ export function remove(map, key) {
   if (newRoot === undefined) {
     return create();
   }
-  return new Map(newRoot, map.size - 1);
+  return new PMap(newRoot, map.size - 1);
 }
 export function has(map, key) {
   if (map.root === undefined) {
