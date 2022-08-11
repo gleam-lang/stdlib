@@ -1,7 +1,4 @@
-import {
-  inspect,
-  isEqual
-} from "./gleam.mjs";
+import { inspect, isEqual } from "./gleam.mjs";
 function getHash(s) {
   if (typeof s === "number") return s;
   if (typeof s !== "string") s = inspect(s);
@@ -52,7 +49,7 @@ function cloneAndSet(arr, at, val) {
   const len = arr.length;
   const out = new Array(len);
   for (let i = 0; i < len; ++i) {
-      out[i] = arr[i];
+    out[i] = arr[i];
   }
   out[at] = val;
   return out;
@@ -64,11 +61,11 @@ function spliceIn(arr, at, val) {
   let i = 0;
   let g = 0;
   while (i < at) {
-      out[g++] = arr[i++];
+    out[g++] = arr[i++];
   }
   out[g++] = val;
   while (i < len) {
-      out[g++] = arr[i++];
+    out[g++] = arr[i++];
   }
   return out;
 }
@@ -79,11 +76,11 @@ function spliceOut(arr, at) {
   let i = 0;
   let g = 0;
   while (i < at) {
-      out[g++] = arr[i++];
+    out[g++] = arr[i++];
   }
   ++i;
   while (i < len) {
-      out[g++] = arr[i++];
+    out[g++] = arr[i++];
   }
   return out;
 }
@@ -91,27 +88,34 @@ function spliceOut(arr, at) {
 function createNode(shift, key1, val1, key2hash, key2, val2) {
   const key1hash = getHash(key1);
   if (key1hash === key2hash) {
-      return {
-          type: COLLISION_NODE,
-          hash: key1hash,
-          array: [
-              { type: ENTRY, k: key1, v: val1 },
-              { type: ENTRY, k: key2, v: val2 },
-          ],
-      };
+    return {
+      type: COLLISION_NODE,
+      hash: key1hash,
+      array: [
+        { type: ENTRY, k: key1, v: val1 },
+        { type: ENTRY, k: key2, v: val2 },
+      ],
+    };
   }
   const addedLeaf = { val: false };
-  return assoc(assocIndex(EMPTY, shift, key1hash, key1, val1, addedLeaf), shift, key2hash, key2, val2, addedLeaf);
+  return assoc(
+    assocIndex(EMPTY, shift, key1hash, key1, val1, addedLeaf),
+    shift,
+    key2hash,
+    key2,
+    val2,
+    addedLeaf
+  );
 }
 /** Associate a node with a new entry, creating a new node. */
 function assoc(root, shift, hash, key, val, addedLeaf) {
   switch (root.type) {
-      case ARRAY_NODE:
-          return assocArray(root, shift, hash, key, val, addedLeaf);
-      case INDEX_NODE:
-          return assocIndex(root, shift, hash, key, val, addedLeaf);
-      case COLLISION_NODE:
-          return assocCollision(root, shift, hash, key, val, addedLeaf);
+    case ARRAY_NODE:
+      return assocArray(root, shift, hash, key, val, addedLeaf);
+    case INDEX_NODE:
+      return assocIndex(root, shift, hash, key, val, addedLeaf);
+    case COLLISION_NODE:
+      return assocCollision(root, shift, hash, key, val, addedLeaf);
   }
 }
 function assocArray(root, shift, hash, key, val, addedLeaf) {
@@ -119,23 +123,27 @@ function assocArray(root, shift, hash, key, val, addedLeaf) {
   const node = root.array[idx];
   // if the corresponding index is empty set the index to a newly created node
   if (node === undefined) {
-      return {
-          type: ARRAY_NODE,
-          size: root.size + 1,
-          array: cloneAndSet(root.array, idx, assocIndex(EMPTY, shift + SHIFT, hash, key, val, addedLeaf)),
-      };
+    return {
+      type: ARRAY_NODE,
+      size: root.size + 1,
+      array: cloneAndSet(
+        root.array,
+        idx,
+        assocIndex(EMPTY, shift + SHIFT, hash, key, val, addedLeaf)
+      ),
+    };
   }
   // otherwise call assoc on the child node
   const n = assoc(node, shift + SHIFT, hash, key, val, addedLeaf);
   // if the child node hasn't changed just return the old root
   if (n === node) {
-      return root;
+    return root;
   }
   // otherwise set the index to the new node
   return {
-      type: ARRAY_NODE,
-      size: root.size,
-      array: cloneAndSet(root.array, idx, n),
+    type: ARRAY_NODE,
+    size: root.size,
+    array: cloneAndSet(root.array, idx, n),
   };
 }
 function assocIndex(root, shift, hash, key, val, addedLeaf) {
@@ -143,284 +151,307 @@ function assocIndex(root, shift, hash, key, val, addedLeaf) {
   const idx = index(root.bitmap, bit);
   // if there is already a item at this hash index..
   if ((root.bitmap & bit) !== 0) {
-      // if there is a node at the index (not an entry), call assoc on the child node
-      const node = root.array[idx];
-      if (node.type !== ENTRY) {
-          const n = assoc(node, shift + SHIFT, hash, key, val, addedLeaf);
-          if (n === node) {
-              return root;
-          }
-          return {
-              type: INDEX_NODE,
-              bitmap: root.bitmap,
-              array: cloneAndSet(root.array, idx, n),
-          };
+    // if there is a node at the index (not an entry), call assoc on the child node
+    const node = root.array[idx];
+    if (node.type !== ENTRY) {
+      const n = assoc(node, shift + SHIFT, hash, key, val, addedLeaf);
+      if (n === node) {
+        return root;
       }
-      // otherwise there is an entry at the index
-      // if the keys are equal replace the entry with the updated value
-      const keyOrNull = node.k;
-      if (isEqual(key, keyOrNull)) {
-          if (val === node.v) {
-              return root;
-          }
-          return {
-              type: INDEX_NODE,
-              bitmap: root.bitmap,
-              array: cloneAndSet(root.array, idx, { type: ENTRY, k: keyOrNull, v: val }),
-          };
+      return {
+        type: INDEX_NODE,
+        bitmap: root.bitmap,
+        array: cloneAndSet(root.array, idx, n),
+      };
+    }
+    // otherwise there is an entry at the index
+    // if the keys are equal replace the entry with the updated value
+    const keyOrNull = node.k;
+    if (isEqual(key, keyOrNull)) {
+      if (val === node.v) {
+        return root;
       }
-      // if the keys are not equal, replace the entry with a new child node
+      return {
+        type: INDEX_NODE,
+        bitmap: root.bitmap,
+        array: cloneAndSet(root.array, idx, {
+          type: ENTRY,
+          k: keyOrNull,
+          v: val,
+        }),
+      };
+    }
+    // if the keys are not equal, replace the entry with a new child node
+    addedLeaf.val = true;
+    return {
+      type: INDEX_NODE,
+      bitmap: root.bitmap,
+      array: cloneAndSet(
+        root.array,
+        idx,
+        createNode(shift + SHIFT, keyOrNull, node.v, hash, key, val)
+      ),
+    };
+  } else {
+    // else there is currently no item at the hash index
+    const n = root.array.length;
+    // if the number of nodes is at the maximum, expand this node into an array node
+    if (n >= MAX_INDEX_NODE) {
+      // create a 32 length array for the new array node (one for each bit in the hash)
+      const nodes = new Array(32);
+      // create and insert a node for the new entry
+      const jdx = mask(hash, shift);
+      nodes[jdx] = assocIndex(EMPTY, shift + SHIFT, hash, key, val, addedLeaf);
+      let j = 0;
+      let bitmap = root.bitmap;
+      // place each item in the index node into the correct spot in the array node
+      // loop through all 32 bits / array positions
+      for (let i = 0; i < 32; i++) {
+        if ((bitmap & 1) !== 0) {
+          const node = root.array[j++];
+          // turn any entries into index nodes
+          // since array nodes should only contain other nodes, not entries
+          if (node.type !== ENTRY) {
+            nodes[i] = node;
+          } else {
+            nodes[i] = assocIndex(
+              EMPTY,
+              shift + SHIFT,
+              getHash(node.k),
+              node.k,
+              node.v,
+              addedLeaf
+            );
+          }
+        }
+        // shift the bitmap to process the next bit
+        bitmap >>>= 1;
+      }
+      return {
+        type: ARRAY_NODE,
+        size: n + 1,
+        array: nodes,
+      };
+    } else {
+      // else there is still space in this index node
+      // simply insert a new entry at the hash index
+      const newArray = spliceIn(root.array, idx, {
+        type: ENTRY,
+        k: key,
+        v: val,
+      });
       addedLeaf.val = true;
       return {
-          type: INDEX_NODE,
-          bitmap: root.bitmap,
-          array: cloneAndSet(root.array, idx, createNode(shift + SHIFT, keyOrNull, node.v, hash, key, val)),
+        type: INDEX_NODE,
+        bitmap: root.bitmap | bit,
+        array: newArray,
       };
-  }
-  else {
-      // else there is currently no item at the hash index
-      const n = root.array.length;
-      // if the number of nodes is at the maximum, expand this node into an array node
-      if (n >= MAX_INDEX_NODE) {
-          // create a 32 length array for the new array node (one for each bit in the hash)
-          const nodes = new Array(32);
-          // create and insert a node for the new entry
-          const jdx = mask(hash, shift);
-          nodes[jdx] = assocIndex(EMPTY, shift + SHIFT, hash, key, val, addedLeaf);
-          let j = 0;
-          let bitmap = root.bitmap;
-          // place each item in the index node into the correct spot in the array node
-          // loop through all 32 bits / array positions
-          for (let i = 0; i < 32; i++) {
-              if ((bitmap & 1) !== 0) {
-                  const node = root.array[j++];
-                  // turn any entries into index nodes
-                  // since array nodes should only contain other nodes, not entries
-                  if (node.type !== ENTRY) {
-                      nodes[i] = node;
-                  }
-                  else {
-                      nodes[i] = assocIndex(EMPTY, shift + SHIFT, getHash(node.k), node.k, node.v, addedLeaf);
-                  }
-              }
-              // shift the bitmap to process the next bit
-              bitmap >>>= 1;
-          }
-          return {
-              type: ARRAY_NODE,
-              size: n + 1,
-              array: nodes,
-          };
-      }
-      else {
-          // else there is still space in this index node
-          // simply insert a new entry at the hash index
-          const newArray = spliceIn(root.array, idx, { type: ENTRY, k: key, v: val });
-          addedLeaf.val = true;
-          return {
-              type: INDEX_NODE,
-              bitmap: root.bitmap | bit,
-              array: newArray,
-          };
-      }
+    }
   }
 }
 function assocCollision(root, shift, hash, key, val, addedLeaf) {
   // if there is a hash collision
   if (hash === root.hash) {
-      const idx = collisionIndexOf(root, key);
-      // if this key already exists replace the entry with the new value
-      if (idx !== -1) {
-          const entry = root.array[idx];
-          if (entry.v === val) {
-              return root;
-          }
-          return {
-              type: COLLISION_NODE,
-              hash: hash,
-              array: cloneAndSet(root.array, idx, { type: ENTRY, k: key, v: val }),
-          };
+    const idx = collisionIndexOf(root, key);
+    // if this key already exists replace the entry with the new value
+    if (idx !== -1) {
+      const entry = root.array[idx];
+      if (entry.v === val) {
+        return root;
       }
-      // otherwise insert the entry at the end of the array
-      const size = root.array.length;
-      addedLeaf.val = true;
       return {
-          type: COLLISION_NODE,
-          hash: hash,
-          array: cloneAndSet(root.array, size, { type: ENTRY, k: key, v: val }),
+        type: COLLISION_NODE,
+        hash: hash,
+        array: cloneAndSet(root.array, idx, { type: ENTRY, k: key, v: val }),
       };
+    }
+    // otherwise insert the entry at the end of the array
+    const size = root.array.length;
+    addedLeaf.val = true;
+    return {
+      type: COLLISION_NODE,
+      hash: hash,
+      array: cloneAndSet(root.array, size, { type: ENTRY, k: key, v: val }),
+    };
   }
   // if there is no hash collision, upgrade to an index node
-  return assoc({
+  return assoc(
+    {
       type: INDEX_NODE,
       bitmap: bitpos(root.hash, shift),
       array: [root],
-  }, shift, hash, key, val, addedLeaf);
+    },
+    shift,
+    hash,
+    key,
+    val,
+    addedLeaf
+  );
 }
 /** Find the index of a key in the collision node's array */
 function collisionIndexOf(root, key) {
   const size = root.array.length;
   for (let i = 0; i < size; i++) {
-      if (isEqual(key, root.array[i].k)) {
-          return i;
-      }
+    if (isEqual(key, root.array[i].k)) {
+      return i;
+    }
   }
   return -1;
 }
 /** Return the found entry or undefined if not present in the root */
 function find(root, shift, hash, key) {
   switch (root.type) {
-      case ARRAY_NODE:
-          return findArray(root, shift, hash, key);
-      case INDEX_NODE:
-          return findIndex(root, shift, hash, key);
-      case COLLISION_NODE:
-          return findCollision(root, shift, hash, key);
+    case ARRAY_NODE:
+      return findArray(root, shift, hash, key);
+    case INDEX_NODE:
+      return findIndex(root, shift, hash, key);
+    case COLLISION_NODE:
+      return findCollision(root, shift, hash, key);
   }
 }
 function findArray(root, shift, hash, key) {
   const idx = mask(hash, shift);
   const node = root.array[idx];
   if (node === undefined) {
-      return undefined;
+    return undefined;
   }
   return find(node, shift + SHIFT, hash, key);
 }
 function findIndex(root, shift, hash, key) {
   const bit = bitpos(hash, shift);
   if ((root.bitmap & bit) === 0) {
-      return undefined;
+    return undefined;
   }
   const idx = index(root.bitmap, bit);
   const node = root.array[idx];
   if (node.type !== ENTRY) {
-      return find(node, shift + SHIFT, hash, key);
+    return find(node, shift + SHIFT, hash, key);
   }
   if (isEqual(key, node.k)) {
-      return node;
+    return node;
   }
   return undefined;
 }
 function findCollision(root, _shift, _hash, key) {
   const idx = collisionIndexOf(root, key);
   if (idx < 0) {
-      return undefined;
+    return undefined;
   }
   return root.array[idx];
 }
 /**
-* Remove an entry from the root, returning the updated root.
-* Returns undefined if the node should be removed from the parent.
-* */
+ * Remove an entry from the root, returning the updated root.
+ * Returns undefined if the node should be removed from the parent.
+ * */
 function without(root, shift, hash, key) {
   switch (root.type) {
-      case ARRAY_NODE:
-          return withoutArray(root, shift, hash, key);
-      case INDEX_NODE:
-          return withoutIndex(root, shift, hash, key);
-      case COLLISION_NODE:
-          return withoutCollision(root, shift, hash, key);
+    case ARRAY_NODE:
+      return withoutArray(root, shift, hash, key);
+    case INDEX_NODE:
+      return withoutIndex(root, shift, hash, key);
+    case COLLISION_NODE:
+      return withoutCollision(root, shift, hash, key);
   }
 }
 function withoutArray(root, shift, hash, key) {
   const idx = mask(hash, shift);
   const node = root.array[idx];
   if (node === undefined) {
-      return root; // already empty
+    return root; // already empty
   }
   const n = without(node, shift + SHIFT, hash, key);
   if (n === node) {
-      return root; // no changes
+    return root; // no changes
   }
   // if the recursive call returned undefined the node should be removed
   if (n === undefined) {
-      // if the number of child nodes is at the minimum, pack into an index node
-      if (root.size <= MIN_ARRAY_NODE) {
-          const arr = root.array;
-          const out = new Array(root.size - 1);
-          let i = 0;
-          let j = 0;
-          let bitmap = 0;
-          while (i < idx) {
-              const nv = arr[i];
-              if (nv !== undefined) {
-                  out[j] = nv;
-                  bitmap |= 1 << i;
-                  ++j;
-              }
-              ++i;
-          }
-          ++i; // skip copying the removed node
-          while (i < arr.length) {
-              const nv = arr[i];
-              if (nv !== undefined) {
-                  out[j] = nv;
-                  bitmap |= 1 << i;
-                  ++j;
-              }
-              ++i;
-          }
-          return {
-              type: INDEX_NODE,
-              bitmap: bitmap,
-              array: out,
-          };
+    // if the number of child nodes is at the minimum, pack into an index node
+    if (root.size <= MIN_ARRAY_NODE) {
+      const arr = root.array;
+      const out = new Array(root.size - 1);
+      let i = 0;
+      let j = 0;
+      let bitmap = 0;
+      while (i < idx) {
+        const nv = arr[i];
+        if (nv !== undefined) {
+          out[j] = nv;
+          bitmap |= 1 << i;
+          ++j;
+        }
+        ++i;
+      }
+      ++i; // skip copying the removed node
+      while (i < arr.length) {
+        const nv = arr[i];
+        if (nv !== undefined) {
+          out[j] = nv;
+          bitmap |= 1 << i;
+          ++j;
+        }
+        ++i;
       }
       return {
-          type: ARRAY_NODE,
-          size: root.size - 1,
-          array: cloneAndSet(root.array, idx, n),
+        type: INDEX_NODE,
+        bitmap: bitmap,
+        array: out,
       };
+    }
+    return {
+      type: ARRAY_NODE,
+      size: root.size - 1,
+      array: cloneAndSet(root.array, idx, n),
+    };
   }
   return {
-      type: ARRAY_NODE,
-      size: root.size,
-      array: cloneAndSet(root.array, idx, n),
+    type: ARRAY_NODE,
+    size: root.size,
+    array: cloneAndSet(root.array, idx, n),
   };
 }
 function withoutIndex(root, shift, hash, key) {
   const bit = bitpos(hash, shift);
   if ((root.bitmap & bit) === 0) {
-      return root; // already empty
+    return root; // already empty
   }
   const idx = index(root.bitmap, bit);
   const node = root.array[idx];
   // if the item is not an entry
   if (node.type !== ENTRY) {
-      const n = without(node, shift + SHIFT, hash, key);
-      if (n === node) {
-          return root; // no changes
-      }
-      // if not undefined, the child node still has items, so update it
-      if (n !== undefined) {
-          return {
-              type: INDEX_NODE,
-              bitmap: root.bitmap,
-              array: cloneAndSet(root.array, idx, n),
-          };
-      }
-      // otherwise the child node should be removed
-      // if it was the only child node, remove this node from the parent
-      if (root.bitmap === bit) {
-          return undefined;
-      }
-      // otherwise just remove the child node
+    const n = without(node, shift + SHIFT, hash, key);
+    if (n === node) {
+      return root; // no changes
+    }
+    // if not undefined, the child node still has items, so update it
+    if (n !== undefined) {
       return {
-          type: INDEX_NODE,
-          bitmap: root.bitmap ^ bit,
-          array: spliceOut(root.array, idx),
+        type: INDEX_NODE,
+        bitmap: root.bitmap,
+        array: cloneAndSet(root.array, idx, n),
       };
+    }
+    // otherwise the child node should be removed
+    // if it was the only child node, remove this node from the parent
+    if (root.bitmap === bit) {
+      return undefined;
+    }
+    // otherwise just remove the child node
+    return {
+      type: INDEX_NODE,
+      bitmap: root.bitmap ^ bit,
+      array: spliceOut(root.array, idx),
+    };
   }
   // otherwise the item is an entry, remove it if the key matches
   if (isEqual(key, node.k)) {
-      if (root.bitmap === bit) {
-          return undefined;
-      }
-      return {
-          type: INDEX_NODE,
-          bitmap: root.bitmap ^ bit,
-          array: spliceOut(root.array, idx),
-      };
+    if (root.bitmap === bit) {
+      return undefined;
+    }
+    return {
+      type: INDEX_NODE,
+      bitmap: root.bitmap ^ bit,
+      array: spliceOut(root.array, idx),
+    };
   }
   return root;
 }
@@ -428,42 +459,42 @@ function withoutCollision(root, _shift, _hash, key) {
   const idx = collisionIndexOf(root, key);
   // if the key not found, no changes
   if (idx === -1) {
-      return root;
+    return root;
   }
   // otherwise the entry was found, remove it
   // if it was the only entry in this node, remove the whole node
   if (root.array.length === 1) {
-      return undefined;
+    return undefined;
   }
   // otherwise just remove the entry
   return {
-      type: COLLISION_NODE,
-      hash: root.hash,
-      array: spliceOut(root.array, idx),
+    type: COLLISION_NODE,
+    hash: root.hash,
+    array: spliceOut(root.array, idx),
   };
 }
 function toArray(root, result) {
   if (root === undefined) {
-      return;
+    return;
   }
   const items = root.array;
   const size = items.length;
   for (let i = 0; i < size; i++) {
-      const item = items[i];
-      if (item === undefined) {
-          continue;
-      }
-      if (item.type === ENTRY) {
-          result.push([item.k, item.v]);
-          continue;
-      }
-      toArray(item, result);
+    const item = items[i];
+    if (item === undefined) {
+      continue;
+    }
+    if (item.type === ENTRY) {
+      result.push([item.k, item.v]);
+      continue;
+    }
+    toArray(item, result);
   }
 }
 export class Map {
   constructor(root, size) {
-      this.root = root;
-      this.size = size;
+    this.root = root;
+    this.size = size;
   }
 }
 /** Extra wrapper to keep track of map size */
@@ -472,17 +503,17 @@ export function create() {
 }
 export function get(map, key) {
   if (map.root === undefined) {
-      return undefined;
+    return undefined;
   }
   return find(map.root, 0, getHash(key), key)?.v;
 }
 export function getWithDefault(map, key, notFound) {
   if (map.root === undefined) {
-      return notFound;
+    return notFound;
   }
   const found = find(map.root, 0, getHash(key), key);
   if (found === undefined) {
-      return notFound;
+    return notFound;
   }
   return found.v;
 }
@@ -491,32 +522,32 @@ export function set(map, key, val) {
   const root = map.root === undefined ? EMPTY : map.root;
   const newRoot = assoc(root, 0, getHash(key), key, val, addedLeaf);
   if (newRoot === map.root) {
-      return map;
+    return map;
   }
   return new Map(newRoot, addedLeaf.val ? map.size + 1 : map.size);
 }
 export function remove(map, key) {
   if (map.root === undefined) {
-      return map;
+    return map;
   }
   const newRoot = without(map.root, 0, getHash(key), key);
   if (newRoot === map.root) {
-      return map;
+    return map;
   }
   if (newRoot === undefined) {
-      return create();
+    return create();
   }
   return new Map(newRoot, map.size - 1);
 }
 export function has(map, key) {
   if (map.root === undefined) {
-      return false;
+    return false;
   }
   return find(map.root, 0, getHash(key), key) !== undefined;
 }
 export function entries(map) {
   if (map.root === undefined) {
-      return [];
+    return [];
   }
   const result = [];
   toArray(map.root, result);
