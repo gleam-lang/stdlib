@@ -2,6 +2,8 @@ import gleam/map
 import gleam/option.{None, Some}
 import gleam/should
 import gleam/string
+import gleam/list
+import gleam/int
 
 pub fn from_list_test() {
   [#(4, 0), #(1, 0)]
@@ -103,6 +105,7 @@ pub fn keys_test() {
   [#("a", 0), #("b", 1), #("c", 2)]
   |> map.from_list
   |> map.keys
+  |> list.sort(string.compare)
   |> should.equal(["a", "b", "c"])
 }
 
@@ -110,6 +113,7 @@ pub fn values_test() {
   [#("a", 0), #("b", 1), #("c", 2)]
   |> map.from_list
   |> map.values
+  |> list.sort(int.compare)
   |> should.equal([0, 1, 2])
 }
 
@@ -189,11 +193,12 @@ pub fn fold_test() {
   |> map.fold(0, add)
   |> should.equal(6)
 
-  let concat = fn(acc, k, _) { string.append(acc, k) }
+  let prepend = fn(acc, k, _) { list.prepend(acc, k) }
 
   dict
-  |> map.fold("", concat)
-  |> should.equal("abcd")
+  |> map.fold([], prepend)
+  |> list.sort(string.compare)
+  |> should.equal(["a", "b", "c", "d"])
 
   map.from_list([])
   |> map.fold(0, add)

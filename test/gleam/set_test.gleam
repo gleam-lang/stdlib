@@ -70,6 +70,7 @@ pub fn filter_test() {
   |> set.from_list()
   |> set.filter(for: int.is_even)
   |> set.to_list
+  |> list.sort(int.compare)
   |> should.equal([4, 6, 44])
 }
 
