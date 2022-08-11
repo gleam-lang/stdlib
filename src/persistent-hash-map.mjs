@@ -568,7 +568,7 @@ function withoutCollision(root, _shift, _hash, key) {
     array: spliceOut(root.array, idx),
   };
 }
-function toArray(root, result) {
+function forEach(root, fn) {
   if (root === undefined) {
     return;
   }
@@ -580,10 +580,10 @@ function toArray(root, result) {
       continue;
     }
     if (item.type === ENTRY) {
-      result.push([item.k, item.v]);
+      fn(item.v, item.k);
       continue;
     }
-    toArray(item, result);
+    forEach(item, fn);
   }
 }
 /** Extra wrapper to keep track of map size */
@@ -591,6 +591,13 @@ export class PMap {
   constructor(root, size) {
     this.root = root;
     this.size = size;
+  }
+  hashCode() {
+    let h = 0;
+    forEach(this, (v, k) => {
+      h = (h + hashMerge(getHash(v), getHash(k))) | 0;
+    });
+    return h;
   }
 }
 export function create() {
@@ -645,7 +652,7 @@ export function entries(map) {
     return [];
   }
   const result = [];
-  toArray(map.root, result);
+  forEach(map.root, (v, k) => result.push([k, v]));
   return result;
 }
 export function __include_me() {
