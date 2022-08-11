@@ -588,6 +588,7 @@ function forEach(root, fn) {
 }
 /** Extra wrapper to keep track of map size */
 export class PMap {
+  static NOT_FOUND = Symbol();
   constructor(root, size) {
     this.root = root;
     this.size = size;
@@ -598,6 +599,13 @@ export class PMap {
       h = (h + hashMerge(getHash(v), getHash(k))) | 0;
     });
     return h;
+  }
+  equals(o) {
+    let equal = true;
+    forEach(this, (v, k) => {
+      equal = equal && isEqual(v, getWithDefault(o, k, PMap.NOT_FOUND));
+    });
+    return equal;
   }
 }
 export function create() {
