@@ -351,7 +351,7 @@ inspect(Binary) when is_binary(Binary) ->
 inspect(List) when is_list(List) ->
     case inspect_list(List) of
         {proper, Elements} -> ["[", Elements, "]"];
-        {improper, Elements} -> ["//erl[", Elements, "]"]
+        {improper, Elements} -> ["//erl([", Elements, "])"]
     end;
 inspect(Any) when is_tuple(Any) % Record constructors
   andalso is_atom(element(1, Any))
