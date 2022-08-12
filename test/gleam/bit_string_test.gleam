@@ -9,6 +9,11 @@ pub fn byte_size_test() {
   |> should.equal(0)
 }
 
+pub fn not_equal_test() {
+  bit_string.from_string("test")
+  |> should.not_equal(bit_string.from_string("asdf"))
+}
+
 pub fn append_test() {
   bit_string.from_string("Test")
   |> bit_string.append(bit_string.from_string(" Me"))

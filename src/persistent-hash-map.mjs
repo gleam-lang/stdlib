@@ -9,7 +9,7 @@ function hashByReference(o) {
   if (known !== undefined) {
     return known;
   }
-  const hash = hashInteger(referenceUID++);
+  const hash = referenceUID++;
   if (referenceUID === 0x7fffffff) {
     referenceUID = 1;
   }
@@ -27,14 +27,14 @@ function hashInteger(i) {
   i = (i >>> 16) ^ i;
   return i;
 }
-/** standard string hash popularised by java + hashInteger at the end */
+/** standard string hash popularised by java */
 function hashString(s) {
   let hash = 0;
   const len = s.length;
   for (let i = 0; i < len; i++) {
     hash = (Math.imul(31, hash) + s.charCodeAt(i)) | 0;
   }
-  return hashInteger(hash);
+  return hash;
 }
 /** convert number to string and hash, seems to be better and faster than anything else */
 function hashNumber(n) {
@@ -55,7 +55,8 @@ function hashObject(o) {
     return hashNumber(o.getTime());
   }
   let h = 0;
-  if (Array.isArray(o)) {
+  if (o instanceof ArrayBuffer) o = new Uint8Array(o);
+  if (Array.isArray(o) || o instanceof Uint8Array) {
     for (let i = 0; i < o.length; i++) {
       h = (Math.imul(31, h) + getHash(o[i])) | 0;
     }
@@ -67,41 +68,35 @@ function hashObject(o) {
     o.forEach((v, k) => {
       h = (h + hashMerge(getHash(v), getHash(k))) | 0;
     });
-  } else if (o instanceof ArrayBuffer) {
-    const view = new Uint8Array(o);
-    for (let i = 0; i < view.length; i++) {
-      h = (Math.imul(31, h) + getHash(view[i])) | 0;
-    }
   } else {
     const keys = Object.keys(o);
     for (let i = 0; i < keys.length; i++) {
       const k = keys[i];
       const v = o[k];
-      h = (h + hashMerge(getHash(v), hashString(k))) | 0;
+      h = (h + hashMerge(getHash(v), hashInteger(hashString(k)))) | 0;
     }
   }
   return h;
 }
 /** hash any js value */
 export function getHash(u) {
-  if (u == null) {
-    return u === null ? 0x42108422 : 0x42108423;
-  }
+  if (u === null) return 0x42108422;
+  if (u === undefined) return 0x42108423;
+  if (u === true) return 0x42108421;
+  if (u === false) return 0x42108420;
   switch (typeof u) {
     case "number":
-      return hashNumber(u);
+      return hashInteger(hashNumber(u));
     case "string":
-      return hashString(u);
-    case "boolean":
-      return u ? 0x42108421 : 0x42108420;
+      return hashInteger(hashString(u));
     case "bigint":
-      return hashNumber(u);
+      return hashInteger(hashNumber(u));
     case "object":
-      return hashObject(u);
+      return hashInteger(hashObject(u));
     case "symbol":
-      return hashByReference(u);
+      return hashInteger(hashByReference(u));
     case "function":
-      return hashByReference(u);
+      return hashInteger(hashByReference(u));
   }
 }
 const SHIFT = 5; // number of bits you need to shift by to get the next bucket
