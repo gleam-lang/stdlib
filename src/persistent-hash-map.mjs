@@ -1,7 +1,7 @@
 import { isEqual } from "./gleam.mjs";
 
 const referenceMap = new WeakMap();
-let referenceUID = 1;
+let referenceUID = 0;
 
 /** hash the object by reference using a weak map and incrementing uid */
 function hashByReference(o) {
@@ -11,21 +11,14 @@ function hashByReference(o) {
   }
   const hash = referenceUID++;
   if (referenceUID === 0x7fffffff) {
-    referenceUID = 1;
+    referenceUID = 0;
   }
   referenceMap.set(o, hash);
   return hash;
 }
-/** taken from immutable.js */
+/** merge two hashes in an order sensitive way */
 function hashMerge(a, b) {
   return (a ^ (b + 0x9e3779b9 + (a << 6) + (a >> 2))) | 0;
-}
-/** scrambles an integer to make it more randomly distributed */
-function hashInteger(i) {
-  i = Math.imul(0x45d9f3b, (i >>> 16) ^ i);
-  i = Math.imul(0x45d9f3b, (i >>> 16) ^ i);
-  i = (i >>> 16) ^ i;
-  return i;
 }
 /** standard string hash popularised by java */
 function hashString(s) {
@@ -55,7 +48,9 @@ function hashObject(o) {
     return hashNumber(o.getTime());
   }
   let h = 0;
-  if (o instanceof ArrayBuffer) o = new Uint8Array(o);
+  if (o instanceof ArrayBuffer) {
+    o = new Uint8Array(o);
+  }
   if (Array.isArray(o) || o instanceof Uint8Array) {
     for (let i = 0; i < o.length; i++) {
       h = (Math.imul(31, h) + getHash(o[i])) | 0;
@@ -73,7 +68,7 @@ function hashObject(o) {
     for (let i = 0; i < keys.length; i++) {
       const k = keys[i];
       const v = o[k];
-      h = (h + hashMerge(getHash(v), hashInteger(hashString(k)))) | 0;
+      h = (h + hashMerge(getHash(v), hashString(k))) | 0;
     }
   }
   return h;
@@ -86,17 +81,17 @@ export function getHash(u) {
   if (u === false) return 0x42108420;
   switch (typeof u) {
     case "number":
-      return hashInteger(hashNumber(u));
+      return hashNumber(u);
     case "string":
-      return hashInteger(hashString(u));
+      return hashString(u);
     case "bigint":
-      return hashInteger(hashNumber(u));
+      return hashNumber(u);
     case "object":
-      return hashInteger(hashObject(u));
+      return hashObject(u);
     case "symbol":
-      return hashInteger(hashByReference(u));
+      return hashByReference(u);
     case "function":
-      return hashInteger(hashByReference(u));
+      return hashByReference(u);
   }
 }
 const SHIFT = 5; // number of bits you need to shift by to get the next bucket
@@ -396,7 +391,7 @@ function find(root, shift, hash, key) {
     case INDEX_NODE:
       return findIndex(root, shift, hash, key);
     case COLLISION_NODE:
-      return findCollision(root, shift, hash, key);
+      return findCollision(root, key);
   }
 }
 function findArray(root, shift, hash, key) {
@@ -422,7 +417,7 @@ function findIndex(root, shift, hash, key) {
   }
   return undefined;
 }
-function findCollision(root, _shift, _hash, key) {
+function findCollision(root, key) {
   const idx = collisionIndexOf(root, key);
   if (idx < 0) {
     return undefined;
@@ -440,7 +435,7 @@ function without(root, shift, hash, key) {
     case INDEX_NODE:
       return withoutIndex(root, shift, hash, key);
     case COLLISION_NODE:
-      return withoutCollision(root, shift, hash, key);
+      return withoutCollision(root, key);
   }
 }
 function withoutArray(root, shift, hash, key) {
@@ -545,10 +540,10 @@ function withoutIndex(root, shift, hash, key) {
   }
   return root;
 }
-function withoutCollision(root, _shift, _hash, key) {
+function withoutCollision(root, key) {
   const idx = collisionIndexOf(root, key);
   // if the key not found, no changes
-  if (idx === -1) {
+  if (idx < 0) {
     return root;
   }
   // otherwise the entry was found, remove it
@@ -583,34 +578,27 @@ function forEach(root, fn) {
 }
 /** Extra wrapper to keep track of map size */
 export class PMap {
-  static NOT_FOUND = Symbol();
   constructor(root, size) {
     this.root = root;
     this.size = size;
   }
   hashCode() {
     let h = 0;
-    forEach(this, (v, k) => {
+    forEach(this.root, (v, k) => {
       h = (h + hashMerge(getHash(v), getHash(k))) | 0;
     });
     return h;
   }
   equals(o) {
     let equal = true;
-    forEach(this, (v, k) => {
-      equal = equal && isEqual(v, getWithDefault(o, k, PMap.NOT_FOUND));
+    forEach(this.root, (v, k) => {
+      equal = equal && isEqual(getWithDefault(o, k, !v), v);
     });
     return equal;
   }
 }
 export function create() {
   return new PMap(undefined, 0);
-}
-export function get(map, key) {
-  if (map.root === undefined) {
-    return undefined;
-  }
-  return find(map.root, 0, getHash(key), key)?.v;
 }
 export function getWithDefault(map, key, notFound) {
   if (map.root === undefined) {
@@ -658,6 +646,4 @@ export function entries(map) {
   forEach(map.root, (v, k) => result.push([k, v]));
   return result;
 }
-export function __include_me() {
-  // blank
-}
+export function __include_me() {}
