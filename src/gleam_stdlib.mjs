@@ -324,10 +324,10 @@ export function map_remove(key, map) {
 
 export function map_get(map, key) {
   const value = map.get(key, NOT_FOUND);
-  if(value === NOT_FOUND) {
+  if (value === NOT_FOUND) {
     return new Error(Nil);
   }
-  return new Ok(value)
+  return new Ok(value);
 }
 
 export function map_insert(key, value, map) {
@@ -528,6 +528,13 @@ export function decode_result(data) {
 }
 
 export function decode_map(data) {
+  if (data instanceof Map) {
+    return new Ok(PMap.fromMap(data));
+  }
+  const proto = Object.getPrototypeOf(data);
+  if (proto === Object.prototype || proto === null) {
+    return new Ok(PMap.fromObject(data));
+  }
   return data instanceof PMap ? new Ok(data) : decoder_error("Map", data);
 }
 
