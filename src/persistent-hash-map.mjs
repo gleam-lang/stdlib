@@ -576,23 +576,23 @@ function forEach(root, fn) {
     forEach(item, fn);
   }
 }
-/** Extra wrapper to keep track of map size */
+/** Extra wrapper to keep track of map size and clean up the API */
 export default class PMap {
   static fromObject(o) {
     const keys = Object.keys(o);
-    let m = PMap.new()
+    let m = PMap.new();
     for (let i = 0; i < keys.length; i++) {
       const k = keys[i];
-      m = m.set(k, o[k])
+      m = m.set(k, o[k]);
     }
-    return m
+    return m;
   }
   static fromMap(o) {
-    let m = PMap.new()
+    let m = PMap.new();
     o.forEach((v, k) => {
-      m = m.set(k, v)
+      m = m.set(k, v);
     });
-    return m
+    return m;
   }
   static new() {
     return new PMap(undefined, 0);
@@ -648,7 +648,7 @@ export default class PMap {
     return result;
   }
   forEach(fn) {
-    forEach(this.root, fn)
+    forEach(this.root, fn);
   }
   hashCode() {
     let h = 0;
@@ -658,8 +658,8 @@ export default class PMap {
     return h;
   }
   equals(o) {
-    if(!(o instanceof PMap)) {
-      return
+    if (!(o instanceof PMap)) {
+      return false;
     }
     let equal = true;
     this.forEach((v, k) => {
