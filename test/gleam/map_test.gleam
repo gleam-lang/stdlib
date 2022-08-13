@@ -84,6 +84,21 @@ pub fn get_test() {
   m
   |> map.get(C)
   |> should.equal(Error(Nil))
+
+  let proplist = [#(<<1, 2, 3>>, 0), #(<<3, 2, 1>>, 1)]
+  let m = map.from_list(proplist)
+
+  m
+  |> map.get(<<1, 2, 3>>)
+  |> should.equal(Ok(0))
+
+  m
+  |> map.get(<<3, 2, 1>>)
+  |> should.equal(Ok(1))
+
+  m
+  |> map.get(<<1, 3, 2>>)
+  |> should.equal(Error(Nil))
 }
 
 pub fn insert_test() {
