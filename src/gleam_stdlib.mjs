@@ -621,6 +621,13 @@ export function decode_result(data) {
 }
 
 export function decode_map(data) {
+  if (data instanceof Map) {
+    return new Ok(PMap.fromMap(data));
+  }
+  const proto = Object.getPrototypeOf(data);
+  if (proto === Object.prototype || proto === null) {
+    return new Ok(PMap.fromObject(data));
+  }
   return data instanceof PMap ? new Ok(data) : decoder_error("Map", data);
 }
 
