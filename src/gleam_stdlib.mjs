@@ -244,7 +244,7 @@ export function trim_right(string) {
 }
 
 export function bit_string_from_string(string) {
-  return new toBitString([stringBits(string)]);
+  return toBitString([stringBits(string)]);
 }
 
 export function bit_string_concat(bit_strings) {
