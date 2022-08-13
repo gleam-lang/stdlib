@@ -15,7 +15,7 @@ import {
 } from "./gleam/regex.mjs";
 import { DecodeError } from "./gleam/dynamic.mjs";
 import { Some, None } from "./gleam/option.mjs";
-import * as pmap from "./persistent-hash-map.mjs";
+import PMap from "./persistent-hash-map.mjs";
 
 const Nil = undefined;
 const NOT_FOUND = {};
@@ -396,7 +396,7 @@ export function regex_scan(regex, string) {
 }
 
 export function new_map() {
-  return pmap.create();
+  return PMap.new();
 }
 
 export function map_size(map) {
@@ -404,15 +404,15 @@ export function map_size(map) {
 }
 
 export function map_to_list(map) {
-  return List.fromArray(pmap.entries(map));
+  return List.fromArray(map.entries());
 }
 
 export function map_remove(key, map) {
-  return pmap.remove(map, key);
+  return map.delete(key);
 }
 
 export function map_get(map, key) {
-  const value = pmap.getWithDefault(map, key, NOT_FOUND);
+  const value = map.get(key, NOT_FOUND);
   if (value === NOT_FOUND) {
     return new Error(Nil);
   }
@@ -420,7 +420,7 @@ export function map_get(map, key) {
 }
 
 export function map_insert(key, value, map) {
-  return pmap.set(map, key, value);
+  return map.set(key, value);
 }
 
 function unsafe_percent_decode(string) {
@@ -551,7 +551,7 @@ export function classify_dynamic(data) {
     return `Tuple of ${data.length} elements`;
   } else if (BitString.isBitString(data)) {
     return "BitString";
-  } else if (data instanceof pmap.PMap) {
+  } else if (data instanceof PMap) {
     return "Map";
   } else if (typeof data === "number") {
     return "Float";
@@ -621,7 +621,7 @@ export function decode_result(data) {
 }
 
 export function decode_map(data) {
-  return data instanceof pmap.PMap ? new Ok(data) : decoder_error("Map", data);
+  return data instanceof PMap ? new Ok(data) : decoder_error("Map", data);
 }
 
 export function decode_option(data, decoder) {
@@ -638,7 +638,7 @@ export function decode_option(data, decoder) {
 
 export function decode_field(value, name) {
   let error = () => decoder_error_no_classify("field", "nothing");
-  if (value instanceof pmap.PMap) {
+  if (value instanceof PMap) {
     let entry = map_get(value, name);
     return entry.isOk() ? entry : error();
   }

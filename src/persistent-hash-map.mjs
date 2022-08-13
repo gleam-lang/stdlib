@@ -577,73 +577,96 @@ function forEach(root, fn) {
   }
 }
 /** Extra wrapper to keep track of map size */
-export class PMap {
+export default class PMap {
+  static fromObject(o) {
+    const keys = Object.keys(o);
+    let m = PMap.new()
+    for (let i = 0; i < keys.length; i++) {
+      const k = keys[i];
+      m = m.set(k, o[k])
+    }
+    return m
+  }
+  static fromMap(o) {
+    let m = PMap.new()
+    o.forEach((v, k) => {
+      m = m.set(k, v)
+    });
+    return m
+  }
+  static new() {
+    return new PMap(undefined, 0);
+  }
   constructor(root, size) {
     this.root = root;
     this.size = size;
   }
+  get(key, notFound) {
+    if (this.root === undefined) {
+      return notFound;
+    }
+    const found = find(this.root, 0, getHash(key), key);
+    if (found === undefined) {
+      return notFound;
+    }
+    return found.v;
+  }
+  set(key, val) {
+    const addedLeaf = { val: false };
+    const root = this.root === undefined ? EMPTY : this.root;
+    const newRoot = assoc(root, 0, getHash(key), key, val, addedLeaf);
+    if (newRoot === this.root) {
+      return this;
+    }
+    return new PMap(newRoot, addedLeaf.val ? this.size + 1 : this.size);
+  }
+  delete(key) {
+    if (this.root === undefined) {
+      return this;
+    }
+    const newRoot = without(this.root, 0, getHash(key), key);
+    if (newRoot === this.root) {
+      return this;
+    }
+    if (newRoot === undefined) {
+      return PMap.new();
+    }
+    return new PMap(newRoot, this.size - 1);
+  }
+  has(key) {
+    if (this.root === undefined) {
+      return false;
+    }
+    return find(this.root, 0, getHash(key), key) !== undefined;
+  }
+  entries() {
+    if (this.root === undefined) {
+      return [];
+    }
+    const result = [];
+    this.forEach((v, k) => result.push([k, v]));
+    return result;
+  }
+  forEach(fn) {
+    forEach(this.root, fn)
+  }
   hashCode() {
     let h = 0;
-    forEach(this.root, (v, k) => {
+    this.forEach((v, k) => {
       h = (h + hashMerge(getHash(v), getHash(k))) | 0;
     });
     return h;
   }
   equals(o) {
+    if(!(o instanceof PMap)) {
+      return
+    }
     let equal = true;
-    forEach(this.root, (v, k) => {
-      equal = equal && isEqual(getWithDefault(o, k, !v), v);
+    this.forEach((v, k) => {
+      equal = equal && isEqual(o.get(k, !v), v);
     });
     return equal;
   }
 }
-export function create() {
-  return new PMap(undefined, 0);
-}
-export function getWithDefault(map, key, notFound) {
-  if (map.root === undefined) {
-    return notFound;
-  }
-  const found = find(map.root, 0, getHash(key), key);
-  if (found === undefined) {
-    return notFound;
-  }
-  return found.v;
-}
-export function set(map, key, val) {
-  const addedLeaf = { val: false };
-  const root = map.root === undefined ? EMPTY : map.root;
-  const newRoot = assoc(root, 0, getHash(key), key, val, addedLeaf);
-  if (newRoot === map.root) {
-    return map;
-  }
-  return new PMap(newRoot, addedLeaf.val ? map.size + 1 : map.size);
-}
-export function remove(map, key) {
-  if (map.root === undefined) {
-    return map;
-  }
-  const newRoot = without(map.root, 0, getHash(key), key);
-  if (newRoot === map.root) {
-    return map;
-  }
-  if (newRoot === undefined) {
-    return create();
-  }
-  return new PMap(newRoot, map.size - 1);
-}
-export function has(map, key) {
-  if (map.root === undefined) {
-    return false;
-  }
-  return find(map.root, 0, getHash(key), key) !== undefined;
-}
-export function entries(map) {
-  if (map.root === undefined) {
-    return [];
-  }
-  const result = [];
-  forEach(map.root, (v, k) => result.push([k, v]));
-  return result;
-}
+
 export function __include_me() {}
