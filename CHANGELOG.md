@@ -2,10 +2,21 @@
 
 ## Unreleased
 
+- Fixed `string.inspect` and `io.debug` crashing on improper Erlang lists (#333).
+
+## v0.22.3 - 2022-08-09
+
+- Removed a duplicate import.
+
+## v0.22.2 - 2022-08-09
+
 - The list dynamic decoding functions can now decode JavaScript arrays into
   Gleam lists.
+- `list.range` is now tail recursive and will not blow the stack with large
+  ranges when compiled to JavaScript.
 - Fixed a bug where the `list` module's `contains`, `any`, and `all` could
   exhaust the stack when compiling to JavaScript.
+- `list.range` and `iterator.range` return values are now inclusive of both start and end bounds.
 
 ## v0.22.1 - 2022-06-27
 
@@ -38,7 +49,7 @@
 - The `int` module gains the `random` function.
 - The JavaScript target implementation of the `string.replace` received a bug
   fix.
-- The `list` module gains a `prepend` function. (#284)
+- The `list` module gains a `prepend` function (#284).
 
 ## v0.20.0 - 2022-02-22
 

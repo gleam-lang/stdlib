@@ -222,19 +222,19 @@ pub fn range_test() {
     |> should.equal(expected)
   }
 
-  test(0, 0, [])
-  test(1, 1, [])
-  test(-1, -1, [])
-  test(0, 1, [0])
-  test(0, 5, [0, 1, 2, 3, 4])
-  test(1, -5, [1, 0, -1, -2, -3, -4])
+  test(0, 0, [0])
+  test(1, 1, [1])
+  test(-1, -1, [-1])
+  test(0, 1, [0, 1])
+  test(0, 5, [0, 1, 2, 3, 4, 5])
+  test(1, -5, [1, 0, -1, -2, -3, -4, -5])
 }
 
 pub fn drop_test() {
   iterator.range(0, 10)
   |> iterator.drop(5)
   |> iterator.to_list
-  |> should.equal([5, 6, 7, 8, 9])
+  |> should.equal([5, 6, 7, 8, 9, 10])
 }
 
 type Cat {
@@ -392,7 +392,7 @@ pub fn last_test() {
 
   iterator.range(1, 10)
   |> iterator.last
-  |> should.equal(Ok(9))
+  |> should.equal(Ok(10))
 }
 
 pub fn empty_test() {

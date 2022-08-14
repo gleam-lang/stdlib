@@ -791,4 +791,17 @@ if erlang {
     |> string.inspect()
     |> should.equal("\"abc\"")
   }
+
+  pub fn improper_list_inspect_test() {
+    let list = improper_list_append(1, 2, 3)
+    assert "//erl([1, 2 | 3])" = string.inspect(list)
+  }
+
+  // Warning: The type of this function is incorrect
+  external fn improper_list_append(
+    item_a,
+    item_b,
+    improper_tail,
+  ) -> List(anything) =
+    "gleam_stdlib_test_ffi" "improper_list_append"
 }
