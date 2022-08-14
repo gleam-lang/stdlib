@@ -1,6 +1,7 @@
 import { isEqual } from "./gleam.mjs";
 
 const referenceMap = new WeakMap();
+const tempDataView = new DataView(new ArrayBuffer(8));
 let referenceUID = 0;
 
 /** hash the object by reference using a weak map and incrementing uid */
@@ -29,9 +30,12 @@ function hashString(s) {
   }
   return hash;
 }
-/** convert number to string and hash, seems to be better and faster than anything else */
+/** hash a number by converting to two integers and do some jumbling */
 function hashNumber(n) {
-  return hashString(n.toString());
+  tempDataView.setFloat64(0, n);
+  const i = tempDataView.getInt32(0);
+  const j = tempDataView.getInt32(4);
+  return Math.imul(0x45d9f3b, (i >> 16) ^ i) ^ j;
 }
 /** hash any js object */
 function hashObject(o) {
