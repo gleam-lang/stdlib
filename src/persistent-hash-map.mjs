@@ -212,13 +212,38 @@ function assocArray(root, shift, hash, key, val, addedLeaf) {
   const node = root.array[idx];
   // if the corresponding index is empty set the index to a newly created node
   if (node === undefined) {
+    addedLeaf.val = true;
     return {
       type: ARRAY_NODE,
       size: root.size + 1,
+      array: cloneAndSet(root.array, idx, { type: ENTRY, k: key, v: val }),
+    };
+  }
+  if (node.type === ENTRY) {
+    // if keys are equal replace the entry
+    if (isEqual(key, node.k)) {
+      if (val === node.v) {
+        return root;
+      }
+      return {
+        type: ARRAY_NODE,
+        size: root.size,
+        array: cloneAndSet(root.array, idx, {
+          type: ENTRY,
+          k: key,
+          v: val,
+        }),
+      };
+    }
+    // otherwise upgrade the entry to a node and insert
+    addedLeaf.val = true;
+    return {
+      type: ARRAY_NODE,
+      size: root.size,
       array: cloneAndSet(
         root.array,
         idx,
-        assocIndex(EMPTY, shift + SHIFT, hash, key, val, addedLeaf)
+        createNode(shift + SHIFT, node.k, node.v, hash, key, val)
       ),
     };
   }
@@ -255,8 +280,8 @@ function assocIndex(root, shift, hash, key, val, addedLeaf) {
     }
     // otherwise there is an entry at the index
     // if the keys are equal replace the entry with the updated value
-    const keyOrNull = node.k;
-    if (isEqual(key, keyOrNull)) {
+    const nodeKey = node.k;
+    if (isEqual(key, nodeKey)) {
       if (val === node.v) {
         return root;
       }
@@ -265,7 +290,7 @@ function assocIndex(root, shift, hash, key, val, addedLeaf) {
         bitmap: root.bitmap,
         array: cloneAndSet(root.array, idx, {
           type: ENTRY,
-          k: keyOrNull,
+          k: key,
           v: val,
         }),
       };
@@ -278,7 +303,7 @@ function assocIndex(root, shift, hash, key, val, addedLeaf) {
       array: cloneAndSet(
         root.array,
         idx,
-        createNode(shift + SHIFT, keyOrNull, node.v, hash, key, val)
+        createNode(shift + SHIFT, nodeKey, node.v, hash, key, val)
       ),
     };
   } else {
@@ -298,23 +323,10 @@ function assocIndex(root, shift, hash, key, val, addedLeaf) {
       for (let i = 0; i < 32; i++) {
         if ((bitmap & 1) !== 0) {
           const node = root.array[j++];
-          // turn any entries into index nodes
-          // since array nodes should only contain other nodes, not entries
-          if (node.type !== ENTRY) {
-            nodes[i] = node;
-          } else {
-            nodes[i] = assocIndex(
-              EMPTY,
-              shift + SHIFT,
-              getHash(node.k),
-              node.k,
-              node.v,
-              addedLeaf
-            );
-          }
+          nodes[i] = node;
         }
         // shift the bitmap to process the next bit
-        bitmap >>>= 1;
+        bitmap = bitmap >>> 1;
       }
       return {
         type: ARRAY_NODE,
@@ -404,6 +416,9 @@ function findArray(root, shift, hash, key) {
   if (node === undefined) {
     return undefined;
   }
+  if (node.type === ENTRY) {
+    return node;
+  }
   return find(node, shift + SHIFT, hash, key);
 }
 function findIndex(root, shift, hash, key) {
@@ -448,9 +463,18 @@ function withoutArray(root, shift, hash, key) {
   if (node === undefined) {
     return root; // already empty
   }
-  const n = without(node, shift + SHIFT, hash, key);
-  if (n === node) {
-    return root; // no changes
+  let n = undefined;
+  // if node is an entry and the keys are not equal there is nothing to remove
+  // if node is not an entry do a recursive call
+  if (node.type === ENTRY) {
+    if (!isEqual(node.k, key)) {
+      return root; // no changes
+    }
+  } else {
+    n = without(node, shift + SHIFT, hash, key);
+    if (n === node) {
+      return root; // no changes
+    }
   }
   // if the recursive call returned undefined the node should be removed
   if (n === undefined) {

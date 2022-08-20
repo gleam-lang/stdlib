@@ -299,3 +299,40 @@ pub fn map_as_key_test() {
   |> map.get(a)
   |> should.equal(Ok("a3"))
 }
+
+pub fn large_n_test() {
+  let n = 10000
+  let l = range(0, n, [])
+
+  let m = list_to_map(l)
+  list.map(l, fn(i) { should.equal(map.get(m, i), Ok(i)) })
+
+  let m = grow_and_shrink_map(n, 0)
+  list.map(l, fn(i) { should.equal(map.get(m, i), Error(Nil)) })
+}
+
+pub fn size_test() {
+  let n = 1000
+  let m = list_to_map(range(0, n, []))
+  map.size(m)
+  |> should.equal(n)
+
+  let m = grow_and_shrink_map(n, n / 2)
+  map.size(m)
+  |> should.equal(n / 2)
+
+  let m =
+    grow_and_shrink_map(n, 0)
+    |> map.delete(0)
+  map.size(m)
+  |> should.equal(0)
+
+  let m = list_to_map(range(0, 18, []))
+
+  map.insert(m, 1, 99)
+  |> map.size()
+  |> should.equal(18)
+  map.insert(m, 2, 99)
+  |> map.size()
+  |> should.equal(18)
+}
