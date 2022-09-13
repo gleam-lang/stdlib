@@ -3,6 +3,14 @@ import gleam/order
 import gleam/should
 import gleam/string
 
+if erlang {
+  const recursion_test_cycles = 999999
+}
+
+if javascript {
+  const recursion_test_cycles = 16999
+}
+
 pub fn length_test() {
   string.length("ß↑e̊")
   |> should.equal(3)
@@ -53,6 +61,12 @@ pub fn reverse_test() {
   |> string.reverse
   |> string.reverse
   |> should.equal("👶🏿")
+
+  "abc"
+  |> string.repeat(recursion_test_cycles)
+  |> string.reverse
+  |> string.starts_with("cba")
+  |> should.be_true
 }
 
 pub fn split_test() {
@@ -233,6 +247,11 @@ pub fn slice_test() {
   "👶🏿"
   |> string.slice(at_index: 0, length: 3)
   |> should.equal("👶🏿")
+
+  "aaa"
+  |> string.repeat(recursion_test_cycles)
+  |> string.slice(at_index: recursion_test_cycles / 2, length: 3)
+  |> should.equal("aaa")
 }
 
 pub fn crop_test() {

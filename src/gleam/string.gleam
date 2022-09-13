@@ -710,9 +710,14 @@ if javascript {
 /// ```
 ///
 pub fn to_graphemes(string: String) -> List(String) {
+  do_to_graphemes(string, [])
+  |> list.reverse
+}
+
+pub fn do_to_graphemes(string: String, acc: List(String)) -> List(String) {
   case pop_grapheme(string) {
-    Ok(#(grapheme, rest)) -> [grapheme, ..to_graphemes(rest)]
-    _ -> []
+    Ok(#(grapheme, rest)) -> do_to_graphemes(rest, [grapheme, ..acc])
+    _ -> acc
   }
 }
 

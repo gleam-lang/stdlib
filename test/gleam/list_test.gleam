@@ -3,6 +3,14 @@ import gleam/int
 import gleam/list
 import gleam/should
 
+if erlang {
+  const recursion_test_cycles = 999999
+}
+
+if javascript {
+  const recursion_test_cycles = 16999
+}
+
 pub fn length_test() {
   list.length([])
   |> should.equal(0)
@@ -49,7 +57,7 @@ pub fn contains_test() {
   list.contains([], 1)
   |> should.be_false
 
-  list.repeat(0, 16999)
+  list.repeat(0, recursion_test_cycles)
   |> list.contains(1)
   |> should.equal(False)
 }
@@ -309,11 +317,11 @@ pub fn all_test() {
   list.all([], fn(_) { False })
   |> should.equal(True)
 
-  list.repeat(False, 16999)
+  list.repeat(False, recursion_test_cycles)
   |> list.all(fn(item) { item })
   |> should.equal(False)
 
-  list.repeat(True, 16999)
+  list.repeat(True, recursion_test_cycles)
   |> list.all(fn(item) { item })
   |> should.equal(True)
 
@@ -340,11 +348,11 @@ pub fn any_test() {
   list.any([], fn(_) { False })
   |> should.equal(False)
 
-  list.repeat(True, 16999)
+  list.repeat(True, recursion_test_cycles)
   |> list.any(fn(item) { item })
   |> should.equal(True)
 
-  list.repeat(False, 16999)
+  list.repeat(False, recursion_test_cycles)
   |> list.any(fn(item) { item })
   |> should.equal(False)
 
