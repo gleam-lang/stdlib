@@ -51,7 +51,7 @@ pub fn contains_test() {
 
   list.repeat(0, 16999)
   |> list.contains(1)
-  |> should.equal(False)
+  |> should.be_false
 }
 
 pub fn first_test() {
@@ -301,21 +301,21 @@ pub fn find_test() {
 
 pub fn all_test() {
   list.all([1, 2, 3, 4, 5], fn(x) { x > 0 })
-  |> should.equal(True)
+  |> should.be_true
 
   list.all([1, 2, 3, 4, 5], fn(x) { x < 0 })
-  |> should.equal(False)
+  |> should.be_false
 
   list.all([], fn(_) { False })
-  |> should.equal(True)
+  |> should.be_true
 
   list.repeat(False, 16999)
   |> list.all(fn(item) { item })
-  |> should.equal(False)
+  |> should.be_false
 
   list.repeat(True, 16999)
   |> list.all(fn(item) { item })
-  |> should.equal(True)
+  |> should.be_true
 
   [1, 2, 3]
   |> list.all(fn(x) {
@@ -332,21 +332,21 @@ pub fn all_test() {
 
 pub fn any_test() {
   list.any([1, 2, 3, 4, 5], fn(x) { x == 2 })
-  |> should.equal(True)
+  |> should.be_true
 
   list.any([1, 2, 3, 4, 5], fn(x) { x < 0 })
-  |> should.equal(False)
+  |> should.be_false
 
   list.any([], fn(_) { False })
-  |> should.equal(False)
+  |> should.be_false
 
   list.repeat(True, 16999)
   |> list.any(fn(item) { item })
-  |> should.equal(True)
+  |> should.be_true
 
   list.repeat(False, 16999)
   |> list.any(fn(item) { item })
-  |> should.equal(False)
+  |> should.be_false
 
   [1, 2, 3]
   |> list.any(fn(x) {
