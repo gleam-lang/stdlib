@@ -3,6 +3,14 @@ import gleam/int
 import gleam/list
 import gleam/should
 
+if erlang {
+  const recursion_test_cycles = 999999
+}
+
+if javascript {
+  const recursion_test_cycles = 16999
+}
+
 pub fn length_test() {
   list.length([])
   |> should.equal(0)
@@ -15,6 +23,10 @@ pub fn length_test() {
 
   list.length([1, 1, 1])
   |> should.equal(3)
+
+  // TCO test
+  list.range(0, recursion_test_cycles)
+  |> list.length()
 }
 
 pub fn reverse_test() {
@@ -29,6 +41,10 @@ pub fn reverse_test() {
 
   list.reverse([1, 2, 3, 4, 5])
   |> should.equal([5, 4, 3, 2, 1])
+
+  // TCO test
+  list.range(0, recursion_test_cycles)
+  |> list.reverse
 }
 
 pub fn is_empty_test() {
@@ -49,9 +65,9 @@ pub fn contains_test() {
   list.contains([], 1)
   |> should.be_false
 
-  list.repeat(0, 16999)
+  // TCO test
+  list.repeat(0, recursion_test_cycles)
   |> list.contains(1)
-  |> should.equal(False)
 }
 
 pub fn first_test() {
@@ -89,6 +105,10 @@ pub fn filter_test() {
   [0, 4, 5, 7, 3]
   |> list.filter(fn(x) { x < 4 })
   |> should.equal([0, 3])
+
+  // TCO test
+  list.range(0, recursion_test_cycles)
+  |> list.filter(fn(x) { x == -1 })
 }
 
 pub fn filter_map_test() {
@@ -99,6 +119,10 @@ pub fn filter_map_test() {
   [2, 4, 6, 1]
   |> list.filter_map(Error)
   |> should.equal([])
+
+  // TCO test
+  list.repeat(0, recursion_test_cycles)
+  |> list.filter_map(fn(x) { Ok(x + 1) })
 }
 
 pub fn map_test() {
@@ -109,12 +133,20 @@ pub fn map_test() {
   [0, 4, 5, 7, 3]
   |> list.map(fn(x) { x * 2 })
   |> should.equal([0, 8, 10, 14, 6])
+
+  // TCO test
+  list.repeat(0, recursion_test_cycles)
+  |> list.map(fn(x) { x })
 }
 
 pub fn map_fold_test() {
   [1, 2, 3, 4]
   |> list.map_fold(from: 0, with: fn(acc, i) { #(acc + i, i * 2) })
   |> should.equal(#(10, [2, 4, 6, 8]))
+
+  // TCO test
+  list.repeat(0, recursion_test_cycles)
+  |> list.map_fold(from: 0, with: fn(acc, i) { #(acc + i, i + 1) })
 }
 
 pub fn try_map_test() {
@@ -132,6 +164,10 @@ pub fn try_map_test() {
   [4, 6, 5, 7, 3]
   |> list.try_map(fun)
   |> should.equal(Error(7))
+
+  // TCO test
+  list.repeat(6, recursion_test_cycles)
+  |> list.try_map(fun)
 }
 
 pub fn drop_test() {
@@ -142,6 +178,10 @@ pub fn drop_test() {
   [1, 2, 3, 4, 5, 6, 7, 8]
   |> list.drop(5)
   |> should.equal([6, 7, 8])
+
+  // TCO test
+  list.repeat(0, recursion_test_cycles)
+  |> list.drop(recursion_test_cycles)
 }
 
 pub fn take_test() {
@@ -152,6 +192,10 @@ pub fn take_test() {
   [1, 2, 3, 4, 5, 6, 7, 8]
   |> list.take(5)
   |> should.equal([1, 2, 3, 4, 5])
+
+  // TCO test
+  list.repeat(0, recursion_test_cycles)
+  |> list.take(recursion_test_cycles)
 }
 
 pub fn new_test() {
@@ -181,8 +225,9 @@ pub fn append_test() {
   list.append([1, 2, 3, 4], [5])
   |> should.equal([1, 2, 3, 4, 5])
 
-  list.append([], [])
-  |> should.equal([])
+  // TCO test
+  list.range(0, recursion_test_cycles)
+  |> list.append([1])
 }
 
 pub fn flatten_test() {
@@ -197,6 +242,11 @@ pub fn flatten_test() {
 
   list.flatten([[1, 2], [], [3, 4]])
   |> should.equal([1, 2, 3, 4])
+  //
+  // FIXME: flatten hangs if tested like below:
+  // TCO test
+  // list.repeat([1], recursion_test_cycles)
+  // |> list.flatten()
 }
 
 pub fn flat_map_test() {
@@ -208,6 +258,10 @@ pub fn fold_test() {
   [1, 2, 3]
   |> list.fold([], fn(acc, x) { [x, ..acc] })
   |> should.equal([3, 2, 1])
+
+  // TCO test
+  list.range(0, recursion_test_cycles)
+  |> list.fold([], fn(acc, x) { [x, ..acc] })
 }
 
 pub fn fold_right_test() {
