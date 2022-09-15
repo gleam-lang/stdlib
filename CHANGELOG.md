@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.23.0 - 2022-09-15
 
 - Fixed `string.inspect` and `io.debug` crashing on improper Erlang lists (#333).
 
