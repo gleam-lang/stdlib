@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.24.0 - unreleased
+
+- `string.slice` is now tail recursive and will no longer blog the stack on
+  large inputs when running on JavaScript.
+
 ## v0.23.0 - 2022-09-15
 
 - Fixed `string.inspect` and `io.debug` crashing on improper Erlang lists (#333).
