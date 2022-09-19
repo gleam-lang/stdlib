@@ -125,14 +125,14 @@ pub fn compare_test() {
 pub fn contains_test() {
   "gleam"
   |> string.contains("ea")
-  |> should.equal(True)
+  |> should.be_true
 
   "gleam"
   |> string.contains("x")
-  |> should.equal(False)
+  |> should.be_false
 
   string.contains(does: "bellwether", contain: "bell")
-  |> should.equal(True)
+  |> should.be_true
 }
 
 pub fn concat_test() {
@@ -186,37 +186,37 @@ pub fn trim_right_test() {
 pub fn starts_with_test() {
   "theory"
   |> string.starts_with("")
-  |> should.equal(True)
+  |> should.be_true
 
   "theory"
   |> string.starts_with("the")
-  |> should.equal(True)
+  |> should.be_true
 
   "theory"
   |> string.starts_with("ory")
-  |> should.equal(False)
+  |> should.be_false
 
   "theory"
   |> string.starts_with("theory2")
-  |> should.equal(False)
+  |> should.be_false
 }
 
 pub fn ends_with_test() {
   "theory"
   |> string.ends_with("")
-  |> should.equal(True)
+  |> should.be_true
 
   "theory"
   |> string.ends_with("ory")
-  |> should.equal(True)
+  |> should.be_true
 
   "theory"
   |> string.ends_with("the")
-  |> should.equal(False)
+  |> should.be_false
 
   "theory"
   |> string.ends_with("theory2")
-  |> should.equal(False)
+  |> should.be_false
 }
 
 pub fn slice_test() {
@@ -795,7 +795,7 @@ if erlang {
       regex.from_string("^\\/\\/erl\\(<[0-9]+\\.[0-9]+\\.[0-9]+>\\)$")
     string.inspect(create_erlang_pid())
     |> regex.check(regular_expression, _)
-    |> should.equal(True)
+    |> should.be_true
 
     // Looks like: `//erl(#Ref<0.1809744150.4035444737.100468>)`.
     assert Ok(regular_expression) =
@@ -804,7 +804,7 @@ if erlang {
       )
     string.inspect(create_erlang_reference())
     |> regex.check(regular_expression, _)
-    |> should.equal(True)
+    |> should.be_true
 
     // On Erlang the runtime representation for `String` and `BitString` is indistinguishable.
     <<"abc":utf8>>
