@@ -192,7 +192,7 @@ pub fn from_base_string(string: String, base: Int) -> Result(Int, Nil) {
 
 if erlang {
   external fn do_from_base_string(String, Int) -> Result(Int, Nil) =
-    "erlang" "binary_to_integer"
+    "gleam_stdlib" "int_from_base_string"
 }
 
 if javascript {

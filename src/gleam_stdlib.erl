@@ -10,7 +10,8 @@
          percent_encode/1, percent_decode/1, regex_check/2, regex_split/2,
          base_decode64/1, parse_query/1, bit_string_concat/1, size_of_tuple/1,
          decode_tuple/1, tuple_get/2, classify_dynamic/1, print/1, println/1,
-         print_error/1, println_error/1, inspect/1, float_to_string/1]).
+         print_error/1, println_error/1, inspect/1, float_to_string/1,
+         int_from_base_string/2]).
 
 %% Taken from OTP's uri_string module
 -define(DEC2HEX(X),
@@ -116,6 +117,12 @@ decode_result(Term) ->
         {error, Inner} -> {ok, {error, Inner}};
         error -> {ok, {error, nil}};
         _ -> decode_error_msg(<<"Result">>, Term)
+    end.
+
+int_from_base_string(String, Base) ->
+    case catch binary_to_integer(String, Base) of
+        Int when is_integer(Int) -> {ok, Int};
+        _ -> {error, nil}
     end.
 
 parse_int(String) ->
