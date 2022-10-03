@@ -183,6 +183,23 @@ if javascript {
     "../gleam_stdlib.mjs" "int_to_base_string"
 }
 
+pub fn from_base_string(string: String, base: Int) -> Result(Int, Nil) {
+  case base >= 2 && base <= 36 {
+    True -> do_from_base_string(string, base)
+    False -> Error(Nil)
+  }
+}
+
+if erlang {
+  external fn do_from_base_string(String, Int) -> Result(Int, Nil) =
+    "erlang" "binary_to_integer"
+}
+
+if javascript {
+  external fn do_from_base_string(Int, Int) -> Result(Int, Nil) =
+    "../gleam_stdlib.mjs" "int_from_base_string"
+}
+
 /// Prints a given int to a string using base2.
 ///
 /// ## Examples

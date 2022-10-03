@@ -57,6 +57,15 @@ export function int_to_base_string(int, base) {
   return int.toString(base).toUpperCase();
 }
 
+export function int_from_base_string(string, base) {
+  const result = parseInt(string, base)
+  if (isNaN(result)) {
+    return new Error(Nil)
+  } else {
+    return new Ok(result)
+  }
+}
+
 export function string_replace(string, target, substitute) {
   if (typeof string.replaceAll !== "undefined") {
     return string.replaceAll(target, substitute);
