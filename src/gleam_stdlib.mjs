@@ -57,13 +57,49 @@ export function int_to_base_string(int, base) {
   return int.toString(base).toUpperCase();
 }
 
+const digits = [
+  "0",
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+  "8",
+  "9",
+  "a",
+  "b",
+  "c",
+  "d",
+  "e",
+  "f",
+  "g",
+  "h",
+  "i",
+  "j",
+  "k",
+  "l",
+  "m",
+  "n",
+  "o",
+  "p",
+  "q",
+  "r",
+  "s",
+  "t",
+  "u",
+  "v",
+  "x",
+  "y",
+  "z",
+];
+
 export function int_from_base_string(string, base) {
-  const result = parseInt(string, base)
-  if (isNaN(result)) {
-    return new Error(Nil)
-  } else {
-    return new Ok(result)
+  if (digits.slice(base).some((d) => string.toLowerCase().includes(d))) {
+    return new Error(Nil);
   }
+  return new Ok(parseInt(string, base));
 }
 
 export function string_replace(string, target, substitute) {
@@ -98,7 +134,7 @@ export function string_length(string) {
     }
     return i;
   } else {
-    return string.match(/./gus).length;
+    return string.match(/./gsu).length;
   }
 }
 
@@ -120,7 +156,7 @@ export function pop_grapheme(string) {
   if (iterator) {
     first = iterator.next().value?.segment;
   } else {
-    first = string.match(/./us)?.[0];
+    first = string.match(/./su)?.[0];
   }
   if (first) {
     return new Ok([first, string.slice(first.length)]);
