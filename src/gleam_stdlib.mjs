@@ -57,13 +57,49 @@ export function int_to_base_string(int, base) {
   return int.toString(base).toUpperCase();
 }
 
+const digits = [
+  "0",
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+  "8",
+  "9",
+  "a",
+  "b",
+  "c",
+  "d",
+  "e",
+  "f",
+  "g",
+  "h",
+  "i",
+  "j",
+  "k",
+  "l",
+  "m",
+  "n",
+  "o",
+  "p",
+  "q",
+  "r",
+  "s",
+  "t",
+  "u",
+  "v",
+  "x",
+  "y",
+  "z",
+];
+
 export function int_from_base_string(string, base) {
-  const result = parseInt(string, base)
-  if (isNaN(result)) {
-    return new Error(Nil)
-  } else {
-    return new Ok(result)
+  if (digits.slice(base).some((d) => string.toLowerCase().includes(d))) {
+    return new Error(Nil);
   }
+  return new Ok(parseInt(string, base));
 }
 
 export function string_replace(string, target, substitute) {
@@ -261,7 +297,7 @@ export function power(base, exponent) {
   // It can thus be assumed that valid input is passed to the Math.pow
   // function and a NaN or Infinity value will not be produced.
   return Math.pow(base, exponent)
-}
+} 
 
 export function random_uniform() {
   let random_uniform_result = Math.random();
