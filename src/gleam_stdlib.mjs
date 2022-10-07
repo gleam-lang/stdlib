@@ -99,7 +99,14 @@ export function int_from_base_string(string, base) {
   if (digits.slice(base).some((d) => string.toLowerCase().includes(d))) {
     return new Error(Nil);
   }
-  return new Ok(parseInt(string, base));
+
+  const result = parseInt(string, base);
+
+  if (isNaN(result)) {
+    return new Error(Nil);
+  }
+
+  return new Ok(result);
 }
 
 export function string_replace(string, target, substitute) {
