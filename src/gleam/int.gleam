@@ -196,7 +196,7 @@ if erlang {
 }
 
 if javascript {
-  external fn do_from_base_string(Int, Int) -> Result(Int, Nil) =
+  external fn do_from_base_string(String, Int) -> Result(Int, Nil) =
     "../gleam_stdlib.mjs" "int_from_base_string"
 }
 
