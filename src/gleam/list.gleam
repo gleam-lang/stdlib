@@ -597,7 +597,6 @@ pub fn fold(
 /// Unlike `fold` this function is not tail recursive. Where possible use
 /// `fold` instead as it will use less memory.
 ///
-/// TODO: tco test
 pub fn fold_right(
   over list: List(a),
   from initial: acc,
@@ -631,7 +630,6 @@ fn do_index_fold(
 /// |> list.index_fold([], fn(acc, item, index) { ... })
 /// ```
 ///
-/// TODO: tco test
 pub fn index_fold(
   over over: List(a),
   from initial: acc,
@@ -658,7 +656,6 @@ pub fn index_fold(
 /// })
 /// ```
 ///
-/// TODO: TCO test
 pub fn try_fold(
   over collection: List(a),
   from accumulator: acc,
@@ -696,7 +693,6 @@ pub type ContinueOrStop(a) {
 /// })
 /// ```
 ///
-/// TODO: TCO test
 pub fn fold_until(
   over collection: List(a),
   from accumulator: acc,
@@ -730,7 +726,6 @@ pub fn fold_until(
 /// Error(Nil)
 /// ```
 ///
-/// TODO: tco test
 pub fn find(
   in haystack: List(a),
   one_that is_desired: fn(a) -> Bool,
@@ -763,7 +758,6 @@ pub fn find(
 /// Error(Nil)
 /// ```
 ///
-/// TODO: tco test
 pub fn find_map(
   in haystack: List(a),
   with fun: fn(a) -> Result(b, c),
@@ -795,7 +789,6 @@ pub fn find_map(
 /// False
 /// ```
 ///
-/// TODO: TCO Test
 pub fn all(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
   case list {
     [] -> True
@@ -827,7 +820,6 @@ pub fn all(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
 /// True
 /// ```
 ///
-/// TODO: tco test
 pub fn any(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
   case list {
     [] -> False
@@ -867,7 +859,6 @@ fn do_zip(xs: List(a), ys: List(b), acc: List(#(a, b))) -> List(#(a, b)) {
 /// [#(1, 3), #(2, 4)]
 /// ```
 ///
-/// TODO: tco test
 pub fn zip(xs: List(a), ys: List(b)) -> List(#(a, b)) {
   do_zip(xs, ys, [])
 }
@@ -921,7 +912,6 @@ fn do_unzip(input, xs, ys) {
 /// #([], [])
 /// ```
 ///
-/// TODO: tco test
 pub fn unzip(input: List(#(a, b))) -> #(List(a), List(b)) {
   do_unzip(input, [], [])
 }
@@ -947,7 +937,6 @@ fn do_intersperse(list: List(a), separator: a, acc: List(a)) -> List(a) {
 /// []
 /// ```
 ///
-/// TODO: tco test
 pub fn intersperse(list: List(a), with elem: a) -> List(a) {
   case list {
     [] | [_] -> list
@@ -989,7 +978,6 @@ pub fn at(in list: List(a), get index: Int) -> Result(a, Nil) {
 /// [1, 4, 7, 3]
 /// ```
 ///
-/// TODO: tco test
 pub fn unique(list: List(a)) -> List(a) {
   case list {
     [] -> []
@@ -1040,7 +1028,6 @@ fn do_sort(
 /// [1, 2, 3, 4, 4, 5, 6]
 /// ```
 ///
-/// TODO: tco test
 pub fn sort(list: List(a), by compare: fn(a, a) -> Order) -> List(a) {
   do_sort(list, compare, length(list))
 }
@@ -1060,7 +1047,6 @@ pub fn sort(list: List(a), by compare: fn(a, a) -> Order) -> List(a) {
 /// [1, 0, -1, -2, -3, -4, -5]
 /// ```
 ///
-/// TODO: tco test
 pub fn range(from start: Int, to stop: Int) -> List(Int) {
   tail_recursive_range(start, stop, [])
 }
@@ -1092,7 +1078,6 @@ fn do_repeat(a: a, times: Int, acc: List(a)) -> List(a) {
 /// ["a", "a", "a", "a", "a"]
 /// ```
 ///
-/// TODO: tco test
 pub fn repeat(item a: a, times times: Int) -> List(a) {
   do_repeat(a, times, [])
 }
@@ -1126,7 +1111,6 @@ fn do_split(list: List(a), n: Int, taken: List(a)) -> #(List(a), List(a)) {
 /// #([6, 7, 8, 9], [])
 /// ```
 ///
-/// TODO: tco test
 pub fn split(list list: List(a), at index: Int) -> #(List(a), List(a)) {
   do_split(list, index, [])
 }
@@ -1162,7 +1146,6 @@ fn do_split_while(
 /// #([1, 2, 3, 4, 5], [])
 /// ```
 ///
-/// TODO: tco test
 pub fn split_while(
   list list: List(a),
   satisfying predicate: fn(a) -> Bool,
@@ -1235,7 +1218,6 @@ fn do_pop(haystack, predicate, checked) {
 /// Error(Nil)
 /// ```
 ///
-/// TODO: tco test
 pub fn pop(
   in haystack: List(a),
   one_that is_desired: fn(a) -> Bool,
@@ -1272,7 +1254,6 @@ fn do_pop_map(haystack, mapper, checked) {
 /// Error(Nil)
 /// ```
 ///
-/// TODO: tco test
 pub fn pop_map(
   in haystack: List(a),
   one_that is_desired: fn(a) -> Result(b, c),
@@ -1320,7 +1301,6 @@ pub fn key_pop(
 /// If there was already a tuple with the key then it is replaced, otherwise it
 /// is added to the end of the list.
 ///
-///
 /// ## Examples
 ///
 /// ```gleam
@@ -1331,7 +1311,6 @@ pub fn key_pop(
 /// [#(5, 0), #(4, 1), #(1, 100)]
 /// ```
 ///
-/// TODO: tco test
 pub fn key_set(list: List(#(a, b)), key: a, value: b) -> List(#(a, b)) {
   case list {
     [] -> [#(key, value)]
@@ -1340,9 +1319,15 @@ pub fn key_set(list: List(#(a, b)), key: a, value: b) -> List(#(a, b)) {
   }
 }
 
-/// Calls a function for each element in a list, discarding the results.
+/// Calls a function for each element in a list, discarding the return value.
 ///
-/// TODO: tco test
+/// Useful for calling a side effect for every item of a list.
+///
+/// ```gleam
+/// > list.each([1, 2, 3], fn(x) { io.println(x) })
+/// Nil
+/// ```
+///
 pub fn each(list: List(a), f: fn(a) -> b) -> Nil {
   case list {
     [] -> Nil
@@ -1374,7 +1359,6 @@ fn do_partition(list, categorise, trues, falses) {
 /// #([1, 3, 5], [2, 4])
 /// ```
 ///
-/// TODO: tco test
 pub fn partition(
   list: List(a),
   with categorise: fn(a) -> Bool,
@@ -1383,7 +1367,8 @@ pub fn partition(
 }
 
 /// Returns all the permutations of a list.
-/// All values must be unique.
+///
+/// Notice: All list item values must be unique.
 ///
 /// ## Examples
 ///
@@ -1392,7 +1377,6 @@ pub fn partition(
 /// [[1, 2], [2, 1]]
 /// ```
 ///
-/// TODO: tco test
 pub fn permutations(l: List(a)) -> List(List(a)) {
   case l {
     [] -> [[]]
@@ -1430,7 +1414,6 @@ fn do_window(acc: List(List(a)), l: List(a), n: Int) -> List(List(a)) {
 /// []
 /// ```
 ///
-/// TODO: tco test
 pub fn window(l: List(a), by n: Int) -> List(List(a)) {
   do_window([], l, n)
   |> reverse
@@ -1461,7 +1444,6 @@ pub fn window_by_2(l: List(a)) -> List(#(a, a)) {
 /// [3, 4]
 /// ```
 ///
-/// TODO: tco test
 pub fn drop_while(
   in list: List(a),
   satisfying predicate: fn(a) -> Bool,
@@ -1500,7 +1482,6 @@ fn do_take_while(
 /// [1, 2]
 /// ```
 ///
-/// TODO: tco test
 pub fn take_while(
   in list: List(a),
   satisfying predicate: fn(a) -> Bool,
@@ -1540,7 +1521,6 @@ fn do_chunk(
 /// [[1], [2, 2], [3], [4, 4, 6], [7, 7]]
 /// ```
 ///
-/// TODO: tco test
 pub fn chunk(in list: List(a), by f: fn(a) -> key) -> List(List(a)) {
   case list {
     [] -> []
@@ -1588,17 +1568,17 @@ fn do_sized_chunk(
 /// [[1, 2, 3], [4, 5, 6], [7, 8]]
 /// ```
 ///
-/// TODO: tco test
 pub fn sized_chunk(in list: List(a), into count: Int) -> List(List(a)) {
   do_sized_chunk(list, count, count, [], [])
 }
 
 /// This function acts similar to fold, but does not take an initial state.
 /// Instead, it starts from the first element in the list
-/// and combines it with each subsequent element in turn using the given function.
-/// The function is called as `fun(accumulator, current_element)`.
+/// and combines it with each subsequent element in turn using the given
+/// function. The function is called as `fun(accumulator, current_element)`.
 ///
-/// Returns `Ok` to indicate a successful run, and `Error` if called on an empty list.
+/// Returns `Ok` to indicate a successful run, and `Error` if called on an
+/// empty list.
 ///
 /// ## Examples
 ///
@@ -1641,7 +1621,6 @@ fn do_scan(
 /// [101, 103, 106]
 /// ```
 ///
-/// TODO: tco test
 pub fn scan(
   over list: List(a),
   from initial: acc,
@@ -1685,7 +1664,6 @@ pub fn last(list: List(a)) -> Result(a, Nil) {
 ///  [[1, 2, 3], [1, 2, 4], [1, 3, 4], [2, 3, 4]]
 /// ```
 ///
-/// TODO: tco test
 pub fn combinations(items: List(a), by n: Int) -> List(List(a)) {
   case n {
     0 -> [[]]
@@ -1753,7 +1731,6 @@ pub fn interleave(list: List(List(a))) -> List(a) {
 /// [[1, 101], [2, 102], [3, 103]]
 /// ```
 ///
-/// TODO: tco test
 pub fn transpose(list_of_list: List(List(a))) -> List(List(a)) {
   let take_first = fn(list) {
     case list {

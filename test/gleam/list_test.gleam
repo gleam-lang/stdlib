@@ -4,11 +4,11 @@ import gleam/list
 import gleam/should
 
 if erlang {
-  const recursion_test_cycles = 999999
+  const recursion_test_cycles = 999_999
 }
 
 if javascript {
-  const recursion_test_cycles = 16999
+  const recursion_test_cycles = 16_999
 }
 
 pub fn length_test() {
@@ -243,8 +243,8 @@ pub fn flatten_test() {
   list.flatten([[1, 2], [], [3, 4]])
   |> should.equal([1, 2, 3, 4])
   //
-  // FIXME: flatten hangs if tested like below:
   // TCO test
+  // TODO: FIXME: implementation broken:
   // list.repeat([1], recursion_test_cycles)
   // |> list.flatten()
 }
@@ -268,12 +268,21 @@ pub fn fold_right_test() {
   [1, 2, 3]
   |> list.fold_right(from: [], with: fn(acc, x) { [x, ..acc] })
   |> should.equal([1, 2, 3])
+  //
+  // TCO test
+  // TODO: FIXME: implementation broken on JS
+  // list.range(0, recursion_test_cycles)
+  // |> list.fold_right(from: [], with: fn(acc, x) { [x, ..acc] })
 }
 
 pub fn index_fold_test() {
   ["a", "b", "c"]
   |> list.index_fold([], fn(acc, i, ix) { [#(ix, i), ..acc] })
   |> should.equal([#(2, "c"), #(1, "b"), #(0, "a")])
+
+  // TCO test
+  list.range(0, recursion_test_cycles)
+  |> list.index_fold([], fn(acc, i, ix) { [#(ix, i), ..acc] })
 }
 
 pub fn fold_until_test() {
@@ -288,6 +297,18 @@ pub fn fold_until_test() {
     },
   )
   |> should.equal(6)
+
+  // TCO test
+  list.range(0, recursion_test_cycles)
+  |> list.fold_until(
+    from: 0,
+    with: fn(acc, n) {
+      case n < recursion_test_cycles {
+        True -> list.Continue(acc + n)
+        False -> list.Stop(acc)
+      }
+    },
+  )
 }
 
 pub fn try_fold_test() {
@@ -314,6 +335,18 @@ pub fn try_fold_test() {
     },
   )
   |> should.equal(Error(Nil))
+
+  // TCO test
+  list.range(0, recursion_test_cycles)
+  |> list.try_fold(
+    0,
+    fn(acc, i) {
+      case i < recursion_test_cycles {
+        True -> Ok(acc + i)
+        False -> Error(Nil)
+      }
+    },
+  )
 }
 
 pub fn find_map_test() {
@@ -335,6 +368,15 @@ pub fn find_map_test() {
   [1, 3]
   |> list.find_map(with: f)
   |> should.equal(Error(Nil))
+
+  // TCO test
+  list.range(0, recursion_test_cycles)
+  |> list.find_map(with: fn(x) {
+    case x == recursion_test_cycles {
+      True -> Ok(recursion_test_cycles)
+      _ -> Error(Nil)
+    }
+  })
 }
 
 pub fn find_test() {
@@ -351,6 +393,10 @@ pub fn find_test() {
   [1, 3]
   |> list.find(one_that: is_two)
   |> should.equal(Error(Nil))
+
+  // TCO test
+  list.range(0, recursion_test_cycles)
+  |> list.find(one_that: fn(x) { x == recursion_test_cycles })
 }
 
 pub fn all_test() {
@@ -363,14 +409,6 @@ pub fn all_test() {
   list.all([], fn(_) { False })
   |> should.be_true
 
-  list.repeat(False, recursion_test_cycles)
-  |> list.all(fn(item) { item })
-  |> should.be_false
-
-  list.repeat(True, recursion_test_cycles)
-  |> list.all(fn(item) { item })
-  |> should.be_true
-
   [1, 2, 3]
   |> list.all(fn(x) {
     case x {
@@ -380,6 +418,15 @@ pub fn all_test() {
       _ -> {
         assert True = False
       }
+    }
+  })
+
+  // TCO test
+  list.repeat(0, recursion_test_cycles)
+  |> list.all(fn(x) {
+    case x {
+      0 -> True
+      _ -> False
     }
   })
 }
@@ -394,14 +441,6 @@ pub fn any_test() {
   list.any([], fn(_) { False })
   |> should.be_false
 
-  list.repeat(True, recursion_test_cycles)
-  |> list.any(fn(item) { item })
-  |> should.be_true
-
-  list.repeat(False, recursion_test_cycles)
-  |> list.any(fn(item) { item })
-  |> should.be_false
-
   [1, 2, 3]
   |> list.any(fn(x) {
     case x {
@@ -413,6 +452,10 @@ pub fn any_test() {
       }
     }
   })
+
+  // TCO test
+  list.range(0, recursion_test_cycles)
+  |> list.any(fn(x) { x == recursion_test_cycles })
 }
 
 pub fn zip_test() {
@@ -430,6 +473,10 @@ pub fn zip_test() {
 
   list.zip([5, 6, 7], [1, 2])
   |> should.equal([#(5, 1), #(6, 2)])
+
+  // TCO test
+  let recursion_test_cycles_list = list.range(0, recursion_test_cycles)
+  list.zip(recursion_test_cycles_list, recursion_test_cycles_list)
 }
 
 pub fn strict_zip_test() {
@@ -455,6 +502,11 @@ pub fn unzip_test() {
 
   list.unzip([])
   |> should.equal(#([], []))
+
+  // TCO test
+  let recursion_test_cycles_list = list.range(0, recursion_test_cycles)
+  list.zip(recursion_test_cycles_list, recursion_test_cycles_list)
+  |> list.unzip()
 }
 
 pub fn intersperse_test() {
@@ -463,6 +515,10 @@ pub fn intersperse_test() {
 
   list.intersperse([], 2)
   |> should.equal([])
+
+  // TCO test
+  list.range(0, recursion_test_cycles)
+  |> list.intersperse(0)
 }
 
 pub fn at_test() {
@@ -491,6 +547,11 @@ pub fn unique_test() {
 
   list.unique([])
   |> should.equal([])
+  //
+  // TCO test
+  // TODO: FIXME: implementation broken
+  // list.range(0, recursion_test_cycles)
+  // |> list.unique()
 }
 
 pub fn sort_test() {
@@ -509,6 +570,12 @@ pub fn sort_test() {
   []
   |> list.sort(int.compare)
   |> should.equal([])
+  //
+  // TCO test
+  // TODO: FIXME: implementation broken on JS
+  // list.range(0, recursion_test_cycles)
+  // |> list.reverse
+  // |> list.sort(int.compare)
 }
 
 pub fn index_map_test() {
@@ -543,8 +610,8 @@ pub fn range_test() {
   list.range(1, -5)
   |> should.equal([1, 0, -1, -2, -3, -4, -5])
 
-  // This should not overflow the stack
-  list.range(1, 100_000)
+  // TCO test
+  list.range(1, recursion_test_cycles)
 }
 
 pub fn repeat_test() {
@@ -559,6 +626,9 @@ pub fn repeat_test() {
 
   list.repeat("x", 5)
   |> should.equal(["x", "x", "x", "x", "x"])
+
+  // TCO test
+  list.repeat(0, recursion_test_cycles)
 }
 
 pub fn split_test() {
@@ -585,6 +655,10 @@ pub fn split_test() {
   [0, 1, 2, 3, 4]
   |> list.split(9)
   |> should.equal(#([0, 1, 2, 3, 4], []))
+
+  // TCO test
+  list.repeat(0, recursion_test_cycles + 10)
+  |> list.split(recursion_test_cycles + 1)
 }
 
 pub fn split_while_test() {
@@ -607,6 +681,10 @@ pub fn split_while_test() {
   [1, 2, 3, 4, 5]
   |> list.split_while(fn(x) { x <= -3 })
   |> should.equal(#([], [1, 2, 3, 4, 5]))
+
+  // TCO test
+  list.repeat(0, recursion_test_cycles + 10)
+  |> list.split_while(fn(x) { x <= recursion_test_cycles + 1 })
 }
 
 pub fn key_find_test() {
@@ -626,14 +704,21 @@ pub fn key_find_test() {
 }
 
 pub fn pop_test() {
-  list.pop([1, 2, 3], fn(x) { x > 2 })
+  [1, 2, 3]
+  |> list.pop(fn(x) { x > 2 })
   |> should.equal(Ok(#(3, [1, 2])))
 
-  list.pop([1, 2, 3], fn(x) { x > 4 })
+  [1, 2, 3]
+  |> list.pop(fn(x) { x > 4 })
   |> should.equal(Error(Nil))
 
-  list.pop([], fn(_x) { True })
+  []
+  |> list.pop(fn(_x) { True })
   |> should.equal(Error(Nil))
+
+  // TCO test
+  list.repeat(0, recursion_test_cycles + 10)
+  |> list.pop(fn(x) { x > recursion_test_cycles + 1 })
 }
 
 pub fn pop_map_test() {
@@ -672,12 +757,32 @@ pub fn key_set_test() {
   [#(5, 0), #(4, 1)]
   |> list.key_set(1, 100)
   |> should.equal([#(5, 0), #(4, 1), #(1, 100)])
+
+  // TCO test
+  let recursion_test_cycles_list = list.range(0, recursion_test_cycles)
+  list.zip(recursion_test_cycles_list, recursion_test_cycles_list)
+  |> list.key_set(0, 0)
+}
+
+pub fn each_test() {
+  list.each([1, 1, 1], fn(x) { assert True = x == 1 })
+  |> should.equal(Nil)
+
+  // TCO test
+  list.each(
+    list.repeat(1, recursion_test_cycles),
+    fn(x) { assert True = x == 1 },
+  )
 }
 
 pub fn partition_test() {
   [1, 2, 3, 4, 5, 6, 7]
   |> list.partition(int.is_odd)
   |> should.equal(#([1, 3, 5, 7], [2, 4, 6]))
+
+  // TCO test
+  list.range(0, recursion_test_cycles)
+  |> list.partition(int.is_even)
 }
 
 pub fn permutations_test() {
@@ -701,6 +806,13 @@ pub fn permutations_test() {
   ["a", "b"]
   |> list.permutations
   |> should.equal([["a", "b"], ["b", "a"]])
+
+  // TCO test
+  // permutations
+  // 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 = 40_320
+  // 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 = 362_800
+  [1, 2, 3, 4, 5, 6, 7, 8]
+  |> list.permutations
 }
 
 pub fn window_test() {
@@ -719,6 +831,10 @@ pub fn window_test() {
   [1, 2, 3, 4, 5]
   |> list.window(3)
   |> should.equal([[1, 2, 3], [2, 3, 4], [3, 4, 5]])
+
+  // TCO test
+  list.range(0, recursion_test_cycles)
+  |> list.window(2)
 }
 
 pub fn window_by_2_test() {
@@ -735,12 +851,20 @@ pub fn drop_while_test() {
   [1, 2, 3, 4]
   |> list.drop_while(fn(x) { x < 3 })
   |> should.equal([3, 4])
+
+  // TCO test
+  list.range(0, recursion_test_cycles + 10)
+  |> list.drop_while(fn(x) { x < recursion_test_cycles + 1 })
 }
 
 pub fn take_while_test() {
   [1, 2, 3, 2, 4]
   |> list.take_while(fn(x) { x < 3 })
   |> should.equal([1, 2])
+
+  // TCO test
+  list.range(0, recursion_test_cycles + 10)
+  |> list.take_while(fn(x) { x < recursion_test_cycles + 1 })
 }
 
 pub fn chunk_test() {
@@ -751,6 +875,10 @@ pub fn chunk_test() {
   [1, 2, 2, 3, 4, 4, 6, 7, 7]
   |> list.chunk(by: fn(n) { n % 2 })
   |> should.equal([[1], [2, 2], [3], [4, 4, 6], [7, 7]])
+
+  // TCO test
+  list.range(0, recursion_test_cycles)
+  |> list.chunk(by: fn(n) { n % 2 })
 }
 
 pub fn sized_chunk_test() {
@@ -761,6 +889,10 @@ pub fn sized_chunk_test() {
   [1, 2, 3, 4, 5, 6, 7, 8]
   |> list.sized_chunk(into: 3)
   |> should.equal([[1, 2, 3], [4, 5, 6], [7, 8]])
+
+  // TCO test
+  list.range(0, recursion_test_cycles * 3)
+  |> list.sized_chunk(into: 3)
 }
 
 pub fn reduce_test() {
@@ -798,6 +930,10 @@ pub fn scan_test() {
     ["Odd", "Even", "Odd"],
     ["Even", "Odd", "Even", "Odd"],
   ])
+
+  // TCO test
+  list.range(0, recursion_test_cycles)
+  |> list.scan(from: 0, with: fn(acc, i) { i + acc })
 }
 
 pub fn last_test() {
@@ -826,6 +962,10 @@ pub fn combinations_test() {
 
   list.combinations([1, 2, 3, 4], 3)
   |> should.equal([[1, 2, 3], [1, 2, 4], [1, 3, 4], [2, 3, 4]])
+
+  // TCO test
+  list.range(1, 20)
+  |> list.combinations(20 / 2)
 }
 
 pub fn combination_pairs_test() {
@@ -840,6 +980,10 @@ pub fn combination_pairs_test() {
 
   list.combination_pairs([1, 2, 3, 4])
   |> should.equal([#(1, 2), #(1, 3), #(1, 4), #(2, 3), #(2, 4), #(3, 4)])
+
+  // TCO test
+  list.range(0, 200)
+  |> list.combination_pairs()
 }
 
 pub fn interleave_test() {
@@ -870,4 +1014,9 @@ pub fn transpose_test() {
 
   list.transpose([[1, 2, 3], [101, 102], [201, 202, 203]])
   |> should.equal([[1, 101, 201], [2, 102, 202], [3, 203]])
+  //
+  // TCO test
+  // TODO: FIXME: implementation broken:
+  // let recursion_test_cycles_list = list.range(0, recursion_test_cycles)
+  // list.transpose([recursion_test_cycles_list, recursion_test_cycles_list])
 }

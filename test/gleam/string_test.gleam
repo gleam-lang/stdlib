@@ -4,11 +4,11 @@ import gleam/should
 import gleam/string
 
 if erlang {
-  const recursion_test_cycles = 999999
+  const recursion_test_cycles = 999_999
 }
 
 if javascript {
-  const recursion_test_cycles = 16999
+  const recursion_test_cycles = 16_999
 }
 
 pub fn length_test() {
@@ -414,8 +414,7 @@ pub fn to_graphemes_test() {
   |> string.to_graphemes
   |> should.equal([
     "Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍", "A̴̵̜̰͔ͫ͗͢", "L̠ͨͧͩ͘",
-    "G̴̻͈͍͔̹̑͗̎̅͛́", "Ǫ̵̹̻̝̳͂̌̌͘",
-    "!͖̬̰̙̗̿̋ͥͥ̂ͣ̐́́͜͞",
+    "G̴̻͈͍͔̹̑͗̎̅͛́", "Ǫ̵̹̻̝̳͂̌̌͘", "!͖̬̰̙̗̿̋ͥͥ̂ͣ̐́́͜͞",
   ])
 }
 
