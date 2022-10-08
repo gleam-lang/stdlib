@@ -10,7 +10,7 @@ if erlang {
 
 if javascript {
   // const recursion_test_cycles = 16_999
-  const recursion_test_cycles = 2
+  const recursion_test_cycles = 16_999
 }
 
 pub fn length_test() {
