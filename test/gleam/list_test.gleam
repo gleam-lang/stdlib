@@ -808,10 +808,10 @@ pub fn permutations_test() {
   |> should.equal([["a", "b"], ["b", "a"]])
 
   // TCO test
-  // permutations
+  // permutation count:
   // 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 = 40_320
   // 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 = 362_800
-  [1, 2, 3, 4, 5, 6, 7, 8]
+  [1, 2, 3, 4, 5, 6, 7, 8, 9]
   |> list.permutations
 }
 
