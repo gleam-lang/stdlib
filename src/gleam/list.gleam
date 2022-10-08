@@ -589,13 +589,15 @@ pub fn fold(
 /// Reduces a list of elements into a single value by calling a given function
 /// on each element, going from right to left.
 ///
-/// Notice: Unlike `fold` this function is not tail recursive. Where possible use
-/// `fold` instead as it will use less memory.
-///
 /// `fold_right([1, 2, 3], 0, add)` is the equivalent of
 /// `add(add(add(0, 3), 2), 1)`.
 ///
 /// This function runs in linear time.
+///
+/// ## Notice
+///
+/// Unlike `fold` this function is not tail recursive. Where possible use
+/// `fold` instead as it will use less memory.
 ///
 pub fn fold_right(
   over list: List(a),
@@ -1368,7 +1370,9 @@ pub fn partition(
 
 /// Returns all the permutations of a list.
 ///
-/// Notice: All list item values must be unique.
+/// ## Notice
+///
+/// All list item values must be unique.
 ///
 /// ## Examples
 ///
