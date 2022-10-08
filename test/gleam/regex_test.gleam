@@ -6,10 +6,10 @@ pub fn from_string_test() {
   assert Ok(re) = regex.from_string("[0-9]")
 
   regex.check(re, "abc123")
-  |> should.equal(True)
+  |> should.be_true
 
   regex.check(re, "abcxyz")
-  |> should.equal(False)
+  |> should.be_false
 
   assert Error(_) = regex.from_string("[0-9")
 }
@@ -19,23 +19,23 @@ pub fn compile_test() {
   assert Ok(re) = regex.compile("[A-B]", options)
 
   regex.check(re, "abc123")
-  |> should.equal(True)
+  |> should.be_true
 
   let options = Options(case_insensitive: False, multi_line: True)
   assert Ok(re) = regex.compile("^[0-9]", options)
 
   regex.check(re, "abc\n123")
-  |> should.equal(True)
+  |> should.be_true
 }
 
 pub fn check_test() {
   assert Ok(re) = regex.from_string("^f.o.?")
 
   regex.check(re, "foo")
-  |> should.equal(True)
+  |> should.be_true
 
   regex.check(re, "boo")
-  |> should.equal(False)
+  |> should.be_false
 }
 
 pub fn split_test() {
