@@ -20,11 +20,7 @@ export async function main() {
         passes++;
       } catch (error) {
         let moduleName = "\ngleam/" + entry.name.slice(0, -3);
-				if (error.line) {
-          process.stdout.write(`\n❌ ${moduleName}.${fnName}:${error.line}: ${error}\n`);
-        } else {
-          process.stdout.write(`\n❌ ${moduleName}.${fnName}: ${error}\n`);
-        }
+        process.stdout.write(`\n❌ ${moduleName}.${fnName}: ${error}\n`);
         failures++;
       }
     }
