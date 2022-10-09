@@ -2,8 +2,10 @@
 
 ## v0.24.0 - unreleased
 
-- `string.slice` is now tail recursive and will no longer blog the stack on
-  large inputs when running on JavaScript.
+- `string.slice` is now tail recursive and will no longer exceed the stack size
+  on large inputs on target JavaScript.
+- Added `int.remainder` and `int.modulo` functions which allow safe modulo
+  operations the way common languages support them.
 
 ## v0.23.0 - 2022-09-15
 
