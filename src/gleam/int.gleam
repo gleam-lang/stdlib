@@ -514,9 +514,94 @@ pub fn random(boundary_a: Int, boundary_b: Int) -> Int {
 /// Error(Nil)
 /// ```
 ///
-pub fn divide(a: Int, by b: Int) -> Result(Int, Nil) {
-  case b {
+pub fn divide(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
+  case divisor {
     0 -> Error(Nil)
-    b -> Ok(a / b)
+    divisor -> Ok(dividend / divisor)
+  }
+}
+
+/// Returns division remainder of the inputs as a `Result`.
+///
+/// This functions mimicks modulo operation of following languages:
+/// C, C#, C++, Go, Java, JavaScript, Kotlin, Nim, PHP, Rust,
+/// Scala, Swift, Crystal as well as Erlang's and Elixir's rem operator.
+///
+/// In addition if the given divisor equals 0, this function returns an Error.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > int.remainder(3, 2)
+/// Ok(1)
+///
+/// > int.remainder(1, 0)
+/// Error(Nil)
+///
+/// > int.remainder(10, -1)
+/// Ok(0)
+///
+/// > int.remainder(13, by: 3)
+/// Ok(1)
+///
+/// > int.remainder(-13, by: 3)
+/// Ok(-1)
+///
+/// > int.remainder(13, by: -3)
+/// Ok(1)
+///
+/// > int.remainder(-13, by: -3)
+/// Ok(-1)
+/// ```
+///
+pub fn remainder(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
+  case divisor {
+    0 -> Error(Nil)
+    divisor -> Ok(dividend % divisor)
+  }
+}
+
+/// Computes the modulo remainder of an integer division.
+///
+/// This functions mimicks modulo operation on following languages:
+/// Haskell, Lua, Python, Ruby, as well as Elixir's Integer.mod().
+///
+/// In addition if the given divisor equals 0, this function returns an Error.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > int.modulo(3, 2)
+/// Ok(1)
+///
+/// > int.modulo(1, 0)
+/// Error(Nil)
+///
+/// > int.modulo(10, -1)
+/// Ok(0)
+///
+/// > int.modulo(13, by: 3)
+/// Ok(1)
+///
+/// > int.modulo(-13, by: 3)
+/// Ok(2)
+///
+/// > int.modulo(13, by: -3)
+/// Ok(-2)
+///
+/// > int.modulo(-13, by: -3)
+/// Ok(-1)
+/// ```
+///
+pub fn modulo(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
+  case divisor {
+    0 -> Error(Nil)
+    _ -> {
+      let remainder = dividend % divisor
+      case remainder * divisor < 0 {
+        True -> Ok(remainder + divisor)
+        False -> Ok(remainder)
+      }
+    }
   }
 }
