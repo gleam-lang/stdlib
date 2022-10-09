@@ -424,6 +424,12 @@ pub fn divide_test() {
 
   int.divide(1, by: 0)
   |> should.equal(Error(Nil))
+
+  int.divide(5, by: 2)
+  |> should.equal(Ok(2))
+
+  int.divide(-99, by: 2)
+  |> should.equal(Ok(-49))
 }
 
 pub fn remainder_test() {

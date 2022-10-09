@@ -502,6 +502,8 @@ pub fn random(boundary_a: Int, boundary_b: Int) -> Int {
   |> float.round()
 }
 
+/// Performs a truncated integer division.
+///
 /// Returns division of the inputs as a `Result`.
 ///
 /// ## Examples
@@ -512,6 +514,12 @@ pub fn random(boundary_a: Int, boundary_b: Int) -> Int {
 ///
 /// > divide(1, 0)
 /// Error(Nil)
+///
+/// > divide(5, 2)
+/// Ok(2)
+///
+/// > divide(-99, 2)
+/// Ok(-49)
 /// ```
 ///
 pub fn divide(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
