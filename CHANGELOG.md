@@ -4,6 +4,7 @@
 
 - `string.slice` is now tail recursive and will no longer blog the stack on
   large inputs when running on JavaScript.
+- Added `int.floor_divide` to complement the truncated `int.divide`.
 
 ## v0.23.0 - 2022-09-15
 

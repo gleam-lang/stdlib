@@ -527,7 +527,8 @@ pub fn divide(a: Int, by b: Int) -> Result(Int, Nil) {
 /// If you want to perform truncated integer division (rounding towards zero),
 /// use `int.divide()` or the `/` operator instead.
 ///
-/// Returns division of the inputs as a `Result`.
+/// Returns division of the inputs as a `Result`: If the given divisor equals
+/// `0`, this function returns an `Error`.
 ///
 /// ## Examples
 ///
