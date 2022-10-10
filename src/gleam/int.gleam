@@ -520,3 +520,38 @@ pub fn divide(a: Int, by b: Int) -> Result(Int, Nil) {
     b -> Ok(a / b)
   }
 }
+
+/// Performs a *floored* integer division, which means that the result will
+/// always be rounded towards negative infinity.
+///
+/// If you want to perform truncated integer division (rounding towards zero),
+/// use `int.divide()` or the `/` operator instead.
+///
+/// Returns division of the inputs as a `Result`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > floor_divide(1, 0)
+/// Error(Nil)
+///
+/// > floor_divide(5, 2)
+/// Ok(2)
+///
+/// > floor_divide(6, -4)
+/// Ok(-2)
+///
+/// > floor_divide(-99, 2)
+/// Ok(-50)
+/// ```
+///
+pub fn floor_divide(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
+  case divisor {
+    0 -> Error(Nil)
+    divisor ->
+      case dividend * divisor < 0 && dividend % divisor != 0 {
+        True -> Ok(dividend / divisor - 1)
+        False -> Ok(dividend / divisor)
+      }
+  }
+}
