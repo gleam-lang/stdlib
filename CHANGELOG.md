@@ -4,8 +4,8 @@
 
 - `string.slice` is now tail recursive and will no longer exceed the stack size
   on large inputs on target JavaScript.
-- Added `int.remainder` and `int.modulo` functions which allow safe modulo
-  operations the way common languages support them.
+- Added `int.remainder` and `int.modulo` functions which allow safe remainder
+  and modulo operations the way common languages support them.
 
 ## v0.23.0 - 2022-09-15
 
