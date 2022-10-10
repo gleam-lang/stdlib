@@ -1079,15 +1079,15 @@ pub fn insertion_sort(list: List(a), by compare: fn(a, a) -> Order) -> List(a) {
 /// Processes as such for inserting `4` into `[1, 2, 3, 5]`:
 ///
 /// ```gleam
-/// > do_insert_into_sorted_list_list_tailrec(4, [1, 2, 3, 5], [])
-/// > do_insert_into_sorted_list_list_tailrec(4, [2, 3, 5], [1])
-/// > do_insert_into_sorted_list_list_tailrec(4, [3, 5], [2, 1])
-/// > do_insert_into_sorted_list_list_tailrec(4, [5], [3, 2, 1])
+/// > do_insert_into_sorted_list_tailrec(4, [1, 2, 3, 5], [])
+/// > do_insert_into_sorted_list_tailrec(4, [2, 3, 5], [1])
+/// > do_insert_into_sorted_list_tailrec(4, [3, 5], [2, 1])
+/// > do_insert_into_sorted_list_tailrec(4, [5], [3, 2, 1])
 /// > [3, 2, 1] |> reverse() |> append(4, ..[5])
 /// [1, 2, 3, 4, 5]
 /// ```
 ///
-fn do_insert_into_sorted_list_list_tailrec(
+fn do_insert_into_sorted_list_tailrec(
   item: a,
   sorted_list: List(a),
   smaller_than_item_acc: List(a),
@@ -1105,7 +1105,7 @@ fn do_insert_into_sorted_list_list_tailrec(
           |> reverse
           |> append([item, ..sorted_list])
         _ ->
-          do_insert_into_sorted_list_list_tailrec(
+          do_insert_into_sorted_list_tailrec(
             item,
             sorted_list_tail,
             [sorted_list_head, ..smaller_than_item_acc],
@@ -1126,7 +1126,7 @@ fn do_insertion_sort_tailrec(
     [chaotic_list_head, ..chaotic_list_tail] ->
       do_insertion_sort_tailrec(
         chaotic_list_tail,
-        do_insert_into_sorted_list_list_tailrec(
+        do_insert_into_sorted_list_tailrec(
           chaotic_list_head,
           sorted_list,
           [],
