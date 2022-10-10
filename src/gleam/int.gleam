@@ -504,7 +504,8 @@ pub fn random(boundary_a: Int, boundary_b: Int) -> Int {
 
 /// Performs a truncated integer division.
 ///
-/// Returns division of the inputs as a `Result`.
+/// Returns division of the inputs as a `Result`: If the given divisor equals
+/// `0`, this function returns an `Error`.
 ///
 /// ## Examples
 ///
@@ -535,8 +536,8 @@ pub fn divide(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
 /// C, C#, C++, Go, Java, JavaScript, Kotlin, Nim, PHP, Rust,
 /// Scala, Swift, Crystal as well as Erlang's and Elixir's rem operator.
 ///
-/// In addition if the given divisor equals `0`, this function returns an
-/// `Error`.
+/// Returns division of the inputs as a `Result`: If the given divisor equals
+/// `0`, this function returns an `Error`.
 ///
 /// ## Examples
 ///
@@ -575,8 +576,8 @@ pub fn remainder(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
 /// This functions mimicks modulo operation on following languages:
 /// Haskell, Lua, Python, Ruby, as well as Elixir's Integer.mod().
 ///
-/// In addition if the given divisor equals `0`, this function returns an
-/// `Error`.
+/// Returns division of the inputs as a `Result`: If the given divisor equals
+/// `0`, this function returns an `Error`.
 ///
 /// ## Examples
 ///
