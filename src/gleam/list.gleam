@@ -594,8 +594,6 @@ pub fn fold(
 ///
 /// This function runs in linear time.
 ///
-/// ## Notice
-///
 /// Unlike `fold` this function is not tail recursive. Where possible use
 /// `fold` instead as it will use less memory.
 ///
@@ -1326,7 +1324,7 @@ pub fn key_set(list: List(#(a, b)), key: a, value: b) -> List(#(a, b)) {
 /// Useful for calling a side effect for every item of a list.
 ///
 /// ```gleam
-/// > list.each([1, 2, 3], fn(x) { io.println(x) })
+/// > list.each([1, 2, 3], io.println(x))
 /// Nil
 /// ```
 ///
@@ -1369,8 +1367,6 @@ pub fn partition(
 }
 
 /// Returns all the permutations of a list.
-///
-/// ## Notice
 ///
 /// All list item values must be unique.
 ///

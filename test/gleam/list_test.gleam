@@ -227,6 +227,9 @@ pub fn append_test() {
   list.append([1, 2, 3, 4], [5])
   |> should.equal([1, 2, 3, 4, 5])
 
+  list.append([], [])
+  |> should.equal([])
+
   // TCO test
   list.range(0, recursion_test_cycles)
   |> list.append([1])
@@ -763,14 +766,11 @@ pub fn key_set_test() {
 }
 
 pub fn each_test() {
-  list.each([1, 1, 1], fn(x) { assert True = x == 1 })
+  list.each([1, 1, 1], fn(x) { assert 1 = x })
   |> should.equal(Nil)
 
   // TCO test
-  list.each(
-    list.repeat(1, recursion_test_cycles),
-    fn(x) { assert True = x == 1 },
-  )
+  list.each(list.repeat(1, recursion_test_cycles), fn(x) { assert 1 = x })
 }
 
 pub fn partition_test() {
