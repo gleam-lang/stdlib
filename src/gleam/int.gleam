@@ -529,13 +529,14 @@ pub fn divide(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
   }
 }
 
-/// Returns division remainder of the inputs as a `Result`.
+/// Computes the remainder of an integer division of inputs as a `Result`.
 ///
 /// This functions mimicks modulo operation of following languages:
 /// C, C#, C++, Go, Java, JavaScript, Kotlin, Nim, PHP, Rust,
 /// Scala, Swift, Crystal as well as Erlang's and Elixir's rem operator.
 ///
-/// In addition if the given divisor equals 0, this function returns an Error.
+/// In addition if the given divisor equals `0`, this function returns an
+/// `Error`.
 ///
 /// ## Examples
 ///
@@ -569,12 +570,13 @@ pub fn remainder(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
   }
 }
 
-/// Computes the modulo remainder of an integer division.
+/// Computes the modulo of an integer division of inputs as a `Result`.
 ///
 /// This functions mimicks modulo operation on following languages:
 /// Haskell, Lua, Python, Ruby, as well as Elixir's Integer.mod().
 ///
-/// In addition if the given divisor equals 0, this function returns an Error.
+/// In addition if the given divisor equals `0`, this function returns an
+/// `Error`.
 ///
 /// ## Examples
 ///
