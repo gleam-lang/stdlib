@@ -1032,6 +1032,47 @@ pub fn sort(list: List(a), by compare: fn(a, a) -> Order) -> List(a) {
   do_sort(list, compare, length(list))
 }
 
+/// Sorts from smallest to largest based upon the ordering specified by a given
+/// function.
+///
+fn insert_into_sorted(
+  item: a,
+  sorted_list: List(a),
+  compare: fn(a, a) -> Order,
+) -> List(a) {
+  case sorted_list {
+    [] -> [item]
+    [head, ..tail] ->
+      case compare(item, head) {
+        order.Eq | order.Lt -> prepend(sorted_list, item)
+        _ ->
+          insert_into_sorted(item, tail, compare)
+          |> prepend(head)
+      }
+  }
+}
+
+/// Sorts from smallest to largest based upon the ordering specified by a given
+/// function. Applies the insertion sort algorithm.
+/// See <https://en.wikipedia.org/wiki/Insertion_sort> for details.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > import gleam/int
+/// > list.insertion_sort([4, 3, 6, 5, 4, 1, 2], by: int.compare)
+/// [1, 2, 3, 4, 4, 5, 6]
+/// ```
+///
+pub fn insertion_sort(list: List(a), by compare: fn(a, a) -> Order) -> List(a) {
+  case list {
+    [] -> []
+    [one_item] -> [one_item]
+    [head, ..tail] ->
+      insert_into_sorted(head, insertion_sort(tail, compare), compare)
+  }
+}
+
 /// Creates a list of ints ranging from a given start and finish.
 ///
 /// ## Examples
