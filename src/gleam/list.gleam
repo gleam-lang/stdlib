@@ -1368,8 +1368,6 @@ pub fn partition(
 
 /// Returns all the permutations of a list.
 ///
-/// All list item values must be unique.
-///
 /// ## Examples
 ///
 /// ```gleam
