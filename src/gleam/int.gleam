@@ -721,11 +721,13 @@ pub fn modulo(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
 pub fn floor_divide(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
   case divisor {
     0 -> Error(Nil)
-    divisor ->
-      case dividend * divisor < 0 && dividend % divisor != 0 {
-        True -> Ok(dividend / divisor - 1)
-        False -> Ok(dividend / divisor)
+    divisor -> {
+      let quotient = dividend / divisor
+      case quotient < 0 && dividend % divisor != 0 {
+        True -> Ok(quotient - 1)
+        False -> Ok(quotient)
       }
+    }
   }
 }
 
