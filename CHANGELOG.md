@@ -6,6 +6,7 @@
   on large inputs on target JavaScript.
 - Added `int.remainder` and `int.modulo` functions which allow safe remainder
   and modulo operations the way common languages support them.
+- Added `int.floor_divide` to complement the truncated `int.divide`.
 
 ## v0.23.0 - 2022-09-15
 

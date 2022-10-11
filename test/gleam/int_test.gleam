@@ -477,3 +477,26 @@ pub fn modulo_test() {
   int.modulo(-13, by: -3)
   |> should.equal(Ok(-1))
 }
+
+pub fn floor_divide_test() {
+  int.floor_divide(1, 1)
+  |> should.equal(Ok(1))
+
+  int.floor_divide(1, 0)
+  |> should.equal(Error(Nil))
+
+  int.floor_divide(0, by: 1)
+  |> should.equal(Ok(0))
+
+  int.floor_divide(1, by: 0)
+  |> should.equal(Error(Nil))
+
+  int.floor_divide(5, by: 2)
+  |> should.equal(Ok(2))
+
+  int.floor_divide(6, by: -4)
+  |> should.equal(Ok(-2))
+
+  int.floor_divide(-99, by: 2)
+  |> should.equal(Ok(-50))
+}
