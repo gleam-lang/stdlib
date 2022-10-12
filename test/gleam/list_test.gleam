@@ -463,6 +463,11 @@ pub fn sort_test() {
   []
   |> list.sort(int.compare)
   |> should.equal([])
+
+  // TCO test
+  list.range(1, 100_000)
+  |> list.reverse
+  |> list.sort(int.compare)
 }
 
 pub fn index_map_test() {

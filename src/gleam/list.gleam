@@ -985,14 +985,19 @@ pub fn unique(list: List(a)) -> List(a) {
   }
 }
 
-fn do_merge_sort(a: List(a), b: List(a), compare: fn(a, a) -> Order) -> List(a) {
+fn do_merge_sort(
+  acc: List(a),
+  a: List(a),
+  b: List(a),
+  compare: fn(a, a) -> Order,
+) -> List(a) {
   case a, b {
-    [], _ -> b
-    _, [] -> a
+    [], _ -> append(reverse(acc), b)
+    _, [] -> append(reverse(acc), a)
     [ax, ..ar], [bx, ..br] ->
       case compare(ax, bx) {
-        order.Lt -> [ax, ..do_merge_sort(ar, b, compare)]
-        _ -> [bx, ..do_merge_sort(a, br, compare)]
+        order.Lt -> do_merge_sort([ax, ..acc], ar, b, compare)
+        _ -> do_merge_sort([bx, ..acc], a, br, compare)
       }
   }
 }
@@ -1009,6 +1014,7 @@ fn do_sort(
       let a_list = take(list, split_length)
       let b_list = drop(list, split_length)
       do_merge_sort(
+        [],
         do_sort(a_list, compare, split_length),
         do_sort(b_list, compare, list_length - split_length),
         compare,
