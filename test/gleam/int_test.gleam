@@ -415,13 +415,67 @@ pub fn random_test() {
 pub fn divide_test() {
   int.divide(1, 1)
   |> should.equal(Ok(1))
+
   int.divide(1, 0)
   |> should.equal(Error(Nil))
 
   int.divide(0, by: 1)
   |> should.equal(Ok(0))
+
   int.divide(1, by: 0)
   |> should.equal(Error(Nil))
+
+  int.divide(5, by: 2)
+  |> should.equal(Ok(2))
+
+  int.divide(-99, by: 2)
+  |> should.equal(Ok(-49))
+}
+
+pub fn remainder_test() {
+  int.remainder(3, 2)
+  |> should.equal(Ok(1))
+
+  int.remainder(1, 0)
+  |> should.equal(Error(Nil))
+
+  int.remainder(10, -1)
+  |> should.equal(Ok(0))
+
+  int.remainder(13, by: 3)
+  |> should.equal(Ok(1))
+
+  int.remainder(-13, by: 3)
+  |> should.equal(Ok(-1))
+
+  int.remainder(13, by: -3)
+  |> should.equal(Ok(1))
+
+  int.remainder(-13, by: -3)
+  |> should.equal(Ok(-1))
+}
+
+pub fn modulo_test() {
+  int.modulo(3, 2)
+  |> should.equal(Ok(1))
+
+  int.modulo(1, 0)
+  |> should.equal(Error(Nil))
+
+  int.modulo(10, -1)
+  |> should.equal(Ok(0))
+
+  int.modulo(13, by: 3)
+  |> should.equal(Ok(1))
+
+  int.modulo(-13, by: 3)
+  |> should.equal(Ok(2))
+
+  int.modulo(13, by: -3)
+  |> should.equal(Ok(-2))
+
+  int.modulo(-13, by: -3)
+  |> should.equal(Ok(-1))
 }
 
 pub fn floor_divide_test() {
