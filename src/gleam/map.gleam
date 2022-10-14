@@ -19,10 +19,7 @@ if javascript {
 /// See [the Erlang map module](https://erlang.org/doc/man/maps.html) for more
 /// information.
 ///
-pub external type Map(
-  key,
-  value,
-)
+pub external type Map(key, value)
 
 /// Determines the number of key-value pairs in the map.
 /// This function runs in constant time and does not need to iterate the map.
