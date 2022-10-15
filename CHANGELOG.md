@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.24.0 - unreleased
+## v0.24.0 - 2022-10-15
 
 - `string.slice` is now tail recursive and will no longer exceed the stack size
   on large inputs on target JavaScript.
