@@ -10,5 +10,6 @@ links = [
 ]
 
 [dependencies]
+benchee = "~> 1.1"
 
 [dev-dependencies]
