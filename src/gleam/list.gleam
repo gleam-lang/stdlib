@@ -1038,6 +1038,130 @@ pub fn sort(list: List(a), by compare: fn(a, a) -> Order) -> List(a) {
   do_sort(list, compare, length(list))
 }
 
+/// Inserts an element into a sorted list at its correct ordering index.
+///
+fn do_insert_into_sorted_list(
+  item: a,
+  sorted_list: List(a),
+  compare: fn(a, a) -> Order,
+) -> List(a) {
+  case sorted_list {
+    [] -> [item]
+    [head, ..tail] ->
+      case compare(item, head) {
+        order.Lt | order.Eq -> prepend(sorted_list, item)
+        _ ->
+          do_insert_into_sorted_list(item, tail, compare)
+          |> prepend(head)
+      }
+  }
+}
+
+/// Sorts from smallest to largest based upon the ordering specified by a given
+/// function. Applies the insertion sort algorithm.
+/// See <https://en.wikipedia.org/wiki/Insertion_sort> for details.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > import gleam/int
+/// > list.insertion_sort([4, 3, 6, 5, 4, 1, 2], by: int.compare)
+/// [1, 2, 3, 4, 4, 5, 6]
+/// ```
+///
+pub fn insertion_sort(list: List(a), by compare: fn(a, a) -> Order) -> List(a) {
+  case list {
+    [] -> []
+    [one_item] -> [one_item]
+    [head, ..tail] ->
+      do_insert_into_sorted_list(head, insertion_sort(tail, compare), compare)
+  }
+}
+
+/// Inserts an element into a sorted list at its correct ordering index.
+///
+/// This is the tail recurwsive variant of do_insert_into_sorted_list.
+///
+/// Processes as such for inserting `4` into `[1, 2, 3, 5]`:
+///
+/// ```gleam
+/// > do_insert_into_sorted_list_tailrec(4, [1, 2, 3, 5], [])
+/// > do_insert_into_sorted_list_tailrec(4, [2, 3, 5], [1])
+/// > do_insert_into_sorted_list_tailrec(4, [3, 5], [2, 1])
+/// > do_insert_into_sorted_list_tailrec(4, [5], [3, 2, 1])
+/// > [3, 2, 1] |> reverse() |> append(4, ..[5])
+/// [1, 2, 3, 4, 5]
+/// ```
+///
+fn do_insert_into_sorted_list_tailrec(
+  item: a,
+  sorted_list: List(a),
+  smaller_than_item_acc: List(a),
+  compare_fn: fn(a, a) -> Order,
+) -> List(a) {
+  case sorted_list {
+    [] ->
+      smaller_than_item_acc
+      |> reverse
+      |> append([item, ..sorted_list])
+    [sorted_list_head, ..sorted_list_tail] ->
+      case compare_fn(item, sorted_list_head) {
+        order.Lt | order.Eq ->
+          smaller_than_item_acc
+          |> reverse
+          |> append([item, ..sorted_list])
+        _ ->
+          do_insert_into_sorted_list_tailrec(
+            item,
+            sorted_list_tail,
+            [sorted_list_head, ..smaller_than_item_acc],
+            compare_fn,
+          )
+      }
+  }
+}
+
+/// This is the private insertion_sort implementation containing an accumulator
+fn do_insertion_sort_tailrec(
+  chaotic_list: List(a),
+  sorted_list: List(a),
+  compare_fn: fn(a, a) -> Order,
+) -> List(a) {
+  case chaotic_list {
+    [] -> sorted_list
+    [chaotic_list_head, ..chaotic_list_tail] ->
+      do_insertion_sort_tailrec(
+        chaotic_list_tail,
+        do_insert_into_sorted_list_tailrec(
+          chaotic_list_head,
+          sorted_list,
+          [],
+          compare_fn,
+        ),
+        compare_fn,
+      )
+  }
+}
+
+/// Sorts from smallest to largest based upon the ordering specified by a given
+/// function. Applies the insertion sort algorithm.
+/// See <https://en.wikipedia.org/wiki/Insertion_sort> for details.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > import gleam/int
+/// > list.insertion_sort_tailrec([4, 3, 6, 5, 4, 1, 2], by: int.compare)
+/// [1, 2, 3, 4, 4, 5, 6]
+/// ```
+///
+pub fn insertion_sort_tailrec(
+  list: List(a),
+  by compare_fn: fn(a, a) -> Order,
+) -> List(a) {
+  do_insertion_sort_tailrec(list, [], compare_fn)
+}
+
 /// Creates a list of ints ranging from a given start and finish.
 ///
 /// ## Examples
