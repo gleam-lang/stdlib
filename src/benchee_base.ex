@@ -1,6 +1,6 @@
 defmodule BencheeBase do
   def run(list_of_function_tuples) do
-    map_of_function_tuples = list_of_function_tuples |> Enum.reverse() |> Enum.into(%{})
+    map_of_function_tuples = list_of_function_tuples |> Enum.into(%{})
 
     Benchee.run(
       map_of_function_tuples,

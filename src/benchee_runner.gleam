@@ -36,6 +36,54 @@ pub fn main() {
   //
   io.print("\n\n")
   io.println("===========================================")
+  io.println("=========== tiny presorted test ===========")
+  io.println("===========================================")
+  io.print("\n")
+  let tiny_test_data = list.range(1, 20)
+  run_on_benchee_base([
+    #("list.merge_sort()", merge_sort_fn(tiny_test_data)),
+    #("list.merge_sort_tailrec()", merge_sort_tailrec_fn(tiny_test_data)),
+    #("list.insertion_sort()", insertion_sort_fn(tiny_test_data)),
+    #(
+      "list.insertion_sort_tailrec()",
+      insertion_sort_tailrec_fn(tiny_test_data),
+    ),
+  ])
+
+  io.print("\n\n")
+  io.println("===========================================")
+  io.println("========== medium presorted test ==========")
+  io.println("===========================================")
+  io.print("\n")
+  let medium_test_data = list.range(1, 1_000)
+  run_on_benchee_base([
+    #("list.merge_sort()", merge_sort_fn(medium_test_data)),
+    #("list.merge_sort_tailrec()", merge_sort_tailrec_fn(medium_test_data)),
+    #("list.insertion_sort()", insertion_sort_fn(medium_test_data)),
+    #(
+      "list.insertion_sort_tailrec()",
+      insertion_sort_tailrec_fn(medium_test_data),
+    ),
+  ])
+
+  io.print("\n\n")
+  io.println("===========================================")
+  io.println("========== large presorted test ===========")
+  io.println("===========================================")
+  io.print("\n")
+  let large_test_data = list.range(1, 50_000)
+  run_on_benchee_base([
+    #("list.merge_sort()", merge_sort_fn(large_test_data)),
+    #("list.merge_sort_tailrec()", merge_sort_tailrec_fn(large_test_data)),
+    #("list.insertion_sort()", insertion_sort_fn(large_test_data)),
+    #(
+      "list.insertion_sort_tailrec()",
+      insertion_sort_tailrec_fn(large_test_data),
+    ),
+  ])
+
+  io.print("\n\n")
+  io.println("===========================================")
   io.println("============ tiny reverse test ============")
   io.println("===========================================")
   io.print("\n")
@@ -44,8 +92,8 @@ pub fn main() {
     |> list.reverse
   run_on_benchee_base([
     #("list.merge_sort()", merge_sort_fn(tiny_test_data)),
-    #("list.insertion_sort()", insertion_sort_fn(tiny_test_data)),
     #("list.merge_sort_tailrec()", merge_sort_tailrec_fn(tiny_test_data)),
+    #("list.insertion_sort()", insertion_sort_fn(tiny_test_data)),
     #(
       "list.insertion_sort_tailrec()",
       insertion_sort_tailrec_fn(tiny_test_data),
@@ -62,8 +110,8 @@ pub fn main() {
     |> list.reverse
   run_on_benchee_base([
     #("list.merge_sort()", merge_sort_fn(medium_test_data)),
-    #("list.insertion_sort()", insertion_sort_fn(medium_test_data)),
     #("list.merge_sort_tailrec()", merge_sort_tailrec_fn(medium_test_data)),
+    #("list.insertion_sort()", insertion_sort_fn(medium_test_data)),
     #(
       "list.insertion_sort_tailrec()",
       insertion_sort_tailrec_fn(medium_test_data),
@@ -80,8 +128,8 @@ pub fn main() {
     |> list.reverse
   run_on_benchee_base([
     #("list.merge_sort()", merge_sort_fn(large_test_data)),
-    #("list.insertion_sort()", insertion_sort_fn(large_test_data)),
     #("list.merge_sort_tailrec()", merge_sort_tailrec_fn(large_test_data)),
+    #("list.insertion_sort()", insertion_sort_fn(large_test_data)),
     #(
       "list.insertion_sort_tailrec()",
       insertion_sort_tailrec_fn(large_test_data),
@@ -98,8 +146,8 @@ pub fn main() {
     |> list_shuffle
   run_on_benchee_base([
     #("list.merge_sort()", merge_sort_fn(tiny_test_data)),
-    #("list.insertion_sort()", insertion_sort_fn(tiny_test_data)),
     #("list.merge_sort_tailrec()", merge_sort_tailrec_fn(tiny_test_data)),
+    #("list.insertion_sort()", insertion_sort_fn(tiny_test_data)),
     #(
       "list.insertion_sort_tailrec()",
       insertion_sort_tailrec_fn(tiny_test_data),
@@ -116,8 +164,8 @@ pub fn main() {
     |> list_shuffle
   run_on_benchee_base([
     #("list.merge_sort()", merge_sort_fn(medium_test_data)),
-    #("list.insertion_sort()", insertion_sort_fn(medium_test_data)),
     #("list.merge_sort_tailrec()", merge_sort_tailrec_fn(medium_test_data)),
+    #("list.insertion_sort()", insertion_sort_fn(medium_test_data)),
     #(
       "list.insertion_sort_tailrec()",
       insertion_sort_tailrec_fn(medium_test_data),
@@ -134,8 +182,8 @@ pub fn main() {
     |> list_shuffle
   run_on_benchee_base([
     #("list.merge_sort()", merge_sort_fn(large_test_data)),
-    #("list.insertion_sort()", insertion_sort_fn(large_test_data)),
     #("list.merge_sort_tailrec()", merge_sort_tailrec_fn(large_test_data)),
+    #("list.insertion_sort()", insertion_sort_fn(large_test_data)),
     #(
       "list.insertion_sort_tailrec()",
       insertion_sort_tailrec_fn(large_test_data),
