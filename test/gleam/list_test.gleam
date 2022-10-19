@@ -448,7 +448,7 @@ pub fn unique_test() {
 }
 
 pub fn sort_test() {
-  // calls merge_sort_trailrec internally.
+  // list.sort() list.merge_sort_trailrec() internally.
   // Thus we do not need to test both.
   [4, 3, 6, 5, 4]
   |> list.sort(int.compare)
@@ -533,24 +533,24 @@ pub fn insertion_sort_tailrec_test() {
 /// TCO test
 pub fn j_sort_test() {
   [4, 3, 6, 5, 4]
-  |> list.insertion_sort_tailrec(int.compare)
+  |> list.j_sort(int.compare)
   |> should.equal([3, 4, 4, 5, 6])
 
   [4, 3, 6, 5, 4, 1]
-  |> list.insertion_sort_tailrec(int.compare)
+  |> list.j_sort(int.compare)
   |> should.equal([1, 3, 4, 4, 5, 6])
 
   [4.1, 3.1, 6.1, 5.1, 4.1]
-  |> list.insertion_sort_tailrec(float.compare)
+  |> list.j_sort(float.compare)
   |> should.equal([3.1, 4.1, 4.1, 5.1, 6.1])
 
   []
-  |> list.insertion_sort_tailrec(int.compare)
+  |> list.j_sort(int.compare)
   |> should.equal([])
 
   list.range(0, 100_000)
   |> list.reverse
-  |> list.insertion_sort_tailrec(int.compare)
+  |> list.j_sort(int.compare)
 }
 
 /// TCO test
