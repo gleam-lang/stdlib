@@ -1239,6 +1239,66 @@ pub fn insertion_sort_tailrec(
   do_insertion_sort_tailrec(list, [], compare_fn)
 }
 
+fn j_merge_up(a, b, acc, compare) {
+  case a, b {
+    [], [] -> acc
+    [ax, ..ar], [] -> j_merge_up(ar, b, [ax, ..acc], compare)
+    [], [bx, ..br] -> j_merge_up(a, br, [bx, ..acc], compare)
+    [ax, ..ar], [bx, ..br] ->
+      case compare(ax, bx) {
+        order.Lt -> j_merge_up(ar, b, [ax, ..acc], compare)
+        _ -> j_merge_up(a, br, [bx, ..acc], compare)
+      }
+  }
+}
+
+fn j_merge_down(a, b, acc, compare) {
+  case a, b {
+    [], [] -> acc
+    [ax, ..ar], [] -> j_merge_down(ar, b, [ax, ..acc], compare)
+    [], [bx, ..br] -> j_merge_down(a, br, [bx, ..acc], compare)
+    [ax, ..ar], [bx, ..br] ->
+      case compare(bx, ax) {
+        order.Lt -> j_merge_down(ar, b, [ax, ..acc], compare)
+        _ -> j_merge_down(a, br, [bx, ..acc], compare)
+      }
+  }
+}
+
+fn j_merge_sort(l, compare, down, ln) {
+  let n = ln / 2
+  let a = take(l, n)
+  let b = drop(l, n)
+  case ln < 3 {
+    True ->
+      case down {
+        True -> j_merge_down(a, b, [], compare)
+        False -> j_merge_up(a, b, [], compare)
+      }
+    False ->
+      case down {
+        True ->
+          j_merge_down(
+            j_merge_sort(a, compare, False, n),
+            j_merge_sort(b, compare, False, ln - n),
+            [],
+            compare,
+          )
+        False ->
+          j_merge_up(
+            j_merge_sort(a, compare, True, n),
+            j_merge_sort(b, compare, True, ln - n),
+            [],
+            compare,
+          )
+      }
+  }
+}
+
+pub fn j_sort(l, compare) {
+  j_merge_sort(l, compare, True, length(l))
+}
+
 /// Creates a list of ints ranging from a given start and finish.
 ///
 /// ## Examples

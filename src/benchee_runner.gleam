@@ -31,6 +31,13 @@ pub fn main() {
     }
   }
 
+  let j_sort_fn = fn(test_data) {
+    fn() {
+      test_data
+      |> list.j_sort(int.compare)
+    }
+  }
+
   // Bechmarks run for ranges of tiny: 20, medium: 20*50 = 1000 and large: 20*50*50 = 50_000
   // Bechmarks run for reversed lists and for shuffled lists
   //
@@ -48,6 +55,7 @@ pub fn main() {
       "list.insertion_sort_tailrec()",
       insertion_sort_tailrec_fn(tiny_test_data),
     ),
+    #("list.j_sort()", j_sort_fn(tiny_test_data)),
   ])
 
   io.print("\n\n")
@@ -64,6 +72,7 @@ pub fn main() {
       "list.insertion_sort_tailrec()",
       insertion_sort_tailrec_fn(medium_test_data),
     ),
+    #("list.j_sort()", j_sort_fn(medium_test_data)),
   ])
 
   io.print("\n\n")
@@ -80,6 +89,7 @@ pub fn main() {
       "list.insertion_sort_tailrec()",
       insertion_sort_tailrec_fn(large_test_data),
     ),
+    #("list.j_sort()", j_sort_fn(large_test_data)),
   ])
 
   io.print("\n\n")
@@ -98,6 +108,7 @@ pub fn main() {
       "list.insertion_sort_tailrec()",
       insertion_sort_tailrec_fn(tiny_test_data),
     ),
+    #("list.j_sort()", j_sort_fn(tiny_test_data)),
   ])
 
   io.print("\n\n")
@@ -116,6 +127,7 @@ pub fn main() {
       "list.insertion_sort_tailrec()",
       insertion_sort_tailrec_fn(medium_test_data),
     ),
+    #("list.j_sort()", j_sort_fn(medium_test_data)),
   ])
 
   io.print("\n\n")
@@ -134,6 +146,7 @@ pub fn main() {
       "list.insertion_sort_tailrec()",
       insertion_sort_tailrec_fn(large_test_data),
     ),
+    #("list.j_sort()", j_sort_fn(large_test_data)),
   ])
 
   io.print("\n\n")
@@ -152,6 +165,7 @@ pub fn main() {
       "list.insertion_sort_tailrec()",
       insertion_sort_tailrec_fn(tiny_test_data),
     ),
+    #("list.j_sort()", j_sort_fn(tiny_test_data)),
   ])
 
   io.print("\n\n")
@@ -170,6 +184,7 @@ pub fn main() {
       "list.insertion_sort_tailrec()",
       insertion_sort_tailrec_fn(medium_test_data),
     ),
+    #("list.j_sort()", j_sort_fn(medium_test_data)),
   ])
 
   io.print("\n\n")
@@ -188,6 +203,7 @@ pub fn main() {
       "list.insertion_sort_tailrec()",
       insertion_sort_tailrec_fn(large_test_data),
     ),
+    #("list.j_sort()", j_sort_fn(large_test_data)),
   ])
 }
 
