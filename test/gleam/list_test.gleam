@@ -525,12 +525,12 @@ pub fn insertion_sort_tailrec_test() {
   |> list.insertion_sort_tailrec(int.compare)
   |> should.equal([])
 
+  // TCO test
   list.range(0, 100_000)
   |> list.reverse
   |> list.insertion_sort_tailrec(int.compare)
 }
 
-/// TCO test
 pub fn j_sort_test() {
   [4, 3, 6, 5, 4]
   |> list.j_sort(int.compare)
@@ -548,12 +548,17 @@ pub fn j_sort_test() {
   |> list.j_sort(int.compare)
   |> should.equal([])
 
+  // TCO test
   list.range(0, 100_000)
+  |> list.reverse
+  |> list.j_sort(int.compare)
+
+  // TCO test
+  list.range(0, 1_000_000)
   |> list.reverse
   |> list.j_sort(int.compare)
 }
 
-/// TCO test
 pub fn index_map_test() {
   list.index_map([3, 4, 5], fn(i, x) { #(i, x) })
   |> should.equal([#(0, 3), #(1, 4), #(2, 5)])
