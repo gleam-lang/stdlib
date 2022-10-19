@@ -31,13 +31,16 @@ pub fn main() {
     }
   }
 
+  // Bechmarks run for ranges of tiny: 20, medium: 20*50 = 1000 and large: 20*50*50 = 50_000
+  // Bechmarks run for reversed lists and for shuffled lists
+  //
   io.print("\n\n")
   io.println("===========================================")
   io.println("============ tiny reverse test ============")
   io.println("===========================================")
   io.print("\n")
   let tiny_test_data =
-    list.range(1, 40)
+    list.range(1, 20)
     |> list.reverse
   run_on_benchee_base([
     #("list.merge_sort()", merge_sort_fn(tiny_test_data)),
@@ -55,7 +58,7 @@ pub fn main() {
   io.println("===========================================")
   io.print("\n")
   let medium_test_data =
-    list.range(1, 2_000)
+    list.range(1, 1_000)
     |> list.reverse
   run_on_benchee_base([
     #("list.merge_sort()", merge_sort_fn(medium_test_data)),
@@ -73,7 +76,7 @@ pub fn main() {
   io.println("===========================================")
   io.print("\n")
   let large_test_data =
-    list.range(1, 100_000)
+    list.range(1, 50_000)
     |> list.reverse
   run_on_benchee_base([
     #("list.merge_sort()", merge_sort_fn(large_test_data)),
@@ -91,7 +94,7 @@ pub fn main() {
   io.println("===========================================")
   io.print("\n")
   let tiny_test_data =
-    list.range(1, 40)
+    list.range(1, 20)
     |> list_shuffle
   run_on_benchee_base([
     #("list.merge_sort()", merge_sort_fn(tiny_test_data)),
@@ -109,7 +112,7 @@ pub fn main() {
   io.println("===========================================")
   io.print("\n")
   let medium_test_data =
-    list.range(1, 2_000)
+    list.range(1, 1_000)
     |> list_shuffle
   run_on_benchee_base([
     #("list.merge_sort()", merge_sort_fn(medium_test_data)),
@@ -127,7 +130,7 @@ pub fn main() {
   io.println("===========================================")
   io.print("\n")
   let large_test_data =
-    list.range(1, 100_000)
+    list.range(1, 50_000)
     |> list_shuffle
   run_on_benchee_base([
     #("list.merge_sort()", merge_sort_fn(large_test_data)),
