@@ -1,10 +1,9 @@
 defmodule BencheeBase do
-  def run(function_tuple_a, function_tuple_b) do
+  def run(list_of_function_tuples) do
+    map_of_function_tuples = list_of_function_tuples |> Enum.reverse() |> Enum.into(%{})
+
     Benchee.run(
-      %{
-        elem(function_tuple_a, 0) => elem(function_tuple_a, 1),
-        elem(function_tuple_b, 0) => elem(function_tuple_b, 1)
-      },
+      map_of_function_tuples,
       time: 10,
       memory_time: 2
     )

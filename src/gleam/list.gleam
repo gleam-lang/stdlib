@@ -985,24 +985,23 @@ pub fn unique(list: List(a)) -> List(a) {
   }
 }
 
-fn do_merge_sort(
-  acc: List(a),
+fn do_merge_sort_inner(
   a: List(a),
   b: List(a),
   compare: fn(a, a) -> Order,
 ) -> List(a) {
   case a, b {
-    [], _ -> append(reverse(acc), b)
-    _, [] -> append(reverse(acc), a)
+    [], _ -> b
+    _, [] -> a
     [ax, ..ar], [bx, ..br] ->
       case compare(ax, bx) {
-        order.Lt -> do_merge_sort([ax, ..acc], ar, b, compare)
-        _ -> do_merge_sort([bx, ..acc], a, br, compare)
+        order.Lt -> [ax, ..do_merge_sort_inner(ar, b, compare)]
+        _ -> [bx, ..do_merge_sort_inner(a, br, compare)]
       }
   }
 }
 
-fn do_sort(
+fn do_merge_sort_outer(
   list: List(a),
   compare: fn(a, a) -> Order,
   list_length: Int,
@@ -1013,10 +1012,9 @@ fn do_sort(
       let split_length = list_length / 2
       let a_list = take(list, split_length)
       let b_list = drop(list, split_length)
-      do_merge_sort(
-        [],
-        do_sort(a_list, compare, split_length),
-        do_sort(b_list, compare, list_length - split_length),
+      do_merge_sort_inner(
+        do_merge_sort_outer(a_list, compare, split_length),
+        do_merge_sort_outer(b_list, compare, list_length - split_length),
         compare,
       )
     }
@@ -1030,12 +1028,89 @@ fn do_sort(
 ///
 /// ```gleam
 /// > import gleam/int
-/// > list.sort([4, 3, 6, 5, 4, 1, 2], by: int.compare)
+/// > list.merge_sort([4, 3, 6, 5, 4, 1, 2], by: int.compare)
 /// [1, 2, 3, 4, 4, 5, 6]
 /// ```
+/// Notice: This is not tail recursive!
+/// Notice: This is the current Gleam 0.24 implementation
+///
+pub fn merge_sort(list: List(a), by compare: fn(a, a) -> Order) -> List(a) {
+  do_merge_sort_outer(list, compare, length(list))
+}
+
+fn do_merge_sort_inner_tailrec(
+  acc: List(a),
+  a: List(a),
+  b: List(a),
+  compare: fn(a, a) -> Order,
+) -> List(a) {
+  case a, b {
+    [], _ -> append(reverse(acc), b)
+    _, [] -> append(reverse(acc), a)
+    [ax, ..ar], [bx, ..br] ->
+      case compare(ax, bx) {
+        order.Lt -> do_merge_sort_inner_tailrec([ax, ..acc], ar, b, compare)
+        _ -> do_merge_sort_inner_tailrec([bx, ..acc], a, br, compare)
+      }
+  }
+}
+
+fn do_merge_sort_outer_tailrec(
+  list: List(a),
+  compare: fn(a, a) -> Order,
+  list_length: Int,
+) -> List(a) {
+  case list_length < 2 {
+    True -> list
+    False -> {
+      let split_length = list_length / 2
+      let a_list = take(list, split_length)
+      let b_list = drop(list, split_length)
+      do_merge_sort_inner_tailrec(
+        [],
+        do_merge_sort_outer_tailrec(a_list, compare, split_length),
+        do_merge_sort_outer_tailrec(b_list, compare, list_length - split_length),
+        compare,
+      )
+    }
+  }
+}
+
+/// Sorts from smallest to largest based upon the ordering specified by a given
+/// function.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > import gleam/int
+/// > list.merge_sort_tailrec([4, 3, 6, 5, 4, 1, 2], by: int.compare)
+/// [1, 2, 3, 4, 4, 5, 6]
+/// ```
+/// Notice: This IS tail recursive!
+/// Notice: This should equal to <https://github.com/gleam-lang/stdlib/pull/348>
+///
+pub fn merge_sort_tailrec(
+  list: List(a),
+  by compare: fn(a, a) -> Order,
+) -> List(a) {
+  do_merge_sort_outer_tailrec(list, compare, length(list))
+}
+
+/// Sorts from smallest to largest based upon the ordering specified by a given
+/// function.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > import gleam/int
+/// > list.sort([4, 3, 6, 5, 4, 1, 2], by: int.compare)
+/// [1, 2, 3, 4, 4, 5, 6]
+///
+/// Proxies into merge_sort_tailrec, because current stdlib uses
+/// merge sort internally.
 ///
 pub fn sort(list: List(a), by compare: fn(a, a) -> Order) -> List(a) {
-  do_sort(list, compare, length(list))
+  merge_sort_tailrec(list, compare)
 }
 
 /// Inserts an element into a sorted list at its correct ordering index.
@@ -1059,6 +1134,7 @@ fn do_insert_into_sorted_list(
 
 /// Sorts from smallest to largest based upon the ordering specified by a given
 /// function. Applies the insertion sort algorithm.
+///
 /// See <https://en.wikipedia.org/wiki/Insertion_sort> for details.
 ///
 /// ## Examples
@@ -1080,7 +1156,7 @@ pub fn insertion_sort(list: List(a), by compare: fn(a, a) -> Order) -> List(a) {
 
 /// Inserts an element into a sorted list at its correct ordering index.
 ///
-/// This is the tail recurwsive variant of do_insert_into_sorted_list.
+/// This is the tail recursive variant of do_insert_into_sorted_list.
 ///
 /// Processes as such for inserting `4` into `[1, 2, 3, 5]`:
 ///
@@ -1145,6 +1221,7 @@ fn do_insertion_sort_tailrec(
 
 /// Sorts from smallest to largest based upon the ordering specified by a given
 /// function. Applies the insertion sort algorithm.
+///
 /// See <https://en.wikipedia.org/wiki/Insertion_sort> for details.
 ///
 /// ## Examples
