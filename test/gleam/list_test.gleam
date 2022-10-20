@@ -448,6 +448,22 @@ pub fn unique_test() {
 }
 
 pub fn sort_test() {
+  []
+  |> list.sort(int.compare)
+  |> should.equal([])
+
+  [1]
+  |> list.sort(int.compare)
+  |> should.equal([1])
+
+  [2, 1]
+  |> list.sort(int.compare)
+  |> should.equal([1, 2])
+
+  [3, 1, 2]
+  |> list.sort(int.compare)
+  |> should.equal([1, 2, 3])
+
   [4, 3, 6, 5, 4]
   |> list.sort(int.compare)
   |> should.equal([3, 4, 4, 5, 6])
@@ -459,10 +475,49 @@ pub fn sort_test() {
   [4.1, 3.1, 6.1, 5.1, 4.1]
   |> list.sort(float.compare)
   |> should.equal([3.1, 4.1, 4.1, 5.1, 6.1])
+}
 
-  []
-  |> list.sort(int.compare)
-  |> should.equal([])
+pub fn sort_stability_test() {
+  let sorted_cards = [
+    #(1, 1),
+    #(2, 1),
+    #(3, 1),
+    #(4, 1),
+    #(1, 2),
+    #(2, 2),
+    #(3, 2),
+    #(4, 2),
+    #(1, 3),
+    #(2, 3),
+    #(3, 3),
+    #(4, 3),
+    #(1, 4),
+    #(2, 4),
+    #(3, 4),
+    #(4, 4),
+  ]
+  let shuffled_cards = [
+    #(3, 2),
+    #(1, 4),
+    #(2, 1),
+    #(3, 3),
+    #(4, 1),
+    #(3, 4),
+    #(1, 2),
+    #(4, 4),
+    #(3, 1),
+    #(1, 1),
+    #(2, 2),
+    #(2, 4),
+    #(4, 2),
+    #(4, 3),
+    #(1, 3),
+    #(2, 3),
+  ]
+  shuffled_cards
+  |> list.sort(fn(a, b) { int.compare(a.0, b.0) })
+  |> list.sort(fn(a, b) { int.compare(a.1, b.1) })
+  |> should.equal(sorted_cards)
 }
 
 pub fn index_map_test() {
