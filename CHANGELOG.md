@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.24.1 - unreleased
+
+- `list.sort` is now tail recursive and will no longer exceed the stack size
+  on large inputs on target JavaScript.
+- `list.sort` is now a "stable" sort, meaning equal elements are sorted in
+  the same order that they appear in the input.
+
 ## v0.24.0 - 2022-10-15
 
 - `string.slice` is now tail recursive and will no longer exceed the stack size
