@@ -985,35 +985,71 @@ pub fn unique(list: List(a)) -> List(a) {
   }
 }
 
-fn do_merge_sort(a: List(a), b: List(a), compare: fn(a, a) -> Order) -> List(a) {
-  case a, b {
-    [], _ -> b
-    _, [] -> a
-    [ax, ..ar], [bx, ..br] ->
+/// Merge lists a and b in ascending order
+/// but only up to 'na' and 'nb' number of items respectively.
+fn merge_up(na, nb, a, b, acc, compare) {
+  case na, nb, a, b {
+    0, 0, _, _ -> acc
+    _, 0, [ax, ..ar], _ -> merge_up(na - 1, nb, ar, b, [ax, ..acc], compare)
+    0, _, _, [bx, ..br] -> merge_up(na, nb - 1, a, br, [bx, ..acc], compare)
+    _, _, [ax, ..ar], [bx, ..br] ->
       case compare(ax, bx) {
-        order.Lt -> [ax, ..do_merge_sort(ar, b, compare)]
-        _ -> [bx, ..do_merge_sort(a, br, compare)]
+        order.Lt -> merge_up(na - 1, nb, ar, b, [ax, ..acc], compare)
+        _ -> merge_up(na, nb - 1, a, br, [bx, ..acc], compare)
       }
   }
 }
 
-fn do_sort(
-  list: List(a),
-  compare: fn(a, a) -> Order,
-  list_length: Int,
-) -> List(a) {
-  case list_length < 2 {
-    True -> list
-    False -> {
-      let split_length = list_length / 2
-      let a_list = take(list, split_length)
-      let b_list = drop(list, split_length)
-      do_merge_sort(
-        do_sort(a_list, compare, split_length),
-        do_sort(b_list, compare, list_length - split_length),
-        compare,
-      )
-    }
+/// Merge lists a and b in descending order
+/// but only up to 'na' and 'nb' number of items respectively.
+fn merge_down(na, nb, a, b, acc, compare) {
+  case na, nb, a, b {
+    0, 0, _, _ -> acc
+    _, 0, [ax, ..ar], _ -> merge_down(na - 1, nb, ar, b, [ax, ..acc], compare)
+    0, _, _, [bx, ..br] -> merge_down(na, nb - 1, a, br, [bx, ..acc], compare)
+    _, _, [ax, ..ar], [bx, ..br] ->
+      case compare(bx, ax) {
+        order.Lt -> merge_down(na - 1, nb, ar, b, [ax, ..acc], compare)
+        _ -> merge_down(na, nb - 1, a, br, [bx, ..acc], compare)
+      }
+  }
+}
+
+/// Merge sort that alternates merging in ascending and descending order
+/// because the merge process also reverses the list.
+/// Some copying is avoided by merging only a subset of the lists
+/// instead of creating and merging new smaller lists.
+fn merge_sort(l, ln, compare, down) {
+  let n = ln / 2
+  let a = l
+  let b = drop(l, n)
+  case ln < 3 {
+    True ->
+      case down {
+        True -> merge_down(n, ln - n, a, b, [], compare)
+        False -> merge_up(n, ln - n, a, b, [], compare)
+      }
+    False ->
+      case down {
+        True ->
+          merge_down(
+            n,
+            ln - n,
+            merge_sort(a, n, compare, False),
+            merge_sort(b, ln - n, compare, False),
+            [],
+            compare,
+          )
+        False ->
+          merge_up(
+            n,
+            ln - n,
+            merge_sort(a, n, compare, True),
+            merge_sort(b, ln - n, compare, True),
+            [],
+            compare,
+          )
+      }
   }
 }
 
@@ -1029,7 +1065,7 @@ fn do_sort(
 /// ```
 ///
 pub fn sort(list: List(a), by compare: fn(a, a) -> Order) -> List(a) {
-  do_sort(list, compare, length(list))
+  merge_sort(list, length(list), compare, True)
 }
 
 /// Creates a list of ints ranging from a given start and finish.
