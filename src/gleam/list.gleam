@@ -1299,6 +1299,91 @@ pub fn j_sort(l, compare) {
   j_merge_sort(l, compare, True, length(l))
 }
 
+/// Merge lists a and b in ascending order
+/// but only up to 'na' and 'nb' number of items respectively.
+fn j2_merge_up(na, nb, a, b, acc, compare) {
+  case na, nb, a, b {
+    0, 0, _, _ -> acc
+    _, 0, [ax, ..ar], _ -> j2_merge_up(na - 1, nb, ar, b, [ax, ..acc], compare)
+    0, _, _, [bx, ..br] -> j2_merge_up(na, nb - 1, a, br, [bx, ..acc], compare)
+    _, _, [ax, ..ar], [bx, ..br] ->
+      case compare(ax, bx) {
+        order.Gt -> j2_merge_up(na, nb - 1, a, br, [bx, ..acc], compare)
+        _ -> j2_merge_up(na - 1, nb, ar, b, [ax, ..acc], compare)
+      }
+  }
+}
+
+/// Merge lists a and b in descending order
+/// but only up to 'na' and 'nb' number of items respectively.
+fn j2_merge_down(na, nb, a, b, acc, compare) {
+  case na, nb, a, b {
+    0, 0, _, _ -> acc
+    _, 0, [ax, ..ar], _ ->
+      j2_merge_down(na - 1, nb, ar, b, [ax, ..acc], compare)
+    0, _, _, [bx, ..br] ->
+      j2_merge_down(na, nb - 1, a, br, [bx, ..acc], compare)
+    _, _, [ax, ..ar], [bx, ..br] ->
+      case compare(bx, ax) {
+        order.Lt -> j2_merge_down(na - 1, nb, ar, b, [ax, ..acc], compare)
+        _ -> j2_merge_down(na, nb - 1, a, br, [bx, ..acc], compare)
+      }
+  }
+}
+
+/// Merge sort that alternates merging in ascending and descending order
+/// because the merge process also reverses the list.
+/// Some copying is avoided by merging only a subset of the lists
+/// instead of creating and merging new smaller lists.
+fn j2_merge_sort(l, ln, compare, down) {
+  let n = ln / 2
+  let a = l
+  let b = drop(l, n)
+  case ln < 3 {
+    True ->
+      case down {
+        True -> j2_merge_down(n, ln - n, a, b, [], compare)
+        False -> j2_merge_up(n, ln - n, a, b, [], compare)
+      }
+    False ->
+      case down {
+        True ->
+          j2_merge_down(
+            n,
+            ln - n,
+            j2_merge_sort(a, n, compare, False),
+            j2_merge_sort(b, ln - n, compare, False),
+            [],
+            compare,
+          )
+        False ->
+          j2_merge_up(
+            n,
+            ln - n,
+            j2_merge_sort(a, n, compare, True),
+            j2_merge_sort(b, ln - n, compare, True),
+            [],
+            compare,
+          )
+      }
+  }
+}
+
+/// Sorts from smallest to largest based upon the ordering specified by a given
+/// function.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > import gleam/int
+/// > list.j2_sort([4, 3, 6, 5, 4, 1, 2], by: int.compare)
+/// [1, 2, 3, 4, 4, 5, 6]
+/// ```
+///
+pub fn j2_sort(list: List(a), by compare: fn(a, a) -> Order) -> List(a) {
+  j2_merge_sort(list, length(list), compare, True)
+}
+
 /// Creates a list of ints ranging from a given start and finish.
 ///
 /// ## Examples

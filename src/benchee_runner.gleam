@@ -9,32 +9,37 @@ pub fn main() {
       |> list.merge_sort(int.compare)
     }
   }
-
-  let insertion_sort_fn = fn(test_data) {
-    fn() {
-      test_data
-      |> list.insertion_sort(int.compare)
-    }
-  }
-
-  let merge_sort_tailrec_fn = fn(test_data) {
-    fn() {
-      test_data
-      |> list.merge_sort_tailrec(int.compare)
-    }
-  }
-
-  let insertion_sort_tailrec_fn = fn(test_data) {
-    fn() {
-      test_data
-      |> list.insertion_sort_tailrec(int.compare)
-    }
-  }
-
+  //
+  // let insertion_sort_fn = fn(test_data) {
+  //   fn() {
+  //     test_data
+  //     |> list.insertion_sort(int.compare)
+  //   }
+  // }
+  // let merge_sort_tailrec_fn = fn(test_data) {
+  //   fn() {
+  //     test_data
+  //     |> list.merge_sort_tailrec(int.compare)
+  //   }
+  // }
+  // let insertion_sort_tailrec_fn = fn(test_data) {
+  //   fn() {
+  //     test_data
+  //     |> list.insertion_sort_tailrec(int.compare)
+  //   }
+  // }
+  //
   let j_sort_fn = fn(test_data) {
     fn() {
       test_data
       |> list.j_sort(int.compare)
+    }
+  }
+
+  let j2_sort_fn = fn(test_data) {
+    fn() {
+      test_data
+      |> list.j2_sort(int.compare)
     }
   }
 
@@ -49,13 +54,14 @@ pub fn main() {
   let tiny_test_data = list.range(1, 20)
   run_on_benchee_base([
     #("list.merge_sort()", merge_sort_fn(tiny_test_data)),
-    #("list.merge_sort_tailrec()", merge_sort_tailrec_fn(tiny_test_data)),
-    #("list.insertion_sort()", insertion_sort_fn(tiny_test_data)),
-    #(
-      "list.insertion_sort_tailrec()",
-      insertion_sort_tailrec_fn(tiny_test_data),
-    ),
+    // #("list.merge_sort_tailrec()", merge_sort_tailrec_fn(tiny_test_data)),
+    // #("list.insertion_sort()", insertion_sort_fn(tiny_test_data)),
+    // #(
+    // "list.insertion_sort_tailrec()",
+    // insertion_sort_tailrec_fn(tiny_test_data),
+    // ),
     #("list.j_sort()", j_sort_fn(tiny_test_data)),
+    #("list.j2_sort()", j2_sort_fn(tiny_test_data)),
   ])
 
   io.print("\n\n")
@@ -66,13 +72,14 @@ pub fn main() {
   let medium_test_data = list.range(1, 1_000)
   run_on_benchee_base([
     #("list.merge_sort()", merge_sort_fn(medium_test_data)),
-    #("list.merge_sort_tailrec()", merge_sort_tailrec_fn(medium_test_data)),
-    #("list.insertion_sort()", insertion_sort_fn(medium_test_data)),
-    #(
-      "list.insertion_sort_tailrec()",
-      insertion_sort_tailrec_fn(medium_test_data),
-    ),
+    // #("list.merge_sort_tailrec()", merge_sort_tailrec_fn(medium_test_data)),
+    // #("list.insertion_sort()", insertion_sort_fn(medium_test_data)),
+    // #(
+    // "list.insertion_sort_tailrec()",
+    // insertion_sort_tailrec_fn(medium_test_data),
+    // ),
     #("list.j_sort()", j_sort_fn(medium_test_data)),
+    #("list.j2_sort()", j2_sort_fn(medium_test_data)),
   ])
 
   io.print("\n\n")
@@ -83,13 +90,14 @@ pub fn main() {
   let large_test_data = list.range(1, 50_000)
   run_on_benchee_base([
     #("list.merge_sort()", merge_sort_fn(large_test_data)),
-    #("list.merge_sort_tailrec()", merge_sort_tailrec_fn(large_test_data)),
-    #("list.insertion_sort()", insertion_sort_fn(large_test_data)),
-    #(
-      "list.insertion_sort_tailrec()",
-      insertion_sort_tailrec_fn(large_test_data),
-    ),
+    // #("list.merge_sort_tailrec()", merge_sort_tailrec_fn(large_test_data)),
+    // #("list.insertion_sort()", insertion_sort_fn(large_test_data)),
+    // #(
+    // "list.insertion_sort_tailrec()",
+    // insertion_sort_tailrec_fn(large_test_data),
+    // ),
     #("list.j_sort()", j_sort_fn(large_test_data)),
+    #("list.j2_sort()", j2_sort_fn(large_test_data)),
   ])
 
   io.print("\n\n")
@@ -102,13 +110,14 @@ pub fn main() {
     |> list.reverse
   run_on_benchee_base([
     #("list.merge_sort()", merge_sort_fn(tiny_test_data)),
-    #("list.merge_sort_tailrec()", merge_sort_tailrec_fn(tiny_test_data)),
-    #("list.insertion_sort()", insertion_sort_fn(tiny_test_data)),
-    #(
-      "list.insertion_sort_tailrec()",
-      insertion_sort_tailrec_fn(tiny_test_data),
-    ),
+    // #("list.merge_sort_tailrec()", merge_sort_tailrec_fn(tiny_test_data)),
+    // #("list.insertion_sort()", insertion_sort_fn(tiny_test_data)),
+    // #(
+    // "list.insertion_sort_tailrec()",
+    // insertion_sort_tailrec_fn(tiny_test_data),
+    // ),
     #("list.j_sort()", j_sort_fn(tiny_test_data)),
+    #("list.j2_sort()", j2_sort_fn(tiny_test_data)),
   ])
 
   io.print("\n\n")
@@ -121,13 +130,14 @@ pub fn main() {
     |> list.reverse
   run_on_benchee_base([
     #("list.merge_sort()", merge_sort_fn(medium_test_data)),
-    #("list.merge_sort_tailrec()", merge_sort_tailrec_fn(medium_test_data)),
-    #("list.insertion_sort()", insertion_sort_fn(medium_test_data)),
-    #(
-      "list.insertion_sort_tailrec()",
-      insertion_sort_tailrec_fn(medium_test_data),
-    ),
+    // #("list.merge_sort_tailrec()", merge_sort_tailrec_fn(medium_test_data)),
+    // #("list.insertion_sort()", insertion_sort_fn(medium_test_data)),
+    // #(
+    // "list.insertion_sort_tailrec()",
+    // insertion_sort_tailrec_fn(medium_test_data),
+    // ),
     #("list.j_sort()", j_sort_fn(medium_test_data)),
+    #("list.j2_sort()", j2_sort_fn(medium_test_data)),
   ])
 
   io.print("\n\n")
@@ -140,13 +150,14 @@ pub fn main() {
     |> list.reverse
   run_on_benchee_base([
     #("list.merge_sort()", merge_sort_fn(large_test_data)),
-    #("list.merge_sort_tailrec()", merge_sort_tailrec_fn(large_test_data)),
-    #("list.insertion_sort()", insertion_sort_fn(large_test_data)),
-    #(
-      "list.insertion_sort_tailrec()",
-      insertion_sort_tailrec_fn(large_test_data),
-    ),
+    // #("list.merge_sort_tailrec()", merge_sort_tailrec_fn(large_test_data)),
+    // #("list.insertion_sort()", insertion_sort_fn(large_test_data)),
+    // #(
+    // "list.insertion_sort_tailrec()",
+    // insertion_sort_tailrec_fn(large_test_data),
+    // ),
     #("list.j_sort()", j_sort_fn(large_test_data)),
+    #("list.j2_sort()", j2_sort_fn(large_test_data)),
   ])
 
   io.print("\n\n")
@@ -159,13 +170,14 @@ pub fn main() {
     |> list_shuffle
   run_on_benchee_base([
     #("list.merge_sort()", merge_sort_fn(tiny_test_data)),
-    #("list.merge_sort_tailrec()", merge_sort_tailrec_fn(tiny_test_data)),
-    #("list.insertion_sort()", insertion_sort_fn(tiny_test_data)),
-    #(
-      "list.insertion_sort_tailrec()",
-      insertion_sort_tailrec_fn(tiny_test_data),
-    ),
+    // #("list.merge_sort_tailrec()", merge_sort_tailrec_fn(tiny_test_data)),
+    // #("list.insertion_sort()", insertion_sort_fn(tiny_test_data)),
+    // #(
+    // "list.insertion_sort_tailrec()",
+    // insertion_sort_tailrec_fn(tiny_test_data),
+    // ),
     #("list.j_sort()", j_sort_fn(tiny_test_data)),
+    #("list.j2_sort()", j2_sort_fn(tiny_test_data)),
   ])
 
   io.print("\n\n")
@@ -178,13 +190,14 @@ pub fn main() {
     |> list_shuffle
   run_on_benchee_base([
     #("list.merge_sort()", merge_sort_fn(medium_test_data)),
-    #("list.merge_sort_tailrec()", merge_sort_tailrec_fn(medium_test_data)),
-    #("list.insertion_sort()", insertion_sort_fn(medium_test_data)),
-    #(
-      "list.insertion_sort_tailrec()",
-      insertion_sort_tailrec_fn(medium_test_data),
-    ),
+    // #("list.merge_sort_tailrec()", merge_sort_tailrec_fn(medium_test_data)),
+    // #("list.insertion_sort()", insertion_sort_fn(medium_test_data)),
+    // #(
+    // "list.insertion_sort_tailrec()",
+    // insertion_sort_tailrec_fn(medium_test_data),
+    // ),
     #("list.j_sort()", j_sort_fn(medium_test_data)),
+    #("list.j2_sort()", j2_sort_fn(medium_test_data)),
   ])
 
   io.print("\n\n")
@@ -197,13 +210,14 @@ pub fn main() {
     |> list_shuffle
   run_on_benchee_base([
     #("list.merge_sort()", merge_sort_fn(large_test_data)),
-    #("list.merge_sort_tailrec()", merge_sort_tailrec_fn(large_test_data)),
-    #("list.insertion_sort()", insertion_sort_fn(large_test_data)),
-    #(
-      "list.insertion_sort_tailrec()",
-      insertion_sort_tailrec_fn(large_test_data),
-    ),
+    // #("list.merge_sort_tailrec()", merge_sort_tailrec_fn(large_test_data)),
+    // #("list.insertion_sort()", insertion_sort_fn(large_test_data)),
+    // #(
+    // "list.insertion_sort_tailrec()",
+    // insertion_sort_tailrec_fn(large_test_data),
+    // ),
     #("list.j_sort()", j_sort_fn(large_test_data)),
+    #("list.j2_sort()", j2_sort_fn(large_test_data)),
   ])
 }
 
