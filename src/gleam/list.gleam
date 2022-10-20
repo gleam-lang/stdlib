@@ -994,8 +994,8 @@ fn merge_up(na, nb, a, b, acc, compare) {
     0, _, _, [bx, ..br] -> merge_up(na, nb - 1, a, br, [bx, ..acc], compare)
     _, _, [ax, ..ar], [bx, ..br] ->
       case compare(ax, bx) {
-        order.Lt -> merge_up(na - 1, nb, ar, b, [ax, ..acc], compare)
-        _ -> merge_up(na, nb - 1, a, br, [bx, ..acc], compare)
+        order.Gt -> merge_up(na, nb - 1, a, br, [bx, ..acc], compare)
+        _ -> merge_up(na - 1, nb, ar, b, [ax, ..acc], compare)
       }
   }
 }
