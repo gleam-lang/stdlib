@@ -589,11 +589,6 @@ pub fn sort_test() {
   |> list.sort(int.compare)
   |> should.equal([])
 
-  // TCO test
-  list.range(0, recursion_test_cycles)
-  |> list.reverse
-  |> list.sort(int.compare)
-
   // Stability tests
   let sorted_cards = [
     #(1, 1),
@@ -635,6 +630,11 @@ pub fn sort_test() {
   |> list.sort(fn(a, b) { int.compare(a.0, b.0) })
   |> list.sort(fn(a, b) { int.compare(a.1, b.1) })
   |> should.equal(sorted_cards)
+
+  // TCO test
+  list.range(0, recursion_test_cycles)
+  |> list.reverse
+  |> list.sort(int.compare)
 }
 
 pub fn index_map_test() {
