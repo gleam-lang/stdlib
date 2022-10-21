@@ -1,9 +1,19 @@
 # Changelog
 
-## v0.24.0 - unreleased
+## v0.24.1 - unreleased
 
-- `string.slice` is now tail recursive and will no longer blog the stack on
-  large inputs when running on JavaScript.
+- `list.sort` is now tail recursive and will no longer exceed the stack size
+  on large inputs on target JavaScript.
+- `list.sort` is now a "stable" sort, meaning equal elements are sorted in
+  the same order that they appear in the input.
+
+## v0.24.0 - 2022-10-15
+
+- `string.slice` is now tail recursive and will no longer exceed the stack size
+  on large inputs on target JavaScript.
+- Added `int.remainder` and `int.modulo` functions which allow safe remainder
+  and modulo operations the way common languages support them.
+- Added `int.floor_divide` to complement the truncated `int.divide`.
 
 ## v0.23.0 - 2022-09-15
 

@@ -273,7 +273,7 @@ pub fn power_test() {
 
   // int.power(-1, 0.5) is equivalent to int.square_root(-1) and should
   // return an error as an imaginary number would otherwise have to be
-  // returned 
+  // returned
   int.power(-1, 0.5)
   |> should.equal(Error(Nil))
 
@@ -286,7 +286,7 @@ pub fn power_test() {
   int.power(0, -1.0)
   |> should.equal(Error(Nil))
 
-  // Check that a negative base and exponent is fine as long as the 
+  // Check that a negative base and exponent is fine as long as the
   // exponent is not fractional
   int.power(-2, -1.0)
   |> should.equal(Ok(-0.5))
@@ -415,11 +415,88 @@ pub fn random_test() {
 pub fn divide_test() {
   int.divide(1, 1)
   |> should.equal(Ok(1))
+
   int.divide(1, 0)
   |> should.equal(Error(Nil))
 
   int.divide(0, by: 1)
   |> should.equal(Ok(0))
+
   int.divide(1, by: 0)
   |> should.equal(Error(Nil))
+
+  int.divide(5, by: 2)
+  |> should.equal(Ok(2))
+
+  int.divide(-99, by: 2)
+  |> should.equal(Ok(-49))
+}
+
+pub fn remainder_test() {
+  int.remainder(3, 2)
+  |> should.equal(Ok(1))
+
+  int.remainder(1, 0)
+  |> should.equal(Error(Nil))
+
+  int.remainder(10, -1)
+  |> should.equal(Ok(0))
+
+  int.remainder(13, by: 3)
+  |> should.equal(Ok(1))
+
+  int.remainder(-13, by: 3)
+  |> should.equal(Ok(-1))
+
+  int.remainder(13, by: -3)
+  |> should.equal(Ok(1))
+
+  int.remainder(-13, by: -3)
+  |> should.equal(Ok(-1))
+}
+
+pub fn modulo_test() {
+  int.modulo(3, 2)
+  |> should.equal(Ok(1))
+
+  int.modulo(1, 0)
+  |> should.equal(Error(Nil))
+
+  int.modulo(10, -1)
+  |> should.equal(Ok(0))
+
+  int.modulo(13, by: 3)
+  |> should.equal(Ok(1))
+
+  int.modulo(-13, by: 3)
+  |> should.equal(Ok(2))
+
+  int.modulo(13, by: -3)
+  |> should.equal(Ok(-2))
+
+  int.modulo(-13, by: -3)
+  |> should.equal(Ok(-1))
+}
+
+pub fn floor_divide_test() {
+  int.floor_divide(1, 1)
+  |> should.equal(Ok(1))
+
+  int.floor_divide(1, 0)
+  |> should.equal(Error(Nil))
+
+  int.floor_divide(0, by: 1)
+  |> should.equal(Ok(0))
+
+  int.floor_divide(1, by: 0)
+  |> should.equal(Error(Nil))
+
+  int.floor_divide(5, by: 2)
+  |> should.equal(Ok(2))
+
+  int.floor_divide(6, by: -4)
+  |> should.equal(Ok(-2))
+
+  int.floor_divide(-99, by: 2)
+  |> should.equal(Ok(-50))
 }
