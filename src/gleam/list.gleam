@@ -985,9 +985,17 @@ pub fn unique(list: List(a)) -> List(a) {
   }
 }
 
-/// Merge lists a and b in ascending order
-/// but only up to 'na' and 'nb' number of items respectively.
-fn merge_up(na, nb, a, b, acc, compare) {
+/// Merge lists `a` and `b` in ascending order
+/// but only up to `na` and `nb` number of items respectively.
+///
+fn merge_up(
+  na: Int,
+  nb: Int,
+  a: List(a),
+  b: List(a),
+  acc: List(a),
+  compare: fn(a, a) -> Order,
+) {
   case na, nb, a, b {
     0, 0, _, _ -> acc
     _, 0, [ax, ..ar], _ -> merge_up(na - 1, nb, ar, b, [ax, ..acc], compare)
@@ -1000,9 +1008,17 @@ fn merge_up(na, nb, a, b, acc, compare) {
   }
 }
 
-/// Merge lists a and b in descending order
-/// but only up to 'na' and 'nb' number of items respectively.
-fn merge_down(na, nb, a, b, acc, compare) {
+/// Merge lists `a` and `b` in descending order
+/// but only up to `na` and `nb` number of items respectively.
+///
+fn merge_down(
+  na: Int,
+  nb: Int,
+  a: List(a),
+  b: List(a),
+  acc: List(a),
+  compare: fn(a, a) -> Order,
+) {
   case na, nb, a, b {
     0, 0, _, _ -> acc
     _, 0, [ax, ..ar], _ -> merge_down(na - 1, nb, ar, b, [ax, ..acc], compare)
@@ -1017,9 +1033,16 @@ fn merge_down(na, nb, a, b, acc, compare) {
 
 /// Merge sort that alternates merging in ascending and descending order
 /// because the merge process also reverses the list.
+///
 /// Some copying is avoided by merging only a subset of the lists
 /// instead of creating and merging new smaller lists.
-fn merge_sort(l, ln, compare, down) {
+///
+fn merge_sort(
+  l: List(a),
+  ln: Int,
+  compare: fn(a, a) -> Order,
+  down: Bool,
+) -> List(a) {
   let n = ln / 2
   let a = l
   let b = drop(l, n)
