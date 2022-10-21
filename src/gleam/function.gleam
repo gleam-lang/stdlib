@@ -72,3 +72,96 @@ pub fn tap(arg: a, effect: fn(a) -> b) -> a {
   effect(arg)
   arg
 }
+
+/// Takes a function with arity one and an argument,
+/// calls that function with the argument and returns the function return value.
+///
+/// Useful for concisely calling functions returned as a part of a pipeline.
+///
+/// ## Example
+///
+/// ```gleam
+/// fn get_doubler() {
+///   fn(x: int) { x * 2 }
+/// }
+///
+/// fn use_apply() {
+///   get_doubler()
+///   |> function.apply1(2)
+///   |> should.equal(4)
+/// }
+///
+pub fn apply1(fun: fn(a) -> value, arg1: a) -> value {
+  fun(arg1)
+}
+
+/// Takes a function with arity two and two arguments,
+/// calls that function with the arguments
+/// and returns the function return value.
+/// 
+/// See `apply1` for more details
+///
+pub fn apply2(fun: fn(a, b) -> value, arg1: a, arg2: b) -> value {
+  fun(arg1, arg2)
+}
+
+/// Takes a function with arity three and three arguments,
+/// calls that function with the arguments
+/// and returns the function return value.
+/// 
+/// See `apply1` for more details
+///
+pub fn apply3(fun: fn(a, b, c) -> value, arg1: a, arg2: b, arg3: c) -> value {
+  fun(arg1, arg2, arg3)
+}
+
+/// Takes a function with arity four and four arguments,
+/// calls that function with the arguments
+/// and returns the function return value.
+/// 
+/// See `apply1` for more details
+///
+pub fn apply4(
+  fun: fn(a, b, c, d) -> value,
+  arg1: a,
+  arg2: b,
+  arg3: c,
+  arg4: d,
+) -> value {
+  fun(arg1, arg2, arg3, arg4)
+}
+
+/// Takes a function with arity five and five arguments,
+/// calls that function with the arguments
+/// and returns the function return value.
+/// 
+/// See `apply1` for more details
+///
+pub fn apply5(
+  fun: fn(a, b, c, d, e) -> value,
+  arg1: a,
+  arg2: b,
+  arg3: c,
+  arg4: d,
+  arg5: e,
+) -> value {
+  fun(arg1, arg2, arg3, arg4, arg5)
+}
+
+/// Takes a function with arity six and six arguments,
+/// calls that function with the arguments
+/// and returns the function return value.
+/// 
+/// See `apply1` for more details
+///
+pub fn apply6(
+  fun: fn(a, b, c, d, e, f) -> value,
+  arg1: a,
+  arg2: b,
+  arg3: c,
+  arg4: d,
+  arg5: e,
+  arg6: f,
+) -> value {
+  fun(arg1, arg2, arg3, arg4, arg5, arg6)
+}
