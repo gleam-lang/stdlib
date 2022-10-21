@@ -6,8 +6,8 @@
   on large inputs on target JavaScript.
 - `list.sort` is now a "stable" sort, meaning equal elements are sorted in
   the same order that they appear in the input.
-- Added tests for the list module to verify tail recursion where it is
-  expected.
+- Added tests for most functions in the list module to verify tail recursion
+  where it is expected to exist.
 
 ## v0.24.0 - 2022-10-15
 
