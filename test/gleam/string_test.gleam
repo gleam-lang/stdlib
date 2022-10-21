@@ -4,10 +4,12 @@ import gleam/should
 import gleam/string
 
 if erlang {
+  // const recursion_test_cycles = 2
   const recursion_test_cycles = 999_999
 }
 
 if javascript {
+  // const recursion_test_cycles = 2
   const recursion_test_cycles = 16_999
 }
 
