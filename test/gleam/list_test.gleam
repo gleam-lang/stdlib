@@ -1020,8 +1020,4 @@ pub fn transpose_test() {
 
   list.transpose([[1, 2, 3], [101, 102], [201, 202, 203]])
   |> should.equal([[1, 101, 201], [2, 102, 202], [3, 203]])
-
-  // TCO test
-  let recursion_test_cycles_list = list.range(0, recursion_test_cycles)
-  list.transpose([recursion_test_cycles_list, recursion_test_cycles_list])
 }

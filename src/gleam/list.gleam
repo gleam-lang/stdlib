@@ -1722,6 +1722,10 @@ pub fn interleave(list: List(List(a))) -> List(a) {
 
 /// Transpose rows and columns of the list of lists.
 ///
+/// Notice: This function is not tail recursive,
+/// and thus may exceed stack size if called,
+/// with large lists (on target JavaScript).
+///
 /// ## Examples
 ///
 /// ```gleam
