@@ -10,7 +10,7 @@ if erlang {
 if javascript {
   // JavaScript engines crash when exceeding a certain stack size:
   //
-  // - Chrome 106 and NodeJS 16 and NodeJS 18 crash around 10_000+
+  // - Chrome 106 and NodeJS V16, V18, and V19 crash around 10_000+
   // - Firefox 106 crashes around 35_000+.
   // - Safari 16 crashes around 40_000+.
   const recursion_test_cycles = 40_000
