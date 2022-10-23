@@ -985,9 +985,17 @@ pub fn unique(list: List(a)) -> List(a) {
   }
 }
 
-/// Merge lists a and b in ascending order
-/// but only up to 'na' and 'nb' number of items respectively.
-fn merge_up(na, nb, a, b, acc, compare) {
+/// Merge lists `a` and `b` in ascending order
+/// but only up to `na` and `nb` number of items respectively.
+///
+fn merge_up(
+  na: Int,
+  nb: Int,
+  a: List(a),
+  b: List(a),
+  acc: List(a),
+  compare: fn(a, a) -> Order,
+) {
   case na, nb, a, b {
     0, 0, _, _ -> acc
     _, 0, [ax, ..ar], _ -> merge_up(na - 1, nb, ar, b, [ax, ..acc], compare)
@@ -1000,9 +1008,17 @@ fn merge_up(na, nb, a, b, acc, compare) {
   }
 }
 
-/// Merge lists a and b in descending order
-/// but only up to 'na' and 'nb' number of items respectively.
-fn merge_down(na, nb, a, b, acc, compare) {
+/// Merge lists `a` and `b` in descending order
+/// but only up to `na` and `nb` number of items respectively.
+///
+fn merge_down(
+  na: Int,
+  nb: Int,
+  a: List(a),
+  b: List(a),
+  acc: List(a),
+  compare: fn(a, a) -> Order,
+) {
   case na, nb, a, b {
     0, 0, _, _ -> acc
     _, 0, [ax, ..ar], _ -> merge_down(na - 1, nb, ar, b, [ax, ..acc], compare)
@@ -1017,9 +1033,16 @@ fn merge_down(na, nb, a, b, acc, compare) {
 
 /// Merge sort that alternates merging in ascending and descending order
 /// because the merge process also reverses the list.
+///
 /// Some copying is avoided by merging only a subset of the lists
 /// instead of creating and merging new smaller lists.
-fn merge_sort(l, ln, compare, down) {
+///
+fn merge_sort(
+  l: List(a),
+  ln: Int,
+  compare: fn(a, a) -> Order,
+  down: Bool,
+) -> List(a) {
   let n = ln / 2
   let a = l
   let b = drop(l, n)
@@ -1337,7 +1360,6 @@ pub fn key_pop(
 /// If there was already a tuple with the key then it is replaced, otherwise it
 /// is added to the end of the list.
 ///
-///
 /// ## Examples
 ///
 /// ```gleam
@@ -1356,7 +1378,14 @@ pub fn key_set(list: List(#(a, b)), key: a, value: b) -> List(#(a, b)) {
   }
 }
 
-/// Calls a function for each element in a list, discarding the results.
+/// Calls a function for each element in a list, discarding the return value.
+///
+/// Useful for calling a side effect for every item of a list.
+///
+/// ```gleam
+/// > list.each([1, 2, 3], io.println)
+/// Nil
+/// ```
 ///
 pub fn each(list: List(a), f: fn(a) -> b) -> Nil {
   case list {
@@ -1397,7 +1426,6 @@ pub fn partition(
 }
 
 /// Returns all the permutations of a list.
-/// All values must be unique.
 ///
 /// ## Examples
 ///
@@ -1603,10 +1631,11 @@ pub fn sized_chunk(in list: List(a), into count: Int) -> List(List(a)) {
 
 /// This function acts similar to fold, but does not take an initial state.
 /// Instead, it starts from the first element in the list
-/// and combines it with each subsequent element in turn using the given function.
-/// The function is called as `fun(accumulator, current_element)`.
+/// and combines it with each subsequent element in turn using the given
+/// function. The function is called as `fun(accumulator, current_element)`.
 ///
-/// Returns `Ok` to indicate a successful run, and `Error` if called on an empty list.
+/// Returns `Ok` to indicate a successful run, and `Error` if called on an
+/// empty list.
 ///
 /// ## Examples
 ///
@@ -1751,6 +1780,10 @@ pub fn interleave(list: List(List(a))) -> List(a) {
 }
 
 /// Transpose rows and columns of the list of lists.
+///
+/// Notice: This function is not tail recursive,
+/// and thus may exceed stack size if called,
+/// with large lists (on target JavaScript).
 ///
 /// ## Examples
 ///
