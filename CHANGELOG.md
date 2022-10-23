@@ -6,6 +6,8 @@
   on large inputs on target JavaScript.
 - `list.sort` is now a "stable" sort, meaning equal elements are sorted in
   the same order that they appear in the input.
+- Added functions `function.apply1` through `function.apply3` which help working
+  with functions in pipelines.
 
 ## v0.24.0 - 2022-10-15
 
