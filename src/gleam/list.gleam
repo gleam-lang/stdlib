@@ -1383,7 +1383,7 @@ pub fn key_set(list: List(#(a, b)), key: a, value: b) -> List(#(a, b)) {
 /// Useful for calling a side effect for every item of a list.
 ///
 /// ```gleam
-/// > list.each([1, 2, 3], io.println(x))
+/// > list.each([1, 2, 3], io.println)
 /// Nil
 /// ```
 ///
