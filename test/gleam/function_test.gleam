@@ -146,27 +146,3 @@ pub fn apply3_test() {
   |> function.apply3(1, 2, 3)
   |> should.equal(6)
 }
-
-pub fn apply4_test() {
-  let fun = fn(x1, x2, x3, x4) { x1 + x2 + x3 + x4 }
-
-  fun
-  |> function.apply4(1, 2, 3, 4)
-  |> should.equal(10)
-}
-
-pub fn apply5_test() {
-  let fun = fn(x1, x2, x3, x4, x5) { x1 + x2 + x3 + x4 + x5 }
-
-  fun
-  |> function.apply5(1, 2, 3, 4, 5)
-  |> should.equal(15)
-}
-
-pub fn apply6_test() {
-  let fun = fn(x1, x2, x3, x4, x5, x6) { x1 + x2 + x3 + x4 + x5 + x6 }
-
-  fun
-  |> function.apply6(1, 2, 3, 4, 5, 6)
-  |> should.equal(21)
-}
