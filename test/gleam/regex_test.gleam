@@ -64,4 +64,18 @@ pub fn scan_test() {
     Match(content: "on a boat", submatches: [None, Some("boat")]),
     Match(content: "in a lake", submatches: [None, Some("lake")]),
   ])
+
+  assert Ok(re) = regex.from_string("answer (\\d+)")
+  regex.scan(re, "Is the answer 42?")
+  |> should.equal([Match(content: "answer 42", submatches: [Some("42")])])
+
+  assert Ok(re) = regex.from_string("(\\d+)")
+  regex.scan(re, "hello 42")
+  |> should.equal([Match(content: "42", submatches: [Some("42")])])
+
+  regex.scan(re, "你好 42")
+  |> should.equal([Match(content: "42", submatches: [Some("42")])])
+
+  regex.scan(re, "你好 42 世界")
+  |> should.equal([Match(content: "42", submatches: [Some("42")])])
 }
