@@ -200,16 +200,17 @@ regex_check(Regex, String) ->
 regex_split(Regex, String) ->
     re:split(String, Regex).
 
-regex_submatches(String, {S, L}) ->
-    SubMatch = string:slice(String, S, L),
-    case string:is_empty(SubMatch) of
+regex_submatches(String, {Start, Length}) ->
+    Binary = unicode:characters_to_binary(String, unicode, unicode),
+    BinarySlice = binary:part(Binary, {Start, Length}),
+    case string:is_empty(binary_to_list(BinarySlice)) of
         true -> none;
-        false -> {some, SubMatch}
+        false -> {some, BinarySlice}
     end.
 
-regex_matches(String, [{S, L} | Submatches]) ->
+regex_matches(String, [{Start, Length} | Submatches]) ->
     Submatches1 = lists:map(fun(X) -> regex_submatches(String, X) end, Submatches),
-    {match, binary:part(String, S, L), Submatches1}.
+    {match, binary:part(String, Start, Length), Submatches1}.
 
 regex_scan(Regex, String) ->
     case re:run(String, Regex, [global]) of
