@@ -8,6 +8,8 @@
   the same order that they appear in the input.
 - Added functions `function.apply1` through `function.apply3` which help working
   with functions in pipelines.
+- `regexp.compile` now allows usage of `\B`, `\b`, `\D`, `\d`, `\S`, `\s`, `\W`
+   and `\w` in conjunction with utf8.
 
 ## v0.24.0 - 2022-10-15
 
