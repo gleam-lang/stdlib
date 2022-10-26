@@ -1452,7 +1452,7 @@ pub fn permutations(l: List(a)) -> List(List(a)) {
         )
         |> reverse
         |> permutations
-        |> map(fn(x) { [i, ..x] })
+        |> map(fn(permutation) { [i, ..permutation] })
       })
       |> flatten
   }
