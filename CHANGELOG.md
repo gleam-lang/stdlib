@@ -8,6 +8,8 @@
   the same order that they appear in the input.
 - Added functions `function.apply1` through `function.apply3` which help working
   with functions in pipelines.
+- Fixed a bug where `list.permutation` would not correctly permutate lists
+  with non-unique item values.
 
 ## v0.24.0 - 2022-10-15
 

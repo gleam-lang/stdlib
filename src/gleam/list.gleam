@@ -1438,12 +1438,23 @@ pub fn permutations(l: List(a)) -> List(List(a)) {
   case l {
     [] -> [[]]
     _ ->
-      map(
+      index_map(
         l,
-        fn(x) {
-          filter(l, fn(y) { y != x })
+        fn(i_idx, i) {
+          index_fold(
+            l,
+            [],
+            fn(acc, j, j_idx) {
+              case i_idx == j_idx {
+                True -> acc
+                False ->
+                  acc
+                  |> append([j])
+              }
+            },
+          )
           |> permutations
-          |> map(append([x], _))
+          |> map(append([i], _))
         },
       )
       |> flatten

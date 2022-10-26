@@ -848,30 +848,85 @@ pub fn permutations_test() {
   |> list.permutations
   |> should.equal([[1, 2], [2, 1]])
 
-  let expected = [
+  [1, 2, 3]
+  |> list.permutations
+  |> should.equal([
     [1, 2, 3],
     [1, 3, 2],
     [2, 1, 3],
     [2, 3, 1],
     [3, 1, 2],
     [3, 2, 1],
-  ]
-
-  [1, 2, 3]
-  |> list.permutations
-  |> should.equal(expected)
+  ])
 
   ["a", "b"]
   |> list.permutations
   |> should.equal([["a", "b"], ["b", "a"]])
 
+  [1, 1]
+  |> list.permutations
+  |> should.equal([[1, 1], [1, 1]])
+
+  [1, 1, 1]
+  |> list.permutations
+  |> should.equal([
+    [1, 1, 1],
+    [1, 1, 1],
+    [1, 1, 1],
+    [1, 1, 1],
+    [1, 1, 1],
+    [1, 1, 1],
+  ])
+
+  [1, 2, 2]
+  |> list.permutations
+  |> should.equal([
+    [1, 2, 2],
+    [1, 2, 2],
+    [2, 1, 2],
+    [2, 2, 1],
+    [2, 1, 2],
+    [2, 2, 1],
+  ])
+
+  ["a", "a", "a", "a"]
+  |> list.permutations
+  |> should.equal([
+    ["a", "a", "a", "a"],
+    ["a", "a", "a", "a"],
+    ["a", "a", "a", "a"],
+    ["a", "a", "a", "a"],
+    ["a", "a", "a", "a"],
+    ["a", "a", "a", "a"],
+    ["a", "a", "a", "a"],
+    ["a", "a", "a", "a"],
+    ["a", "a", "a", "a"],
+    ["a", "a", "a", "a"],
+    ["a", "a", "a", "a"],
+    ["a", "a", "a", "a"],
+    ["a", "a", "a", "a"],
+    ["a", "a", "a", "a"],
+    ["a", "a", "a", "a"],
+    ["a", "a", "a", "a"],
+    ["a", "a", "a", "a"],
+    ["a", "a", "a", "a"],
+    ["a", "a", "a", "a"],
+    ["a", "a", "a", "a"],
+    ["a", "a", "a", "a"],
+    ["a", "a", "a", "a"],
+    ["a", "a", "a", "a"],
+    ["a", "a", "a", "a"],
+  ])
+
   // TCO test
   case recursion_test_cycles > 2 {
     // Permutation count:
-    // 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 = 40_320
-    // 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 = 362_800
+    // 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8               =     40_320
+    // 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9           =    362_800
+    // 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10      =  3_628_800
+    // 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 * 11 = 39_916_800
     True ->
-      [1, 2, 3, 4, 5, 6, 7, 8, 9]
+      list.range(1, 9)
       |> list.permutations
     False -> [[]]
   }
