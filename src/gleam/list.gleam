@@ -1438,25 +1438,22 @@ pub fn permutations(l: List(a)) -> List(List(a)) {
   case l {
     [] -> [[]]
     _ ->
-      index_map(
-        l,
-        fn(i_idx, i) {
-          index_fold(
-            l,
-            [],
-            fn(acc, j, j_idx) {
-              case i_idx == j_idx {
-                True -> acc
-                False ->
-                  acc
-                  |> append([j])
-              }
-            },
-          )
-          |> permutations
-          |> map(append([i], _))
-        },
-      )
+      l
+      |> index_map(fn(i_idx, i) {
+        l
+        |> index_fold(
+          [],
+          fn(acc, j, j_idx) {
+            case i_idx == j_idx {
+              True -> acc
+              False -> [j, ..acc]
+            }
+          },
+        )
+        |> reverse
+        |> permutations
+        |> map(fn(x) { [i, ..x] })
+      })
       |> flatten
   }
 }
