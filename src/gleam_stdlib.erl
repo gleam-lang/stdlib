@@ -201,8 +201,7 @@ regex_split(Regex, String) ->
     re:split(String, Regex).
 
 regex_submatches(String, {Start, Length}) ->
-    Binary = unicode:characters_to_binary(String, unicode, unicode),
-    BinarySlice = binary:part(Binary, {Start, Length}),
+    BinarySlice = binary:part(String, {Start, Length}),
     case string:is_empty(binary_to_list(BinarySlice)) of
         true -> none;
         false -> {some, BinarySlice}
