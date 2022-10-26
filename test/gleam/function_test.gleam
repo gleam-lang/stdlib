@@ -122,3 +122,48 @@ pub fn tap_test() {
   })
   |> should.equal("Thanks Joe & Louis")
 }
+
+pub fn apply1_test() {
+  let fun = fn(x1) { x1 }
+
+  fun
+  |> function.apply1(1)
+  |> should.equal(1)
+}
+
+pub fn apply2_test() {
+  let fun = fn(x1, x2) { x1 + x2 }
+
+  fun
+  |> function.apply2(1, 2)
+  |> should.equal(3)
+}
+
+pub fn apply3_test() {
+  let fun = fn(x1, x2, x3) { x1 + x2 + x3 }
+
+  fun
+  |> function.apply3(1, 2, 3)
+  |> should.equal(6)
+}
+
+pub fn apply3_maintains_arguments_orders_test() {
+  let first = "first"
+  let second = "second"
+  let third = "third"
+  let fun = fn(x1, x2, x3) {
+    should.equal(x1, first)
+    should.equal(x2, second)
+    should.equal(x3, third)
+  }
+
+  function.apply3(fun, first, second, third)
+}
+
+pub fn apply3_supports_arguments_of_different_types() {
+  let fun = fn(x1, _x2, _x3) { x1 }
+
+  fun
+  |> function.apply3(1, 0.5, "3")
+  |> should.equal(1)
+}

@@ -502,7 +502,10 @@ pub fn random(boundary_a: Int, boundary_b: Int) -> Int {
   |> float.round()
 }
 
-/// Returns division of the inputs as a `Result`.
+/// Performs a truncated integer division.
+///
+/// Returns division of the inputs as a `Result`: If the given divisor equals
+/// `0`, this function returns an `Error`.
 ///
 /// ## Examples
 ///
@@ -512,12 +515,105 @@ pub fn random(boundary_a: Int, boundary_b: Int) -> Int {
 ///
 /// > divide(1, 0)
 /// Error(Nil)
+///
+/// > divide(5, 2)
+/// Ok(2)
+///
+/// > divide(-99, 2)
+/// Ok(-49)
 /// ```
 ///
-pub fn divide(a: Int, by b: Int) -> Result(Int, Nil) {
-  case b {
+pub fn divide(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
+  case divisor {
     0 -> Error(Nil)
-    b -> Ok(a / b)
+    divisor -> Ok(dividend / divisor)
+  }
+}
+
+/// Computes the remainder of an integer division of inputs as a `Result`.
+///
+/// This functions mimicks modulo operation of following languages:
+/// C, C#, C++, Go, Java, JavaScript, Kotlin, Nim, PHP, Rust,
+/// Scala, Swift, Crystal as well as Erlang's and Elixir's rem operator.
+///
+/// Returns division of the inputs as a `Result`: If the given divisor equals
+/// `0`, this function returns an `Error`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > int.remainder(3, 2)
+/// Ok(1)
+///
+/// > int.remainder(1, 0)
+/// Error(Nil)
+///
+/// > int.remainder(10, -1)
+/// Ok(0)
+///
+/// > int.remainder(13, by: 3)
+/// Ok(1)
+///
+/// > int.remainder(-13, by: 3)
+/// Ok(-1)
+///
+/// > int.remainder(13, by: -3)
+/// Ok(1)
+///
+/// > int.remainder(-13, by: -3)
+/// Ok(-1)
+/// ```
+///
+pub fn remainder(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
+  case divisor {
+    0 -> Error(Nil)
+    divisor -> Ok(dividend % divisor)
+  }
+}
+
+/// Computes the modulo of an integer division of inputs as a `Result`.
+///
+/// This functions mimicks modulo operation on following languages:
+/// Haskell, Lua, Python, Ruby, as well as Elixir's Integer.mod().
+///
+/// Returns division of the inputs as a `Result`: If the given divisor equals
+/// `0`, this function returns an `Error`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > int.modulo(3, 2)
+/// Ok(1)
+///
+/// > int.modulo(1, 0)
+/// Error(Nil)
+///
+/// > int.modulo(10, -1)
+/// Ok(0)
+///
+/// > int.modulo(13, by: 3)
+/// Ok(1)
+///
+/// > int.modulo(-13, by: 3)
+/// Ok(2)
+///
+/// > int.modulo(13, by: -3)
+/// Ok(-2)
+///
+/// > int.modulo(-13, by: -3)
+/// Ok(-1)
+/// ```
+///
+pub fn modulo(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
+  case divisor {
+    0 -> Error(Nil)
+    _ -> {
+      let remainder = dividend % divisor
+      case remainder * divisor < 0 {
+        True -> Ok(remainder + divisor)
+        False -> Ok(remainder)
+      }
+    }
   }
 }
 
