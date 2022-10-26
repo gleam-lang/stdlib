@@ -946,21 +946,6 @@ pub fn permutations_test() {
     ["a", "a", "a", "a"],
     ["a", "a", "a", "a"],
   ])
-
-  // TCO test
-  case recursion_test_cycles > 1 {
-    // Permutation count:
-    // 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8               =     40_320
-    // 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9           =    362_800
-    // These would on the Beam, with `%% Unknown error: {timeout, ...`
-    // and are very slow on Node:
-    // 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10      =  3_628_800
-    // 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 * 11 = 39_916_800
-    True ->
-      list.range(1, 6)
-      |> list.permutations
-    False -> [[]]
-  }
 }
 
 pub fn window_test() {
