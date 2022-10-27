@@ -6,8 +6,10 @@
   on large inputs on target JavaScript.
 - `list.sort` is now a "stable" sort, meaning equal elements are sorted in
   the same order that they appear in the input.
-- Added functions `function.apply1` through `function.apply3` which help working
-  with functions in pipelines.
+- Added functions `function.apply1` through `function.apply3` which help
+  working with functions in pipelines.
+- Fixed a bug where `regex.scan` would not work correctly on utf8.
+- The performance of `list.flatten` has been greatly improved.
 - Added `list.shuffle`.
 
 ## v0.24.0 - 2022-10-15
