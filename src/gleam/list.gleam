@@ -530,18 +530,19 @@ pub fn prepend(to list: List(a), item: a) -> List(a) {
   [item, ..list]
 }
 
-fn prepend_list_reverse(list prefix: List(a), to suffix: List(a)) -> List(a) {
+// Reverses a list and prepends it to another list
+fn reverse_and_prepend(list prefix: List(a), to suffix: List(a)) -> List(a) {
   case prefix {
     [] -> suffix
-    [head, ..tail] -> prepend_list_reverse(tail, [head, ..suffix])
+    [head, ..tail] -> reverse_and_prepend(list: tail, to: [head, ..suffix])
   }
 }
 
 fn do_flatten(lists: List(List(a)), acc: List(a)) -> List(a) {
   case lists {
     [] -> reverse(acc)
-    [a_list, ..rest_lists] ->
-      do_flatten(rest_lists, prepend_list_reverse(a_list, acc))
+    [list, ..further_lists] ->
+      do_flatten(further_lists, reverse_and_prepend(list: list, to: acc))
   }
 }
 
