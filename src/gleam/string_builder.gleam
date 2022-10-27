@@ -217,8 +217,6 @@ if erlang {
 }
 
 if javascript {
-  import gleam/list
-
   fn do_reverse(builder: StringBuilder) -> StringBuilder {
     builder
     |> to_string
