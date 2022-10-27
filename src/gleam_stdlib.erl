@@ -184,6 +184,7 @@ compile_regex(String, Options) ->
     {options, Caseless, Multiline} = Options,
     OptionsList = [
         unicode,
+        ucp,
         Caseless andalso caseless,
         Multiline andalso multiline
     ],

@@ -2,6 +2,9 @@
 
 ## v0.24.1 - unreleased
 
+- For `regexp.compile` unicode character properties are now used when
+  resolving `\B`, `\b`, `\D`, `\d`, `\S`, `\s`, `\W`, and `\w` on target
+  Erlang.
 - `list.sort` is now tail recursive and will no longer exceed the stack size
   on large inputs on target JavaScript.
 - `list.sort` is now a "stable" sort, meaning equal elements are sorted in
@@ -11,7 +14,7 @@
 - Fixed a bug where `regex.scan` would not work correctly on utf8.
 - The performance of `list.flatten` has been greatly improved.
 - The `string_builder` module gains the `join` function.
-- The `list` module gains the  `shuffle` function.
+- The `list` module gains the `shuffle` function.
 
 ## v0.24.0 - 2022-10-15
 
