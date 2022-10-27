@@ -2,6 +2,9 @@
 
 ## v0.24.1 - unreleased
 
+- Fixed a bug where `list.permutations` would not correctly permutate lists
+  with non-unique item values.
+- The `list` module gains the  `shuffle` function.
 - `list.sort` is now tail recursive and will no longer exceed the stack size
   on large inputs on target JavaScript.
 - `list.sort` is now a "stable" sort, meaning elements which are equal in
@@ -11,8 +14,6 @@
 - Fixed a bug where `regex.scan` would not work correctly on utf8.
 - The performance of `list.flatten` has been greatly improved.
 - The `string_builder` module gains the `join` function.
-- Fixed a bug where `list.permutations` would not correctly permutate lists
-  with non-unique item values.
 
 ## v0.24.0 - 2022-10-15
 
