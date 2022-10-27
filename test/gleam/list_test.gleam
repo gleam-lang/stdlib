@@ -1099,4 +1099,8 @@ pub fn shuffle_test() {
   |> list.shuffle
   |> list.sort(int.compare)
   |> should.equal(list.range(1, 100))
+
+  // TCO test
+  list.range(0, recursion_test_cycles)
+  |> list.shuffle()
 }
