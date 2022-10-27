@@ -4,7 +4,8 @@
 
 - `list.sort` is now tail recursive and will no longer exceed the stack size
   on large inputs on target JavaScript.
-- `list.sort` is now a "stable" sort, meaning equal elements are sorted in
+- `list.sort` is now a "stable" sort, meaning elements equal in regards to the
+  given comparison function keep their previous order.
   the same order that they appear in the input.
 - Added functions `function.apply1` through `function.apply3` which help working
   with functions in pipelines.
