@@ -1443,18 +1443,34 @@ pub fn partition(
 /// [[1, 2], [2, 1]]
 /// ```
 ///
+/// Notice, that this function is not tail recursive:
+///
+/// The execution limits on permutations are iterations rather than stack size;
+/// for a permutation with `10` items a non tail recursive algorithm will at
+/// worst built up a stack size of `10` before it goes back to `1` eventually,
+/// while a permutation of say `5_000` items will not compute, in reasonable
+/// time, despite not exceeding stack size.
+///
 pub fn permutations(l: List(a)) -> List(List(a)) {
   case l {
     [] -> [[]]
     _ ->
-      map(
-        l,
-        fn(x) {
-          filter(l, fn(y) { y != x })
-          |> permutations
-          |> map(append([x], _))
-        },
-      )
+      l
+      |> index_map(fn(i_idx, i) {
+        l
+        |> index_fold(
+          [],
+          fn(acc, j, j_idx) {
+            case i_idx == j_idx {
+              True -> acc
+              False -> [j, ..acc]
+            }
+          },
+        )
+        |> reverse
+        |> permutations
+        |> map(fn(permutation) { [i, ..permutation] })
+      })
       |> flatten
   }
 }

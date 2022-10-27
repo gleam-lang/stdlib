@@ -2,13 +2,15 @@
 
 ## v0.24.1 - unreleased
 
+- Fixed a bug where `list.permutations` would not correctly permutate lists
+  with non-unique item values.
 - For `regexp.compile` unicode character properties are now used when
   resolving `\B`, `\b`, `\D`, `\d`, `\S`, `\s`, `\W`, and `\w` on target
   Erlang.
 - `list.sort` is now tail recursive and will no longer exceed the stack size
   on large inputs on target JavaScript.
-- `list.sort` is now a "stable" sort, meaning equal elements are sorted in
-  the same order that they appear in the input.
+- `list.sort` is now a "stable" sort, meaning elements which are equal in
+  regards to the given comparison function will keep their previous order.
 - Added functions `function.apply1` through `function.apply3` which help
   working with functions in pipelines.
 - Fixed a bug where `regex.scan` would not work correctly on utf8.
