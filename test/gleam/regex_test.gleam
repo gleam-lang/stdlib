@@ -26,6 +26,13 @@ pub fn compile_test() {
 
   regex.check(re, "abc\n123")
   |> should.be_true
+
+  // For Erlang: This test only succeds only, if the unicode AND the ucp flag
+  // are enabled
+  assert Ok(re) = regex.compile("\\s", options)
+  // Em Space = U+2003 = " " (used below)
+  regex.check(re, " ")
+  |> should.be_true
 }
 
 pub fn check_test() {
