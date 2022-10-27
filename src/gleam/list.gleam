@@ -530,17 +530,25 @@ pub fn prepend(to list: List(a), item: a) -> List(a) {
   [item, ..list]
 }
 
+// Reverses a list and prepends it to another list
+fn reverse_and_prepend(list prefix: List(a), to suffix: List(a)) -> List(a) {
+  case prefix {
+    [] -> suffix
+    [head, ..tail] -> reverse_and_prepend(list: tail, to: [head, ..suffix])
+  }
+}
+
 fn do_flatten(lists: List(List(a)), acc: List(a)) -> List(a) {
   case lists {
-    [] -> acc
-    [l, ..rest] -> do_flatten(rest, append(acc, l))
+    [] -> reverse(acc)
+    [list, ..further_lists] ->
+      do_flatten(further_lists, reverse_and_prepend(list: list, to: acc))
   }
 }
 
 /// Flattens a list of lists into a single list.
 ///
-/// This function runs in linear time, and it traverses and copies all the
-/// inner lists.
+/// This function traverses all elements twice.
 ///
 /// ## Examples
 ///
