@@ -7,8 +7,8 @@
 - `list.sort` is now a "stable" sort, meaning elements equal in regards to the
   given comparison function keep their previous order.
   the same order that they appear in the input.
-- Added functions `function.apply1` through `function.apply3` which help working
-  with functions in pipelines.
+- Added functions `function.apply1` through `function.apply3` which help
+  working with functions in pipelines.
 - Fixed a bug where `regex.scan` would not work correctly on utf8.
 - The performance of `list.flatten` has been greatly improved.
 - Fixed a bug where `list.permutations` would not correctly permutate lists
