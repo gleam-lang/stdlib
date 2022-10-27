@@ -8,6 +8,7 @@
   the same order that they appear in the input.
 - Added functions `function.apply1` through `function.apply3` which help working
   with functions in pipelines.
+- Added `list.shuffle`.
 
 ## v0.24.0 - 2022-10-15
 
