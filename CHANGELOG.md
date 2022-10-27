@@ -11,6 +11,7 @@
   working with functions in pipelines.
 - Fixed a bug where `regex.scan` would not work correctly on utf8.
 - The performance of `list.flatten` has been greatly improved.
+- The `string_builder` module gains the `join` function.
 - Fixed a bug where `list.permutations` would not correctly permutate lists
   with non-unique item values.
 
