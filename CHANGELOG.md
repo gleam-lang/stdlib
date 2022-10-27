@@ -12,7 +12,8 @@
 - The performance of `list.flatten` has been greatly improved.
 - The `string_builder` module gains the `join` function.
 - For `regexp.compile` unicode character properties are now used when
-  resolving `\B`, `\b`, `\D`, `\d`, `\S`, `\s`, `\W` and `\w` on target Erlang.
+  resolving `\B`, `\b`, `\D`, `\d`, `\S`, `\s`, `\W`, and `\w` on target
+  Erlang.
 
 ## v0.24.0 - 2022-10-15
 
