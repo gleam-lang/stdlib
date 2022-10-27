@@ -134,3 +134,14 @@ pub fn new_test() {
   |> string_builder.to_string
   |> should.equal("")
 }
+
+pub fn join_test() {
+  [
+    string_builder.from_string("Gleam"),
+    string_builder.from_string("Elixir"),
+    string_builder.from_string("Erlang"),
+  ]
+  |> string_builder.join(", ")
+  |> string_builder.to_string
+  |> should.equal("Gleam, Elixir, Erlang")
+}

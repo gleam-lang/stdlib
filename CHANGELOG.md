@@ -10,7 +10,8 @@
   working with functions in pipelines.
 - Fixed a bug where `regex.scan` would not work correctly on utf8.
 - The performance of `list.flatten` has been greatly improved.
-- Added `list.shuffle`.
+- The `string_builder` module gains the `join` function.
+- The `list` module gains the  `shuffle` function.
 
 ## v0.24.0 - 2022-10-15
 
