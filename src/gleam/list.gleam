@@ -1816,47 +1816,39 @@ pub fn transpose(list_of_list: List(List(a))) -> List(List(a)) {
   }
 }
 
-fn do_shuffle_unwrap(list: List(#(idx, a)), acc: List(a)) -> List(a) {
+fn do_shuffle_pair_unwrap(list: List(#(idx_type, a)), acc: List(a)) -> List(a) {
   case list {
     [] -> acc
     _ -> {
       let [elem_pair, ..enumerable] = list
-      do_shuffle_unwrap(enumerable, [elem_pair.1, ..acc])
+      do_shuffle_pair_unwrap(enumerable, [elem_pair.1, ..acc])
     }
   }
 }
 
-fn do_shuffle_list_of_pair_sort(
-  list_of_pairs: List(#(Float, a)),
-) -> List(#(Float, a)) {
+fn do_shuffle_by_pair_indexes(
+  list_of_pairs: List(#(idx_type, a)),
+  compare: fn(idx_type, idx_type) -> Order,
+) -> List(#(idx_type, a)) {
   sort(
     list_of_pairs,
-    fn(a_pair: #(Float, a), b_pair: #(Float, a)) -> Order {
-      case a_pair.0 == b_pair.0 {
-        True -> order.Eq
-        False ->
-          case a_pair.0 <. b_pair.0 {
-            True -> order.Lt
-            False -> order.Gt
-          }
-      }
+    fn(a_pair: #(idx_type, a), b_pair: #(idx_type, a)) -> Order {
+      compare(a_pair.0, b_pair.0)
     },
   )
 }
 
 /// Takes a list, randomly sorts all items and returns the shuffled list.
 ///
-/// Mimicks Elixir's `Enum.shuffle` but replaces `rand:uniform` and
-/// `lists:keysort` Erlang calls with Gleam implementations.
+/// Mimicks Elixir's `Enum.shuffle` but replaces Erlang calls to `rand:uniform`
+/// and `lists:keysort` with vanilla Gleam implementations.
 ///
 pub fn shuffle(list: List(a)) -> List(a) {
+  let randomizer = fn() { float.random(0.0, 1.0) }
   let list_of_pairs =
-    fold(
-      over: list,
-      from: [],
-      with: fn(acc, a) { [#(float.random(0.0, 1.0), a), ..acc] },
-    )
+    fold(over: list, from: [], with: fn(acc, a) { [#(randomizer(), a), ..acc] })
 
-  do_shuffle_list_of_pair_sort(list_of_pairs)
-  |> do_shuffle_unwrap([])
+  list_of_pairs
+  |> do_shuffle_by_pair_indexes(float.compare)
+  |> do_shuffle_pair_unwrap([])
 }
