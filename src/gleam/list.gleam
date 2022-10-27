@@ -23,6 +23,7 @@
 ////
 
 import gleam/int
+import gleam/float
 import gleam/order.{Order}
 import gleam/pair
 
@@ -1821,4 +1822,45 @@ pub fn transpose(list_of_list: List(List(a))) -> List(List(a)) {
       [firsts, ..rest]
     }
   }
+}
+
+fn do_shuffle_pair_unwrap(list: List(#(Float, a)), acc: List(a)) -> List(a) {
+  case list {
+    [] -> acc
+    _ -> {
+      let [elem_pair, ..enumerable] = list
+      do_shuffle_pair_unwrap(enumerable, [elem_pair.1, ..acc])
+    }
+  }
+}
+
+fn do_shuffle_by_pair_indexes(
+  list_of_pairs: List(#(Float, a)),
+) -> List(#(Float, a)) {
+  sort(
+    list_of_pairs,
+    fn(a_pair: #(Float, a), b_pair: #(Float, a)) -> Order {
+      float.compare(a_pair.0, b_pair.0)
+    },
+  )
+}
+
+/// Takes a list, randomly sorts all items and returns the shuffled list.
+///
+/// ## Example
+///
+/// ```gleam
+/// list.range(1, 10)
+/// |> list.shuffle()
+/// > [1, 6, 9, 10, 3, 8, 4, 2, 7, 5]
+/// ```
+///
+/// Notice: This function uses Erlang's `:rand` module or Javascript's
+/// `Math.random()` to calcuate the index shuffling.
+///
+pub fn shuffle(list: List(a)) -> List(a) {
+  list
+  |> fold(from: [], with: fn(acc, a) { [#(float.random(0.0, 1.0), a), ..acc] })
+  |> do_shuffle_by_pair_indexes()
+  |> do_shuffle_pair_unwrap([])
 }
