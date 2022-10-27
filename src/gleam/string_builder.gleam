@@ -1,3 +1,5 @@
+import gleam/list
+
 /// `StringBuilder` is a type used for efficiently building strings.
 ///
 /// When we append one string to another the strings must be copied to a
@@ -159,6 +161,12 @@ if erlang {
 if javascript {
   external fn do_byte_size(StringBuilder) -> Int =
     "../gleam_stdlib.mjs" "length"
+}
+
+pub fn join(builders: List(StringBuilder), with sep: String) -> StringBuilder {
+  builders
+  |> list.intersperse(from_string(sep))
+  |> concat
 }
 
 /// Converts a builder to a new builder where the contents have been
