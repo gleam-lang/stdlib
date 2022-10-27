@@ -1081,3 +1081,22 @@ pub fn transpose_test() {
   list.transpose([[1, 2, 3], [101, 102], [201, 202, 203]])
   |> should.equal([[1, 101, 201], [2, 102, 202], [3, 203]])
 }
+
+pub fn shuffle_test() {
+  []
+  |> list.shuffle
+  |> should.equal([])
+
+  [1, 1]
+  |> list.shuffle
+  |> should.equal([1, 1])
+
+  [1, 1, 1]
+  |> list.shuffle
+  |> should.equal([1, 1, 1])
+
+  list.range(1, 100)
+  |> list.shuffle
+  |> list.sort(int.compare)
+  |> should.equal(list.range(1, 100))
+}

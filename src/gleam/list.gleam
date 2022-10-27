@@ -23,6 +23,7 @@
 ////
 
 import gleam/int
+import gleam/float
 import gleam/order.{Order}
 import gleam/pair
 
@@ -1813,4 +1814,49 @@ pub fn transpose(list_of_list: List(List(a))) -> List(List(a)) {
       [firsts, ..rest]
     }
   }
+}
+
+fn do_shuffle_unwrap(list: List(#(idx, a)), acc: List(a)) -> List(a) {
+  case list {
+    [] -> acc
+    _ -> {
+      let [elem_pair, ..enumerable] = list
+      do_shuffle_unwrap(enumerable, [elem_pair.1, ..acc])
+    }
+  }
+}
+
+fn do_shuffle_list_of_pair_sort(
+  list_of_pairs: List(#(Float, a)),
+) -> List(#(Float, a)) {
+  sort(
+    list_of_pairs,
+    fn(a_pair: #(Float, a), b_pair: #(Float, a)) -> Order {
+      case a_pair.0 == b_pair.0 {
+        True -> order.Eq
+        False ->
+          case a_pair.0 <. b_pair.0 {
+            True -> order.Lt
+            False -> order.Gt
+          }
+      }
+    },
+  )
+}
+
+/// Takes a list, randomly sorts all items and returns the shuffled list.
+///
+/// Mimicks Elixir's `Enum.shuffle` but replaces `rand:uniform` and
+/// `lists:keysort` Erlang calls with Gleam implementations.
+///
+pub fn shuffle(list: List(a)) -> List(a) {
+  let list_of_pairs =
+    fold(
+      over: list,
+      from: [],
+      with: fn(acc, a) { [#(float.random(0.0, 1.0), a), ..acc] },
+    )
+
+  do_shuffle_list_of_pair_sort(list_of_pairs)
+  |> do_shuffle_unwrap([])
 }
