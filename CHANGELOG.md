@@ -4,6 +4,9 @@
 
 - Fixed a bug where `list.permutations` would not correctly permutate lists
   with non-unique item values.
+- For `regexp.compile` unicode character properties are now used when
+  resolving `\B`, `\b`, `\D`, `\d`, `\S`, `\s`, `\W`, and `\w` on target
+  Erlang.
 - `list.sort` is now tail recursive and will no longer exceed the stack size
   on large inputs on target JavaScript.
 - `list.sort` is now a "stable" sort, meaning elements which are equal in
