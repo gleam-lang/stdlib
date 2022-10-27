@@ -163,6 +163,8 @@ if javascript {
     "../gleam_stdlib.mjs" "length"
 }
 
+/// Joins the given builders into a new builder separated with the given string
+///
 pub fn join(builders: List(StringBuilder), with sep: String) -> StringBuilder {
   builders
   |> list.intersperse(from_string(sep))
