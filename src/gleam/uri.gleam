@@ -4,8 +4,8 @@
 //// URIs or encoding query strings). The functions in this module are implemented
 //// according to [RFC 3986](https://tools.ietf.org/html/rfc3986).
 ////
-//// Query encoding (Form encoding) is defined in the w3c specification.
-//// https://www.w3.org/TR/html52/sec-forms.html#urlencoded-form-data
+//// Query encoding (Form encoding) is defined in the 
+//// [W3C specification](https://www.w3.org/TR/html52/sec-forms.html#urlencoded-form-data).
 
 import gleam/int
 import gleam/list
@@ -370,7 +370,7 @@ pub fn to_string(uri: Uri) -> String {
 /// Fetches the origin of a URI.
 ///
 /// Returns the origin of a uri as defined in
-/// https://tools.ietf.org/html/rfc6454
+/// [RFC 6454](https://tools.ietf.org/html/rfc6454)
 ///
 /// The supported URI schemes are `http` and `https`.
 /// URLs without a scheme will return `Error`.
