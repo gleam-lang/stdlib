@@ -902,6 +902,44 @@ pub fn strict_zip(
   }
 }
 
+fn do_zip_with(xs: List(a), ys: List(b), fun: fn(a, b) -> c, acc: List(c)) -> List(c) {
+  case xs, ys {
+    [x, ..xs], [y, ..ys] -> do_zip_with(xs, ys, fun, [fun(x, y), ..acc])
+    _, _ -> reverse(acc)
+  }
+}
+
+/// Takes two lists and a binary operation
+/// and returns a single list with the results of
+/// applying the operation to each element 
+/// at the same position in both lists.
+///
+/// If one of the lists is longer than the other, the remaining elements from
+/// the longer list are not used.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > zip_with([], [], fn (a, b) { a + b })
+/// []
+///
+/// > zip_with([1, 2, 3], [4, 5, 6], fn (a, b) { a + b })
+/// [5, 7, 9]
+///
+/// > zip_with([1, 2, 3], [4, 5, 6], fn (a, b) { #(a, b) })
+/// [#(1, 4), #(2, 5), #(3, 9)]
+///
+/// > zip_with([1, 2], [4], fn (a, b) { a + b })
+/// [5]
+///
+/// > zip_with([5], [1, 2], fn (a, b) { a + b })
+/// [6]
+/// ```
+///
+pub fn zip_with(xs: List(a), ys: List(b), fun: fn(a, b) -> c) -> List(c) {
+  do_zip_with(xs, ys, fun, [])
+}
+
 fn do_unzip(input, xs, ys) {
   case input {
     [] -> #(reverse(xs), reverse(ys))

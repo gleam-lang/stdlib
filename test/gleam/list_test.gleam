@@ -484,6 +484,39 @@ pub fn zip_test() {
   list.zip(recursion_test_cycles_list, recursion_test_cycles_list)
 }
 
+pub fn zip_with_test() {
+  list.zip_with([], [], fn (a, b) { a + b })
+  |> should.equal([])
+
+  list.zip_with([], [1, 2, 3], fn (a, b) { a + b })
+  |> should.equal([])
+
+  list.zip_with([1, 2], [], fn (a, b) { a + b })
+  |> should.equal([])
+
+  list.zip_with([1, 2, 3], [4, 5, 6], fn (a, b) { a + b })
+  |> should.equal([5, 7, 9])
+
+  list.zip_with([1, 2], [4, 5, 6], fn (a, b) { a + b })
+  |> should.equal([5, 7])
+
+  list.zip_with([5, 6, 7], [1, 2], fn (a, b) { a + b })
+  |> should.equal([6, 8])
+
+  list.zip_with([1, 2, 3], [4, 5, 6], fn (a, b) { #(a, b) })
+  |> should.equal([#(1, 4), #(2, 5), #(3, 6)])
+
+  list.zip_with([1, 2], [4], fn (a, b) { a + b })
+  |> should.equal([5])
+
+    list.zip_with([5], [1, 2], fn (a, b) { a + b })
+  |> should.equal([6])
+
+  // TCO test
+  let recursion_test_cycles_list = list.range(0, recursion_test_cycles)
+  list.zip_with(recursion_test_cycles_list, recursion_test_cycles_list, fn (a, b) { a + b })
+}
+
 pub fn strict_zip_test() {
   list.strict_zip([], [1, 2, 3])
   |> should.equal(Error(list.LengthMismatch))
