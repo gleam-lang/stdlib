@@ -703,6 +703,42 @@ pub fn zip(left: Iterator(a), right: Iterator(b)) -> Iterator(#(a, b)) {
   |> Iterator
 }
 
+fn do_zip_with(
+  left: fn() -> Action(a),
+  right: fn() -> Action(b),
+  fun: fn(a, b) -> c
+) -> fn() -> Action(c) {
+  fn() {
+    case left() {
+      Stop -> Stop
+      Continue(el_left, next_left) ->
+        case right() {
+          Stop -> Stop
+          Continue(el_right, next_right) ->
+            Continue(fun(el_left, el_right), do_zip_with(next_left, next_right, fun))
+        }
+    }
+  }
+}
+
+/// Takes two iterators and a binary operation
+/// and returns an iterator with the results of
+/// applying the operation to each element 
+/// at the same position in both
+/// until the shorter one runs out.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > from_list([1, 2, 3]) |> zip_with(range(5, 7), fn (a, b) { a + b }) |> to_list
+/// [6, 8, 10]
+/// ```
+///
+pub fn zip_with(left: Iterator(a), right: Iterator(b), fun: fn(a, b) -> c) -> Iterator(c) {
+  do_zip_with(left.continuation, right.continuation, fun)
+  |> Iterator
+}
+
 // Result of collecting a single chunk by key
 type Chunk(element, key) {
   AnotherBy(List(element), key, element, fn() -> Action(element))

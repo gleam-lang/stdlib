@@ -305,6 +305,13 @@ pub fn zip_test() {
   |> should.equal([#("a", 20), #("b", 21), #("c", 22)])
 }
 
+pub fn zip_with_test() {
+  iterator.from_list([1, 2, 3])
+  |> iterator.zip_with(iterator.range(5, 7), fn (a, b) { a + b })
+  |> iterator.to_list
+  |> should.equal([6, 8, 10])
+}
+
 pub fn chunk_test() {
   iterator.from_list([1, 2, 2, 3, 4, 4, 6, 7, 7])
   |> iterator.chunk(by: fn(n) { n % 2 })
