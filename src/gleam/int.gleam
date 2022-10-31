@@ -106,6 +106,45 @@ if javascript {
     "../gleam_stdlib.mjs" "parse_int"
 }
 
+/// Parses a given string as an int in a given base if possible.
+/// Supports only bases 2 to 36, for values outside of which this function returns an `Error(Nil)`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > base_parse("10", 2)
+/// Ok(2)
+///
+/// > base_parse("30", 16)
+/// Ok(48)
+///
+/// > base_parse("1C", 36)
+/// Ok(48)
+///
+/// > base_parse("48", 1)
+/// Error(Nil)
+///
+/// > base_parse("48", 37)
+/// Error(Nil)
+/// ```
+///
+pub fn base_parse(string: String, base: Int) -> Result(Int, Nil) {
+  case base >= 2 && base <= 36 {
+    True -> do_base_parse(string, base)
+    False -> Error(Nil)
+  }
+}
+
+if erlang {
+  external fn do_base_parse(String, Int) -> Result(Int, Nil) =
+    "gleam_stdlib" "int_from_base_string"
+}
+
+if javascript {
+  external fn do_base_parse(String, Int) -> Result(Int, Nil) =
+    "../gleam_stdlib.mjs" "int_from_base_string"
+}
+
 /// Prints a given int to a string.
 ///
 /// ## Examples
@@ -181,23 +220,6 @@ if erlang {
 if javascript {
   external fn do_to_base_string(Int, Int) -> String =
     "../gleam_stdlib.mjs" "int_to_base_string"
-}
-
-pub fn from_base_string(string: String, base: Int) -> Result(Int, Nil) {
-  case base >= 2 && base <= 36 {
-    True -> do_from_base_string(string, base)
-    False -> Error(Nil)
-  }
-}
-
-if erlang {
-  external fn do_from_base_string(String, Int) -> Result(Int, Nil) =
-    "gleam_stdlib" "int_from_base_string"
-}
-
-if javascript {
-  external fn do_from_base_string(String, Int) -> Result(Int, Nil) =
-    "../gleam_stdlib.mjs" "int_from_base_string"
 }
 
 /// Prints a given int to a string using base2.
