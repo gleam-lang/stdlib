@@ -652,3 +652,75 @@ pub fn floor_divide(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
       }
   }
 }
+
+/// Adds two integers together.
+///
+/// It's the function equivalent of the `+` operator. 
+/// This function is useful in higher order functions or pipes.
+/// 
+/// ## Examples
+///
+/// ```gleam
+/// > add(1, 2)
+/// 3
+///
+/// > list.fold([1, 2, 3], 0, add)
+/// 6
+///
+/// > 3 |> add(2)
+/// 5
+/// ```
+pub fn add(a: Int, b: Int) -> Int {
+  a + b
+}
+
+/// Multiplies two integers together.
+///
+/// It's the function equivalent of the `*` operator. 
+/// This function is useful in higher order functions or pipes.
+/// 
+/// ## Examples
+///
+/// ```gleam
+/// > multiply(2, 4)
+/// 8
+///
+/// > list.fold([2, 3, 4], 1, multiply)
+/// 24
+///
+/// > 3 |> multiply(2)
+/// 6
+/// ```
+pub fn multiply(a: Int, b: Int) -> Int {
+  a * b
+}
+
+/// Subtracts an integer subtrahend from an integer minuend.
+///
+/// It's the function equivalent of the `-` operator. 
+/// This function is useful in higher order functions or pipes.
+/// 
+/// ## Examples
+///
+/// ```gleam
+/// > subtract(3, 1)
+/// 2.0
+///
+/// > list.fold([1, 2, 3], 10, subtract)
+/// 4
+///
+/// > 3 |> subtract(_, 2)
+/// 1
+///
+/// > 3 |> subtract(2, _)
+/// -1
+///
+/// > 3 |> subtract(subtrahend: 2)
+/// 1
+///
+/// > 3 |> subtract(minuend: 2)
+/// -1
+/// ```
+pub fn subtract(minuend a: Int, subtrahend b: Int) -> Int {
+  a - b
+}

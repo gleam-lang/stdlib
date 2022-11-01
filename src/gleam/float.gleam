@@ -436,3 +436,75 @@ pub fn divide(a: Float, by b: Float) -> Result(Float, Nil) {
     b -> Ok(a /. b)
   }
 }
+
+/// Adds two floats together.
+///
+/// It's the function equivalent of the `+.` operator. 
+/// This function is useful in higher order functions or pipes.
+/// 
+/// ## Examples
+///
+/// ```gleam
+/// > add(1.0, 2.0)
+/// 3.0
+///
+/// > list.fold([1.0, 2.0, 3.0], 0.0, add)
+/// 6.0
+///
+/// > 3.0 |> add(2.0)
+/// 5.0
+/// ```
+pub fn add(a: Float, b: Float) -> Float {
+  a +. b
+}
+
+/// Multiplies two floats together.
+///
+/// It's the function equivalent of the `*.` operator. 
+/// This function is useful in higher order functions or pipes.
+/// 
+/// ## Examples
+///
+/// ```gleam
+/// > multiply(2.0, 4.0)
+/// 8.0
+///
+/// > list.fold([2.0, 3.0, 4.0], 1.0, multiply)
+/// 24.0
+///
+/// > 3.0 |> multiply(2.0)
+/// 6.0
+/// ```
+pub fn multiply(a: Float, b: Float) -> Float {
+  a *. b
+}
+
+/// Subtracts a float subtrahend from a float minuend.gleam/base
+///
+/// It's the function equivalent of the `-.` operator. 
+/// This function is useful in higher order functions or pipes.
+/// 
+/// ## Examples
+///
+/// ```gleam
+/// > subtract(3.0, 1.0)
+/// 2.0
+///
+/// > list.fold([1.0, 2.0, 3.0], 10.0, subtract)
+/// 4.0
+///
+/// > 3.0 |> subtract(_, 2.0)
+/// 1.0
+///
+/// > 3.0 |> subtract(2.0, _)
+/// -1.0
+///
+/// > 3.0 |> subtract(subtrahend: 2.0)
+/// 1.0
+///
+/// > 3.0 |> subtract(minuend: 2.0)
+/// -1.0
+/// ```
+pub fn subtract(minuend a: Float, subtrahend b: Float) -> Float {
+  a -. b
+}
