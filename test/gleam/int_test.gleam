@@ -508,7 +508,8 @@ pub fn add_test() {
   list.fold([1, 2, 3], 0, int.add)
   |> should.equal(6)
 
-  3 |> int.add(2)
+  3
+  |> int.add(2)
   |> should.equal(5)
 }
 
@@ -519,7 +520,8 @@ pub fn multiply_test() {
   list.fold([2, 3, 4], 1, int.multiply)
   |> should.equal(24)
 
-  3 |> int.multiply(2)
+  3
+  |> int.multiply(2)
   |> should.equal(6)
 }
 
@@ -530,15 +532,19 @@ pub fn subtract_test() {
   list.fold([1, 2, 3], 10, int.subtract)
   |> should.equal(4)
 
-  3 |> int.subtract(_, 2)
+  3
+  |> int.subtract(2)
   |> should.equal(1)
 
-  3 |> int.subtract(2, _)
+  3
+  |> int.subtract(2, _)
   |> should.equal(-1)
 
-  3 |> int.subtract(subtrahend: 2)
+  3
+  |> int.subtract(subtrahend: 2)
   |> should.equal(1)
 
-  3 |> int.subtract(minuend: 2)
+  3
+  |> int.subtract(minuend: 2)
   |> should.equal(-1)
 }

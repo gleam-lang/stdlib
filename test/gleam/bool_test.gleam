@@ -9,10 +9,12 @@ pub fn and_test() {
   bool.and(False, True)
   |> should.be_false
 
-  True |> bool.and(_, True)
+  True
+  |> bool.and(True)
   |> should.be_true
 
-  False |> bool.and(True, _)
+  False
+  |> bool.and(True, _)
   |> should.be_false
 }
 
@@ -23,10 +25,12 @@ pub fn or_test() {
   bool.or(False, True)
   |> should.be_true
 
-  True |> bool.or(_, False)
+  True
+  |> bool.or(False)
   |> should.be_true
 
-  False |> bool.or(True, _)
+  False
+  |> bool.or(True, _)
   |> should.be_true
 }
 
