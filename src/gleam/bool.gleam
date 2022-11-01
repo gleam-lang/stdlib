@@ -8,6 +8,54 @@
 
 import gleam/order.{Order}
 
+/// Returns the and of two bools.
+///
+/// It's the function equivalent of the `&&` operator. 
+/// This function is useful in higher order functions or pipes.
+/// 
+/// ## Examples
+///
+/// ```gleam
+/// > and(True, True)
+/// True
+///
+/// > and(False, True)
+/// False
+///
+/// > True |> and(_, True)
+/// True
+///
+/// > False |> and(True, _)
+/// False
+/// ```
+pub fn and(a: Bool, b: Bool) {
+  a && b
+}
+
+/// Returns the or of two bools.
+///
+/// It's the function equivalent of the `||` operator. 
+/// This function is useful in higher order functions or pipes.
+/// 
+/// ## Examples
+///
+/// ```gleam
+/// > or(True, True)
+/// True
+///
+/// > or(False, True)
+/// True
+///
+/// > False |> or(_, False)
+/// False
+///
+/// > False |> or(True, _)
+/// True
+/// ```
+pub fn or(a: Bool, b: Bool) {
+  a || b
+}
+
 /// Returns the opposite bool value.
 ///
 /// This is the same as the `!` or `not` operators in some other languages.
