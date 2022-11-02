@@ -530,12 +530,4 @@ pub fn subtract_test() {
   3
   |> int.subtract(2, _)
   |> should.equal(-1)
-
-  3
-  |> int.subtract(subtrahend: 2)
-  |> should.equal(1)
-
-  3
-  |> int.subtract(minuend: 2)
-  |> should.equal(-1)
 }

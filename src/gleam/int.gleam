@@ -714,13 +714,7 @@ pub fn multiply(a: Int, b: Int) -> Int {
 ///
 /// > 3 |> subtract(2, _)
 /// -1
-///
-/// > 3 |> subtract(subtrahend: 2)
-/// 1
-///
-/// > 3 |> subtract(minuend: 2)
-/// -1
 /// ```
-pub fn subtract(minuend a: Int, subtrahend b: Int) -> Int {
+pub fn subtract(a: Int, b: Int) -> Int {
   a - b
 }

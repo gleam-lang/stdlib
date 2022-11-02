@@ -498,13 +498,7 @@ pub fn multiply(a: Float, b: Float) -> Float {
 ///
 /// > 3.0 |> subtract(2.0, _)
 /// -1.0
-///
-/// > 3.0 |> subtract(subtrahend: 2.0)
-/// 1.0
-///
-/// > 3.0 |> subtract(minuend: 2.0)
-/// -1.0
 /// ```
-pub fn subtract(minuend a: Float, subtrahend b: Float) -> Float {
+pub fn subtract(a: Float, b: Float) -> Float {
   a -. b
 }
