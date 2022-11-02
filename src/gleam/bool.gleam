@@ -8,7 +8,7 @@
 
 import gleam/order.{Order}
 
-/// Returns the and of two bools.
+/// Returns the and of two bools, but it evaluates both arguments.
 ///
 /// It's the function equivalent of the `&&` operator. 
 /// This function is useful in higher order functions or pipes.
@@ -29,7 +29,7 @@ pub fn and(a: Bool, b: Bool) -> Bool {
   a && b
 }
 
-/// Returns the or of two bools.
+/// Returns the or of two bools, but it evaluates both arguments.
 ///
 /// It's the function equivalent of the `||` operator. 
 /// This function is useful in higher order functions or pipes.
