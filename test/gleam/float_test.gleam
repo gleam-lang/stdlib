@@ -420,12 +420,4 @@ pub fn subtract_test() {
   3.0
   |> float.subtract(2.0, _)
   |> should.equal(-1.0)
-
-  3.0
-  |> float.subtract(subtrahend: 2.0)
-  |> should.equal(1.0)
-
-  3.0
-  |> float.subtract(minuend: 2.0)
-  |> should.equal(-1.0)
 }
