@@ -479,7 +479,7 @@ pub fn multiply(a: Float, b: Float) -> Float {
   a *. b
 }
 
-/// Subtracts a float subtrahend from a float minuend.gleam/base
+/// Subtracts one float from another.
 ///
 /// It's the function equivalent of the `-.` operator. 
 /// This function is useful in higher order functions or pipes.
