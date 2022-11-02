@@ -22,10 +22,7 @@ import gleam/order.{Order}
 /// > and(False, True)
 /// False
 ///
-/// > True |> and(_, True)
-/// True
-///
-/// > False |> and(True, _)
+/// > False |> and(True)
 /// False
 /// ```
 pub fn and(a: Bool, b: Bool) -> Bool {
@@ -46,10 +43,7 @@ pub fn and(a: Bool, b: Bool) -> Bool {
 /// > or(False, True)
 /// True
 ///
-/// > False |> or(_, False)
-/// False
-///
-/// > False |> or(True, _)
+/// > False |> or(True)
 /// True
 /// ```
 pub fn or(a: Bool, b: Bool) -> Bool {
