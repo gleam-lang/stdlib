@@ -395,9 +395,6 @@ pub fn add_test() {
   float.add(1.0, 2.0)
   |> should.equal(3.0)
 
-  list.fold([1.0, 2.0, 3.0], 0.0, float.add)
-  |> should.equal(6.0)
-
   3.0
   |> float.add(2.0)
   |> should.equal(5.0)
@@ -407,9 +404,6 @@ pub fn multiply_test() {
   float.multiply(2.0, 4.0)
   |> should.equal(8.0)
 
-  list.fold([2.0, 3.0, 4.0], 1.0, float.multiply)
-  |> should.equal(24.0)
-
   3.0
   |> float.multiply(2.0)
   |> should.equal(6.0)
@@ -418,9 +412,6 @@ pub fn multiply_test() {
 pub fn subtract_test() {
   float.subtract(3.0, 1.0)
   |> should.equal(2.0)
-
-  list.fold([1.0, 2.0, 3.0], 10.0, float.subtract)
-  |> should.equal(4.0)
 
   3.0
   |> float.subtract(2.0)
