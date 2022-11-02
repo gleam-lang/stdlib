@@ -695,7 +695,7 @@ pub fn multiply(a: Int, b: Int) -> Int {
   a * b
 }
 
-/// Subtracts an integer subtrahend from an integer minuend.
+/// Subtracts one int from another.
 ///
 /// It's the function equivalent of the `-` operator. 
 /// This function is useful in higher order functions or pipes.
@@ -709,7 +709,7 @@ pub fn multiply(a: Int, b: Int) -> Int {
 /// > list.fold([1, 2, 3], 10, subtract)
 /// 4
 ///
-/// > 3 |> subtract(_, 2)
+/// > 3 |> subtract(2)
 /// 1
 ///
 /// > 3 |> subtract(2, _)
