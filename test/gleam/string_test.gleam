@@ -82,6 +82,12 @@ pub fn split_test() {
   "Gleam, Erlang,Elixir"
   |> string.split(", ")
   |> should.equal(["Gleam", "Erlang,Elixir"])
+
+  "Gleam On Beam"
+  |> string.split("")
+  |> should.equal([
+    "G", "l", "e", "a", "m", " ", "O", "n", " ", "B", "e", "a", "m",
+  ])
 }
 
 pub fn split_once_test() {
