@@ -34,11 +34,11 @@ pub fn is_empty_test() {
   |> should.be_false
 }
 
-pub fn length_test() {
+pub fn count_test() {
   let test = fn(input) {
     queue.from_list(input)
-    |> queue.length
-    |> should.equal(list.length(input))
+    |> queue.count
+    |> should.equal(list.count(input))
   }
 
   test([])

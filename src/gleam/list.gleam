@@ -44,33 +44,39 @@ pub type LengthMismatch {
 /// ## Examples
 ///
 /// ```gleam
-/// > length([])
+/// > count([])
 /// 0
 ///
-/// > length([1])
+/// > count([1])
 /// 1
 ///
-/// > length([1, 2])
+/// > count([1, 2])
 /// 2
 /// ```
 ///
+pub fn count(list: List(a)) -> Int {
+  do_count(list)
+}
+
+/// Deprecated: Use list.count
+///
 pub fn length(of list: List(a)) -> Int {
-  do_length(list)
+  count(list)
 }
 
 if erlang {
-  external fn do_length(List(a)) -> Int =
+  external fn do_count(List(a)) -> Int =
     "erlang" "length"
 }
 
 if javascript {
-  fn do_length(list: List(a)) -> Int {
-    do_length_acc(list, 0)
+  fn do_count(list: List(a)) -> Int {
+    do_count_acc(list, 0)
   }
 
-  fn do_length_acc(list: List(a), count: Int) -> Int {
+  fn do_count_acc(list: List(a), count: Int) -> Int {
     case list {
-      [_, ..list] -> do_length_acc(list, count + 1)
+      [_, ..list] -> do_count_acc(list, count + 1)
       _ -> count
     }
   }

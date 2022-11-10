@@ -4,7 +4,7 @@
 //// URIs or encoding query strings). The functions in this module are implemented
 //// according to [RFC 3986](https://tools.ietf.org/html/rfc3986).
 ////
-//// Query encoding (Form encoding) is defined in the 
+//// Query encoding (Form encoding) is defined in the
 //// [W3C specification](https://www.w3.org/TR/html52/sec-forms.html#urlencoded-form-data).
 
 import gleam/int
@@ -404,7 +404,7 @@ pub fn origin(uri: Uri) -> Result(String, Nil) {
 }
 
 fn drop_last(elements: List(a)) -> List(a) {
-  list.take(from: elements, up_to: list.length(elements) - 1)
+  list.take(from: elements, up_to: list.count(elements) - 1)
 }
 
 fn join_segments(segments: List(String)) -> String {

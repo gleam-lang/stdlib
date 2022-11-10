@@ -85,18 +85,24 @@ pub fn is_empty(queue: Queue(a)) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// > length(from_list([]))
+/// > count(from_list([]))
 /// 0
 ///
-/// > length(from_list([1]))
+/// > count(from_list([1]))
 /// 1
 ///
-/// > length(from_list([1, 2]))
+/// > count(from_list([1, 2]))
 /// 2
 /// ```
 ///
+pub fn count(queue: Queue(a)) -> Int {
+  list.count(queue.in) + list.count(queue.out)
+}
+
+/// Deprecated: Use queue.count
+///
 pub fn length(queue: Queue(a)) -> Int {
-  list.length(queue.in) + list.length(queue.out)
+  count(queue)
 }
 
 /// Pushes an element onto the back of the queue.

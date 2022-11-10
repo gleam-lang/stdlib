@@ -17,6 +17,9 @@
 - The performance of `list.flatten` has been greatly improved.
 - The `string_builder` module gains the `join` function.
 - The `list` module gains the `shuffle` function.
+- Renamed `list.length` and `queue.length` to `list.count` and `queue.count`,
+  because these functions signify that the length has to be counted and is,
+  not just available as a property.
 
 ## v0.24.0 - 2022-10-15
 

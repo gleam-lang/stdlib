@@ -16,22 +16,22 @@ if javascript {
   const recursion_test_cycles = 40_000
 }
 
-pub fn length_test() {
-  list.length([])
+pub fn count_test() {
+  list.count([])
   |> should.equal(0)
 
-  list.length([1])
+  list.count([1])
   |> should.equal(1)
 
-  list.length([1, 1])
+  list.count([1, 1])
   |> should.equal(2)
 
-  list.length([1, 1, 1])
+  list.count([1, 1, 1])
   |> should.equal(3)
 
   // TCO test
   list.range(0, recursion_test_cycles)
-  |> list.length()
+  |> list.count()
 }
 
 pub fn reverse_test() {
