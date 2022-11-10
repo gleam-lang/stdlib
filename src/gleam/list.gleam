@@ -61,7 +61,7 @@ pub fn count(list: List(a)) -> Int {
 /// Deprecated: Use `list.count` instead.
 ///
 pub fn length(of list: List(a)) -> Int {
-  count(list)
+  do_count(list)
 }
 
 if erlang {
