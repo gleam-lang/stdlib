@@ -500,3 +500,34 @@ pub fn floor_divide_test() {
   int.floor_divide(-99, by: 2)
   |> should.equal(Ok(-50))
 }
+
+pub fn add_test() {
+  int.add(1, 2)
+  |> should.equal(3)
+
+  3
+  |> int.add(2)
+  |> should.equal(5)
+}
+
+pub fn multiply_test() {
+  int.multiply(2, 4)
+  |> should.equal(8)
+
+  3
+  |> int.multiply(2)
+  |> should.equal(6)
+}
+
+pub fn subtract_test() {
+  int.subtract(3, 1)
+  |> should.equal(2)
+
+  3
+  |> int.subtract(2)
+  |> should.equal(1)
+
+  3
+  |> int.subtract(2, _)
+  |> should.equal(-1)
+}

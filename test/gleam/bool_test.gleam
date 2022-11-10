@@ -2,6 +2,38 @@ import gleam/bool
 import gleam/order
 import gleam/should
 
+pub fn and_test() {
+  bool.and(True, True)
+  |> should.be_true
+
+  bool.and(False, True)
+  |> should.be_false
+
+  True
+  |> bool.and(True)
+  |> should.be_true
+
+  False
+  |> bool.and(True, _)
+  |> should.be_false
+}
+
+pub fn or_test() {
+  bool.or(True, True)
+  |> should.be_true
+
+  bool.or(False, True)
+  |> should.be_true
+
+  True
+  |> bool.or(False)
+  |> should.be_true
+
+  False
+  |> bool.or(True, _)
+  |> should.be_true
+}
+
 pub fn negate_test() {
   bool.negate(True)
   |> should.be_false

@@ -2,6 +2,9 @@
 
 ## v0.24.1 - unreleased
 
+- The `bool` module gains the `and` and `or` functions.
+- The `float` module gains the `add`, `subtract` and `multiply` functions.
+- The `int` module gains the `add`, `subtract` and `multiply` functions.
 - Fixed a bug where `list.permutations` would not correctly permutate lists
   with non-unique item values.
 - For `regexp.compile` unicode character properties are now used when
@@ -17,6 +20,8 @@
 - The performance of `list.flatten` has been greatly improved.
 - The `string_builder` module gains the `join` function.
 - The `list` module gains the `shuffle` function.
+- `string.split` will now return a list of graphemes if split on an empty
+  string (`""`).
 - Renamed `list.length` and `queue.length` to `list.count` and `queue.count`,
   because these functions signify that the length has to be counted and is,
   not just available as a property.

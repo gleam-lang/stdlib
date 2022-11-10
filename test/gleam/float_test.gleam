@@ -390,3 +390,34 @@ pub fn divide_test() {
   float.divide(1.0, by: 0.0)
   |> should.equal(Error(Nil))
 }
+
+pub fn add_test() {
+  float.add(1.0, 2.0)
+  |> should.equal(3.0)
+
+  3.0
+  |> float.add(2.0)
+  |> should.equal(5.0)
+}
+
+pub fn multiply_test() {
+  float.multiply(2.0, 4.0)
+  |> should.equal(8.0)
+
+  3.0
+  |> float.multiply(2.0)
+  |> should.equal(6.0)
+}
+
+pub fn subtract_test() {
+  float.subtract(3.0, 1.0)
+  |> should.equal(2.0)
+
+  3.0
+  |> float.subtract(2.0)
+  |> should.equal(1.0)
+
+  3.0
+  |> float.subtract(2.0, _)
+  |> should.equal(-1.0)
+}

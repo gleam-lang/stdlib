@@ -410,10 +410,14 @@ if javascript {
 /// ```
 ///
 pub fn split(x: String, on substring: String) -> List(String) {
-  x
-  |> string_builder.from_string
-  |> string_builder.split(on: substring)
-  |> list.map(with: string_builder.to_string)
+  case substring {
+    "" -> to_graphemes(x)
+    _ ->
+      x
+      |> string_builder.from_string
+      |> string_builder.split(on: substring)
+      |> list.map(with: string_builder.to_string)
+  }
 }
 
 /// Splits a `String` a single time on the given substring.
