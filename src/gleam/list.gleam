@@ -38,8 +38,8 @@ pub type LengthMismatch {
 /// This function has to traverse the list to determine the number of elements,
 /// so it runs in linear time.
 ///
-/// This function is natively implemented by the virtual machine and is highly
-/// optimised.
+/// For Erlang, this function is natively implemented by the virtual machine
+/// and is highly optimised.
 ///
 /// ## Examples
 ///
