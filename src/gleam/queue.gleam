@@ -99,7 +99,7 @@ pub fn count(queue: Queue(a)) -> Int {
   list.count(queue.in) + list.count(queue.out)
 }
 
-/// Deprecated: Use queue.count
+/// Deprecated: Use `queue.count` instead
 ///
 pub fn length(queue: Queue(a)) -> Int {
   count(queue)

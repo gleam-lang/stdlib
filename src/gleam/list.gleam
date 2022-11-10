@@ -58,7 +58,7 @@ pub fn count(list: List(a)) -> Int {
   do_count(list)
 }
 
-/// Deprecated: Use list.count
+/// Deprecated: Use `list.count` instead.
 ///
 pub fn length(of list: List(a)) -> Int {
   count(list)
