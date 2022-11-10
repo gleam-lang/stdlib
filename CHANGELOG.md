@@ -23,7 +23,7 @@
 - `string.split` will now return a list of graphemes if split on an empty
   string (`""`).
 - Renamed `list.length` and `queue.length` to `list.count` and `queue.count`,
-  because these functions signify that the length has to be counted and is,
+  because these function names signify that the length has to be counted and is,
   not just available as a property.
 
 ## v0.24.0 - 2022-10-15
