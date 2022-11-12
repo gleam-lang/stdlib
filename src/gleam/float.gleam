@@ -4,6 +4,7 @@ import gleam/order.{Order}
 /// possible.
 ///
 /// ## Examples
+///
 /// ```gleam
 /// > parse("2.3")
 /// Ok(2.3)
@@ -29,6 +30,7 @@ if javascript {
 /// Returns the string representation of the provided `Float`.
 ///
 /// ## Examples
+///
 /// ```gleam
 /// > to_string(2.3)
 /// "2.3"
@@ -88,6 +90,7 @@ pub fn compare(a: Float, with b: Float) -> Order {
 /// e.g. 5.3 - 5.0 is not exactly 0.3 in a float
 ///
 /// ## Examples
+///
 /// ```gleam
 /// > loosely_compare(5.0, with: 5.3, tolerating: 0.5)
 /// Eq

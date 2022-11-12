@@ -197,10 +197,7 @@ pub fn to_list(iterator: Iterator(element)) -> List(element) {
 /// ## Examples
 ///
 /// ```gleam
-/// > assert Next(head, tail) =
-/// >   [1, 2, 3, 4]
-/// >   |> from_list
-/// >   |> step
+/// > assert Next(head, tail) = [1, 2, 3, 4] |> from_list |> step
 /// > head
 /// 1
 ///
@@ -1134,6 +1131,7 @@ fn do_fold_until(
 ///
 ///
 /// ## Examples
+///
 /// ```gleam
 /// > let f = fn(acc, e) {
 /// >   case e {

@@ -296,8 +296,10 @@ fn do_map(list: List(a), fun: fn(a) -> b, acc: List(b)) -> List(b) {
 ///
 /// ## Examples
 ///
+/// ```gleam
 /// > map([2, 4, 6], fn(x) { x * 2 })
 /// [4, 8, 12]
+/// ```
 ///
 pub fn map(list: List(a), with fun: fn(a) -> b) -> List(b) {
   do_map(list, fun, [])
@@ -479,8 +481,10 @@ pub fn take(from list: List(a), up_to n: Int) -> List(a) {
 ///
 /// ## Examples
 ///
+/// ```gleam
 /// > new()
 /// []
+/// ```
 ///
 pub fn new() -> List(a) {
   []
@@ -1713,10 +1717,10 @@ pub fn scan(
 ///
 /// ## Examples
 ///
+/// ```gleam
 /// > last([])
 /// Error(Nil)
 ///
-/// ```gleam
 /// > last([1, 2, 3, 4, 5])
 /// Ok(5)
 /// ```

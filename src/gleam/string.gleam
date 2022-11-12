@@ -688,6 +688,7 @@ if javascript {
 /// pattern match on `String`s exactly as you would with lists.
 ///
 /// ## Examples
+///
 /// ```gleam
 /// > pop_grapheme("gleam")
 /// Ok(#("g", "leam"))
