@@ -208,6 +208,7 @@ if javascript {
 /// are taken starting from the *end* of the list.
 ///
 /// ## Examples
+///
 /// ```gleam
 /// > slice(from: "gleam", at_index: 1, length: 2)
 /// "le"
@@ -261,6 +262,7 @@ if javascript {
 /// If the `from` string does not contain the `before` string, `from` is returned unchanged.
 ///
 /// ## Examples
+///
 /// ```gleam
 /// > crop(from: "The Lone Gunmen", before: "Lone")
 /// "Lone Gunmen"
@@ -290,6 +292,7 @@ if javascript {
 /// Drops *n* graphemes from the left side of a `String`.
 ///
 /// ## Examples
+///
 /// ```gleam
 /// > drop_left(from: "The Lone Gunmen", up_to: 2)
 /// "e Lone Gunmen"
@@ -305,6 +308,7 @@ pub fn drop_left(from string: String, up_to num_graphemes: Int) -> String {
 /// Drops *n* graphemes from the right side of a `String`.
 ///
 /// ## Examples
+///
 /// ```gleam
 /// > drop_right(from: "Cigarette Smoking Man", up_to: 2)
 /// "Cigarette Smoking M"
@@ -755,9 +759,7 @@ pub fn utf_codepoint(value: Int) -> Result(UtfCodepoint, Nil) {
 /// ```gleam
 /// > to_option("")
 /// None
-/// ```
 ///
-/// ```gleam
 /// > to_option("hats")
 /// Some("hats")
 /// ```
@@ -778,9 +780,7 @@ pub fn to_option(s: String) -> Option(String) {
 /// ```gleam
 /// > first("")
 /// Error(Nil)
-/// ```
 ///
-/// ```gleam
 /// > first("icecream")
 /// Ok("i")
 /// ```
@@ -801,9 +801,7 @@ pub fn first(s: String) -> Result(String, Nil) {
 /// ```gleam
 /// > last("")
 /// Error(Nil)
-/// ```
 ///
-/// ```gleam
 /// > last("icecream")
 /// Ok("m")
 /// ```
@@ -833,7 +831,7 @@ pub fn capitalise(s: String) -> String {
   }
 }
 
-/// Returns a `String` representation of values in Gleam syntax.
+/// Returns a `String` representation of a term in Gleam syntax.
 ///
 pub fn inspect(term: anything) -> String {
   do_inspect(term)

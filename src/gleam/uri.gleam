@@ -4,7 +4,7 @@
 //// URIs or encoding query strings). The functions in this module are implemented
 //// according to [RFC 3986](https://tools.ietf.org/html/rfc3986).
 ////
-//// Query encoding (Form encoding) is defined in the 
+//// Query encoding (Form encoding) is defined in the
 //// [W3C specification](https://www.w3.org/TR/html52/sec-forms.html#urlencoded-form-data).
 
 import gleam/int
@@ -41,9 +41,8 @@ pub type Uri {
 ///
 /// ## Examples
 ///
-/// ```
+/// ```gleam
 /// > parse("https://example.com:1234/a/b?query=true#fragment")
-///
 /// Ok(Uri(scheme: Some("https"), ...))
 /// ```
 ///
@@ -190,9 +189,8 @@ if javascript {
 ///
 /// ## Examples
 ///
-/// ```
+/// ```gleam
 /// > parse_query("a=1&b=2")
-///
 /// Ok([#("a", "1"), #("b", "2")])
 /// ```
 ///
@@ -216,9 +214,8 @@ if javascript {
 ///
 /// ## Examples
 ///
-/// ```
+/// ```gleam
 /// > query_to_string([#("a", "1"), #("b", "2")])
-///
 /// "a=1&b=2"
 /// ```
 ///
@@ -242,9 +239,8 @@ fn query_pair(pair: #(String, String)) -> StringBuilder {
 ///
 /// ## Examples
 ///
-/// ```
+/// ```gleam
 /// > percent_encode("100% great")
-///
 /// "100%25%20great"
 /// ```
 ///
@@ -266,9 +262,8 @@ if javascript {
 ///
 /// ## Examples
 ///
-/// ```
+/// ```gleam
 /// > percent_decode("100%25+great")
-///
 /// Ok("100% great")
 /// ```
 ///
@@ -316,9 +311,8 @@ fn remove_dot_segments(input: List(String)) -> List(String) {
 ///
 /// ## Examples
 ///
-/// ```
+/// ```gleam
 /// > path_segments("/users/1")
-///
 /// ["users" ,"1"]
 /// ```
 ///
@@ -332,10 +326,9 @@ pub fn path_segments(path: String) -> List(String) {
 ///
 /// ## Examples
 ///
-/// ```
+/// ```gleam
 /// > let uri = Uri(Some("http"), None, Some("example.com"), ...)
 /// > to_string(uri)
-///
 /// "https://example.com"
 /// ```
 ///
@@ -377,10 +370,9 @@ pub fn to_string(uri: Uri) -> String {
 ///
 /// ## Examples
 ///
-/// ```
+/// ```gleam
 /// > assert Ok(uri) = parse("http://example.com/path?foo#bar")
 /// > origin(uri)
-///
 /// Ok("http://example.com")
 /// ```
 ///

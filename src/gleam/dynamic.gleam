@@ -962,9 +962,7 @@ pub fn decode2(
 /// > from(#(1, 2.0, "3"))
 /// > |> decode3(MyRecord, element(0, int), element(1, float), element(2, string))
 /// Ok(MyRecord(1, 2.0, "3"))
-/// ```
 ///
-/// ```gleam
 /// > from(#("", "", ""))
 /// > |> decode3(MyRecord, element(0, int), element(1, float), element(2, string))
 /// Error([
@@ -1002,9 +1000,7 @@ pub fn decode3(
 /// >   element(3, string),
 /// > )
 /// Ok(MyRecord(1, 2.1, "3", "4"))
-/// ```
 ///
-/// ```gleam
 /// > from(#("", "", "", ""))
 /// > |> decode4(
 /// >   MyRecord,
@@ -1055,9 +1051,7 @@ pub fn decode4(
 /// >   element(4, string),
 /// > )
 /// Ok(MyRecord(1, 2.1, "3", "4", "5"))
-/// ```
 ///
-/// ```gleam
 /// > from(#("", "", "", "", ""))
 /// > |> decode5(
 /// >   MyRecord,
@@ -1112,9 +1106,7 @@ pub fn decode5(
 /// >   element(5, string),
 /// > )
 /// Ok(MyRecord(1, 2.1, "3", "4", "5", "6"))
-/// ```
 ///
-/// ```gleam
 /// > from(#("", "", "", "", "", ""))
 /// > |> decode6(
 /// >   MyRecord,
@@ -1174,9 +1166,7 @@ pub fn decode6(
 /// >   element(6, string),
 /// > )
 /// Ok(MyRecord(1, 2.1, "3", "4", "5", "6", "7"))
-/// ```
 ///
-/// ```gleam
 /// > from(#("", "", "", "", "", "", ""))
 /// > |> decode7(
 /// >   MyRecord,
@@ -1240,9 +1230,7 @@ pub fn decode7(
 /// >   element(7, string),
 /// > )
 /// Ok(MyRecord(1, 2.1, "3", "4", "5", "6", "7", "8"))
-/// ```
 ///
-/// ```gleam
 /// > from(#("", "", "", "", "", "", "", ""))
 /// > |> decode7(
 /// >   MyRecord,
@@ -1310,9 +1298,7 @@ pub fn decode8(
 /// >   element(8, string),
 /// > )
 /// Ok(MyRecord(1, 2.1, "3", "4", "5", "6", "7", "8", "9"))
-/// ```
 ///
-/// ```gleam
 /// > from(#("", "", "", "", "", "", "", "", ""))
 /// > |> decode7(
 /// >   MyRecord,

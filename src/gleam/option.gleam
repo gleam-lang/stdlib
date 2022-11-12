@@ -17,7 +17,7 @@ pub type Option(a) {
 ///
 /// ## Examples
 ///
-/// ```
+/// ```gleam
 /// > all([Some(1), Some(2)])
 /// Some([1, 2])
 ///
@@ -77,6 +77,7 @@ pub fn is_none(option: Option(a)) -> Bool {
 /// ```gleam
 /// > to_result(Some(1), "some_error")
 /// Ok(1)
+///
 /// > to_result(None, "some_error")
 /// Error("some_error")
 /// ```
@@ -95,6 +96,7 @@ pub fn to_result(option: Option(a), e) -> Result(a, e) {
 /// ```gleam
 /// > from_result(Ok(1))
 /// Some(1)
+///
 /// > from_result(Error("some_error"))
 /// None
 /// ```
@@ -277,7 +279,7 @@ pub fn lazy_or(first: Option(a), second: fn() -> Option(a)) -> Option(a) {
 ///
 /// ## Examples
 ///
-/// ```
+/// ```gleam
 /// > values([Some(1), None, Some(3)])
 /// [1, 3]
 /// ```

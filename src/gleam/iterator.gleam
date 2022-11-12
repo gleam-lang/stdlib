@@ -178,7 +178,7 @@ pub fn run(iterator: Iterator(e)) -> Nil {
 ///
 /// ## Examples
 ///
-/// ```
+/// ```gleam
 /// > [1, 2, 3] |> from_list |> map(fn(x) { x * 2 }) |> to_list
 /// [2, 4, 6]
 /// ```
@@ -655,8 +655,8 @@ fn do_scan(
 ///
 /// ## Examples
 ///
-/// Generate a sequence of partial sums:
 /// ```gleam
+/// // Generate a sequence of partial sums
 /// > from_list([1, 2, 3, 4, 5]) |> scan(from: 0, with: fn(acc, el) { acc + el }) |> to_list
 /// [1, 3, 6, 10, 15]
 /// ```
@@ -1055,8 +1055,10 @@ pub fn empty() -> Iterator(element) {
 ///
 /// ## Examples
 ///
+/// ```gleam
 /// > once(fn() { 1 }) |> to_list
 /// [1]
+/// ```
 ///
 pub fn once(f: fn() -> element) -> Iterator(element) {
   fn() { Continue(f(), stop) }
@@ -1204,7 +1206,7 @@ pub fn try_fold(
 ///
 /// ## Examples
 ///
-/// ```
+/// ```gleam
 /// > from_list([1, 2, 3]) |> first
 /// Ok(1)
 ///
@@ -1226,7 +1228,7 @@ pub fn first(from iterator: Iterator(e)) -> Result(e, Nil) {
 ///
 /// ## Examples
 ///
-/// ```
+/// ```gleam
 /// > from_list([1, 2, 3, 4]) |> at(2)
 /// Ok(3)
 ///

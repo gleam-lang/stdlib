@@ -52,7 +52,7 @@ if javascript {
 ///
 /// ## Examples
 ///
-/// ```
+/// ```gleam
 /// > clamp(1.2, min: 1.4, max: 1.6)
 /// 1.4
 /// ```
@@ -66,6 +66,7 @@ pub fn clamp(x: Float, min min_bound: Float, max max_bound: Float) -> Float {
 /// Compares two `Float`s, returning an order.
 ///
 /// ## Examples
+///
 /// ```gleam
 /// > compare(2.0, 2.3)
 /// Lt
@@ -282,10 +283,10 @@ pub fn absolute_value(x: Float) -> Float {
 pub fn power(base: Float, of exponent: Float) -> Result(Float, Nil) {
   let fractional: Bool = ceiling(exponent) -. exponent >. 0.
   // In the following check:
-  // 1. If the base is negative and the exponent is fractional then 
+  // 1. If the base is negative and the exponent is fractional then
   //    return an error as it will otherwise be an imaginary number
   // 2. If the base is 0 and the exponent is negative then the expression
-  //    is equivalent to the exponent divided by 0 and an error should be 
+  //    is equivalent to the exponent divided by 0 and an error should be
   //    returned
   case base <. 0. && fractional || base == 0. && exponent <. 0. {
     True -> Error(Nil)
@@ -376,8 +377,8 @@ fn do_product(numbers: List(Float), initial: Float) -> Float {
   }
 }
 
-/// Returns 0.0 if boundary_a and boundary_b are equal,
-/// otherwise returns a Float x where: lower_boundary =< x < upper_boundary.
+/// Returns `0.0` if `boundary_a` and `boundary_b` are equal,
+/// otherwise returns a `Float x` where `lower_boundary =< x < upper_boundary`.
 ///
 /// ## Examples
 ///
@@ -439,9 +440,9 @@ pub fn divide(a: Float, by b: Float) -> Result(Float, Nil) {
 
 /// Adds two floats together.
 ///
-/// It's the function equivalent of the `+.` operator. 
+/// It's the function equivalent of the `+.` operator.
 /// This function is useful in higher order functions or pipes.
-/// 
+///
 /// ## Examples
 ///
 /// ```gleam
@@ -454,15 +455,16 @@ pub fn divide(a: Float, by b: Float) -> Result(Float, Nil) {
 /// > 3.0 |> add(2.0)
 /// 5.0
 /// ```
+///
 pub fn add(a: Float, b: Float) -> Float {
   a +. b
 }
 
 /// Multiplies two floats together.
 ///
-/// It's the function equivalent of the `*.` operator. 
+/// It's the function equivalent of the `*.` operator.
 /// This function is useful in higher order functions or pipes.
-/// 
+///
 /// ## Examples
 ///
 /// ```gleam
@@ -475,15 +477,16 @@ pub fn add(a: Float, b: Float) -> Float {
 /// > 3.0 |> multiply(2.0)
 /// 6.0
 /// ```
+///
 pub fn multiply(a: Float, b: Float) -> Float {
   a *. b
 }
 
 /// Subtracts one float from another.
 ///
-/// It's the function equivalent of the `-.` operator. 
+/// It's the function equivalent of the `-.` operator.
 /// This function is useful in higher order functions or pipes.
-/// 
+///
 /// ## Examples
 ///
 /// ```gleam
@@ -499,6 +502,7 @@ pub fn multiply(a: Float, b: Float) -> Float {
 /// > 3.0 |> subtract(2.0, _)
 /// -1.0
 /// ```
+///
 pub fn subtract(a: Float, b: Float) -> Float {
   a -. b
 }

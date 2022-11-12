@@ -156,9 +156,7 @@ pub fn then(
 /// ```gleam
 /// > unwrap(Ok(1), 0)
 /// 1
-/// ```
 ///
-/// ```gleam
 /// > unwrap(Error(""), 0)
 /// 0
 /// ```
@@ -178,9 +176,7 @@ pub fn unwrap(result: Result(a, e), or default: a) -> a {
 /// ```gleam
 /// > lazy_unwrap(Ok(1), fn() { 0 })
 /// 1
-/// ```
 ///
-/// ```gleam
 /// > lazy_unwrap(Error(""), fn() { 0 })
 /// 0
 /// ```
@@ -200,9 +196,7 @@ pub fn lazy_unwrap(result: Result(a, e), or default: fn() -> a) -> a {
 /// ```gleam
 /// > unwrap_error(Error(1), 0)
 /// 1
-/// ```
 ///
-/// ```gleam
 /// > unwrap_error(Ok(""), 0)
 /// 0
 /// ```
@@ -222,9 +216,7 @@ pub fn unwrap_error(result: Result(a, e), or default: e) -> e {
 /// ```gleam
 /// > unwrap_both(Error(1))
 /// 1
-/// ```
 ///
-/// ```gleam
 /// > unwrap_both(Ok(2))
 /// 2
 /// ```
@@ -314,9 +306,7 @@ pub fn lazy_or(
 /// ```gleam
 /// > all([Ok(1), Ok(2)])
 /// Ok([1, 2])
-/// ```
 ///
-/// ```gleam
 /// > all([Ok(1), Error("e")])
 /// Error("e")
 /// ```
@@ -332,9 +322,7 @@ pub fn all(results: List(Result(a, e))) -> Result(List(a), e) {
 /// ```gleam
 /// > replace(Ok(1), Nil)
 /// Ok(Nil)
-/// ```
 ///
-/// ```gleam
 /// > replace(Error(1), Nil)
 /// Error(1)
 /// ```
@@ -353,9 +341,7 @@ pub fn replace(result: Result(a, e), value: b) -> Result(b, e) {
 /// ```gleam
 /// > replace_error(Error(1), Nil)
 /// Error(Nil)
-/// ```
 ///
-/// ```gleam
 /// > replace_error(Ok(1), Nil)
 /// Ok(1)
 /// ```
@@ -371,7 +357,7 @@ pub fn replace_error(result: Result(a, e1), error: e2) -> Result(a, e2) {
 ///
 /// ## Examples
 ///
-/// ```
+/// ```gleam
 /// > values([Ok(1), None, Ok(3)])
 /// [1, 3]
 /// ```

@@ -6,7 +6,7 @@ import gleam/string
 ///
 /// ## Example
 ///
-/// ```
+/// ```gleam
 /// > io.print("Hi mum")
 /// // -> Hi mum
 /// Nil
