@@ -217,7 +217,7 @@ pub fn to_base36(x: Int) -> String {
 ///
 /// ## Examples
 ///
-/// ```
+/// ```gleam
 /// > to_float(5)
 /// 5.
 ///
@@ -246,7 +246,7 @@ if javascript {
 ///
 /// ## Examples
 ///
-/// ```
+/// ```gleam
 /// > clamp(40, min: 50, max: 60)
 /// 50
 /// ```
@@ -465,8 +465,8 @@ fn do_undigits(
   }
 }
 
-/// Returns 0 if boundary_a and boundary_b are equal,
-/// otherwise returns an Int x where: lower_boundary =< x < upper_boundary.
+/// Returns `0` if `boundary_a` and `boundary_b` are equal,
+/// otherwise returns an `Int x` where `lower_boundary =< x < upper_boundary`.
 ///
 /// ## Examples
 ///
@@ -655,9 +655,9 @@ pub fn floor_divide(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
 
 /// Adds two integers together.
 ///
-/// It's the function equivalent of the `+` operator. 
+/// It's the function equivalent of the `+` operator.
 /// This function is useful in higher order functions or pipes.
-/// 
+///
 /// ## Examples
 ///
 /// ```gleam
@@ -670,15 +670,16 @@ pub fn floor_divide(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
 /// > 3 |> add(2)
 /// 5
 /// ```
+///
 pub fn add(a: Int, b: Int) -> Int {
   a + b
 }
 
 /// Multiplies two integers together.
 ///
-/// It's the function equivalent of the `*` operator. 
+/// It's the function equivalent of the `*` operator.
 /// This function is useful in higher order functions or pipes.
-/// 
+///
 /// ## Examples
 ///
 /// ```gleam
@@ -691,15 +692,16 @@ pub fn add(a: Int, b: Int) -> Int {
 /// > 3 |> multiply(2)
 /// 6
 /// ```
+///
 pub fn multiply(a: Int, b: Int) -> Int {
   a * b
 }
 
 /// Subtracts one int from another.
 ///
-/// It's the function equivalent of the `-` operator. 
+/// It's the function equivalent of the `-` operator.
 /// This function is useful in higher order functions or pipes.
-/// 
+///
 /// ## Examples
 ///
 /// ```gleam
@@ -715,6 +717,7 @@ pub fn multiply(a: Int, b: Int) -> Int {
 /// > 3 |> subtract(2, _)
 /// -1
 /// ```
+///
 pub fn subtract(a: Int, b: Int) -> Int {
   a - b
 }

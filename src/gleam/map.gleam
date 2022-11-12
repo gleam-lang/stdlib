@@ -34,7 +34,6 @@ pub external type Map(key, value)
 /// 1
 /// ```
 ///
-///
 pub fn size(map: Map(k, v)) -> Int {
   do_size(map)
 }
@@ -210,7 +209,6 @@ if javascript {
 /// > |> map_values(fn(key, value) { key * value })
 /// [#(3, 9), #(2, 8)]
 /// ```
-///
 ///
 pub fn map_values(in map: Map(k, v), with fun: fn(k, v) -> w) -> Map(k, w) {
   do_map_values(fun, map)

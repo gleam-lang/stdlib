@@ -214,8 +214,8 @@ fn order(first: Set(member), second: Set(member)) -> #(Set(member), Set(member))
 /// ## Examples
 ///
 /// ```gleam
-///  > union(from_list([1, 2]), from_list([2, 3])) |> to_list
-///  [1, 2, 3]
+/// > union(from_list([1, 2]), from_list([2, 3])) |> to_list
+/// [1, 2, 3]
 /// ```
 ///
 pub fn union(of first: Set(member), and second: Set(member)) -> Set(member) {
@@ -230,8 +230,8 @@ pub fn union(of first: Set(member), and second: Set(member)) -> Set(member) {
 /// ## Examples
 ///
 /// ```gleam
-///  > intersection(from_list([1, 2]), from_list([2, 3])) |> to_list
-///  [2]
+/// > intersection(from_list([1, 2]), from_list([2, 3])) |> to_list
+/// [2]
 /// ```
 ///
 pub fn intersection(

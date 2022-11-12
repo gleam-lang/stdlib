@@ -1734,8 +1734,8 @@ pub fn last(list: List(a)) -> Result(a, Nil) {
 /// > combinations([1, 2, 3], 2)
 /// [[1, 2], [1, 3], [2, 3]]
 ///
-///  > combinations([1, 2, 3, 4], 3)
-///  [[1, 2, 3], [1, 2, 4], [1, 3, 4], [2, 3, 4]]
+/// > combinations([1, 2, 3, 4], 3)
+/// [[1, 2, 3], [1, 2, 4], [1, 3, 4], [2, 3, 4]]
 /// ```
 ///
 pub fn combinations(items: List(a), by n: Int) -> List(List(a)) {
