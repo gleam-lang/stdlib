@@ -1129,7 +1129,6 @@ fn do_fold_until(
 /// If called on an iterator of infinite length then this function will only ever
 /// return if the function returns `list.Stop`.
 ///
-///
 /// ## Examples
 ///
 /// ```gleam
@@ -1170,7 +1169,6 @@ fn do_try_fold(
 }
 
 /// A variant of fold that might fail.
-///
 ///
 /// The folding function should return `Result(accumulator, error)`.
 /// If the returned value is `Ok(accumulator)` try_fold will try the next value in the iterator.
