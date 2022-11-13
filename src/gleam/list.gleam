@@ -682,7 +682,7 @@ fn do_index_fold(
 ///
 /// ```gleam
 /// ["a", "b", "c"]
-/// |> list.index_fold([], fn(acc, item, index) { ... })
+/// |> index_fold([], fn(acc, item, index) { ... })
 /// ```
 ///
 pub fn index_fold(

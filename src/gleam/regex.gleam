@@ -160,8 +160,8 @@ if javascript {
 /// ## Examples
 ///
 /// ```gleam
-/// > assert Ok(re) = regex.from_string("[oi]n a (\\w+)")
-/// > regex.scan(with: re, content: "I am on a boat in a lake.")
+/// > assert Ok(re) = from_string("[oi]n a (\\w+)")
+/// > scan(with: re, content: "I am on a boat in a lake.")
 /// [
 ///   Match(
 ///     content: "on a boat",
