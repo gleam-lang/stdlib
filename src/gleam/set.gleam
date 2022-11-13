@@ -40,7 +40,10 @@ pub fn new() -> Set(member) {
 /// ## Examples
 ///
 /// ```gleam
-/// > new() |> insert(1) |> insert(2) |> size
+/// > new()
+/// > |> insert(1)
+/// > |> insert(2)
+/// > |> size
 /// 2
 /// ```
 ///
@@ -55,7 +58,10 @@ pub fn size(set: Set(member)) -> Int {
 /// ## Examples
 ///
 /// ```gleam
-/// > new() |> insert(1) |> insert(2) |> size
+/// > new()
+/// > |> insert(1)
+/// > |> insert(2)
+/// > |> size
 /// 2
 /// ```
 ///
@@ -70,10 +76,16 @@ pub fn insert(into set: Set(member), this member: member) -> Set(member) {
 /// ## Examples
 ///
 /// ```gleam
-/// > new() |> insert(2) |> contains(2)
+/// > new()
+/// > |> insert(2)
+/// > |> contains(2)
 /// True
+/// ```
 ///
-/// > new() |> insert(2) |> contains(1)
+/// ```gleam
+/// > new()
+/// > |> insert(2)
+/// > |> contains(1)
 /// False
 /// ```
 ///
@@ -91,7 +103,10 @@ pub fn contains(in set: Set(member), this member: member) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// > new() |> insert(2) |> delete(2) |> contains(1)
+/// > new()
+/// > |> insert(2)
+/// > |> delete(2)
+/// > |> contains(1)
 /// False
 /// ```
 ///
@@ -192,7 +207,9 @@ pub fn filter(
 /// ## Examples
 ///
 /// ```gleam
-/// > from_list([1, 2, 3]) |> take([1, 3, 5]) |> to_list
+/// > from_list([1, 2, 3])
+/// > |> take([1, 3, 5])
+/// > |> to_list
 /// [1, 3]
 /// ```
 ///

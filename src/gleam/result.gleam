@@ -10,7 +10,9 @@ import gleam/list
 /// ```gleam
 /// > is_ok(Ok(1))
 /// True
+/// ```
 ///
+/// ```gleam
 /// > is_ok(Error(Nil))
 /// False
 /// ```
@@ -29,7 +31,9 @@ pub fn is_ok(result: Result(a, e)) -> Bool {
 /// ```gleam
 /// > is_error(Ok(1))
 /// False
+/// ```
 ///
+/// ```gleam
 /// > is_error(Error(Nil))
 /// True
 /// ```
@@ -52,7 +56,9 @@ pub fn is_error(result: Result(a, e)) -> Bool {
 /// ```gleam
 /// > map(over: Ok(1), with: fn(x) { x + 1 })
 /// Ok(2)
+/// ```
 ///
+/// ```gleam
 /// > map(over: Error(1), with: fn(x) { x + 1 })
 /// Error(1)
 /// ```
@@ -75,7 +81,9 @@ pub fn map(over result: Result(a, e), with fun: fn(a) -> b) -> Result(b, e) {
 /// ```gleam
 /// > map_error(over: Error(1), with: fn(x) { x + 1 })
 /// Error(2)
+/// ```
 ///
+/// ```gleam
 /// > map_error(over: Ok(1), with: fn(x) { x + 1 })
 /// Ok(1)
 /// ```
@@ -97,10 +105,14 @@ pub fn map_error(
 /// ```gleam
 /// > flatten(Ok(Ok(1)))
 /// Ok(1)
+/// ```
 ///
+/// ```gleam
 /// > flatten(Ok(Error("")))
 /// Error("")
+/// ```
 ///
+/// ```gleam
 /// > flatten(Error(Nil))
 /// Error(Nil)
 /// ```
@@ -127,13 +139,19 @@ pub fn flatten(result: Result(Result(a, e), e)) -> Result(a, e) {
 /// ```gleam
 /// > then(Ok(1), fn(x) { Ok(x + 1) })
 /// Ok(2)
+/// ```
 ///
+/// ```gleam
 /// > then(Ok(1), fn(x) { Ok(#("a", x)) })
 /// Ok(#("a", 1))
+/// ```
 ///
+/// ```gleam
 /// > then(Ok(1), fn(_) { Error("Oh no") })
 /// Error("Oh no")
+/// ```
 ///
+/// ```gleam
 /// > then(Error(Nil), fn(x) { Ok(x + 1) })
 /// Error(Nil)
 /// ```
@@ -156,7 +174,9 @@ pub fn then(
 /// ```gleam
 /// > unwrap(Ok(1), 0)
 /// 1
+/// ```
 ///
+/// ```gleam
 /// > unwrap(Error(""), 0)
 /// 0
 /// ```
@@ -176,7 +196,9 @@ pub fn unwrap(result: Result(a, e), or default: a) -> a {
 /// ```gleam
 /// > lazy_unwrap(Ok(1), fn() { 0 })
 /// 1
+/// ```
 ///
+/// ```gleam
 /// > lazy_unwrap(Error(""), fn() { 0 })
 /// 0
 /// ```
@@ -196,7 +218,9 @@ pub fn lazy_unwrap(result: Result(a, e), or default: fn() -> a) -> a {
 /// ```gleam
 /// > unwrap_error(Error(1), 0)
 /// 1
+/// ```
 ///
+/// ```gleam
 /// > unwrap_error(Ok(""), 0)
 /// 0
 /// ```
@@ -216,7 +240,9 @@ pub fn unwrap_error(result: Result(a, e), or default: e) -> e {
 /// ```gleam
 /// > unwrap_both(Error(1))
 /// 1
+/// ```
 ///
+/// ```gleam
 /// > unwrap_both(Ok(2))
 /// 2
 /// ```
@@ -235,7 +261,9 @@ pub fn unwrap_both(result: Result(a, a)) -> a {
 /// ```gleam
 /// > nil_error(Error(1))
 /// Error(Nil)
+/// ```
 ///
+/// ```gleam
 /// > nil_error(Ok(1))
 /// Ok(1)
 /// ```
@@ -251,13 +279,19 @@ pub fn nil_error(result: Result(a, e)) -> Result(a, Nil) {
 /// ```gleam
 /// > or(Ok(1), Ok(2))
 /// Ok(1)
+/// ```
 ///
+/// ```gleam
 /// > or(Ok(1), Error("Error 2"))
 /// Ok(1)
+/// ```
 ///
+/// ```gleam
 /// > or(Error("Error 1"), Ok(2))
 /// Ok(2)
+/// ```
 ///
+/// ```gleam
 /// > or(Error("Error 1"), Error("Error 2"))
 /// Error("Error 2")
 /// ```
@@ -276,13 +310,19 @@ pub fn or(first: Result(a, e), second: Result(a, e)) -> Result(a, e) {
 /// ```gleam
 /// > lazy_or(Ok(1), fn() { Ok(2) })
 /// Ok(1)
+/// ```
 ///
+/// ```gleam
 /// > lazy_or(Ok(1), fn() { Error("Error 2") })
 /// Ok(1)
+/// ```
 ///
+/// ```gleam
 /// > lazy_or(Error("Error 1"), fn() { Ok(2) })
 /// Ok(2)
+/// ```
 ///
+/// ```gleam
 /// > lazy_or(Error("Error 1"), fn() { Error("Error 2") })
 /// Error("Error 2")
 /// ```
@@ -306,7 +346,9 @@ pub fn lazy_or(
 /// ```gleam
 /// > all([Ok(1), Ok(2)])
 /// Ok([1, 2])
+/// ```
 ///
+/// ```gleam
 /// > all([Ok(1), Error("e")])
 /// Error("e")
 /// ```
@@ -322,7 +364,9 @@ pub fn all(results: List(Result(a, e))) -> Result(List(a), e) {
 /// ```gleam
 /// > replace(Ok(1), Nil)
 /// Ok(Nil)
+/// ```
 ///
+/// ```gleam
 /// > replace(Error(1), Nil)
 /// Error(1)
 /// ```
@@ -341,7 +385,9 @@ pub fn replace(result: Result(a, e), value: b) -> Result(b, e) {
 /// ```gleam
 /// > replace_error(Error(1), Nil)
 /// Error(Nil)
+/// ```
 ///
+/// ```gleam
 /// > replace_error(Ok(1), Nil)
 /// Ok(1)
 /// ```

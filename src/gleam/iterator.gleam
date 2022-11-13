@@ -109,7 +109,8 @@ pub fn repeat(x: element) -> Iterator(element) {
 /// ## Examples
 ///
 /// ```gleam
-/// > from_list([1, 2, 3, 4]) |> to_list
+/// > from_list([1, 2, 3, 4])
+/// > |> to_list
 /// [1, 2, 3, 4]
 /// ```
 ///
@@ -179,7 +180,10 @@ pub fn run(iterator: Iterator(e)) -> Nil {
 /// ## Examples
 ///
 /// ```gleam
-/// > [1, 2, 3] |> from_list |> map(fn(x) { x * 2 }) |> to_list
+/// > [1, 2, 3]
+/// > |> from_list
+/// > |> map(fn(x) { x * 2 })
+/// > |> to_list
 /// [2, 4, 6]
 /// ```
 ///
@@ -197,13 +201,19 @@ pub fn to_list(iterator: Iterator(element)) -> List(element) {
 /// ## Examples
 ///
 /// ```gleam
-/// > assert Next(head, tail) = [1, 2, 3, 4] |> from_list |> step
+/// > assert Next(head, tail) = [1, 2, 3, 4]
+/// >   |> from_list
+/// >   |> step
 /// > head
 /// 1
+/// ```
 ///
+/// ```gleam
 /// > tail |> to_list
 /// [2, 3, 4]
+/// ```
 ///
+/// ```gleam
 /// > empty() |> step
 /// Done
 /// ```
@@ -235,10 +245,18 @@ fn do_take(continuation: fn() -> Action(e), desired: Int) -> fn() -> Action(e) {
 /// ## Examples
 ///
 /// ```gleam
-/// > [1, 2, 3, 4, 5] |> from_list |> take(up_to: 3) |> to_list
+/// > [1, 2, 3, 4, 5]
+/// > |> from_list
+/// > |> take(up_to: 3)
+/// > |> to_list
 /// [1, 2, 3]
+/// ```
 ///
-/// > [1, 2] |> from_list |> take(up_to: 3) |> to_list
+/// ```gleam
+/// > [1, 2]
+/// > |> from_list
+/// > |> take(up_to: 3)
+/// > |> to_list
 /// [1, 2]
 /// ```
 ///
@@ -271,10 +289,18 @@ fn do_drop(continuation: fn() -> Action(e), desired: Int) -> Action(e) {
 /// ## Examples
 ///
 /// ```gleam
-/// > [1, 2, 3, 4, 5] |> from_list |> drop(up_to: 3) |> to_list
+/// > [1, 2, 3, 4, 5]
+/// > |> from_list
+/// > |> drop(up_to: 3)
+/// > |> to_list
 /// [4, 5]
+/// ```
 ///
-/// > [1, 2] |> from_list |> drop(up_to: 3) |> to_list
+/// ```gleam
+/// > [1, 2]
+/// > |> from_list
+/// > |> drop(up_to: 3)
+/// > |> to_list
 /// []
 /// ```
 ///
@@ -303,7 +329,10 @@ fn do_map(continuation: fn() -> Action(a), f: fn(a) -> b) -> fn() -> Action(b) {
 /// ## Examples
 ///
 /// ```gleam
-/// > [1, 2, 3] |> from_list |> map(fn(x) { x * 2 }) |> to_list
+/// > [1, 2, 3]
+/// > |> from_list
+/// > |> map(fn(x) { x * 2 })
+/// > |> to_list
 /// [2, 4, 6]
 /// ```
 ///
@@ -328,7 +357,10 @@ fn do_append(first: fn() -> Action(a), second: fn() -> Action(a)) -> Action(a) {
 /// ## Examples
 ///
 /// ```gleam
-/// > [1, 2] |> from_list |> append([3, 4] |> from_list) |> to_list
+/// > [1, 2]
+/// > |> from_list
+/// > |> append([3, 4] |> from_list)
+/// > |> to_list
 /// [1, 2, 3, 4]
 /// ```
 ///
@@ -353,7 +385,10 @@ fn do_flatten(flattened: fn() -> Action(Iterator(a))) -> Action(a) {
 /// ## Examples
 ///
 /// ```gleam
-/// > from_list([[1, 2], [3, 4]]) |> map(from_list) |> flatten |> to_list
+/// > from_list([[1, 2], [3, 4]])
+/// > |> map(from_list)
+/// > |> flatten
+/// > |> to_list
 /// [1, 2, 3, 4]
 /// ```
 ///
@@ -374,7 +409,10 @@ pub fn flatten(iterator: Iterator(Iterator(a))) -> Iterator(a) {
 /// ## Examples
 ///
 /// ```gleam
-/// > [1, 2] |> from_list |> flat_map(fn(x) { from_list([x, x + 1]) }) |> to_list
+/// > [1, 2]
+/// > |> from_list
+/// > |> flat_map(fn(x) { from_list([x, x + 1]) })
+/// > |> to_list
 /// [1, 2, 2, 3]
 /// ```
 ///
@@ -413,7 +451,10 @@ fn do_filter(
 ///
 /// ```gleam
 /// > import gleam/int
-/// > [1, 2, 3, 4] |> from_list |> filter(int.is_even) |> to_list
+/// > [1, 2, 3, 4]
+/// > |> from_list
+/// > |> filter(int.is_even)
+/// > |> to_list
 /// [2, 4]
 /// ```
 ///
@@ -430,7 +471,11 @@ pub fn filter(
 /// ## Examples
 ///
 /// ```gleam
-/// > [1, 2] |> from_list |> cycle |> take(6) |> to_list
+/// > [1, 2]
+/// > |> from_list
+/// > |> cycle
+/// > |> take(6)
+/// > |> to_list
 /// [1, 2, 1, 2, 1, 2]
 /// ```
 ///
@@ -447,10 +492,14 @@ pub fn cycle(iterator: Iterator(a)) -> Iterator(a) {
 /// ```gleam
 /// > range(from: 1, to: 5) |> to_list
 /// [1, 2, 3, 4, 5]
+/// ```
 ///
+/// ```gleam
 /// > range(from: 1, to: -2) |> to_list
 /// [1, 0, -1, -2]
+/// ```
 ///
+/// ```gleam
 /// > range(from: 0, to: 0) |> to_list
 /// [0]
 /// ```
@@ -504,10 +553,14 @@ fn do_find(continuation: fn() -> Action(a), f: fn(a) -> Bool) -> Result(a, Nil) 
 /// ```gleam
 /// > find(from_list([1, 2, 3]), fn(x) { x > 2 })
 /// Ok(3)
+/// ```
 ///
+/// ```gleam
 /// > find(from_list([1, 2, 3]), fn(x) { x > 4 })
 /// Error(Nil)
+/// ```
 ///
+/// ```gleam
 /// > find(empty(), fn(_) { True })
 /// Error(Nil)
 /// ```
@@ -585,7 +638,9 @@ fn do_take_while(
 /// ## Examples
 ///
 /// ```gleam
-/// > from_list([1, 2, 3, 2, 4]) |> take_while(satisfying: fn(x) { x < 3 }) |> to_list
+/// > from_list([1, 2, 3, 2, 4])
+/// > |> take_while(satisfying: fn(x) { x < 3 })
+/// > |> to_list
 /// [1, 2]
 /// ```
 ///
@@ -618,7 +673,9 @@ fn do_drop_while(
 /// ## Examples
 ///
 /// ```gleam
-/// > from_list([1, 2, 3, 4, 2, 5]) |> drop_while(satisfying: fn(x) { x < 4 }) |> to_list
+/// > from_list([1, 2, 3, 4, 2, 5])
+/// > |> drop_while(satisfying: fn(x) { x < 4 })
+/// > |> to_list
 /// [4, 2, 5]
 /// ```
 ///
@@ -654,7 +711,9 @@ fn do_scan(
 ///
 /// ```gleam
 /// // Generate a sequence of partial sums
-/// > from_list([1, 2, 3, 4, 5]) |> scan(from: 0, with: fn(acc, el) { acc + el }) |> to_list
+/// > from_list([1, 2, 3, 4, 5])
+/// > |> scan(from: 0, with: fn(acc, el) { acc + el })
+/// > |> to_list
 /// [1, 3, 6, 10, 15]
 /// ```
 ///
@@ -691,7 +750,9 @@ fn do_zip(
 /// ## Examples
 ///
 /// ```gleam
-/// > from_list(["a", "b", "c"]) |> zip(range(20, 30)) |> to_list
+/// > from_list(["a", "b", "c"])
+/// > |> zip(range(20, 30))
+/// > |> to_list
 /// [#("a", 20), #("b", 21), #("c", 22)]
 /// ```
 ///
@@ -743,7 +804,9 @@ fn do_chunk(
 /// ## Examples
 ///
 /// ```gleam
-/// > from_list([1, 2, 2, 3, 4, 4, 6, 7, 7]) |> chunk(by: fn(n) { n % 2 }) |> to_list
+/// > from_list([1, 2, 2, 3, 4, 4, 6, 7, 7])
+/// > |> chunk(by: fn(n) { n % 2 })
+/// > |> to_list
 /// [[1], [2, 2], [3], [4, 4, 6], [7, 7]]
 /// ```
 ///
@@ -812,10 +875,16 @@ fn do_sized_chunk(
 /// ## Examples
 ///
 /// ```gleam
-/// > from_list([1, 2, 3, 4, 5, 6]) |> sized_chunk(into: 2) |> to_list
+/// > from_list([1, 2, 3, 4, 5, 6])
+/// > |> sized_chunk(into: 2)
+/// > |> to_list
 /// [[1, 2], [3, 4], [5, 6]]
+/// ```
 ///
-/// > from_list([1, 2, 3, 4, 5, 6, 7, 8]) |> sized_chunk(into: 3) |> to_list
+/// ```gleam
+/// > from_list([1, 2, 3, 4, 5, 6, 7, 8])
+/// > |> sized_chunk(into: 3)
+/// > |> to_list
 /// [[1, 2, 3], [4, 5, 6], [7, 8]]
 /// ```
 ///
@@ -847,13 +916,19 @@ fn do_intersperse(
 /// ## Examples
 ///
 /// ```gleam
-/// > empty() |> intersperse(with: 0) |> to_list
+/// > empty()
+/// > |> intersperse(with: 0)
+/// > |> to_list
 /// []
 ///
-/// > from_list([1]) |> intersperse(with: 0) |> to_list
+/// > from_list([1])
+/// > |> intersperse(with: 0)
+/// > |> to_list
 /// [1]
 ///
-/// > from_list([1, 2, 3, 4, 5]) |> intersperse(with: 0) |> to_list
+/// > from_list([1, 2, 3, 4, 5])
+/// > |> intersperse(with: 0)
+/// > |> to_list
 /// [1, 0, 2, 0, 3, 0, 4, 0, 5]
 /// ```
 ///
@@ -892,10 +967,14 @@ fn do_any(
 /// ```gleam
 /// > empty() |> any(fn(n) { n % 2 == 0 })
 /// False
+/// ```
 ///
+/// ```gleam
 /// > from_list([1, 2, 5, 7, 9]) |> any(fn(n) { n % 2 == 0 })
 /// True
+/// ```
 ///
+/// ```gleam
 /// > from_list([1, 3, 5, 7, 9]) |> any(fn(n) { n % 2 == 0 })
 /// False
 /// ```
@@ -930,10 +1009,14 @@ fn do_all(
 /// ```gleam
 /// > empty() |> all(fn(n) { n % 2 == 0 })
 /// True
+/// ```
 ///
+/// ```gleam
 /// > from_list([2, 4, 6, 8]) |> all(fn(n) { n % 2 == 0 })
 /// True
+/// ```
 ///
+/// ```gleam
 /// > from_list([2, 4, 5, 8]) |> all(fn(n) { n % 2 == 0 })
 /// False
 /// ```
@@ -997,7 +1080,9 @@ pub fn group(
 /// ```gleam
 /// > from_list([]) |> reduce(fn(acc, x) { acc + x })
 /// Error(Nil)
+/// ```
 ///
+/// ```gleam
 /// > from_list([1, 2, 3, 4, 5]) |> reduce(fn(acc, x) { acc + x })
 /// Ok(15)
 /// ```
@@ -1025,7 +1110,9 @@ pub fn reduce(
 /// ```gleam
 /// > empty() |> last
 /// Error(Nil)
+/// ```
 ///
+/// ```gleam
 /// > range(1, 10) |> last
 /// Ok(9)
 /// ```
@@ -1094,7 +1181,9 @@ fn do_interleave(
 /// ```gleam
 /// > from_list([1, 2, 3, 4]) |> interleave(from_list([11, 12, 13, 14])) |> to_list
 /// [1, 11, 2, 12, 3, 13, 4, 14]
+/// ```
 ///
+/// ```gleam
 /// > from_list([1, 2, 3, 4]) |> interleave(from_list([100])) |> to_list
 /// [1, 100, 2, 3, 4]
 /// ```
@@ -1132,6 +1221,7 @@ fn do_fold_until(
 /// ## Examples
 ///
 /// ```gleam
+/// > import gleam/list
 /// > let f = fn(acc, e) {
 /// >   case e {
 /// >     _ if e < 4 -> list.Continue(e + acc)
@@ -1141,7 +1231,7 @@ fn do_fold_until(
 /// >
 /// > [1, 2, 3, 4]
 /// > |> from_list
-/// > |> iterator.fold_until(from: acc, with: f)
+/// > |> fold_until(from: acc, with: f)
 /// 6
 /// ```
 ///
@@ -1205,7 +1295,9 @@ pub fn try_fold(
 /// ```gleam
 /// > from_list([1, 2, 3]) |> first
 /// Ok(1)
+/// ```
 ///
+/// ```gleam
 /// > empty() |> first
 /// Error(Nil)
 /// ```
@@ -1216,21 +1308,25 @@ pub fn first(from iterator: Iterator(e)) -> Result(e, Nil) {
   }
 }
 
-/// Returns nth element yielded by the given iterator, where 0 means the first element.
+/// Returns nth element yielded by the given iterator, where `0` means the first element.
 ///
 /// If there are not enough elements in the iterator, `Error(Nil)` is returned.
 ///
-/// For any `index` less than 0 this function behaves as if it was set to 0.
+/// For any `index` less than `0` this function behaves as if it was set to `0`.
 ///
 /// ## Examples
 ///
 /// ```gleam
 /// > from_list([1, 2, 3, 4]) |> at(2)
 /// Ok(3)
+/// ```
 ///
+/// ```gleam
 /// > from_list([1, 2, 3, 4]) |> at(4)
 /// Error(Nil)
+/// ```
 ///
+/// ```gleam
 /// > empty() |> at(0)
 /// Error(Nil)
 /// ```

@@ -43,7 +43,9 @@ pub type Options {
 /// > assert Ok(re) = compile("^[0-9]", with: options)
 /// > match(re, "abc\n123")
 /// True
+/// ```
 ///
+/// ```gleam
 /// > let options = Options(case_insensitive: True, multi_line: False)
 /// > assert Ok(re) = compile("[A-Z]", with: options)
 /// > match(re, "abc123")
@@ -75,10 +77,14 @@ if javascript {
 /// > assert Ok(re) = from_string("[0-9]")
 /// > match(re, "abc123")
 /// True
+/// ```
 ///
+/// ```gleam
 /// > match(re, "abcxyz")
 /// False
+/// ```
 ///
+/// ```gleam
 /// > from_string("[0-9")
 /// Error(
 ///   CompileError(
@@ -100,7 +106,9 @@ pub fn from_string(pattern: String) -> Result(Regex, CompileError) {
 /// > assert Ok(re) = from_string("^f.o.?")
 /// > check(with: re, content: "foo")
 /// True
+/// ```
 ///
+/// ```gleam
 /// > check(with: re, content: "boo")
 /// False
 /// ```

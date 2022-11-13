@@ -60,11 +60,15 @@ if javascript {
 /// > io.debug("Hi mum")
 /// // -> <<"Hi mum">>
 /// "Hi mum"
+/// ```
 ///
+/// ```gleam
 /// > io.debug(Ok(1))
 /// // -> {ok, 1}
 /// Ok(1)
+/// ```
 ///
+/// ```gleam
 /// > import list
 /// > [1, 2]
 /// > |> list.map(fn(x) { x + 1 })

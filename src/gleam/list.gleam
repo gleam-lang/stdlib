@@ -46,10 +46,14 @@ pub type LengthMismatch {
 /// ```gleam
 /// > length([])
 /// 0
+/// ```
 ///
+/// ```gleam
 /// > length([1])
 /// 1
+/// ```
 ///
+/// ```gleam
 /// > length([1, 2])
 /// 2
 /// ```
@@ -90,10 +94,14 @@ if javascript {
 /// ```gleam
 /// > reverse([])
 /// []
+/// ```
 ///
+/// ```gleam
 /// > reverse([1])
 /// [1]
+/// ```
 ///
+/// ```gleam
 /// > reverse([1, 2])
 /// [2, 1]
 /// ```
@@ -129,10 +137,14 @@ if javascript {
 /// ```gleam
 /// > is_empty([])
 /// True
+/// ```
 ///
+/// ```gleam
 /// > is_empty([1])
 /// False
+/// ```
 ///
+/// ```gleam
 /// > is_empty([1, 1])
 /// False
 /// ```
@@ -151,16 +163,24 @@ pub fn is_empty(list: List(a)) -> Bool {
 /// ```gleam
 /// > [] |> contains(any: 0)
 /// False
+/// ```
 ///
+/// ```gleam
 /// > [0] |> contains(any: 0)
 /// True
+/// ```
 ///
+/// ```gleam
 /// > [1] |> contains(any: 0)
 /// False
+/// ```
 ///
+/// ```gleam
 /// > [1, 1] |> contains(any: 0)
 /// False
+/// ```
 ///
+/// ```gleam
 /// > [1, 0] |> contains(any: 0)
 /// True
 /// ```
@@ -180,10 +200,14 @@ pub fn contains(list: List(a), any elem: a) -> Bool {
 /// ```gleam
 /// > first([])
 /// Error(Nil)
+/// ```
 ///
+/// ```gleam
 /// > first([0])
 /// Ok(0)
+/// ```
 ///
+/// ```gleam
 /// > first([1, 2])
 /// Ok(1)
 /// ```
@@ -205,10 +229,14 @@ pub fn first(list: List(a)) -> Result(a, Nil) {
 /// ```gleam
 /// > rest([])
 /// Error(Nil)
+/// ```
 ///
+/// ```gleam
 /// > rest([0])
 /// Ok([])
+/// ```
 ///
+/// ```gleam
 /// > rest([1, 2])
 /// Ok([2])
 /// ```
@@ -241,7 +269,9 @@ fn do_filter(list: List(a), fun: fn(a) -> Bool, acc: List(a)) -> List(a) {
 /// ```gleam
 /// > filter([2, 4, 6, 1], fn(x) { x > 2 })
 /// [4, 6]
+/// ```
 ///
+/// ```gleam
 /// > filter([2, 4, 6, 1], fn(x) { x > 6 })
 /// []
 /// ```
@@ -275,7 +305,9 @@ fn do_filter_map(
 /// ```gleam
 /// > filter_map([2, 4, 6, 1], Error)
 /// []
+/// ```
 ///
+/// ```gleam
 /// > filter_map([2, 4, 6, 1], fn(x) { Ok(x + 1) })
 /// [3, 5, 7, 2]
 /// ```
@@ -397,13 +429,19 @@ fn do_try_map(
 /// ```gleam
 /// > try_map([1, 2, 3], fn(x) { Ok(x + 2) })
 /// Ok([3, 4, 5])
+/// ```
 ///
+/// ```gleam
 /// > try_map([1, 2, 3], fn(_) { Error(0) })
 /// Error(0)
+/// ```
 ///
+/// ```gleam
 /// > try_map([[1], [2, 3]], head)
 /// Ok([1, 2])
+/// ```
 ///
+/// ```gleam
 /// > try_map([[1], [], [2]], head)
 /// Error(Nil)
 /// ```
@@ -428,7 +466,9 @@ pub fn try_map(
 /// ```gleam
 /// > drop([1, 2, 3, 4], 2)
 /// [3, 4]
+/// ```
 ///
+/// ```gleam
 /// > drop([1, 2, 3, 4], 9)
 /// []
 /// ```
@@ -468,7 +508,9 @@ fn do_take(list: List(a), n: Int, acc: List(a)) -> List(a) {
 /// ```gleam
 /// > take([1, 2, 3, 4], 2)
 /// [1, 2]
+/// ```
 ///
+/// ```gleam
 /// > take([1, 2, 3, 4], 9)
 /// [1, 2, 3, 4]
 /// ```
@@ -731,10 +773,14 @@ pub fn fold_until(
 /// ```gleam
 /// > find([1, 2, 3], fn(x) { x > 2 })
 /// Ok(3)
+/// ```
 ///
+/// ```gleam
 /// > find([1, 2, 3], fn(x) { x > 4 })
 /// Error(Nil)
+/// ```
 ///
+/// ```gleam
 /// > find([], fn(_) { True })
 /// Error(Nil)
 /// ```
@@ -763,10 +809,14 @@ pub fn find(
 /// ```gleam
 /// > find_map([[], [2], [3]], head)
 /// Ok(2)
+/// ```
 ///
+/// ```gleam
 /// > find_map([[], []], head)
 /// Error(Nil)
+/// ```
 ///
+/// ```gleam
 /// > find_map([], head)
 /// Error(Nil)
 /// ```
@@ -794,10 +844,14 @@ pub fn find_map(
 /// ```gleam
 /// > all([], fn(x) { x > 3 })
 /// True
+/// ```
 ///
+/// ```gleam
 /// > all([4, 5], fn(x) { x > 3 })
 /// True
+/// ```
 ///
+/// ```gleam
 /// > all([4, 3], fn(x) { x > 3 })
 /// False
 /// ```
@@ -822,13 +876,19 @@ pub fn all(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
 /// ```gleam
 /// > any([], fn(x) { x > 3 })
 /// False
+/// ```
 ///
+/// ```gleam
 /// > any([4, 5], fn(x) { x > 3 })
 /// True
+/// ```
 ///
+/// ```gleam
 /// > any([4, 3], fn(x) { x > 4 })
 /// False
+/// ```
 ///
+/// ```gleam
 /// > any([3, 4], fn(x) { x > 3 })
 /// True
 /// ```
@@ -861,13 +921,19 @@ fn do_zip(xs: List(a), ys: List(b), acc: List(#(a, b))) -> List(#(a, b)) {
 /// ```gleam
 /// > zip([], [])
 /// []
+/// ```
 ///
+/// ```gleam
 /// > zip([1, 2], [3])
 /// [#(1, 3)]
+/// ```
 ///
+/// ```gleam
 /// > zip([1], [3, 4])
 /// [#(1, 3)]
+/// ```
 ///
+/// ```gleam
 /// > zip([1, 2], [3, 4])
 /// [#(1, 3), #(2, 4)]
 /// ```
@@ -885,13 +951,19 @@ pub fn zip(xs: List(a), ys: List(b)) -> List(#(a, b)) {
 /// ```gleam
 /// > strict_zip([], [])
 /// Ok([])
+/// ```
 ///
+/// ```gleam
 /// > strict_zip([1, 2], [3])
 /// Error(LengthMismatch)
+/// ```
 ///
+/// ```gleam
 /// > strict_zip([1], [3, 4])
 /// Error(LengthMismatch)
+/// ```
 ///
+/// ```gleam
 /// > strict_zip([1, 2], [3, 4])
 /// Ok([#(1, 3), #(2, 4)])
 /// ```
@@ -920,7 +992,9 @@ fn do_unzip(input, xs, ys) {
 /// ```gleam
 /// > unzip([#(1, 2), #(3, 4)])
 /// #([1, 3], [2, 4])
+/// ```
 ///
+/// ```gleam
 /// > unzip([])
 /// #([], [])
 /// ```
@@ -945,7 +1019,9 @@ fn do_intersperse(list: List(a), separator: a, acc: List(a)) -> List(a) {
 /// ```gleam
 /// > intersperse([1, 1, 1], 2)
 /// [1, 2, 1, 2, 1]
+/// ```
 ///
+/// ```gleam
 /// > intersperse([], 2)
 /// []
 /// ```
@@ -969,7 +1045,9 @@ pub fn intersperse(list: List(a), with elem: a) -> List(a) {
 /// ```gleam
 /// > at([1, 2, 3], 1)
 /// Ok(2)
+/// ```
 ///
+/// ```gleam
 /// > at([1, 2, 3], 5)
 /// Error(Nil)
 /// ```
@@ -1111,10 +1189,14 @@ pub fn sort(list: List(a), by compare: fn(a, a) -> Order) -> List(a) {
 /// ```gleam
 /// > range(0, 0)
 /// [0]
+/// ```
 ///
+/// ```gleam
 /// > range(0, 5)
 /// [0, 1, 2, 3, 4, 5]
+/// ```
 ///
+/// ```gleam
 /// > range(1, -5)
 /// [1, 0, -1, -2, -3, -4, -5]
 /// ```
@@ -1145,7 +1227,9 @@ fn do_repeat(a: a, times: Int, acc: List(a)) -> List(a) {
 /// ```gleam
 /// > repeat("a", times: 0)
 /// []
+/// ```
 ///
+/// ```gleam
 /// > repeat("a", times: 5)
 /// ["a", "a", "a", "a", "a"]
 /// ```
@@ -1175,10 +1259,14 @@ fn do_split(list: List(a), n: Int, taken: List(a)) -> #(List(a), List(a)) {
 /// ```gleam
 /// > split([6, 7, 8, 9], 0)
 /// #([], [6, 7, 8, 9])
+/// ```
 ///
+/// ```gleam
 /// > split([6, 7, 8, 9], 2)
 /// #([6, 7], [8, 9])
+/// ```
 ///
+/// ```gleam
 /// > split([6, 7, 8, 9], 4)
 /// #([6, 7, 8, 9], [])
 /// ```
@@ -1213,7 +1301,9 @@ fn do_split_while(
 /// ```gleam
 /// > split_while([1, 2, 3, 4, 5], fn(x) { x <= 3 })
 /// #([1, 2, 3], [4, 5])
+/// ```
 ///
+/// ```gleam
 /// > split_while([1, 2, 3, 4, 5], fn(x) { x <= 5 })
 /// #([1, 2, 3, 4, 5], [])
 /// ```
@@ -1238,10 +1328,14 @@ pub fn split_while(
 /// ```gleam
 /// > key_find([#("a", 0), #("b", 1)], "a")
 /// Ok(0)
+/// ```
 ///
+/// ```gleam
 /// > key_find([#("a", 0), #("b", 1)], "b")
 /// Ok(1)
+/// ```
 ///
+/// ```gleam
 /// > key_find([#("a", 0), #("b", 1)], "c")
 /// Error(Nil)
 /// ```
@@ -1282,10 +1376,14 @@ fn do_pop(haystack, predicate, checked) {
 /// ```gleam
 /// > pop([1, 2, 3], fn(x) { x > 2 })
 /// Ok(#(3, [1, 2]))
+/// ```
 ///
+/// ```gleam
 /// > pop([1, 2, 3], fn(x) { x > 4 })
 /// Error(Nil)
+/// ```
 ///
+/// ```gleam
 /// > pop([], fn(_) { True })
 /// Error(Nil)
 /// ```
@@ -1318,10 +1416,14 @@ fn do_pop_map(haystack, mapper, checked) {
 /// ```gleam
 /// > pop_map([[], [2], [3]], head)
 /// Ok(#(2, [[], [3]]))
+/// ```
 ///
+/// ```gleam
 /// > pop_map([[], []], head)
 /// Error(Nil)
+/// ```
 ///
+/// ```gleam
 /// > pop_map([], head)
 /// Error(Nil)
 /// ```
@@ -1344,10 +1446,14 @@ pub fn pop_map(
 /// ```gleam
 /// > key_pop([#("a", 0), #("b", 1)], "a")
 /// Ok(#(0, [#("b", 1)]))
+/// ```
 ///
+/// ```gleam
 /// > key_pop([#("a", 0), #("b", 1)], "b")
 /// Ok(#(1, [#("a", 0)]))
+/// ```
 ///
+/// ```gleam
 /// > key_pop([#("a", 0), #("b", 1)], "c")
 /// Error(Nil)
 /// ```
@@ -1378,7 +1484,9 @@ pub fn key_pop(
 /// ```gleam
 /// > key_set([#(5, 0), #(4, 1)], 4, 100)
 /// [#(5, 0), #(4, 100)]
+/// ```
 ///
+/// ```gleam
 /// > key_set([#(5, 0), #(4, 1)], 1, 100)
 /// [#(5, 0), #(4, 1), #(1, 100)]
 /// ```
@@ -1487,7 +1595,9 @@ fn do_window(acc: List(List(a)), l: List(a), n: Int) -> List(List(a)) {
 /// ```gleam
 /// > window([1,2,3,4,5], 3)
 /// [[1, 2, 3], [2, 3, 4], [3, 4, 5]]
+/// ```
 ///
+/// ```gleam
 /// > window([1, 2], 4)
 /// []
 /// ```
@@ -1504,7 +1614,9 @@ pub fn window(l: List(a), by n: Int) -> List(List(a)) {
 /// ```gleam
 /// > window_by_2([1,2,3,4])
 /// [#(1, 2), #(2, 3), #(3, 4)]
+/// ```
 ///
+/// ```gleam
 /// > window_by_2([1])
 /// []
 /// ```
@@ -1641,7 +1753,9 @@ fn do_sized_chunk(
 /// ```gleam
 /// > [1, 2, 3, 4, 5, 6] |> sized_chunk(into: 2)
 /// [[1, 2], [3, 4], [5, 6]]
+/// ```
 ///
+/// ```gleam
 /// > [1, 2, 3, 4, 5, 6, 7, 8] |> sized_chunk(into: 3)
 /// [[1, 2, 3], [4, 5, 6], [7, 8]]
 /// ```
@@ -1663,7 +1777,9 @@ pub fn sized_chunk(in list: List(a), into count: Int) -> List(List(a)) {
 /// ```gleam
 /// > [] |> reduce(fn(acc, x) { acc + x })
 /// Error(Nil)
+/// ```
 ///
+/// ```gleam
 /// > [1, 2, 3, 4, 5] |> reduce(fn(acc, x) { acc + x })
 /// Ok(15)
 /// ```
@@ -1720,7 +1836,9 @@ pub fn scan(
 /// ```gleam
 /// > last([])
 /// Error(Nil)
+/// ```
 ///
+/// ```gleam
 /// > last([1, 2, 3, 4, 5])
 /// Ok(5)
 /// ```
@@ -1737,7 +1855,9 @@ pub fn last(list: List(a)) -> Result(a, Nil) {
 /// ```gleam
 /// > combinations([1, 2, 3], 2)
 /// [[1, 2], [1, 3], [2, 3]]
+/// ```
 ///
+/// ```gleam
 /// > combinations([1, 2, 3, 4], 3)
 /// [[1, 2, 3], [1, 2, 4], [1, 3, 4], [2, 3, 4]]
 /// ```
@@ -1859,6 +1979,9 @@ fn do_shuffle_by_pair_indexes(
 
 /// Takes a list, randomly sorts all items and returns the shuffled list.
 ///
+/// This function uses Erlang's `:rand` module or Javascript's
+/// `Math.random()` to calcuate the index shuffling.
+///
 /// ## Example
 ///
 /// ```gleam
@@ -1866,9 +1989,6 @@ fn do_shuffle_by_pair_indexes(
 /// |> list.shuffle()
 /// > [1, 6, 9, 10, 3, 8, 4, 2, 7, 5]
 /// ```
-///
-/// Notice: This function uses Erlang's `:rand` module or Javascript's
-/// `Math.random()` to calcuate the index shuffling.
 ///
 pub fn shuffle(list: List(a)) -> List(a) {
   list

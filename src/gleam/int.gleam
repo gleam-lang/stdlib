@@ -8,7 +8,9 @@ import gleam/order.{Order}
 /// ```gleam
 /// > absolute_value(-12)
 /// 12
+/// ```
 ///
+/// ```gleam
 /// > absolute_value(10)
 /// 10
 /// ```
@@ -28,16 +30,24 @@ pub fn absolute_value(x: Int) -> Int {
 /// ```gleam
 /// > power(2, -1.0)
 /// Ok(0.5)
+/// ```
 ///
+/// ```gleam
 /// > power(2, 2.0)
 /// Ok(4.0)
+/// ```
 ///
+/// ```gleam
 /// > power(8, 1.5)
 /// Ok(22.627416997969522)
+/// ```
 ///
+/// ```gleam
 /// > 4 |> power(of: 2.0)
 /// Ok(16.0)
+/// ```
 ///
+/// ```gleam
 /// > power(-1, 0.5)
 /// Error(Nil)
 /// ```
@@ -55,7 +65,9 @@ pub fn power(base: Int, of exponent: Float) -> Result(Float, Nil) {
 /// ```gleam
 /// > square_root(4)
 /// Ok(2.0)
+/// ```
 ///
+/// ```gleam
 /// > square_root(-16)
 /// Error(Nil)
 /// ```
@@ -73,7 +85,9 @@ pub fn square_root(x: Int) -> Result(Float, Nil) {
 /// ```gleam
 /// > parse("2")
 /// Ok(2)
+/// ```
 ///
+/// ```gleam
 /// > parse("ABC")
 /// Error(Nil)
 /// ```
@@ -130,16 +144,24 @@ pub type InvalidBase {
 /// ```gleam
 /// > to_base_string(2, 2)
 /// Ok("10")
+/// ```
 ///
+/// ```gleam
 /// > to_base_string(48, 16)
 /// Ok("30")
+/// ```
 ///
+/// ```gleam
 /// > to_base_string(48, 36)
 /// Ok("1C")
+/// ```
 ///
+/// ```gleam
 /// > to_base_string(48, 1)
 /// Error(InvalidBase)
+/// ```
 ///
+/// ```gleam
 /// > to_base_string(48, 37)
 /// Error(InvalidBase)
 /// ```
@@ -219,13 +241,17 @@ pub fn to_base36(x: Int) -> String {
 ///
 /// ```gleam
 /// > to_float(5)
-/// 5.
+/// 5.0
+/// ```
 ///
+/// ```gleam
 /// > to_float(0)
-/// 0.
+/// 0.0
+/// ```
 ///
+/// ```gleam
 /// > to_float(-3)
-/// -3.
+/// -3.0
 /// ```
 ///
 pub fn to_float(x: Int) -> Float {
@@ -264,10 +290,14 @@ pub fn clamp(x: Int, min min_bound: Int, max max_bound: Int) -> Int {
 /// ```gleam
 /// > compare(2, 3)
 /// Lt
+/// ```
 ///
+/// ```gleam
 /// > compare(4, 3)
 /// Gt
+/// ```
 ///
+/// ```gleam
 /// > compare(3, 3)
 /// Eq
 /// ```
@@ -322,7 +352,9 @@ pub fn max(a: Int, b: Int) -> Int {
 /// ```gleam
 /// > is_even(2)
 /// True
+/// ```
 ///
+/// ```gleam
 /// > is_even(3)
 /// False
 /// ```
@@ -338,7 +370,9 @@ pub fn is_even(x: Int) -> Bool {
 /// ```gleam
 /// > is_odd(3)
 /// True
+/// ```
 ///
+/// ```gleam
 /// > is_odd(2)
 /// False
 /// ```
@@ -411,7 +445,9 @@ fn do_product(numbers: List(Int), initial: Int) -> Int {
 /// ```gleam
 /// > digits(234, 10)
 /// Ok([2,3,4])
+/// ```
 ///
+/// ```gleam
 /// > digits(234, 1)
 /// Error(InvalidBase)
 /// ```
@@ -438,10 +474,14 @@ fn do_digits(x: Int, base: Int, acc: List(Int)) -> List(Int) {
 /// ```gleam
 /// > undigits([2,3,4], 10)
 /// Ok(234)
+/// ```
 ///
+/// ```gleam
 /// > undigits([2,3,4], 1)
 /// Error(InvalidBase)
+/// ```
 ///
+/// ```gleam
 /// > undigits([2,3,4], 2)
 /// Error(InvalidBase)
 /// ```
@@ -512,13 +552,19 @@ pub fn random(boundary_a: Int, boundary_b: Int) -> Int {
 /// ```gleam
 /// > divide(0, 1)
 /// Ok(1)
+/// ```
 ///
+/// ```gleam
 /// > divide(1, 0)
 /// Error(Nil)
+/// ```
 ///
+/// ```gleam
 /// > divide(5, 2)
 /// Ok(2)
+/// ```
 ///
+/// ```gleam
 /// > divide(-99, 2)
 /// Ok(-49)
 /// ```
@@ -544,22 +590,34 @@ pub fn divide(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
 /// ```gleam
 /// > int.remainder(3, 2)
 /// Ok(1)
+/// ```
 ///
+/// ```gleam
 /// > int.remainder(1, 0)
 /// Error(Nil)
+/// ```
 ///
+/// ```gleam
 /// > int.remainder(10, -1)
 /// Ok(0)
+/// ```
 ///
+/// ```gleam
 /// > int.remainder(13, by: 3)
 /// Ok(1)
+/// ```
 ///
+/// ```gleam
 /// > int.remainder(-13, by: 3)
 /// Ok(-1)
+/// ```
 ///
+/// ```gleam
 /// > int.remainder(13, by: -3)
 /// Ok(1)
+/// ```
 ///
+/// ```gleam
 /// > int.remainder(-13, by: -3)
 /// Ok(-1)
 /// ```
@@ -584,22 +642,34 @@ pub fn remainder(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
 /// ```gleam
 /// > int.modulo(3, 2)
 /// Ok(1)
+/// ```
 ///
+/// ```gleam
 /// > int.modulo(1, 0)
 /// Error(Nil)
+/// ```
 ///
+/// ```gleam
 /// > int.modulo(10, -1)
 /// Ok(0)
+/// ```
 ///
+/// ```gleam
 /// > int.modulo(13, by: 3)
 /// Ok(1)
+/// ```
 ///
+/// ```gleam
 /// > int.modulo(-13, by: 3)
 /// Ok(2)
+/// ```
 ///
+/// ```gleam
 /// > int.modulo(13, by: -3)
 /// Ok(-2)
+/// ```
 ///
+/// ```gleam
 /// > int.modulo(-13, by: -3)
 /// Ok(-1)
 /// ```
@@ -631,13 +701,19 @@ pub fn modulo(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
 /// ```gleam
 /// > floor_divide(1, 0)
 /// Error(Nil)
+/// ```
 ///
+/// ```gleam
 /// > floor_divide(5, 2)
 /// Ok(2)
+/// ```
 ///
+/// ```gleam
 /// > floor_divide(6, -4)
 /// Ok(-2)
+/// ```
 ///
+/// ```gleam
 /// > floor_divide(-99, 2)
 /// Ok(-50)
 /// ```
@@ -663,10 +739,15 @@ pub fn floor_divide(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
 /// ```gleam
 /// > add(1, 2)
 /// 3
+/// ```
 ///
+/// ```gleam
+/// import gleam/list
 /// > list.fold([1, 2, 3], 0, add)
 /// 6
+/// ```
 ///
+/// ```gleam
 /// > 3 |> add(2)
 /// 5
 /// ```
@@ -685,10 +766,15 @@ pub fn add(a: Int, b: Int) -> Int {
 /// ```gleam
 /// > multiply(2, 4)
 /// 8
+/// ```
 ///
+/// ```gleam
+/// import gleam/list
 /// > list.fold([2, 3, 4], 1, multiply)
 /// 24
+/// ```
 ///
+/// ```gleam
 /// > 3 |> multiply(2)
 /// 6
 /// ```
@@ -707,13 +793,20 @@ pub fn multiply(a: Int, b: Int) -> Int {
 /// ```gleam
 /// > subtract(3, 1)
 /// 2.0
+/// ```
 ///
+/// ```gleam
+/// import gleam/list
 /// > list.fold([1, 2, 3], 10, subtract)
 /// 4
+/// ```
 ///
+/// ```gleam
 /// > 3 |> subtract(2)
 /// 1
+/// ```
 ///
+/// ```gleam
 /// > 3 |> subtract(2, _)
 /// -1
 /// ```

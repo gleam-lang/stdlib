@@ -29,7 +29,9 @@ pub external type Map(key, value)
 /// ```gleam
 /// > new() |> size()
 /// 0
+/// ```
 ///
+/// ```gleam
 /// > new() |> insert("key", "value") |> size()
 /// 1
 /// ```
@@ -58,7 +60,9 @@ if javascript {
 /// ```gleam
 /// > new() |> to_list()
 /// []
+/// ```
 ///
+/// ```gleam
 /// > new() |> insert("key", 0) |> to_list()
 /// [#("key", 0)]
 /// ```
@@ -104,7 +108,9 @@ if javascript {
 /// ```gleam
 /// > new() |> insert("a", 0) |> has_key("a")
 /// True
+/// ```
 ///
+/// ```gleam
 /// > new() |> insert("a", 0) |> has_key("b")
 /// False
 /// ```
@@ -150,7 +156,9 @@ if javascript {
 /// ```gleam
 /// > new() |> insert("a", 0) |> get("a")
 /// Ok(0)
+/// ```
 ///
+/// ```gleam
 /// > new() |> insert("a", 0) |> get("b")
 /// Error(Nil)
 /// ```
@@ -179,7 +187,9 @@ if javascript {
 /// ```gleam
 /// > new() |> insert("a", 0) |> to_list
 /// [#("a", 0)]
+/// ```
 ///
+/// ```gleam
 /// > new() |> insert("a", 0) |> insert("a", 5) |> to_list
 /// [#("a", 5)]
 /// ```
@@ -296,7 +306,9 @@ if javascript {
 /// > from_list([#("a", 0), #("b", 1)])
 /// > |> filter(fn(key, value) { value != 0 })
 /// from_list([#("b", 1)])
+/// ```
 ///
+/// ```gleam
 /// > from_list([#("a", 0), #("b", 1)])
 /// > |> filter(fn(key, value) { True })
 /// from_list([#("a", 0), #("b", 1)])
@@ -339,7 +351,9 @@ if javascript {
 /// > from_list([#("a", 0), #("b", 1)])
 /// > |> take(["b"])
 /// from_list([#("b", 1)])
+/// ```
 ///
+/// ```gleam
 /// > from_list([#("a", 0), #("b", 1)])
 /// > |> take(["a", "b", "c"])
 /// from_list([#("a", 0), #("b", 1)])
@@ -409,7 +423,9 @@ if javascript {
 /// ```gleam
 /// > delete([#("a", 0), #("b", 1)], "a")
 /// from_list([#("b", 1)])
+/// ```
 ///
+/// ```gleam
 /// > delete([#("a", 0), #("b", 1)], "c")
 /// from_list([#("a", 0), #("b", 1)])
 /// ```
@@ -436,10 +452,14 @@ if javascript {
 /// ```gleam
 /// > drop([#("a", 0), #("b", 1)], ["a"])
 /// from_list([#("b", 2)])
+/// ```
 ///
+/// ```gleam
 /// > delete([#("a", 0), #("b", 1)], ["c"])
 /// from_list([#("a", 0), #("b", 1)])
+/// ```
 ///
+/// ```gleam
 /// > drop([#("a", 0), #("b", 1)], ["a", "b", "c"])
 /// from_list([])
 /// ```
@@ -466,7 +486,9 @@ pub fn drop(from map: Map(k, v), drop disallowed_keys: List(k)) -> Map(k, v) {
 /// >
 /// > update(map, "a", increment)
 /// from_list([#("a", 1)])
+/// ```
 ///
+/// ```gleam
 /// > update(map, "b", increment)
 /// from_list([#("a", 0), #("b", 0)])
 /// ```
@@ -503,7 +525,9 @@ fn do_fold(list: List(#(k, v)), initial: acc, fun: fn(acc, k, v) -> acc) -> acc 
 /// > let map = from_list([#("a", 1), #("b", 3), #("c", 9)])
 /// > fold(map, 0, fn(accumulator, key, value) { accumulator + value })
 /// 13
+/// ```
 ///
+/// ```gleam
 /// > import gleam/string.{append}
 /// > fold(map, "", fn(accumulator, key, value) { append(accumulator, key) })
 /// "abc"

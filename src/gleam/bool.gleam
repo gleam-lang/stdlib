@@ -18,10 +18,14 @@ import gleam/order.{Order}
 /// ```gleam
 /// > and(True, True)
 /// True
+/// ```
 ///
+/// ```gleam
 /// > and(False, True)
 /// False
+/// ```
 ///
+/// ```gleam
 /// > False |> and(True)
 /// False
 /// ```
@@ -40,10 +44,14 @@ pub fn and(a: Bool, b: Bool) -> Bool {
 /// ```gleam
 /// > or(True, True)
 /// True
+/// ```
 ///
+/// ```gleam
 /// > or(False, True)
 /// True
+/// ```
 ///
+/// ```gleam
 /// > False |> or(True)
 /// True
 /// ```
@@ -61,7 +69,9 @@ pub fn or(a: Bool, b: Bool) -> Bool {
 /// ```gleam
 /// > negate(True)
 /// False
+/// ```
 ///
+/// ```gleam
 /// > negate(False)
 /// True
 /// ```
@@ -80,13 +90,19 @@ pub fn negate(bool: Bool) -> Bool {
 /// ```gleam
 /// > nor(False, False)
 /// True
+/// ```
 ///
+/// ```gleam
 /// > nor(False, True)
 /// False
+/// ```
 ///
+/// ```gleam
 /// > nor(True, False)
 /// False
+/// ```
 ///
+/// ```gleam
 /// > nor(True, True)
 /// False
 /// ```
@@ -107,13 +123,19 @@ pub fn nor(a: Bool, b: Bool) -> Bool {
 /// ```gleam
 /// > nand(False, False)
 /// True
+/// ```
 ///
+/// ```gleam
 /// > nand(False, True)
 /// True
+/// ```
 ///
+/// ```gleam
 /// > nand(True, False)
 /// True
+/// ```
 ///
+/// ```gleam
 /// > nand(True, True)
 /// False
 /// ```
@@ -134,13 +156,19 @@ pub fn nand(a: Bool, b: Bool) -> Bool {
 /// ```gleam
 /// > exclusive_or(False, False)
 /// False
+/// ```
 ///
+/// ```gleam
 /// > exclusive_or(False, True)
 /// True
+/// ```
 ///
+/// ```gleam
 /// > exclusive_or(True, False)
 /// True
+/// ```
 ///
+/// ```gleam
 /// > exclusive_or(True, True)
 /// False
 /// ```
@@ -161,13 +189,19 @@ pub fn exclusive_or(a: Bool, b: Bool) -> Bool {
 /// ```gleam
 /// > exclusive_nor(False, False)
 /// True
+/// ```
 ///
+/// ```gleam
 /// > exclusive_nor(False, True)
 /// False
+/// ```
 ///
+/// ```gleam
 /// > exclusive_nor(True, False)
 /// False
+/// ```
 ///
+/// ```gleam
 /// > exclusive_nor(True, True)
 /// True
 /// ```
@@ -207,10 +241,14 @@ pub fn compare(a: Bool, with b: Bool) -> Order {
 /// ```gleam
 /// > max(True, False)
 /// True
+/// ```
 ///
+/// ```gleam
 /// > max(False, True)
 /// True
+/// ```
 ///
+/// ```gleam
 /// > max(False, False)
 /// False
 /// ```
@@ -229,7 +267,9 @@ pub fn max(a: Bool, b: Bool) -> Bool {
 /// ```gleam
 /// > min(True, False)
 /// False
+/// ```
 ///
+/// ```gleam
 /// > min(False, True)
 /// False
 ///
@@ -270,7 +310,9 @@ pub fn to_int(bool: Bool) -> Int {
 /// ```gleam
 /// > to_string(True)
 /// "True"
+/// ```
 ///
+/// ```gleam
 /// > to_string(False)
 /// "False"
 /// ```
