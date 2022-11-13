@@ -588,37 +588,37 @@ pub fn divide(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// > int.remainder(3, 2)
+/// > remainder(3, 2)
 /// Ok(1)
 /// ```
 ///
 /// ```gleam
-/// > int.remainder(1, 0)
+/// > remainder(1, 0)
 /// Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// > int.remainder(10, -1)
+/// > remainder(10, -1)
 /// Ok(0)
 /// ```
 ///
 /// ```gleam
-/// > int.remainder(13, by: 3)
+/// > remainder(13, by: 3)
 /// Ok(1)
 /// ```
 ///
 /// ```gleam
-/// > int.remainder(-13, by: 3)
+/// > remainder(-13, by: 3)
 /// Ok(-1)
 /// ```
 ///
 /// ```gleam
-/// > int.remainder(13, by: -3)
+/// > remainder(13, by: -3)
 /// Ok(1)
 /// ```
 ///
 /// ```gleam
-/// > int.remainder(-13, by: -3)
+/// > remainder(-13, by: -3)
 /// Ok(-1)
 /// ```
 ///
@@ -640,37 +640,37 @@ pub fn remainder(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// > int.modulo(3, 2)
+/// > modulo(3, 2)
 /// Ok(1)
 /// ```
 ///
 /// ```gleam
-/// > int.modulo(1, 0)
+/// > modulo(1, 0)
 /// Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// > int.modulo(10, -1)
+/// > modulo(10, -1)
 /// Ok(0)
 /// ```
 ///
 /// ```gleam
-/// > int.modulo(13, by: 3)
+/// > modulo(13, by: 3)
 /// Ok(1)
 /// ```
 ///
 /// ```gleam
-/// > int.modulo(-13, by: 3)
+/// > modulo(-13, by: 3)
 /// Ok(2)
 /// ```
 ///
 /// ```gleam
-/// > int.modulo(13, by: -3)
+/// > modulo(13, by: -3)
 /// Ok(-2)
 /// ```
 ///
 /// ```gleam
-/// > int.modulo(-13, by: -3)
+/// > modulo(-13, by: -3)
 /// Ok(-1)
 /// ```
 ///

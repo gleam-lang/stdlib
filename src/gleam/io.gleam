@@ -57,13 +57,13 @@ if javascript {
 /// ## Example
 ///
 /// ```gleam
-/// > io.debug("Hi mum")
+/// > debug("Hi mum")
 /// // -> <<"Hi mum">>
 /// "Hi mum"
 /// ```
 ///
 /// ```gleam
-/// > io.debug(Ok(1))
+/// > debug(Ok(1))
 /// // -> {ok, 1}
 /// Ok(1)
 /// ```
@@ -72,7 +72,7 @@ if javascript {
 /// > import list
 /// > [1, 2]
 /// > |> list.map(fn(x) { x + 1 })
-/// > |> io.debug
+/// > |> debug
 /// > |> list.map(fn(x) { x * 2 })
 /// // -> [2, 3]
 /// [4, 6]

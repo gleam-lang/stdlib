@@ -81,13 +81,13 @@ pub fn tap(arg: a, effect: fn(a) -> b) -> a {
 /// ## Example
 ///
 /// ```gleam
-/// let doubler = fn() {
-///   fn(x: Int) { x * 2 }
-/// }
-///
-/// doubler()
-/// |> function.apply1(2)
-/// |> should.equal(4)
+/// > let doubler = fn() {
+/// >  fn(x: Int) { x * 2 }
+/// > }
+/// >
+/// > doubler()
+/// > |> apply1(2)
+/// 4
 /// ```
 ///
 pub fn apply1(fun: fn(a) -> value, arg1: a) -> value {

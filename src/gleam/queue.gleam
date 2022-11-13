@@ -142,23 +142,23 @@ pub fn push_front(onto queue: Queue(a), this item: a) -> Queue(a) {
 /// # Examples
 ///
 /// ```gleam
-/// > queue.new()
-/// > |> queue.push_back(0)
-/// > |> queue.push_back(1)
-/// > |> queue.pop_back()
-/// Ok(#(1, queue.push_front(queue.new(), 0)))
+/// > new()
+/// > |> push_back(0)
+/// > |> push_back(1)
+/// > |> pop_back()
+/// Ok(#(1, push_front(new(), 0)))
 /// ```
 ///
 /// ```gleam
-/// > queue.new()
-/// > |> queue.push_front(0)
-/// > |> queue.pop_back()
-/// Ok(#(0, queue.new()))
+/// > new()
+/// > |> push_front(0)
+/// > |> pop_back()
+/// Ok(#(0, new()))
 /// ```
 ///
 /// ```gleam
-/// > queue.new()
-/// > |> queue.pop_back()
+/// > new()
+/// > |> pop_back()
 /// Error(Nil)
 /// ```
 ///
