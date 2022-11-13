@@ -6,7 +6,7 @@ pub fn compose(fun1: fn(a) -> b, fun2: fn(b) -> c) -> fn(a) -> c {
 }
 
 /// Takes a function with arity two
-/// and returns a curried equivalent.
+/// and returns a curried equivalent:
 /// `fn(a, b) -> c` becomes `fn(a) -> fn(b) -> c`.
 ///
 pub fn curry2(fun: fn(a, b) -> value) {
@@ -14,7 +14,7 @@ pub fn curry2(fun: fn(a, b) -> value) {
 }
 
 /// Takes a function with arity three
-/// and returns a curried equivalent.
+/// and returns a curried equivalent:
 /// `fn(a, b, c) -> d` becomes `fn(a) -> fn(b) -> fn(c) -> d`.
 ///
 pub fn curry3(fun: fn(a, b, c) -> value) {
@@ -81,15 +81,14 @@ pub fn tap(arg: a, effect: fn(a) -> b) -> a {
 /// ## Example
 ///
 /// ```gleam
-/// fn get_doubler() {
-///   fn(x: int) { x * 2 }
+/// let doubler = fn() {
+///   fn(x: Int) { x * 2 }
 /// }
 ///
-/// fn use_apply() {
-///   get_doubler()
-///   |> function.apply1(2)
-///   |> should.equal(4)
-/// }
+/// doubler()
+/// |> function.apply1(2)
+/// |> should.equal(4)
+/// ```
 ///
 pub fn apply1(fun: fn(a) -> value, arg1: a) -> value {
   fun(arg1)
@@ -98,8 +97,8 @@ pub fn apply1(fun: fn(a) -> value, arg1: a) -> value {
 /// Takes a function with arity two and two arguments,
 /// calls that function with the arguments
 /// and returns the function return value.
-/// 
-/// See `apply1` for more details
+///
+/// See `apply1` for more details.
 ///
 pub fn apply2(fun: fn(a, b) -> value, arg1: a, arg2: b) -> value {
   fun(arg1, arg2)
@@ -108,8 +107,8 @@ pub fn apply2(fun: fn(a, b) -> value, arg1: a, arg2: b) -> value {
 /// Takes a function with arity three and three arguments,
 /// calls that function with the arguments
 /// and returns the function return value.
-/// 
-/// See `apply1` for more details
+///
+/// See `apply1` for more details.
 ///
 pub fn apply3(fun: fn(a, b, c) -> value, arg1: a, arg2: b, arg3: c) -> value {
   fun(arg1, arg2, arg3)

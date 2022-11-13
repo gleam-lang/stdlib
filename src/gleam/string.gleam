@@ -19,7 +19,9 @@ if erlang {
 /// ```gleam
 /// > is_empty("")
 /// True
+/// ```
 ///
+/// ```gleam
 /// > is_empty("the world")
 /// False
 /// ```
@@ -38,10 +40,14 @@ pub fn is_empty(str: String) -> Bool {
 /// ```gleam
 /// > length("Gleam")
 /// 5
+/// ```
 ///
+/// ```gleam
 /// > length("ß↑e̊")
 /// 3
+/// ```
 ///
+/// ```gleam
 /// > length("")
 /// 0
 /// ```
@@ -101,7 +107,9 @@ if javascript {
 /// ```gleam
 /// > replace("www.example.com", each: ".", with: "-")
 /// "www-example-com"
+/// ```
 ///
+/// ```gleam
 /// > replace("a,b,c,d,e", each: ",", with: "/")
 /// "a/b/c/d/e"
 /// ```
@@ -178,7 +186,9 @@ if javascript {
 /// ```gleam
 /// > compare("Anthony", "Anthony")
 /// order.Eq
+/// ```
 ///
+/// ```gleam
 /// > compare("A", "B")
 /// order.Lt
 /// ```
@@ -212,16 +222,24 @@ if javascript {
 /// ```gleam
 /// > slice(from: "gleam", at_index: 1, length: 2)
 /// "le"
+/// ```
 ///
+/// ```gleam
 /// > slice(from: "gleam", at_index: 1, length: 10)
 /// "leam"
+/// ```
 ///
+/// ```gleam
 /// > slice(from: "gleam", at_index: 10, length: 3)
 /// ""
+/// ```
 ///
+/// ```gleam
 /// > slice(from: "gleam", at_index: -2, length: 2)
 /// "am"
+/// ```
 ///
+/// ```gleam
 /// > slice(from: "gleam", at_index: -12, length: 2)
 /// ""
 /// ```
@@ -328,10 +346,14 @@ pub fn drop_right(from string: String, up_to num_graphemes: Int) -> String {
 /// ```gleam
 /// > contains(does: "theory", contain: "ory")
 /// True
+/// ```
 ///
+/// ```gleam
 /// > contains(does: "theory", contain: "the")
 /// True
+/// ```
 ///
+/// ```gleam
 /// > contains(does: "theory", contain: "THE")
 /// False
 /// ```
@@ -433,7 +455,9 @@ pub fn split(x: String, on substring: String) -> List(String) {
 /// ```gleam
 /// > split_once("home/gleam/desktop/", on: "/")
 /// Ok(#("home", "gleam/desktop/"))
+/// ```
 ///
+/// ```gleam
 /// > split_once("home/gleam/desktop/", on: "?")
 /// Error(Nil)
 /// ```
@@ -549,10 +573,14 @@ pub fn join(strings: List(String), with separator: String) -> String {
 /// ```gleam
 /// > pad_left("121", to: 5, with: ".")
 /// "..121"
+/// ```
 ///
+/// ```gleam
 /// > pad_left("121", to: 3, with: ".")
 /// "121"
+/// ```
 ///
+/// ```gleam
 /// > pad_left("121", to: 2, with: ".")
 /// "121"
 /// ```
@@ -571,14 +599,18 @@ pub fn pad_left(string: String, to desired_length: Int, with pad_string: String)
 /// ## Examples
 ///
 /// ```gleam
-/// > pad_right("121", to: 5, with: ".")
-/// "121.."
+/// > pad_right("123", to: 5, with: ".")
+/// "123.."
+/// ```
 ///
-/// > pad_right("121", to: 3, with: ".")
-/// "121"
+/// ```gleam
+/// > pad_right("123", to: 3, with: ".")
+/// "123"
+/// ```
 ///
-/// > pad_right("121", to: 2, with: ".")
-/// "121"
+/// ```gleam
+/// > pad_right("123", to: 2, with: ".")
+/// "123"
 /// ```
 ///
 pub fn pad_right(
@@ -692,7 +724,9 @@ if javascript {
 /// ```gleam
 /// > pop_grapheme("gleam")
 /// Ok(#("g", "leam"))
+/// ```
 ///
+/// ```gleam
 /// > pop_grapheme("")
 /// Error(Nil)
 /// ```
@@ -711,7 +745,8 @@ if javascript {
     "../gleam_stdlib.mjs" "pop_grapheme"
 }
 
-/// Converts a `String` to a list of graphemes.
+/// Converts a `String` to a list of
+/// [graphemes](https://en.wikipedia.org/wiki/Grapheme).
 ///
 /// ```gleam
 /// > to_graphemes("abc")
@@ -753,14 +788,17 @@ pub fn utf_codepoint(value: Int) -> Result(UtfCodepoint, Nil) {
   }
 }
 
-/// Converts a `String` into `Option(String)` where an empty `String` becomes `None`.
+/// Converts a `String` into `Option(String)` where an empty `String` becomes
+/// `None`.
 ///
 /// ## Examples
 ///
 /// ```gleam
 /// > to_option("")
 /// None
+/// ```
 ///
+/// ```gleam
 /// > to_option("hats")
 /// Some("hats")
 /// ```
@@ -781,7 +819,9 @@ pub fn to_option(s: String) -> Option(String) {
 /// ```gleam
 /// > first("")
 /// Error(Nil)
+/// ```
 ///
+/// ```gleam
 /// > first("icecream")
 /// Ok("i")
 /// ```
@@ -802,7 +842,9 @@ pub fn first(s: String) -> Result(String, Nil) {
 /// ```gleam
 /// > last("")
 /// Error(Nil)
+/// ```
 ///
+/// ```gleam
 /// > last("icecream")
 /// Ok("m")
 /// ```

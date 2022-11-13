@@ -300,7 +300,9 @@ if javascript {
 /// ```gleam
 /// > from_strings(["a", "b"]) == from_string("ab")
 /// False
+/// ```
 ///
+/// ```gleam
 /// > is_equal(from_strings(["a", "b"]), from_string("ab"))
 /// True
 /// ```
@@ -326,10 +328,14 @@ if javascript {
 /// ```gleam
 /// > from_string("ok") |> is_empty
 /// False
+/// ```
 ///
+/// ```gleam
 /// > from_string("") |> is_empty
 /// True
+/// ```
 ///
+/// ```gleam
 /// > from_strings([]) |> is_empty
 /// True
 /// ```

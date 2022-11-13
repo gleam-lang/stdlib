@@ -65,10 +65,14 @@ pub fn to_list(queue: Queue(a)) -> List(a) {
 /// ```gleam
 /// > [] |> from_list |> is_empty
 /// True
+/// ```
 ///
+/// ```gleam
 /// > [1] |> from_list |> is_empty
 /// False
+/// ```
 ///
+/// ```gleam
 /// > [1, 2] |> from_list |> is_empty
 /// False
 /// ```
@@ -87,10 +91,14 @@ pub fn is_empty(queue: Queue(a)) -> Bool {
 /// ```gleam
 /// > length(from_list([]))
 /// 0
+/// ```
 ///
+/// ```gleam
 /// > length(from_list([1]))
 /// 1
+/// ```
 ///
+/// ```gleam
 /// > length(from_list([1, 2]))
 /// 2
 /// ```
@@ -139,12 +147,16 @@ pub fn push_front(onto queue: Queue(a), this item: a) -> Queue(a) {
 /// > |> queue.push_back(1)
 /// > |> queue.pop_back()
 /// Ok(#(1, queue.push_front(queue.new(), 0)))
+/// ```
 ///
+/// ```gleam
 /// > queue.new()
 /// > |> queue.push_front(0)
 /// > |> queue.pop_back()
 /// Ok(#(0, queue.new()))
+/// ```
 ///
+/// ```gleam
 /// > queue.new()
 /// > |> queue.pop_back()
 /// Error(Nil)
@@ -175,12 +187,16 @@ pub fn pop_back(from queue: Queue(a)) -> Result(#(a, Queue(a)), Nil) {
 /// > |> queue.push_front(0)
 /// > |> queue.pop_front()
 /// Ok(#(0, queue.push_back(queue.new(), 1)))
+/// ```
 ///
+/// ```gleam
 /// > queue.new()
 /// > |> queue.push_back(0)
 /// > |> queue.pop_front()
 /// Ok(#(0, queue.new()))
+/// ```
 ///
+/// ```gleam
 /// > queue.new()
 /// > |> queue.pop_back()
 /// Error(Nil)
@@ -207,10 +223,14 @@ pub fn pop_front(from queue: Queue(a)) -> Result(#(a, Queue(a)), Nil) {
 /// ```gleam
 /// > [] |> from_list |> reverse |> to_list
 /// []
+/// ```
 ///
+/// ```gleam
 /// > [1] |> from_list |> reverse |> to_list
 /// [1]
+/// ```
 ///
+/// ```gleam
 /// > [1, 2] |> from_list |> reverse |> to_list
 /// [2, 1]
 /// ```

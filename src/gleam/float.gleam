@@ -1,14 +1,16 @@
 import gleam/order.{Order}
 
-/// Attempts to parse a string as a `Float`, returning `Error(Nil)` if it was not
-/// possible.
+/// Attempts to parse a string as a `Float`, returning `Error(Nil)` if it was
+/// not possible.
 ///
 /// ## Examples
 ///
 /// ```gleam
 /// > parse("2.3")
 /// Ok(2.3)
+/// ```
 ///
+/// ```gleam
 /// > parse("ABC")
 /// Error(Nil)
 /// ```
@@ -193,7 +195,9 @@ if javascript {
 /// ```gleam
 /// > round(2.3)
 /// 2
+/// ```
 ///
+/// ```gleam
 /// > round(2.5)
 /// 3
 /// ```
@@ -249,7 +253,9 @@ if javascript {
 /// ```gleam
 /// > absolute_value(-12.5)
 /// 12.5
+/// ```
 ///
+/// ```gleam
 /// > absolute_value(10.2)
 /// 10.2
 /// ```
@@ -269,16 +275,24 @@ pub fn absolute_value(x: Float) -> Float {
 /// ```gleam
 /// > power(2.0, -1.0)
 /// Ok(0.5)
+/// ```
 ///
+/// ```gleam
 /// > power(2.0, 2.0)
 /// Ok(4.0)
+/// ```
 ///
+/// ```gleam
 /// > power(8.0, 1.5)
 /// Ok(22.627416997969522)
+/// ```
 ///
+/// ```gleam
 /// > 4.0 |> power(of: 2.0)
 /// Ok(16.0)
+/// ```
 ///
+/// ```gleam
 /// > power(-1.0, 0.5)
 /// Error(Nil)
 /// ```
@@ -314,7 +328,9 @@ if javascript {
 /// ```gleam
 /// > square_root(4.0)
 /// Ok(2.0)
+/// ```
 ///
+/// ```gleam
 /// > square_root(-16.0)
 /// Error(Nil)
 /// ```
@@ -328,8 +344,8 @@ pub fn square_root(x: Float) -> Result(Float, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// > negate(1.)
-/// -1.
+/// > negate(1.0)
+/// -1.0
 /// ```
 ///
 pub fn negate(x: Float) -> Float {
@@ -429,7 +445,9 @@ if javascript {
 /// ```gleam
 /// > divide(0.0, 1.0)
 /// Ok(1.0)
+/// ```
 ///
+/// ```gleam
 /// > divide(1.0, 0.0)
 /// Error(Nil)
 /// ```
@@ -451,10 +469,15 @@ pub fn divide(a: Float, by b: Float) -> Result(Float, Nil) {
 /// ```gleam
 /// > add(1.0, 2.0)
 /// 3.0
+/// ```
 ///
+/// ```gleam
+/// > import gleam/list
 /// > list.fold([1.0, 2.0, 3.0], 0.0, add)
 /// 6.0
+/// ```
 ///
+/// ```gleam
 /// > 3.0 |> add(2.0)
 /// 5.0
 /// ```
@@ -473,10 +496,15 @@ pub fn add(a: Float, b: Float) -> Float {
 /// ```gleam
 /// > multiply(2.0, 4.0)
 /// 8.0
+/// ```
 ///
+/// ```gleam
+/// import gleam/list
 /// > list.fold([2.0, 3.0, 4.0], 1.0, multiply)
 /// 24.0
+/// ```
 ///
+/// ```gleam
 /// > 3.0 |> multiply(2.0)
 /// 6.0
 /// ```
@@ -495,13 +523,20 @@ pub fn multiply(a: Float, b: Float) -> Float {
 /// ```gleam
 /// > subtract(3.0, 1.0)
 /// 2.0
+/// ```
 ///
+/// ```gleam
+/// > import gleam/list
 /// > list.fold([1.0, 2.0, 3.0], 10.0, subtract)
 /// 4.0
+/// ```
 ///
+/// ```gleam
 /// > 3.0 |> subtract(_, 2.0)
 /// 1.0
+/// ```
 ///
+/// ```gleam
 /// > 3.0 |> subtract(2.0, _)
 /// -1.0
 /// ```

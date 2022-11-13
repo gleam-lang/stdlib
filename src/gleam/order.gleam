@@ -20,10 +20,14 @@ pub type Order {
 /// ```gleam
 /// > reverse(Lt)
 /// Gt
+/// ```
 ///
+/// ```gleam
 /// > reverse(Eq)
 /// Eq
+/// ```
 ///
+/// ```gleam
 /// > reverse(Lt)
 /// Gt
 /// ```
@@ -43,10 +47,14 @@ pub fn reverse(order: Order) -> Order {
 /// ```gleam
 /// > to_int(Lt)
 /// -1
+/// ```
 ///
+/// ```gleam
 /// > to_int(Eq)
 /// 0
+/// ```
 ///
+/// ```gleam
 /// > to_int(Gt)
 /// 1
 /// ```
