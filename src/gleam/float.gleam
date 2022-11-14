@@ -544,3 +544,21 @@ pub fn multiply(a: Float, b: Float) -> Float {
 pub fn subtract(a: Float, b: Float) -> Float {
   a -. b
 }
+
+/// Returns the absolute distance of the inputs as a positive Float.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > distance(-10.5, 10.0)
+/// > 20.5
+/// ```
+///
+/// ```gleam
+/// > distance(0.0, -2.5)
+/// 2.5
+///
+pub fn distance(a: Float, b: Float) -> Float {
+  a -. b
+  |> absolute_value()
+}

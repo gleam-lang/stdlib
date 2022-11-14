@@ -264,7 +264,7 @@ pub fn power_test() {
 
   // float.power(-1.0, 0.5) is equivalent to float.square_root(-1.0)
   // and should return an error as an imaginary number would otherwise
-  // have to be returned 
+  // have to be returned
   float.power(-1.0, 0.5)
   |> should.equal(Error(Nil))
 
@@ -277,7 +277,7 @@ pub fn power_test() {
   float.power(0.0, -1.0)
   |> should.equal(Error(Nil))
 
-  // Check that a negative base and exponent is fine as long as the 
+  // Check that a negative base and exponent is fine as long as the
   // exponent is not fractional
   float.power(-2.0, -1.0)
   |> should.equal(Ok(-0.5))
@@ -420,4 +420,30 @@ pub fn subtract_test() {
   3.0
   |> float.subtract(2.0, _)
   |> should.equal(-1.0)
+}
+
+pub fn distance_test() {
+  float.distance(0.0, 0.0)
+  |> should.equal(0.0)
+
+  float.distance(1.0, 2.0)
+  |> should.equal(1.0)
+
+  float.distance(2.0, 1.0)
+  |> should.equal(1.0)
+
+  float.distance(-1.0, 0.0)
+  |> should.equal(1.0)
+
+  float.distance(0.0, -1.0)
+  |> should.equal(1.0)
+
+  float.distance(10.0, 20.0)
+  |> should.equal(10.0)
+
+  float.distance(-10.0, -20.0)
+  |> should.equal(10.0)
+
+  float.distance(-10.5, 10.5)
+  |> should.equal(21.0)
 }

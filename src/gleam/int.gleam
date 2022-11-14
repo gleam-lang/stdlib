@@ -814,3 +814,21 @@ pub fn multiply(a: Int, b: Int) -> Int {
 pub fn subtract(a: Int, b: Int) -> Int {
   a - b
 }
+
+/// Returns the absolute distance of the inputs as a positive Int.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > distance(-10, 10)
+/// > 20
+/// ```
+///
+/// ```gleam
+/// > distance(0, -2)
+/// 2
+///
+pub fn distance(a: Int, b: Int) -> Int {
+  a - b
+  |> absolute_value()
+}
