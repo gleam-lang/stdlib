@@ -375,6 +375,14 @@ pub fn pop_grapheme_test() {
   |> string.pop_grapheme
   |> should.equal(Ok(#("g", "")))
 
+  "🏳️‍🌈"
+  |> string.pop_grapheme
+  |> should.equal(Ok(#("🏳️‍🌈", "")))
+
+  "👨‍👩‍👦‍👦"
+  |> string.pop_grapheme()
+  |> should.equal(Ok(#("👨‍👩‍👦‍👦", "")))
+
   ""
   |> string.pop_grapheme
   |> should.equal(Error(Nil))
@@ -457,6 +465,10 @@ pub fn pop_codepoint_test() {
   "🏳️‍🌈"
   |> string.pop_codepoint
   |> should.equal(Ok(#("🏳", "️‍🌈")))
+
+  "👨‍👩‍👦‍👦"
+  |> string.pop_codepoint()
+  |> should.equal(Ok(#("👨", "‍👩‍👦‍👦")))
 
   ""
   |> string.pop_codepoint
