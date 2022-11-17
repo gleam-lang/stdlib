@@ -120,14 +120,18 @@ export function pop_grapheme(string) {
   }
 }
 
+export function codepoints(string) {
+	return Array.from(string);
+}
+
 export function pop_codepoint(string) {
-  const codepoints = Array.from(string);
-  if (codepoints.length > 1) {
-    const head = codepoints[0];
-    const tail = codepoints.slice(1);
+  const cps = codepoints(string);
+  if (cps.length > 1) {
+    const head = cps[0];
+    const tail = cps.slice(1);
     return new Ok([head, tail.join("")]);
-  } else if (codepoints.length == 1) {
-    const head = codepoints[0];
+  } else if (cps.length == 1) {
+    const head = cps[0];
     return new Ok([head, ""]);
   } else {
     return new Error(Nil);
