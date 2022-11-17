@@ -467,7 +467,7 @@ pub fn pop_codepoint_test() {
   |> should.equal(Ok(#("🏳", "️‍🌈")))
 
   "👨‍👩‍👦‍👦"
-  |> string.pop_codepoint()
+  |> string.pop_codepoint
   |> should.equal(Ok(#("👨", "‍👩‍👦‍👦")))
 
   ""

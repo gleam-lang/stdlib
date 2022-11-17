@@ -780,8 +780,21 @@ if javascript {
 /// ## Examples
 ///
 /// ```gleam
-/// > pop_codepoint("🏳️‍🌈")
-/// Ok(#("🏳", "️ ‍ 🌈"))
+/// > "🏳️‍🌈"
+/// > |> string.pop_codepoint
+/// Ok(#("🏳", "️‍🌈"))
+/// ```
+///
+/// ```gleam
+/// > "👨‍👩‍👦‍👦"
+/// > |> string.pop_codepoint
+/// Ok(#("👨", "‍👩‍👦‍👦"))
+/// ```
+///
+/// ```gleam
+/// > "gleam"
+/// > |> string.pop_codepoint
+/// Ok(#("g", "leam"))
 /// ```
 ///
 /// ```gleam
@@ -806,9 +819,30 @@ if javascript {
 /// Converts a `String` to a list of
 /// [codepoints](https://en.wikipedia.org/wiki/Unicode#Codespace_and_CodePoints).
 ///
+/// ## Examples
+///
 /// ```gleam
 /// > to_codepoints("abc")
 /// ["a", "b", "c"]
+/// ```
+///
+/// ```gleam
+/// > to_codepoints("abc")
+/// ["a", "b", "c"]
+/// ```
+///
+/// ```gleam
+/// // graphemes consisting of single codepoints
+/// > "🌷🎁💩😜👍"
+/// > |> string.to_codepoints
+/// ["🌷", "🎁", "💩", "😜", "👍"])
+/// ```
+///
+/// ```gleam
+/// // graphemes consisting of multuple codepoints
+/// > "🏳️‍🌈"
+/// > |> string.to_codepoints
+/// ["🏳", "️", "‍", "🌈"]
 /// ```
 ///
 pub fn to_codepoints(string: String) -> List(String) {
