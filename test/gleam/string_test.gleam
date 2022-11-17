@@ -397,9 +397,17 @@ pub fn to_graphemes_test() {
   |> string.to_graphemes
   |> should.equal(["a", "b", "c"])
 
-  "🌷🎁💩😜👍🏳️‍🌈"
+  "🌷🎁💩😜👍"
   |> string.to_graphemes
-  |> should.equal(["🌷", "🎁", "💩", "😜", "👍", "🏳️‍🌈"])
+  |> should.equal(["🌷", "🎁", "💩", "😜", "👍"])
+
+  "🏳️‍🌈"
+  |> string.to_graphemes
+  |> should.equal(["🏳️‍🌈"])
+
+  "🎁🏳️‍🌈🌷"
+  |> string.to_graphemes
+  |> should.equal(["🎁", "🏳️‍🌈", "🌷"])
 
   "Ĺo͂řȩm̅"
   |> string.to_graphemes
@@ -412,6 +420,13 @@ pub fn to_graphemes_test() {
   "👨‍👩‍👦‍👦"
   |> string.to_graphemes()
   |> should.equal(["👨‍👩‍👦‍👦"])
+
+  "👨‍👩‍👦‍👦🏳️‍🌈👨‍👩‍👦‍👦🏳️‍🌈"
+  |> string.to_graphemes()
+  |> should.equal([
+    "👨‍👩‍👦‍👦", "🏳️‍🌈", "👨‍👩‍👦‍👦",
+    "🏳️‍🌈",
+  ])
 
   "ごん゙に゙ぢば"
   |> string.to_graphemes()
@@ -427,6 +442,93 @@ pub fn to_graphemes_test() {
     "Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍", "A̴̵̜̰͔ͫ͗͢", "L̠ͨͧͩ͘",
     "G̴̻͈͍͔̹̑͗̎̅͛́", "Ǫ̵̹̻̝̳͂̌̌͘",
     "!͖̬̰̙̗̿̋ͥͥ̂ͣ̐́́͜͞",
+  ])
+}
+
+pub fn pop_codepoint_test() {
+  "gleam"
+  |> string.pop_codepoint
+  |> should.equal(Ok(#("g", "leam")))
+
+  "g"
+  |> string.pop_codepoint
+  |> should.equal(Ok(#("g", "")))
+
+  ""
+  |> string.pop_codepoint
+  |> should.equal(Error(Nil))
+}
+
+pub fn to_codepoints_test() {
+  ""
+  |> string.to_codepoints
+  |> should.equal([])
+
+  "\n\t\r\"\\"
+  |> string.to_codepoints
+  |> should.equal(["\n", "\t", "\r", "\"", "\\"])
+
+  "a"
+  |> string.to_codepoints
+  |> should.equal(["a"])
+
+  "abc"
+  |> string.to_codepoints
+  |> should.equal(["a", "b", "c"])
+
+  "🌷🎁💩😜👍"
+  |> string.to_codepoints
+  |> should.equal(["🌷", "🎁", "💩", "😜", "👍"])
+
+  "🏳️‍🌈"
+  |> string.to_codepoints
+  |> should.equal(["🏳", "️", "‍", "🌈"])
+
+  "🎁🏳️‍🌈🌷"
+  |> string.to_codepoints
+  |> should.equal(["🎁", "🏳", "️", "‍", "🌈", "🌷"])
+
+  "Ĺo͂řȩm̅"
+  |> string.to_codepoints
+  |> should.equal(["Ĺ", "o", "͂", "ř", "ȩ", "m", "̅"])
+
+  "뎌쉐"
+  |> string.to_codepoints
+  |> should.equal(["뎌", "쉐"])
+
+  "👨‍👩‍👦‍👦"
+  |> string.to_codepoints()
+  |> should.equal(["👨", "‍", "👩", "‍", "👦", "‍", "👦"])
+
+  "👨‍👩‍👦‍👦🏳️‍🌈👨‍👩‍👦‍👦🏳️‍🌈"
+  |> string.to_codepoints()
+  |> should.equal([
+    "👨", "‍", "👩", "‍", "👦", "‍", "👦", "🏳", "️", "‍",
+    "🌈", "👨", "‍", "👩", "‍", "👦", "‍", "👦", "🏳", "️",
+    "‍", "🌈",
+  ])
+
+  "ごん゙に゙ぢば"
+  |> string.to_codepoints()
+  |> should.equal([
+    "こ", "゙", "ん", "゙", "に", "゙", "ち", "゙", "は", "゙",
+  ])
+
+  "パピプペポ"
+  |> string.to_codepoints()
+  |> should.equal([
+    "ハ", "゚", "ヒ", "゚", "フ", "゚", "ヘ", "゚", "ホ", "゚",
+  ])
+
+  "Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍A̴̵̜̰͔ͫ͗͢L̠ͨͧͩ͘G̴̻͈͍͔̹̑͗̎̅͛́Ǫ̵̹̻̝̳͂̌̌͘!͖̬̰̙̗̿̋ͥͥ̂ͣ̐́́͜͞"
+  |> string.to_codepoints
+  |> should.equal([
+    "Z", "͑", "ͫ", "̓", "ͪ", "̂", "ͫ", "̽", "͏", "̴", "̙", "̤", "̞",
+    "͉", "͚", "̯", "̞", "̠", "͍", "A", "̴", "̵", "̜", "̰", "͔", "ͫ",
+    "͗", "͢", "L", "̠", "ͨ", "ͧ", "ͩ", "͘", "G", "̴", "̻", "͈", "͍",
+    "͔", "̹", "̑", "͗", "̎", "̅", "͛", "́", "Ǫ", "̵", "̹", "̻", "̝",
+    "̳", "͂", "̌", "̌", "͘", "!", "͖", "̬", "̰", "̙", "̗", "̿", "̋",
+    "ͥ", "ͥ", "̂", "ͣ", "̐", "́", "́", "͜", "͞",
   ])
 }
 

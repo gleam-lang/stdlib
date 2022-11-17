@@ -10,7 +10,7 @@
          percent_encode/1, percent_decode/1, regex_check/2, regex_split/2,
          base_decode64/1, parse_query/1, bit_string_concat/1, size_of_tuple/1,
          decode_tuple/1, tuple_get/2, classify_dynamic/1, print/1, println/1,
-         inspect/1, float_to_string/1]).
+         inspect/1, float_to_string/1, string_pop_codepoint/1]).
 
 %% Taken from OTP's uri_string module
 -define(DEC2HEX(X),
@@ -153,6 +153,13 @@ string_pad(String, Length, Dir, PadString) ->
     case unicode:characters_to_binary(Chars) of
         Bin when is_binary(Bin) -> Bin;
         Error -> erlang:error({gleam_error, {string_invalid_utf8, Error}})
+    end.
+
+string_pop_codepoint(String) ->
+    case string:next_codepoint(String) of
+        [ Next | Rest ] ->
+            {ok, {unicode:characters_to_binary([Next]), unicode:characters_to_binary(Rest)}};
+        _ -> {error, nil}
     end.
 
 string_pop_grapheme(String) ->

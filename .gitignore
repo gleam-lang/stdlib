@@ -18,6 +18,11 @@ _build
 *.iml
 rebar3.crashdump
 doc
-.tool-versions
 build
 manifest.toml
+
+# asdf
+.tool-versions
+
+# Elixir's iex
+.iex.exs

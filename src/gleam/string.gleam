@@ -775,6 +775,54 @@ if javascript {
     "../gleam_stdlib.mjs" "codepoint"
 }
 
+/// Splits a non-empty `String` into a code point and a tail.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > pop_codepoint("gleam")
+/// Ok(#("g", "leam"))
+/// ```
+///
+/// ```gleam
+/// > pop_codepoint("")
+/// Error(Nil)
+/// ```
+///
+pub fn pop_codepoint(string: String) -> Result(#(String, String), Nil) {
+  do_pop_codepoint(string)
+}
+
+if erlang {
+  external fn do_pop_codepoint(string: String) -> Result(#(String, String), Nil) =
+    "gleam_stdlib" "string_pop_codepoint"
+}
+
+if javascript {
+  external fn do_pop_codepoint(string: String) -> Result(#(String, String), Nil) =
+    "../gleam_stdlib.mjs" "pop_codepoint"
+}
+
+/// Converts a `String` to a list of
+/// [codepoints](https://en.wikipedia.org/wiki/Unicode#Codespace_and_CodePoints).
+///
+/// ```gleam
+/// > to_codepoints("abc")
+/// ["a", "b", "c"]
+/// ```
+///
+pub fn to_codepoints(string: String) -> List(String) {
+  do_to_codepoints(string, [])
+  |> list.reverse
+}
+
+fn do_to_codepoints(string: String, acc: List(String)) -> List(String) {
+  case pop_codepoint(string) {
+    Ok(#(grapheme, rest)) -> do_to_codepoints(rest, [grapheme, ..acc])
+    _ -> acc
+  }
+}
+
 /// Converts an integer to a `UtfCodepoint`.
 ///
 /// Returns an `Error` if the integer does not represent a valid UTF codepoint.
