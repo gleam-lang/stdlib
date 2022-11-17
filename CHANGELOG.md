@@ -22,6 +22,7 @@
 - The `list` module gains the `shuffle` function.
 - `string.split` will now return a list of graphemes if split on an empty
   string (`""`).
+- The `string` module gains `pop_codepoint` and `to_codepoints`.
 
 ## v0.24.0 - 2022-10-15
 

@@ -775,13 +775,13 @@ if javascript {
     "../gleam_stdlib.mjs" "codepoint"
 }
 
-/// Splits a non-empty `String` into a code point and a tail.
+/// Splits a non-empty `String` into a codepoint and a tail.
 ///
 /// ## Examples
 ///
 /// ```gleam
-/// > pop_codepoint("gleam")
-/// Ok(#("g", "leam"))
+/// > pop_codepoint("🏳️‍🌈")
+/// Ok(#("🏳", "️ ‍ 🌈"))
 /// ```
 ///
 /// ```gleam

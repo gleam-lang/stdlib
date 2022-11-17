@@ -454,6 +454,10 @@ pub fn pop_codepoint_test() {
   |> string.pop_codepoint
   |> should.equal(Ok(#("g", "")))
 
+  "🏳️‍🌈"
+  |> string.pop_codepoint
+  |> should.equal(Ok(#("🏳", "️‍🌈")))
+
   ""
   |> string.pop_codepoint
   |> should.equal(Error(Nil))
