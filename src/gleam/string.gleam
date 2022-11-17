@@ -839,7 +839,7 @@ if javascript {
 /// ```
 ///
 /// ```gleam
-/// // graphemes consisting of multuple codepoints
+/// // graphemes composed by multiple codepoints
 /// > "🏳️‍🌈"
 /// > |> string.to_codepoints
 /// ["🏳", "️", "‍", "🌈"]
@@ -852,7 +852,7 @@ pub fn to_codepoints(string: String) -> List(String) {
 
 fn do_to_codepoints(string: String, acc: List(String)) -> List(String) {
   case pop_codepoint(string) {
-    Ok(#(grapheme, rest)) -> do_to_codepoints(rest, [grapheme, ..acc])
+    Ok(#(codepoint, rest)) -> do_to_codepoints(rest, [codepoint, ..acc])
     _ -> acc
   }
 }
