@@ -120,6 +120,20 @@ export function pop_grapheme(string) {
   }
 }
 
+export function pop_codepoint(string) {
+  const codepoints = Array.from(string);
+  if (codepoints.length > 1) {
+    const head = codepoints[0];
+    const tail = codepoints.slice(1);
+    return new Ok([head, tail.join("")]);
+  } else if (codepoints.length == 1) {
+    const head = codepoints[0];
+    return new Ok([head, ""]);
+  } else {
+    return new Error(Nil);
+  }
+}
+
 export function lowercase(string) {
   return string.toLowerCase();
 }
