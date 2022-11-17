@@ -137,16 +137,16 @@ pub fn to_base36_test() {
 
 pub fn to_float_test() {
   int.to_float(1)
-  |> should.equal(1.)
+  |> should.equal(1.0)
 
   int.to_float(5)
-  |> should.equal(5.)
+  |> should.equal(5.0)
 
   int.to_float(0)
-  |> should.equal(0.)
+  |> should.equal(0.0)
 
   int.to_float(-5)
-  |> should.equal(-5.)
+  |> should.equal(-5.0)
 }
 
 pub fn compare_test() {
