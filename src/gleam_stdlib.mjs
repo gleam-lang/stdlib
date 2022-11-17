@@ -120,7 +120,7 @@ export function pop_grapheme(string) {
   }
 }
 
-export function codepoints(string) {
+function codepoints(string) {
 	return Array.from(string);
 }
 
