@@ -113,3 +113,31 @@ pub fn apply2(fun: fn(a, b) -> value, arg1: a, arg2: b) -> value {
 pub fn apply3(fun: fn(a, b, c) -> value, arg1: a, arg2: b, arg3: c) -> value {
   fun(arg1, arg2, arg3)
 }
+
+/// Compares two values for equality.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > equal(True, False)
+/// False
+/// ```
+///
+/// ```gleam
+/// > equal(False, False)
+/// True
+/// ```
+///
+/// ```gleam
+/// > equal(1, 1)
+/// True
+/// ```
+///
+/// ```gleam
+/// > "Gleam" |> equal(to: "Erlang")
+/// False
+/// ```
+///
+pub fn equal(a: any, to b: any) -> Bool {
+  a == b
+}

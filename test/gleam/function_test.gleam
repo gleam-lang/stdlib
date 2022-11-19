@@ -167,3 +167,18 @@ pub fn apply3_supports_arguments_of_different_types() {
   |> function.apply3(1, 0.5, "3")
   |> should.equal(1)
 }
+
+pub fn equal_test() {
+  function.equal(True, False)
+  |> should.equal(False)
+
+  function.equal(False, False)
+  |> should.equal(True)
+
+  function.equal(1, 1)
+  |> should.equal(True)
+
+  "Gleam"
+  |> function.equal(to: "Erlang")
+  |> should.equal(False)
+}
