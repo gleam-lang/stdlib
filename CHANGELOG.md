@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.24.1 - unreleased
+## v0.25.0 - 2022-11-19
 
 - Fixed a bug where `list.permutations` would not correctly permutate lists
   with non-unique item values.
