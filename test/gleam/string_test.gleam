@@ -3,19 +3,6 @@ import gleam/order
 import gleam/should
 import gleam/string
 
-if erlang {
-  const recursion_test_cycles = 1_000_000
-}
-
-if javascript {
-  // JavaScript engines crash when exceeding a certain stack size:
-  //
-  // - Chrome 106 and NodeJS V16, V18, and V19 crash around 10_000+
-  // - Firefox 106 crashes around 35_000+.
-  // - Safari 16 crashes around 40_000+.
-  const recursion_test_cycles = 40_000
-}
-
 pub fn length_test() {
   string.length("ß↑e̊")
   |> should.equal(3)
@@ -66,12 +53,6 @@ pub fn reverse_test() {
   |> string.reverse
   |> string.reverse
   |> should.equal("👶🏿")
-
-  "abc"
-  |> string.repeat(recursion_test_cycles)
-  |> string.reverse
-  |> string.starts_with("cba")
-  |> should.be_true
 }
 
 pub fn split_test() {
@@ -258,11 +239,6 @@ pub fn slice_test() {
   "👶🏿"
   |> string.slice(at_index: 0, length: 3)
   |> should.equal("👶🏿")
-
-  "aaa"
-  |> string.repeat(recursion_test_cycles)
-  |> string.slice(at_index: recursion_test_cycles / 2, length: 3)
-  |> should.equal("aaa")
 }
 
 pub fn crop_test() {

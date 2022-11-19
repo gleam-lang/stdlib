@@ -1095,14 +1095,6 @@ pub fn combinations_test() {
 
   list.combinations([1, 2, 3, 4], 3)
   |> should.equal([[1, 2, 3], [1, 2, 4], [1, 3, 4], [2, 3, 4]])
-
-  // TCO test
-  case recursion_test_cycles > 2 {
-    True ->
-      list.range(1, 20)
-      |> list.combinations(20 / 2)
-    False -> []
-  }
 }
 
 pub fn combination_pairs_test() {

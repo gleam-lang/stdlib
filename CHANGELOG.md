@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.24.1 - unreleased
+## v0.25.0 - 2022-11-19
 
 - The `bool` module gains the `and` and `or` functions.
 - The `float` module gains the `add`, `subtract` and `multiply` functions.
