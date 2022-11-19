@@ -5,6 +5,7 @@
 - The `bool` module gains the `and` and `or` functions.
 - The `float` module gains the `add`, `subtract` and `multiply` functions.
 - The `int` module gains the `add`, `subtract` and `multiply` functions.
+- The `function` module gains the `equal` function.
 - Fixed a bug where `list.permutations` would not correctly permutate lists
   with non-unique item values.
 - For `regexp.compile` unicode character properties are now used when
