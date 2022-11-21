@@ -90,30 +90,6 @@ pub fn flip_test() {
   |> should.equal("String: 'Alice', Int: '2'")
 }
 
-pub fn identity_test() {
-  1
-  |> function.identity
-  |> should.equal(1)
-
-  ""
-  |> function.identity
-  |> should.equal("")
-
-  []
-  |> function.identity
-  |> should.equal([])
-
-  #(1, 2.0)
-  |> function.identity
-  |> should.equal(#(1, 2.0))
-}
-
-pub fn constant_test() {
-  #(1, 2)
-  |> pair.map_first(function.constant(42))
-  |> should.equal(#(42, 2))
-}
-
 pub fn tap_test() {
   "Thanks Joe & Louis"
   |> function.tap(fn(s: String) {
@@ -166,19 +142,4 @@ pub fn apply3_supports_arguments_of_different_types() {
   fun
   |> function.apply3(1, 0.5, "3")
   |> should.equal(1)
-}
-
-pub fn equal_test() {
-  function.equal(True, False)
-  |> should.equal(False)
-
-  function.equal(False, False)
-  |> should.equal(True)
-
-  function.equal(1, 1)
-  |> should.equal(True)
-
-  "Gleam"
-  |> function.equal(to: "Erlang")
-  |> should.equal(False)
 }

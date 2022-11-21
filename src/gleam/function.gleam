@@ -50,19 +50,6 @@ pub fn flip(fun: fn(a, b) -> c) -> fn(b, a) -> c {
   fn(b, a) { fun(a, b) }
 }
 
-/// Takes a single argument and always returns its input value.
-///
-pub fn identity(x: a) -> a {
-  x
-}
-
-/// Takes a single argument and returns a new function that
-/// ignores its argument and always returns the input value.
-///
-pub fn constant(value: a) -> fn(b) -> a {
-  fn(_) { value }
-}
-
 /// Takes an argument and a single function,
 /// calls that function with that argument
 /// and returns that argument instead of the function return value.
