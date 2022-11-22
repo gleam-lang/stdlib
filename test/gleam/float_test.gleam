@@ -61,27 +61,27 @@ pub fn clamp_test() {
 }
 
 pub fn compare_test() {
-  float.compare(0., 0.)
+  float.compare(0.0, 0.0)
   |> should.equal(order.Eq)
 
   float.compare(0.1, 0.1)
   |> should.equal(order.Eq)
 
-  float.compare(0., 0.1)
+  float.compare(0.0, 0.1)
   |> should.equal(order.Lt)
 
-  float.compare(-2., -1.9)
+  float.compare(-2.0, -1.9)
   |> should.equal(order.Lt)
 
-  float.compare(2., 1.9)
+  float.compare(2.0, 1.9)
   |> should.equal(order.Gt)
 
-  float.compare(-1.9, -2.)
+  float.compare(-1.9, -2.0)
   |> should.equal(order.Gt)
 }
 
 pub fn loosely_compare_test() {
-  float.loosely_compare(10.2, 10.5, tolerating: 0.)
+  float.loosely_compare(10.2, 10.5, tolerating: 0.0)
   |> should.equal(order.Lt)
 
   float.loosely_compare(10.2, with: 10.5, tolerating: 0.31)
@@ -101,7 +101,7 @@ pub fn loosely_compare_test() {
 }
 
 pub fn loosely_equals_test() {
-  float.loosely_equals(10.2, 10.5, tolerating: 0.)
+  float.loosely_equals(10.2, 10.5, tolerating: 0.0)
   |> should.be_false
 
   float.loosely_equals(10.2, with: 10.5, tolerating: 0.31)
@@ -201,14 +201,14 @@ pub fn truncate_test() {
 }
 
 pub fn min_test() {
-  float.min(0., 0.)
-  |> should.equal(0.)
+  float.min(0.0, 0.0)
+  |> should.equal(0.0)
 
   float.min(0.3, 1.5)
   |> should.equal(0.3)
 
-  float.min(1., 0.)
-  |> should.equal(0.)
+  float.min(1.0, 0.0)
+  |> should.equal(0.0)
 
   float.min(-1.7, 2.5)
   |> should.equal(-1.7)
@@ -216,22 +216,22 @@ pub fn min_test() {
   float.min(-2.2, -2.2)
   |> should.equal(-2.2)
 
-  float.min(-1., -1.)
-  |> should.equal(-1.)
+  float.min(-1.0, -1.0)
+  |> should.equal(-1.0)
 
-  float.min(-1.1, -1.)
+  float.min(-1.1, -1.0)
   |> should.equal(-1.1)
 }
 
 pub fn max_test() {
-  float.max(0., 0.)
-  |> should.equal(0.)
+  float.max(0.0, 0.0)
+  |> should.equal(0.0)
 
   float.max(0.3, 1.5)
   |> should.equal(1.5)
 
-  float.max(1., 0.)
-  |> should.equal(1.)
+  float.max(1.0, 0.0)
+  |> should.equal(1.0)
 
   float.max(-1.7, 2.5)
   |> should.equal(2.5)
@@ -239,11 +239,11 @@ pub fn max_test() {
   float.max(-2.2, -2.2)
   |> should.equal(-2.2)
 
-  float.max(-1., -1.)
-  |> should.equal(-1.)
+  float.max(-1.0, -1.0)
+  |> should.equal(-1.0)
 
-  float.max(-1.1, -1.)
-  |> should.equal(-1.)
+  float.max(-1.1, -1.0)
+  |> should.equal(-1.0)
 }
 
 pub fn absolute_value_test() {
@@ -318,14 +318,14 @@ pub fn square_root_test() {
 }
 
 pub fn negate_test() {
-  float.negate(-1.)
-  |> should.equal(1.)
+  float.negate(-1.0)
+  |> should.equal(1.0)
 
-  float.negate(2.)
-  |> should.equal(-2.)
+  float.negate(2.0)
+  |> should.equal(-2.0)
 
-  float.negate(0.)
-  |> should.equal(0.)
+  float.negate(0.0)
+  |> should.equal(0.0)
 }
 
 pub fn sum_test() {
@@ -338,10 +338,10 @@ pub fn sum_test() {
 
 pub fn product_test() {
   float.product([])
-  |> should.equal(0.)
+  |> should.equal(0.0)
 
-  float.product([4.])
-  |> should.equal(4.)
+  float.product([4.0])
+  |> should.equal(4.0)
 
   float.product([2.5, 3.2, 4.2])
   |> should.equal(33.6)
