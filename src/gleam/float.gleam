@@ -105,8 +105,8 @@ pub fn loosely_compare(
   with b: Float,
   tolerating tolerance: Float,
 ) -> Order {
-  let diff = absolute_value(a -. b)
-  case diff <=. tolerance {
+  let difference = absolute_value(a -. b)
+  case difference <=. tolerance {
     True -> order.Eq
     False -> compare(a, b)
   }
