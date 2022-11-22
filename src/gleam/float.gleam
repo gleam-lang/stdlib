@@ -289,9 +289,9 @@ if javascript {
 /// ```
 ///
 pub fn absolute_value(x: Float) -> Float {
-  case x >=. 0. {
+  case x >=. 0.0 {
     True -> x
-    _ -> 0. -. x
+    _ -> 0.0 -. x
   }
 }
 
@@ -326,14 +326,14 @@ pub fn absolute_value(x: Float) -> Float {
 /// ```
 ///
 pub fn power(base: Float, of exponent: Float) -> Result(Float, Nil) {
-  let fractional: Bool = ceiling(exponent) -. exponent >. 0.
+  let fractional: Bool = ceiling(exponent) -. exponent >. 0.0
   // In the following check:
   // 1. If the base is negative and the exponent is fractional then
   //    return an error as it will otherwise be an imaginary number
   // 2. If the base is 0 and the exponent is negative then the expression
   //    is equivalent to the exponent divided by 0 and an error should be
   //    returned
-  case base <. 0. && fractional || base == 0. && exponent <. 0. {
+  case base <. 0.0 && fractional || base == 0.0 && exponent <. 0.0 {
     True -> Error(Nil)
     False -> Ok(do_power(base, exponent))
   }
@@ -377,7 +377,7 @@ pub fn square_root(x: Float) -> Result(Float, Nil) {
 /// ```
 ///
 pub fn negate(x: Float) -> Float {
-  -1. *. x
+  -1.0 *. x
 }
 
 /// Sums a list of `Float`s.
@@ -412,8 +412,8 @@ fn do_sum(numbers: List(Float), initial: Float) -> Float {
 ///
 pub fn product(numbers: List(Float)) -> Float {
   case numbers {
-    [] -> 0.
-    _ -> do_product(numbers, 1.)
+    [] -> 0.0
+    _ -> do_product(numbers, 1.0)
   }
 }
 
