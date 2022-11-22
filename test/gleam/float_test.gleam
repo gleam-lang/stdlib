@@ -100,6 +100,26 @@ pub fn loosely_compare_test() {
   |> should.equal(order.Eq)
 }
 
+pub fn loosely_equals_test() {
+  float.loosely_equals(10.2, 10.5, tolerating: 0.)
+  |> should.be_false
+
+  float.loosely_equals(10.2, with: 10.5, tolerating: 0.31)
+  |> should.be_true
+
+  float.loosely_equals(10.5, 10.2, 0.31)
+  |> should.be_true
+
+  float.loosely_equals(10.2, 10.5, 0.29)
+  |> should.be_false
+
+  float.loosely_equals(10.5, 10.2, 0.29)
+  |> should.be_false
+
+  float.loosely_equals(-10.2, -10.5, 0.31)
+  |> should.be_true
+}
+
 pub fn ceiling_test() {
   8.1
   |> float.ceiling
@@ -264,7 +284,7 @@ pub fn power_test() {
 
   // float.power(-1.0, 0.5) is equivalent to float.square_root(-1.0)
   // and should return an error as an imaginary number would otherwise
-  // have to be returned 
+  // have to be returned
   float.power(-1.0, 0.5)
   |> should.equal(Error(Nil))
 
@@ -277,7 +297,7 @@ pub fn power_test() {
   float.power(0.0, -1.0)
   |> should.equal(Error(Nil))
 
-  // Check that a negative base and exponent is fine as long as the 
+  // Check that a negative base and exponent is fine as long as the
   // exponent is not fractional
   float.power(-2.0, -1.0)
   |> should.equal(Ok(-0.5))
@@ -369,8 +389,8 @@ pub fn random_test() {
       with: fn(accumulator, _element) { accumulator +. float.random(min, max) },
     )
     |> fn(sum) { sum /. int.to_float(iterations) }
-    |> float.loosely_compare(expected_average, tolerance)
-    |> should.equal(order.Eq)
+    |> float.loosely_equals(expected_average, tolerance)
+    |> should.be_true
   }
   test_mean(100, 0.0, 0.0, 5.0)
   test_mean(1_000, 0.0, 100.0, 5.0)
