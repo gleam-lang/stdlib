@@ -87,9 +87,11 @@ pub fn compare(a: Float, with b: Float) -> Order {
   }
 }
 
-/// Compares two `Float`s within a tolerance.
-/// Keep in mind that as this are floats the tolerance won't be exact
-/// e.g. 5.3 - 5.0 is not exactly 0.3 in a float
+/// Compares two `Float`s within a tolerance and returns an `Order`:
+/// `Lt` for lower than, `Eq` for equals, or `Gt` for greater than.
+///
+/// Notice: For `Float`s the tolerance won't be exact:
+/// `5.3 - 5.0` is not exactly `0.3`.
 ///
 /// ## Examples
 ///
@@ -108,6 +110,32 @@ pub fn loosely_compare(
     True -> order.Eq
     False -> compare(a, b)
   }
+}
+
+/// Checks for equality of two `Float`s within a tolerance.
+///
+/// Notice: For `Float`s the tolerance won't be exact:
+/// `5.3 - 5.0` is not exactly `0.3`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > loosely_equals(5.0, with: 5.3, tolerating: 0.5)
+/// True
+/// ```
+///
+/// ```gleam
+/// > loosely_equals(5.0, with: 5.1, tolerating: 0.1)
+/// False
+/// ```
+///
+pub fn loosely_equals(
+  a: Float,
+  with b: Float,
+  tolerating tolerance: Float,
+) -> Bool {
+  let difference = absolute_value(a -. b)
+  difference <=. tolerance
 }
 
 /// Compares two `Float`s, returning the smaller of the two.

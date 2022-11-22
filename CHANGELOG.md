@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.26.0 - unreleased
+
+- The `float` module gains the `loosely_equals` function.
+
 ## v0.25.0 - 2022-11-19
 
 - The `bool` module gains the `and` and `or` functions.
