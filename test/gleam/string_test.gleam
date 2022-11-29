@@ -351,6 +351,14 @@ pub fn pop_grapheme_test() {
   |> string.pop_grapheme
   |> should.equal(Ok(#("g", "")))
 
+  "🏳️‍🌈"
+  |> string.pop_grapheme
+  |> should.equal(Ok(#("🏳️‍🌈", "")))
+
+  "👨‍👩‍👦‍👦"
+  |> string.pop_grapheme()
+  |> should.equal(Ok(#("👨‍👩‍👦‍👦", "")))
+
   ""
   |> string.pop_grapheme
   |> should.equal(Error(Nil))
@@ -373,9 +381,17 @@ pub fn to_graphemes_test() {
   |> string.to_graphemes
   |> should.equal(["a", "b", "c"])
 
-  "🌷🎁💩😜👍🏳️‍🌈"
+  "🌷🎁💩😜👍"
   |> string.to_graphemes
-  |> should.equal(["🌷", "🎁", "💩", "😜", "👍", "🏳️‍🌈"])
+  |> should.equal(["🌷", "🎁", "💩", "😜", "👍"])
+
+  "🏳️‍🌈"
+  |> string.to_graphemes
+  |> should.equal(["🏳️‍🌈"])
+
+  "🎁🏳️‍🌈🌷"
+  |> string.to_graphemes
+  |> should.equal(["🎁", "🏳️‍🌈", "🌷"])
 
   "Ĺo͂řȩm̅"
   |> string.to_graphemes
@@ -389,13 +405,20 @@ pub fn to_graphemes_test() {
   |> string.to_graphemes()
   |> should.equal(["👨‍👩‍👦‍👦"])
 
-  "ごん゙に゙ぢば"
+  "👨‍👩‍👦‍👦🏳️‍🌈👨‍👩‍👦‍👦🏳️‍🌈"
   |> string.to_graphemes()
-  |> should.equal(["ご", "ん゙", "に゙", "ぢ", "ば"])
+  |> should.equal([
+    "👨‍👩‍👦‍👦", "🏳️‍🌈", "👨‍👩‍👦‍👦",
+    "🏳️‍🌈",
+  ])
 
-  "パピプペポ"
+  "ごん゙に゙ぢば"
   |> string.to_graphemes()
-  |> should.equal(["パ", "ピ", "プ", "ペ", "ポ"])
+  |> should.equal(["ご", "ん゙", "に゙", "ぢ", "ば"])
+
+  "パピプペポ"
+  |> string.to_graphemes()
+  |> should.equal(["パ", "ピ", "プ", "ペ", "ポ"])
 
   "Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍A̴̵̜̰͔ͫ͗͢L̠ͨͧͩ͘G̴̻͈͍͔̹̑͗̎̅͛́Ǫ̵̹̻̝̳͂̌̌͘!͖̬̰̙̗̿̋ͥͥ̂ͣ̐́́͜͞"
   |> string.to_graphemes
@@ -404,6 +427,71 @@ pub fn to_graphemes_test() {
     "G̴̻͈͍͔̹̑͗̎̅͛́", "Ǫ̵̹̻̝̳͂̌̌͘",
     "!͖̬̰̙̗̿̋ͥͥ̂ͣ̐́́͜͞",
   ])
+}
+
+pub fn to_utf_codepoints_test() {
+  ""
+  |> string.to_utf_codepoints
+  |> should.equal([])
+
+  "gleam"
+  |> string.to_utf_codepoints
+  |> should.equal({
+    assert #(Ok(g), Ok(l), Ok(e), Ok(a), Ok(m)) = #(
+      string.utf_codepoint(103),
+      string.utf_codepoint(108),
+      string.utf_codepoint(101),
+      string.utf_codepoint(97),
+      string.utf_codepoint(109),
+    )
+    [g, l, e, a, m]
+  })
+
+  "🏳️‍🌈"
+  |> string.to_utf_codepoints
+  |> should.equal({
+    // ["🏳", "️", "‍", "🌈"]
+    assert #(
+      Ok(waving_white_flag),
+      Ok(variant_selector_16),
+      Ok(zero_width_joiner),
+      Ok(rainbow),
+    ) = #(
+      string.utf_codepoint(127987),
+      string.utf_codepoint(65039),
+      string.utf_codepoint(8205),
+      string.utf_codepoint(127752),
+    )
+    [waving_white_flag, variant_selector_16, zero_width_joiner, rainbow]
+  })
+}
+
+pub fn from_utf_codepoints_test() {
+  ""
+  |> string.to_utf_codepoints
+  |> string.from_utf_codepoints
+  |> should.equal("")
+
+  "gleam"
+  |> string.to_utf_codepoints
+  |> string.from_utf_codepoints
+  |> should.equal("gleam")
+
+  "🏳️‍🌈"
+  |> string.to_utf_codepoints
+  |> string.from_utf_codepoints
+  |> should.equal("🏳️‍🌈")
+
+  {
+    assert #(Ok(a), Ok(b), Ok(c)) = #(
+      string.utf_codepoint(97),
+      string.utf_codepoint(98),
+      string.utf_codepoint(99),
+    )
+    [a, b, c]
+  }
+  |> string.from_utf_codepoints
+  |> should.equal("abc")
 }
 
 pub fn utf_codepoint_test() {
