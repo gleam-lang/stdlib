@@ -779,7 +779,7 @@ if javascript {
 /// Converts a `String` to a `List` of `UtfCodepoint`.
 ///
 /// See <https://en.wikipedia.org/wiki/Code_point> and
-/// <https://en.wikipedia.org/wiki/Unicode#Codespace_and_CodePoints> for an
+/// <https://en.wikipedia.org/wiki/Unicode#Codespace_and_Code_Points> for an
 /// explanation on code points.
 ///
 /// ## Examples
@@ -833,7 +833,7 @@ if javascript {
 /// Converts a `List` of `UtfCodepoint`s to a `String`.
 ///
 /// See <https://en.wikipedia.org/wiki/Code_point> and
-/// <https://en.wikipedia.org/wiki/Unicode#Codespace_and_CodePoints> for an
+/// <https://en.wikipedia.org/wiki/Unicode#Codespace_and_Code_Points> for an
 /// explanation on code points.
 ///
 /// ## Examples
