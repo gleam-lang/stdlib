@@ -95,7 +95,7 @@ pub fn compare(a: Float, with b: Float) -> Order {
 /// Compares two `Float`s within a tolerance, returning an `Order`:
 /// `Lt` for lower than, `Eq` for equals, or `Gt` for greater than.
 ///
-/// This function allows Float comparison despite
+/// This function allows Float comparison while handling
 /// [Floating Point Imprecision](https://en.wikipedia.org/wiki/Floating-point_arithmetic#Accuracy_problems).
 ///
 /// Notice: For `Float`s the tolerance won't be exact:
@@ -126,7 +126,7 @@ pub fn loosely_compare(
 /// Checks for equality of two `Float`s within a tolerance,
 /// returning an `Bool`.
 ///
-/// This function allows Float comparison despite
+/// This function allows Float comparison while handling
 /// [Floating Point Imprecision](https://en.wikipedia.org/wiki/Floating-point_arithmetic#Accuracy_problems).
 ///
 /// Notice: For `Float`s the tolerance won't be exact:
