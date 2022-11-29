@@ -67,7 +67,8 @@ pub fn clamp(x: Float, min min_bound: Float, max max_bound: Float) -> Float {
   |> max(min_bound)
 }
 
-/// Compares two `Float`s, returning an order.
+/// Compares two `Float`s, returning an `Order`:
+/// `Lt` for lower than, `Eq` for equals, or `Gt` for greater than.
 ///
 /// ## Examples
 ///
@@ -75,6 +76,10 @@ pub fn clamp(x: Float, min min_bound: Float, max max_bound: Float) -> Float {
 /// > compare(2.0, 2.3)
 /// Lt
 /// ```
+///
+/// To handle
+/// [Floating Point Imprecision](https://en.wikipedia.org/wiki/Floating-point_arithmetic#Accuracy_problems)
+/// you may use [`loosely_compare`](#loosely_compare) instead.
 ///
 pub fn compare(a: Float, with b: Float) -> Order {
   case a == b {
@@ -87,8 +92,11 @@ pub fn compare(a: Float, with b: Float) -> Order {
   }
 }
 
-/// Compares two `Float`s within a tolerance and returns an `Order`:
+/// Compares two `Float`s within a tolerance, returning an `Order`:
 /// `Lt` for lower than, `Eq` for equals, or `Gt` for greater than.
+///
+/// This function allows Float comparison despite
+/// [Floating Point Imprecision](https://en.wikipedia.org/wiki/Floating-point_arithmetic#Accuracy_problems).
 ///
 /// Notice: For `Float`s the tolerance won't be exact:
 /// `5.3 - 5.0` is not exactly `0.3`.
@@ -99,6 +107,9 @@ pub fn compare(a: Float, with b: Float) -> Order {
 /// > loosely_compare(5.0, with: 5.3, tolerating: 0.5)
 /// Eq
 /// ```
+///
+/// If you want to check only for equality you may use
+/// [`loosely_equals`](#loosely_equals) instead.
 ///
 pub fn loosely_compare(
   a: Float,
@@ -112,7 +123,11 @@ pub fn loosely_compare(
   }
 }
 
-/// Checks for equality of two `Float`s within a tolerance.
+/// Checks for equality of two `Float`s within a tolerance,
+/// returning an `Bool`.
+///
+/// This function allows Float comparison despite
+/// [Floating Point Imprecision](https://en.wikipedia.org/wiki/Floating-point_arithmetic#Accuracy_problems).
 ///
 /// Notice: For `Float`s the tolerance won't be exact:
 /// `5.3 - 5.0` is not exactly `0.3`.
