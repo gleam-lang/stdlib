@@ -145,7 +145,7 @@ pub fn apply1(fun: fn(a) -> value, arg1: a) -> value {
 /// calls that function with the arguments
 /// and returns the function return value.
 ///
-/// See `apply1` for more details.
+/// See [`apply1`](#apply1) for more details.
 ///
 pub fn apply2(fun: fn(a, b) -> value, arg1: a, arg2: b) -> value {
   fun(arg1, arg2)
@@ -155,7 +155,7 @@ pub fn apply2(fun: fn(a, b) -> value, arg1: a, arg2: b) -> value {
 /// calls that function with the arguments
 /// and returns the function return value.
 ///
-/// See `apply1` for more details.
+/// See [`apply1`](#apply1) for more details.
 ///
 pub fn apply3(fun: fn(a, b, c) -> value, arg1: a, arg2: b, arg3: c) -> value {
   fun(arg1, arg2, arg3)
