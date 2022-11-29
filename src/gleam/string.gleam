@@ -778,7 +778,9 @@ if javascript {
 
 /// Converts a `String` to a `List` of `UtfCodepoint`.
 ///
-/// Also see: <https://en.wikipedia.org/wiki/Unicode#Codespace_and_CodePoints>.
+/// See <https://en.wikipedia.org/wiki/Code_point> and
+/// <https://en.wikipedia.org/wiki/Unicode#Codespace_and_CodePoints> for an
+/// explanation on code points.
 ///
 /// ## Examples
 ///
@@ -788,7 +790,9 @@ if javascript {
 /// ```
 ///
 /// ```gleam
-/// // aka ["🏳", "️", "‍", "🌈"] aka [waving_white_flag, variant_selector_16, zero_width_joiner, rainbow]
+/// // Semantically the same as:
+/// // ["🏳", "️", "‍", "🌈"] or:
+/// // [waving_white_flag, variant_selector_16, zero_width_joiner, rainbow]
 /// > "🏳️‍🌈" |> to_utf_codepoints
 /// [UtfCodepoint(127987), UtfCodepoint(65039), UtfCodepoint(8205), UtfCodepoint(127752)]
 /// ```
@@ -828,7 +832,9 @@ if javascript {
 
 /// Converts a `List` of `UtfCodepoint`s to a `String`.
 ///
-/// Also see: <https://en.wikipedia.org/wiki/Unicode#Codespace_and_CodePoints>.
+/// See <https://en.wikipedia.org/wiki/Code_point> and
+/// <https://en.wikipedia.org/wiki/Unicode#Codespace_and_CodePoints> for an
+/// explanation on code points.
 ///
 /// ## Examples
 ///
