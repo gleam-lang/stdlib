@@ -14,6 +14,8 @@
 - Fixed a bug where some string functions would incorrectly handle newlines when
   iterating over graphemes in older JavaScript environments that do not have the
   `Intl.Segmenter` class.
+- The `string` module gains `to_utf_codepoints` and `from_utf_codepoints`
+  functions.
 
 ## v0.25.0 - 2022-11-19
 
