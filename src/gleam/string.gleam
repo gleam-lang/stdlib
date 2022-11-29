@@ -8,8 +8,9 @@ import gleam/order
 import gleam/string_builder.{StringBuilder}
 
 if erlang {
-  import gleam/result
+  import gleam/bit_string
   import gleam/dynamic.{Dynamic}
+  import gleam/result
 }
 
 /// Determines if a `String` is empty.
@@ -773,6 +774,111 @@ if erlang {
 if javascript {
   external fn unsafe_int_to_utf_codepoint(Int) -> UtfCodepoint =
     "../gleam_stdlib.mjs" "codepoint"
+}
+
+/// Converts a `String` to a `List` of `UtfCodepoint`.
+///
+/// Also see: <https://en.wikipedia.org/wiki/Unicode#Codespace_and_CodePoints>.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > "a" |> to_utf_codepoints
+/// [UtfCodepoint(97)]
+/// ```
+///
+/// ```gleam
+/// // aka ["🏳", "️", "‍", "🌈"] aka [waving_white_flag, variant_selector_16, zero_width_joiner, rainbow]
+/// > "🏳️‍🌈" |> to_utf_codepoints
+/// [UtfCodepoint(127987), UtfCodepoint(65039), UtfCodepoint(8205), UtfCodepoint(127752)]
+/// ```
+///
+pub fn to_utf_codepoints(string: String) -> List(UtfCodepoint) {
+  do_to_utf_codepoints(string)
+}
+
+if erlang {
+  fn do_to_utf_codepoints(string: String) -> List(UtfCodepoint) {
+    do_to_utf_codepoints_impl(bit_string.from_string(string), [])
+    |> list.reverse
+  }
+
+  fn do_to_utf_codepoints_impl(
+    bit_string: BitString,
+    acc: List(UtfCodepoint),
+  ) -> List(UtfCodepoint) {
+    case bit_string {
+      <<head:utf8_codepoint, rest:binary>> ->
+        do_to_utf_codepoints_impl(rest, [head, ..acc])
+      <<>> -> acc
+    }
+  }
+}
+
+if javascript {
+  fn do_to_utf_codepoints(string: String) -> List(UtfCodepoint) {
+    string
+    |> string_to_codepoint_integer_list
+    |> list.map(unsafe_int_to_utf_codepoint)
+  }
+
+  external fn string_to_codepoint_integer_list(String) -> List(Int) =
+    "../gleam_stdlib.mjs" "string_to_codepoint_integer_list"
+}
+
+/// Converts a `List` of `UtfCodepoint`s to a `String`.
+///
+/// Also see: <https://en.wikipedia.org/wiki/Unicode#Codespace_and_CodePoints>.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > {
+/// >   assert #(Ok(a), Ok(b), Ok(c)) = #(
+/// >     utf_codepoint(97),
+/// >     utf_codepoint(98),
+/// >     utf_codepoint(99),
+/// >   )
+/// >   [a, b, c]
+/// > }
+/// > |> from_utf_codepoints
+/// "abc"
+/// ```
+///
+pub fn from_utf_codepoints(utf_codepoints: List(UtfCodepoint)) -> String {
+  do_from_utf_codepoints(utf_codepoints)
+}
+
+if erlang {
+  fn do_from_utf_codepoints(utf_codepoints: List(UtfCodepoint)) -> String {
+    assert Ok(string) =
+      do_from_utf_codepoints_impl(utf_codepoints, bit_string.from_string(""))
+      |> bit_string.to_string
+    string
+  }
+
+  fn do_from_utf_codepoints_impl(
+    utf_codepoints: List(UtfCodepoint),
+    acc: BitString,
+  ) -> BitString {
+    case utf_codepoints {
+      [head, ..tail] ->
+        do_from_utf_codepoints_impl(
+          tail,
+          <<acc:bit_string, head:utf8_codepoint>>,
+        )
+      [] -> acc
+    }
+  }
+}
+
+if javascript {
+  fn do_from_utf_codepoints(utf_codepoints: List(UtfCodepoint)) -> String {
+    utf_codepoint_list_to_string(utf_codepoints)
+  }
+
+  external fn utf_codepoint_list_to_string(List(UtfCodepoint)) -> String =
+    "../gleam_stdlib.mjs" "utf_codepoint_list_to_string"
 }
 
 /// Converts an integer to a `UtfCodepoint`.
