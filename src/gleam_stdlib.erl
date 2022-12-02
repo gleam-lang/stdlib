@@ -10,7 +10,7 @@
          percent_encode/1, percent_decode/1, regex_check/2, regex_split/2,
          base_decode64/1, parse_query/1, bit_string_concat/1, size_of_tuple/1,
          decode_tuple/1, tuple_get/2, classify_dynamic/1, print/1, println/1,
-         inspect/1, float_to_string/1]).
+         eprint/1, eprintln/1, inspect/1, float_to_string/1]).
 
 %% Taken from OTP's uri_string module
 -define(DEC2HEX(X),
@@ -317,6 +317,14 @@ print(String) ->
 
 println(String) ->
     io:put_chars([String, $\n]),
+    nil.
+
+eprint(String) ->
+    io:put_chars(standard_error, String),
+    nil.
+
+eprintln(String) ->
+    io:put_chars(standard_error, [String, $\n]),
     nil.
 
 inspect(true) ->
