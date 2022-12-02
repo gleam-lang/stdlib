@@ -228,6 +228,14 @@ export function print(string) {
   }
 }
 
+export function eprint(string) {
+  if (typeof process === "object") {
+    process.stderr.write(string); // We can write without a trailing newline
+  } else {
+    console.error(string); // We're in a browser. Newlines are mandated
+  }
+}
+
 export function ceiling(float) {
   return Math.ceil(float);
 }
