@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - "main_ci_tinkering"
+      - "main"
       - "v*.*.*"
   pull_request:
 
