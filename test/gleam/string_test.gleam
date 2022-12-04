@@ -351,14 +351,6 @@ pub fn pop_grapheme_test() {
   |> string.pop_grapheme
   |> should.equal(Ok(#("g", "")))
 
-  "🏳️‍🌈"
-  |> string.pop_grapheme
-  |> should.equal(Ok(#("🏳️‍🌈", "")))
-
-  "👨‍👩‍👦‍👦"
-  |> string.pop_grapheme()
-  |> should.equal(Ok(#("👨‍👩‍👦‍👦", "")))
-
   ""
   |> string.pop_grapheme
   |> should.equal(Error(Nil))
@@ -381,17 +373,9 @@ pub fn to_graphemes_test() {
   |> string.to_graphemes
   |> should.equal(["a", "b", "c"])
 
-  "🌷🎁💩😜👍"
+  "🌷🎁💩😜👍🏳️‍🌈"
   |> string.to_graphemes
-  |> should.equal(["🌷", "🎁", "💩", "😜", "👍"])
-
-  "🏳️‍🌈"
-  |> string.to_graphemes
-  |> should.equal(["🏳️‍🌈"])
-
-  "🎁🏳️‍🌈🌷"
-  |> string.to_graphemes
-  |> should.equal(["🎁", "🏳️‍🌈", "🌷"])
+  |> should.equal(["🌷", "🎁", "💩", "😜", "👍", "🏳️‍🌈"])
 
   "Ĺo͂řȩm̅"
   |> string.to_graphemes
@@ -404,13 +388,6 @@ pub fn to_graphemes_test() {
   "👨‍👩‍👦‍👦"
   |> string.to_graphemes()
   |> should.equal(["👨‍👩‍👦‍👦"])
-
-  "👨‍👩‍👦‍👦🏳️‍🌈👨‍👩‍👦‍👦🏳️‍🌈"
-  |> string.to_graphemes()
-  |> should.equal([
-    "👨‍👩‍👦‍👦", "🏳️‍🌈", "👨‍👩‍👦‍👦",
-    "🏳️‍🌈",
-  ])
 
   "ごん゙に゙ぢば"
   |> string.to_graphemes()
