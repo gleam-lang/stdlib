@@ -511,6 +511,10 @@ pub fn bit_string_utf_codepoint_test() {
 }
 
 pub fn to_ints_test() {
+  ""
+  |> string.to_ints
+  |> should.equal([])
+
   "abc"
   |> string.to_ints
   |> should.equal([97, 98, 99])
@@ -518,6 +522,19 @@ pub fn to_ints_test() {
   "🐍"
   |> string.to_ints
   |> should.equal([128013])
+
+  {
+    assert Ok(cp) = string.utf_codepoint(128013)
+    [cp]
+  }
+  |> string.from_utf_codepoints
+  |> string.to_ints
+  |> should.equal([128013])
+
+  string.to_utf_codepoints("🐍")
+  |> string.from_utf_codepoints
+  |> string.to_ints
+  "🐍"
 }
 
 pub fn to_option_test() {

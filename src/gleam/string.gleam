@@ -900,6 +900,27 @@ pub fn utf_codepoint(value: Int) -> Result(UtfCodepoint, Nil) {
   }
 }
 
+/// Converts a string to a list of UtfCodepoint integers.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > "abc"
+/// > |> string.to_ints
+/// [97, 98, 99]
+/// ```
+///
+/// ```gleam
+/// > "🐍"
+/// > |> string.to_ints
+/// [128013]
+/// ```
+///
+/// ```gleam
+/// > [utf_codepoint(128013)] |> from_utf_codepoints |> to_ints
+/// "🐍"
+/// ```
+///
 pub fn to_ints(s: String) -> List(Int) {
   to_utf_codepoints(s)
   |> list.map(utf_codepoint_to_int)
