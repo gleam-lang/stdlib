@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - "main"
+      - "main_ci_tinkering"
       - "v*.*.*"
   pull_request:
 
@@ -11,14 +11,14 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.0.0
-      - uses: erlef/setup-beam@v1.13.0
+      - uses: actions/checkout@v2.5.0
+      - uses: erlef/setup-beam@v1.15.0
         with:
-          otp-version: "23.2"
-          gleam-version: "0.25.0-rc1"
-      - uses: actions/setup-node@v2
+          otp-version: "24.2"
+          gleam-version: "0.25.0"
+      - uses: actions/setup-node@v3.5.1
         with:
-          node-version: "16.0.0"
+          node-version: "16.18.1"
       - run: gleam test --target erlang
       - run: gleam test --target javascript
       - run: gleam format --check src test
