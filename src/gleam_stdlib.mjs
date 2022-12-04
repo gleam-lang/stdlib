@@ -95,7 +95,7 @@ export function string_length(string) {
 
 export function graphemes(string) {
   return List.fromArray(
-    Array.from(graphemes_iterator(string)).map(((item) => item.segment ))
+    Array.from(graphemes_iterator(string)).map((item) => item.segment)
   );
 }
 
@@ -199,12 +199,12 @@ export function bit_string_concat(bit_strings) {
   return toBitString(bit_strings.toArray().map((b) => b.buffer));
 }
 
-export function log(term) {
+export function console_log(term) {
   console.log(term);
 }
 
-export function debug(term) {
-  console.log(inspect(term));
+export function console_error(term) {
+  console.error(term);
 }
 
 export function crash(message) {
@@ -228,11 +228,19 @@ export function print(string) {
   }
 }
 
-export function eprint(string) {
+export function print_error(string) {
   if (typeof process === "object") {
     process.stderr.write(string); // We can write without a trailing newline
   } else {
     console.error(string); // We're in a browser. Newlines are mandated
+  }
+}
+
+export function print_debug(string) {
+  if (typeof process === "object") {
+    process.stderr.write(string + "\n"); // If we're in Node.js, use `stderr`
+  } else {
+    console.log(string); // Otherwise, use `console.log` (so that it doesn't look like an error)
   }
 }
 
@@ -259,7 +267,7 @@ export function power(base, exponent) {
   //   the result will essentially be division by zero).
   // It can thus be assumed that valid input is passed to the Math.pow
   // function and a NaN or Infinity value will not be produced.
-  return Math.pow(base, exponent)
+  return Math.pow(base, exponent);
 }
 
 export function random_uniform() {

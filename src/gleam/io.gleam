@@ -33,23 +33,23 @@ if javascript {
 /// ## Example
 ///
 /// ```
-/// > io.eprint("Hi pop")
+/// > io.print_error("Hi pop")
 /// // -> Hi pop
 /// Nil
 /// ```
 ///
-pub fn eprint(string: String) -> Nil {
-  do_eprint(string)
+pub fn print_error(string: String) -> Nil {
+  do_print_error(string)
 }
 
 if erlang {
-  external fn do_eprint(string: String) -> Nil =
-    "gleam_stdlib" "eprint"
+  external fn do_print_error(string: String) -> Nil =
+    "gleam_stdlib" "print_error"
 }
 
 if javascript {
-  external fn do_eprint(String) -> Nil =
-    "../gleam_stdlib.mjs" "eprint"
+  external fn do_print_error(String) -> Nil =
+    "../gleam_stdlib.mjs" "print_error"
 }
 
 /// Writes a string to standard output, appending a newline to the end.
@@ -73,7 +73,7 @@ if erlang {
 
 if javascript {
   external fn do_println(String) -> Nil =
-    "../gleam_stdlib.mjs" "log"
+    "../gleam_stdlib.mjs" "console_log"
 }
 
 /// Writes a string to standard error, appending a newline to the end.
@@ -81,26 +81,26 @@ if javascript {
 /// ## Example
 ///
 /// ```gleam
-/// > io.eprintln("Hi pop")
+/// > io.println_error("Hi pop")
 /// // -> Hi mum
 /// Nil
 /// ```
 ///
-pub fn eprintln(string: String) -> Nil {
-  do_eprintln(string)
+pub fn println_error(string: String) -> Nil {
+  do_println_error(string)
 }
 
 if erlang {
-  external fn do_eprintln(string: String) -> Nil =
-    "gleam_stdlib" "eprintln"
+  external fn do_println_error(string: String) -> Nil =
+    "gleam_stdlib" "println_error"
 }
 
 if javascript {
-  external fn do_eprintln(String) -> Nil =
-    "../gleam_stdlib.mjs" "error"
+  external fn do_println_error(String) -> Nil =
+    "../gleam_stdlib.mjs" "console_error"
 }
 
-/// Prints a value to standard output (stdout) yielding Gleam syntax.
+/// Prints a value to standard error (stderr) yielding Gleam syntax.
 ///
 /// The value is returned after being printed so it can be used in pipelines.
 ///
@@ -131,39 +131,17 @@ if javascript {
 pub fn debug(term: anything) -> anything {
   term
   |> string.inspect
-  |> println
+  |> do_debug_println
 
   term
 }
 
-/// Prints a value to standard error (stderr) yielding Gleam syntax.
-///
-/// The value is returned after being printed so it can be used in pipelines.
-///
-/// ## Example
-///
-/// ```gleam
-/// > io.edebug("Hi pop")
-/// // -> <<"Hi pop">>
-/// "Hi pop"
-///
-/// > io.edebug(Ok(1))
-/// // -> {ok, 1}
-/// Ok(1)
-///
-/// > import list
-/// > [1, 2]
-/// > |> list.map(fn(x) { x + 1 })
-/// > |> io.edebug
-/// > |> list.map(fn(x) { x * 2 })
-/// // -> [2, 3]
-/// [4, 6]
-/// ```
-///
-pub fn edebug(term: anything) -> anything {
-  term
-  |> string.inspect
-  |> eprintln
+if erlang {
+  external fn do_debug_println(string: String) -> Nil =
+    "gleam_stdlib" "println_error"
+}
 
-  term
+if javascript {
+  external fn do_debug_println(String) -> Nil =
+    "../gleam_stdlib.mjs" "print_debug"
 }
