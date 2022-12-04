@@ -900,6 +900,21 @@ pub fn utf_codepoint(value: Int) -> Result(UtfCodepoint, Nil) {
   }
 }
 
+pub fn to_ints(s: String) -> List(Int) {
+  to_utf_codepoints(s)
+  |> list.map(utf_codepoint_to_int)
+}
+
+if erlang {
+  external fn utf_codepoint_to_int(cp: UtfCodepoint) -> Int =
+    "gleam_stdlib" "identity"
+}
+
+if javascript {
+  external fn utf_codepoint_to_int(cp: UtfCodepoint) -> Int =
+    "../gleam_stdlib.mjs" "utf_codepoint_to_int"
+}
+
 /// Converts a `String` into `Option(String)` where an empty `String` becomes
 /// `None`.
 ///
