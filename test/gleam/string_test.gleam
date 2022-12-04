@@ -415,6 +415,11 @@ pub fn utf_codepoint_test() {
 
   string.utf_codepoint(55296)
   |> should.be_error
+
+  assert Ok(star) = string.utf_codepoint(127775)
+  star
+  |> string.utf_codepoint_to_int
+  |> should.equal(127775)
 }
 
 pub fn bit_string_utf_codepoint_test() {

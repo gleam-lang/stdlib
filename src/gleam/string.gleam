@@ -768,11 +768,17 @@ fn do_to_graphemes(string: String, acc: List(String)) -> List(String) {
 if erlang {
   external fn unsafe_int_to_utf_codepoint(Int) -> UtfCodepoint =
     "gleam_stdlib" "identity"
+
+  external fn unsafe_utf_codepoint_to_int(UtfCodepoint) -> Int =
+    "gleam_stdlib" "identity"
 }
 
 if javascript {
   external fn unsafe_int_to_utf_codepoint(Int) -> UtfCodepoint =
     "../gleam_stdlib.mjs" "codepoint"
+
+  external fn unsafe_utf_codepoint_to_int(UtfCodepoint) -> Int =
+    "../gleam_stdlib.mjs" "codepoint_to_int"
 }
 
 /// Converts an integer to a `UtfCodepoint`.
@@ -786,6 +792,11 @@ pub fn utf_codepoint(value: Int) -> Result(UtfCodepoint, Nil) {
     i if i >= 55296 && i <= 57343 -> Error(Nil)
     i -> Ok(unsafe_int_to_utf_codepoint(i))
   }
+}
+
+/// Converts a `UtfCodepoint` to an integer.
+pub fn utf_codepoint_to_int(codepoint: UtfCodepoint) -> Int {
+  unsafe_utf_codepoint_to_int(codepoint)
 }
 
 /// Converts a `String` into `Option(String)` where an empty `String` becomes

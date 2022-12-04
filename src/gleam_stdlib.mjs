@@ -281,6 +281,10 @@ export function codepoint(int) {
   return new UtfCodepoint(int);
 }
 
+export function codepoint_to_int(codepoint) {
+  return codepoint.value;
+}
+
 export function regex_check(regex, string) {
   return regex.test(string);
 }
