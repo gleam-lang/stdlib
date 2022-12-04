@@ -510,6 +510,16 @@ pub fn bit_string_utf_codepoint_test() {
   should.equal(<<snake:utf8_codepoint>>, <<"🐍":utf8>>)
 }
 
+pub fn to_ints_test() {
+  "abc"
+  |> string.to_ints
+  |> should.equal([97, 98, 99])
+
+  "🐍"
+  |> string.to_ints
+  |> should.equal([128013])
+}
+
 pub fn to_option_test() {
   ""
   |> string.to_option

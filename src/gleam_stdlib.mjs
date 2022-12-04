@@ -363,6 +363,10 @@ export function utf_codepoint_list_to_string(utf_codepoint_integer_list) {
     .join("");
 }
 
+export function utf_codepoint_to_int(utf_codepoint) {
+	return utf_codepoint.value;
+}
+
 export function regex_check(regex, string) {
   return regex.test(string);
 }
