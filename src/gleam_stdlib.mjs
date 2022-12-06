@@ -89,7 +89,7 @@ export function string_length(string) {
     }
     return i;
   } else {
-    return string.match(/./gu).length;
+    return string.match(/./gus).length;
   }
 }
 
@@ -111,7 +111,7 @@ export function pop_grapheme(string) {
   if (iterator) {
     first = iterator.next().value?.segment;
   } else {
-    first = string.match(/./u)?.[0];
+    first = string.match(/./us)?.[0];
   }
   if (first) {
     return new Ok([first, string.slice(first.length)]);
