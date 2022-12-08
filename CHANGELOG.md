@@ -10,6 +10,8 @@
   when running as JavaScript in a browser)
 - The `list.at` function now returns `Error(Nil)` if given index is smaller than
   zero, instead of returning the first element.
+- The `string` module takes into account newlines for `length` and
+  various other functions in Firefox
 
 ## v0.25.0 - 2022-11-19
 
