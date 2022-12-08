@@ -1036,9 +1036,8 @@ pub fn intersperse(list: List(a), with elem: a) -> List(a) {
 /// Returns the element in the Nth position in the list, with 0 being the first
 /// position.
 ///
-/// `Error(Nil)` is returned if the list is not long enough for the given index.
-///
-/// For any `index` less than 0 this function behaves as if it was set to 0.
+/// `Error(Nil)` is returned if the list is not long enough for the given index
+/// or if the index is less than 0.
 ///
 /// ## Examples
 ///
@@ -1053,9 +1052,13 @@ pub fn intersperse(list: List(a), with elem: a) -> List(a) {
 /// ```
 ///
 pub fn at(in list: List(a), get index: Int) -> Result(a, Nil) {
-  list
-  |> drop(index)
-  |> first
+  case index >= 0 {
+    True ->
+      list
+      |> drop(index)
+      |> first
+    False -> Error(Nil)
+  }
 }
 
 /// Removes any duplicate elements from a given list.
