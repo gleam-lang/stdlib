@@ -8,6 +8,8 @@
 - The `io.debug` function now prints to stderr instead of stdout when using
   the Erlang target or running in Node.js (but still uses `console.log`
   when running as JavaScript in a browser)
+- The `string` module takes into account newlines for `length` and
+  various other functions in Firefox
 
 ## v0.25.0 - 2022-11-19
 
