@@ -10,8 +10,9 @@
   when running as JavaScript in a browser)
 - The `list.at` function now returns `Error(Nil)` if given index is smaller than
   zero, instead of returning the first element.
-- The `string` module takes into account newlines for `length` and
-  various other functions in Firefox
+- Fixed a bug where some string functions would incorrectly handle newlines when
+  iterating over graphemes in older JavaScript environments that do not have the
+  `Intl.Segmenter` class.
 
 ## v0.25.0 - 2022-11-19
 
