@@ -15,7 +15,7 @@
   iterating over graphemes in older JavaScript environments that do not have the
   `Intl.Segmenter` class.
 - The `string` module gains `to_utf_codepoints`, `from_utf_codepoints`, and
-  `to_ints` functions.
+  `utf_codepoint_to_int` functions.
 
 ## v0.25.0 - 2022-11-19
 

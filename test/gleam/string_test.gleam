@@ -487,31 +487,13 @@ pub fn bit_string_utf_codepoint_test() {
   should.equal(<<snake:utf8_codepoint>>, <<"🐍":utf8>>)
 }
 
-pub fn to_ints_test() {
-  ""
-  |> string.to_ints
-  |> should.equal([])
-
-  "abc"
-  |> string.to_ints
-  |> should.equal([97, 98, 99])
-
-  "🐍"
-  |> string.to_ints
-  |> should.equal([128013])
-
+pub fn utf_codepoint_to_int_test() {
   {
-    assert Ok(cp) = string.utf_codepoint(128013)
-    [cp]
+    assert Ok(ordinal_value) = string.utf_codepoint(128_013)
+    ordinal_value
   }
-  |> string.from_utf_codepoints
-  |> string.to_ints
-  |> should.equal([128013])
-
-  string.to_utf_codepoints("🐍")
-  |> string.from_utf_codepoints
-  |> string.to_ints
-  "🐍"
+  |> string.utf_codepoint_to_int
+  |> should.equal(128_013)
 }
 
 pub fn to_option_test() {
