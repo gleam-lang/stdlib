@@ -87,16 +87,16 @@ pub fn scan_test() {
 }
 
 pub fn replace_test() {
-  assert Ok(re) = regex.from_string("a")
+  assert Ok(re_letter) = regex.from_string("a")
   assert Ok(re_digits) = regex.from_string("\\d+")
 
-  regex.replace(re, "abc", "b")
+  regex.replace(re_letter, "abc", "b")
   |> should.equal("bbc")
 
-  regex.replace(re, "xyz", "b")
+  regex.replace(re_letter, "xyz", "b")
   |> should.equal("xyz")
 
-  regex.replace(re, "aba", "x")
+  regex.replace(re_letter, "aba", "x")
   |> should.equal("xbx")
 
   regex.replace(re_digits, "Number 9", "(&)")
