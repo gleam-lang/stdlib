@@ -91,4 +91,7 @@ pub fn replace_test() {
 
   regex.replace(re, "abc", "b")
   |> should.equal("bbc")
+
+  regex.replace(re, "xyz", "b")
+  |> should.equal("xyz")
 }
