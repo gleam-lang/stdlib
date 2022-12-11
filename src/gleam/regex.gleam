@@ -187,3 +187,23 @@ if javascript {
   external fn do_scan(Regex, String) -> List(Match) =
     "../gleam_stdlib.mjs" "regex_scan"
 }
+
+///
+///
+pub fn replace(
+  with regex: Regex,
+  subject subject: String,
+  replacement replacement: String,
+) -> String {
+  do_replace(regex, subject, replacement)
+}
+
+if erlang {
+  external fn do_replace(Regex, String, String) -> String =
+    "gleam_stdlib" "regex_replace"
+}
+
+if javascript {
+  external fn do_scan(Regex, String, String) -> String =
+    "../gleam_stdlib.mjs" "regex_replace"
+}
