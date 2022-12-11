@@ -99,6 +99,6 @@ pub fn replace_test() {
   regex.replace(re, "aba", "x")
   |> should.equal("xbx")
 
-  regex.replace(re_digit, "Number 9", "(\\1)")
+  regex.replace(re_digit, "Number 9", "(&)")
   |> should.equal("Number (9)")
 }
