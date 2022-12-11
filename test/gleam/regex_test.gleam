@@ -85,3 +85,10 @@ pub fn scan_test() {
   regex.scan(re, "你好 42 世界")
   |> should.equal([Match(content: "42", submatches: [Some("42")])])
 }
+
+pub fn replace_test() {
+  assert Ok(re) = regex.from_string("a")
+
+  regex.replace(re, "abc", "b")
+  |> should.equal("bbc")
+}
