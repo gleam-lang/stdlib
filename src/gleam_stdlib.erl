@@ -7,7 +7,7 @@
          string_ends_with/2, string_pad/4, decode_map/1, uri_parse/1,
          bit_string_int_to_u32/1, bit_string_int_from_u32/1, decode_result/1,
          bit_string_slice/3, decode_bit_string/1, compile_regex/2, regex_scan/2,
-         percent_encode/1, percent_decode/1, regex_check/2, regex_split/2,
+         percent_encode/1, percent_decode/1, regex_check/2, regex_replace/3, regex_split/2,
          base_decode64/1, parse_query/1, bit_string_concat/1, size_of_tuple/1,
          decode_tuple/1, tuple_get/2, classify_dynamic/1, print/1, println/1,
          print_error/1, println_error/1, inspect/1, float_to_string/1]).
@@ -197,6 +197,9 @@ regex_check(Regex, String) ->
 
 regex_split(Regex, String) ->
     re:split(String, Regex).
+
+regex_replace(Regex, String, Replacement) ->
+    re:replace(String, Regex, Replacement, [global, {return, binary}]).
 
 regex_submatches(String, {Start, Length}) ->
     BinarySlice = binary:part(String, {Start, Length}),
