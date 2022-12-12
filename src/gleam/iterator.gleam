@@ -653,6 +653,45 @@ pub fn take_while(
   |> Iterator
 }
 
+fn do_take_while_inclusive(
+  continuation: fn() -> Action(element),
+  predicate: fn(element) -> Bool,
+  continue: Bool,
+) -> fn() -> Action(element) {
+  fn() {
+    case continue {
+      False -> Stop
+      True ->
+        case continuation() {
+          Stop -> Stop
+          Continue(e, next) ->
+            Continue(e, do_take_while_inclusive(next, predicate, predicate(e)))
+        }
+    }
+  }
+}
+
+/// Creates an iterator that yields elements while the predicate returns `True`,
+/// and also yields the element for which the predicate first returned `False`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > from_list([1, 2, 3, 2, 4])
+/// > |> take_while_inclusive(satisfying: fn(x) { x < 3 })
+/// > |> to_list
+/// [1, 2, 3]
+/// ```
+///
+pub fn take_while_inclusive(
+  in iterator: Iterator(element),
+  satisfying predicate: fn(element) -> Bool,
+) -> Iterator(element) {
+  iterator.continuation
+  |> do_take_while_inclusive(predicate, True)
+  |> Iterator
+}
+
 fn do_drop_while(
   continuation: fn() -> Action(element),
   predicate: fn(element) -> Bool,

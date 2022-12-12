@@ -284,6 +284,13 @@ pub fn take_while_test() {
   |> should.equal([1, 2])
 }
 
+pub fn take_while_inclusive_test() {
+  iterator.from_list([1, 2, 3, 2, 4])
+  |> iterator.take_while_inclusive(satisfying: fn(x) { x < 3 })
+  |> iterator.to_list
+  |> should.equal([1, 2, 3])
+}
+
 pub fn drop_while_test() {
   iterator.from_list([1, 2, 3, 4, 2, 5])
   |> iterator.drop_while(satisfying: fn(x) { x < 4 })
