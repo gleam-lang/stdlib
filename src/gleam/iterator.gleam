@@ -125,6 +125,49 @@ pub fn from_list(list: List(element)) -> Iterator(element) {
 }
 
 // Consuming Iterators
+fn do_transform(
+  continuation: fn() -> Action(a),
+  state: acc,
+  f: fn(acc, a) -> Step(b, acc),
+) -> fn() -> Action(b) {
+  fn() {
+    case continuation() {
+      Stop -> Stop
+      Continue(el, next) ->
+        case f(state, el) {
+          Done -> Stop
+          Next(yield, next_state) ->
+            Continue(yield, do_transform(next, next_state, f))
+        }
+    }
+  }
+}
+
+/// Creates an iterator from an existing iterator
+/// and a stateful function that may short-circuit.
+///
+/// `f` takes arguments `acc` for current state and `el` for current element from underlying iterator,
+/// and returns either `Next` with yielded element and new state value, or `Done` to halt the iterator.
+///
+/// ## Examples
+///
+/// Approximate implementation of `index` in terms of `transform`:
+///
+/// ```gleam
+/// > from_list(["a", "b", "c"])
+/// > |> transform(0, fn(i, el) { Next(#(i, el), i + 1) })
+/// > |> to_list
+/// [#(0, "a"), #(1, "b"), #(2, "c")]
+/// ```
+pub fn transform(
+  over iterator: Iterator(a),
+  from initial: acc,
+  with f: fn(acc, a) -> Step(b, acc),
+) -> Iterator(b) {
+  do_transform(iterator.continuation, initial, f)
+  |> Iterator
+}
+
 fn do_fold(
   continuation: fn() -> Action(e),
   f: fn(acc, e) -> acc,
