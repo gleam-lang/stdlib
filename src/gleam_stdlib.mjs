@@ -630,3 +630,22 @@ export function decode_field(value, name) {
     return error();
   }
 }
+
+// Used to test side-effects
+let storage = [];
+
+export function storage_init() {
+  storage = []
+}
+
+export function storage_add(value) {
+  storage.push(value);
+}
+
+export function storage_get() {
+  return List.fromArray(storage);
+}
+
+export function storage_clear() {
+  storage = []
+}

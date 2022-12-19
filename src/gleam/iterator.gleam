@@ -342,6 +342,53 @@ pub fn map(over iterator: Iterator(a), with f: fn(a) -> b) -> Iterator(b) {
   |> Iterator
 }
 
+/// Creates an iterator from an existing iterator and a function.
+///
+/// For each element in the iterator calls the given function with the element
+/// as the only argument, presumably for side-effects. The values in the
+/// returned iterator remain unchanged.
+///
+/// This function does not evaluate the elements of the iterator, the
+/// function is evaluated when the iterator is later run.
+///
+/// ## Examples
+///
+/// This can be useful for debugging stages of an iterator pipeline.
+///
+/// ```gleam
+/// > [1, 2, 3]
+/// > |> from_list
+/// > |> tap(io.debug)
+/// > |> map(fn(x) { x * -1 })
+/// > |> tap(io.debug)
+/// > |> to_list
+/// ```
+///
+/// Prints:
+/// ```
+/// 1
+/// -1
+/// 2
+/// -2
+/// 3
+/// -3
+/// ```
+///
+/// Returns:
+/// ```gleam
+/// [-1, -2, -3]
+/// ```
+///
+pub fn tap(over iterator: Iterator(a), with callback: fn(a) -> b) -> Iterator(a) {
+  map(
+    iterator,
+    fn(value) {
+      callback(value)
+      value
+    },
+  )
+}
+
 fn do_append(first: fn() -> Action(a), second: fn() -> Action(a)) -> Action(a) {
   case first() {
     Continue(e, first) -> Continue(e, fn() { do_append(first, second) })

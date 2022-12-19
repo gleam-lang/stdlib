@@ -102,6 +102,49 @@ pub fn map_test() {
   test([1, 2, 3, 4, 5, 6, 7, 8], f)
 }
 
+pub fn tap_test() {
+  storage_init()
+  let fun = fn(value) { storage_add(value * 2) }
+
+  [1, 2, 3, 4, 5]
+  |> iterator.from_list
+  |> iterator.tap(fun)
+  |> iterator.to_list
+  |> should.equal([1, 2, 3, 4, 5])
+
+  should.equal(storage_get(), [2, 4, 6, 8, 10])
+  storage_clear()
+}
+
+if javascript {
+  // Mutable storage implementation for testing side effects
+  external fn storage_init() -> Nil =
+    "../gleam_stdlib.mjs" "storage_init"
+
+  external fn storage_add(a) -> Nil =
+    "../gleam_stdlib.mjs" "storage_add"
+
+  external fn storage_get() -> List(a) =
+    "../gleam_stdlib.mjs" "storage_get"
+
+  external fn storage_clear() -> Nil =
+    "../gleam_stdlib.mjs" "storage_clear"
+}
+
+if erlang {
+  external fn storage_init() -> Nil =
+    "gleam_stdlib" "storage_init"
+
+  external fn storage_add(a) -> Nil =
+    "gleam_stdlib" "storage_add"
+
+  external fn storage_get() -> List(a) =
+    "gleam_stdlib" "storage_get"
+
+  external fn storage_clear() -> Nil =
+    "gleam_stdlib" "storage_clear"
+}
+
 // a |> from_list |> flat_map(f) |> to_list ==
 //   a |> list.map(f) |> list.map(to_list) |> list.flatten
 pub fn flat_map_test() {

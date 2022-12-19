@@ -10,7 +10,8 @@
          percent_encode/1, percent_decode/1, regex_check/2, regex_split/2,
          base_decode64/1, parse_query/1, bit_string_concat/1, size_of_tuple/1,
          decode_tuple/1, tuple_get/2, classify_dynamic/1, print/1, println/1,
-         print_error/1, println_error/1, inspect/1, float_to_string/1]).
+         print_error/1, println_error/1, inspect/1, float_to_string/1,
+         storage_init/0, storage_add/1, storage_get/0, storage_clear/0]).
 
 %% Taken from OTP's uri_string module
 -define(DEC2HEX(X),
@@ -395,3 +396,14 @@ inspect_list([First | ImproperTail]) ->
 
 float_to_string(Float) when is_float(Float) ->
     erlang:iolist_to_binary(io_lib_format:fwrite_g(Float)).
+
+% Used to test side effects
+storage_init() ->
+    ets:new(gleam_test_storage, [ordered_set, protected, named_table]).
+storage_add(Value) ->
+    ets:insert(gleam_test_storage, {Value}).
+storage_get() ->
+    Items = ets:tab2list(gleam_test_storage),
+    lists:map(fun({X}) -> X end, Items).
+storage_clear() ->
+    ets:delete(gleam_test_storage).
