@@ -8,6 +8,7 @@
 - The `io.debug` function now prints to stderr instead of stdout when using
   the Erlang target or running in Node.js (but still uses `console.log`
   when running as JavaScript in a browser)
+- The `iterator` module gains the `transform` function.
 - The `list.at` function now returns `Error(Nil)` if given index is smaller than
   zero, instead of returning the first element.
 - Fixed a bug where some string functions would incorrectly handle newlines when
