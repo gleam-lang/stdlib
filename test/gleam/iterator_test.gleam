@@ -69,6 +69,14 @@ pub fn take_test() {
   test(22, [0, 1, 2, 3, 4])
 }
 
+pub fn transform_test() {
+  ["a", "b", "c", "d"]
+  |> iterator.from_list
+  |> iterator.transform(0, fn(i, el) { Next(#(i, el), i + 1) })
+  |> iterator.to_list
+  |> should.equal([#(0, "a"), #(1, "b"), #(2, "c"), #(3, "d")])
+}
+
 // a |> from_list |> fold(a, f) == a |> list.fold(_, a, f)
 pub fn fold_test() {
   let test = fn(subject, acc, f) {
