@@ -69,12 +69,57 @@ pub fn take_test() {
   test(22, [0, 1, 2, 3, 4])
 }
 
-pub fn transform_test() {
+pub fn transform_index_test() {
+  let f = fn(i, el) { Next(#(i, el), i + 1) }
+
   ["a", "b", "c", "d"]
   |> iterator.from_list
-  |> iterator.transform(0, fn(i, el) { Next(#(i, el), i + 1) })
+  |> iterator.transform(0, f)
   |> iterator.to_list
   |> should.equal([#(0, "a"), #(1, "b"), #(2, "c"), #(3, "d")])
+}
+
+pub fn transform_take_test() {
+  let f = fn(rem, el) {
+    case rem > 0 {
+      False -> Done
+      True -> Next(el, rem - 1)
+    }
+  }
+
+  [1, 2, 3, 4, 5]
+  |> iterator.from_list
+  |> iterator.transform(3, f)
+  |> iterator.to_list
+  |> should.equal([1, 2, 3])
+}
+
+pub fn transform_take_while_test() {
+  let f = fn(_, el) {
+    case el < 3 {
+      True -> Next(el, Nil)
+      False -> Done
+    }
+  }
+
+  [1, 2, 3, 2, 4]
+  |> iterator.from_list
+  |> iterator.transform(Nil, f)
+  |> iterator.to_list
+  |> should.equal([1, 2])
+}
+
+pub fn transform_scan_test() {
+  let f = fn(acc, el) {
+    let result = acc + el
+    Next(result, result)
+  }
+
+  [1, 2, 3, 4, 5]
+  |> iterator.from_list
+  |> iterator.transform(0, f)
+  |> iterator.to_list
+  |> should.equal([1, 3, 6, 10, 15])
 }
 
 // a |> from_list |> fold(a, f) == a |> list.fold(_, a, f)
