@@ -407,18 +407,18 @@ pub fn to_graphemes_test() {
 }
 
 pub fn utf_codepoint_test() {
-  string.utf_codepoint(1114444)
+  string.utf_codepoint(1_114_444)
   |> should.be_error
 
-  string.utf_codepoint(65534)
+  string.utf_codepoint(65_534)
   |> should.be_error
 
-  string.utf_codepoint(55296)
+  string.utf_codepoint(55_296)
   |> should.be_error
 }
 
 pub fn bit_string_utf_codepoint_test() {
-  assert Ok(snake) = string.utf_codepoint(128013)
+  assert Ok(snake) = string.utf_codepoint(128_013)
   should.equal(<<snake:utf8_codepoint>>, <<"🐍":utf8>>)
 }
 
@@ -584,6 +584,18 @@ pub fn inspect_test() {
 
   string.inspect("")
   |> should.equal("\"\"")
+
+  string.inspect("\n")
+  |> should.equal("\"\\n\"")
+
+  string.inspect("\r")
+  |> should.equal("\"\\r\"")
+
+  string.inspect("\t")
+  |> should.equal("\"\\t\"")
+
+  string.inspect("\\")
+  |> should.equal("\"\\\"")
 
   string.inspect("1")
   |> should.equal("\"1\"")
