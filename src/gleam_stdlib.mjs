@@ -58,14 +58,14 @@ export function int_to_base_string(int, base) {
 }
 
 const int_base_patterns = {
-  2:  /[^0-1]/,
-  3:  /[^0-2]/,
-  4:  /[^0-3]/,
-  5:  /[^0-4]/,
-  6:  /[^0-5]/,
-  7:  /[^0-6]/,
-  8:  /[^0-7]/,
-  9:  /[^0-8]/,
+  2: /[^0-1]/,
+  3: /[^0-2]/,
+  4: /[^0-3]/,
+  5: /[^0-4]/,
+  6: /[^0-5]/,
+  7: /[^0-6]/,
+  8: /[^0-7]/,
+  9: /[^0-8]/,
   10: /[^0-9]/,
   11: /[^0-9a]/,
   12: /[^0-9a-b]/,
@@ -93,10 +93,10 @@ const int_base_patterns = {
   34: /[^0-9a-x]/,
   35: /[^0-9a-y]/,
   36: /[^0-9a-z]/,
-}
+};
 
 export function int_from_base_string(string, base) {
-  if (int_base_patterns[base].test(string.toLowerCase())) {
+  if (int_base_patterns[base].test(string.replace(/^-/, "").toLowerCase())) {
     return new Error(Nil);
   }
 
