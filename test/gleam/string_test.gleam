@@ -582,38 +582,65 @@ pub fn inspect_test() {
   string.inspect([1.5])
   |> should.equal("[1.5]")
 
+  let q = "\""
+  let b = "\\"
+  let n = "n"
+  let r = "r"
+  let t = "t"
+
   string.inspect("")
-  |> should.equal("\"\"")
-
-  string.inspect("\"")
-  |> should.equal("\"\\\"\"")
-
-  string.inspect("\n")
-  |> should.equal("\"\\n\"")
-
-  string.inspect("\n\n")
-  |> should.equal("\"\\n\\n\"")
-
-  string.inspect("\r\r")
-  |> should.equal("\"\\r\\r\"")
-
-  string.inspect("\r\n")
-  |> should.equal("\"\\r\\n\"")
-
-  string.inspect("\t\t")
-  |> should.equal("\"\\t\\t\"")
+  |> should.equal(string.concat([q, q]))
 
   string.inspect("\\")
-  |> should.equal("\"\\\\\"")
+  |> should.equal(string.concat([q, b, b, q]))
 
   string.inspect("\\\\")
-  |> should.equal("\"\\\\\\\"")
+  |> should.equal(string.concat([q, b, b, b, b, q]))
+
+  string.inspect("\\\\\\")
+  |> should.equal(string.concat([q, b, b, b, b, b, b, q]))
+
+  string.inspect("\"")
+  |> should.equal(string.concat([q, b, q, q]))
+
+  string.inspect("\"\"")
+  |> should.equal(string.concat([q, b, q, b, q, q]))
+
+  string.inspect("\r")
+  |> should.equal(string.concat([q, b, r, q]))
+
+  string.inspect("\n")
+  |> should.equal(string.concat([q, b, n, q]))
+
+  string.inspect("\t")
+  |> should.equal(string.concat([q, b, t, q]))
+
+  string.inspect("\r\r")
+  |> should.equal(string.concat([q, b, r, b, r, q]))
+
+  string.inspect("\n\n")
+  |> should.equal(string.concat([q, b, n, b, n, q]))
+
+  string.inspect("\r\n")
+  |> should.equal(string.concat([q, b, r, b, n, q]))
+
+  string.inspect("\t\t")
+  |> should.equal(string.concat([q, b, t, b, t, q]))
 
   string.inspect("\\\n\\")
-  |> should.equal("\"\\\\n\\\"")
+  |> should.equal(string.concat([q, b, b, b, n, b, b, q]))
+
+  string.inspect("\\\"\\")
+  |> should.equal(string.concat([q, b, b, b, q, b, b, q]))
+
+  string.inspect("0")
+  |> should.equal("\"0\"")
 
   string.inspect("1")
   |> should.equal("\"1\"")
+
+  string.inspect("2")
+  |> should.equal("\"2\"")
 
   string.inspect("Hello Joe!")
   |> should.equal("\"Hello Joe!\"")
@@ -623,6 +650,15 @@ pub fn inspect_test() {
 
   string.inspect("💜 Gleam")
   |> should.equal("\"💜 Gleam\"")
+
+  string.inspect("True")
+  |> should.equal("\"True\"")
+
+  string.inspect("False")
+  |> should.equal("\"False\"")
+
+  string.inspect("Nil")
+  |> should.equal("\"Nil\"")
 
   string.inspect(["1"])
   |> should.equal("[\"1\"]")
