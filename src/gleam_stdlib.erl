@@ -345,11 +345,11 @@ inspect(Any) when is_float(Any) ->
     io_lib_format:fwrite_g(Any);
 inspect(Binary) when is_binary(Binary) ->
     case inspect_maybe_utf8_string(Binary, []) of
-        {ok, InspectedUtf8String} ->
-            ["\"", InspectedUtf8String, "\""];
-        {error, not_an_utf8_string} ->
+        not_an_utf8_string ->
             Segments = [erlang:integer_to_list(X) || <<X>> <= Binary],
-            ["<<", lists:join(", ", Segments), ">>"]
+            ["<<", lists:join(", ", Segments), ">>"];
+        InspectedUtf8String ->
+            ["\"", InspectedUtf8String, "\""]
         end;
 inspect(List) when is_list(List) ->
     case inspect_list(List) of
@@ -390,13 +390,13 @@ inspect_list([First | Rest]) when is_list(Rest) ->
 inspect_list([First | ImproperTail]) ->
     {improper, [inspect(First), <<" | ">>, inspect(ImproperTail)]}.
 
-
 inspect_maybe_utf8_string(Binary, Acc) ->
     case Binary of
         <<>> ->
-            {ok, Acc};
+            Acc;
 
         <<Head/utf8, Rest/binary>> ->
+            io_lib:format("~p", [Head]),
             Head2 = case Head of
                 "\\" -> "\\\\";
                 "\"" -> "\\\"";
@@ -409,9 +409,8 @@ inspect_maybe_utf8_string(Binary, Acc) ->
             inspect_maybe_utf8_string(Rest, Acc ++ [Head2]);
 
         _Else ->
-            {error, not_an_utf8_string}
+            not_an_utf8_string
     end.
-
 
 float_to_string(Float) when is_float(Float) ->
     erlang:iolist_to_binary(io_lib_format:fwrite_g(Float)).
