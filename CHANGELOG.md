@@ -13,7 +13,7 @@
 - Fixed a bug where some string functions would incorrectly handle newlines when
   iterating over graphemes in older JavaScript environments that do not have the
   `Intl.Segmenter` class.
-- Fixed `string.inspect`'s and thus `io.debug`'s escaping  of `\`, `\n`, `\r`,
+- Fixed `string.inspect`'s and thus `io.debug`'s escaping  of `"`, `\`, `\n`, `\r`,
   and `\t`.
 
 ## v0.25.0 - 2022-11-19
