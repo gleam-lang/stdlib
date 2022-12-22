@@ -653,16 +653,16 @@ pub fn inspect_test() {
   |> should.equal(string.concat([q, b, b, b, q, b, q, b, b, q]))
 
   string.inspect("'")
-  |> should.equal("'")
+  |> should.equal("\"'\"")
 
   string.inspect("''")
-  |> should.equal("''")
+  |> should.equal("\"''\"")
 
   string.inspect("around-single-quotes'around-single-quotes")
-  |> should.equal("around-single-quotes'around-single-quotes")
+  |> should.equal("\"around-single-quotes'around-single-quotes\"")
 
   string.inspect("'between-single-quotes'")
-  |> should.equal("'between-single-quotes'")
+  |> should.equal("\"'between-single-quotes'\"")
 
   string.inspect("0")
   |> should.equal("\"0\"")
