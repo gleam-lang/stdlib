@@ -344,13 +344,13 @@ inspect(Any) when is_integer(Any) ->
 inspect(Any) when is_float(Any) ->
     io_lib_format:fwrite_g(Any);
 inspect(Binary) when is_binary(Binary) ->
-	case gleam@bit_string:is_utf8(Binary) of
+    case gleam@bit_string:is_utf8(Binary) of
         true ->
             ["\"", io_lib:format("~p", [Binary]), "\""];
         false ->
             Segments = [erlang:integer_to_list(X) || <<X>> <= Binary],
             ["<<", lists:join(", ", Segments), ">>"]
-        end;
+    end;
 inspect(List) when is_list(List) ->
     case inspect_list(List) of
         {proper, Elements} -> ["[", Elements, "]"];
