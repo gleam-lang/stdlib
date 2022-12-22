@@ -347,10 +347,10 @@ inspect(Binary) when is_binary(Binary) ->
     case inspect_maybe_utf8_string(Binary, []) of
         {ok, InspectedUtf8String} ->
             ["\"", InspectedUtf8String, "\""];
-		{error, not_an_utf8_string} ->
-			Segments = [erlang:integer_to_list(X) || <<X>> <= Binary],
-			["<<", lists:join(", ", Segments), ">>"]
-		end;
+        {error, not_an_utf8_string} ->
+            Segments = [erlang:integer_to_list(X) || <<X>> <= Binary],
+            ["<<", lists:join(", ", Segments), ">>"]
+        end;
 inspect(List) when is_list(List) ->
     case inspect_list(List) of
         {proper, Elements} -> ["[", Elements, "]"];
@@ -397,15 +397,15 @@ inspect_maybe_utf8_string(Binary, Acc) ->
             {ok, Acc};
 
         <<Head/utf8, Rest/binary>> ->
-			Head2 = case Head of
-				"\\" -> "\\\\";
-				"\"" -> "\\\"";
-				"\r" -> "\\r";
-				"\n" -> "\\n";
-				"\t" -> "\\t";
-				"\r\n" -> "\\r\\n";
-				Other -> Other
-			end,
+            Head2 = case Head of
+                "\\" -> "\\\\";
+                "\"" -> "\\\"";
+                "\r" -> "\\r";
+                "\n" -> "\\n";
+                "\t" -> "\\t";
+                "\r\n" -> "\\r\\n";
+                Other -> Other
+            end,
             inspect_maybe_utf8_string(Rest, Acc ++ [Head2]);
 
         _Else ->
