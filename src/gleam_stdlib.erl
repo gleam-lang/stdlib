@@ -10,7 +10,7 @@
          percent_encode/1, percent_decode/1, regex_check/2, regex_split/2,
          base_decode64/1, parse_query/1, bit_string_concat/1, size_of_tuple/1,
          decode_tuple/1, tuple_get/2, classify_dynamic/1, print/1, println/1,
-         print_error/1, println_error/1, inspect/1, float_to_string/1]).
+         print_error/1, println_error/1, inspect/1, float_to_string/1, inspect_maybe_utf8_string/2]).
 
 %% Taken from OTP's uri_string module
 -define(DEC2HEX(X),
@@ -344,19 +344,12 @@ inspect(Any) when is_integer(Any) ->
 inspect(Any) when is_float(Any) ->
     io_lib_format:fwrite_g(Any);
 inspect(Binary) when is_binary(Binary) ->
-    case gleam@bit_string:is_utf8(Binary) of
-        true ->
-            Binary2 = string:replace(Binary, "\\", "\\\\", all),
-            Binary3 = string:replace(Binary2, "\"", "\\\"", all),
-            % The \r\n combination needs dedicated handling, the other combinations do not:
-            Binary4 = string:replace(Binary3, "\r\n", "\\r\\n", all),
-            Binary5 = string:replace(Binary4, "\r", "\\r", all),
-            Binary6 = string:replace(Binary5, "\n", "\\n", all),
-            Binary7 = string:replace(Binary6, "\t", "\\t", all),
-            ["\"", Binary7, "\""];
-        false ->
+    case inspect_maybe_utf8_string(Binary, []) of
+        not_an_utf8_string ->
             Segments = [erlang:integer_to_list(X) || <<X>> <= Binary],
-            ["<<", lists:join(", ", Segments), ">>"]
+            ["<<", lists:join(", ", Segments), ">>"];
+        InspectedUtf8String ->
+            ["\"", InspectedUtf8String, "\""]
     end;
 inspect(List) when is_list(List) ->
     case inspect_list(List) of
@@ -396,6 +389,29 @@ inspect_list([First | Rest]) when is_list(Rest) ->
     {Kind, [inspect(First), <<", ">> | Inspected]};
 inspect_list([First | ImproperTail]) ->
     {improper, [inspect(First), <<" | ">>, inspect(ImproperTail)]}.
+
+
+inspect_maybe_utf8_string(Binary, Acc) ->
+    case Binary of
+        <<>> ->
+            Acc;
+
+        <<Head/utf8, Rest/binary>> ->
+			Head2 = case Head of
+				"\\" -> "\\\\";
+				"\"" -> "\\\"";
+				"\r" -> "\\r";
+				"\n" -> "\\n";
+				"\t" -> "\\t";
+				"\r\n" -> "\\r\\n";
+				Other -> Other
+			end,
+            inspect_maybe_utf8_string(Rest, Acc ++ [Head2]);
+
+        _Else ->
+            not_an_utf8_string
+    end.
+
 
 float_to_string(Float) when is_float(Float) ->
     erlang:iolist_to_binary(io_lib_format:fwrite_g(Float)).

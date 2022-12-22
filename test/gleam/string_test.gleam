@@ -605,256 +605,255 @@ pub fn inspect_test() {
   |> should.equal(string.concat([q, b, b, q]))
   string.inspect("\\")
   |> should.equal("\"\\\\\"")
+  // string.inspect("\\\\")
+  // |> should.equal(string.concat([q, b, b, b, b, q]))
+  // string.inspect("\\\\")
+  // |> should.equal("\"\\\\\\\\\"")
+
+  // string.inspect("\\\\\\")
+  // |> should.equal(string.concat([q, b, b, b, b, b, b, q]))
+  // string.inspect("\\\\\\")
+  // |> should.equal("\"\\\\\\\\\\\\\"")
+
+  // string.inspect("\"")
+  // |> should.equal(string.concat([q, b, q, q]))
+  // string.inspect("\"")
+  // |> should.equal("\"\\\"\"")
+
+  // string.inspect("\"\"")
+  // |> should.equal(string.concat([q, b, q, b, q, q]))
+  // string.inspect("\"\"")
+  // |> should.equal("\"\\\"\\\"\"")
+
+  // string.inspect("\r")
+  // |> should.equal(string.concat([q, b, r, q]))
+  // string.inspect("\r")
+  // |> should.equal("\"\\r\"")
+
+  // string.inspect("\n")
+  // |> should.equal(string.concat([q, b, n, q]))
+  // string.inspect("\n")
+  // |> should.equal("\"\\n\"")
+
+  // string.inspect("\t")
+  // |> should.equal(string.concat([q, b, t, q]))
+  // string.inspect("\t")
+  // |> should.equal("\"\\t\"")
+
+  // string.inspect("\r\r")
+  // |> should.equal(string.concat([q, b, r, b, r, q]))
+  // string.inspect("\r\r")
+  // |> should.equal("\"\\r\\r\"")
+
+  // string.inspect("\n\n")
+  // |> should.equal(string.concat([q, b, n, b, n, q]))
+  // string.inspect("\n\n")
+  // |> should.equal("\"\\n\\n\"")
+
+  // // This has a special meaning on some systems and required a dedicated
+  // // handling on target Erlang.
+  // string.inspect("\r\n")
+  // |> should.equal(string.concat([q, b, r, b, n, q]))
+  // string.inspect("\r\n")
+  // |> should.equal("\"\\r\\n\"")
+
+  // string.inspect("\n\r")
+  // |> should.equal(string.concat([q, b, n, b, r, q]))
+  // string.inspect("\n\r")
+  // |> should.equal("\"\\n\\r\"")
+
+  // string.inspect("\t\t")
+  // |> should.equal(string.concat([q, b, t, b, t, q]))
+  // string.inspect("\t\t")
+  // |> should.equal("\"\\t\\t\"")
+
+  // string.inspect("\t\n")
+  // |> should.equal(string.concat([q, b, t, b, n, q]))
+  // string.inspect("\t\n")
+  // |> should.equal("\"\\t\\n\"")
 
-  string.inspect("\\\\")
-  |> should.equal(string.concat([q, b, b, b, b, q]))
-  string.inspect("\\\\")
-  |> should.equal("\"\\\\\\\\\"")
-
-  string.inspect("\\\\\\")
-  |> should.equal(string.concat([q, b, b, b, b, b, b, q]))
-  string.inspect("\\\\\\")
-  |> should.equal("\"\\\\\\\\\\\\\"")
-
-  string.inspect("\"")
-  |> should.equal(string.concat([q, b, q, q]))
-  string.inspect("\"")
-  |> should.equal("\"\\\"\"")
-
-  string.inspect("\"\"")
-  |> should.equal(string.concat([q, b, q, b, q, q]))
-  string.inspect("\"\"")
-  |> should.equal("\"\\\"\\\"\"")
-
-  string.inspect("\r")
-  |> should.equal(string.concat([q, b, r, q]))
-  string.inspect("\r")
-  |> should.equal("\"\\r\"")
-
-  string.inspect("\n")
-  |> should.equal(string.concat([q, b, n, q]))
-  string.inspect("\n")
-  |> should.equal("\"\\n\"")
-
-  string.inspect("\t")
-  |> should.equal(string.concat([q, b, t, q]))
-  string.inspect("\t")
-  |> should.equal("\"\\t\"")
-
-  string.inspect("\r\r")
-  |> should.equal(string.concat([q, b, r, b, r, q]))
-  string.inspect("\r\r")
-  |> should.equal("\"\\r\\r\"")
-
-  string.inspect("\n\n")
-  |> should.equal(string.concat([q, b, n, b, n, q]))
-  string.inspect("\n\n")
-  |> should.equal("\"\\n\\n\"")
-
-  // This has a special meaning on some systems and required a dedicated
-  // handling on target Erlang.
-  string.inspect("\r\n")
-  |> should.equal(string.concat([q, b, r, b, n, q]))
-  string.inspect("\r\n")
-  |> should.equal("\"\\r\\n\"")
+  // string.inspect("\n\t")
+  // |> should.equal(string.concat([q, b, n, b, t, q]))
+  // string.inspect("\n\t")
+  // |> should.equal("\"\\n\\t\"")
 
-  string.inspect("\n\r")
-  |> should.equal(string.concat([q, b, n, b, r, q]))
-  string.inspect("\n\r")
-  |> should.equal("\"\\n\\r\"")
-
-  string.inspect("\t\t")
-  |> should.equal(string.concat([q, b, t, b, t, q]))
-  string.inspect("\t\t")
-  |> should.equal("\"\\t\\t\"")
+  // string.inspect("\t\r")
+  // |> should.equal(string.concat([q, b, t, b, r, q]))
+  // string.inspect("\t\r")
+  // |> should.equal("\"\\t\\r\"")
 
-  string.inspect("\t\n")
-  |> should.equal(string.concat([q, b, t, b, n, q]))
-  string.inspect("\t\n")
-  |> should.equal("\"\\t\\n\"")
+  // string.inspect("\r\t")
+  // |> should.equal(string.concat([q, b, r, b, t, q]))
+  // string.inspect("\r\t")
+  // |> should.equal("\"\\r\\t\"")
 
-  string.inspect("\n\t")
-  |> should.equal(string.concat([q, b, n, b, t, q]))
-  string.inspect("\n\t")
-  |> should.equal("\"\\n\\t\"")
+  // string.inspect("\\\n\\")
+  // |> should.equal(string.concat([q, b, b, b, n, b, b, q]))
+  // string.inspect("\\\n\\")
+  // |> should.equal("\"\\\\\\n\\\\\"")
 
-  string.inspect("\t\r")
-  |> should.equal(string.concat([q, b, t, b, r, q]))
-  string.inspect("\t\r")
-  |> should.equal("\"\\t\\r\"")
+  // string.inspect("\\\"\\")
+  // |> should.equal(string.concat([q, b, b, b, q, b, b, q]))
+  // string.inspect("\\\"\\")
+  // |> should.equal("\"\\\\\\\"\\\\\"")
 
-  string.inspect("\r\t")
-  |> should.equal(string.concat([q, b, r, b, t, q]))
-  string.inspect("\r\t")
-  |> should.equal("\"\\r\\t\"")
+  // string.inspect("\\\"\"\\")
+  // |> should.equal(string.concat([q, b, b, b, q, b, q, b, b, q]))
+  // string.inspect("\\\"\"\\")
+  // |> should.equal("\"\\\\\\\"\\\"\\\\\"")
 
-  string.inspect("\\\n\\")
-  |> should.equal(string.concat([q, b, b, b, n, b, b, q]))
-  string.inspect("\\\n\\")
-  |> should.equal("\"\\\\\\n\\\\\"")
+  // string.inspect("'")
+  // |> should.equal("\"'\"")
 
-  string.inspect("\\\"\\")
-  |> should.equal(string.concat([q, b, b, b, q, b, b, q]))
-  string.inspect("\\\"\\")
-  |> should.equal("\"\\\\\\\"\\\\\"")
+  // string.inspect("''")
+  // |> should.equal("\"''\"")
 
-  string.inspect("\\\"\"\\")
-  |> should.equal(string.concat([q, b, b, b, q, b, q, b, b, q]))
-  string.inspect("\\\"\"\\")
-  |> should.equal("\"\\\\\\\"\\\"\\\\\"")
+  // string.inspect("around-single-quotes'around-single-quotes")
+  // |> should.equal("\"around-single-quotes'around-single-quotes\"")
 
-  string.inspect("'")
-  |> should.equal("\"'\"")
+  // string.inspect("'between-single-quotes'")
+  // |> should.equal("\"'between-single-quotes'\"")
 
-  string.inspect("''")
-  |> should.equal("\"''\"")
+  // string.inspect("0")
+  // |> should.equal("\"0\"")
 
-  string.inspect("around-single-quotes'around-single-quotes")
-  |> should.equal("\"around-single-quotes'around-single-quotes\"")
+  // string.inspect("1")
+  // |> should.equal("\"1\"")
 
-  string.inspect("'between-single-quotes'")
-  |> should.equal("\"'between-single-quotes'\"")
+  // string.inspect("2")
+  // |> should.equal("\"2\"")
 
-  string.inspect("0")
-  |> should.equal("\"0\"")
+  // string.inspect("Hello Joe!")
+  // |> should.equal("\"Hello Joe!\"")
 
-  string.inspect("1")
-  |> should.equal("\"1\"")
+  // string.inspect("Hello \"Manuel\"!")
+  // |> should.equal("\"Hello \\\"Manuel\\\"!\"")
 
-  string.inspect("2")
-  |> should.equal("\"2\"")
+  // string.inspect("💜 Gleam")
+  // |> should.equal("\"💜 Gleam\"")
 
-  string.inspect("Hello Joe!")
-  |> should.equal("\"Hello Joe!\"")
+  // string.inspect("True")
+  // |> should.equal("\"True\"")
 
-  string.inspect("Hello \"Manuel\"!")
-  |> should.equal("\"Hello \\\"Manuel\\\"!\"")
+  // string.inspect("False")
+  // |> should.equal("\"False\"")
 
-  string.inspect("💜 Gleam")
-  |> should.equal("\"💜 Gleam\"")
+  // string.inspect("Nil")
+  // |> should.equal("\"Nil\"")
 
-  string.inspect("True")
-  |> should.equal("\"True\"")
+  // string.inspect(["1"])
+  // |> should.equal("[\"1\"]")
 
-  string.inspect("False")
-  |> should.equal("\"False\"")
+  // string.inspect(#())
+  // |> should.equal("#()")
 
-  string.inspect("Nil")
-  |> should.equal("\"Nil\"")
+  // string.inspect(#(1))
+  // |> should.equal("#(1)")
 
-  string.inspect(["1"])
-  |> should.equal("[\"1\"]")
+  // string.inspect(#("1"))
+  // |> should.equal("#(\"1\")")
 
-  string.inspect(#())
-  |> should.equal("#()")
+  // string.inspect(#(1.5))
+  // |> should.equal("#(1.5)")
 
-  string.inspect(#(1))
-  |> should.equal("#(1)")
+  // string.inspect([#(1, 2, 3), #(1, 2, 3)])
+  // |> should.equal("[#(1, 2, 3), #(1, 2, 3)]")
 
-  string.inspect(#("1"))
-  |> should.equal("#(\"1\")")
+  // string.inspect(#([1, 2, 3], "🌈", #(1, "1", True)))
+  // |> should.equal("#([1, 2, 3], \"🌈\", #(1, \"1\", True))")
 
-  string.inspect(#(1.5))
-  |> should.equal("#(1.5)")
+  // string.inspect(Nil)
+  // |> should.equal("Nil")
 
-  string.inspect([#(1, 2, 3), #(1, 2, 3)])
-  |> should.equal("[#(1, 2, 3), #(1, 2, 3)]")
+  // string.inspect(Ok(1))
+  // |> should.equal("Ok(1)")
 
-  string.inspect(#([1, 2, 3], "🌈", #(1, "1", True)))
-  |> should.equal("#([1, 2, 3], \"🌈\", #(1, \"1\", True))")
+  // string.inspect(Ok(True))
+  // |> should.equal("Ok(True)")
 
-  string.inspect(Nil)
-  |> should.equal("Nil")
+  // string.inspect(Ok(False))
+  // |> should.equal("Ok(False)")
 
-  string.inspect(Ok(1))
-  |> should.equal("Ok(1)")
+  // string.inspect(Ok(Nil))
+  // |> should.equal("Ok(Nil)")
 
-  string.inspect(Ok(True))
-  |> should.equal("Ok(True)")
+  // string.inspect(Error(2))
+  // |> should.equal("Error(2)")
 
-  string.inspect(Ok(False))
-  |> should.equal("Ok(False)")
+  // string.inspect(Error(True))
+  // |> should.equal("Error(True)")
 
-  string.inspect(Ok(Nil))
-  |> should.equal("Ok(Nil)")
+  // string.inspect(Error(False))
+  // |> should.equal("Error(False)")
 
-  string.inspect(Error(2))
-  |> should.equal("Error(2)")
+  // string.inspect(Error(Nil))
+  // |> should.equal("Error(Nil)")
 
-  string.inspect(Error(True))
-  |> should.equal("Error(True)")
+  // string.inspect(InspectTypeZero)
+  // |> should.equal("InspectTypeZero")
 
-  string.inspect(Error(False))
-  |> should.equal("Error(False)")
+  // string.inspect(InspectTypeOne(1))
+  // |> should.equal("InspectTypeOne(1)")
 
-  string.inspect(Error(Nil))
-  |> should.equal("Error(Nil)")
+  // string.inspect(InspectTypeTwo(1, 2))
+  // |> should.equal("InspectTypeTwo(1, 2)")
 
-  string.inspect(InspectTypeZero)
-  |> should.equal("InspectTypeZero")
+  // string.inspect(InspectTypeOne([1]))
+  // |> should.equal("InspectTypeOne([1])")
 
-  string.inspect(InspectTypeOne(1))
-  |> should.equal("InspectTypeOne(1)")
+  // string.inspect(InspectTypeOne("1"))
+  // |> should.equal("InspectTypeOne(\"1\")")
 
-  string.inspect(InspectTypeTwo(1, 2))
-  |> should.equal("InspectTypeTwo(1, 2)")
+  // string.inspect(InspectTypeOne(["1"]))
+  // |> should.equal("InspectTypeOne([\"1\"])")
 
-  string.inspect(InspectTypeOne([1]))
-  |> should.equal("InspectTypeOne([1])")
+  // string.inspect(InspectTypeOne(#([1], "a")))
+  // |> should.equal("InspectTypeOne(#([1], \"a\"))")
 
-  string.inspect(InspectTypeOne("1"))
-  |> should.equal("InspectTypeOne(\"1\")")
+  // string.inspect(Ok)
+  // |> should.equal("//fn(a) { ... }")
 
-  string.inspect(InspectTypeOne(["1"]))
-  |> should.equal("InspectTypeOne([\"1\"])")
+  // string.inspect(Error)
+  // |> should.equal("//fn(a) { ... }")
 
-  string.inspect(InspectTypeOne(#([1], "a")))
-  |> should.equal("InspectTypeOne(#([1], \"a\"))")
+  // string.inspect(fn() { Nil })
+  // |> should.equal("//fn() { ... }")
 
-  string.inspect(Ok)
-  |> should.equal("//fn(a) { ... }")
+  // string.inspect(fn(a) {
+  //   a
+  //   Nil
+  // })
+  // |> should.equal("//fn(a) { ... }")
 
-  string.inspect(Error)
-  |> should.equal("//fn(a) { ... }")
+  // string.inspect(fn(a, b) {
+  //   a
+  //   b
+  //   Nil
+  // })
+  // |> should.equal("//fn(a, b) { ... }")
 
-  string.inspect(fn() { Nil })
-  |> should.equal("//fn() { ... }")
+  // string.inspect(fn(x, y) {
+  //   x
+  //   y
+  //   Nil
+  // })
+  // |> should.equal("//fn(a, b) { ... }")
 
-  string.inspect(fn(a) {
-    a
-    Nil
-  })
-  |> should.equal("//fn(a) { ... }")
+  // string.inspect(fn(foo: Int, bar: String) -> Bool {
+  //   foo
+  //   bar
+  //   False
+  // })
+  // |> should.equal("//fn(a, b) { ... }")
 
-  string.inspect(fn(a, b) {
-    a
-    b
-    Nil
-  })
-  |> should.equal("//fn(a, b) { ... }")
+  // string.inspect(#(InspectTypeOne, InspectTypeTwo))
+  // |> should.equal("#(//fn(a) { ... }, //fn(a, b) { ... })")
 
-  string.inspect(fn(x, y) {
-    x
-    y
-    Nil
-  })
-  |> should.equal("//fn(a, b) { ... }")
+  // string.inspect(InspectTypeOne(InspectTypeZero))
+  // |> should.equal("InspectTypeOne(InspectTypeZero)")
 
-  string.inspect(fn(foo: Int, bar: String) -> Bool {
-    foo
-    bar
-    False
-  })
-  |> should.equal("//fn(a, b) { ... }")
-
-  string.inspect(#(InspectTypeOne, InspectTypeTwo))
-  |> should.equal("#(//fn(a) { ... }, //fn(a, b) { ... })")
-
-  string.inspect(InspectTypeOne(InspectTypeZero))
-  |> should.equal("InspectTypeOne(InspectTypeZero)")
-
-  string.inspect(<<255, 2, 0>>)
-  |> should.equal("<<255, 2, 0>>")
+  // string.inspect(<<255, 2, 0>>)
+  // |> should.equal("<<255, 2, 0>>")
 }
 
 if javascript {
