@@ -622,7 +622,7 @@ pub fn inspect_test() {
   |> should.equal(string.concat([q, b, n, b, n, q]))
 
   // This has a special meaning on some systems and required a dedicated
-  // handling on target Erlang:
+  // handling on target Erlang.
   string.inspect("\r\n")
   |> should.equal(string.concat([q, b, r, b, n, q]))
 
@@ -816,7 +816,7 @@ if javascript {
     |> should.equal("#(InspectTypeZero, InspectTypeZero)")
 
     // Due to JavaScript's `Number` type `Float`s without digits return as
-    // `Int`s:
+    // `Int`s.
     string.inspect(-1.0)
     |> should.equal("-1")
 
