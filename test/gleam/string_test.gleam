@@ -585,17 +585,32 @@ pub fn inspect_test() {
   string.inspect("")
   |> should.equal("\"\"")
 
+  string.inspect("\"")
+  |> should.equal("\"\\\"\"")
+
   string.inspect("\n")
   |> should.equal("\"\\n\"")
 
-  string.inspect("\r")
-  |> should.equal("\"\\r\"")
+  string.inspect("\n\n")
+  |> should.equal("\"\\n\\n\"")
 
-  string.inspect("\t")
-  |> should.equal("\"\\t\"")
+  string.inspect("\r\r")
+  |> should.equal("\"\\r\\r\"")
+
+  string.inspect("\r\n")
+  |> should.equal("\"\\r\\n\"")
+
+  string.inspect("\t\t")
+  |> should.equal("\"\\t\\t\"")
 
   string.inspect("\\")
-  |> should.equal("\"\\\"")
+  |> should.equal("\"\\\\\"")
+
+  string.inspect("\\\\")
+  |> should.equal("\"\\\\\\\"")
+
+  string.inspect("\\\n\\")
+  |> should.equal("\"\\\\n\\\"")
 
   string.inspect("1")
   |> should.equal("\"1\"")

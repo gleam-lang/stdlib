@@ -346,12 +346,10 @@ inspect(Any) when is_float(Any) ->
 inspect(Binary) when is_binary(Binary) ->
     case gleam@bit_string:is_utf8(Binary) of
         true ->
-			Binary2 = string:replace(Binary, "\"", "\\\"", all),
-			Binary3 = string:replace(Binary2, "\n", "\\n", all),
-			Binary4 = string:replace(Binary3, "\r", "\\r", all),
-			Binary5 = string:replace(Binary4, "\t", "\\t", all),
-
-            ["\"", Binary5, "\""];
+            Pattern = [$"],
+            Replacement = [$\\, $\\, $"],
+            Escaped = re:replace(Binary, Pattern, Replacement, [{return, binary}, global]),
+            ["\"", Escaped, "\""];
         false ->
             Segments = [erlang:integer_to_list(X) || <<X>> <= Binary],
             ["<<", lists:join(", ", Segments), ">>"]
