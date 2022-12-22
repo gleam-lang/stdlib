@@ -346,7 +346,10 @@ inspect(Any) when is_float(Any) ->
 inspect(Binary) when is_binary(Binary) ->
     case gleam@bit_string:is_utf8(Binary) of
         true ->
-            ["\"", io_lib:format("~p", [Binary]), "\""];
+            case io_lib:format("~p", [Binary]) of
+                [[$<, $<, Escaped, $>, $>]] -> [Escaped];
+                ["<<>>"] -> ["\"\""]
+            end;
         false ->
             Segments = [erlang:integer_to_list(X) || <<X>> <= Binary],
             ["<<", lists:join(", ", Segments), ">>"]
