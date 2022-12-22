@@ -808,14 +808,14 @@ pub fn inspect_test() {
 
 if javascript {
   pub fn target_inspect_test() {
-    // Due to Erlang's internal representation, on Erlang this will pass, instead:
+    // Due to Erlang's internal representation, on Erlang this passes, instead:
+    // string.inspect(#(InspectTypeZero, InspectTypeZero))
     // |> should.equal("InspectTypeZero(InspectTypeZero)")
-    //
     string.inspect(#(InspectTypeZero, InspectTypeZero))
     |> should.equal("#(InspectTypeZero, InspectTypeZero)")
 
-    // Due to JavaScript's `Number` type `Float`s without digits return as `Int`s.
-    //
+    // Due to JavaScript's `Number` type `Float`s without digits return as
+    // `Int`s:
     string.inspect(-1.0)
     |> should.equal("-1")
 
@@ -831,7 +831,8 @@ if javascript {
     string.inspect(#(1.0))
     |> should.equal("#(1)")
 
-    // Unlike on Erlang, on JavaScript `BitString` and `String` do have a different runtime representation.
+    // Unlike on Erlang, on JavaScript `BitString` and `String` do have a
+    // different runtime representation.
     <<"abc":utf8>>
     |> string.inspect()
     |> should.equal("<<97, 98, 99>>")
@@ -848,14 +849,15 @@ if erlang {
     "erlang" "make_ref"
 
   pub fn target_inspect_test() {
-    // Erlang's internal representation does not allow a correct differentiation.
+    // Erlang's internal representation does not allow a correct
+    // differentiation at runtime and thus this does not pass:
+    // string.inspect(#(InspectTypeZero, InspectTypeZero))
     // |> should.equal("#(InspectTypeZero, InspectTypeZero)")
-    //
     string.inspect(#(InspectTypeZero, InspectTypeZero))
     |> should.equal("InspectTypeZero(InspectTypeZero)")
 
-    // Unlike JavaScript, Erlang correctly differentiates between `1` and `1.0`.
-    //
+    // Unlike JavaScript, Erlang correctly differentiates between `1` and `1.0`
+    // at runtime.
     string.inspect(-1.0)
     |> should.equal("-1.0")
 
