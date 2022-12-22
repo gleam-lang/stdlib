@@ -398,7 +398,11 @@ inspect_maybe_utf8_string(Binary, Acc) ->
         <<Head/utf8, Rest/binary>> ->
             io_lib:format("~p", [Head]),
             Head2 = case Head of
-                "\\" -> "\\\\";
+                "\\" -> "a";
+                <<"\\">> -> "b";
+                <<"\\"/utf8>> -> "c";
+                <<"\\\\">> -> "d";
+                <<"\\\\"/utf8>> -> "e";
                 "\"" -> "\\\"";
                 "\r" -> "\\r";
                 "\n" -> "\\n";
