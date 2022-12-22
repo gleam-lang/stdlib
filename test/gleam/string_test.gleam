@@ -621,7 +621,8 @@ pub fn inspect_test() {
   string.inspect("\n\n")
   |> should.equal(string.concat([q, b, n, b, n, q]))
 
-  // This has a special meaning on some systems and required a dedicated handling on target Erlang:
+  // This has a special meaning on some systems and required a dedicated
+  // handling on target Erlang:
   string.inspect("\r\n")
   |> should.equal(string.concat([q, b, r, b, n, q]))
 
@@ -889,7 +890,8 @@ if erlang {
     |> regex.check(regular_expression, _)
     |> should.be_true
 
-    // On Erlang the runtime representation for `String` and `BitString` is indistinguishable.
+    // On Erlang the runtime representation for `String` and `BitString` is
+    // indistinguishable.
     <<"abc":utf8>>
     |> string.inspect()
     |> should.equal("\"abc\"")
