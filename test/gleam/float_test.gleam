@@ -393,10 +393,10 @@ pub fn random_test() {
     |> should.be_true
   }
   test_mean(100, 0.0, 0.0, 5.0)
-  test_mean(1_000, 0.0, 100.0, 5.0)
-  test_mean(1_000, -100.0, 100.0, 5.0)
-  test_mean(1_000, -100.0, 0.0, 5.0)
-  test_mean(1_000, 0.0, -100.0, 5.0)
+  test_mean(1000, 0.0, 100.0, 5.0)
+  test_mean(1000, -100.0, 100.0, 5.0)
+  test_mean(1000, -100.0, 0.0, 5.0)
+  test_mean(1000, 0.0, -100.0, 5.0)
 }
 
 pub fn divide_test() {

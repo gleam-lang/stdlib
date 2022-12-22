@@ -116,11 +116,11 @@ pub fn to_base16_test() {
   |> int.to_base16()
   |> should.equal("-64")
 
-  43981
+  43_981
   |> int.to_base16()
   |> should.equal("ABCD")
 
-  -43981
+  -43_981
   |> int.to_base16()
   |> should.equal("-ABCD")
 }
@@ -219,7 +219,7 @@ pub fn is_even_test() {
   int.is_even(-2)
   |> should.be_true
 
-  int.is_even(10006)
+  int.is_even(10_006)
   |> should.be_true
 
   int.is_even(1)
@@ -228,7 +228,7 @@ pub fn is_even_test() {
   int.is_even(-3)
   |> should.be_false
 
-  int.is_even(10005)
+  int.is_even(10_005)
   |> should.be_false
 }
 
@@ -242,7 +242,7 @@ pub fn is_odd_test() {
   int.is_odd(-2)
   |> should.be_false
 
-  int.is_odd(10006)
+  int.is_odd(10_006)
   |> should.be_false
 
   int.is_odd(1)
@@ -251,7 +251,7 @@ pub fn is_odd_test() {
   int.is_odd(-3)
   |> should.be_true
 
-  int.is_odd(10005)
+  int.is_odd(10_005)
   |> should.be_true
 }
 
@@ -406,10 +406,10 @@ pub fn random_test() {
     |> should.be_true
   }
   test_average(100, 0, 0, 5)
-  test_average(1_000, 0, 100, 5)
-  test_average(1_000, -100, 100, 5)
-  test_average(1_000, -100, 0, 5)
-  test_average(1_000, 0, -100, 5)
+  test_average(1000, 0, 100, 5)
+  test_average(1000, -100, 100, 5)
+  test_average(1000, -100, 0, 5)
+  test_average(1000, 0, -100, 5)
 }
 
 pub fn divide_test() {
