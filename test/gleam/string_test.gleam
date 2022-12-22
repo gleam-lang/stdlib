@@ -582,10 +582,17 @@ pub fn inspect_test() {
   string.inspect([1.5])
   |> should.equal("[1.5]")
 
+  // These variables are used in the tests below to be able to map the test
+  // results in a simple 1-to-1 transformation from the test inputs:
+  // double-quote
   let q = "\""
+  // backslash
   let b = "\\"
+  // newline
   let n = "n"
+  // carriage return
   let r = "r"
+  // tab
   let t = "t"
 
   string.inspect("")
