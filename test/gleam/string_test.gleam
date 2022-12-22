@@ -621,6 +621,7 @@ pub fn inspect_test() {
   string.inspect("\n\n")
   |> should.equal(string.concat([q, b, n, b, n, q]))
 
+  // This has a special meaning on some systems and required a dedicated handling on target Erlang:
   string.inspect("\r\n")
   |> should.equal(string.concat([q, b, r, b, n, q]))
 
@@ -635,6 +636,12 @@ pub fn inspect_test() {
 
   string.inspect("\n\t")
   |> should.equal(string.concat([q, b, n, b, t, q]))
+
+  string.inspect("\t\r")
+  |> should.equal(string.concat([q, b, t, b, r, q]))
+
+  string.inspect("\r\t")
+  |> should.equal(string.concat([q, b, r, b, t, q]))
 
   string.inspect("\\\n\\")
   |> should.equal(string.concat([q, b, b, b, n, b, b, q]))

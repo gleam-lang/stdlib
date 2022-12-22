@@ -348,6 +348,7 @@ inspect(Binary) when is_binary(Binary) ->
         true ->
 			Binary2 = string:replace(Binary, "\\", "\\\\", all),
 			Binary3 = string:replace(Binary2, "\"", "\\\"", all),
+			% The \r\n combination needs dedicated handling, the other combinations do not:
 			Binary4 = string:replace(Binary3, "\r\n", "\\r\\n", all),
 			Binary5 = string:replace(Binary4, "\r", "\\r", all),
 			Binary6 = string:replace(Binary5, "\n", "\\n", all),
