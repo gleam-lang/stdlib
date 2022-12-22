@@ -890,8 +890,8 @@ if erlang {
     |> regex.check(regular_expression, _)
     |> should.be_true
 
-    // On Erlang the runtime representation for `String` and `BitString` is
-    // indistinguishable.
+    // On Erlang the representation between `String` and `BitString` is
+    // indistinguishable at runtime.
     <<"abc":utf8>>
     |> string.inspect()
     |> should.equal("\"abc\"")
