@@ -590,68 +590,110 @@ pub fn inspect_test() {
 
   string.inspect("")
   |> should.equal(string.concat([q, q]))
+  string.inspect("")
+  |> should.equal("\"\"")
 
   string.inspect("\\")
   |> should.equal(string.concat([q, b, b, q]))
+  string.inspect("\\")
+  |> should.equal("\"\\\\\"")
 
   string.inspect("\\\\")
   |> should.equal(string.concat([q, b, b, b, b, q]))
+  string.inspect("\\\\")
+  |> should.equal("\"\\\\\\\\\"")
 
   string.inspect("\\\\\\")
   |> should.equal(string.concat([q, b, b, b, b, b, b, q]))
+  string.inspect("\\\\\\")
+  |> should.equal("\"\\\\\\\\\\\\\"")
 
   string.inspect("\"")
   |> should.equal(string.concat([q, b, q, q]))
+  string.inspect("\"")
+  |> should.equal("\"\\\"\"")
 
   string.inspect("\"\"")
   |> should.equal(string.concat([q, b, q, b, q, q]))
+  string.inspect("\"\"")
+  |> should.equal("\"\\\"\\\"\"")
 
   string.inspect("\r")
   |> should.equal(string.concat([q, b, r, q]))
+  string.inspect("\r")
+  |> should.equal("\"\\r\"")
 
   string.inspect("\n")
   |> should.equal(string.concat([q, b, n, q]))
+  string.inspect("\n")
+  |> should.equal("\"\\n\"")
 
   string.inspect("\t")
   |> should.equal(string.concat([q, b, t, q]))
+  string.inspect("\t")
+  |> should.equal("\"\\t\"")
 
   string.inspect("\r\r")
   |> should.equal(string.concat([q, b, r, b, r, q]))
+  string.inspect("\r\r")
+  |> should.equal("\"\\r\\r\"")
 
   string.inspect("\n\n")
   |> should.equal(string.concat([q, b, n, b, n, q]))
+  string.inspect("\n\n")
+  |> should.equal("\"\\n\\n\"")
 
   // This has a special meaning on some systems and required a dedicated
   // handling on target Erlang.
   string.inspect("\r\n")
   |> should.equal(string.concat([q, b, r, b, n, q]))
+  string.inspect("\r\n")
+  |> should.equal("\"\\r\\n\"")
 
   string.inspect("\n\r")
   |> should.equal(string.concat([q, b, n, b, r, q]))
+  string.inspect("\n\r")
+  |> should.equal("\"\\n\\r\"")
 
   string.inspect("\t\t")
   |> should.equal(string.concat([q, b, t, b, t, q]))
+  string.inspect("\t\t")
+  |> should.equal("\"\\t\\t\"")
 
   string.inspect("\t\n")
   |> should.equal(string.concat([q, b, t, b, n, q]))
+  string.inspect("\t\n")
+  |> should.equal("\"\\t\\n\"")
 
   string.inspect("\n\t")
   |> should.equal(string.concat([q, b, n, b, t, q]))
+  string.inspect("\n\t")
+  |> should.equal("\"\\n\\t\"")
 
   string.inspect("\t\r")
   |> should.equal(string.concat([q, b, t, b, r, q]))
+  string.inspect("\t\r")
+  |> should.equal("\"\\t\\r\"")
 
   string.inspect("\r\t")
   |> should.equal(string.concat([q, b, r, b, t, q]))
+  string.inspect("\r\t")
+  |> should.equal("\"\\r\\t\"")
 
   string.inspect("\\\n\\")
   |> should.equal(string.concat([q, b, b, b, n, b, b, q]))
+  string.inspect("\\\n\\")
+  |> should.equal("\"\\\\\\n\\\\\"")
 
   string.inspect("\\\"\\")
   |> should.equal(string.concat([q, b, b, b, q, b, b, q]))
+  string.inspect("\\\"\\")
+  |> should.equal("\"\\\\\\\"\\\\\"")
 
   string.inspect("\\\"\"\\")
   |> should.equal(string.concat([q, b, b, b, q, b, q, b, b, q]))
+  string.inspect("\\\"\"\\")
+  |> should.equal("\"\\\\\\\"\\\"\\\\\"")
 
   string.inspect("'")
   |> should.equal("\"'\"")
