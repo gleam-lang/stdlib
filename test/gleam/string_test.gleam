@@ -583,7 +583,8 @@ pub fn inspect_test() {
   |> should.equal("[1.5]")
 
   // These variables are used in the tests below to be able to map the test
-  // results in a simple 1-to-1 transformation from the test inputs:
+  // results in a simple 1-to-1 transformation from the test inputs, for
+  // enhanced readability and test proof reading:
   // double-quote
   let q = "\""
   // backslash
