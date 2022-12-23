@@ -748,6 +748,12 @@ pub fn inspect_test() {
   string.inspect("👨‍👩‍👦‍👦 💜 Gleam")
   |> should.equal("\"👨‍👩‍👦‍👦 💜 Gleam\"")
 
+  string.inspect("✨")
+  |> should.equal("\"✨\"")
+
+  string.inspect("🏳️‍⚧️")
+  |> should.equal("\"🏳️‍⚧️\"")
+
   string.inspect("True")
   |> should.equal("\"True\"")
 
