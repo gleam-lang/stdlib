@@ -104,7 +104,7 @@ pub fn to_string_test() {
   |> bit_string.to_string
   |> should.equal(Ok("ø"))
 
-  <<65535>>
+  <<65_535>>
   |> bit_string.to_string
   |> should.equal(Error(Nil))
 }
@@ -126,7 +126,7 @@ pub fn is_utf8_test() {
   |> bit_string.is_utf8
   |> should.be_true
 
-  <<65535>>
+  <<65_535>>
   |> bit_string.is_utf8
   |> should.be_false
 }

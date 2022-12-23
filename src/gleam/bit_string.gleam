@@ -91,7 +91,7 @@ if erlang {
   fn do_is_utf8(bits: BitString) -> Bool {
     case bits {
       <<>> -> True
-      <<_:utf8, rest:binary>> -> is_utf8(rest)
+      <<_:utf8, rest:binary>> -> do_is_utf8(rest)
       _ -> False
     }
   }

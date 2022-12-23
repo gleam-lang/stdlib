@@ -16,6 +16,8 @@
   `Intl.Segmenter` class.
 - The `string` module gains `to_utf_codepoints`, `from_utf_codepoints`, and
   `utf_codepoint_to_int` functions.
+- Fixed `string.inspect`'s escaping of `"`, `\`, `\n`, `\r`, `\r\n`, and `\t`,
+  which in turn fixes `io.debug`'s output of such strings.
 
 ## v0.25.0 - 2022-11-19
 
