@@ -434,10 +434,10 @@ pub fn to_utf_codepoints_test() {
       Ok(zero_width_joiner),
       Ok(rainbow),
     ) = #(
-      string.utf_codepoint(127987),
-      string.utf_codepoint(65039),
+      string.utf_codepoint(127_987),
+      string.utf_codepoint(65_039),
       string.utf_codepoint(8205),
-      string.utf_codepoint(127752),
+      string.utf_codepoint(127_752),
     )
     [waving_white_flag, variant_selector_16, zero_width_joiner, rainbow]
   })
@@ -472,18 +472,18 @@ pub fn from_utf_codepoints_test() {
 }
 
 pub fn utf_codepoint_test() {
-  string.utf_codepoint(1114444)
+  string.utf_codepoint(1_114_444)
   |> should.be_error
 
-  string.utf_codepoint(65534)
+  string.utf_codepoint(65_534)
   |> should.be_error
 
-  string.utf_codepoint(55296)
+  string.utf_codepoint(55_296)
   |> should.be_error
 }
 
 pub fn bit_string_utf_codepoint_test() {
-  assert Ok(snake) = string.utf_codepoint(128013)
+  assert Ok(snake) = string.utf_codepoint(128_013)
   should.equal(<<snake:utf8_codepoint>>, <<"🐍":utf8>>)
 }
 
@@ -659,8 +659,85 @@ pub fn inspect_test() {
   string.inspect("")
   |> should.equal("\"\"")
 
+  string.inspect("\\")
+  |> should.equal("\"\\\\\"")
+
+  string.inspect("\\\\")
+  |> should.equal("\"\\\\\\\\\"")
+
+  string.inspect("\\\\\\")
+  |> should.equal("\"\\\\\\\\\\\\\"")
+
+  string.inspect("\"")
+  |> should.equal("\"\\\"\"")
+  string.inspect("\"\"")
+  |> should.equal("\"\\\"\\\"\"")
+
+  string.inspect("\r")
+  |> should.equal("\"\\r\"")
+
+  string.inspect("\n")
+  |> should.equal("\"\\n\"")
+
+  string.inspect("\t")
+  |> should.equal("\"\\t\"")
+
+  string.inspect("\r\r")
+  |> should.equal("\"\\r\\r\"")
+
+  string.inspect("\n\n")
+  |> should.equal("\"\\n\\n\"")
+
+  string.inspect("\r\n")
+  |> should.equal("\"\\r\\n\"")
+
+  string.inspect("\n\r")
+  |> should.equal("\"\\n\\r\"")
+
+  string.inspect("\t\t")
+  |> should.equal("\"\\t\\t\"")
+
+  string.inspect("\t\n")
+  |> should.equal("\"\\t\\n\"")
+
+  string.inspect("\n\t")
+  |> should.equal("\"\\n\\t\"")
+
+  string.inspect("\t\r")
+  |> should.equal("\"\\t\\r\"")
+
+  string.inspect("\r\t")
+  |> should.equal("\"\\r\\t\"")
+
+  string.inspect("\\\n\\")
+  |> should.equal("\"\\\\\\n\\\\\"")
+
+  string.inspect("\\\"\\")
+  |> should.equal("\"\\\\\\\"\\\\\"")
+
+  string.inspect("\\\"\"\\")
+  |> should.equal("\"\\\\\\\"\\\"\\\\\"")
+
+  string.inspect("'")
+  |> should.equal("\"'\"")
+
+  string.inspect("''")
+  |> should.equal("\"''\"")
+
+  string.inspect("around-single-quotes'around-single-quotes")
+  |> should.equal("\"around-single-quotes'around-single-quotes\"")
+
+  string.inspect("'between-single-quotes'")
+  |> should.equal("\"'between-single-quotes'\"")
+
+  string.inspect("0")
+  |> should.equal("\"0\"")
+
   string.inspect("1")
   |> should.equal("\"1\"")
+
+  string.inspect("2")
+  |> should.equal("\"2\"")
 
   string.inspect("Hello Joe!")
   |> should.equal("\"Hello Joe!\"")
@@ -668,8 +745,17 @@ pub fn inspect_test() {
   string.inspect("Hello \"Manuel\"!")
   |> should.equal("\"Hello \\\"Manuel\\\"!\"")
 
-  string.inspect("💜 Gleam")
-  |> should.equal("\"💜 Gleam\"")
+  string.inspect("👨‍👩‍👦‍👦 💜 Gleam")
+  |> should.equal("\"👨‍👩‍👦‍👦 💜 Gleam\"")
+
+  string.inspect("True")
+  |> should.equal("\"True\"")
+
+  string.inspect("False")
+  |> should.equal("\"False\"")
+
+  string.inspect("Nil")
+  |> should.equal("\"Nil\"")
 
   string.inspect(["1"])
   |> should.equal("[\"1\"]")
@@ -689,8 +775,10 @@ pub fn inspect_test() {
   string.inspect([#(1, 2, 3), #(1, 2, 3)])
   |> should.equal("[#(1, 2, 3), #(1, 2, 3)]")
 
-  string.inspect(#([1, 2, 3], "🌈", #(1, "1", True)))
-  |> should.equal("#([1, 2, 3], \"🌈\", #(1, \"1\", True))")
+  string.inspect(#([1, 2, 3], "🌈", "🏳️‍🌈", #(1, "1", True)))
+  |> should.equal(
+    "#([1, 2, 3], \"🌈\", \"🏳️‍🌈\", #(1, \"1\", True))",
+  )
 
   string.inspect(Nil)
   |> should.equal("Nil")
@@ -788,14 +876,14 @@ pub fn inspect_test() {
 
 if javascript {
   pub fn target_inspect_test() {
-    // Due to Erlang's internal representation, on Erlang this will pass, instead:
+    // Due to Erlang's internal representation, on Erlang this passes, instead:
+    // string.inspect(#(InspectTypeZero, InspectTypeZero))
     // |> should.equal("InspectTypeZero(InspectTypeZero)")
-    //
     string.inspect(#(InspectTypeZero, InspectTypeZero))
     |> should.equal("#(InspectTypeZero, InspectTypeZero)")
 
-    // Due to JavaScript's `Number` type `Float`s without digits return as `Int`s.
-    //
+    // Due to JavaScript's `Number` type `Float`s without digits return as
+    // `Int`s.
     string.inspect(-1.0)
     |> should.equal("-1")
 
@@ -811,7 +899,8 @@ if javascript {
     string.inspect(#(1.0))
     |> should.equal("#(1)")
 
-    // Unlike on Erlang, on JavaScript `BitString` and `String` do have a different runtime representation.
+    // Unlike on Erlang, on JavaScript `BitString` and `String` do have a
+    // different runtime representation.
     <<"abc":utf8>>
     |> string.inspect()
     |> should.equal("<<97, 98, 99>>")
@@ -828,14 +917,15 @@ if erlang {
     "erlang" "make_ref"
 
   pub fn target_inspect_test() {
-    // Erlang's internal representation does not allow a correct differentiation.
+    // Erlang's internal representation does not allow a correct
+    // differentiation at runtime and thus this does not pass:
+    // string.inspect(#(InspectTypeZero, InspectTypeZero))
     // |> should.equal("#(InspectTypeZero, InspectTypeZero)")
-    //
     string.inspect(#(InspectTypeZero, InspectTypeZero))
     |> should.equal("InspectTypeZero(InspectTypeZero)")
 
-    // Unlike JavaScript, Erlang correctly differentiates between `1` and `1.0`.
-    //
+    // Unlike JavaScript, Erlang correctly differentiates between `1` and `1.0`
+    // at runtime.
     string.inspect(-1.0)
     |> should.equal("-1.0")
 
@@ -867,7 +957,8 @@ if erlang {
     |> regex.check(regular_expression, _)
     |> should.be_true
 
-    // On Erlang the runtime representation for `String` and `BitString` is indistinguishable.
+    // On Erlang the representation between `String` and `BitString` is
+    // indistinguishable at runtime.
     <<"abc":utf8>>
     |> string.inspect()
     |> should.equal("\"abc\"")

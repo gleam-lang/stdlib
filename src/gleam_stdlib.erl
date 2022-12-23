@@ -351,13 +351,9 @@ inspect(Any) when is_integer(Any) ->
 inspect(Any) when is_float(Any) ->
     io_lib_format:fwrite_g(Any);
 inspect(Binary) when is_binary(Binary) ->
-    case gleam@bit_string:is_utf8(Binary) of
-        true ->
-            Pattern = [$"],
-            Replacement = [$\\, $\\, $"],
-            Escaped = re:replace(Binary, Pattern, Replacement, [{return, binary}, global]),
-            ["\"", Escaped, "\""];
-        false ->
+    case inspect_maybe_utf8_string(Binary, <<>>) of
+        {ok, InspectedUtf8String} -> InspectedUtf8String;
+        {error, not_a_utf8_string} ->
             Segments = [erlang:integer_to_list(X) || <<X>> <= Binary],
             ["<<", lists:join(", ", Segments), ">>"]
     end;
@@ -390,7 +386,7 @@ inspect(Any) when is_function(Any) ->
 inspect(Any) ->
     ["//erl(", io_lib:format("~p", [Any]), ")"].
 
-inspect_list([])  ->
+inspect_list([]) ->
     {proper, []};
 inspect_list([Head]) ->
     {proper, [inspect(Head)]};
@@ -399,6 +395,22 @@ inspect_list([First | Rest]) when is_list(Rest) ->
     {Kind, [inspect(First), <<", ">> | Inspected]};
 inspect_list([First | ImproperTail]) ->
     {improper, [inspect(First), <<" | ">>, inspect(ImproperTail)]}.
+
+inspect_maybe_utf8_string(Binary, Acc) ->
+    case Binary of
+        <<>> -> {ok, <<$", Acc/binary, $">>};
+        <<Head/utf8, Rest/binary>> ->
+            Escaped = case Head of
+                $" -> <<$\\, $">>;
+                $\\ -> <<$\\, $\\>>;
+                $\r -> <<$\\, $r>>;
+                $\n -> <<$\\, $n>>;
+                $\t -> <<$\\, $t>>;
+                Other -> <<Other/utf8>>
+            end,
+            inspect_maybe_utf8_string(Rest, <<Acc/binary, Escaped/binary>>);
+        _ -> {error, not_a_utf8_string}
+    end.
 
 float_to_string(Float) when is_float(Float) ->
     erlang:iolist_to_binary(io_lib_format:fwrite_g(Float)).

@@ -32,10 +32,10 @@ pub fn bit_string_test() {
 
 if erlang {
   pub fn bit_string_erlang_test() {
-    <<65535:16>>
+    <<65_535:16>>
     |> dynamic.from
     |> dynamic.bit_string
-    |> should.equal(Ok(<<65535:16>>))
+    |> should.equal(Ok(<<65_535:16>>))
   }
 }
 
@@ -67,7 +67,7 @@ pub fn string_test() {
 
 if erlang {
   pub fn string_non_utf8_test() {
-    <<65535:16>>
+    <<65_535:16>>
     |> dynamic.from
     |> dynamic.string
     |> should.equal(Error([
