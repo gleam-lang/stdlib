@@ -1293,7 +1293,7 @@ pub fn decode7(
 ///
 /// ```gleam
 /// > from(#(1, 2.1, "3", "4", "5", "6", "7", "8"))
-/// > |> decode7(
+/// > |> decode8(
 /// >   MyRecord,
 /// >   element(0, int),
 /// >   element(1, float),
@@ -1309,7 +1309,7 @@ pub fn decode7(
 ///
 /// ```gleam
 /// > from(#("", "", "", "", "", "", "", ""))
-/// > |> decode7(
+/// > |> decode8(
 /// >   MyRecord,
 /// >   element(0, int),
 /// >   element(1, float),
@@ -1362,7 +1362,7 @@ pub fn decode8(
 ///
 /// ```gleam
 /// > from(#(1, 2.1, "3", "4", "5", "6", "7", "8", "9"))
-/// > |> decode7(
+/// > |> decode9(
 /// >   MyRecord,
 /// >   element(0, int),
 /// >   element(1, float),
@@ -1379,7 +1379,7 @@ pub fn decode8(
 ///
 /// ```gleam
 /// > from(#("", "", "", "", "", "", "", "", ""))
-/// > |> decode7(
+/// > |> decode9(
 /// >   MyRecord,
 /// >   element(0, int),
 /// >   element(1, float),
