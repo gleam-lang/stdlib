@@ -339,7 +339,7 @@ pub fn path_segments(path: String) -> List(String) {
 /// ```gleam
 /// > let uri = Uri(Some("http"), None, Some("example.com"), ...)
 /// > to_string(uri)
-/// "https://example.com"
+/// "http://example.com"
 /// ```
 ///
 pub fn to_string(uri: Uri) -> String {
