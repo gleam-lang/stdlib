@@ -276,7 +276,7 @@ if javascript {
 /// ## Examples
 ///
 /// ```gleam
-/// > keys(from_list([#("a", 0), #("b", 1)]))
+/// > values(from_list([#("a", 0), #("b", 1)]))
 /// [0, 1]
 /// ```
 ///
