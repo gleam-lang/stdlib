@@ -267,9 +267,8 @@ fn insert_to_group(
   )
 }
 
-/// Takes a lists and groups the values by a key
-/// which is build from a key_selector function
-/// and the values are stored in a new List.
+/// Takes a list and groups the values by a key
+/// which is built from a key_selector function.
 ///
 /// ## Examples
 ///
