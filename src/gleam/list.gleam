@@ -281,6 +281,7 @@ fn insert_to_group(
 ///       Error(_) -> "Failed"
 ///     }
 ///   })
+///   |> map.to_list
 ///
 /// [
 ///   #("Failed", [Error("Wrong")]),
@@ -288,6 +289,7 @@ fn insert_to_group(
 /// ]
 ///
 /// > group(from: [1,2,3,4,5], with: fn(i) {fn(i) { i - i / 3 * 3 }})
+/// |> map.to_list
 /// [#(0, [3]), #(1, [1, 4]), #(2, [2, 5])]
 /// ```
 ///
