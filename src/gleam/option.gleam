@@ -1,5 +1,3 @@
-import gleam/list
-
 /// `Option` represents a value that may be present or not. `Some` means the value is
 /// present, `None` means the value is not.
 ///
@@ -9,6 +7,17 @@ import gleam/list
 pub type Option(a) {
   Some(a)
   None
+}
+
+fn list_fold_right(
+  over list: List(a),
+  from initial: acc,
+  with fun: fn(acc, a) -> acc,
+) -> acc {
+  case list {
+    [] -> initial
+    [x, ..rest] -> fun(list_fold_right(rest, initial, fun), x)
+  }
 }
 
 /// Combines a list of `Option`s into a single `Option`.
@@ -28,7 +37,7 @@ pub type Option(a) {
 /// ```
 ///
 pub fn all(list: List(Option(a))) -> Option(List(a)) {
-  list.fold_right(
+  list_fold_right(
     list,
     from: Some([]),
     with: fn(acc, item) {
@@ -312,6 +321,45 @@ pub fn lazy_or(first: Option(a), second: fn() -> Option(a)) -> Option(a) {
   }
 }
 
+fn list_reverse(xs: List(a)) -> List(a) {
+  do_reverse(xs)
+}
+
+if erlang {
+  external fn do_reverse(List(a)) -> List(a) =
+    "lists" "reverse"
+}
+
+if javascript {
+  fn do_reverse(list) {
+    do_reverse_acc(list, [])
+  }
+
+  fn do_reverse_acc(remaining, accumulator) {
+    case remaining {
+      [] -> accumulator
+      [item, ..rest] -> do_reverse_acc(rest, [item, ..accumulator])
+    }
+  }
+}
+
+fn list_filter_map(
+  list: List(a),
+  fun: fn(a) -> Result(b, e),
+  acc: List(b),
+) -> List(b) {
+  case list {
+    [] -> list_reverse(acc)
+    [x, ..xs] -> {
+      let new_acc = case fun(x) {
+        Ok(x) -> [x, ..acc]
+        Error(_) -> acc
+      }
+      list_filter_map(xs, fun, new_acc)
+    }
+  }
+}
+
 /// Given a list of `Option`s,
 /// returns only the values inside `Some`.
 ///
@@ -323,5 +371,5 @@ pub fn lazy_or(first: Option(a), second: fn() -> Option(a)) -> Option(a) {
 /// ```
 ///
 pub fn values(options: List(Option(a))) -> List(a) {
-  list.filter_map(options, fn(op) { to_result(op, "") })
+  list_filter_map(options, fn(op) { to_result(op, "") }, [])
 }

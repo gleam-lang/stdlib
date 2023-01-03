@@ -1,4 +1,3 @@
-import gleam/list
 import gleam/option.{Option}
 
 if javascript {
@@ -81,6 +80,17 @@ if javascript {
     "../gleam_stdlib.mjs" "map_to_list"
 }
 
+fn list_fold(
+  over list: List(a),
+  from initial: acc,
+  with fun: fn(acc, a) -> acc,
+) -> acc {
+  case list {
+    [] -> initial
+    [x, ..rest] -> list_fold(rest, fun(initial, x), fun)
+  }
+}
+
 /// Converts a list of 2-element tuples `#(key, value)` to a map.
 ///
 /// If two tuples have the same key the last one in the list will be the one
@@ -97,7 +107,7 @@ if erlang {
 
 if javascript {
   fn do_from_list(list: List(#(k, v))) -> Map(k, v) {
-    list.fold(list, new(), insert_pair)
+    list_fold(list, new(), insert_pair)
   }
 }
 
@@ -237,6 +247,35 @@ if javascript {
   }
 }
 
+fn list_reverse(xs: List(a)) -> List(a) {
+  do_reverse(xs)
+}
+
+if erlang {
+  external fn do_reverse(List(a)) -> List(a) =
+    "lists" "reverse"
+}
+
+if javascript {
+  fn do_reverse(list) {
+    do_reverse_acc(list, [])
+  }
+
+  fn do_reverse_acc(remaining, accumulator) {
+    case remaining {
+      [] -> accumulator
+      [item, ..rest] -> do_reverse_acc(rest, [item, ..accumulator])
+    }
+  }
+}
+
+fn list_map(list: List(a), fun: fn(a) -> b, acc: List(b)) -> List(b) {
+  case list {
+    [] -> list_reverse(acc)
+    [x, ..xs] -> list_map(xs, fun, [fun(x), ..acc])
+  }
+}
+
 /// Gets a list of all keys in a given map.
 ///
 /// Maps are not ordered so the keys are not returned in any specific order. Do
@@ -263,7 +302,7 @@ if javascript {
   fn do_keys(map: Map(k, v)) -> List(k) {
     map
     |> to_list
-    |> list.map(pair.first)
+    |> list_map(pair.first)
   }
 }
 
@@ -293,7 +332,7 @@ if javascript {
   fn do_values(map: Map(k, v)) -> List(v) {
     map
     |> to_list
-    |> list.map(pair.second)
+    |> list_map(pair.second)
   }
 }
 
@@ -376,7 +415,7 @@ if javascript {
         _ -> taken
       }
     }
-    list.fold(over: desired_keys, from: new(), with: insert)
+    internal_fold(over: desired_keys, from: new(), with: insert)
   }
 }
 
@@ -411,7 +450,7 @@ if javascript {
   fn do_merge(map: Map(k, v), new_entries: Map(k, v)) -> Map(k, v) {
     new_entries
     |> to_list
-    |> list.fold(map, insert_pair)
+    |> internal_fold(map, insert_pair)
   }
 }
 
@@ -465,7 +504,7 @@ if javascript {
 /// ```
 ///
 pub fn drop(from map: Map(k, v), drop disallowed_keys: List(k)) -> Map(k, v) {
-  list.fold(over: disallowed_keys, from: map, with: delete)
+  list_fold(over: disallowed_keys, from: map, with: delete)
 }
 
 /// Creates a new map with one entry updated using a given function.
