@@ -321,41 +321,22 @@ pub fn lazy_or(first: Option(a), second: fn() -> Option(a)) -> Option(a) {
   }
 }
 
-fn list_reverse(xs: List(a)) -> List(a) {
-  do_reverse(xs)
-}
-
-if erlang {
-  external fn do_reverse(List(a)) -> List(a) =
-    "lists" "reverse"
-}
-
-if javascript {
-  fn do_reverse(list) {
-    do_reverse_acc(list, [])
-  }
-
-  fn do_reverse_acc(remaining, accumulator) {
-    case remaining {
-      [] -> accumulator
-      [item, ..rest] -> do_reverse_acc(rest, [item, ..accumulator])
-    }
+fn do_reverse(remaining, accumulator) {
+  case remaining {
+    [] -> accumulator
+    [item, ..rest] -> do_reverse(rest, [item, ..accumulator])
   }
 }
 
-fn list_filter_map(
-  list: List(a),
-  fun: fn(a) -> Result(b, e),
-  acc: List(b),
-) -> List(b) {
+fn do_values(list: List(a), fun: fn(a) -> Result(b, e), acc: List(b)) -> List(b) {
   case list {
-    [] -> list_reverse(acc)
+    [] -> do_reverse(acc, [])
     [x, ..xs] -> {
       let new_acc = case fun(x) {
         Ok(x) -> [x, ..acc]
         Error(_) -> acc
       }
-      list_filter_map(xs, fun, new_acc)
+      do_values(xs, fun, new_acc)
     }
   }
 }
@@ -371,5 +352,5 @@ fn list_filter_map(
 /// ```
 ///
 pub fn values(options: List(Option(a))) -> List(a) {
-  list_filter_map(options, fn(op) { to_result(op, "") }, [])
+  do_values(options, fn(op) { to_result(op, "") }, [])
 }

@@ -80,14 +80,14 @@ if javascript {
     "../gleam_stdlib.mjs" "map_to_list"
 }
 
-fn list_fold(
-  over list: List(a),
-  from initial: acc,
-  with fun: fn(acc, a) -> acc,
-) -> acc {
+fn fold_list_of_pair(
+  over list: List(#(k, v)),
+  from initial: Map(k, v),
+  with fun: fn(Map(k, v), #(k, v)) -> Map(k, v),
+) -> Map(k, v) {
   case list {
     [] -> initial
-    [x, ..rest] -> list_fold(rest, fun(initial, x), fun)
+    [x, ..rest] -> fold_list_of_pair(rest, fun(initial, x), fun)
   }
 }
 
@@ -107,7 +107,7 @@ if erlang {
 
 if javascript {
   fn do_from_list(list: List(#(k, v))) -> Map(k, v) {
-    list_fold(list, new(), insert_pair)
+    fold_list_of_pair(list, new(), insert_pair)
   }
 }
 
