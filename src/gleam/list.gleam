@@ -26,7 +26,6 @@ import gleam/int
 import gleam/float
 import gleam/order.{Order}
 import gleam/pair
-import gleam/option.{None, Some}
 import gleam/map.{Map}
 
 /// An error value returned by the `strict_zip` function.
@@ -250,25 +249,19 @@ pub fn rest(list: List(a)) -> Result(List(a), Nil) {
   }
 }
 
-fn insert_to_group(
-  groups: Map(k, List(v)),
-  new_key: k,
-  new_value: v,
-) -> Map(k, List(v)) {
-  map.update(
-    groups,
-    new_key,
-    fn(v) {
-      case v {
-        Some(value) -> [new_value, ..value]
-        None -> [new_value]
-      }
-    },
-  )
+fn group_updater(
+  f: fn(element) -> key,
+) -> fn(Map(key, List(element)), element) -> Map(key, List(element)) {
+  fn(groups, elem) {
+    case map.get(groups, f(elem)) {
+      Ok(existing) -> map.insert(groups, f(elem), [elem, ..existing])
+      Error(_) -> map.insert(groups, f(elem), [elem])
+    }
+  }
 }
 
 /// Takes a list and groups the values by a key
-/// which is built from a key_selector function.
+/// which is built from a key function.
 ///
 /// ## Examples
 ///
@@ -292,23 +285,10 @@ fn insert_to_group(
 /// [#(0, [3]), #(1, [1, 4]), #(2, [2, 5])]
 /// ```
 ///
-pub fn group(
-  from list: List(v),
-  with key_selector: fn(v) -> k,
-) -> Map(k, List(v)) {
-  map(list, fn(x) { #(key_selector(x), x) })
-  |> map_fold_right(map.new(), insert_to_group)
-}
-
-fn map_fold_right(
-  list: List(#(k, v)),
-  initial: acc,
-  fun: fn(acc, k, v) -> acc,
-) -> acc {
-  case list {
-    [] -> initial
-    [#(k, v), ..tail] -> fun(map_fold_right(tail, initial, fun), k, v)
-  }
+pub fn group(list: List(v), by key: fn(v) -> k) -> Map(k, List(v)) {
+  list
+  |> fold(map.new(), group_updater(key))
+  |> map.map_values(fn(_, group) { reverse(group) })
 }
 
 fn do_filter(list: List(a), fun: fn(a) -> Bool, acc: List(a)) -> List(a) {
