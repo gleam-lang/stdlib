@@ -9,14 +9,33 @@ pub type Option(a) {
   None
 }
 
-fn list_fold_right(
-  over list: List(a),
-  from initial: acc,
-  with fun: fn(acc, a) -> acc,
-) -> acc {
+fn do_reverse(remaining: Option(List(a)), accumulator: List(a)) -> List(a) {
+  case remaining {
+    None -> accumulator
+    Some(values) ->
+      case values {
+        [] -> accumulator
+        [item, ..rest] -> do_reverse(Some(rest), [item, ..accumulator])
+      }
+  }
+}
+
+fn do_all(list: List(Option(a)), initial: Option(List(a))) -> Option(List(a)) {
   case list {
-    [] -> initial
-    [x, ..rest] -> fun(list_fold_right(rest, initial, fun), x)
+    [] ->
+      case do_reverse(initial, []) {
+        [] -> None
+        [x, ..xs] -> Some([x, ..xs])
+      }
+    [x, ..rest] -> {
+      let with = fn(acc, item) {
+        case acc, item {
+          Some(values), Some(value) -> Some([value, ..values])
+          _, _ -> None
+        }
+      }
+      do_all(rest, with(initial, x))
+    }
   }
 }
 
@@ -37,16 +56,8 @@ fn list_fold_right(
 /// ```
 ///
 pub fn all(list: List(Option(a))) -> Option(List(a)) {
-  list_fold_right(
-    list,
-    from: Some([]),
-    with: fn(acc, item) {
-      case acc, item {
-        Some(values), Some(value) -> Some([value, ..values])
-        _, _ -> None
-      }
-    },
-  )
+  list
+  |> do_all(Some([]))
 }
 
 /// Checks whether the `Option` is a `Some` value.
@@ -321,22 +332,22 @@ pub fn lazy_or(first: Option(a), second: fn() -> Option(a)) -> Option(a) {
   }
 }
 
-fn do_reverse(remaining, accumulator) {
+fn reverse_acc(remaining, accumulator) {
   case remaining {
     [] -> accumulator
-    [item, ..rest] -> do_reverse(rest, [item, ..accumulator])
+    [item, ..rest] -> reverse_acc(rest, [item, ..accumulator])
   }
 }
 
-fn do_values(list: List(a), fun: fn(a) -> Result(b, e), acc: List(b)) -> List(b) {
+fn do_values(list: List(Option(a)), acc: List(a)) -> List(a) {
   case list {
-    [] -> do_reverse(acc, [])
+    [] -> reverse_acc(acc, [])
     [x, ..xs] -> {
-      let new_acc = case fun(x) {
-        Ok(x) -> [x, ..acc]
-        Error(_) -> acc
+      let new_acc = case x {
+        Some(value) -> [value, ..acc]
+        None -> acc
       }
-      do_values(xs, fun, new_acc)
+      do_values(xs, new_acc)
     }
   }
 }
@@ -352,5 +363,5 @@ fn do_values(list: List(a), fun: fn(a) -> Result(b, e), acc: List(b)) -> List(b)
 /// ```
 ///
 pub fn values(options: List(Option(a))) -> List(a) {
-  do_values(options, fn(op) { to_result(op, "") }, [])
+  do_values(options, [])
 }

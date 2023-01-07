@@ -80,17 +80,6 @@ if javascript {
     "../gleam_stdlib.mjs" "map_to_list"
 }
 
-fn fold_list_of_pair(
-  over list: List(#(k, v)),
-  from initial: Map(k, v),
-  with fun: fn(Map(k, v), #(k, v)) -> Map(k, v),
-) -> Map(k, v) {
-  case list {
-    [] -> initial
-    [x, ..rest] -> fold_list_of_pair(rest, fun(initial, x), fun)
-  }
-}
-
 /// Converts a list of 2-element tuples `#(key, value)` to a map.
 ///
 /// If two tuples have the same key the last one in the list will be the one
@@ -106,6 +95,18 @@ if erlang {
 }
 
 if javascript {
+  fn fold_list_of_pair(
+    over list: List(#(k, v)),
+    from initial: Map(k, v),
+    with pair: #(k, v),
+  ) -> Map(k, v) {
+    case list {
+      [] -> initial
+      [x, ..rest] ->
+        fold_list_of_pair(rest, insert(initial, pair.0, pair.1), pair)
+    }
+  }
+
   fn do_from_list(list: List(#(k, v))) -> Map(k, v) {
     fold_list_of_pair(list, new(), insert_pair)
   }
@@ -247,35 +248,6 @@ if javascript {
   }
 }
 
-fn list_reverse(xs: List(a)) -> List(a) {
-  do_reverse(xs)
-}
-
-if erlang {
-  external fn do_reverse(List(a)) -> List(a) =
-    "lists" "reverse"
-}
-
-if javascript {
-  fn do_reverse(list) {
-    do_reverse_acc(list, [])
-  }
-
-  fn do_reverse_acc(remaining, accumulator) {
-    case remaining {
-      [] -> accumulator
-      [item, ..rest] -> do_reverse_acc(rest, [item, ..accumulator])
-    }
-  }
-}
-
-fn list_map(list: List(a), fun: fn(a) -> b, acc: List(b)) -> List(b) {
-  case list {
-    [] -> list_reverse(acc)
-    [x, ..xs] -> list_map(xs, fun, [fun(x), ..acc])
-  }
-}
-
 /// Gets a list of all keys in a given map.
 ///
 /// Maps are not ordered so the keys are not returned in any specific order. Do
@@ -299,10 +271,25 @@ if erlang {
 }
 
 if javascript {
+  fn do_reverse_acc(remaining, accumulator) {
+    case remaining {
+      [] -> accumulator
+      [item, ..rest] -> do_reverse_acc(rest, [item, ..accumulator])
+    }
+  }
+
+  fn do_keys_acc(list: List(#(k, v)), acc: List(k)) -> List(k) {
+    case list {
+      [] -> do_reverse_acc(acc, [])
+      [x, ..xs] -> do_keys_acc(xs, [x.0, ..acc])
+    }
+  }
+
   fn do_keys(map: Map(k, v)) -> List(k) {
-    map
-    |> to_list
-    |> list_map(pair.first)
+    let list_of_pairs =
+      map
+      |> to_list
+    do_keys_acc(list_of_pairs, [])
   }
 }
 
@@ -329,10 +316,18 @@ if erlang {
 }
 
 if javascript {
+  fn do_values_acc(list: List(#(k, v)), acc: List(v)) -> List(v) {
+    case list {
+      [] -> do_reverse_acc(acc, [])
+      [x, ..xs] -> do_values_acc(xs, [x.1, ..acc])
+    }
+  }
+
   fn do_values(map: Map(k, v)) -> List(v) {
-    map
-    |> to_list
-    |> list_map(pair.second)
+    let list_of_pairs =
+      map
+      |> to_list
+    do_values_acc(list_of_pairs, [])
   }
 }
 
@@ -408,14 +403,25 @@ if erlang {
 }
 
 if javascript {
-  fn do_take(desired_keys: List(k), map: Map(k, v)) -> Map(k, v) {
+  fn insert_taken(
+    map: Map(k, v),
+    desired_keys: List(k),
+    acc: Map(k, v),
+  ) -> Map(k, v) {
     let insert = fn(taken, key) {
       case get(map, key) {
         Ok(value) -> insert(taken, key, value)
         _ -> taken
       }
     }
-    internal_fold(over: desired_keys, from: new(), with: insert)
+    case desired_keys {
+      [] -> acc
+      [x, ..xs] -> do_insert_taken(map, xs, insert(acc, x))
+    }
+  }
+
+  fn do_take(desired_keys: List(k), map: Map(k, v)) -> Map(k, v) {
+    insert_taken(map, desired_keys, new())
   }
 }
 
@@ -447,10 +453,17 @@ if javascript {
     insert(map, pair.0, pair.1)
   }
 
+  fn fold_inserts(new_entries: List(#(k, v)), map: Map(k, v)) -> Map(k, v) {
+    case new_entries {
+      [] -> map
+      [x, ..xs] -> fold_inserts(xs, insert_pair(map, x))
+    }
+  }
+
   fn do_merge(map: Map(k, v), new_entries: Map(k, v)) -> Map(k, v) {
     new_entries
     |> to_list
-    |> internal_fold(map, insert_pair)
+    |> fold_inserts(map)
   }
 }
 
@@ -483,6 +496,13 @@ if javascript {
     "../gleam_stdlib.mjs" "map_remove"
 }
 
+fn do_drop(map: Map(k, v), disallowed_keys: List(k)) -> Map(k, v) {
+  case disallowed_keys {
+    [] -> map
+    [x, ..xs] -> do_drop(delete(map, x), xs)
+  }
+}
+
 /// Creates a new map from a given map with all the same entries except any with
 /// keys found in a given list.
 ///
@@ -504,7 +524,7 @@ if javascript {
 /// ```
 ///
 pub fn drop(from map: Map(k, v), drop disallowed_keys: List(k)) -> Map(k, v) {
-  list_fold(over: disallowed_keys, from: map, with: delete)
+  do_drop(map, disallowed_keys)
 }
 
 /// Creates a new map with one entry updated using a given function.
