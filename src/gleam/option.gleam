@@ -56,8 +56,7 @@ fn do_all(list: List(Option(a)), initial: Option(List(a))) -> Option(List(a)) {
 /// ```
 ///
 pub fn all(list: List(Option(a))) -> Option(List(a)) {
-  list
-  |> do_all(Some([]))
+  do_all(list, Some([]))
 }
 
 /// Checks whether the `Option` is a `Some` value.
