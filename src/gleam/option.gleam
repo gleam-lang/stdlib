@@ -9,32 +9,17 @@ pub type Option(a) {
   None
 }
 
-fn do_reverse(remaining: Option(List(a)), accumulator: List(a)) -> List(a) {
-  case remaining {
-    None -> accumulator
-    Some(values) ->
-      case values {
-        [] -> accumulator
-        [item, ..rest] -> do_reverse(Some(rest), [item, ..accumulator])
-      }
-  }
-}
-
-fn do_all(list: List(Option(a)), initial: Option(List(a))) -> Option(List(a)) {
+fn do_all(list: List(Option(a)), acc: List(a)) -> Option(List(a)) {
   case list {
-    [] ->
-      case do_reverse(initial, []) {
-        [] -> None
-        [x, ..xs] -> Some([x, ..xs])
-      }
+    [] -> Some(acc)
     [x, ..rest] -> {
-      let with = fn(acc, item) {
+      let accumulate = fn(acc, item) {
         case acc, item {
           Some(values), Some(value) -> Some([value, ..values])
           _, _ -> None
         }
       }
-      do_all(rest, with(initial, x))
+      accumulate(do_all(rest, acc), x)
     }
   }
 }
@@ -56,7 +41,7 @@ fn do_all(list: List(Option(a)), initial: Option(List(a))) -> Option(List(a)) {
 /// ```
 ///
 pub fn all(list: List(Option(a))) -> Option(List(a)) {
-  do_all(list, Some([]))
+  do_all(list, [])
 }
 
 /// Checks whether the `Option` is a `Some` value.
@@ -331,22 +316,17 @@ pub fn lazy_or(first: Option(a), second: fn() -> Option(a)) -> Option(a) {
   }
 }
 
-fn reverse_acc(remaining, accumulator) {
-  case remaining {
-    [] -> accumulator
-    [item, ..rest] -> reverse_acc(rest, [item, ..accumulator])
-  }
-}
-
 fn do_values(list: List(Option(a)), acc: List(a)) -> List(a) {
   case list {
-    [] -> reverse_acc(acc, [])
+    [] -> acc
     [x, ..xs] -> {
-      let new_acc = case x {
-        Some(value) -> [value, ..acc]
-        None -> acc
+      let accumulate = fn(acc, item) {
+        case item {
+          Some(value) -> [value, ..acc]
+          None -> acc
+        }
       }
-      do_values(xs, new_acc)
+      accumulate(do_values(xs, acc), x)
     }
   }
 }

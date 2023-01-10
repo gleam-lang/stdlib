@@ -249,7 +249,7 @@ pub fn rest(list: List(a)) -> Result(List(a), Nil) {
   }
 }
 
-fn group_updater(
+fn update_group(
   f: fn(element) -> key,
 ) -> fn(Map(key, List(element)), element) -> Map(key, List(element)) {
   fn(groups, elem) {
@@ -286,9 +286,7 @@ fn group_updater(
 /// ```
 ///
 pub fn group(list: List(v), by key: fn(v) -> k) -> Map(k, List(v)) {
-  list
-  |> fold(map.new(), group_updater(key))
-  |> map.map_values(fn(_, group) { reverse(group) })
+  fold_right(list, map.new(), update_group(key))
 }
 
 fn do_filter(list: List(a), fun: fn(a) -> Bool, acc: List(a)) -> List(a) {

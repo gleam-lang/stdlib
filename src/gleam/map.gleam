@@ -496,13 +496,6 @@ if javascript {
     "../gleam_stdlib.mjs" "map_remove"
 }
 
-fn do_drop(map: Map(k, v), disallowed_keys: List(k)) -> Map(k, v) {
-  case disallowed_keys {
-    [] -> map
-    [x, ..xs] -> do_drop(delete(map, x), xs)
-  }
-}
-
 /// Creates a new map from a given map with all the same entries except any with
 /// keys found in a given list.
 ///
@@ -524,7 +517,10 @@ fn do_drop(map: Map(k, v), disallowed_keys: List(k)) -> Map(k, v) {
 /// ```
 ///
 pub fn drop(from map: Map(k, v), drop disallowed_keys: List(k)) -> Map(k, v) {
-  do_drop(map, disallowed_keys)
+  case disallowed_keys {
+    [] -> map
+    [x, ..xs] -> drop(delete(map, x), xs)
+  }
 }
 
 /// Creates a new map with one entry updated using a given function.
