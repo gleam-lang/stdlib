@@ -2,6 +2,7 @@
 
 ## v0.26.0 - unreleased
 
+- The `dynamic` module gains the `decode1` function.
 - The `float` module gains the `loosely_equals` function.
 - The `io` module gains `print_error` and `println_error` functions for
   printing to stderr.
