@@ -5,6 +5,7 @@
 - The `float` module gains the `loosely_equals` function.
 - The `io` module gains `print_error` and `println_error` functions for
   printing to stderr.
+- The `set` module gains the `drop` function.
 - The `io.debug` function now prints to stderr instead of stdout when using
   the Erlang target or running in Node.js (but still uses `console.log`
   when running as JavaScript in a browser)
