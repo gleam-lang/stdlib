@@ -199,6 +199,10 @@ pub fn filter(
   Set(map.filter(in: set.map, for: fn(m, _) { property(m) }))
 }
 
+pub fn drop(from set: Set(member), drop disallowed: List(member)) -> Set(member) {
+  list.fold(over: disallowed, from: set, with: delete)
+}
+
 /// Creates a new map from a given map, only including any members which are in
 /// a given list.
 ///
