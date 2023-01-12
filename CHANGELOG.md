@@ -22,6 +22,8 @@
   which in turn fixes `io.debug`'s output of such strings.
 - The `bit_string` function in the `dynamic` module now knows how to handle
   JavaScript `Uint8Array`s.
+- The `dynamic` module is able to decode simple JavaScript objects to maps.
+  So, the behaviour of the `field` and `object` functions are consistent.
 
 ## v0.25.0 - 2022-11-19
 
