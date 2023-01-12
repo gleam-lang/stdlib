@@ -987,6 +987,33 @@ pub fn any(of decoders: List(Decoder(t))) -> Decoder(t) {
   }
 }
 
+/// Decode 1 values from a `Dynamic` value.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > from(#(1, 2.0, "3"))
+/// > |> decode1(MyRecord, element(0, int))
+/// Ok(MyRecord(1))
+/// ```
+///
+/// ```gleam
+/// > from(#("", "", ""))
+/// > |> decode1(MyRecord, element(0, int))
+/// Error([
+///   DecodeError(expected: "Int", found: "String", path: ["0"]),
+/// ])
+/// ```
+///
+pub fn decode1(constructor: fn(t1) -> t, t1: Decoder(t1)) -> Decoder(t) {
+  fn(value) {
+    case t1(value) {
+      Ok(a) -> Ok(constructor(a))
+      a -> Error(all_errors(a))
+    }
+  }
+}
+
 /// Decode 2 values from a `Dynamic` value.
 ///
 /// ## Examples
