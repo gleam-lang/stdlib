@@ -744,6 +744,18 @@ pub fn map_test() {
   |> dynamic.from
   |> dynamic.map(dynamic.string, dynamic.int)
   |> should.equal(Error([DecodeError(expected: "Map", found: "Int", path: [])]))
+
+  []
+  |> dynamic.from
+  |> dynamic.map(dynamic.string, dynamic.int)
+  |> should.equal(Error([DecodeError(expected: "Map", found: "List", path: [])]))
+
+  fn() { Nil }
+  |> dynamic.from
+  |> dynamic.map(dynamic.string, dynamic.int)
+  |> should.equal(Error([
+    DecodeError(expected: "Map", found: "Function", path: []),
+  ]))
 }
 
 pub fn shallow_list_test() {

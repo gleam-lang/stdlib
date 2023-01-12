@@ -673,8 +673,14 @@ export function decode_result(data) {
   return Result.isResult(data) ? new Ok(data) : decoder_error("Result", data);
 }
 
+function decode_object_to_map(data) {
+  return typeof data === 'object' && data !== null && !Array.isArray(data)
+    ? new Ok(new Map(Object.entries(data)))
+    : decoder_error("Map", data);
+}
+
 export function decode_map(data) {
-  return data instanceof Map ? new Ok(data) : decoder_error("Map", data);
+  return data instanceof Map ? new Ok(data) : decode_object_to_map(data);
 }
 
 export function decode_option(data, decoder) {
