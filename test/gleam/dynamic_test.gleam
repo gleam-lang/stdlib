@@ -745,10 +745,12 @@ pub fn map_test() {
   |> dynamic.map(dynamic.string, dynamic.int)
   |> should.equal(Error([DecodeError(expected: "Map", found: "Int", path: [])]))
 
-  []
+  #()
   |> dynamic.from
   |> dynamic.map(dynamic.string, dynamic.int)
-  |> should.equal(Error([DecodeError(expected: "Map", found: "List", path: [])]))
+  |> should.equal(Error([
+    DecodeError(expected: "Map", found: "Tuple of 0 elements", path: []),
+  ]))
 
   fn() { Nil }
   |> dynamic.from
