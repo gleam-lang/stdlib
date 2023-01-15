@@ -96,7 +96,7 @@ pub fn rest_test() {
 }
 
 pub fn group_test() {
-  [Ok(1), Error("Wrong"), Ok(200), Ok(1)]
+  [Ok(10), Error("Wrong"), Ok(200), Ok(1)]
   |> list.group(fn(i) {
     case i {
       Ok(_) -> "Successful"
@@ -106,15 +106,15 @@ pub fn group_test() {
   |> should.equal(
     map.new()
     |> map.insert("Failed", [Error("Wrong")])
-    |> map.insert("Successful", [Ok(1), Ok(200), Ok(1)]),
+    |> map.insert("Successful", [Ok(1), Ok(200), Ok(10)]),
   )
 
   list.group([1, 2, 3, 4, 5], fn(i) { i - i / 3 * 3 })
   |> should.equal(
     map.new()
     |> map.insert(0, [3])
-    |> map.insert(1, [1, 4])
-    |> map.insert(2, [2, 5]),
+    |> map.insert(1, [4, 1])
+    |> map.insert(2, [5, 2]),
   )
 }
 

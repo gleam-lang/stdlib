@@ -263,11 +263,13 @@ fn update_group(
 /// Takes a list and groups the values by a key
 /// which is built from a key function.
 ///
+/// Does not preserve the initial value order.
+///
 /// ## Examples
 ///
 /// ```gleam
 /// > [Ok(3), Error("Wrong"), Ok(200), Ok(73)]
-///   |> group(with: fn(i) {
+///   |> group(by: fn(i) {
 ///     case i {
 ///       Ok(_) -> "Successful"
 ///       Error(_) -> "Failed"
@@ -277,7 +279,7 @@ fn update_group(
 ///
 /// [
 ///   #("Failed", [Error("Wrong")]),
-///   #("Successful", [Ok(3), Ok(200), Ok(73)])
+///   #("Successful", [Ok(73), Ok(200), Ok(3)])
 /// ]
 ///
 /// > group(from: [1,2,3,4,5], with: fn(i) {fn(i) { i - i / 3 * 3 }})
@@ -286,7 +288,7 @@ fn update_group(
 /// ```
 ///
 pub fn group(list: List(v), by key: fn(v) -> k) -> Map(k, List(v)) {
-  fold_right(list, map.new(), update_group(key))
+  fold(list, map.new(), update_group(key))
 }
 
 fn do_filter(list: List(a), fun: fn(a) -> Bool, acc: List(a)) -> List(a) {

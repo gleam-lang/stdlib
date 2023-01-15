@@ -98,17 +98,15 @@ if javascript {
   fn fold_list_of_pair(
     over list: List(#(k, v)),
     from initial: Map(k, v),
-    with pair: #(k, v),
   ) -> Map(k, v) {
     case list {
       [] -> initial
-      [x, ..rest] ->
-        fold_list_of_pair(rest, insert(initial, pair.0, pair.1), pair)
+      [x, ..rest] -> fold_list_of_pair(rest, insert(initial, x.0, x.1))
     }
   }
 
   fn do_from_list(list: List(#(k, v))) -> Map(k, v) {
-    fold_list_of_pair(list, new(), insert_pair)
+    fold_list_of_pair(list, new())
   }
 }
 

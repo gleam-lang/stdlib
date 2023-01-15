@@ -5,6 +5,9 @@ pub fn all_test() {
   option.all([Some(1), Some(2), Some(3)])
   |> should.equal(Some([1, 2, 3]))
 
+  option.all([])
+  |> should.equal(Some([]))
+
   option.all([Some(1), None, Some(3)])
   |> should.equal(None)
 }
