@@ -284,7 +284,7 @@ fn update_group(
 ///
 /// > group(from: [1,2,3,4,5], with: fn(i) {fn(i) { i - i / 3 * 3 }})
 /// |> map.to_list
-/// [#(0, [3]), #(1, [1, 4]), #(2, [2, 5])]
+/// [#(0, [3]), #(1, [4, 1]), #(2, [5, 2])]
 /// ```
 ///
 pub fn group(list: List(v), by key: fn(v) -> k) -> Map(k, List(v)) {
