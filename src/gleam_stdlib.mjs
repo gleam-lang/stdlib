@@ -350,21 +350,18 @@ export function codepoint(int) {
 }
 
 export function string_to_codepoint_integer_list(string) {
-  return List.fromArray(
-    Array.from(string)
-      .map(item => item.codePointAt(0))
-  );
+  return List.fromArray(Array.from(string).map((item) => item.codePointAt(0)));
 }
 
 export function utf_codepoint_list_to_string(utf_codepoint_integer_list) {
   return utf_codepoint_integer_list
     .toArray()
-    .map(x => String.fromCodePoint(x.value))
+    .map((x) => String.fromCodePoint(x.value))
     .join("");
 }
 
 export function utf_codepoint_to_int(utf_codepoint) {
-	return utf_codepoint.value;
+  return utf_codepoint.value;
 }
 
 export function regex_check(regex, string) {
@@ -646,9 +643,13 @@ export function decode_bool(data) {
 }
 
 export function decode_bit_string(data) {
-  return BitString.isBitString(data)
-    ? new Ok(data)
-    : decoder_error("BitString", data);
+  if (BitString.isBitString(data)) {
+    return new Ok(data);
+  }
+  if (data instanceof Uint8Array) {
+    return new Ok(new BitString(data));
+  }
+  return decoder_error("BitString", data);
 }
 
 export function decode_tuple(data) {
@@ -673,7 +674,13 @@ export function decode_result(data) {
 }
 
 export function decode_map(data) {
-  return data instanceof Map ? new Ok(data) : decoder_error("Map", data);
+  if (data instanceof Map) {
+    return new Ok(data)
+  }
+  if (typeof data === 'object' && data !== null && Object.getPrototypeOf(data) == Object.getPrototypeOf({})) {
+    return new Ok(new Map(Object.entries(data)))
+  }
+  return  decoder_error("Map", data);
 }
 
 export function decode_option(data, decoder) {

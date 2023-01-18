@@ -1,10 +1,17 @@
 # Changelog
 
-## v0.26.0 - unreleased
+## Unreleased
 
+- The `dynamic` module is able to decode simple JavaScript objects to maps.
+  So, the behaviour of the `field` and `object` functions are consistent.
+
+## v0.26.0 - 2023-01-12
+
+- The `dynamic` module gains the `decode1` function.
 - The `float` module gains the `loosely_equals` function.
 - The `io` module gains `print_error` and `println_error` functions for
   printing to stderr.
+- The `set` module gains the `drop` function.
 - The `io.debug` function now prints to stderr instead of stdout when using
   the Erlang target or running in Node.js (but still uses `console.log`
   when running as JavaScript in a browser)
@@ -20,6 +27,8 @@
   which in turn fixes `io.debug`'s output of such strings.
 - The `list` module gains the `group` function.
 - The `option` and the `map` module gain independence from the `list` module
+- The `bit_string` function in the `dynamic` module now knows how to handle
+  JavaScript `Uint8Array`s.
 
 ## v0.25.0 - 2022-11-19
 

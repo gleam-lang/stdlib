@@ -80,6 +80,13 @@ pub fn take_test() {
   |> should.equal(set.from_list([1, 3]))
 }
 
+pub fn drop_test() {
+  ["a", "b", "c"]
+  |> set.from_list
+  |> set.drop(["a", "b", "d"])
+  |> should.equal(set.from_list(["c"]))
+}
+
 pub fn union_test() {
   set.union(set.from_list([1, 2]), set.from_list([2, 3]))
   |> set.to_list
