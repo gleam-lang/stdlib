@@ -18,6 +18,8 @@
   `utf_codepoint_to_int` functions.
 - Fixed `string.inspect`'s escaping of `"`, `\`, `\n`, `\r`, `\r\n`, and `\t`,
   which in turn fixes `io.debug`'s output of such strings.
+- The `list` module gains the `group` function.
+- The `option` and the `map` module gain independence from the `list` module
 
 ## v0.25.0 - 2022-11-19
 
