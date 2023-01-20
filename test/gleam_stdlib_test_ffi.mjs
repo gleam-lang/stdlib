@@ -1,4 +1,5 @@
 import { opendir } from "fs/promises";
+import * as process from "process";
 
 const dir = "build/dev/javascript/gleam_stdlib/gleam/";
 

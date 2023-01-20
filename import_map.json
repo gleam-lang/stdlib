@@ -1,0 +1,7 @@
+{
+  "imports": {
+    "fs" : "https://deno.land/std@0.173.0/node/fs.ts",
+		"fs/promises" : "https://deno.land/std@0.173.0/node/fs/promises.ts",
+    "process": "https://deno.land/std@0.173.0/node/process.ts"
+  }
+}
