@@ -157,15 +157,13 @@ pub fn to_string_test() {
 }
 
 pub fn guard_test() {
-  assert 1 = {
-    let x = 1
-    use <- bool.guard(True, or: 2)
-    x
+  assert 2 = {
+    use <- bool.guard(when: True, return: 2)
+    1
   }
 
-  assert 2 = {
-    let x = 1
-    use <- bool.guard(False, or: 2)
-    x
+  assert 1 = {
+    use <- bool.guard(when: False, return: 2)
+    1
   }
 }
