@@ -411,36 +411,3 @@ pub fn replace_error(result: Result(a, e1), error: e2) -> Result(a, e2) {
 pub fn values(results: List(Result(a, e))) -> List(a) {
   list.filter_map(results, fn(r) { r })
 }
-
-/// Run a callback function if the given bool is `True`, otherwise return a
-/// default error value.
-///
-/// This function is suitable for `use` expressions.
-///
-/// ## Examples
-///
-/// ```gleam
-/// > let name = "Kamaka"
-/// > use <- guard(name != "", or: "Missing name")
-/// > Ok("Hello, " <> name)
-/// Ok("Hello, Kamaka")
-/// ```
-///
-/// ```gleam
-/// > let name = ""
-/// > use <- guard(name != "", or: "Missing name")
-/// > Ok("Hello, " <> name)
-/// Error("Missing name")
-/// ```
-///
-///
-pub fn guard(
-  requirement: Bool,
-  or error: e,
-  then consequence: fn() -> Result(a, e),
-) -> Result(a, e) {
-  case requirement {
-    True -> consequence()
-    False -> Error(error)
-  }
-}
