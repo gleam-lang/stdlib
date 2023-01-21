@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- The `bool` module gains the `guard` function.
+- The `result` module gains the `guard` function.
 - The `dynamic` module is able to decode simple JavaScript objects to maps.
   So, the behaviour of the `field` and `object` functions are consistent.
 
