@@ -155,3 +155,17 @@ pub fn to_string_test() {
   bool.to_string(False)
   |> should.equal("False")
 }
+
+pub fn guard_test() {
+  assert 1 = {
+    let x = 1
+    use <- bool.guard(True, or: 2)
+    x
+  }
+
+  assert 2 = {
+    let x = 1
+    use <- bool.guard(False, or: 2)
+    x
+  }
+}
