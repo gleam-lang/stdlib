@@ -326,33 +326,63 @@ pub fn to_string(bool: Bool) -> String {
 
 /// Run a callback function if the given bool is `True`, otherwise return a
 /// default value.
+/// 
+/// With a `use` expression this function can simulate the early-return pattern
+/// found in some other programming languages.
 ///
-/// This function is suitable for `use` expressions.
+/// In a procedural language:
+///
+/// ```js
+/// if (predicate) return value;
+/// // ...
+/// ```
+///
+/// In Gleam with a `use` expression:
+///
+/// ```gleam
+/// use <- guard(when: predicate, return: value)
+/// // ...
+/// ```
+///
+/// Like everything in Gleam `use` is an expression, so it short circuits the
+/// current block, not the entire function. As a result you can assign the value
+/// to a variable:
+///
+/// ```gleam
+/// let x = {
+///   use <- guard(when: predicate, return: value)
+///   // ...
+/// }
+/// ```
+///
+/// Note that unlike in procedural languages the `return` value is evaluated
+/// even when the predicate is `False`, so it is advisable not to perform
+/// expensive computation there.
+///
 ///
 /// ## Examples
 ///
 /// ```gleam
-/// > let name = "Kamaka"
-/// > use <- guard(name != "", or: "Welcome!")
-/// > "Hello, " <> name
-/// "Hello, Kamaka"
-/// ```
-///
-/// ```gleam
 /// > let name = ""
-/// > use <- guard(name != "", or: "Welcome!")
+/// > use <- guard(when: name == "", return: "Welcome!")
 /// > "Hello, " <> name
 /// "Welcome!"
 /// ```
 ///
+/// ```gleam
+/// > let name = "Kamaka"
+/// > use <- guard(when: name == "", return: "Welcome!")
+/// > "Hello, " <> name
+/// "Hello, Kamaka"
+/// ```
 ///
 pub fn guard(
-  requirement: Bool,
-  or alternative: t,
-  then consequence: fn() -> t,
+  when requirement: Bool,
+  return consequence: t,
+  otherwise alternative: fn() -> t,
 ) -> t {
   case requirement {
-    True -> consequence()
-    False -> alternative
+    True -> consequence
+    False -> alternative()
   }
 }
