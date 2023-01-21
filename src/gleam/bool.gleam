@@ -333,16 +333,16 @@ pub fn to_string(bool: Bool) -> String {
 ///
 /// ```gleam
 /// > let name = "Kamaka"
-/// > use <- guard(name != "", or: "friend")
+/// > use <- guard(name != "", or: "Welcome!")
 /// > "Hello, " <> name
 /// "Hello, Kamaka"
 /// ```
 ///
 /// ```gleam
 /// > let name = ""
-/// > use <- guard(name != "", or: "friend")
+/// > use <- guard(name != "", or: "Welcome!")
 /// > "Hello, " <> name
-/// "Hello, friend"
+/// "Welcome!"
 /// ```
 ///
 ///
