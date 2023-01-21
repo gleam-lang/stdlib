@@ -422,14 +422,14 @@ pub fn values(results: List(Result(a, e))) -> List(a) {
 /// ```gleam
 /// > let name = "Kamaka"
 /// > use <- guard(name != "", or: "Missing name")
-/// > "Hello, " <> name
+/// > Ok("Hello, " <> name)
 /// Ok("Hello, Kamaka")
 /// ```
 ///
 /// ```gleam
 /// > let name = ""
 /// > use <- guard(name != "", or: "Missing name")
-/// > "Hello, " <> name
+/// > Ok("Hello, " <> name)
 /// Error("Missing name")
 /// ```
 ///
