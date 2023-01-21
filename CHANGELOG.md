@@ -25,6 +25,8 @@
   `utf_codepoint_to_int` functions.
 - Fixed `string.inspect`'s escaping of `"`, `\`, `\n`, `\r`, `\r\n`, and `\t`,
   which in turn fixes `io.debug`'s output of such strings.
+- The `bit_string` function in the `dynamic` module now knows how to handle
+  JavaScript `Uint8Array`s.  
 - The `list` module gains the `group` function.
 
 ## v0.25.0 - 2022-11-19
