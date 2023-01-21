@@ -205,3 +205,17 @@ pub fn values_test() {
   result.values([Ok(1), Error(""), Ok(3)])
   |> should.equal([1, 3])
 }
+
+pub fn guard_test() {
+  assert Ok(1) = {
+    let x = 1
+    use <- result.guard(True, or: "nope")
+    Ok(x)
+  }
+
+  assert Error("nope") = {
+    let x = 1
+    use <- result.guard(False, or: "nope")
+    Ok(x)
+  }
+}
