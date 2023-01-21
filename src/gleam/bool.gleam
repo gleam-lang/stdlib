@@ -323,3 +323,36 @@ pub fn to_string(bool: Bool) -> String {
     True -> "True"
   }
 }
+
+/// Run a callback function if the given bool is `True`, otherwise return a
+/// default value.
+///
+/// This function is suitable for `use` expressions.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > let name = "Kamaka"
+/// > use <- guard(name != "", or: "friend")
+/// > "Hello, " <> name
+/// "Hello, Kamaka"
+/// ```
+///
+/// ```gleam
+/// > let name = ""
+/// > use <- guard(name != "", or: "friend")
+/// > "Hello, " <> name
+/// "Hello, friend"
+/// ```
+///
+///
+pub fn guard(
+  requirement: Bool,
+  or alternative: t,
+  then consequence: fn() -> t,
+) -> t {
+  case requirement {
+    True -> consequence()
+    False -> alternative
+  }
+}
