@@ -416,13 +416,10 @@ pub fn all_test() {
 
   [1, 2, 3]
   |> list.all(fn(x) {
+    // Inexhaustive, crashs if no short-circuit
     case x {
       1 -> True
       2 -> False
-      // Crash if no short-circuit
-      _ -> {
-        assert True = False
-      }
     }
   })
 
@@ -448,13 +445,10 @@ pub fn any_test() {
 
   [1, 2, 3]
   |> list.any(fn(x) {
+    // Inexhaustive, crashs if no short-circuit
     case x {
       1 -> False
       2 -> True
-      // Crash if no short-circuit
-      _ -> {
-        assert True = False
-      }
     }
   })
 
