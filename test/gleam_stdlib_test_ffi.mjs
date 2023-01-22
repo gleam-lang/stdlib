@@ -1,4 +1,4 @@
-// Verbatim copy of gleeunit 0.10.0's <https://github.com/lpil/gleeunit/blob/main/src/gleeunit_ffi.mjs>
+// This file is a verbatim copy of gleeunit 0.10.0's <https://github.com/lpil/gleeunit/blob/main/src/gleeunit_ffi.mjs>
 
 async function* gleamFiles(directory) {
   for (let entry of await read_dir(directory)) {
