@@ -12,3 +12,8 @@ links = [
 [dependencies]
 
 [dev-dependencies]
+
+[javascript.deno]
+allow_read = [
+  "./",
+]
