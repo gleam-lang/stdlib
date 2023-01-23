@@ -41,7 +41,7 @@ if erlang {
 
 if javascript {
   external fn uint8array(List(Int)) -> dynamic.Dynamic =
-    "../gleam_stdlib_test_helpers_ffi.mjs" "uint8array"
+    "../gleam_stdlib_test_ffi.mjs" "uint8array"
 
   pub fn bit_string_erlang_test() {
     [1, 1, 2, 3, 5, 8]
