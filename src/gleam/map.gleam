@@ -1,9 +1,5 @@
 import gleam/option.{Option}
 
-if javascript {
-  import gleam/pair
-}
-
 /// A dictionary of keys and values.
 ///
 /// Any type can be used for the keys and values of a map, but all the keys
@@ -414,7 +410,7 @@ if javascript {
     }
     case desired_keys {
       [] -> acc
-      [x, ..xs] -> do_insert_taken(map, xs, insert(acc, x))
+      [x, ..xs] -> insert_taken(map, xs, insert(acc, x))
     }
   }
 
