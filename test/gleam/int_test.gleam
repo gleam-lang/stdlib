@@ -349,7 +349,7 @@ pub fn sum_test() {
 
 pub fn product_test() {
   int.product([])
-  |> should.equal(0)
+  |> should.equal(1)
 
   int.product([4])
   |> should.equal(4)
