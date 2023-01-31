@@ -338,7 +338,7 @@ pub fn sum_test() {
 
 pub fn product_test() {
   float.product([])
-  |> should.equal(0.0)
+  |> should.equal(1.0)
 
   float.product([4.0])
   |> should.equal(4.0)

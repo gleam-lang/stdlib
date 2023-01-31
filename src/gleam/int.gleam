@@ -465,7 +465,7 @@ fn do_sum(numbers: List(Int), initial: Int) -> Int {
 ///
 pub fn product(numbers: List(Int)) -> Int {
   case numbers {
-    [] -> 0
+    [] -> 1
     _ -> do_product(numbers, 1)
   }
 }

@@ -427,7 +427,7 @@ fn do_sum(numbers: List(Float), initial: Float) -> Float {
 ///
 pub fn product(numbers: List(Float)) -> Float {
   case numbers {
-    [] -> 0.0
+    [] -> 1.0
     _ -> do_product(numbers, 1.0)
   }
 }
