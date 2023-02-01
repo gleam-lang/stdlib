@@ -26,6 +26,7 @@ import gleam/int
 import gleam/float
 import gleam/order.{Order}
 import gleam/pair
+import gleam/map.{Map}
 
 /// An error value returned by the `strict_zip` function.
 ///
@@ -246,6 +247,48 @@ pub fn rest(list: List(a)) -> Result(List(a), Nil) {
     [] -> Error(Nil)
     [_, ..xs] -> Ok(xs)
   }
+}
+
+fn update_group(
+  f: fn(element) -> key,
+) -> fn(Map(key, List(element)), element) -> Map(key, List(element)) {
+  fn(groups, elem) {
+    case map.get(groups, f(elem)) {
+      Ok(existing) -> map.insert(groups, f(elem), [elem, ..existing])
+      Error(_) -> map.insert(groups, f(elem), [elem])
+    }
+  }
+}
+
+/// Takes a list and groups the values by a key
+/// which is built from a key function.
+///
+/// Does not preserve the initial value order.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > [Ok(3), Error("Wrong"), Ok(200), Ok(73)]
+///   |> group(by: fn(i) {
+///     case i {
+///       Ok(_) -> "Successful"
+///       Error(_) -> "Failed"
+///     }
+///   })
+///   |> map.to_list
+///
+/// [
+///   #("Failed", [Error("Wrong")]),
+///   #("Successful", [Ok(73), Ok(200), Ok(3)])
+/// ]
+///
+/// > group(from: [1,2,3,4,5], with: fn(i) {fn(i) { i - i / 3 * 3 }})
+/// |> map.to_list
+/// [#(0, [3]), #(1, [4, 1]), #(2, [5, 2])]
+/// ```
+///
+pub fn group(list: List(v), by key: fn(v) -> k) -> Map(k, List(v)) {
+  fold(list, map.new(), update_group(key))
 }
 
 fn do_filter(list: List(a), fun: fn(a) -> Bool, acc: List(a)) -> List(a) {

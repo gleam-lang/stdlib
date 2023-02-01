@@ -1,9 +1,4 @@
-import gleam/list
 import gleam/option.{Option}
-
-if javascript {
-  import gleam/pair
-}
 
 /// A dictionary of keys and values.
 ///
@@ -96,8 +91,18 @@ if erlang {
 }
 
 if javascript {
+  fn fold_list_of_pair(
+    over list: List(#(k, v)),
+    from initial: Map(k, v),
+  ) -> Map(k, v) {
+    case list {
+      [] -> initial
+      [x, ..rest] -> fold_list_of_pair(rest, insert(initial, x.0, x.1))
+    }
+  }
+
   fn do_from_list(list: List(#(k, v))) -> Map(k, v) {
-    list.fold(list, new(), insert_pair)
+    fold_list_of_pair(list, new())
   }
 }
 
@@ -260,10 +265,25 @@ if erlang {
 }
 
 if javascript {
+  fn do_reverse_acc(remaining, accumulator) {
+    case remaining {
+      [] -> accumulator
+      [item, ..rest] -> do_reverse_acc(rest, [item, ..accumulator])
+    }
+  }
+
+  fn do_keys_acc(list: List(#(k, v)), acc: List(k)) -> List(k) {
+    case list {
+      [] -> do_reverse_acc(acc, [])
+      [x, ..xs] -> do_keys_acc(xs, [x.0, ..acc])
+    }
+  }
+
   fn do_keys(map: Map(k, v)) -> List(k) {
-    map
-    |> to_list
-    |> list.map(pair.first)
+    let list_of_pairs =
+      map
+      |> to_list
+    do_keys_acc(list_of_pairs, [])
   }
 }
 
@@ -290,10 +310,18 @@ if erlang {
 }
 
 if javascript {
+  fn do_values_acc(list: List(#(k, v)), acc: List(v)) -> List(v) {
+    case list {
+      [] -> do_reverse_acc(acc, [])
+      [x, ..xs] -> do_values_acc(xs, [x.1, ..acc])
+    }
+  }
+
   fn do_values(map: Map(k, v)) -> List(v) {
-    map
-    |> to_list
-    |> list.map(pair.second)
+    let list_of_pairs =
+      map
+      |> to_list
+    do_values_acc(list_of_pairs, [])
   }
 }
 
@@ -369,14 +397,25 @@ if erlang {
 }
 
 if javascript {
-  fn do_take(desired_keys: List(k), map: Map(k, v)) -> Map(k, v) {
+  fn insert_taken(
+    map: Map(k, v),
+    desired_keys: List(k),
+    acc: Map(k, v),
+  ) -> Map(k, v) {
     let insert = fn(taken, key) {
       case get(map, key) {
         Ok(value) -> insert(taken, key, value)
         _ -> taken
       }
     }
-    list.fold(over: desired_keys, from: new(), with: insert)
+    case desired_keys {
+      [] -> acc
+      [x, ..xs] -> insert_taken(map, xs, insert(acc, x))
+    }
+  }
+
+  fn do_take(desired_keys: List(k), map: Map(k, v)) -> Map(k, v) {
+    insert_taken(map, desired_keys, new())
   }
 }
 
@@ -408,10 +447,17 @@ if javascript {
     insert(map, pair.0, pair.1)
   }
 
+  fn fold_inserts(new_entries: List(#(k, v)), map: Map(k, v)) -> Map(k, v) {
+    case new_entries {
+      [] -> map
+      [x, ..xs] -> fold_inserts(xs, insert_pair(map, x))
+    }
+  }
+
   fn do_merge(map: Map(k, v), new_entries: Map(k, v)) -> Map(k, v) {
     new_entries
     |> to_list
-    |> list.fold(map, insert_pair)
+    |> fold_inserts(map)
   }
 }
 
@@ -465,7 +511,10 @@ if javascript {
 /// ```
 ///
 pub fn drop(from map: Map(k, v), drop disallowed_keys: List(k)) -> Map(k, v) {
-  list.fold(over: disallowed_keys, from: map, with: delete)
+  case disallowed_keys {
+    [] -> map
+    [x, ..xs] -> drop(delete(map, x), xs)
+  }
 }
 
 /// Creates a new map with one entry updated using a given function.

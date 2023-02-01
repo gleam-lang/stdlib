@@ -1,6 +1,7 @@
 import gleam/float
 import gleam/int
 import gleam/list
+import gleam/map
 import gleam/should
 
 if erlang {
@@ -92,6 +93,29 @@ pub fn rest_test() {
 
   list.rest([])
   |> should.equal(Error(Nil))
+}
+
+pub fn group_test() {
+  [Ok(10), Error("Wrong"), Ok(200), Ok(1)]
+  |> list.group(fn(i) {
+    case i {
+      Ok(_) -> "Successful"
+      Error(_) -> "Failed"
+    }
+  })
+  |> should.equal(
+    map.new()
+    |> map.insert("Failed", [Error("Wrong")])
+    |> map.insert("Successful", [Ok(1), Ok(200), Ok(10)]),
+  )
+
+  list.group([1, 2, 3, 4, 5], fn(i) { i - i / 3 * 3 })
+  |> should.equal(
+    map.new()
+    |> map.insert(0, [3])
+    |> map.insert(1, [4, 1])
+    |> map.insert(2, [5, 2]),
+  )
 }
 
 pub fn filter_test() {

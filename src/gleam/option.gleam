@@ -1,5 +1,3 @@
-import gleam/list
-
 /// `Option` represents a value that may be present or not. `Some` means the value is
 /// present, `None` means the value is not.
 ///
@@ -9,6 +7,21 @@ import gleam/list
 pub type Option(a) {
   Some(a)
   None
+}
+
+fn do_all(list: List(Option(a)), acc: List(a)) -> Option(List(a)) {
+  case list {
+    [] -> Some(acc)
+    [x, ..rest] -> {
+      let accumulate = fn(acc, item) {
+        case acc, item {
+          Some(values), Some(value) -> Some([value, ..values])
+          _, _ -> None
+        }
+      }
+      accumulate(do_all(rest, acc), x)
+    }
+  }
 }
 
 /// Combines a list of `Option`s into a single `Option`.
@@ -28,16 +41,7 @@ pub type Option(a) {
 /// ```
 ///
 pub fn all(list: List(Option(a))) -> Option(List(a)) {
-  list.fold_right(
-    list,
-    from: Some([]),
-    with: fn(acc, item) {
-      case acc, item {
-        Some(values), Some(value) -> Some([value, ..values])
-        _, _ -> None
-      }
-    },
-  )
+  do_all(list, [])
 }
 
 /// Checks whether the `Option` is a `Some` value.
@@ -312,6 +316,21 @@ pub fn lazy_or(first: Option(a), second: fn() -> Option(a)) -> Option(a) {
   }
 }
 
+fn do_values(list: List(Option(a)), acc: List(a)) -> List(a) {
+  case list {
+    [] -> acc
+    [x, ..xs] -> {
+      let accumulate = fn(acc, item) {
+        case item {
+          Some(value) -> [value, ..acc]
+          None -> acc
+        }
+      }
+      accumulate(do_values(xs, acc), x)
+    }
+  }
+}
+
 /// Given a list of `Option`s,
 /// returns only the values inside `Some`.
 ///
@@ -323,5 +342,5 @@ pub fn lazy_or(first: Option(a), second: fn() -> Option(a)) -> Option(a) {
 /// ```
 ///
 pub fn values(options: List(Option(a))) -> List(a) {
-  list.filter_map(options, fn(op) { to_result(op, "") })
+  do_values(options, [])
 }
