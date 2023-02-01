@@ -265,16 +265,16 @@ if erlang {
 }
 
 if javascript {
-  fn do_reverse_acc(remaining, accumulator) {
+  fn reverse_and_concat(remaining, accumulator) {
     case remaining {
       [] -> accumulator
-      [item, ..rest] -> do_reverse_acc(rest, [item, ..accumulator])
+      [item, ..rest] -> reverse_and_concat(rest, [item, ..accumulator])
     }
   }
 
   fn do_keys_acc(list: List(#(k, v)), acc: List(k)) -> List(k) {
     case list {
-      [] -> do_reverse_acc(acc, [])
+      [] -> reverse_and_concat(acc, [])
       [x, ..xs] -> do_keys_acc(xs, [x.0, ..acc])
     }
   }
@@ -312,7 +312,7 @@ if erlang {
 if javascript {
   fn do_values_acc(list: List(#(k, v)), acc: List(v)) -> List(v) {
     case list {
-      [] -> do_reverse_acc(acc, [])
+      [] -> reverse_and_concat(acc, [])
       [x, ..xs] -> do_values_acc(xs, [x.1, ..acc])
     }
   }
