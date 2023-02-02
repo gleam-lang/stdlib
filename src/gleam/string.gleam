@@ -893,9 +893,9 @@ if javascript {
 ///
 pub fn utf_codepoint(value: Int) -> Result(UtfCodepoint, Nil) {
   case value {
-    i if i > 1114111 -> Error(Nil)
-    65534 | 65535 -> Error(Nil)
-    i if i >= 55296 && i <= 57343 -> Error(Nil)
+    i if i > 1_114_111 -> Error(Nil)
+    65_534 | 65_535 -> Error(Nil)
+    i if i >= 55_296 && i <= 57_343 -> Error(Nil)
     i -> Ok(unsafe_int_to_utf_codepoint(i))
   }
 }
