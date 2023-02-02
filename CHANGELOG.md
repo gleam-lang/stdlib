@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.26.1 - 2023-02-02
 
 - The `prepend` function in the `list` module gains the `this` label.
 - The `list` module gains the `group` function.
