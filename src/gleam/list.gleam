@@ -616,7 +616,7 @@ if javascript {
 /// let new_list = [1, ..existing_list]
 /// ```
 ///
-pub fn prepend(to list: List(a), item: a) -> List(a) {
+pub fn prepend(to list: List(a), this item: a) -> List(a) {
   [item, ..list]
 }
 
