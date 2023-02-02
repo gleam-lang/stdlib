@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- The `prepend` function in the `list` module gains the `this` label.
 - The `list` module gains the `group` function.
 - The `dynamic` module is able to decode simple JavaScript objects to maps.
   So, the behaviour of the `field` and `object` functions are consistent.
