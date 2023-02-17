@@ -275,6 +275,8 @@ export function bit_string_to_string(bit_string) {
 export function print(string) {
   if (typeof process === "object") {
     process.stdout.write(string); // We can write without a trailing newline
+  } else if (typeof Deno === "object") {
+    Deno.stdout.writeSync(new TextEncoder().encode(string));
   } else {
     console.log(string); // We're in a browser. Newlines are mandated
   }
