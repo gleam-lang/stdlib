@@ -276,7 +276,7 @@ export function print(string) {
   if (typeof process === "object") {
     process.stdout.write(string); // We can write without a trailing newline
   } else if (typeof Deno === "object") {
-    Deno.stdout.writeSync(new TextEncoder().encode(string));
+    Deno.stdout.writeSync(new TextEncoder().encode(string)); // We can write without a trailing newline
   } else {
     console.log(string); // We're in a browser. Newlines are mandated
   }
@@ -285,6 +285,8 @@ export function print(string) {
 export function print_error(string) {
   if (typeof process === "object") {
     process.stderr.write(string); // We can write without a trailing newline
+  } else if (typeof Deno === "object") {
+    Deno.stderr.writeSync(new TextEncoder().encode(string)); // We can write without a trailing newline
   } else {
     console.error(string); // We're in a browser. Newlines are mandated
   }
@@ -293,6 +295,8 @@ export function print_error(string) {
 export function print_debug(string) {
   if (typeof process === "object") {
     process.stderr.write(string + "\n"); // If we're in Node.js, use `stderr`
+  } else if (typeof Deno === "object") {
+    Deno.stderr.writeSync(new TextEncoder().encode(string + "\n")); // If we're in Deno, use `stderr`
   } else {
     console.log(string); // Otherwise, use `console.log` (so that it doesn't look like an error)
   }
