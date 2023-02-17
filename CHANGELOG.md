@@ -1,8 +1,9 @@
 # Changelog
 
 ## Unreleased
-- The `io.print`, `io.print_error`, and `io.print_debug` now match the Node.Js
-  implementation when run with Deno.
+
+- Fixed a bug where `io.print`, `io.print_error`, and `io.print_debug` would use 
+  `console.log` and add `"\n"` to the output when running on Deno.
 
 ## v0.26.1 - 2023-02-02
 
