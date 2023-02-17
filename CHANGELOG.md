@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+- The `io.print`, `io.print_error`, and `io.print_debug` now match the Node.Js
+  implementation when run with Deno.
+
 ## v0.26.1 - 2023-02-02
 
 - The `prepend` function in the `list` module gains the `this` label.
@@ -9,8 +13,6 @@
 - For a given empty list as an argument, `int.product` now returns `1` instead
   of `0`, and `float.product` now returns `1.0` instead of `0.0`. This mimicks
   the behavior of Elixir's `Enum.product/1`.
-- The `io.print`, `io.print_error`, and `io.print_debug` now match the Node.Js
-  implementation when run with Deno.
 
 ## v0.26.0 - 2023-01-12
 
