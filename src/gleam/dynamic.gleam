@@ -1462,3 +1462,13 @@ fn all_errors(result: Result(a, List(DecodeError))) -> List(DecodeError) {
     Error(errors) -> errors
   }
 }
+
+/// A decoder that always succeeds
+pub fn success(value) {
+  fn(_) { Ok(value) }
+}
+
+/// A decoder that always fails
+pub fn fail() {
+  fn(x) { Error([DecodeError("", found: classify(x), path: [])]) }
+}
