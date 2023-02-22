@@ -521,6 +521,9 @@ pub fn floor_divide_test() {
 
   int.floor_divide(-99, by: 2)
   |> should.equal(Ok(-50))
+
+  int.floor_divide(-1, by: 2)
+  |> should.equal(Ok(-1))
 }
 
 pub fn add_test() {
