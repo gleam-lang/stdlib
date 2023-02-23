@@ -761,10 +761,11 @@ pub fn try_fold(
 ) -> Result(acc, e) {
   case collection {
     [] -> Ok(accumulator)
-    [first, ..rest] -> {
-      try accumulator = fun(accumulator, first)
-      try_fold(rest, accumulator, fun)
-    }
+    [first, ..rest] ->
+      case fun(accumulator, first) {
+        Ok(result) -> try_fold(rest, result, fun)
+        Error(_) as error -> error
+      }
   }
 }
 
