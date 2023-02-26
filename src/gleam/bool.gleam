@@ -330,7 +330,7 @@ pub fn to_string(bool: Bool) -> String {
 /// With a `use` expression this function can simulate the early-return pattern
 /// found in some other programming languages.
 ///
-/// In a procedural language:
+/// In a procedural language, such as JavaScript:
 ///
 /// ```js
 /// if (predicate) return value;
