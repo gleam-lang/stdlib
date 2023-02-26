@@ -651,7 +651,7 @@ pub fn flatten(lists: List(List(a))) -> List(a) {
   do_flatten(lists, [])
 }
 
-/// Maps the list with the given function and then flattens the result.
+/// Maps the list with the given function and then flattens it.
 ///
 /// ## Examples
 ///
@@ -761,10 +761,11 @@ pub fn try_fold(
 ) -> Result(acc, e) {
   case collection {
     [] -> Ok(accumulator)
-    [first, ..rest] -> {
-      try accumulator = fun(accumulator, first)
-      try_fold(rest, accumulator, fun)
-    }
+    [first, ..rest] ->
+      case fun(accumulator, first) {
+        Ok(result) -> try_fold(rest, result, fun)
+        Error(_) as error -> error
+      }
   }
 }
 
@@ -1748,7 +1749,7 @@ fn do_chunk(
 }
 
 /// Returns a list of chunks in which
-/// the result of calling `f` on each element is the same.
+/// the return value of calling `f` on each element is the same.
 ///
 /// ## Examples
 ///

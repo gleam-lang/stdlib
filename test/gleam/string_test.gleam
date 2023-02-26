@@ -414,7 +414,7 @@ pub fn to_utf_codepoints_test() {
   "gleam"
   |> string.to_utf_codepoints
   |> should.equal({
-    assert #(Ok(g), Ok(l), Ok(e), Ok(a), Ok(m)) = #(
+    let assert #(Ok(g), Ok(l), Ok(e), Ok(a), Ok(m)) = #(
       string.utf_codepoint(103),
       string.utf_codepoint(108),
       string.utf_codepoint(101),
@@ -428,7 +428,7 @@ pub fn to_utf_codepoints_test() {
   |> string.to_utf_codepoints
   |> should.equal({
     // ["🏳", "️", "‍", "🌈"]
-    assert #(
+    let assert #(
       Ok(waving_white_flag),
       Ok(variant_selector_16),
       Ok(zero_width_joiner),
@@ -460,7 +460,7 @@ pub fn from_utf_codepoints_test() {
   |> should.equal("🏳️‍🌈")
 
   {
-    assert #(Ok(a), Ok(b), Ok(c)) = #(
+    let assert #(Ok(a), Ok(b), Ok(c)) = #(
       string.utf_codepoint(97),
       string.utf_codepoint(98),
       string.utf_codepoint(99),
@@ -483,13 +483,13 @@ pub fn utf_codepoint_test() {
 }
 
 pub fn bit_string_utf_codepoint_test() {
-  assert Ok(snake) = string.utf_codepoint(128_013)
+  let assert Ok(snake) = string.utf_codepoint(128_013)
   should.equal(<<snake:utf8_codepoint>>, <<"🐍":utf8>>)
 }
 
 pub fn utf_codepoint_to_int_test() {
   {
-    assert Ok(ordinal_value) = string.utf_codepoint(128_013)
+    let assert Ok(ordinal_value) = string.utf_codepoint(128_013)
     ordinal_value
   }
   |> string.utf_codepoint_to_int
@@ -948,14 +948,14 @@ if erlang {
     |> should.equal("#(1.0)")
 
     // Looks like `//erl(<0.83.0>)`.
-    assert Ok(regular_expression) =
+    let assert Ok(regular_expression) =
       regex.from_string("^\\/\\/erl\\(<[0-9]+\\.[0-9]+\\.[0-9]+>\\)$")
     string.inspect(create_erlang_pid())
     |> regex.check(regular_expression, _)
     |> should.be_true
 
     // Looks like: `//erl(#Ref<0.1809744150.4035444737.100468>)`.
-    assert Ok(regular_expression) =
+    let assert Ok(regular_expression) =
       regex.from_string(
         "^\\/\\/erl\\(#Ref<[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+>\\)$",
       )
@@ -972,7 +972,7 @@ if erlang {
 
   pub fn improper_list_inspect_test() {
     let list = improper_list_append(1, 2, 3)
-    assert "//erl([1, 2 | 3])" = string.inspect(list)
+    let assert "//erl([1, 2 | 3])" = string.inspect(list)
   }
 
   // Warning: The type of this function is incorrect

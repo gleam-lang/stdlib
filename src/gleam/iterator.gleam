@@ -1,3 +1,4 @@
+import gleam/result
 import gleam/int
 import gleam/list
 import gleam/map.{Map}
@@ -1295,7 +1296,7 @@ fn do_try_fold(
   case continuation() {
     Stop -> Ok(accumulator)
     Continue(elem, next) -> {
-      try accumulator = f(accumulator, elem)
+      use accumulator <- result.then(f(accumulator, elem))
       do_try_fold(next, f, accumulator)
     }
   }

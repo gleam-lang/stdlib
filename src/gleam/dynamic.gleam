@@ -329,19 +329,21 @@ pub fn result(
   error decode_error: Decoder(e),
 ) -> Decoder(Result(a, e)) {
   fn(value) {
-    try inner_result = decode_result(value)
+    use inner_result <- result.then(decode_result(value))
 
     case inner_result {
       Ok(raw) -> {
-        try value =
+        use value <- result.then(
           decode_ok(raw)
-          |> map_errors(push_path(_, "ok"))
+          |> map_errors(push_path(_, "ok")),
+        )
         Ok(Ok(value))
       }
       Error(raw) -> {
-        try value =
+        use value <- result.then(
           decode_error(raw)
-          |> map_errors(push_path(_, "error"))
+          |> map_errors(push_path(_, "error")),
+        )
         Ok(Error(value))
       }
     }
@@ -382,7 +384,7 @@ pub fn list(
   of decoder_type: fn(Dynamic) -> Result(inner, DecodeErrors),
 ) -> Decoder(List(inner)) {
   fn(dynamic) {
-    try list = shallow_list(dynamic)
+    use list <- result.then(shallow_list(dynamic))
     list
     |> list.try_map(decoder_type)
     |> map_errors(push_path(_, "*"))
@@ -514,9 +516,9 @@ if javascript {
 ///
 pub fn element(at index: Int, of inner_type: Decoder(t)) -> Decoder(t) {
   fn(data: Dynamic) {
-    try tuple = decode_tuple(data)
+    use tuple <- result.then(decode_tuple(data))
     let size = tuple_size(tuple)
-    try data = case index >= 0 {
+    use data <- result.then(case index >= 0 {
       True ->
         case index < size {
           True -> tuple_get(tuple, index)
@@ -527,7 +529,7 @@ pub fn element(at index: Int, of inner_type: Decoder(t)) -> Decoder(t) {
           True -> tuple_get(tuple, size + index)
           False -> at_least_decode_tuple_error(int.absolute_value(index), data)
         }
-    }
+    })
     inner_type(data)
     |> map_errors(push_path(_, index))
   }
@@ -607,7 +609,10 @@ fn assert_is_tuple(
       int.to_string(desired_size),
       " elements",
     ]))
-  try tuple = map_errors(decode_tuple(value), put_expected(_, expected))
+  use tuple <- result.then(map_errors(
+    decode_tuple(value),
+    put_expected(_, expected),
+  ))
   case tuple_size(tuple) {
     size if size == desired_size -> Ok(Nil)
     _ -> exact_decode_tuple_error(desired_size, value)
@@ -667,7 +672,7 @@ pub fn tuple2(
   second decode2: Decoder(b),
 ) -> Decoder(#(a, b)) {
   fn(value) {
-    try _ = assert_is_tuple(value, 2)
+    use _ <- result.then(assert_is_tuple(value, 2))
     let #(a, b) = unsafe_coerce(value)
     case decode1(a), decode2(b) {
       Ok(a), Ok(b) -> Ok(#(a, b))
@@ -718,7 +723,7 @@ pub fn tuple3(
   third decode3: Decoder(c),
 ) -> Decoder(#(a, b, c)) {
   fn(value) {
-    try _ = assert_is_tuple(value, 3)
+    use _ <- result.then(assert_is_tuple(value, 3))
     let #(a, b, c) = unsafe_coerce(value)
     case decode1(a), decode2(b), decode3(c) {
       Ok(a), Ok(b), Ok(c) -> Ok(#(a, b, c))
@@ -769,7 +774,7 @@ pub fn tuple4(
   fourth decode4: Decoder(d),
 ) -> Decoder(#(a, b, c, d)) {
   fn(value) {
-    try _ = assert_is_tuple(value, 4)
+    use _ <- result.then(assert_is_tuple(value, 4))
     let #(a, b, c, d) = unsafe_coerce(value)
     case decode1(a), decode2(b), decode3(c), decode4(d) {
       Ok(a), Ok(b), Ok(c), Ok(d) -> Ok(#(a, b, c, d))
@@ -820,7 +825,7 @@ pub fn tuple5(
   fifth decode5: Decoder(e),
 ) -> Decoder(#(a, b, c, d, e)) {
   fn(value) {
-    try _ = assert_is_tuple(value, 5)
+    use _ <- result.then(assert_is_tuple(value, 5))
     let #(a, b, c, d, e) = unsafe_coerce(value)
     case decode1(a), decode2(b), decode3(c), decode4(d), decode5(e) {
       Ok(a), Ok(b), Ok(c), Ok(d), Ok(e) -> Ok(#(a, b, c, d, e))
@@ -869,7 +874,7 @@ pub fn tuple6(
   sixth decode6: Decoder(f),
 ) -> Decoder(#(a, b, c, d, e, f)) {
   fn(value) {
-    try _ = assert_is_tuple(value, 6)
+    use _ <- result.then(assert_is_tuple(value, 6))
     let #(a, b, c, d, e, f) = unsafe_coerce(value)
     case
       decode1(a),
@@ -917,20 +922,23 @@ pub fn map(
   to value_type: Decoder(v),
 ) -> Decoder(Map(k, v)) {
   fn(value) {
-    try map = decode_map(value)
-    try pairs =
+    use map <- result.then(decode_map(value))
+    use pairs <- result.then(
       map
       |> map.to_list
       |> list.try_map(fn(pair) {
         let #(k, v) = pair
-        try k =
+        use k <- result.then(
           key_type(k)
-          |> map_errors(push_path(_, "keys"))
-        try v =
+          |> map_errors(push_path(_, "keys")),
+        )
+        use v <- result.then(
           value_type(v)
-          |> map_errors(push_path(_, "values"))
+          |> map_errors(push_path(_, "values")),
+        )
         Ok(#(k, v))
-      })
+      }),
+    )
     Ok(map.from_list(pairs))
   }
 }

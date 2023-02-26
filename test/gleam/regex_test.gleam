@@ -3,7 +3,7 @@ import gleam/regex.{Match, Options}
 import gleam/should
 
 pub fn from_string_test() {
-  assert Ok(re) = regex.from_string("[0-9]")
+  let assert Ok(re) = regex.from_string("[0-9]")
 
   regex.check(re, "abc123")
   |> should.be_true
@@ -11,31 +11,31 @@ pub fn from_string_test() {
   regex.check(re, "abcxyz")
   |> should.be_false
 
-  assert Error(_) = regex.from_string("[0-9")
+  let assert Error(_) = regex.from_string("[0-9")
 }
 
 pub fn compile_test() {
   let options = Options(case_insensitive: True, multi_line: False)
-  assert Ok(re) = regex.compile("[A-B]", options)
+  let assert Ok(re) = regex.compile("[A-B]", options)
 
   regex.check(re, "abc123")
   |> should.be_true
 
   let options = Options(case_insensitive: False, multi_line: True)
-  assert Ok(re) = regex.compile("^[0-9]", options)
+  let assert Ok(re) = regex.compile("^[0-9]", options)
 
   regex.check(re, "abc\n123")
   |> should.be_true
 
   // For Erlang: This test will only passes if unicode and ucp flags are set
-  assert Ok(re) = regex.compile("\\s", options)
+  let assert Ok(re) = regex.compile("\\s", options)
   // Em space == U+2003 == " " == used below
   regex.check(re, " ")
   |> should.be_true
 }
 
 pub fn check_test() {
-  assert Ok(re) = regex.from_string("^f.o.?")
+  let assert Ok(re) = regex.from_string("^f.o.?")
 
   regex.check(re, "foo")
   |> should.be_true
@@ -45,14 +45,14 @@ pub fn check_test() {
 }
 
 pub fn split_test() {
-  assert Ok(re) = regex.from_string(" *, *")
+  let assert Ok(re) = regex.from_string(" *, *")
 
   regex.split(re, "foo,32, 4, 9  ,0")
   |> should.equal(["foo", "32", "4", "9", "0"])
 }
 
 pub fn scan_test() {
-  assert Ok(re) = regex.from_string("Gl\\w+")
+  let assert Ok(re) = regex.from_string("Gl\\w+")
 
   regex.scan(re, "!Gleam")
   |> should.equal([Match(content: "Gleam", submatches: [])])
@@ -63,7 +63,7 @@ pub fn scan_test() {
   regex.scan(re, "𐍈Gleam")
   |> should.equal([Match(content: "Gleam", submatches: [])])
 
-  assert Ok(re) = regex.from_string("[oi]n a(.?) (\\w+)")
+  let assert Ok(re) = regex.from_string("[oi]n a(.?) (\\w+)")
 
   regex.scan(re, "I am on a boat in a lake.")
   |> should.equal([
@@ -71,11 +71,11 @@ pub fn scan_test() {
     Match(content: "in a lake", submatches: [None, Some("lake")]),
   ])
 
-  assert Ok(re) = regex.from_string("answer (\\d+)")
+  let assert Ok(re) = regex.from_string("answer (\\d+)")
   regex.scan(re, "Is the answer 42?")
   |> should.equal([Match(content: "answer 42", submatches: [Some("42")])])
 
-  assert Ok(re) = regex.from_string("(\\d+)")
+  let assert Ok(re) = regex.from_string("(\\d+)")
   regex.scan(re, "hello 42")
   |> should.equal([Match(content: "42", submatches: [Some("42")])])
 

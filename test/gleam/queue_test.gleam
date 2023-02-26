@@ -83,7 +83,7 @@ pub fn push_test() {
 }
 
 pub fn pop_back_test() {
-  assert Ok(tup) =
+  let assert Ok(tup) =
     [1, 2, 3]
     |> queue.from_list
     |> queue.pop_back
@@ -99,7 +99,7 @@ pub fn pop_back_test() {
 }
 
 pub fn pop_back_after_push_back_test() {
-  assert Ok(tup) =
+  let assert Ok(tup) =
     queue.new()
     |> queue.push_back(1)
     |> queue.push_back(2)
@@ -112,7 +112,7 @@ pub fn pop_back_after_push_back_test() {
 }
 
 pub fn pop_back_after_push_test() {
-  assert Ok(tup) =
+  let assert Ok(tup) =
     queue.new()
     |> queue.push_front("b")
     |> queue.push_back("x")
@@ -132,7 +132,7 @@ pub fn pop_back_empty_test() {
 }
 
 pub fn pop_front_test() {
-  assert Ok(tup) =
+  let assert Ok(tup) =
     [1, 2, 3]
     |> queue.from_list
     |> queue.pop_front
@@ -148,7 +148,7 @@ pub fn pop_front_test() {
 }
 
 pub fn pop_front_after_push_front_test() {
-  assert Ok(tup) =
+  let assert Ok(tup) =
     queue.new()
     |> queue.push_front(3)
     |> queue.push_front(2)
@@ -161,7 +161,7 @@ pub fn pop_front_after_push_front_test() {
 }
 
 pub fn pop_front_after_push_test() {
-  assert Ok(tup) =
+  let assert Ok(tup) =
     queue.new()
     |> queue.push_front("b")
     |> queue.push_back("x")
