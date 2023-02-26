@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Updated for Gleam v0.27.0.
 - Fixed a bug where `io.print`, `io.print_error`, and `io.print_debug` would use 
   `console.log` and add `"\n"` to the output when running on Deno.
 - Fixed a bug where `int.floor_divide` would return the wrong result in certain
