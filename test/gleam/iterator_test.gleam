@@ -31,7 +31,7 @@ pub fn step_test() {
         |> should.equal(Done)
 
       [h, ..t] -> {
-        assert Next(h2, t2) = step
+        let assert Next(h2, t2) = step
         h
         |> should.equal(h2)
         t2

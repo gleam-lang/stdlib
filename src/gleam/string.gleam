@@ -857,7 +857,7 @@ pub fn from_utf_codepoints(utf_codepoints: List(UtfCodepoint)) -> String {
 
 if erlang {
   fn do_from_utf_codepoints(utf_codepoints: List(UtfCodepoint)) -> String {
-    assert Ok(string) =
+    let assert Ok(string) =
       do_from_utf_codepoints_impl(utf_codepoints, bit_string.from_string(""))
       |> bit_string.to_string
     string

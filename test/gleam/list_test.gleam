@@ -444,9 +444,7 @@ pub fn all_test() {
       1 -> True
       2 -> False
       // Crash if no short-circuit
-      _ -> {
-        assert True = False
-      }
+      _ -> panic
     }
   })
 
@@ -476,9 +474,7 @@ pub fn any_test() {
       1 -> False
       2 -> True
       // Crash if no short-circuit
-      _ -> {
-        assert True = False
-      }
+      _ -> panic
     }
   })
 
@@ -850,11 +846,11 @@ pub fn key_set_test() {
 }
 
 pub fn each_test() {
-  list.each([1, 1, 1], fn(x) { assert 1 = x })
+  list.each([1, 1, 1], fn(x) { let assert 1 = x })
   |> should.equal(Nil)
 
   // TCO test
-  list.each(list.repeat(1, recursion_test_cycles), fn(x) { assert 1 = x })
+  list.each(list.repeat(1, recursion_test_cycles), fn(x) { let assert 1 = x })
 }
 
 pub fn partition_test() {
