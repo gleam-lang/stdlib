@@ -326,7 +326,7 @@ pub fn to_string(bool: Bool) -> String {
 
 /// Run a callback function if the given bool is `True`, otherwise return a
 /// default value.
-/// 
+///
 /// With a `use` expression this function can simulate the early-return pattern
 /// found in some other programming languages.
 ///
@@ -355,10 +355,9 @@ pub fn to_string(bool: Bool) -> String {
 /// }
 /// ```
 ///
-/// Note that unlike in procedural languages the `return` value is evaluated
+/// Note: Unlike in procedural languages the `return` value is evaluated
 /// even when the predicate is `False`, so it is advisable not to perform
-/// expensive computation there.
-///
+/// expensive or possibly unwanted side-effect computation there.
 ///
 /// ## Examples
 ///
