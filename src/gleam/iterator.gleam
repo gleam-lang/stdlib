@@ -1396,16 +1396,16 @@ fn do_length(over continuation: fn() -> Action(e), with length: Int) -> Int {
 /// ## Examples
 /// 
 /// ```gleam
-/// > empty() |> count
+/// > empty() |> length
 /// 0
 /// ```
 ///
 /// ```gleam
-/// > from_list([1, 2, 3, 4]) |> count
+/// > from_list([1, 2, 3, 4]) |> length
 /// 4
 /// ```
 ///
-pub fn length(in iterator: Iterator(e)) -> Int {
+pub fn length(over iterator: Iterator(e)) -> Int {
   iterator.continuation
   |> do_length(0)
 }
