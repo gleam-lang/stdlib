@@ -1380,3 +1380,32 @@ pub fn at(in iterator: Iterator(e), get index: Int) -> Result(e, Nil) {
   |> drop(index)
   |> first
 }
+
+fn do_length(over continuation: fn() -> Action(e), with length: Int) -> Int {
+  case continuation() {
+    Stop -> length
+    Continue(_, next) -> do_length(next, length + 1)
+  }
+}
+
+/// Counts the number of elements in the given iterator.
+///
+/// This function has to traverse the entire iterator to count its elements,
+/// so it runs in linear time. 
+///
+/// ## Examples
+/// 
+/// ```gleam
+/// > empty() |> count
+/// 0
+/// ```
+///
+/// ```gleam
+/// > from_list([1, 2, 3, 4]) |> count
+/// 4
+/// ```
+///
+pub fn length(in iterator: Iterator(e)) -> Int {
+  iterator.continuation
+  |> do_length(0)
+}
