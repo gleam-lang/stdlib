@@ -558,3 +558,17 @@ pub fn at_test() {
   |> iterator.at(0)
   |> should.equal(Error(Nil))
 }
+
+pub fn length_test() {
+  iterator.from_list([1])
+  |> iterator.length
+  |> should.equal(1)
+
+  iterator.from_list([1, 2, 3, 4])
+  |> iterator.length
+  |> should.equal(4)
+
+  iterator.empty()
+  |> iterator.length
+  |> should.equal(0)
+}
