@@ -3,10 +3,11 @@
 ## v0.27.0 - 2023-02-26
 
 - The `bool` module gains the `guard` function.
-- Fixed a bug where `io.print`, `io.print_error`, and `io.print_debug` would use 
+- Fixed a bug where `io.print`, `io.print_error`, and `io.print_debug` would use
   `console.log` and add `"\n"` to the output when running on Deno.
 - Fixed a bug where `int.floor_divide` would return the wrong result in certain
   edge-cases.
+- The `iterator` module gains the `length` function.
 
 ## v0.26.1 - 2023-02-02
 
