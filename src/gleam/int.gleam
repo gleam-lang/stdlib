@@ -261,7 +261,7 @@ pub fn to_base16(x: Int) -> String {
   do_to_base_string(x, 16)
 }
 
-/// Prints a given int to a string using base16.
+/// Prints a given int to a string using base36.
 ///
 /// ## Examples
 ///
