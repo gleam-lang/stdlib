@@ -222,7 +222,7 @@ if javascript {
     "../gleam_stdlib.mjs" "int_to_base_string"
 }
 
-/// Prints a given int to a string using base2.
+/// Prints a given int to a string using base-2.
 ///
 /// ## Examples
 ///
@@ -235,7 +235,7 @@ pub fn to_base2(x: Int) -> String {
   do_to_base_string(x, 2)
 }
 
-/// Prints a given int to a string using base8.
+/// Prints a given int to a string using base-8.
 ///
 /// ## Examples
 ///
@@ -248,7 +248,7 @@ pub fn to_base8(x: Int) -> String {
   do_to_base_string(x, 8)
 }
 
-/// Prints a given int to a string using base16.
+/// Prints a given int to a string using base-16.
 ///
 /// ## Examples
 ///
@@ -261,7 +261,7 @@ pub fn to_base16(x: Int) -> String {
   do_to_base_string(x, 16)
 }
 
-/// Prints a given int to a string using base36.
+/// Prints a given int to a string using base-36.
 ///
 /// ## Examples
 ///
