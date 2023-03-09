@@ -390,7 +390,7 @@ export function regex_scan(regex, string) {
   let matches = Array.from(string.matchAll(regex)).map((match) => {
     let content = match.shift();
     let submatches = match.map((x) => (x ? new Some(x) : new None()));
-    let spliceIndex = submatches.findLastIndex(index => index instanceof Some);
+    let spliceIndex = submatches.findLastIndex(submatch => submatch instanceof Some);
     submatches.splice(spliceIndex + 1);
     return new RegexMatch(content, List.fromArray(submatches));
   });
