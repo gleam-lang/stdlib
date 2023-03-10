@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- `regex.scan` now behaves consistently accross both targets when a capture group does not capture anything.
+
 ## v0.27.0 - 2023-02-26
 
 - The `bool` module gains the `guard` function.
