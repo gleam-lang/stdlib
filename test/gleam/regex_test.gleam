@@ -84,4 +84,21 @@ pub fn scan_test() {
 
   regex.scan(re, "你好 42 世界")
   |> should.equal([Match(content: "42", submatches: [Some("42")])])
+
+  let assert Ok(re) = regex.from_string("([+|\\-])?(\\d+)(\\w+)?")
+  regex.scan(re, "+36kg")
+  |> should.equal([
+    Match(content: "+36kg", submatches: [Some("+"), Some("36"), Some("kg")]),
+  ])
+
+  regex.scan(re, "36kg")
+  |> should.equal([
+    Match(content: "36kg", submatches: [None, Some("36"), Some("kg")]),
+  ])
+
+  regex.scan(re, "-36")
+  |> should.equal([Match(content: "-36", submatches: [Some("-"), Some("36")])])
+
+  regex.scan(re, "-kg")
+  |> should.equal([])
 }
