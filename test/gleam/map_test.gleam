@@ -301,7 +301,7 @@ pub fn map_as_key_test() {
 }
 
 pub fn large_n_test() {
-  let n = 10000
+  let n = 10_000
   let l = range(0, n, [])
 
   let m = list_to_map(l)
