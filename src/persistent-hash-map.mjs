@@ -1,3 +1,8 @@
+/**
+ * This file uses jsdoc to annotate types.
+ * These types can be checked using the typescript compiler with "checkjs" option.
+ */
+
 import { isEqual } from "./gleam.mjs";
 
 const referenceMap = new WeakMap();
@@ -70,7 +75,10 @@ function hashObject(o) {
   const proto = Object.getPrototypeOf(o);
   if (proto !== null && typeof proto.hashCode === "function") {
     try {
-      return o.hashCode(o);
+      const code = o.hashCode(o);
+      if (typeof code === "number") {
+        return code
+      }
     } catch {}
   }
   if (o instanceof Promise || o instanceof WeakSet || o instanceof WeakMap) {
@@ -945,4 +953,3 @@ export default class PMap {
   }
 }
 
-export function __include_me() {}
