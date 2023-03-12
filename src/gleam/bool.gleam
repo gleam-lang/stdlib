@@ -8,6 +8,58 @@
 
 import gleam/order.{Order}
 
+/// Returns the and of two bools, but it evaluates both arguments.
+///
+/// It's the function equivalent of the `&&` operator.
+/// This function is useful in higher order functions or pipes.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > and(True, True)
+/// True
+/// ```
+///
+/// ```gleam
+/// > and(False, True)
+/// False
+/// ```
+///
+/// ```gleam
+/// > False |> and(True)
+/// False
+/// ```
+///
+pub fn and(a: Bool, b: Bool) -> Bool {
+  a && b
+}
+
+/// Returns the or of two bools, but it evaluates both arguments.
+///
+/// It's the function equivalent of the `||` operator.
+/// This function is useful in higher order functions or pipes.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > or(True, True)
+/// True
+/// ```
+///
+/// ```gleam
+/// > or(False, True)
+/// True
+/// ```
+///
+/// ```gleam
+/// > False |> or(True)
+/// True
+/// ```
+///
+pub fn or(a: Bool, b: Bool) -> Bool {
+  a || b
+}
+
 /// Returns the opposite bool value.
 ///
 /// This is the same as the `!` or `not` operators in some other languages.
@@ -17,7 +69,9 @@ import gleam/order.{Order}
 /// ```gleam
 /// > negate(True)
 /// False
+/// ```
 ///
+/// ```gleam
 /// > negate(False)
 /// True
 /// ```
@@ -36,13 +90,19 @@ pub fn negate(bool: Bool) -> Bool {
 /// ```gleam
 /// > nor(False, False)
 /// True
+/// ```
 ///
+/// ```gleam
 /// > nor(False, True)
 /// False
+/// ```
 ///
+/// ```gleam
 /// > nor(True, False)
 /// False
+/// ```
 ///
+/// ```gleam
 /// > nor(True, True)
 /// False
 /// ```
@@ -63,13 +123,19 @@ pub fn nor(a: Bool, b: Bool) -> Bool {
 /// ```gleam
 /// > nand(False, False)
 /// True
+/// ```
 ///
+/// ```gleam
 /// > nand(False, True)
 /// True
+/// ```
 ///
+/// ```gleam
 /// > nand(True, False)
 /// True
+/// ```
 ///
+/// ```gleam
 /// > nand(True, True)
 /// False
 /// ```
@@ -90,13 +156,19 @@ pub fn nand(a: Bool, b: Bool) -> Bool {
 /// ```gleam
 /// > exclusive_or(False, False)
 /// False
+/// ```
 ///
+/// ```gleam
 /// > exclusive_or(False, True)
 /// True
+/// ```
 ///
+/// ```gleam
 /// > exclusive_or(True, False)
 /// True
+/// ```
 ///
+/// ```gleam
 /// > exclusive_or(True, True)
 /// False
 /// ```
@@ -117,13 +189,19 @@ pub fn exclusive_or(a: Bool, b: Bool) -> Bool {
 /// ```gleam
 /// > exclusive_nor(False, False)
 /// True
+/// ```
 ///
+/// ```gleam
 /// > exclusive_nor(False, True)
 /// False
+/// ```
 ///
+/// ```gleam
 /// > exclusive_nor(True, False)
 /// False
+/// ```
 ///
+/// ```gleam
 /// > exclusive_nor(True, True)
 /// True
 /// ```
@@ -163,10 +241,14 @@ pub fn compare(a: Bool, with b: Bool) -> Order {
 /// ```gleam
 /// > max(True, False)
 /// True
+/// ```
 ///
+/// ```gleam
 /// > max(False, True)
 /// True
+/// ```
 ///
+/// ```gleam
 /// > max(False, False)
 /// False
 /// ```
@@ -185,7 +267,9 @@ pub fn max(a: Bool, b: Bool) -> Bool {
 /// ```gleam
 /// > min(True, False)
 /// False
+/// ```
 ///
+/// ```gleam
 /// > min(False, True)
 /// False
 ///
@@ -226,7 +310,9 @@ pub fn to_int(bool: Bool) -> Int {
 /// ```gleam
 /// > to_string(True)
 /// "True"
+/// ```
 ///
+/// ```gleam
 /// > to_string(False)
 /// "False"
 /// ```
@@ -235,5 +321,68 @@ pub fn to_string(bool: Bool) -> String {
   case bool {
     False -> "False"
     True -> "True"
+  }
+}
+
+/// Run a callback function if the given bool is `True`, otherwise return a
+/// default value.
+/// 
+/// With a `use` expression this function can simulate the early-return pattern
+/// found in some other programming languages.
+///
+/// In a procedural language:
+///
+/// ```js
+/// if (predicate) return value;
+/// // ...
+/// ```
+///
+/// In Gleam with a `use` expression:
+///
+/// ```gleam
+/// use <- guard(when: predicate, return: value)
+/// // ...
+/// ```
+///
+/// Like everything in Gleam `use` is an expression, so it short circuits the
+/// current block, not the entire function. As a result you can assign the value
+/// to a variable:
+///
+/// ```gleam
+/// let x = {
+///   use <- guard(when: predicate, return: value)
+///   // ...
+/// }
+/// ```
+///
+/// Note that unlike in procedural languages the `return` value is evaluated
+/// even when the predicate is `False`, so it is advisable not to perform
+/// expensive computation there.
+///
+///
+/// ## Examples
+///
+/// ```gleam
+/// > let name = ""
+/// > use <- guard(when: name == "", return: "Welcome!")
+/// > "Hello, " <> name
+/// "Welcome!"
+/// ```
+///
+/// ```gleam
+/// > let name = "Kamaka"
+/// > use <- guard(when: name == "", return: "Welcome!")
+/// > "Hello, " <> name
+/// "Hello, Kamaka"
+/// ```
+///
+pub fn guard(
+  when requirement: Bool,
+  return consequence: t,
+  otherwise alternative: fn() -> t,
+) -> t {
+  case requirement {
+    True -> consequence
+    False -> alternative()
   }
 }

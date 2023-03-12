@@ -41,12 +41,14 @@ pub type Options {
 /// ```gleam
 /// > let options = Options(case_insensitive: False, multi_line: True)
 /// > assert Ok(re) = compile("^[0-9]", with: options)
-/// > match(re, "abc\n123")
+/// > check(re, "abc\n123")
 /// True
+/// ```
 ///
+/// ```gleam
 /// > let options = Options(case_insensitive: True, multi_line: False)
 /// > assert Ok(re) = compile("[A-Z]", with: options)
-/// > match(re, "abc123")
+/// > check(re, "abc123")
 /// True
 /// ```
 ///
@@ -73,12 +75,16 @@ if javascript {
 ///
 /// ```gleam
 /// > assert Ok(re) = from_string("[0-9]")
-/// > match(re, "abc123")
+/// > check(re, "abc123")
 /// True
+/// ```
 ///
-/// > match(re, "abcxyz")
+/// ```gleam
+/// > check(re, "abcxyz")
 /// False
+/// ```
 ///
+/// ```gleam
 /// > from_string("[0-9")
 /// Error(
 ///   CompileError(
@@ -100,7 +106,9 @@ pub fn from_string(pattern: String) -> Result(Regex, CompileError) {
 /// > assert Ok(re) = from_string("^f.o.?")
 /// > check(with: re, content: "foo")
 /// True
+/// ```
 ///
+/// ```gleam
 /// > check(with: re, content: "boo")
 /// False
 /// ```
@@ -152,8 +160,8 @@ if javascript {
 /// ## Examples
 ///
 /// ```gleam
-/// > assert Ok(re) = regex.from_string("[oi]n a (\\w+)")
-/// > regex.scan(with: re, content: "I am on a boat in a lake.")
+/// > assert Ok(re) = from_string("[oi]n a (\\w+)")
+/// > scan(with: re, content: "I am on a boat in a lake.")
 /// [
 ///   Match(
 ///     content: "on a boat",

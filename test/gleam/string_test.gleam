@@ -63,6 +63,12 @@ pub fn split_test() {
   "Gleam, Erlang,Elixir"
   |> string.split(", ")
   |> should.equal(["Gleam", "Erlang,Elixir"])
+
+  "Gleam On Beam"
+  |> string.split("")
+  |> should.equal([
+    "G", "l", "e", "a", "m", " ", "O", "n", " ", "B", "e", "a", "m",
+  ])
 }
 
 pub fn split_once_test() {
@@ -111,14 +117,14 @@ pub fn compare_test() {
 pub fn contains_test() {
   "gleam"
   |> string.contains("ea")
-  |> should.equal(True)
+  |> should.be_true
 
   "gleam"
   |> string.contains("x")
-  |> should.equal(False)
+  |> should.be_false
 
   string.contains(does: "bellwether", contain: "bell")
-  |> should.equal(True)
+  |> should.be_true
 }
 
 pub fn concat_test() {
@@ -172,37 +178,37 @@ pub fn trim_right_test() {
 pub fn starts_with_test() {
   "theory"
   |> string.starts_with("")
-  |> should.equal(True)
+  |> should.be_true
 
   "theory"
   |> string.starts_with("the")
-  |> should.equal(True)
+  |> should.be_true
 
   "theory"
   |> string.starts_with("ory")
-  |> should.equal(False)
+  |> should.be_false
 
   "theory"
   |> string.starts_with("theory2")
-  |> should.equal(False)
+  |> should.be_false
 }
 
 pub fn ends_with_test() {
   "theory"
   |> string.ends_with("")
-  |> should.equal(True)
+  |> should.be_true
 
   "theory"
   |> string.ends_with("ory")
-  |> should.equal(True)
+  |> should.be_true
 
   "theory"
   |> string.ends_with("the")
-  |> should.equal(False)
+  |> should.be_false
 
   "theory"
   |> string.ends_with("theory2")
-  |> should.equal(False)
+  |> should.be_false
 }
 
 pub fn slice_test() {
@@ -395,24 +401,99 @@ pub fn to_graphemes_test() {
   |> string.to_graphemes
   |> should.equal([
     "Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍", "A̴̵̜̰͔ͫ͗͢", "L̠ͨͧͩ͘",
-    "G̴̻͈͍͔̹̑͗̎̅͛́", "Ǫ̵̹̻̝̳͂̌̌͘", "!͖̬̰̙̗̿̋ͥͥ̂ͣ̐́́͜͞",
+    "G̴̻͈͍͔̹̑͗̎̅͛́", "Ǫ̵̹̻̝̳͂̌̌͘",
+    "!͖̬̰̙̗̿̋ͥͥ̂ͣ̐́́͜͞",
   ])
 }
 
+pub fn to_utf_codepoints_test() {
+  ""
+  |> string.to_utf_codepoints
+  |> should.equal([])
+
+  "gleam"
+  |> string.to_utf_codepoints
+  |> should.equal({
+    let assert #(Ok(g), Ok(l), Ok(e), Ok(a), Ok(m)) = #(
+      string.utf_codepoint(103),
+      string.utf_codepoint(108),
+      string.utf_codepoint(101),
+      string.utf_codepoint(97),
+      string.utf_codepoint(109),
+    )
+    [g, l, e, a, m]
+  })
+
+  "🏳️‍🌈"
+  |> string.to_utf_codepoints
+  |> should.equal({
+    // ["🏳", "️", "‍", "🌈"]
+    let assert #(
+      Ok(waving_white_flag),
+      Ok(variant_selector_16),
+      Ok(zero_width_joiner),
+      Ok(rainbow),
+    ) = #(
+      string.utf_codepoint(127_987),
+      string.utf_codepoint(65_039),
+      string.utf_codepoint(8205),
+      string.utf_codepoint(127_752),
+    )
+    [waving_white_flag, variant_selector_16, zero_width_joiner, rainbow]
+  })
+}
+
+pub fn from_utf_codepoints_test() {
+  ""
+  |> string.to_utf_codepoints
+  |> string.from_utf_codepoints
+  |> should.equal("")
+
+  "gleam"
+  |> string.to_utf_codepoints
+  |> string.from_utf_codepoints
+  |> should.equal("gleam")
+
+  "🏳️‍🌈"
+  |> string.to_utf_codepoints
+  |> string.from_utf_codepoints
+  |> should.equal("🏳️‍🌈")
+
+  {
+    let assert #(Ok(a), Ok(b), Ok(c)) = #(
+      string.utf_codepoint(97),
+      string.utf_codepoint(98),
+      string.utf_codepoint(99),
+    )
+    [a, b, c]
+  }
+  |> string.from_utf_codepoints
+  |> should.equal("abc")
+}
+
 pub fn utf_codepoint_test() {
-  string.utf_codepoint(1114444)
+  string.utf_codepoint(1_114_444)
   |> should.be_error
 
-  string.utf_codepoint(65534)
+  string.utf_codepoint(65_534)
   |> should.be_error
 
-  string.utf_codepoint(55296)
+  string.utf_codepoint(55_296)
   |> should.be_error
 }
 
 pub fn bit_string_utf_codepoint_test() {
-  assert Ok(snake) = string.utf_codepoint(128013)
+  let assert Ok(snake) = string.utf_codepoint(128_013)
   should.equal(<<snake:utf8_codepoint>>, <<"🐍":utf8>>)
+}
+
+pub fn utf_codepoint_to_int_test() {
+  {
+    let assert Ok(ordinal_value) = string.utf_codepoint(128_013)
+    ordinal_value
+  }
+  |> string.utf_codepoint_to_int
+  |> should.equal(128_013)
 }
 
 pub fn to_option_test() {
@@ -578,8 +659,85 @@ pub fn inspect_test() {
   string.inspect("")
   |> should.equal("\"\"")
 
+  string.inspect("\\")
+  |> should.equal("\"\\\\\"")
+
+  string.inspect("\\\\")
+  |> should.equal("\"\\\\\\\\\"")
+
+  string.inspect("\\\\\\")
+  |> should.equal("\"\\\\\\\\\\\\\"")
+
+  string.inspect("\"")
+  |> should.equal("\"\\\"\"")
+  string.inspect("\"\"")
+  |> should.equal("\"\\\"\\\"\"")
+
+  string.inspect("\r")
+  |> should.equal("\"\\r\"")
+
+  string.inspect("\n")
+  |> should.equal("\"\\n\"")
+
+  string.inspect("\t")
+  |> should.equal("\"\\t\"")
+
+  string.inspect("\r\r")
+  |> should.equal("\"\\r\\r\"")
+
+  string.inspect("\n\n")
+  |> should.equal("\"\\n\\n\"")
+
+  string.inspect("\r\n")
+  |> should.equal("\"\\r\\n\"")
+
+  string.inspect("\n\r")
+  |> should.equal("\"\\n\\r\"")
+
+  string.inspect("\t\t")
+  |> should.equal("\"\\t\\t\"")
+
+  string.inspect("\t\n")
+  |> should.equal("\"\\t\\n\"")
+
+  string.inspect("\n\t")
+  |> should.equal("\"\\n\\t\"")
+
+  string.inspect("\t\r")
+  |> should.equal("\"\\t\\r\"")
+
+  string.inspect("\r\t")
+  |> should.equal("\"\\r\\t\"")
+
+  string.inspect("\\\n\\")
+  |> should.equal("\"\\\\\\n\\\\\"")
+
+  string.inspect("\\\"\\")
+  |> should.equal("\"\\\\\\\"\\\\\"")
+
+  string.inspect("\\\"\"\\")
+  |> should.equal("\"\\\\\\\"\\\"\\\\\"")
+
+  string.inspect("'")
+  |> should.equal("\"'\"")
+
+  string.inspect("''")
+  |> should.equal("\"''\"")
+
+  string.inspect("around-single-quotes'around-single-quotes")
+  |> should.equal("\"around-single-quotes'around-single-quotes\"")
+
+  string.inspect("'between-single-quotes'")
+  |> should.equal("\"'between-single-quotes'\"")
+
+  string.inspect("0")
+  |> should.equal("\"0\"")
+
   string.inspect("1")
   |> should.equal("\"1\"")
+
+  string.inspect("2")
+  |> should.equal("\"2\"")
 
   string.inspect("Hello Joe!")
   |> should.equal("\"Hello Joe!\"")
@@ -587,8 +745,23 @@ pub fn inspect_test() {
   string.inspect("Hello \"Manuel\"!")
   |> should.equal("\"Hello \\\"Manuel\\\"!\"")
 
-  string.inspect("💜 Gleam")
-  |> should.equal("\"💜 Gleam\"")
+  string.inspect("👨‍👩‍👦‍👦 💜 Gleam")
+  |> should.equal("\"👨‍👩‍👦‍👦 💜 Gleam\"")
+
+  string.inspect("✨")
+  |> should.equal("\"✨\"")
+
+  string.inspect("🏳️‍⚧️")
+  |> should.equal("\"🏳️‍⚧️\"")
+
+  string.inspect("True")
+  |> should.equal("\"True\"")
+
+  string.inspect("False")
+  |> should.equal("\"False\"")
+
+  string.inspect("Nil")
+  |> should.equal("\"Nil\"")
 
   string.inspect(["1"])
   |> should.equal("[\"1\"]")
@@ -608,8 +781,10 @@ pub fn inspect_test() {
   string.inspect([#(1, 2, 3), #(1, 2, 3)])
   |> should.equal("[#(1, 2, 3), #(1, 2, 3)]")
 
-  string.inspect(#([1, 2, 3], "🌈", #(1, "1", True)))
-  |> should.equal("#([1, 2, 3], \"🌈\", #(1, \"1\", True))")
+  string.inspect(#([1, 2, 3], "🌈", "🏳️‍🌈", #(1, "1", True)))
+  |> should.equal(
+    "#([1, 2, 3], \"🌈\", \"🏳️‍🌈\", #(1, \"1\", True))",
+  )
 
   string.inspect(Nil)
   |> should.equal("Nil")
@@ -707,14 +882,14 @@ pub fn inspect_test() {
 
 if javascript {
   pub fn target_inspect_test() {
-    // Due to Erlang's internal representation, on Erlang this will pass, instead:
+    // Due to Erlang's internal representation, on Erlang this passes, instead:
+    // string.inspect(#(InspectTypeZero, InspectTypeZero))
     // |> should.equal("InspectTypeZero(InspectTypeZero)")
-    //
     string.inspect(#(InspectTypeZero, InspectTypeZero))
     |> should.equal("#(InspectTypeZero, InspectTypeZero)")
 
-    // Due to JavaScript's `Number` type `Float`s without digits return as `Int`s.
-    //
+    // Due to JavaScript's `Number` type `Float`s without digits return as
+    // `Int`s.
     string.inspect(-1.0)
     |> should.equal("-1")
 
@@ -730,7 +905,8 @@ if javascript {
     string.inspect(#(1.0))
     |> should.equal("#(1)")
 
-    // Unlike on Erlang, on JavaScript `BitString` and `String` do have a different runtime representation.
+    // Unlike on Erlang, on JavaScript `BitString` and `String` do have a
+    // different runtime representation.
     <<"abc":utf8>>
     |> string.inspect()
     |> should.equal("<<97, 98, 99>>")
@@ -747,14 +923,15 @@ if erlang {
     "erlang" "make_ref"
 
   pub fn target_inspect_test() {
-    // Erlang's internal representation does not allow a correct differentiation.
+    // Erlang's internal representation does not allow a correct
+    // differentiation at runtime and thus this does not pass:
+    // string.inspect(#(InspectTypeZero, InspectTypeZero))
     // |> should.equal("#(InspectTypeZero, InspectTypeZero)")
-    //
     string.inspect(#(InspectTypeZero, InspectTypeZero))
     |> should.equal("InspectTypeZero(InspectTypeZero)")
 
-    // Unlike JavaScript, Erlang correctly differentiates between `1` and `1.0`.
-    //
+    // Unlike JavaScript, Erlang correctly differentiates between `1` and `1.0`
+    // at runtime.
     string.inspect(-1.0)
     |> should.equal("-1.0")
 
@@ -771,22 +948,23 @@ if erlang {
     |> should.equal("#(1.0)")
 
     // Looks like `//erl(<0.83.0>)`.
-    assert Ok(regular_expression) =
+    let assert Ok(regular_expression) =
       regex.from_string("^\\/\\/erl\\(<[0-9]+\\.[0-9]+\\.[0-9]+>\\)$")
     string.inspect(create_erlang_pid())
     |> regex.check(regular_expression, _)
-    |> should.equal(True)
+    |> should.be_true
 
     // Looks like: `//erl(#Ref<0.1809744150.4035444737.100468>)`.
-    assert Ok(regular_expression) =
+    let assert Ok(regular_expression) =
       regex.from_string(
         "^\\/\\/erl\\(#Ref<[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+>\\)$",
       )
     string.inspect(create_erlang_reference())
     |> regex.check(regular_expression, _)
-    |> should.equal(True)
+    |> should.be_true
 
-    // On Erlang the runtime representation for `String` and `BitString` is indistinguishable.
+    // On Erlang the representation between `String` and `BitString` is
+    // indistinguishable at runtime.
     <<"abc":utf8>>
     |> string.inspect()
     |> should.equal("\"abc\"")
@@ -794,7 +972,7 @@ if erlang {
 
   pub fn improper_list_inspect_test() {
     let list = improper_list_append(1, 2, 3)
-    assert "//erl([1, 2 | 3])" = string.inspect(list)
+    let assert "//erl([1, 2 | 3])" = string.inspect(list)
   }
 
   // Warning: The type of this function is incorrect

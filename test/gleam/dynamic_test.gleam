@@ -32,10 +32,22 @@ pub fn bit_string_test() {
 
 if erlang {
   pub fn bit_string_erlang_test() {
-    <<65535:16>>
+    <<65_535:16>>
     |> dynamic.from
     |> dynamic.bit_string
-    |> should.equal(Ok(<<65535:16>>))
+    |> should.equal(Ok(<<65_535:16>>))
+  }
+}
+
+if javascript {
+  external fn uint8array(List(Int)) -> dynamic.Dynamic =
+    "../gleam_stdlib_test_ffi.mjs" "uint8array"
+
+  pub fn bit_string_erlang_test() {
+    [1, 1, 2, 3, 5, 8]
+    |> uint8array
+    |> dynamic.bit_string
+    |> should.equal(Ok(<<1, 1, 2, 3, 5, 8>>))
   }
 }
 
@@ -67,7 +79,7 @@ pub fn string_test() {
 
 if erlang {
   pub fn string_non_utf8_test() {
-    <<65535:16>>
+    <<65_535:16>>
     |> dynamic.from
     |> dynamic.string
     |> should.equal(Error([
@@ -732,6 +744,20 @@ pub fn map_test() {
   |> dynamic.from
   |> dynamic.map(dynamic.string, dynamic.int)
   |> should.equal(Error([DecodeError(expected: "Map", found: "Int", path: [])]))
+
+  #()
+  |> dynamic.from
+  |> dynamic.map(dynamic.string, dynamic.int)
+  |> should.equal(Error([
+    DecodeError(expected: "Map", found: "Tuple of 0 elements", path: []),
+  ]))
+
+  fn() { Nil }
+  |> dynamic.from
+  |> dynamic.map(dynamic.string, dynamic.int)
+  |> should.equal(Error([
+    DecodeError(expected: "Map", found: "Function", path: []),
+  ]))
 }
 
 pub fn shallow_list_test() {
@@ -824,6 +850,26 @@ pub fn any_test() {
   |> dynamic.from
   |> decoder
   |> should.equal(Error([DecodeError("another type", "String", path: [])]))
+}
+
+type One(a) {
+  One(a)
+}
+
+pub fn decode1_test() {
+  let decoder = dynamic.decode1(One, dynamic.element(0, dynamic.int))
+
+  #(1)
+  |> dynamic.from
+  |> decoder
+  |> should.equal(Ok(One(1)))
+
+  #(1.3)
+  |> dynamic.from
+  |> decoder
+  |> should.equal(Error([
+    DecodeError(expected: "Int", found: "Float", path: ["0"]),
+  ]))
 }
 
 type Two(a, b) {

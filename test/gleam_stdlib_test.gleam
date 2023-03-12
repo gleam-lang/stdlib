@@ -5,5 +5,5 @@ if erlang {
 
 if javascript {
   pub external fn main() -> Nil =
-    "./gleam_stdlib_test_ffi.mjs" "main"
+    "././gleeunit.mjs" "main"
 }

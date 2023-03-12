@@ -8,8 +8,9 @@ import gleam/order
 import gleam/string_builder.{StringBuilder}
 
 if erlang {
-  import gleam/result
+  import gleam/bit_string
   import gleam/dynamic.{Dynamic}
+  import gleam/result
 }
 
 /// Determines if a `String` is empty.
@@ -19,7 +20,9 @@ if erlang {
 /// ```gleam
 /// > is_empty("")
 /// True
+/// ```
 ///
+/// ```gleam
 /// > is_empty("the world")
 /// False
 /// ```
@@ -38,10 +41,14 @@ pub fn is_empty(str: String) -> Bool {
 /// ```gleam
 /// > length("Gleam")
 /// 5
+/// ```
 ///
+/// ```gleam
 /// > length("ß↑e̊")
 /// 3
+/// ```
 ///
+/// ```gleam
 /// > length("")
 /// 0
 /// ```
@@ -101,7 +108,9 @@ if javascript {
 /// ```gleam
 /// > replace("www.example.com", each: ".", with: "-")
 /// "www-example-com"
+/// ```
 ///
+/// ```gleam
 /// > replace("a,b,c,d,e", each: ",", with: "/")
 /// "a/b/c/d/e"
 /// ```
@@ -178,7 +187,9 @@ if javascript {
 /// ```gleam
 /// > compare("Anthony", "Anthony")
 /// order.Eq
+/// ```
 ///
+/// ```gleam
 /// > compare("A", "B")
 /// order.Lt
 /// ```
@@ -208,19 +219,28 @@ if javascript {
 /// are taken starting from the *end* of the list.
 ///
 /// ## Examples
+///
 /// ```gleam
 /// > slice(from: "gleam", at_index: 1, length: 2)
 /// "le"
+/// ```
 ///
+/// ```gleam
 /// > slice(from: "gleam", at_index: 1, length: 10)
 /// "leam"
+/// ```
 ///
+/// ```gleam
 /// > slice(from: "gleam", at_index: 10, length: 3)
 /// ""
+/// ```
 ///
+/// ```gleam
 /// > slice(from: "gleam", at_index: -2, length: 2)
 /// "am"
+/// ```
 ///
+/// ```gleam
 /// > slice(from: "gleam", at_index: -12, length: 2)
 /// ""
 /// ```
@@ -261,6 +281,7 @@ if javascript {
 /// If the `from` string does not contain the `before` string, `from` is returned unchanged.
 ///
 /// ## Examples
+///
 /// ```gleam
 /// > crop(from: "The Lone Gunmen", before: "Lone")
 /// "Lone Gunmen"
@@ -290,6 +311,7 @@ if javascript {
 /// Drops *n* graphemes from the left side of a `String`.
 ///
 /// ## Examples
+///
 /// ```gleam
 /// > drop_left(from: "The Lone Gunmen", up_to: 2)
 /// "e Lone Gunmen"
@@ -305,6 +327,7 @@ pub fn drop_left(from string: String, up_to num_graphemes: Int) -> String {
 /// Drops *n* graphemes from the right side of a `String`.
 ///
 /// ## Examples
+///
 /// ```gleam
 /// > drop_right(from: "Cigarette Smoking Man", up_to: 2)
 /// "Cigarette Smoking M"
@@ -324,10 +347,14 @@ pub fn drop_right(from string: String, up_to num_graphemes: Int) -> String {
 /// ```gleam
 /// > contains(does: "theory", contain: "ory")
 /// True
+/// ```
 ///
+/// ```gleam
 /// > contains(does: "theory", contain: "the")
 /// True
+/// ```
 ///
+/// ```gleam
 /// > contains(does: "theory", contain: "THE")
 /// False
 /// ```
@@ -410,10 +437,14 @@ if javascript {
 /// ```
 ///
 pub fn split(x: String, on substring: String) -> List(String) {
-  x
-  |> string_builder.from_string
-  |> string_builder.split(on: substring)
-  |> list.map(with: string_builder.to_string)
+  case substring {
+    "" -> to_graphemes(x)
+    _ ->
+      x
+      |> string_builder.from_string
+      |> string_builder.split(on: substring)
+      |> list.map(with: string_builder.to_string)
+  }
 }
 
 /// Splits a `String` a single time on the given substring.
@@ -425,7 +456,9 @@ pub fn split(x: String, on substring: String) -> List(String) {
 /// ```gleam
 /// > split_once("home/gleam/desktop/", on: "/")
 /// Ok(#("home", "gleam/desktop/"))
+/// ```
 ///
+/// ```gleam
 /// > split_once("home/gleam/desktop/", on: "?")
 /// Error(Nil)
 /// ```
@@ -463,7 +496,7 @@ if javascript {
 /// Creates a new `String` by joining two `String`s together.
 ///
 /// This function copies both `String`s and runs in linear time. If you find
-/// yourself joining `String`s frequently consider using the [`string_builder`](../string_builder)
+/// yourself joining `String`s frequently consider using the [`string_builder`](../gleam/string_builder.html)
 /// module as it can append `String`s much faster!
 ///
 /// ## Examples
@@ -483,7 +516,7 @@ pub fn append(to first: String, suffix second: String) -> String {
 /// Creates a new `String` by joining many `String`s together.
 ///
 /// This function copies both `String`s and runs in linear time. If you find
-/// yourself joining `String`s frequently consider using the [`string_builder`](../string_builder)
+/// yourself joining `String`s frequently consider using the [`string_builder`](../gleam/string_builder.html)
 /// module as it can append `String`s much faster!
 ///
 /// ## Examples
@@ -541,10 +574,14 @@ pub fn join(strings: List(String), with separator: String) -> String {
 /// ```gleam
 /// > pad_left("121", to: 5, with: ".")
 /// "..121"
+/// ```
 ///
+/// ```gleam
 /// > pad_left("121", to: 3, with: ".")
 /// "121"
+/// ```
 ///
+/// ```gleam
 /// > pad_left("121", to: 2, with: ".")
 /// "121"
 /// ```
@@ -563,14 +600,18 @@ pub fn pad_left(string: String, to desired_length: Int, with pad_string: String)
 /// ## Examples
 ///
 /// ```gleam
-/// > pad_right("121", to: 5, with: ".")
-/// "121.."
+/// > pad_right("123", to: 5, with: ".")
+/// "123.."
+/// ```
 ///
-/// > pad_right("121", to: 3, with: ".")
-/// "121"
+/// ```gleam
+/// > pad_right("123", to: 3, with: ".")
+/// "123"
+/// ```
 ///
-/// > pad_right("121", to: 2, with: ".")
-/// "121"
+/// ```gleam
+/// > pad_right("123", to: 2, with: ".")
+/// "123"
 /// ```
 ///
 pub fn pad_right(
@@ -680,10 +721,13 @@ if javascript {
 /// pattern match on `String`s exactly as you would with lists.
 ///
 /// ## Examples
+///
 /// ```gleam
 /// > pop_grapheme("gleam")
 /// Ok(#("g", "leam"))
+/// ```
 ///
+/// ```gleam
 /// > pop_grapheme("")
 /// Error(Nil)
 /// ```
@@ -702,7 +746,8 @@ if javascript {
     "../gleam_stdlib.mjs" "pop_grapheme"
 }
 
-/// Converts a `String` to a list of graphemes.
+/// Converts a `String` to a list of
+/// [graphemes](https://en.wikipedia.org/wiki/Grapheme).
 ///
 /// ```gleam
 /// > to_graphemes("abc")
@@ -710,9 +755,14 @@ if javascript {
 /// ```
 ///
 pub fn to_graphemes(string: String) -> List(String) {
+  do_to_graphemes(string, [])
+  |> list.reverse
+}
+
+fn do_to_graphemes(string: String, acc: List(String)) -> List(String) {
   case pop_grapheme(string) {
-    Ok(#(grapheme, rest)) -> [grapheme, ..to_graphemes(rest)]
-    _ -> []
+    Ok(#(grapheme, rest)) -> do_to_graphemes(rest, [grapheme, ..acc])
+    _ -> acc
   }
 }
 
@@ -726,20 +776,155 @@ if javascript {
     "../gleam_stdlib.mjs" "codepoint"
 }
 
+/// Converts a `String` to a `List` of `UtfCodepoint`.
+///
+/// See <https://en.wikipedia.org/wiki/Code_point> and
+/// <https://en.wikipedia.org/wiki/Unicode#Codespace_and_Code_Points> for an
+/// explanation on code points.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > "a" |> to_utf_codepoints
+/// [UtfCodepoint(97)]
+/// ```
+///
+/// ```gleam
+/// // Semantically the same as:
+/// // ["🏳", "️", "‍", "🌈"] or:
+/// // [waving_white_flag, variant_selector_16, zero_width_joiner, rainbow]
+/// > "🏳️‍🌈" |> to_utf_codepoints
+/// [UtfCodepoint(127987), UtfCodepoint(65039), UtfCodepoint(8205), UtfCodepoint(127752)]
+/// ```
+///
+pub fn to_utf_codepoints(string: String) -> List(UtfCodepoint) {
+  do_to_utf_codepoints(string)
+}
+
+if erlang {
+  fn do_to_utf_codepoints(string: String) -> List(UtfCodepoint) {
+    do_to_utf_codepoints_impl(bit_string.from_string(string), [])
+    |> list.reverse
+  }
+
+  fn do_to_utf_codepoints_impl(
+    bit_string: BitString,
+    acc: List(UtfCodepoint),
+  ) -> List(UtfCodepoint) {
+    case bit_string {
+      <<head:utf8_codepoint, rest:binary>> ->
+        do_to_utf_codepoints_impl(rest, [head, ..acc])
+      <<>> -> acc
+    }
+  }
+}
+
+if javascript {
+  fn do_to_utf_codepoints(string: String) -> List(UtfCodepoint) {
+    string
+    |> string_to_codepoint_integer_list
+    |> list.map(unsafe_int_to_utf_codepoint)
+  }
+
+  external fn string_to_codepoint_integer_list(String) -> List(Int) =
+    "../gleam_stdlib.mjs" "string_to_codepoint_integer_list"
+}
+
+/// Converts a `List` of `UtfCodepoint`s to a `String`.
+///
+/// See <https://en.wikipedia.org/wiki/Code_point> and
+/// <https://en.wikipedia.org/wiki/Unicode#Codespace_and_Code_Points> for an
+/// explanation on code points.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > {
+/// >   assert #(Ok(a), Ok(b), Ok(c)) = #(
+/// >     utf_codepoint(97),
+/// >     utf_codepoint(98),
+/// >     utf_codepoint(99),
+/// >   )
+/// >   [a, b, c]
+/// > }
+/// > |> from_utf_codepoints
+/// "abc"
+/// ```
+///
+pub fn from_utf_codepoints(utf_codepoints: List(UtfCodepoint)) -> String {
+  do_from_utf_codepoints(utf_codepoints)
+}
+
+if erlang {
+  fn do_from_utf_codepoints(utf_codepoints: List(UtfCodepoint)) -> String {
+    let assert Ok(string) =
+      do_from_utf_codepoints_impl(utf_codepoints, bit_string.from_string(""))
+      |> bit_string.to_string
+    string
+  }
+
+  fn do_from_utf_codepoints_impl(
+    utf_codepoints: List(UtfCodepoint),
+    acc: BitString,
+  ) -> BitString {
+    case utf_codepoints {
+      [head, ..tail] ->
+        do_from_utf_codepoints_impl(
+          tail,
+          <<acc:bit_string, head:utf8_codepoint>>,
+        )
+      [] -> acc
+    }
+  }
+}
+
+if javascript {
+  fn do_from_utf_codepoints(utf_codepoints: List(UtfCodepoint)) -> String {
+    utf_codepoint_list_to_string(utf_codepoints)
+  }
+
+  external fn utf_codepoint_list_to_string(List(UtfCodepoint)) -> String =
+    "../gleam_stdlib.mjs" "utf_codepoint_list_to_string"
+}
+
 /// Converts an integer to a `UtfCodepoint`.
 ///
 /// Returns an `Error` if the integer does not represent a valid UTF codepoint.
 ///
 pub fn utf_codepoint(value: Int) -> Result(UtfCodepoint, Nil) {
   case value {
-    i if i > 1114111 -> Error(Nil)
-    65534 | 65535 -> Error(Nil)
-    i if i >= 55296 && i <= 57343 -> Error(Nil)
+    i if i > 1_114_111 -> Error(Nil)
+    65_534 | 65_535 -> Error(Nil)
+    i if i >= 55_296 && i <= 57_343 -> Error(Nil)
     i -> Ok(unsafe_int_to_utf_codepoint(i))
   }
 }
 
-/// Converts a `String` into `Option(String)` where an empty `String` becomes `None`.
+/// Converts an UtfCodepoint to its ordinal code point value.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > utf_codepoint_to_int(128013) |> to_utf_codepoint_int
+/// 128013
+/// ```
+///
+pub fn utf_codepoint_to_int(cp: UtfCodepoint) -> Int {
+  do_utf_codepoint_to_int(cp)
+}
+
+if erlang {
+  external fn do_utf_codepoint_to_int(cp: UtfCodepoint) -> Int =
+    "gleam_stdlib" "identity"
+}
+
+if javascript {
+  external fn do_utf_codepoint_to_int(cp: UtfCodepoint) -> Int =
+    "../gleam_stdlib.mjs" "utf_codepoint_to_int"
+}
+
+/// Converts a `String` into `Option(String)` where an empty `String` becomes
+/// `None`.
 ///
 /// ## Examples
 ///
@@ -824,7 +1009,7 @@ pub fn capitalise(s: String) -> String {
   }
 }
 
-/// Returns a `String` representation of values in Gleam syntax.
+/// Returns a `String` representation of a term in Gleam syntax.
 ///
 pub fn inspect(term: anything) -> String {
   do_inspect(term)

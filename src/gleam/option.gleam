@@ -1,5 +1,3 @@
-import gleam/list
-
 /// `Option` represents a value that may be present or not. `Some` means the value is
 /// present, `None` means the value is not.
 ///
@@ -11,31 +9,39 @@ pub type Option(a) {
   None
 }
 
+fn do_all(list: List(Option(a)), acc: List(a)) -> Option(List(a)) {
+  case list {
+    [] -> Some(acc)
+    [x, ..rest] -> {
+      let accumulate = fn(acc, item) {
+        case acc, item {
+          Some(values), Some(value) -> Some([value, ..values])
+          _, _ -> None
+        }
+      }
+      accumulate(do_all(rest, acc), x)
+    }
+  }
+}
+
 /// Combines a list of `Option`s into a single `Option`.
 /// If all elements in the list are `Some` then returns a `Some` holding the list of values.
 /// If any element is `None` then returns`None`.
 ///
 /// ## Examples
 ///
-/// ```
+/// ```gleam
 /// > all([Some(1), Some(2)])
 /// Some([1, 2])
+/// ```
 ///
+/// ```gleam
 /// > all([Some(1), None])
 /// None
 /// ```
 ///
 pub fn all(list: List(Option(a))) -> Option(List(a)) {
-  list.fold_right(
-    list,
-    from: Some([]),
-    with: fn(acc, item) {
-      case acc, item {
-        Some(values), Some(value) -> Some([value, ..values])
-        _, _ -> None
-      }
-    },
-  )
+  do_all(list, [])
 }
 
 /// Checks whether the `Option` is a `Some` value.
@@ -45,7 +51,9 @@ pub fn all(list: List(Option(a))) -> Option(List(a)) {
 /// ```gleam
 /// > is_some(Some(1))
 /// True
+/// ```
 ///
+/// ```gleam
 /// > is_some(None)
 /// False
 /// ```
@@ -61,7 +69,9 @@ pub fn is_some(option: Option(a)) -> Bool {
 /// ```gleam
 /// > is_none(Some(1))
 /// False
+/// ```
 ///
+/// ```gleam
 /// > is_none(None)
 /// True
 /// ```
@@ -77,6 +87,9 @@ pub fn is_none(option: Option(a)) -> Bool {
 /// ```gleam
 /// > to_result(Some(1), "some_error")
 /// Ok(1)
+/// ```
+///
+/// ```gleam
 /// > to_result(None, "some_error")
 /// Error("some_error")
 /// ```
@@ -95,6 +108,9 @@ pub fn to_result(option: Option(a), e) -> Result(a, e) {
 /// ```gleam
 /// > from_result(Ok(1))
 /// Some(1)
+/// ```
+///
+/// ```gleam
 /// > from_result(Error("some_error"))
 /// None
 /// ```
@@ -113,7 +129,9 @@ pub fn from_result(result: Result(a, e)) -> Option(a) {
 /// ```gleam
 /// > unwrap(Some(1), 0)
 /// 1
+/// ```
 ///
+/// ```gleam
 /// > unwrap(None, 0)
 /// 0
 /// ```
@@ -132,7 +150,9 @@ pub fn unwrap(option: Option(a), or default: a) -> a {
 /// ```gleam
 /// > lazy_unwrap(Some(1), fn() { 0 })
 /// 1
+/// ```
 ///
+/// ```gleam
 /// > lazy_unwrap(None, fn() { 0 })
 /// 0
 /// ```
@@ -155,7 +175,9 @@ pub fn lazy_unwrap(option: Option(a), or default: fn() -> a) -> a {
 /// ```gleam
 /// > map(over: Some(1), with: fn(x) { x + 1 })
 /// Some(2)
+/// ```
 ///
+/// ```gleam
 /// > map(over: None, with: fn(x) { x + 1 })
 /// None
 /// ```
@@ -174,10 +196,14 @@ pub fn map(over option: Option(a), with fun: fn(a) -> b) -> Option(b) {
 /// ```gleam
 /// > flatten(Some(Some(1)))
 /// Some(1)
+/// ```
 ///
+/// ```gleam
 /// > flatten(Some(None))
 /// None
+/// ```
 ///
+/// ```gleam
 /// > flatten(None)
 /// None
 /// ```
@@ -204,13 +230,19 @@ pub fn flatten(option: Option(Option(a))) -> Option(a) {
 /// ```gleam
 /// > then(Some(1), fn(x) { Some(x + 1) })
 /// Some(2)
+/// ```
 ///
+/// ```gleam
 /// > then(Some(1), fn(x) { Some(#("a", x)) })
 /// Some(#("a", 1))
+/// ```
 ///
+/// ```gleam
 /// > then(Some(1), fn(_) { None })
 /// None
+/// ```
 ///
+/// ```gleam
 /// > then(None, fn(x) { Some(x + 1) })
 /// None
 /// ```
@@ -229,13 +261,19 @@ pub fn then(option: Option(a), apply fun: fn(a) -> Option(b)) -> Option(b) {
 /// ```gleam
 /// > or(Some(1), Some(2))
 /// Some(1)
+/// ```
 ///
+/// ```gleam
 /// > or(Some(1), None)
 /// Some(1)
+/// ```
 ///
+/// ```gleam
 /// > or(None, Some(2))
 /// Some(2)
+/// ```
 ///
+/// ```gleam
 /// > or(None, None)
 /// None
 /// ```
@@ -254,13 +292,19 @@ pub fn or(first: Option(a), second: Option(a)) -> Option(a) {
 /// ```gleam
 /// > lazy_or(Some(1), fn() { Some(2) })
 /// Some(1)
+/// ```
 ///
+/// ```gleam
 /// > lazy_or(Some(1), fn() { None })
 /// Some(1)
+/// ```
 ///
+/// ```gleam
 /// > lazy_or(None, fn() { Some(2) })
 /// Some(2)
+/// ```
 ///
+/// ```gleam
 /// > lazy_or(None, fn() { None })
 /// None
 /// ```
@@ -272,16 +316,31 @@ pub fn lazy_or(first: Option(a), second: fn() -> Option(a)) -> Option(a) {
   }
 }
 
+fn do_values(list: List(Option(a)), acc: List(a)) -> List(a) {
+  case list {
+    [] -> acc
+    [x, ..xs] -> {
+      let accumulate = fn(acc, item) {
+        case item {
+          Some(value) -> [value, ..acc]
+          None -> acc
+        }
+      }
+      accumulate(do_values(xs, acc), x)
+    }
+  }
+}
+
 /// Given a list of `Option`s,
 /// returns only the values inside `Some`.
 ///
 /// ## Examples
 ///
-/// ```
+/// ```gleam
 /// > values([Some(1), None, Some(3)])
 /// [1, 3]
 /// ```
 ///
 pub fn values(options: List(Option(a))) -> List(a) {
-  list.filter_map(options, fn(op) { to_result(op, "") })
+  do_values(options, [])
 }

@@ -1,6 +1,79 @@
 # Changelog
 
-## Unreleased
+## v0.27.0 - 2023-02-26
+
+- The `bool` module gains the `guard` function.
+- Fixed a bug where `io.print`, `io.print_error`, and `io.print_debug` would use
+  `console.log` and add `"\n"` to the output when running on Deno.
+- Fixed a bug where `int.floor_divide` would return the wrong result in certain
+  edge-cases.
+- The `iterator` module gains the `length` function.
+
+## v0.26.1 - 2023-02-02
+
+- The `prepend` function in the `list` module gains the `this` label.
+- The `list` module gains the `group` function.
+- The `dynamic` module is able to decode simple JavaScript objects to maps.
+  So, the behaviour of the `field` and `object` functions are consistent.
+- For a given empty list as an argument, `int.product` now returns `1` instead
+  of `0`, and `float.product` now returns `1.0` instead of `0.0`. This mimicks
+  the behavior of Elixir's `Enum.product/1`.
+
+## v0.26.0 - 2023-01-12
+
+- The `dynamic` module gains the `decode1` function.
+- The `float` module gains the `loosely_equals` function.
+- The `io` module gains `print_error` and `println_error` functions for
+  printing to stderr.
+- The `set` module gains the `drop` function.
+- The `io.debug` function now prints to stderr instead of stdout when using
+  the Erlang target or running in Node.js (but still uses `console.log`
+  when running as JavaScript in a browser)
+- The `iterator` module gains the `transform` function.
+- The `list.at` function now returns `Error(Nil)` if given index is smaller than
+  zero, instead of returning the first element.
+- Fixed a bug where some string functions would incorrectly handle newlines when
+  iterating over graphemes in older JavaScript environments that do not have the
+  `Intl.Segmenter` class.
+- The `string` module gains `to_utf_codepoints`, `from_utf_codepoints`, and
+  `utf_codepoint_to_int` functions.
+- Fixed `string.inspect`'s escaping of `"`, `\`, `\n`, `\r`, `\r\n`, and `\t`,
+  which in turn fixes `io.debug`'s output of such strings.
+- The `bit_string` function in the `dynamic` module now knows how to handle
+  JavaScript `Uint8Array`s.
+
+## v0.25.0 - 2022-11-19
+
+- The `bool` module gains the `and` and `or` functions.
+- The `float` module gains the `add`, `subtract` and `multiply` functions.
+- The `int` module gains the `add`, `subtract` and `multiply` functions.
+- Fixed a bug where `list.permutations` would not correctly permutate lists
+  with non-unique item values.
+- For `regexp.compile` unicode character properties are now used when
+  resolving `\B`, `\b`, `\D`, `\d`, `\S`, `\s`, `\W`, and `\w` on target
+  Erlang.
+- `list.sort` is now tail recursive and will no longer exceed the stack size
+  on large inputs on target JavaScript.
+- `list.sort` is now a "stable" sort, meaning elements which are equal in
+  regards to the given comparison function will keep their previous order.
+- Added functions `function.apply1` through `function.apply3` which help
+  working with functions in pipelines.
+- Fixed a bug where `regex.scan` would not work correctly on utf8.
+- The performance of `list.flatten` has been greatly improved.
+- The `string_builder` module gains the `join` function.
+- The `list` module gains the `shuffle` function.
+- `string.split` will now return a list of graphemes if split on an empty
+  string (`""`).
+
+## v0.24.0 - 2022-10-15
+
+- `string.slice` is now tail recursive and will no longer exceed the stack size
+  on large inputs on target JavaScript.
+- Added `int.remainder` and `int.modulo` functions which allow safe remainder
+  and modulo operations the way common languages support them.
+- Added `int.floor_divide` to complement the truncated `int.divide`.
+
+## v0.23.0 - 2022-09-15
 
 - Fixed `string.inspect` and `io.debug` crashing on improper Erlang lists (#333).
 

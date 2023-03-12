@@ -1,9 +1,4 @@
-import gleam/list
 import gleam/option.{Option}
-
-if javascript {
-  import gleam/pair
-}
 
 if javascript {
   // hack to include another js file..
@@ -35,11 +30,12 @@ pub external type Map(key, value)
 /// ```gleam
 /// > new() |> size()
 /// 0
+/// ```
 ///
+/// ```gleam
 /// > new() |> insert("key", "value") |> size()
 /// 1
 /// ```
-///
 ///
 pub fn size(map: Map(k, v)) -> Int {
   do_size(map)
@@ -65,7 +61,9 @@ if javascript {
 /// ```gleam
 /// > new() |> to_list()
 /// []
+/// ```
 ///
+/// ```gleam
 /// > new() |> insert("key", 0) |> to_list()
 /// [#("key", 0)]
 /// ```
@@ -99,8 +97,18 @@ if erlang {
 }
 
 if javascript {
+  fn fold_list_of_pair(
+    over list: List(#(k, v)),
+    from initial: Map(k, v),
+  ) -> Map(k, v) {
+    case list {
+      [] -> initial
+      [x, ..rest] -> fold_list_of_pair(rest, insert(initial, x.0, x.1))
+    }
+  }
+
   fn do_from_list(list: List(#(k, v))) -> Map(k, v) {
-    list.fold(list, new(), insert_pair)
+    fold_list_of_pair(list, new())
   }
 }
 
@@ -111,7 +119,9 @@ if javascript {
 /// ```gleam
 /// > new() |> insert("a", 0) |> has_key("a")
 /// True
+/// ```
 ///
+/// ```gleam
 /// > new() |> insert("a", 0) |> has_key("b")
 /// False
 /// ```
@@ -157,7 +167,9 @@ if javascript {
 /// ```gleam
 /// > new() |> insert("a", 0) |> get("a")
 /// Ok(0)
+/// ```
 ///
+/// ```gleam
 /// > new() |> insert("a", 0) |> get("b")
 /// Error(Nil)
 /// ```
@@ -186,7 +198,9 @@ if javascript {
 /// ```gleam
 /// > new() |> insert("a", 0) |> to_list
 /// [#("a", 0)]
+/// ```
 ///
+/// ```gleam
 /// > new() |> insert("a", 0) |> insert("a", 5) |> to_list
 /// [#("a", 5)]
 /// ```
@@ -216,7 +230,6 @@ if javascript {
 /// > |> map_values(fn(key, value) { key * value })
 /// [#(3, 9), #(2, 8)]
 /// ```
-///
 ///
 pub fn map_values(in map: Map(k, v), with fun: fn(k, v) -> w) -> Map(k, w) {
   do_map_values(fun, map)
@@ -258,10 +271,25 @@ if erlang {
 }
 
 if javascript {
+  fn reverse_and_concat(remaining, accumulator) {
+    case remaining {
+      [] -> accumulator
+      [item, ..rest] -> reverse_and_concat(rest, [item, ..accumulator])
+    }
+  }
+
+  fn do_keys_acc(list: List(#(k, v)), acc: List(k)) -> List(k) {
+    case list {
+      [] -> reverse_and_concat(acc, [])
+      [x, ..xs] -> do_keys_acc(xs, [x.0, ..acc])
+    }
+  }
+
   fn do_keys(map: Map(k, v)) -> List(k) {
-    map
-    |> to_list
-    |> list.map(pair.first)
+    let list_of_pairs =
+      map
+      |> to_list
+    do_keys_acc(list_of_pairs, [])
   }
 }
 
@@ -274,7 +302,7 @@ if javascript {
 /// ## Examples
 ///
 /// ```gleam
-/// > keys(from_list([#("a", 0), #("b", 1)]))
+/// > values(from_list([#("a", 0), #("b", 1)]))
 /// [0, 1]
 /// ```
 ///
@@ -288,10 +316,18 @@ if erlang {
 }
 
 if javascript {
+  fn do_values_acc(list: List(#(k, v)), acc: List(v)) -> List(v) {
+    case list {
+      [] -> reverse_and_concat(acc, [])
+      [x, ..xs] -> do_values_acc(xs, [x.1, ..acc])
+    }
+  }
+
   fn do_values(map: Map(k, v)) -> List(v) {
-    map
-    |> to_list
-    |> list.map(pair.second)
+    let list_of_pairs =
+      map
+      |> to_list
+    do_values_acc(list_of_pairs, [])
   }
 }
 
@@ -304,7 +340,9 @@ if javascript {
 /// > from_list([#("a", 0), #("b", 1)])
 /// > |> filter(fn(key, value) { value != 0 })
 /// from_list([#("b", 1)])
+/// ```
 ///
+/// ```gleam
 /// > from_list([#("a", 0), #("b", 1)])
 /// > |> filter(fn(key, value) { True })
 /// from_list([#("a", 0), #("b", 1)])
@@ -347,7 +385,9 @@ if javascript {
 /// > from_list([#("a", 0), #("b", 1)])
 /// > |> take(["b"])
 /// from_list([#("b", 1)])
+/// ```
 ///
+/// ```gleam
 /// > from_list([#("a", 0), #("b", 1)])
 /// > |> take(["a", "b", "c"])
 /// from_list([#("a", 0), #("b", 1)])
@@ -363,14 +403,25 @@ if erlang {
 }
 
 if javascript {
-  fn do_take(desired_keys: List(k), map: Map(k, v)) -> Map(k, v) {
+  fn insert_taken(
+    map: Map(k, v),
+    desired_keys: List(k),
+    acc: Map(k, v),
+  ) -> Map(k, v) {
     let insert = fn(taken, key) {
       case get(map, key) {
         Ok(value) -> insert(taken, key, value)
         _ -> taken
       }
     }
-    list.fold(over: desired_keys, from: new(), with: insert)
+    case desired_keys {
+      [] -> acc
+      [x, ..xs] -> insert_taken(map, xs, insert(acc, x))
+    }
+  }
+
+  fn do_take(desired_keys: List(k), map: Map(k, v)) -> Map(k, v) {
+    insert_taken(map, desired_keys, new())
   }
 }
 
@@ -402,10 +453,17 @@ if javascript {
     insert(map, pair.0, pair.1)
   }
 
+  fn fold_inserts(new_entries: List(#(k, v)), map: Map(k, v)) -> Map(k, v) {
+    case new_entries {
+      [] -> map
+      [x, ..xs] -> fold_inserts(xs, insert_pair(map, x))
+    }
+  }
+
   fn do_merge(map: Map(k, v), new_entries: Map(k, v)) -> Map(k, v) {
     new_entries
     |> to_list
-    |> list.fold(map, insert_pair)
+    |> fold_inserts(map)
   }
 }
 
@@ -417,7 +475,9 @@ if javascript {
 /// ```gleam
 /// > delete([#("a", 0), #("b", 1)], "a")
 /// from_list([#("b", 1)])
+/// ```
 ///
+/// ```gleam
 /// > delete([#("a", 0), #("b", 1)], "c")
 /// from_list([#("a", 0), #("b", 1)])
 /// ```
@@ -444,16 +504,23 @@ if javascript {
 /// ```gleam
 /// > drop([#("a", 0), #("b", 1)], ["a"])
 /// from_list([#("b", 2)])
+/// ```
 ///
+/// ```gleam
 /// > delete([#("a", 0), #("b", 1)], ["c"])
 /// from_list([#("a", 0), #("b", 1)])
+/// ```
 ///
+/// ```gleam
 /// > drop([#("a", 0), #("b", 1)], ["a", "b", "c"])
 /// from_list([])
 /// ```
 ///
 pub fn drop(from map: Map(k, v), drop disallowed_keys: List(k)) -> Map(k, v) {
-  list.fold(over: disallowed_keys, from: map, with: delete)
+  case disallowed_keys {
+    [] -> map
+    [x, ..xs] -> drop(delete(map, x), xs)
+  }
 }
 
 /// Creates a new map with one entry updated using a given function.
@@ -474,7 +541,9 @@ pub fn drop(from map: Map(k, v), drop disallowed_keys: List(k)) -> Map(k, v) {
 /// >
 /// > update(map, "a", increment)
 /// from_list([#("a", 1)])
+/// ```
 ///
+/// ```gleam
 /// > update(map, "b", increment)
 /// from_list([#("a", 0), #("b", 0)])
 /// ```
@@ -511,7 +580,9 @@ fn do_fold(list: List(#(k, v)), initial: acc, fun: fn(acc, k, v) -> acc) -> acc 
 /// > let map = from_list([#("a", 1), #("b", 3), #("c", 9)])
 /// > fold(map, 0, fn(accumulator, key, value) { accumulator + value })
 /// 13
+/// ```
 ///
+/// ```gleam
 /// > import gleam/string.{append}
 /// > fold(map, "", fn(accumulator, key, value) { append(accumulator, key) })
 /// "abc"

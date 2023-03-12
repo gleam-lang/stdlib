@@ -57,6 +57,58 @@ export function int_to_base_string(int, base) {
   return int.toString(base).toUpperCase();
 }
 
+const int_base_patterns = {
+  2: /[^0-1]/,
+  3: /[^0-2]/,
+  4: /[^0-3]/,
+  5: /[^0-4]/,
+  6: /[^0-5]/,
+  7: /[^0-6]/,
+  8: /[^0-7]/,
+  9: /[^0-8]/,
+  10: /[^0-9]/,
+  11: /[^0-9a]/,
+  12: /[^0-9a-b]/,
+  13: /[^0-9a-c]/,
+  14: /[^0-9a-d]/,
+  15: /[^0-9a-e]/,
+  16: /[^0-9a-f]/,
+  17: /[^0-9a-g]/,
+  18: /[^0-9a-h]/,
+  19: /[^0-9a-i]/,
+  20: /[^0-9a-j]/,
+  21: /[^0-9a-k]/,
+  22: /[^0-9a-l]/,
+  23: /[^0-9a-m]/,
+  24: /[^0-9a-n]/,
+  25: /[^0-9a-o]/,
+  26: /[^0-9a-p]/,
+  27: /[^0-9a-q]/,
+  28: /[^0-9a-r]/,
+  29: /[^0-9a-s]/,
+  30: /[^0-9a-t]/,
+  31: /[^0-9a-u]/,
+  32: /[^0-9a-v]/,
+  33: /[^0-9a-w]/,
+  34: /[^0-9a-x]/,
+  35: /[^0-9a-y]/,
+  36: /[^0-9a-z]/,
+};
+
+export function int_from_base_string(string, base) {
+  if (int_base_patterns[base].test(string.replace(/^-/, "").toLowerCase())) {
+    return new Error(Nil);
+  }
+
+  const result = parseInt(string, base);
+
+  if (isNaN(result)) {
+    return new Error(Nil);
+  }
+
+  return new Ok(result);
+}
+
 export function string_replace(string, target, substitute) {
   if (typeof string.replaceAll !== "undefined") {
     return string.replaceAll(target, substitute);
@@ -89,13 +141,13 @@ export function string_length(string) {
     }
     return i;
   } else {
-    return string.match(/./gu).length;
+    return string.match(/./gsu).length;
   }
 }
 
 export function graphemes(string) {
   return List.fromArray(
-    Array.from(graphemes_iterator(string)).map(((item) => item.segment ))
+    Array.from(graphemes_iterator(string)).map((item) => item.segment)
   );
 }
 
@@ -111,7 +163,7 @@ export function pop_grapheme(string) {
   if (iterator) {
     first = iterator.next().value?.segment;
   } else {
-    first = string.match(/./u)?.[0];
+    first = string.match(/./su)?.[0];
   }
   if (first) {
     return new Ok([first, string.slice(first.length)]);
@@ -199,12 +251,12 @@ export function bit_string_concat(bit_strings) {
   return toBitString(bit_strings.toArray().map((b) => b.buffer));
 }
 
-export function log(term) {
+export function console_log(term) {
   console.log(term);
 }
 
-export function debug(term) {
-  console.log(inspect(term));
+export function console_error(term) {
+  console.error(term);
 }
 
 export function crash(message) {
@@ -223,8 +275,30 @@ export function bit_string_to_string(bit_string) {
 export function print(string) {
   if (typeof process === "object") {
     process.stdout.write(string); // We can write without a trailing newline
+  } else if (typeof Deno === "object") {
+    Deno.stdout.writeSync(new TextEncoder().encode(string)); // We can write without a trailing newline
   } else {
     console.log(string); // We're in a browser. Newlines are mandated
+  }
+}
+
+export function print_error(string) {
+  if (typeof process === "object") {
+    process.stderr.write(string); // We can write without a trailing newline
+  } else if (typeof Deno === "object") {
+    Deno.stderr.writeSync(new TextEncoder().encode(string)); // We can write without a trailing newline
+  } else {
+    console.error(string); // We're in a browser. Newlines are mandated
+  }
+}
+
+export function print_debug(string) {
+  if (typeof process === "object") {
+    process.stderr.write(string + "\n"); // If we're in Node.js, use `stderr`
+  } else if (typeof Deno === "object") {
+    Deno.stderr.writeSync(new TextEncoder().encode(string + "\n")); // If we're in Deno, use `stderr`
+  } else {
+    console.log(string); // Otherwise, use `console.log` (so that it doesn't look like an error)
   }
 }
 
@@ -251,7 +325,7 @@ export function power(base, exponent) {
   //   the result will essentially be division by zero).
   // It can thus be assumed that valid input is passed to the Math.pow
   // function and a NaN or Infinity value will not be produced.
-  return Math.pow(base, exponent)
+  return Math.pow(base, exponent);
 }
 
 export function random_uniform() {
@@ -279,6 +353,21 @@ export function bit_string_slice(bits, position, length) {
 
 export function codepoint(int) {
   return new UtfCodepoint(int);
+}
+
+export function string_to_codepoint_integer_list(string) {
+  return List.fromArray(Array.from(string).map((item) => item.codePointAt(0)));
+}
+
+export function utf_codepoint_list_to_string(utf_codepoint_integer_list) {
+  return utf_codepoint_integer_list
+    .toArray()
+    .map((x) => String.fromCodePoint(x.value))
+    .join("");
+}
+
+export function utf_codepoint_to_int(utf_codepoint) {
+  return utf_codepoint.value;
 }
 
 export function regex_check(regex, string) {
@@ -501,9 +590,13 @@ export function decode_bool(data) {
 }
 
 export function decode_bit_string(data) {
-  return BitString.isBitString(data)
-    ? new Ok(data)
-    : decoder_error("BitString", data);
+  if (BitString.isBitString(data)) {
+    return new Ok(data);
+  }
+  if (data instanceof Uint8Array) {
+    return new Ok(new BitString(data));
+  }
+  return decoder_error("BitString", data);
 }
 
 export function decode_tuple(data) {
@@ -528,6 +621,9 @@ export function decode_result(data) {
 }
 
 export function decode_map(data) {
+  if(data instanceof PMap) {
+    return new Ok(data)
+  }
   if (data instanceof Map) {
     return new Ok(PMap.fromMap(data));
   }
@@ -535,7 +631,7 @@ export function decode_map(data) {
   if (proto === Object.prototype || proto === null) {
     return new Ok(PMap.fromObject(data));
   }
-  return data instanceof PMap ? new Ok(data) : decoder_error("Map", data);
+  return decoder_error("Map", data);
 }
 
 export function decode_option(data, decoder) {

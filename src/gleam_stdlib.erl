@@ -1,7 +1,7 @@
 -module(gleam_stdlib).
 
 -export([map_get/2, iodata_append/2, identity/1, decode_int/1, decode_bool/1,
-         decode_float/1, decode_thunk/1, decode_list/1, decode_option/2,
+         decode_float/1, decode_list/1, decode_option/2,
          decode_field/2, parse_int/1, parse_float/1, less_than/2,
          string_pop_grapheme/1, string_starts_with/2, wrap_list/1,
          string_ends_with/2, string_pad/4, decode_map/1, uri_parse/1,
@@ -10,7 +10,8 @@
          percent_encode/1, percent_decode/1, regex_check/2, regex_split/2,
          base_decode64/1, parse_query/1, bit_string_concat/1, size_of_tuple/1,
          decode_tuple/1, tuple_get/2, classify_dynamic/1, print/1, println/1,
-         inspect/1, float_to_string/1]).
+         print_error/1, println_error/1, inspect/1, float_to_string/1,
+         int_from_base_string/2]).
 
 %% Taken from OTP's uri_string module
 -define(DEC2HEX(X),
@@ -73,9 +74,6 @@ decode_float(Data) -> decode_error_msg(<<"Float">>, Data).
 decode_bool(Data) when is_boolean(Data) -> {ok, Data};
 decode_bool(Data) -> decode_error_msg(<<"Bool">>, Data).
 
-decode_thunk(Data) when is_function(Data, 0) -> {ok, Data};
-decode_thunk(Data) -> decode_error_msg("zero arity function", Data).
-
 decode_list(Data) when is_list(Data) -> {ok, Data};
 decode_list(Data) -> decode_error_msg(<<"List">>, Data).
 
@@ -119,6 +117,12 @@ decode_result(Term) ->
         {error, Inner} -> {ok, {error, Inner}};
         error -> {ok, {error, nil}};
         _ -> decode_error_msg(<<"Result">>, Term)
+    end.
+
+int_from_base_string(String, Base) ->
+    case catch binary_to_integer(String, Base) of
+        Int when is_integer(Int) -> {ok, Int};
+        _ -> {error, nil}
     end.
 
 parse_int(String) ->
@@ -184,6 +188,7 @@ compile_regex(String, Options) ->
     {options, Caseless, Multiline} = Options,
     OptionsList = [
         unicode,
+        ucp,
         Caseless andalso caseless,
         Multiline andalso multiline
     ],
@@ -200,16 +205,16 @@ regex_check(Regex, String) ->
 regex_split(Regex, String) ->
     re:split(String, Regex).
 
-regex_submatches(String, {S, L}) ->
-    SubMatch = string:slice(String, S, L),
-    case string:is_empty(SubMatch) of
+regex_submatches(String, {Start, Length}) ->
+    BinarySlice = binary:part(String, {Start, Length}),
+    case string:is_empty(binary_to_list(BinarySlice)) of
         true -> none;
-        false -> {some, SubMatch}
+        false -> {some, BinarySlice}
     end.
 
-regex_matches(String, [{S, L} | Submatches]) ->
+regex_matches(String, [{Start, Length} | Submatches]) ->
     Submatches1 = lists:map(fun(X) -> regex_submatches(String, X) end, Submatches),
-    {match, binary:part(String, S, L), Submatches1}.
+    {match, binary:part(String, Start, Length), Submatches1}.
 
 regex_scan(Regex, String) ->
     case re:run(String, Regex, [global]) of
@@ -321,6 +326,14 @@ println(String) ->
     io:put_chars([String, $\n]),
     nil.
 
+print_error(String) ->
+    io:put_chars(standard_error, String),
+    nil.
+
+println_error(String) ->
+    io:put_chars(standard_error, [String, $\n]),
+    nil.
+
 inspect(true) ->
     "True";
 inspect(false) ->
@@ -338,13 +351,9 @@ inspect(Any) when is_integer(Any) ->
 inspect(Any) when is_float(Any) ->
     io_lib_format:fwrite_g(Any);
 inspect(Binary) when is_binary(Binary) ->
-    case gleam@bit_string:is_utf8(Binary) of
-        true ->
-            Pattern = [$"],
-            Replacement = [$\\, $\\, $"],
-            Escaped = re:replace(Binary, Pattern, Replacement, [{return, binary}, global]),
-            ["\"", Escaped, "\""];
-        false ->
+    case inspect_maybe_utf8_string(Binary, <<>>) of
+        {ok, InspectedUtf8String} -> InspectedUtf8String;
+        {error, not_a_utf8_string} ->
             Segments = [erlang:integer_to_list(X) || <<X>> <= Binary],
             ["<<", lists:join(", ", Segments), ">>"]
     end;
@@ -377,7 +386,7 @@ inspect(Any) when is_function(Any) ->
 inspect(Any) ->
     ["//erl(", io_lib:format("~p", [Any]), ")"].
 
-inspect_list([])  ->
+inspect_list([]) ->
     {proper, []};
 inspect_list([Head]) ->
     {proper, [inspect(Head)]};
@@ -386,6 +395,22 @@ inspect_list([First | Rest]) when is_list(Rest) ->
     {Kind, [inspect(First), <<", ">> | Inspected]};
 inspect_list([First | ImproperTail]) ->
     {improper, [inspect(First), <<" | ">>, inspect(ImproperTail)]}.
+
+inspect_maybe_utf8_string(Binary, Acc) ->
+    case Binary of
+        <<>> -> {ok, <<$", Acc/binary, $">>};
+        <<Head/utf8, Rest/binary>> ->
+            Escaped = case Head of
+                $" -> <<$\\, $">>;
+                $\\ -> <<$\\, $\\>>;
+                $\r -> <<$\\, $r>>;
+                $\n -> <<$\\, $n>>;
+                $\t -> <<$\\, $t>>;
+                Other -> <<Other/utf8>>
+            end,
+            inspect_maybe_utf8_string(Rest, <<Acc/binary, Escaped/binary>>);
+        _ -> {error, not_a_utf8_string}
+    end.
 
 float_to_string(Float) when is_float(Float) ->
     erlang:iolist_to_binary(io_lib_format:fwrite_g(Float)).

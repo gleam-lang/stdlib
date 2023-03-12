@@ -69,6 +69,28 @@ pub fn parse_test() {
   |> should.equal(Error(Nil))
 }
 
+pub fn base_parse_test() {
+  "100"
+  |> int.base_parse(16)
+  |> should.equal(Ok(256))
+
+  "-100"
+  |> int.base_parse(16)
+  |> should.equal(Ok(-256))
+
+  "100"
+  |> int.base_parse(1)
+  |> should.equal(Error(Nil))
+
+  "100"
+  |> int.base_parse(37)
+  |> should.equal(Error(Nil))
+
+  "AG"
+  |> int.base_parse(16)
+  |> should.equal(Error(Nil))
+}
+
 pub fn to_base_string_test() {
   100
   |> int.to_base_string(16)
@@ -116,11 +138,11 @@ pub fn to_base16_test() {
   |> int.to_base16()
   |> should.equal("-64")
 
-  43981
+  43_981
   |> int.to_base16()
   |> should.equal("ABCD")
 
-  -43981
+  -43_981
   |> int.to_base16()
   |> should.equal("-ABCD")
 }
@@ -137,16 +159,16 @@ pub fn to_base36_test() {
 
 pub fn to_float_test() {
   int.to_float(1)
-  |> should.equal(1.)
+  |> should.equal(1.0)
 
   int.to_float(5)
-  |> should.equal(5.)
+  |> should.equal(5.0)
 
   int.to_float(0)
-  |> should.equal(0.)
+  |> should.equal(0.0)
 
   int.to_float(-5)
-  |> should.equal(-5.)
+  |> should.equal(-5.0)
 }
 
 pub fn compare_test() {
@@ -219,7 +241,7 @@ pub fn is_even_test() {
   int.is_even(-2)
   |> should.be_true
 
-  int.is_even(10006)
+  int.is_even(10_006)
   |> should.be_true
 
   int.is_even(1)
@@ -228,7 +250,7 @@ pub fn is_even_test() {
   int.is_even(-3)
   |> should.be_false
 
-  int.is_even(10005)
+  int.is_even(10_005)
   |> should.be_false
 }
 
@@ -242,7 +264,7 @@ pub fn is_odd_test() {
   int.is_odd(-2)
   |> should.be_false
 
-  int.is_odd(10006)
+  int.is_odd(10_006)
   |> should.be_false
 
   int.is_odd(1)
@@ -251,7 +273,7 @@ pub fn is_odd_test() {
   int.is_odd(-3)
   |> should.be_true
 
-  int.is_odd(10005)
+  int.is_odd(10_005)
   |> should.be_true
 }
 
@@ -273,7 +295,7 @@ pub fn power_test() {
 
   // int.power(-1, 0.5) is equivalent to int.square_root(-1) and should
   // return an error as an imaginary number would otherwise have to be
-  // returned 
+  // returned
   int.power(-1, 0.5)
   |> should.equal(Error(Nil))
 
@@ -286,7 +308,7 @@ pub fn power_test() {
   int.power(0, -1.0)
   |> should.equal(Error(Nil))
 
-  // Check that a negative base and exponent is fine as long as the 
+  // Check that a negative base and exponent is fine as long as the
   // exponent is not fractional
   int.power(-2, -1.0)
   |> should.equal(Ok(-0.5))
@@ -327,7 +349,7 @@ pub fn sum_test() {
 
 pub fn product_test() {
   int.product([])
-  |> should.equal(0)
+  |> should.equal(1)
 
   int.product([4])
   |> should.equal(4)
@@ -406,20 +428,131 @@ pub fn random_test() {
     |> should.be_true
   }
   test_average(100, 0, 0, 5)
-  test_average(1_000, 0, 100, 5)
-  test_average(1_000, -100, 100, 5)
-  test_average(1_000, -100, 0, 5)
-  test_average(1_000, 0, -100, 5)
+  test_average(1000, 0, 100, 5)
+  test_average(1000, -100, 100, 5)
+  test_average(1000, -100, 0, 5)
+  test_average(1000, 0, -100, 5)
 }
 
 pub fn divide_test() {
   int.divide(1, 1)
   |> should.equal(Ok(1))
+
   int.divide(1, 0)
   |> should.equal(Error(Nil))
 
   int.divide(0, by: 1)
   |> should.equal(Ok(0))
+
   int.divide(1, by: 0)
   |> should.equal(Error(Nil))
+
+  int.divide(5, by: 2)
+  |> should.equal(Ok(2))
+
+  int.divide(-99, by: 2)
+  |> should.equal(Ok(-49))
+}
+
+pub fn remainder_test() {
+  int.remainder(3, 2)
+  |> should.equal(Ok(1))
+
+  int.remainder(1, 0)
+  |> should.equal(Error(Nil))
+
+  int.remainder(10, -1)
+  |> should.equal(Ok(0))
+
+  int.remainder(13, by: 3)
+  |> should.equal(Ok(1))
+
+  int.remainder(-13, by: 3)
+  |> should.equal(Ok(-1))
+
+  int.remainder(13, by: -3)
+  |> should.equal(Ok(1))
+
+  int.remainder(-13, by: -3)
+  |> should.equal(Ok(-1))
+}
+
+pub fn modulo_test() {
+  int.modulo(3, 2)
+  |> should.equal(Ok(1))
+
+  int.modulo(1, 0)
+  |> should.equal(Error(Nil))
+
+  int.modulo(10, -1)
+  |> should.equal(Ok(0))
+
+  int.modulo(13, by: 3)
+  |> should.equal(Ok(1))
+
+  int.modulo(-13, by: 3)
+  |> should.equal(Ok(2))
+
+  int.modulo(13, by: -3)
+  |> should.equal(Ok(-2))
+
+  int.modulo(-13, by: -3)
+  |> should.equal(Ok(-1))
+}
+
+pub fn floor_divide_test() {
+  int.floor_divide(1, 1)
+  |> should.equal(Ok(1))
+
+  int.floor_divide(1, 0)
+  |> should.equal(Error(Nil))
+
+  int.floor_divide(0, by: 1)
+  |> should.equal(Ok(0))
+
+  int.floor_divide(1, by: 0)
+  |> should.equal(Error(Nil))
+
+  int.floor_divide(5, by: 2)
+  |> should.equal(Ok(2))
+
+  int.floor_divide(6, by: -4)
+  |> should.equal(Ok(-2))
+
+  int.floor_divide(-99, by: 2)
+  |> should.equal(Ok(-50))
+
+  int.floor_divide(-1, by: 2)
+  |> should.equal(Ok(-1))
+}
+
+pub fn add_test() {
+  int.add(1, 2)
+  |> should.equal(3)
+
+  3
+  |> int.add(2)
+  |> should.equal(5)
+}
+
+pub fn multiply_test() {
+  int.multiply(2, 4)
+  |> should.equal(8)
+
+  3
+  |> int.multiply(2)
+  |> should.equal(6)
+}
+
+pub fn subtract_test() {
+  int.subtract(3, 1)
+  |> should.equal(2)
+
+  3
+  |> int.subtract(2)
+  |> should.equal(1)
+
+  3
+  |> int.subtract(2, _)
+  |> should.equal(-1)
 }

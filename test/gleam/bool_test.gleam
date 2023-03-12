@@ -2,6 +2,38 @@ import gleam/bool
 import gleam/order
 import gleam/should
 
+pub fn and_test() {
+  bool.and(True, True)
+  |> should.be_true
+
+  bool.and(False, True)
+  |> should.be_false
+
+  True
+  |> bool.and(True)
+  |> should.be_true
+
+  False
+  |> bool.and(True, _)
+  |> should.be_false
+}
+
+pub fn or_test() {
+  bool.or(True, True)
+  |> should.be_true
+
+  bool.or(False, True)
+  |> should.be_true
+
+  True
+  |> bool.or(False)
+  |> should.be_true
+
+  False
+  |> bool.or(True, _)
+  |> should.be_true
+}
+
 pub fn negate_test() {
   bool.negate(True)
   |> should.be_false
@@ -82,30 +114,30 @@ pub fn compare_test() {
 
 pub fn max_test() {
   bool.max(True, True)
-  |> should.equal(True)
+  |> should.be_true
 
   bool.max(True, False)
-  |> should.equal(True)
+  |> should.be_true
 
   bool.max(False, False)
-  |> should.equal(False)
+  |> should.be_false
 
   bool.max(False, True)
-  |> should.equal(True)
+  |> should.be_true
 }
 
 pub fn min_test() {
   bool.min(True, True)
-  |> should.equal(True)
+  |> should.be_true
 
   bool.min(True, False)
-  |> should.equal(False)
+  |> should.be_false
 
   bool.min(False, False)
-  |> should.equal(False)
+  |> should.be_false
 
   bool.min(False, True)
-  |> should.equal(False)
+  |> should.be_false
 }
 
 pub fn to_int_test() {
@@ -122,4 +154,16 @@ pub fn to_string_test() {
 
   bool.to_string(False)
   |> should.equal("False")
+}
+
+pub fn guard_test() {
+  let assert 2 = {
+    use <- bool.guard(when: True, return: 2)
+    1
+  }
+
+  let assert 1 = {
+    use <- bool.guard(when: False, return: 2)
+    1
+  }
 }
