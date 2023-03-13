@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- The `Map` type was rewritten as a persistent immutable data structure. This
+  results in drastically improved performance when constructing or updating
+  maps, especially with large maps.
+
 ## v0.27.0 - 2023-02-26
 
 - The `bool` module gains the `guard` function.
