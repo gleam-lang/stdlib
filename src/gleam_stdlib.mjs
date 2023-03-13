@@ -388,7 +388,7 @@ export function compile_regex(pattern, options) {
 
 export function regex_scan(regex, string) {
   let matches = Array.from(string.matchAll(regex)).map((match) => {
-    let content = match[0];
+    const content = match[0];
     const submatches = [];
     for (let n = match.length - 1; n > 0; n--) {
       if (match[n]) {
