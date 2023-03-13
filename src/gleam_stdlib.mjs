@@ -388,19 +388,18 @@ export function compile_regex(pattern, options) {
 
 export function regex_scan(regex, string) {
   let matches = Array.from(string.matchAll(regex)).map((match) => {
-    let content = match.shift();
-    let submatches = match.map((x) => (x ? new Some(x) : new None()));
-    submatches.reverse()
-    const newSubmatches = []
-    for (const submatch of submatches) {
-      if (submatch instanceof Some) {
-        newSubmatches.push(submatch)
+    let content = match[0];
+    const submatches = [];
+    for (let n = match.length - 1; n > 0; n--) {
+      if (match[n]) {
+        submatches[n-1] = new Some(match[n])
         continue
       }
-      if (newSubmatches.length > 0) newSubmatches.push(submatch)
+      if(submatches.length > 0) {
+        submatches[n-1] = new None()
+      }
     }
-    newSubmatches.reverse()
-    return new RegexMatch(content, List.fromArray(newSubmatches));
+    return new RegexMatch(content, List.fromArray(submatches));
   });
   return List.fromArray(matches);
 }
