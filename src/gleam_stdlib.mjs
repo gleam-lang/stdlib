@@ -621,14 +621,14 @@ export function decode_result(data) {
 }
 
 export function decode_map(data) {
-  if (data instanceof Map) {
+  if (data instanceof PMap) {
     return new Ok(PMap.fromMap(data));
   }
   const proto = Object.getPrototypeOf(data);
   if (proto === Object.prototype || proto === null) {
     return new Ok(PMap.fromObject(data));
   }
-  return data instanceof PMap ? new Ok(data) : decoder_error("Map", data);
+  return decoder_error("Map", data);
 }
 
 export function decode_option(data, decoder) {
