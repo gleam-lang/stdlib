@@ -15,10 +15,10 @@ import {
 } from "./gleam/regex.mjs";
 import { DecodeError } from "./gleam/dynamic.mjs";
 import { Some, None } from "./gleam/option.mjs";
-
-const HASHCODE_CACHE = new WeakMap();
+import PMap from "./persistent-hash-map.mjs";
 
 const Nil = undefined;
+const NOT_FOUND = {};
 
 export function identity(x) {
   return x;
@@ -244,7 +244,7 @@ export function trim_right(string) {
 }
 
 export function bit_string_from_string(string) {
-  return new toBitString([stringBits(string)]);
+  return toBitString([stringBits(string)]);
 }
 
 export function bit_string_concat(bit_strings) {
@@ -405,71 +405,8 @@ export function regex_scan(regex, string) {
   return List.fromArray(matches);
 }
 
-class Map {
-  static #hashcode_cache = new WeakMap();
-
-  static hash(value) {
-    let existing = this.#hashcode_cache.get(value);
-    if (existing) {
-      return existing;
-    } else if (value instanceof Object) {
-      let hashcode = inspect(value);
-      HASHCODE_CACHE.set(value, hashcode);
-      return hashcode;
-    } else {
-      return value.toString();
-    }
-  }
-
-  constructor() {
-    this.entries = new globalThis.Map();
-  }
-
-  get size() {
-    return this.entries.size;
-  }
-
-  inspect() {
-    let entries = [...this.entries.values()]
-      .map((pair) => inspect(pair))
-      .join(", ");
-    return `map.from_list([${entries}])`;
-  }
-
-  copy() {
-    let map = new Map();
-    map.entries = new globalThis.Map(this.entries);
-    return map;
-  }
-
-  toList() {
-    return List.fromArray([...this.entries.values()]);
-  }
-
-  insert(k, v) {
-    let map = this.copy();
-    map.entries.set(Map.hash(k), [k, v]);
-    return map;
-  }
-
-  delete(k) {
-    let map = this.copy();
-    map.entries.delete(Map.hash(k));
-    return map;
-  }
-
-  get(key) {
-    let code = Map.hash(key);
-    if (this.entries.has(code)) {
-      return new Ok(this.entries.get(code)[1]);
-    } else {
-      return new Error(Nil);
-    }
-  }
-}
-
 export function new_map() {
-  return new Map();
+  return PMap.new();
 }
 
 export function map_size(map) {
@@ -477,19 +414,23 @@ export function map_size(map) {
 }
 
 export function map_to_list(map) {
-  return map.toList();
+  return List.fromArray(map.entries());
 }
 
-export function map_remove(k, map) {
-  return map.delete(k);
+export function map_remove(key, map) {
+  return map.delete(key);
 }
 
 export function map_get(map, key) {
-  return map.get(key);
+  const value = map.get(key, NOT_FOUND);
+  if (value === NOT_FOUND) {
+    return new Error(Nil);
+  }
+  return new Ok(value);
 }
 
 export function map_insert(key, value, map) {
-  return map.insert(key, value);
+  return map.set(key, value);
 }
 
 function unsafe_percent_decode(string) {
@@ -620,7 +561,7 @@ export function classify_dynamic(data) {
     return `Tuple of ${data.length} elements`;
   } else if (BitString.isBitString(data)) {
     return "BitString";
-  } else if (data instanceof Map) {
+  } else if (data instanceof PMap) {
     return "Map";
   } else if (typeof data === "number") {
     return "Float";
@@ -690,13 +631,14 @@ export function decode_result(data) {
 }
 
 export function decode_map(data) {
-  if (data instanceof Map) {
-    return new Ok(data)
+  if (data instanceof PMap) {
+    return new Ok(PMap.fromMap(data));
   }
-  if (typeof data === 'object' && data !== null && Object.getPrototypeOf(data) == Object.getPrototypeOf({})) {
-    return new Ok(new Map(Object.entries(data)))
+  const proto = Object.getPrototypeOf(data);
+  if (proto === Object.prototype || proto === null) {
+    return new Ok(PMap.fromObject(data));
   }
-  return  decoder_error("Map", data);
+  return decoder_error("Map", data);
 }
 
 export function decode_option(data, decoder) {
@@ -713,8 +655,8 @@ export function decode_option(data, decoder) {
 
 export function decode_field(value, name) {
   let error = () => decoder_error_no_classify("field", "nothing");
-  if (value instanceof Map) {
-    let entry = value.get(name);
+  if (value instanceof PMap) {
+    let entry = map_get(value, name);
     return entry.isOk() ? entry : error();
   }
   try {
