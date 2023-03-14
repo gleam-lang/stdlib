@@ -187,7 +187,7 @@ if javascript {
 /// > scan(with: re, content: "36")
 /// [
 ///   Match(
-///     content: "-36",
+///     content: "36",
 ///     submatches: [None, Some("36")]
 ///   )
 /// ]
