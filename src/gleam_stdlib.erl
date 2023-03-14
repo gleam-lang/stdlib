@@ -205,6 +205,7 @@ regex_check(Regex, String) ->
 regex_split(Regex, String) ->
     re:split(String, Regex).
 
+regex_submatches(_, {-1, 0}) -> none;
 regex_submatches(String, {Start, Length}) ->
     BinarySlice = binary:part(String, {Start, Length}),
     case string:is_empty(binary_to_list(BinarySlice)) of

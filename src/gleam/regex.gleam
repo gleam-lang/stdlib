@@ -160,7 +160,7 @@ if javascript {
 /// ## Examples
 ///
 /// ```gleam
-/// > assert Ok(re) = from_string("[oi]n a (\\w+)")
+/// > let assert Ok(re) = from_string("[oi]n a (\\w+)")
 /// > scan(with: re, content: "I am on a boat in a lake.")
 /// [
 ///   Match(
@@ -172,6 +172,50 @@ if javascript {
 ///     submatches: [Some("lake")]
 ///   )
 /// ]
+/// ```
+///
+/// ```gleam
+/// > let assert Ok(re) = regex.from_string("([+|\\-])?(\\d+)(\\w+)?")
+/// > scan(with: re, content: "-36")
+/// [
+///   Match(
+///     content: "-36",
+///     submatches: [Some("-"), Some("36")]
+///   )
+/// ]
+///
+/// > scan(with: re, content: "36")
+/// [
+///   Match(
+///     content: "-36",
+///     submatches: [None, Some("36")]
+///   )
+/// ]
+/// ```
+///
+/// ```gleam
+/// > let assert Ok(re) = regex.from_string("var\\s*(\\w+)\\s*(int|string)?\\s*=\\s*(.*)")
+/// > scan(with: re, content: "var age = 32")
+/// [
+///   Match(
+///     content: "var age = 32",
+///     submatches: [Some("age"), None, Some("32")]
+///   )
+/// ]
+/// ```
+///
+/// ```gleam
+/// > let assert Ok(re) = regex.from_string("let (\\w+) = (\\w+)")
+/// > scan(with: re, content: "let age = 32")
+/// [
+///   Match(
+///     content: "let age = 32",
+///     submatches: [Some("age"), Some("32")]
+///   )
+/// ]
+///
+/// > scan(with: re, content: "const age = 32")
+/// []
 /// ```
 ///
 pub fn scan(with regex: Regex, content string: String) -> List(Match) {

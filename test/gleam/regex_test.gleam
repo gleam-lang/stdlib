@@ -84,4 +84,48 @@ pub fn scan_test() {
 
   regex.scan(re, "你好 42 世界")
   |> should.equal([Match(content: "42", submatches: [Some("42")])])
+
+  let assert Ok(re) = regex.from_string("([+|\\-])?(\\d+)(\\w+)?")
+  regex.scan(re, "+36kg")
+  |> should.equal([
+    Match(content: "+36kg", submatches: [Some("+"), Some("36"), Some("kg")]),
+  ])
+
+  regex.scan(re, "36kg")
+  |> should.equal([
+    Match(content: "36kg", submatches: [None, Some("36"), Some("kg")]),
+  ])
+
+  regex.scan(re, "36")
+  |> should.equal([Match(content: "36", submatches: [None, Some("36")])])
+
+  regex.scan(re, "-36")
+  |> should.equal([Match(content: "-36", submatches: [Some("-"), Some("36")])])
+
+  regex.scan(re, "-kg")
+  |> should.equal([])
+
+  let assert Ok(re) =
+    regex.from_string("var\\s*(\\w+)\\s*(int|string)?\\s*=\\s*(.*)")
+  regex.scan(re, "var age int = 32")
+  |> should.equal([
+    Match(
+      content: "var age int = 32",
+      submatches: [Some("age"), Some("int"), Some("32")],
+    ),
+  ])
+
+  regex.scan(re, "var age = 32")
+  |> should.equal([
+    Match(content: "var age = 32", submatches: [Some("age"), None, Some("32")]),
+  ])
+
+  let assert Ok(re) = regex.from_string("let (\\w+) = (\\w+)")
+  regex.scan(re, "let age = 32")
+  |> should.equal([
+    Match(content: "let age = 32", submatches: [Some("age"), Some("32")]),
+  ])
+
+  regex.scan(re, "const age = 32")
+  |> should.equal([])
 }

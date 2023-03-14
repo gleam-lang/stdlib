@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `regex.scan` now behaves consistently across both targets when a capture group does not capture anything.
 - The `Map` type was rewritten as a persistent immutable data structure. This
   results in drastically improved performance when constructing or updating
   maps, especially with large maps.
