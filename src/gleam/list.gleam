@@ -1593,6 +1593,33 @@ pub fn partition(
   do_partition(list, categorise, [], [])
 }
 
+fn do_cluster(list: List(a), separator: a, acc: #(List(List(a)), List(a))) {
+  case list {
+    [] -> append(acc.0, [acc.1])
+    [head, ..tail] if head == separator ->
+      do_cluster(tail, separator, #(append(acc.0, [acc.1]), []))
+    [head, ..tail] ->
+      do_cluster(tail, separator, #(acc.0, append(acc.1, [head])))
+  }
+}
+
+/// Separates elements in the list into clusters using a given separator
+///
+/// ## Examples
+///
+/// ```gleam
+/// > [1, 2, 3, 0, 4, 5, 6] |> list.cluster(0)
+/// [[1, 2, 3], [4, 5, 6]]
+/// ```
+///
+/// ```gleam
+/// > ["a", "b", "c"] |> list.cluster(" ")
+/// [["a", "b", "c"]]
+/// ```
+pub fn cluster(list: List(a), by separator: a) -> List(List(a)) {
+  do_cluster(list, separator, #([], []))
+}
+
 /// Returns all the permutations of a list.
 ///
 /// ## Examples
