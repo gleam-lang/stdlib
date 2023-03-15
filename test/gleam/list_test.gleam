@@ -868,9 +868,9 @@ pub fn cluster_test() {
   |> list.cluster(" ")
   |> should.equal([["a", "b"], ["d", "e"]])
 
-  [1, 2, 3, 0, 4, 5, 6]
+  [1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9]
   |> list.cluster(0)
-  |> should.equal([[1, 2, 3], [4, 5, 6]])
+  |> should.equal([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
 
   [3.14, 1.61, 1.41, 2.71]
   |> list.cluster(0.0)
