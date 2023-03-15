@@ -863,6 +863,20 @@ pub fn partition_test() {
   |> list.partition(int.is_even)
 }
 
+pub fn cluster_test() {
+  ["a", "b", " ", "d", "e"]
+  |> list.cluster(" ")
+  |> should.equal([["a", "b"], ["d", "e"]])
+
+  [1, 2, 3, 0, 4, 5, 6]
+  |> list.cluster(0)
+  |> should.equal([[1, 2, 3], [4, 5, 6]])
+
+  [3.14, 1.61, 1.41, 2.71]
+  |> list.cluster(0.0)
+  |> should.equal([[3.14, 1.61, 1.41, 2.71]])
+}
+
 pub fn permutations_test() {
   [1, 2]
   |> list.permutations
