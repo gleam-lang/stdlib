@@ -864,9 +864,9 @@ pub fn partition_test() {
 }
 
 pub fn cluster_test() {
-  ["a", "b", " ", "d", "e"]
+  ["a", "b", " ", "c", "d"]
   |> list.cluster(" ")
-  |> should.equal([["a", "b"], ["d", "e"]])
+  |> should.equal([["a", "b"], ["c", "d"]])
 
   [1, 2, 3, 0, 4, 5, 6, 0, 7, 8, 9]
   |> list.cluster(0)
