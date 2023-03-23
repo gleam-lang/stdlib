@@ -995,7 +995,11 @@ fn do_any(
 ) -> Bool {
   case continuation() {
     Stop -> False
-    Continue(e, next) -> predicate(e) || do_any(next, predicate)
+    Continue(e, next) ->
+      case predicate(e) {
+        True -> True
+        False -> do_any(next, predicate)
+      }
   }
 }
 
@@ -1037,7 +1041,11 @@ fn do_all(
 ) -> Bool {
   case continuation() {
     Stop -> True
-    Continue(e, next) -> predicate(e) && do_all(next, predicate)
+    Continue(e, next) ->
+      case predicate(e) {
+        True -> do_all(next, predicate)
+        False -> False
+      }
   }
 }
 
@@ -1391,10 +1399,10 @@ fn do_length(over continuation: fn() -> Action(e), with length: Int) -> Int {
 /// Counts the number of elements in the given iterator.
 ///
 /// This function has to traverse the entire iterator to count its elements,
-/// so it runs in linear time. 
+/// so it runs in linear time.
 ///
 /// ## Examples
-/// 
+///
 /// ```gleam
 /// > empty() |> length
 /// 0
