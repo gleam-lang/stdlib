@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.28.0 - 2023-03-26
 
 - `regex.scan` now behaves consistently across both targets when a capture group does not capture anything.
 - The `Map` type was rewritten as a persistent immutable data structure. This
