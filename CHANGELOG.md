@@ -6,6 +6,7 @@
 - The `Map` type was rewritten as a persistent immutable data structure. This
   results in drastically improved performance when constructing or updating
   maps, especially with large maps.
+- The `all` and `any` functions in the `iterator` module are now tail recursive.
 
 ## v0.27.0 - 2023-02-26
 
