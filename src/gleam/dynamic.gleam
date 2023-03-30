@@ -610,7 +610,7 @@ fn at_least_decode_tuple_error(
   data: Dynamic,
 ) -> Result(a, DecodeErrors) {
   let s = case size {
-    0 -> ""
+    s if s <= 1 -> ""
     _ -> "s"
   }
   let error =
@@ -619,6 +619,22 @@ fn at_least_decode_tuple_error(
     |> string_builder.to_string
     |> DecodeError(found: classify(data), path: [])
   Error([error])
+}
+
+fn exact_decode_list_error(size: Int, data: Dynamic) -> Result(a, DecodeErrors) {
+  let expected = list_size_error_msg(size)
+  let error = DecodeError(expected: expected, found: classify(data), path: [])
+  Error([error])
+}
+
+fn list_size_error_msg(size: Int) -> String {
+  let s = case size {
+    s if s <= 1 -> ""
+    _ -> "s"
+  }
+  ["List of ", int.to_string(size), " element", s]
+  |> string_builder.from_strings
+  |> string_builder.to_string
 }
 
 // A tuple of unknown size
@@ -633,6 +649,9 @@ if erlang {
 
   external fn tuple_size(UnknownTuple) -> Int =
     "gleam_stdlib" "size_of_tuple"
+
+  external fn list_to_tuple(Dynamic) -> Result(Dynamic, DecodeErrors) =
+    "gleam_stdlib" "list_to_tuple"
 }
 
 if javascript {
@@ -644,6 +663,9 @@ if javascript {
 
   external fn tuple_size(UnknownTuple) -> Int =
     "../gleam_stdlib.mjs" "length"
+
+  external fn list_to_tuple(Dynamic) -> Result(Dynamic, DecodeErrors) =
+    "../gleam_stdlib.mjs" "list_to_tuple"
 }
 
 fn tuple_errors(
@@ -656,10 +678,32 @@ fn tuple_errors(
   }
 }
 
+fn ensure_tuple(
+  value: Dynamic,
+  desired_size: Int,
+) -> Result(Dynamic, DecodeErrors) {
+  do_ensure_tuple(classify(value), value, desired_size)
+}
+
+fn do_ensure_tuple(
+  value_type: String,
+  value: Dynamic,
+  desired_size: Int,
+) -> Result(Dynamic, DecodeErrors) {
+  case value_type {
+    "Tuple" <> _ -> assert_is_tuple(value, desired_size)
+    "List" -> {
+      use _ <- result.then(assert_is_list(value, desired_size))
+      list_to_tuple(value)
+    }
+    _ -> exact_decode_tuple_error(desired_size, value)
+  }
+}
+
 fn assert_is_tuple(
   value: Dynamic,
   desired_size: Int,
-) -> Result(Nil, DecodeErrors) {
+) -> Result(Dynamic, DecodeErrors) {
   let expected =
     string_builder.to_string(string_builder.from_strings([
       "Tuple of ",
@@ -671,8 +715,28 @@ fn assert_is_tuple(
     put_expected(_, expected),
   ))
   case tuple_size(tuple) {
-    size if size == desired_size -> Ok(Nil)
+    size if size == desired_size -> Ok(value)
     _ -> exact_decode_tuple_error(desired_size, value)
+  }
+}
+
+fn assert_is_list(
+  value: Dynamic,
+  desired_size: Int,
+) -> Result(List(Dynamic), DecodeErrors) {
+  let expected = list_size_error_msg(desired_size)
+  use list <- result.then(map_errors(
+    decode_list(value),
+    put_expected(_, expected),
+  ))
+  case list.length(list) {
+    size if size == desired_size -> Ok(list)
+    size if size != desired_size -> {
+      let found = list_size_error_msg(size)
+      let error = DecodeError(expected: expected, found: found, path: [])
+      Error([error])
+    }
+    _ -> exact_decode_list_error(desired_size, value)
   }
 }
 
@@ -693,7 +757,7 @@ fn push_path(error: DecodeError, name: t) -> DecodeError {
   DecodeError(..error, path: [name, ..error.path])
 }
 
-/// Checks to see if a `Dynamic` value is a 2 element tuple containing
+/// Checks to see if a `Dynamic` value is a 2-element tuple, list or array containing
 /// specifically typed elements.
 ///
 /// ## Examples
@@ -706,6 +770,18 @@ fn push_path(error: DecodeError, name: t) -> DecodeError {
 ///
 /// ```gleam
 /// > from(#(1, 2.0))
+/// > |> tuple2(int, float)
+/// Ok(#(1, 2.0))
+/// ```
+///
+/// ```gleam
+/// > from([1, 2])
+/// > |> tuple2(int, int)
+/// Ok(#(1, 2))
+/// ```
+///
+/// ```gleam
+/// > from([from(1), from(2.0)])
 /// > |> tuple2(int, float)
 /// Ok(#(1, 2.0))
 /// ```
@@ -729,8 +805,8 @@ pub fn tuple2(
   second decode2: Decoder(b),
 ) -> Decoder(#(a, b)) {
   fn(value) {
-    use _ <- result.try(assert_is_tuple(value, 2))
-    let #(a, b) = unsafe_coerce(value)
+    use tuple <- result.try(ensure_tuple(value, 2))
+    let #(a, b) = unsafe_coerce(tuple)
     case decode1(a), decode2(b) {
       Ok(a), Ok(b) -> Ok(#(a, b))
       a, b ->
@@ -741,7 +817,7 @@ pub fn tuple2(
   }
 }
 
-/// Checks to see if a `Dynamic` value is a 3-element tuple containing
+/// Checks to see if a `Dynamic` value is a 3-element tuple, list or array containing
 /// specifically typed elements.
 ///
 /// ## Examples
@@ -755,6 +831,18 @@ pub fn tuple2(
 /// ```gleam
 /// > from(#(1, 2.0, "3"))
 /// > |> tuple3(int, float, string)
+/// Ok(#(1, 2.0, "3"))
+/// ```
+///
+/// ```gleam
+/// > from([1, 2, 3])
+/// > |> tuple3(int, int, int)
+/// Ok(#(1, 2, 3))
+/// ```
+///
+/// ```gleam
+/// > from([from(1), from(2.0), from("3")])
+/// > |> tuple2(int, float, string)
 /// Ok(#(1, 2.0, "3"))
 /// ```
 ///
@@ -780,8 +868,8 @@ pub fn tuple3(
   third decode3: Decoder(c),
 ) -> Decoder(#(a, b, c)) {
   fn(value) {
-    use _ <- result.try(assert_is_tuple(value, 3))
-    let #(a, b, c) = unsafe_coerce(value)
+    use tuple <- result.try(ensure_tuple(value, 3))
+    let #(a, b, c) = unsafe_coerce(tuple)
     case decode1(a), decode2(b), decode3(c) {
       Ok(a), Ok(b), Ok(c) -> Ok(#(a, b, c))
       a, b, c ->
@@ -793,7 +881,7 @@ pub fn tuple3(
   }
 }
 
-/// Checks to see if a `Dynamic` value is a 4 element tuple containing
+/// Checks to see if a `Dynamic` value is a 4-element tuple, list or array containing
 /// specifically typed elements.
 ///
 /// ## Examples
@@ -808,6 +896,18 @@ pub fn tuple3(
 /// > from(#(1, 2.0, "3", 4))
 /// > |> tuple4(int, float, string, int)
 /// Ok(#(1, 2.0, "3", 4))
+///
+/// ```gleam
+/// > from([1, 2, 3, 4])
+/// > |> tuple3(int, int, int, int)
+/// Ok(#(1, 2, 3, 4))
+/// ```
+///
+/// ```gleam
+/// > from([from(1), from(2.0), from("3"), from(4)])
+/// > |> tuple2(int, float, string, int)
+/// Ok(#(1, 2.0, "3", 4))
+/// ```
 ///
 /// > from(#(1, 2))
 /// > |> tuple4(int, float, string, int)
@@ -831,8 +931,8 @@ pub fn tuple4(
   fourth decode4: Decoder(d),
 ) -> Decoder(#(a, b, c, d)) {
   fn(value) {
-    use _ <- result.try(assert_is_tuple(value, 4))
-    let #(a, b, c, d) = unsafe_coerce(value)
+    use tuple <- result.try(ensure_tuple(value, 4))
+    let #(a, b, c, d) = unsafe_coerce(tuple)
     case decode1(a), decode2(b), decode3(c), decode4(d) {
       Ok(a), Ok(b), Ok(c), Ok(d) -> Ok(#(a, b, c, d))
       a, b, c, d ->
@@ -845,7 +945,7 @@ pub fn tuple4(
   }
 }
 
-/// Checks to see if a `Dynamic` value is a 5-element tuple containing
+/// Checks to see if a `Dynamic` value is a 5-element tuple, list or array containing
 /// specifically typed elements.
 ///
 /// ## Examples
@@ -860,6 +960,18 @@ pub fn tuple4(
 /// > from(#(1, 2.0, "3", 4, 5))
 /// > |> tuple5(int, float, string, int, int)
 /// Ok(#(1, 2.0, "3", 4, 5))
+/// ```
+///
+/// ```gleam
+/// > from([1, 2, 3, 4, 5])
+/// > |> tuple3(int, int, int, int, int)
+/// Ok(#(1, 2, 3, 4, 5))
+/// ```
+///
+/// ```gleam
+/// > from([from(1), from(2.0), from("3"), from(4), from(True)])
+/// > |> tuple2(int, float, string, int, bool)
+/// Ok(#(1, 2.0, "3", 4, True))
 /// ```
 ///
 /// ```gleam
@@ -882,8 +994,8 @@ pub fn tuple5(
   fifth decode5: Decoder(e),
 ) -> Decoder(#(a, b, c, d, e)) {
   fn(value) {
-    use _ <- result.try(assert_is_tuple(value, 5))
-    let #(a, b, c, d, e) = unsafe_coerce(value)
+    use tuple <- result.try(ensure_tuple(value, 5))
+    let #(a, b, c, d, e) = unsafe_coerce(tuple)
     case decode1(a), decode2(b), decode3(c), decode4(d), decode5(e) {
       Ok(a), Ok(b), Ok(c), Ok(d), Ok(e) -> Ok(#(a, b, c, d, e))
       a, b, c, d, e ->
@@ -897,7 +1009,7 @@ pub fn tuple5(
   }
 }
 
-/// Checks to see if a `Dynamic` value is a 6-element tuple containing
+/// Checks to see if a `Dynamic` value is a 6-element tuple, list or array containing
 /// specifically typed elements.
 ///
 /// ## Examples
@@ -912,6 +1024,18 @@ pub fn tuple5(
 /// > from(#(1, 2.0, "3", 4, 5, 6))
 /// > |> tuple6(int, float, string, int, int)
 /// Ok(#(1, 2.0, "3", 4, 5, 6))
+/// ```
+///
+/// ```gleam
+/// > from([1, 2, 3, 4, 5, 6])
+/// > |> tuple3(int, int, int, int, int, int)
+/// Ok(#(1, 2, 3, 4, 5, 6))
+/// ```
+///
+/// ```gleam
+/// > from([from(1), from(2.0), from("3"), from(4), from(True), from(False)])
+/// > |> tuple2(int, float, string, int, bool, bool)
+/// Ok(#(1, 2.0, "3", 4, True, False))
 /// ```
 ///
 /// ```gleam
@@ -937,8 +1061,8 @@ pub fn tuple6(
   sixth decode6: Decoder(f),
 ) -> Decoder(#(a, b, c, d, e, f)) {
   fn(value) {
-    use _ <- result.try(assert_is_tuple(value, 6))
-    let #(a, b, c, d, e, f) = unsafe_coerce(value)
+    use tuple <- result.try(ensure_tuple(value, 6))
+    let #(a, b, c, d, e, f) = unsafe_coerce(tuple)
     case
       decode1(a),
       decode2(b),
