@@ -616,6 +616,10 @@ export function decode_tuple(data) {
   return Array.isArray(data) ? new Ok(data) : decoder_error("Tuple", data);
 }
 
+export function list_to_tuple(data) {
+  return List.isList(data) ? new Ok([...data]) : decoder_error("List", data);
+}
+
 export function tuple_get(data, index) {
   return index >= 0 && data.length > index
     ? new Ok(data[index])

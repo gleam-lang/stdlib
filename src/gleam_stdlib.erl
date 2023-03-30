@@ -11,7 +11,7 @@
          base_decode64/1, parse_query/1, bit_string_concat/1, size_of_tuple/1,
          decode_tuple/1, tuple_get/2, classify_dynamic/1, print/1, println/1,
          print_error/1, println_error/1, inspect/1, float_to_string/1,
-         int_from_base_string/2]).
+         int_from_base_string/2, list_to_tuple/1]).
 
 %% Taken from OTP's uri_string module
 -define(DEC2HEX(X),
@@ -418,3 +418,6 @@ inspect_maybe_utf8_string(Binary, Acc) ->
 
 float_to_string(Float) when is_float(Float) ->
     erlang:iolist_to_binary(io_lib_format:fwrite_g(Float)).
+
+list_to_tuple(Data) when is_list(Data) -> {ok, erlang:list_to_tuple(Data)};
+list_to_tuple(Data) -> decode_error_msg(<<"List">>, Data).
