@@ -1391,10 +1391,10 @@ fn do_length(over continuation: fn() -> Action(e), with length: Int) -> Int {
 /// Counts the number of elements in the given iterator.
 ///
 /// This function has to traverse the entire iterator to count its elements,
-/// so it runs in linear time. 
+/// so it runs in linear time.
 ///
 /// ## Examples
-/// 
+///
 /// ```gleam
 /// > empty() |> length
 /// 0
@@ -1408,4 +1408,36 @@ fn do_length(over continuation: fn() -> Action(e), with length: Int) -> Int {
 pub fn length(over iterator: Iterator(e)) -> Int {
   iterator.continuation
   |> do_length(0)
+}
+
+/// Traverse an iterator, calling a function on each element.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > empty() |> each(io.println)
+/// Nil
+/// ```
+///
+/// ```gleam
+/// > from_list(["Tom", "Malory", "Louis"]) |> each(io.println)
+/// // -> Tom
+/// // -> Malory
+/// // -> Louis
+/// Nil
+/// ```
+///
+pub fn each(over iterator: Iterator(a), with f: fn(a) -> b) -> Nil {
+  iterator.continuation
+  |> do_each(f)
+}
+
+fn do_each(over continuation: fn() -> Action(a), with f: fn(a) -> b) -> Nil {
+  case continuation() {
+    Stop -> Nil
+    Continue(value, next) -> {
+      f(value)
+      do_each(next, f)
+    }
+  }
 }
