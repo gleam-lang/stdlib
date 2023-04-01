@@ -406,6 +406,12 @@ pub fn any_test() {
   iterator.from_list([1, 3, 5, 7, 9])
   |> iterator.any(satisfying: fn(n) { n % 2 == 0 })
   |> should.be_false
+
+  // TCO test
+  iterator.repeat(1)
+  |> iterator.take(1_000_000)
+  |> iterator.any(satisfying: fn(n) { n % 2 == 0 })
+  |> should.be_false
 }
 
 pub fn all_test() {
@@ -420,6 +426,12 @@ pub fn all_test() {
   iterator.from_list([2, 4, 5, 8])
   |> iterator.all(satisfying: fn(n) { n % 2 == 0 })
   |> should.be_false
+
+  // TCO test
+  iterator.repeat(0)
+  |> iterator.take(1_000_000)
+  |> iterator.all(satisfying: fn(n) { n % 2 == 0 })
+  |> should.be_true
 }
 
 pub fn group_test() {

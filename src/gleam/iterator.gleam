@@ -995,7 +995,11 @@ fn do_any(
 ) -> Bool {
   case continuation() {
     Stop -> False
-    Continue(e, next) -> predicate(e) || do_any(next, predicate)
+    Continue(e, next) ->
+      case predicate(e) {
+        True -> True
+        False -> do_any(next, predicate)
+      }
   }
 }
 
@@ -1037,7 +1041,11 @@ fn do_all(
 ) -> Bool {
   case continuation() {
     Stop -> True
-    Continue(e, next) -> predicate(e) && do_all(next, predicate)
+    Continue(e, next) ->
+      case predicate(e) {
+        True -> do_all(next, predicate)
+        False -> False
+      }
   }
 }
 
