@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- The `iterator` module gains the `each` function.
+
 ## v0.28.0 - 2023-03-26
 
 - `regex.scan` now behaves consistently across both targets when a capture group does not capture anything.
@@ -7,7 +11,6 @@
   results in drastically improved performance when constructing or updating
   maps, especially with large maps.
 - The `all` and `any` functions in the `iterator` module are now tail recursive.
-- The `iterator` module gains the `each` function.
 
 ## v0.27.0 - 2023-02-26
 
