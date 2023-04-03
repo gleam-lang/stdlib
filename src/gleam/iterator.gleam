@@ -1436,16 +1436,7 @@ pub fn length(over iterator: Iterator(e)) -> Int {
 /// ```
 ///
 pub fn each(over iterator: Iterator(a), with f: fn(a) -> b) -> Nil {
-  iterator.continuation
-  |> do_each(f)
-}
-
-fn do_each(over continuation: fn() -> Action(a), with f: fn(a) -> b) -> Nil {
-  case continuation() {
-    Stop -> Nil
-    Continue(value, next) -> {
-      f(value)
-      do_each(next, f)
-    }
-  }
+  iterator
+  |> map(f)
+  |> run
 }
