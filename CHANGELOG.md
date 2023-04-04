@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- The `iterator` module gains the `each` function.
+
 ## v0.28.0 - 2023-03-26
 
 - `regex.scan` now behaves consistently across both targets when a capture group does not capture anything.

@@ -584,3 +584,9 @@ pub fn length_test() {
   |> iterator.length
   |> should.equal(0)
 }
+
+pub fn each_test() {
+  use it <- iterator.each(iterator.from_list([1]))
+  it
+  |> should.equal(1)
+}

@@ -1417,3 +1417,26 @@ pub fn length(over iterator: Iterator(e)) -> Int {
   iterator.continuation
   |> do_length(0)
 }
+
+/// Traverse an iterator, calling a function on each element.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > empty() |> each(io.println)
+/// Nil
+/// ```
+///
+/// ```gleam
+/// > from_list(["Tom", "Malory", "Louis"]) |> each(io.println)
+/// // -> Tom
+/// // -> Malory
+/// // -> Louis
+/// Nil
+/// ```
+///
+pub fn each(over iterator: Iterator(a), with f: fn(a) -> b) -> Nil {
+  iterator
+  |> map(f)
+  |> run
+}
