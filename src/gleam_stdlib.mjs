@@ -564,8 +564,8 @@ export function classify_dynamic(data) {
     return "Map";
   } else if (typeof data === "number") {
     return "Float";
-  } else if (data === null) {
-    return "null";
+  } else if (data == null) {
+    return "Nil";
   } else {
     let type = typeof data;
     return type.charAt(0).toUpperCase() + type.slice(1);
