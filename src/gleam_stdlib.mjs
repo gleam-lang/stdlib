@@ -564,6 +564,8 @@ export function classify_dynamic(data) {
     return "Map";
   } else if (typeof data === "number") {
     return "Float";
+  } else if (data === null) {
+    return "null";
   } else {
     let type = typeof data;
     return type.charAt(0).toUpperCase() + type.slice(1);
@@ -632,6 +634,9 @@ export function decode_result(data) {
 export function decode_map(data) {
   if (data instanceof PMap) {
     return new Ok(PMap.fromMap(data));
+  }
+  if (data == null) {
+    return decoder_error("Map", data);
   }
   const proto = Object.getPrototypeOf(data);
   if (proto === Object.prototype || proto === null) {
