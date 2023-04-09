@@ -581,10 +581,13 @@ function findArray(root, shift, hash, key) {
   if (node === undefined) {
     return undefined;
   }
-  if (node.type === ENTRY) {
+  if (node.type !== ENTRY) {
+    return find(node, shift + SHIFT, hash, key);
+  }
+  if (isEqual(key, node.k)) {
     return node;
   }
-  return find(node, shift + SHIFT, hash, key);
+  return undefined;
 }
 /**
  * @template K,V
