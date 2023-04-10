@@ -637,7 +637,7 @@ export function decode_map(data) {
   if (data instanceof PMap) {
     return new Ok(PMap.fromMap(data));
   }
-  if (data == null) {
+  if (typeof data !== "object") {
     return decoder_error("Map", data);
   }
   const proto = Object.getPrototypeOf(data);
