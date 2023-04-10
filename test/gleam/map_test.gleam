@@ -361,3 +361,17 @@ pub fn peters_bug_test() {
   |> map.get(0)
   |> should.equal(Error(Nil))
 }
+
+pub fn zero_must_be_contained_test() {
+  let map =
+    map.new()
+    |> map.insert(0, Nil)
+
+  map
+  |> map.get(0)
+  |> should.equal(Ok(Nil))
+
+  map
+  |> map.has_key(0)
+  |> should.equal(True)
+}

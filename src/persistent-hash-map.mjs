@@ -77,7 +77,7 @@ function hashObject(o) {
     try {
       const code = o.hashCode(o);
       if (typeof code === "number") {
-        return code
+        return code;
       }
     } catch {}
   }
@@ -955,4 +955,3 @@ export default class PMap {
     return equal;
   }
 }
-
