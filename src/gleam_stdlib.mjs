@@ -564,7 +564,9 @@ export function classify_dynamic(data) {
     return "Map";
   } else if (typeof data === "number") {
     return "Float";
-  } else if (data == null) {
+  } else if (data === null) {
+    return "Null";
+  } else if (data === undefined) {
     return "Nil";
   } else {
     let type = typeof data;
