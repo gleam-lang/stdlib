@@ -5,6 +5,7 @@
 - The `iterator` module gains the `each` function.
 - Fixed a bug in maps when running on JavaScript where value membership could be
   incorrectly stated in some cases.
+- Don't crash when `null` or `undefined` is passed to `dynamic.map`
 
 ## v0.28.0 - 2023-03-26
 
