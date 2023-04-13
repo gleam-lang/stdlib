@@ -682,15 +682,7 @@ fn ensure_tuple(
   value: Dynamic,
   desired_size: Int,
 ) -> Result(Dynamic, DecodeErrors) {
-  do_ensure_tuple(classify(value), value, desired_size)
-}
-
-fn do_ensure_tuple(
-  value_type: String,
-  value: Dynamic,
-  desired_size: Int,
-) -> Result(Dynamic, DecodeErrors) {
-  case value_type {
+  case classify(value) {
     "Tuple" <> _ -> assert_is_tuple(value, desired_size)
     "List" -> {
       use _ <- result.then(assert_is_list(value, desired_size))
