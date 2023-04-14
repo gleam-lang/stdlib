@@ -392,11 +392,11 @@ export function regex_scan(regex, string) {
     const submatches = [];
     for (let n = match.length - 1; n > 0; n--) {
       if (match[n]) {
-        submatches[n-1] = new Some(match[n])
-        continue
+        submatches[n - 1] = new Some(match[n]);
+        continue;
       }
-      if(submatches.length > 0) {
-        submatches[n-1] = new None()
+      if (submatches.length > 0) {
+        submatches[n - 1] = new None();
       }
     }
     return new RegexMatch(content, List.fromArray(submatches));
@@ -636,6 +636,9 @@ export function decode_result(data) {
 export function decode_map(data) {
   if (data instanceof PMap) {
     return new Ok(PMap.fromMap(data));
+  }
+  if (data == null) {
+    return decoder_error("Map", data);
   }
   if (typeof data !== "object") {
     return decoder_error("Map", data);
