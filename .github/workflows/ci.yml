@@ -19,6 +19,10 @@ jobs:
       - uses: actions/setup-node@v3.5.1
         with:
           node-version: "16.18.1"
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
       - run: gleam test --target erlang
       - run: gleam test --target javascript
+      - run: deno test
       - run: gleam format --check src test
