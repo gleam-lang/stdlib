@@ -41,7 +41,7 @@ decode_error_msg(Expected, Data) when is_binary(Expected) ->
 decode_error(Expected, Got) when is_binary(Expected) andalso is_binary(Got) ->
     {error, [{decode_error, Expected, Got, []}]}.
 
-classify_dynamic(X) when is_atom(X) -> <<"Atom">>;
+classify_dynamic(X) when is_atom(X) -> <<"Nil">>;
 classify_dynamic(X) when is_binary(X) -> <<"String">>;
 classify_dynamic(X) when is_bitstring(X) -> <<"BitString">>;
 classify_dynamic(X) when is_integer(X) -> <<"Int">>;
