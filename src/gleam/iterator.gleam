@@ -1304,7 +1304,7 @@ fn do_try_fold(
   case continuation() {
     Stop -> Ok(accumulator)
     Continue(elem, next) -> {
-      use accumulator <- result.then(f(accumulator, elem))
+      use accumulator <- result.try(f(accumulator, elem))
       do_try_fold(next, f, accumulator)
     }
   }
