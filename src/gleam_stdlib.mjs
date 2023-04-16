@@ -565,7 +565,7 @@ export function classify_dynamic(data) {
   } else if (typeof data === "number") {
     return "Float";
   } else if (data === null) {
-    return "Null";
+    return "Atom";
   } else if (data === undefined) {
     return "Nil";
   } else {
