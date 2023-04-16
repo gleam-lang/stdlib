@@ -178,10 +178,7 @@ pub fn try(
 
 /// DEPRECATED: Use `result.try` instead.
 ///
-pub fn then(
-  result: Result(a, e),
-  apply fun: fn(a) -> Result(b, e),
-) -> Result(b, e) {
+pub fn then(result, fun) {
   try(result, fun)
 }
 
