@@ -59,21 +59,21 @@ pub fn flatten_test() {
   |> should.equal(Error(Error(1)))
 }
 
-pub fn then_test() {
+pub fn try_test() {
   Error(1)
-  |> result.then(fn(x) { Ok(x + 1) })
+  |> result.try(fn(x) { Ok(x + 1) })
   |> should.equal(Error(1))
 
   Ok(1)
-  |> result.then(fn(x) { Ok(x + 1) })
+  |> result.try(fn(x) { Ok(x + 1) })
   |> should.equal(Ok(2))
 
   Ok(1)
-  |> result.then(fn(_) { Ok("type change") })
+  |> result.try(fn(_) { Ok("type change") })
   |> should.equal(Ok("type change"))
 
   Ok(1)
-  |> result.then(fn(_) { Error(1) })
+  |> result.try(fn(_) { Error(1) })
   |> should.equal(Error(1))
 }
 

@@ -137,26 +137,36 @@ pub fn flatten(result: Result(Result(a, e), e)) -> Result(a, e) {
 /// ## Examples
 ///
 /// ```gleam
-/// > then(Ok(1), fn(x) { Ok(x + 1) })
+/// > try(Ok(1), fn(x) { Ok(x + 1) })
 /// Ok(2)
 /// ```
 ///
 /// ```gleam
-/// > then(Ok(1), fn(x) { Ok(#("a", x)) })
+/// > try(Ok(1), fn(x) { Ok(#("a", x)) })
 /// Ok(#("a", 1))
 /// ```
 ///
 /// ```gleam
-/// > then(Ok(1), fn(_) { Error("Oh no") })
+/// > try(Ok(1), fn(_) { Error("Oh no") })
 /// Error("Oh no")
 /// ```
 ///
 /// ```gleam
-/// > then(Error(Nil), fn(x) { Ok(x + 1) })
+/// > try(Error(Nil), fn(x) { Ok(x + 1) })
 /// Error(Nil)
 /// ```
 ///
-pub fn then(
+/// `result.try` can be utilized the way
+/// ancient Gleam's `try` used to work:
+///
+/// ```text
+/// // Ancient try
+/// try file = open_file()
+/// // ... can be mimicked like so:
+/// use file <- try(open_file())
+/// ```
+///
+pub fn try(
   result: Result(a, e),
   apply fun: fn(a) -> Result(b, e),
 ) -> Result(b, e) {
@@ -164,6 +174,16 @@ pub fn then(
     Ok(x) -> fun(x)
     Error(e) -> Error(e)
   }
+}
+
+/// DEPRECATED: Use `result.try` instead,
+/// which has the same signature and does the same thing.
+///
+pub fn then(
+  result: Result(a, e),
+  apply fun: fn(a) -> Result(b, e),
+) -> Result(b, e) {
+  try(result, fun)
 }
 
 /// Extracts the `Ok` value from a result, returning a default value if the result
