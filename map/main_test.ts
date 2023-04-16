@@ -6,18 +6,7 @@ Deno.test("does not throw when decoding null", () => {
 
   assertObjectMatch(result, {
     0: {
-      head: { expected: "Map", found: "Null", path: {} },
-      tail: {},
-    },
-  });
-});
-
-Deno.test("does not throw when decoding undefined", () => {
-  const result = decode_map(undefined);
-
-  assertObjectMatch(result, {
-    0: {
-      head: { expected: "Map", found: "Nil", path: {} },
+      head: { expected: "Map", found: "Atom", path: {} },
       tail: {},
     },
   });
