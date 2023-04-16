@@ -176,8 +176,7 @@ pub fn try(
   }
 }
 
-/// DEPRECATED: Use `result.try` instead,
-/// which has the same signature and does the same thing.
+/// DEPRECATED: Use `result.try` instead.
 ///
 pub fn then(
   result: Result(a, e),
