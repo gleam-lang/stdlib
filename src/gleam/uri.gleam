@@ -103,7 +103,7 @@ if javascript {
     let fragment =
       fragment
       |> option.to_result(Nil)
-      |> result.then(string.pop_grapheme)
+      |> result.try(string.pop_grapheme)
       |> result.map(pair.second)
       |> option.from_result
     let scheme =
@@ -126,7 +126,7 @@ if javascript {
     |> regex.compile(regex.Options(case_insensitive: True, multi_line: False))
     |> result.nil_error
     |> result.map(regex.scan(_, string))
-    |> result.then(list.first)
+    |> result.try(list.first)
     |> result.map(fn(m: regex.Match) { m.submatches })
     |> result.unwrap([])
   }
