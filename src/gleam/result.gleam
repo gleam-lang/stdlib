@@ -168,7 +168,10 @@ pub fn try(
 
 /// An alias for `try`. See the documentation for that function for more information.
 ///
-pub fn then(result, fun) {
+pub fn then(
+  result: Result(a, e),
+  apply fun: fn(a) -> Result(b, e),
+)
   try(result, fun)
 }
 
