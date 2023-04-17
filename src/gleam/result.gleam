@@ -166,7 +166,7 @@ pub fn try(
   }
 }
 
-/// DEPRECATED: Use `result.try` instead.
+/// An alias for `try`. See the documentation for that function for more information.
 ///
 pub fn then(result, fun) {
   try(result, fun)
