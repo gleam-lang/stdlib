@@ -156,16 +156,6 @@ pub fn flatten(result: Result(Result(a, e), e)) -> Result(a, e) {
 /// Error(Nil)
 /// ```
 ///
-/// `result.try` can be utilized the way
-/// ancient Gleam's `try` used to work:
-///
-/// ```text
-/// // Ancient try
-/// try file = open_file()
-/// // ... can be mimicked like so:
-/// use file <- try(open_file())
-/// ```
-///
 pub fn try(
   result: Result(a, e),
   apply fun: fn(a) -> Result(b, e),
