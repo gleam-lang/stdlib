@@ -867,7 +867,7 @@ pub fn try_each_test() {
   list.try_each(
     over: [1, 1, 1],
     with: fn(x) {
-      let assert 1 = x
+      should.equal(x, 1)
       Ok(Nil)
     },
   )
@@ -876,7 +876,7 @@ pub fn try_each_test() {
   list.try_each(
     over: [1, 2, 3],
     with: fn(x) {
-      let assert 1 = x
+      should.equal(x, 1)
       Error(Nil)
     },
   )
