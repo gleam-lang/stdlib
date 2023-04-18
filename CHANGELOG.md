@@ -6,6 +6,7 @@
 - Fixed a bug in maps when running on JavaScript where value membership could be
   incorrectly stated in some cases.
 - `result.then` is now an alias of `result.try`; both do the same.
+- The `list` module gains the `try_each` function.
 
 ## v0.28.0 - 2023-03-26
 
