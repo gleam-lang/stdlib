@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- ...
+
+## v0.28.1 - 23-04-10
+
 - The `iterator` module gains the `each` function.
 - Fixed a bug in maps when running on JavaScript where value membership could be
   incorrectly stated in some cases.
