@@ -1571,6 +1571,33 @@ pub fn each(list: List(a), f: fn(a) -> b) -> Nil {
 /// If the returned value is `Ok(new_value)`, try_each will discard the return value and call
 /// the function on the next element of the list.
 /// If the returned value is `Error(error)`, try_each will stop and return Nil.
+///
+/// ## Examples
+///
+/// ```gleam
+/// list.try_each(
+///   over: [1, 2, 3],
+///   with: fn(x) {
+///     io.print(int.to_string(x))
+///     Ok(Nil)
+///   },
+/// )
+/// // -> 123
+/// ```
+///
+/// ```gleam
+/// list.try_each(
+///   over: [1, 2, 3],
+///   with: fn(x) {
+///     io.print(int.to_string(x))
+///     case x {
+///       2 -> Error(Nil)
+///       _ -> Ok(Nil)
+///     }
+///   },
+/// )
+/// // -> 12
+/// ```
 pub fn try_each(over list: List(a), with fun: fn(a) -> Result(b, c)) -> Nil {
   case list {
     [] -> Nil
