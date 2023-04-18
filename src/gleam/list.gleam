@@ -1565,38 +1565,42 @@ pub fn each(list: List(a), f: fn(a) -> b) -> Nil {
   }
 }
 
-/// A variant of each that might fail.
+/// Used to iterate through a list of items and execute a side effect per item as long as the
+/// previous side effect execution returned an `Ok(_)`.
 ///
-/// Takes a function that returns a result and tries to calls it for each element in a list.
-/// If the returned value is `Ok(new_value)`, try_each will discard the return value and call
-/// the function on the next element of the list.
-/// If the returned value is `Error(error)`, try_each will stop and return Nil.
+/// Takes a function that returns a `Result`. The function is applied to each list item.
+/// If the function application on an item returns `Ok(_)`, then `try_each` will go on and apply the
+/// function to the next item.
+///
+/// However, if any application returns an `Error(_)`, at that point the function will stop executing.
+/// In any case the function returns `Nil`, even if it passes through all items or incurs in an
+/// `Error`.
 ///
 /// ## Examples
 ///
 /// ```gleam
-/// list.try_each(
-///   over: [1, 2, 3],
-///   with: fn(x) {
-///     io.print(int.to_string(x))
-///     Ok(Nil)
-///   },
-/// )
-/// // -> 123
+/// > try_each(
+/// >   over: [1, 2, 3],
+/// >   with: fn(x) {
+/// >     io.print(int.to_string(x)) // prints "1" "2" "3" as single side effects.
+/// >     Ok(Nil)
+/// >   },
+/// > )
+/// Nil
 /// ```
 ///
 /// ```gleam
-/// list.try_each(
-///   over: [1, 2, 3],
-///   with: fn(x) {
-///     io.print(int.to_string(x))
-///     case x {
-///       2 -> Error(Nil)
-///       _ -> Ok(Nil)
-///     }
-///   },
-/// )
-/// // -> 12
+/// > try_each(
+/// >   over: [1, 2, 3],
+/// >   with: fn(x) {
+/// >     io.print(int.to_string(x)) // prints "1" "2" as single side effects.
+/// >     case x {
+/// >       2 -> Error(Nil)
+/// >       _ -> Ok(Nil)
+/// >     }
+/// >   },
+/// > )
+/// Nil
 /// ```
 pub fn try_each(over list: List(a), with fun: fn(a) -> Result(b, c)) -> Nil {
   case list {
