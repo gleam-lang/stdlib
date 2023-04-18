@@ -863,6 +863,29 @@ pub fn each_test() {
   )
 }
 
+pub fn try_each_test() {
+  list.try_each(
+    over: [1, 1, 1],
+    with: fn(x) {
+      let assert 1 = x
+      Ok(Nil)
+    },
+  )
+
+  // `try_each` actually stops when `fun` returns error
+  list.try_each(
+    over: [1, 2, 3],
+    with: fn(x) {
+      let assert 1 = x
+      Error(Nil)
+    },
+  )
+
+  // TCO test
+  list.repeat(1, recursion_test_cycles)
+  |> list.try_each(with: fn(_) { Ok(Nil) })
+}
+
 pub fn partition_test() {
   [1, 2, 3, 4, 5, 6, 7]
   |> list.partition(int.is_odd)
