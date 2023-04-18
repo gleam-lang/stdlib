@@ -1572,7 +1572,14 @@ pub fn each(list: List(a), f: fn(a) -> b) -> Nil {
 /// the function on the next element of the list.
 /// If the returned value is `Error(error)`, try_each will stop and return Nil.
 pub fn try_each(over list: List(a), with fun: fn(a) -> Result(b, c)) -> Nil {
-  todo
+  case list {
+    [] -> Nil
+    [x, ..xs] ->
+      case fun(x) {
+        Ok(_) -> try_each(over: xs, with: fun)
+        Error(_) -> Nil
+      }
+  }
 }
 
 fn do_partition(list, categorise, trues, falses) {
