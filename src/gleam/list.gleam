@@ -1571,8 +1571,8 @@ pub fn each(list: List(a), f: fn(a) -> b) -> Nil {
 /// Takes a function that returns a `Result`. The function is applied to each list item.
 /// If the function application on an item returns `Ok(_)`, then `try_each` will go on and apply the
 /// function to the next item.
-///
 /// However, if any application returns an `Error(_)`, at that point the function will stop executing.
+///
 /// In any case the function returns `Nil`, even if it passes through all items or incurs in an
 /// `Error`.
 ///
@@ -1582,7 +1582,7 @@ pub fn each(list: List(a), f: fn(a) -> b) -> Nil {
 /// > try_each(
 /// >   over: [1, 2, 3],
 /// >   with: fn(x) {
-/// >     io.print(int.to_string(x)) // prints "1" "2" "3" as single side effects.
+/// >     x |> int.to_string |> io.print // prints "1" "2" "3" as single side effects.
 /// >     Ok(Nil)
 /// >   },
 /// > )
@@ -1593,7 +1593,7 @@ pub fn each(list: List(a), f: fn(a) -> b) -> Nil {
 /// > try_each(
 /// >   over: [1, 2, 3],
 /// >   with: fn(x) {
-/// >     io.print(int.to_string(x)) // prints "1" "2" as single side effects.
+/// >     x |> int.to_string |> io.print // prints "1" "2" as single side effects.
 /// >     case x {
 /// >       2 -> Error(Nil)
 /// >       _ -> Ok(Nil)
