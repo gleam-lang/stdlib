@@ -1565,6 +1565,16 @@ pub fn each(list: List(a), f: fn(a) -> b) -> Nil {
   }
 }
 
+/// A variant of each that might fail.
+///
+/// Takes a function that returns a result and tries to calls it for each element in a list.
+/// If the returned value is `Ok(new_value)`, try_each will discard the return value and call
+/// the function on the next element of the list.
+/// If the returned value is `Error(error)`, try_each will stop and return Nil.
+pub fn try_each(over list: List(a), with fun: fn(a) -> Result(b, c)) -> Nil {
+  todo
+}
+
 fn do_partition(list, categorise, trues, falses) {
   case list {
     [] -> #(reverse(trues), reverse(falses))
