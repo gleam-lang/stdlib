@@ -861,8 +861,14 @@ pub fn tuple5(
 /// > from(#(1, 2))
 /// > |> tuple6(int, float, string, int, int, int)
 /// Error([
-///   DecodeError(expected: "6 element tuple", found: "2 element tuple", path: []),
+///   DecodeError(expected: "Tuple of 6 elements", found: "Tuple of 2 elements", path: []),
 /// ])
+/// ```
+///
+/// ```gleam
+/// > from("")
+/// > |> tuple6(int, float, string, int, int, int)
+/// Error([DecodeError(expected: "Tuple of 6 elements", found: "String", path: [])])
 /// ```
 ///
 pub fn tuple6(
