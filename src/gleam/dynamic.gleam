@@ -429,7 +429,7 @@ pub fn list(
 /// ```gleam
 /// > from(123)
 /// > |> optional(string)
-/// Error([DecodeError(expected: "BitString", found: "Int", path: [])])
+/// Error([DecodeError(expected: "String", found: "Int", path: [])])
 /// ```
 ///
 pub fn optional(of decode: Decoder(inner)) -> Decoder(Option(inner)) {
