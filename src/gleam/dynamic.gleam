@@ -755,7 +755,7 @@ pub fn tuple3(
 /// > from(#(1, 2))
 /// > |> tuple4(int, float, string, int)
 /// Error([
-///   DecodeError(expected: "4 element tuple", found: "2 element tuple", path: []),
+///   DecodeError(expected: "Tuple of 4 elements", found: "Tuple of 2 elements", path: []),
 /// ])
 /// ```
 ///
@@ -763,7 +763,7 @@ pub fn tuple3(
 /// > from("")
 /// > |> tuple4(int, float, string, int)
 /// Error([
-///   DecodeError(expected: "4 element tuple", found: "String", path: []),
+///   DecodeError(expected: "Tuple of 4 elements", found: "String", path: []),
 /// ])
 /// ```
 ///
