@@ -77,6 +77,24 @@ pub fn try_test() {
   |> should.equal(Error(1))
 }
 
+pub fn then_test() {
+  Error(1)
+  |> result.then(fn(x) { Ok(x + 1) })
+  |> should.equal(Error(1))
+
+  Ok(1)
+  |> result.then(fn(x) { Ok(x + 1) })
+  |> should.equal(Ok(2))
+
+  Ok(1)
+  |> result.then(fn(_) { Ok("type change") })
+  |> should.equal(Ok("type change"))
+
+  Ok(1)
+  |> result.then(fn(_) { Error(1) })
+  |> should.equal(Error(1))
+}
+
 pub fn unwrap_test() {
   Ok(1)
   |> result.unwrap(50)
