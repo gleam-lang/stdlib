@@ -239,7 +239,7 @@ if javascript {
 ///
 /// ```gleam
 /// > bool(from(123))
-/// Error([DecodeError(expected: "bool", found: "Int", path: [])])
+/// Error([DecodeError(expected: "Bool", found: "Int", path: [])])
 /// ```
 ///
 pub fn bool(from data: Dynamic) -> Result(Bool, DecodeErrors) {
