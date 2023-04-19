@@ -981,7 +981,7 @@ if javascript {
 ///
 /// ```gleam
 /// > bool_or_string(from(1))
-/// Error(DecodeError(expected: "unknown", found: "unknown", path: []))
+/// Error(DecodeError(expected: "another type", found: "Int", path: []))
 /// ```
 ///
 pub fn any(of decoders: List(Decoder(t))) -> Decoder(t) {
