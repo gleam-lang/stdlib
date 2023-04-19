@@ -171,7 +171,7 @@ pub fn try(
 pub fn then(
   result: Result(a, e),
   apply fun: fn(a) -> Result(b, e),
-)
+) -> Result(b, e) {
   try(result, fun)
 }
 

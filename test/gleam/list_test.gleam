@@ -846,11 +846,21 @@ pub fn key_set_test() {
 }
 
 pub fn each_test() {
-  list.each([1, 1, 1], fn(x) { let assert 1 = x })
+  list.each(
+    [1, 1, 1],
+    fn(x) {
+      let assert 1 = x
+    },
+  )
   |> should.equal(Nil)
 
   // TCO test
-  list.each(list.repeat(1, recursion_test_cycles), fn(x) { let assert 1 = x })
+  list.each(
+    list.repeat(1, recursion_test_cycles),
+    fn(x) {
+      let assert 1 = x
+    },
+  )
 }
 
 pub fn partition_test() {
