@@ -371,7 +371,7 @@ pub fn result(
 /// ```gleam
 /// > from([1, 2, 3])
 /// > |> list(of: string)
-/// Error([DecodeError(expected: "String", found: "Int", path: [])])
+/// Error([DecodeError(expected: "String", found: "Int", path: ["*"])])
 /// ```
 ///
 /// ```gleam
