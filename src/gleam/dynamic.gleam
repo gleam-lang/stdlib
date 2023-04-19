@@ -657,14 +657,14 @@ fn push_path(error: DecodeError, name: t) -> DecodeError {
 /// > from(#(1, 2, 3))
 /// > |> tuple2(int, float)
 /// Error([
-///   DecodeError(expected: "2 element tuple", found: "3 element tuple", path: []),
+///   DecodeError(expected: "Tuple of 2 elements", found: "Tuple of 3 elements", path: []),
 /// ])
 /// ```
 ///
 /// ```gleam
 /// > from("")
 /// > |> tuple2(int, float)
-/// Error([DecodeError(expected: "2 element tuple", found: "String", path: [])])
+/// Error([DecodeError(expected: "Tuple of 2 elements", found: "String", path: [])])
 /// ```
 ///
 pub fn tuple2(
