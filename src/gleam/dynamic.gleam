@@ -321,7 +321,7 @@ if javascript {
 /// ```gleam
 /// > from(123)
 /// > |> result(ok: int, error: string)
-/// Error([DecodeError(expected: "2 element tuple", found: "Int", path: [])])
+/// Error([DecodeError(expected: "Result", found: "Int", path: [])])
 /// ```
 ///
 pub fn result(
