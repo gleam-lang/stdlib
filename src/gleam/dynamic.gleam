@@ -809,12 +809,12 @@ pub fn tuple4(
 /// > from(#(1, 2))
 /// > |> tuple5(int, float, string, int, int)
 /// Error([
-///   DecodeError(expected: "5 element tuple", found: "2 element tuple", path: [])),
+///   DecodeError(expected: "Tuple of 5 elements", found: "Tuple of 2 elements", path: [])),
 /// ])
 ///
 /// > from("")
 /// > |> tuple5(int, float, string, int, int)
-/// Error([DecodeError(expected: "5 element tuple", found: "String", path: [])])
+/// Error([DecodeError(expected: "Tuple of 5 elements", found: "String", path: [])])
 /// ```
 ///
 pub fn tuple5(
