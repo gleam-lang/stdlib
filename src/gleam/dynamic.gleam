@@ -271,7 +271,7 @@ if javascript {
 ///
 /// ```gleam
 /// > shallow_list(1)
-/// Error([DecodeError(expected: "Int", found: "Int", path: [])])
+/// Error([DecodeError(expected: "List", found: "Int", path: [])])
 /// ```
 ///
 pub fn shallow_list(from value: Dynamic) -> Result(List(Dynamic), DecodeErrors) {
