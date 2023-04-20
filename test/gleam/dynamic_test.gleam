@@ -51,6 +51,35 @@ if javascript {
   }
 }
 
+if erlang {
+  pub type MyAtom {
+    ThisIsAnAtom
+  }
+
+  pub fn map_from_atom_test() {
+    ThisIsAnAtom
+    |> dynamic.from
+    |> dynamic.map(dynamic.string, dynamic.int)
+    |> should.equal(Error([
+      DecodeError(expected: "Map", found: "Atom", path: []),
+    ]))
+  }
+}
+
+if javascript {
+  external fn get_null() -> dynamic.Dynamic =
+    "../gleam_stdlib_test_ffi.mjs" "get_null"
+
+  pub fn map_from_null_test() {
+    get_null()
+    |> dynamic.from
+    |> dynamic.map(dynamic.string, dynamic.int)
+    |> should.equal(Error([
+      DecodeError(expected: "Map", found: "Null", path: []),
+    ]))
+  }
+}
+
 pub fn string_test() {
   ""
   |> dynamic.from
