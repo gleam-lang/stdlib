@@ -461,7 +461,9 @@ if javascript {
 ///
 /// ```gleam
 /// > import gleam/map
-/// > from(map.new("Hello", "World"))
+/// > map.new()
+/// > |> map.insert("Hello", "World")
+/// > |> from
 /// > |> field(named: "Hello", of: string)
 /// Ok("World")
 /// ```
