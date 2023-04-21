@@ -484,6 +484,54 @@ pub fn field(named name: a, of inner_type: Decoder(t)) -> Decoder(t) {
   }
 }
 
+/// Checks to see if a `Dynamic` value is a map with a specific field.
+/// If the map does not have the specified field, returns an `Ok(None)` instead of failing; otherwise,
+/// returns the decoded field wrapped in `Some(_)`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > import gleam/map
+/// > map.new()
+/// > |> map.insert("Hello", "World")
+/// > |> from
+/// > |> field(named: "Hello", of: string)
+/// Ok(Some("World"))
+/// ```
+///
+/// ```gleam
+/// > import gleam/map
+/// > map.new()
+/// > |> from
+/// > |> field(named: "Hello", of: string)
+/// Ok(None)
+/// ```
+///
+/// ```gleam
+/// > from(123)
+/// > |> field("Hello", string)
+/// Error([DecodeError(expected: "Map", found: "Int", path: [])])
+/// ```
+///
+pub fn optional_field(
+  named name: a,
+  of inner_type: Decoder(t),
+) -> Decoder(Option(t)) {
+  fn(value) {
+    case decode_field(value, name) {
+      Error(not_a_map_errors) -> Error(not_a_map_errors)
+      Ok(dynamic_field_result) ->
+        case dynamic_field_result {
+          Error(_) -> Ok(option.None)
+          Ok(dynamic_field) ->
+            dynamic_field
+            |> decode_optional(inner_type)
+            |> map_errors(push_path(_, name))
+        }
+    }
+  }
+}
+
 if erlang {
   external fn decode_field(
     Dynamic,
