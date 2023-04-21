@@ -864,26 +864,29 @@ pub fn each_test() {
 }
 
 pub fn try_each_test() {
-  list.try_each(
-    over: [1, 1, 1],
-    with: fn(x) {
-      should.equal(x, 1)
-      Ok(Nil)
-    },
-  )
+  let assert Ok(Nil) =
+    list.try_each(
+      over: [1, 1, 1],
+      with: fn(x) {
+        should.equal(x, 1)
+        Ok(Nil)
+      },
+    )
 
   // `try_each` actually stops when `fun` returns error
-  list.try_each(
-    over: [1, 2, 3],
-    with: fn(x) {
-      should.equal(x, 1)
-      Error(Nil)
-    },
-  )
+  let assert Error(1) =
+    list.try_each(
+      over: [1, 2, 3],
+      with: fn(x) {
+        should.equal(x, 1)
+        Error(x)
+      },
+    )
 
   // TCO test
-  list.repeat(1, recursion_test_cycles)
-  |> list.try_each(with: fn(_) { Ok(Nil) })
+  let assert Ok(Nil) =
+    list.repeat(1, recursion_test_cycles)
+    |> list.try_each(with: fn(_) { Ok(Nil) })
 }
 
 pub fn partition_test() {
