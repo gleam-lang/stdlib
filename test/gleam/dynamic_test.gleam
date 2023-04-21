@@ -359,6 +359,62 @@ pub fn field_test() {
   ]))
 }
 
+pub fn optional_field_test() {
+  map.new()
+  |> map.insert("ok", 1)
+  |> dynamic.from
+  |> dynamic.optional_field(named: "ok", of: dynamic.int)
+  |> should.equal(Ok(Some(1)))
+
+  map.new()
+  |> map.insert("ok", 1.0)
+  |> dynamic.from
+  |> dynamic.optional_field(named: "ok", of: dynamic.float)
+  |> should.equal(Ok(Some(1.0)))
+
+  map.new()
+  |> map.insert("ok", 3)
+  |> map.insert("error", 1)
+  |> dynamic.from
+  |> dynamic.optional_field("ok", dynamic.int)
+  |> should.equal(Ok(Some(3)))
+
+  map.new()
+  |> map.insert("ok", 3)
+  |> dynamic.from
+  |> dynamic.optional_field("ok", dynamic.string)
+  |> should.equal(Error([
+    DecodeError(expected: "String", found: "Int", path: ["ok"]),
+  ]))
+
+  map.new()
+  |> map.insert("ok", None)
+  |> dynamic.from
+  |> dynamic.optional_field("ok", dynamic.int)
+  |> should.equal(Ok(None))
+
+  map.new()
+  |> map.insert("ok", Nil)
+  |> dynamic.from
+  |> dynamic.optional_field("ok", dynamic.int)
+  |> should.equal(Ok(None))
+
+  map.new()
+  |> dynamic.from
+  |> dynamic.optional_field("ok", dynamic.int)
+  |> should.equal(Ok(None))
+
+  1
+  |> dynamic.from
+  |> dynamic.optional_field("ok", dynamic.int)
+  |> should.equal(Error([DecodeError(expected: "Map", found: "Int", path: [])]))
+
+  []
+  |> dynamic.from
+  |> dynamic.optional_field("ok", dynamic.int)
+  |> should.equal(Error([DecodeError(expected: "Map", found: "List", path: [])]))
+}
+
 pub fn element_test() {
   let ok_one_tuple = #("ok", 1)
 
