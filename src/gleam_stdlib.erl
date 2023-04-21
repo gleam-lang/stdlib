@@ -78,12 +78,14 @@ decode_bool(Data) -> decode_error_msg(<<"Bool">>, Data).
 decode_list(Data) when is_list(Data) -> {ok, Data};
 decode_list(Data) -> decode_error_msg(<<"List">>, Data).
 
-decode_field(Data, Key) ->
+decode_field(Data, Key) when is_map(Data) ->
     case Data of
-        #{Key := Value} -> {ok, Value};
+        #{Key := Value} -> {ok, {ok, Value}};
         _ ->
-            decode_error(<<"field"/utf8>>, <<"nothing"/utf8>>)
-    end.
+            {ok, decode_error(<<"field"/utf8>>, <<"nothing"/utf8>>)}
+    end;
+decode_field(Data, _) ->
+    decode_error_msg(<<"Map">>, Data).
 
 size_of_tuple(Data) -> tuple_size(Data).
 
