@@ -474,20 +474,29 @@ if javascript {
 ///
 pub fn field(named name: a, of inner_type: Decoder(t)) -> Decoder(t) {
   fn(value) {
-    value
-    |> decode_field(name)
-    |> result.try(inner_type)
-    |> map_errors(push_path(_, name))
+    case decode_field(value, name) {
+      Error(not_a_map_errors) -> Error(not_a_map_errors)
+      Ok(dynamic_field_result) ->
+        dynamic_field_result
+        |> result.try(inner_type)
+        |> map_errors(push_path(_, name))
+    }
   }
 }
 
 if erlang {
-  external fn decode_field(Dynamic, name) -> Result(Dynamic, DecodeErrors) =
+  external fn decode_field(
+    Dynamic,
+    name,
+  ) -> Result(Result(Dynamic, DecodeErrors), DecodeErrors) =
     "gleam_stdlib" "decode_field"
 }
 
 if javascript {
-  external fn decode_field(Dynamic, name) -> Result(Dynamic, DecodeErrors) =
+  external fn decode_field(
+    Dynamic,
+    name,
+  ) -> Result(Result(Dynamic, DecodeErrors), DecodeErrors) =
     "../gleam_stdlib.mjs" "decode_field"
 }
 
