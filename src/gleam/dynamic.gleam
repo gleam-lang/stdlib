@@ -476,13 +476,14 @@ if javascript {
 ///
 pub fn field(named name: a, of inner_type: Decoder(t)) -> Decoder(t) {
   fn(value) {
-    case decode_field(value, name) {
-      Error(not_a_map_errors) -> Error(not_a_map_errors)
-      Ok(dynamic_field_result) ->
-        dynamic_field_result
-        |> result.try(inner_type)
-        |> map_errors(push_path(_, name))
-    }
+    let missing_field_error =
+      DecodeError(expected: "field", found: "nothing", path: [])
+
+    use maybe_inner <- result.try(decode_field(value, name))
+    maybe_inner
+    |> option.to_result([missing_field_error])
+    |> result.try(inner_type)
+    |> map_errors(push_path(_, name))
   }
 }
 
@@ -520,16 +521,13 @@ pub fn optional_field(
   of inner_type: Decoder(t),
 ) -> Decoder(Option(t)) {
   fn(value) {
-    case decode_field(value, name) {
-      Error(not_a_map_errors) -> Error(not_a_map_errors)
-      Ok(dynamic_field_result) ->
-        case dynamic_field_result {
-          Error(_) -> Ok(option.None)
-          Ok(dynamic_field) ->
-            dynamic_field
-            |> decode_optional(inner_type)
-            |> map_errors(push_path(_, name))
-        }
+    use maybe_inner <- result.try(decode_field(value, name))
+    case maybe_inner {
+      option.None -> Ok(option.None)
+      option.Some(dynamic_inner) ->
+        dynamic_inner
+        |> decode_optional(inner_type)
+        |> map_errors(push_path(_, name))
     }
   }
 }
@@ -538,7 +536,7 @@ if erlang {
   external fn decode_field(
     Dynamic,
     name,
-  ) -> Result(Result(Dynamic, DecodeErrors), DecodeErrors) =
+  ) -> Result(Option(Dynamic), DecodeErrors) =
     "gleam_stdlib" "decode_field"
 }
 
@@ -546,7 +544,7 @@ if javascript {
   external fn decode_field(
     Dynamic,
     name,
-  ) -> Result(Result(Dynamic, DecodeErrors), DecodeErrors) =
+  ) -> Result(Option(Dynamic), DecodeErrors) =
     "../gleam_stdlib.mjs" "decode_field"
 }
 
