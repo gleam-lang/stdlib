@@ -80,9 +80,9 @@ decode_list(Data) -> decode_error_msg(<<"List">>, Data).
 
 decode_field(Data, Key) when is_map(Data) ->
     case Data of
-        #{Key := Value} -> {ok, {ok, Value}};
+        #{Key := Value} -> {ok, {some, Value}};
         _ ->
-            {ok, decode_error(<<"field"/utf8>>, <<"nothing"/utf8>>)}
+            {ok, none}
     end;
 decode_field(Data, _) ->
     decode_error_msg(<<"Map">>, Data).

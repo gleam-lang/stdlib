@@ -663,14 +663,13 @@ export function decode_option(data, decoder) {
 }
 
 export function decode_field(value, name) {
-  let missing_field_error = () => decoder_error_no_classify("field", "nothing");
   let not_a_map_error = () => decoder_error("Map", value);
 
   if (value instanceof PMap || value instanceof WeakMap || value instanceof Map) {
     let entry = map_get(value, name);
-    return new Ok(entry.isOk() ? entry : missing_field_error());
+    return new Ok(entry.isOk() ? new Some(entry[0]) : new None());
   } else if (Object.getPrototypeOf(value) == Object.prototype) {
-    return try_get_field(value, name, () => new Ok(missing_field_error()));
+    return try_get_field(value, name, () => new Ok(new None()));
   } else {
     return try_get_field(value, name, not_a_map_error);
   }
@@ -678,7 +677,7 @@ export function decode_field(value, name) {
 
 function try_get_field(value, field, or_else) {
   try {
-    return field in value ? new Ok(new Ok(value[field])) : or_else();
+    return field in value ? new Ok(new Some(value[field])) : or_else();
   } catch {
     return or_else();
   }
