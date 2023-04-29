@@ -6,3 +6,7 @@ export function uint8array(list) {
   }
   return array;
 }
+
+export function get_null() {
+  return null;
+}
