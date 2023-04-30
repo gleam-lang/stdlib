@@ -616,8 +616,47 @@ export function decode_tuple(data) {
   return Array.isArray(data) ? new Ok(data) : decoder_error("Tuple", data);
 }
 
-export function list_to_tuple(data) {
-  return List.isList(data) ? new Ok([...data]) : decoder_error("List", data);
+export function decode_tuple2(data) {
+  return decode_tupleN(data, 2);
+}
+
+export function decode_tuple3(data) {
+  return decode_tupleN(data, 3);
+}
+
+export function decode_tuple4(data) {
+  return decode_tupleN(data, 4);
+}
+
+export function decode_tuple5(data) {
+  return decode_tupleN(data, 5);
+}
+
+export function decode_tuple6(data) {
+  return decode_tupleN(data, 6);
+}
+
+function decode_tupleN(data, n) {
+  let error_message = `Tuple or List of ${n} elements`;
+
+  if (!(List.isList(data) || Array.isArray(data))) {
+    return decoder_error(error_message, data);
+  }
+
+  let array = List.isList(data) ? [...data] : data; 
+
+  let i = 0;
+  for (; i < n; i++) {
+    if (array[i] === undefined) {
+      return decoder_error(error_message, data);
+    }
+  }
+
+  if (array[i] === undefined) {
+    return new Ok(array);
+  } else {
+    return decoder_error(error_message, data);
+  }
 }
 
 export function tuple_get(data, index) {
