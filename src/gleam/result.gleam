@@ -366,6 +366,36 @@ pub fn all(results: List(Result(a, e))) -> Result(List(a), e) {
   list.try_map(results, fn(x) { x })
 }
 
+/// TODO Add doc!
+pub fn partition(results: List(Result(a, e))) -> Result(List(a), List(e)) {
+  case results {
+    [] -> Ok([])
+    [Ok(a), ..rest] -> do_partition(rest, Ok([a]))
+    [Error(b), ..rest] -> do_partition(rest, Error([b]))
+  }
+}
+
+fn do_partition(results: List(Result(a, b)), acc: Result(List(a), List(b))) {
+  case results {
+    [] ->
+      acc
+      |> map(list.reverse)
+      |> map_error(list.reverse)
+
+    [Ok(a), ..rest] ->
+      case acc {
+        Ok(all_as) -> do_partition(rest, Ok([a, ..all_as]))
+        Error(all_bs) -> do_partition(rest, Error(all_bs))
+      }
+
+    [Error(b), ..rest] ->
+      case acc {
+        Ok(_) -> do_partition(rest, Error([b]))
+        Error(all_bs) -> do_partition(rest, Error([b, ..all_bs]))
+      }
+  }
+}
+
 /// Replace the value within a result
 ///
 /// ## Examples

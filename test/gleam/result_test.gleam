@@ -1,3 +1,4 @@
+import gleam/list
 import gleam/result
 import gleam/should
 
@@ -193,6 +194,41 @@ pub fn all_test() {
   [Ok(1), Error("a"), Error("b"), Ok(3)]
   |> result.all
   |> should.equal(Error("a"))
+}
+
+pub fn partition_test() {
+  []
+  |> result.partition
+  |> should.equal(Ok([]))
+
+  [Ok(1), Ok(2), Ok(3)]
+  |> result.partition
+  |> should.equal(Ok([1, 2, 3]))
+
+  [Error("a"), Error("b"), Error("c")]
+  |> result.partition
+  |> should.equal(Error(["a", "b", "c"]))
+
+  [Error("a"), Ok(1), Ok(2)]
+  |> result.partition
+  |> should.equal(Error(["a"]))
+
+  [Ok(1), Ok(2), Error("a")]
+  |> result.partition
+  |> should.equal(Error(["a"]))
+
+  [Ok(1), Error("a"), Ok(2), Error("b"), Error("c")]
+  |> result.partition
+  |> should.equal(Error(["a", "b", "c"]))
+
+  // TCO test
+  list.repeat(Ok(1), 1_000_000)
+  |> result.partition
+  |> should.be_ok
+
+  list.repeat(Error("a"), 1_000_000)
+  |> result.partition
+  |> should.be_error
 }
 
 pub fn replace_error_test() {
