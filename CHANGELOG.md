@@ -6,6 +6,7 @@
   of `null` or `undefined`.
 - Fixed a bug where `io.debug` would crash when called in a React Native
   environment.
+- The `result` module gains the `partition` function.
 
 ## v0.28.1 - 2023-04-10
 
