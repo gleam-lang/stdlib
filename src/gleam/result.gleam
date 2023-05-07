@@ -366,7 +366,22 @@ pub fn all(results: List(Result(a, e))) -> Result(List(a), e) {
   list.try_map(results, fn(x) { x })
 }
 
-/// TODO Add doc!
+/// Combines a list of results into a single result.
+/// If all elements in the list are `Ok` then returns an `Ok` holding the list of values.
+/// If any element is `Error` then returns an `Error` holding the list of all errors.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > partition([Ok(1), Ok(2)])
+/// Ok([1, 2])
+/// ```
+///
+/// ```gleam
+/// > partition([Ok(1), Error("a"), Error("b")])
+/// Error(["a", "b"])
+/// ```
+///
 pub fn partition(results: List(Result(a, e))) -> Result(List(a), List(e)) {
   case results {
     [] -> Ok([])
