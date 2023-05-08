@@ -366,48 +366,26 @@ pub fn all(results: List(Result(a, e))) -> Result(List(a), e) {
   list.try_map(results, fn(x) { x })
 }
 
-/// Combines a list of results into a single result.
-/// If all elements in the list are `Ok` then returns an `Ok` holding the list of values.
-/// If any element is `Error` then returns an `Error` holding the list of all errors.
+/// Given a list of results, returns a pair where the first element is a list
+/// of all the values inside `Ok` and the second element is a list with all the
+/// values inside `Error`.
 ///
 /// ## Examples
 ///
 /// ```gleam
-/// > partition([Ok(1), Ok(2)])
-/// Ok([1, 2])
+/// > partition([Ok(1), Error("a"), Error("b"), Ok(2)])
+/// #([1, 2], ["a", "b"])
 /// ```
 ///
-/// ```gleam
-/// > partition([Ok(1), Error("a"), Error("b")])
-/// Error(["a", "b"])
-/// ```
-///
-pub fn partition(results: List(Result(a, e))) -> Result(List(a), List(e)) {
-  case results {
-    [] -> Ok([])
-    [Ok(a), ..rest] -> do_partition(rest, Ok([a]))
-    [Error(b), ..rest] -> do_partition(rest, Error([b]))
-  }
+pub fn partition(results: List(Result(a, e))) -> #(List(a), List(e)) {
+  do_partition(results, [], [])
 }
 
-fn do_partition(results: List(Result(a, b)), acc: Result(List(a), List(b))) {
+fn do_partition(results: List(Result(a, e)), oks: List(a), errors: List(e)) {
   case results {
-    [] ->
-      acc
-      |> map(list.reverse)
-      |> map_error(list.reverse)
-
-    [Ok(a), ..rest] ->
-      case acc {
-        Ok(all_as) -> do_partition(rest, Ok([a, ..all_as]))
-        Error(all_bs) -> do_partition(rest, Error(all_bs))
-      }
-
-    [Error(b), ..rest] ->
-      case acc {
-        Ok(_) -> do_partition(rest, Error([b]))
-        Error(all_bs) -> do_partition(rest, Error([b, ..all_bs]))
-      }
+    [] -> #(list.reverse(oks), list.reverse(errors))
+    [Ok(a), ..rest] -> do_partition(rest, [a, ..oks], errors)
+    [Error(e), ..rest] -> do_partition(rest, oks, [e, ..errors])
   }
 }
 
