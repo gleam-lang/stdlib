@@ -2,7 +2,10 @@
 
 ## Unreleased
 
-- Don't crash when `null` or `undefined` is passed to `dynamic.map`
+- Fixed a bug where `dynamic.map` would crash when passed the JavaScript values
+  of `null` or `undefined`.
+- Fixed a bug where `io.debug` would crash when called in a React Native
+  environment.
 
 ## v0.28.1 - 2023-04-10
 - The `iterator` module gains the `each` function.
