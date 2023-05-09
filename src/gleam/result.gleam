@@ -368,13 +368,14 @@ pub fn all(results: List(Result(a, e))) -> Result(List(a), e) {
 
 /// Given a list of results, returns a pair where the first element is a list
 /// of all the values inside `Ok` and the second element is a list with all the
-/// values inside `Error`.
+/// values inside `Error`. The values in both lists appear in reverse order with
+/// respect to their position in the original list of results. 
 ///
 /// ## Examples
 ///
 /// ```gleam
 /// > partition([Ok(1), Error("a"), Error("b"), Ok(2)])
-/// #([1, 2], ["a", "b"])
+/// #([2, 1], ["b", "a"])
 /// ```
 ///
 pub fn partition(results: List(Result(a, e))) -> #(List(a), List(e)) {
@@ -383,7 +384,7 @@ pub fn partition(results: List(Result(a, e))) -> #(List(a), List(e)) {
 
 fn do_partition(results: List(Result(a, e)), oks: List(a), errors: List(e)) {
   case results {
-    [] -> #(list.reverse(oks), list.reverse(errors))
+    [] -> #(oks, errors)
     [Ok(a), ..rest] -> do_partition(rest, [a, ..oks], errors)
     [Error(e), ..rest] -> do_partition(rest, oks, [e, ..errors])
   }
