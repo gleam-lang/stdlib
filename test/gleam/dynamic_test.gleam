@@ -511,7 +511,7 @@ pub fn tuple2_test() {
   |> should.equal(Error([
     DecodeError(
       path: [],
-      expected: "Tuple or List of 2 elements",
+      expected: "Tuple of 2 elements",
       found: "Tuple of 3 elements",
     ),
   ]))
@@ -520,7 +520,7 @@ pub fn tuple2_test() {
   |> dynamic.from
   |> dynamic.tuple2(dynamic.int, dynamic.int)
   |> should.equal(Error([
-    DecodeError(path: [], expected: "Tuple or List of 2 elements", found: "Int"),
+    DecodeError(path: [], expected: "Tuple of 2 elements", found: "Int"),
   ]))
 
   [1, 2]
@@ -547,7 +547,7 @@ pub fn tuple2_test() {
   |> should.equal(Error([
     DecodeError(
       path: [],
-      expected: "Tuple or List of 2 elements",
+      expected: "Tuple of 2 elements",
       found: "List",
     ),
   ]))
@@ -558,7 +558,7 @@ pub fn tuple2_test() {
   |> should.equal(Error([
     DecodeError(
       path: [],
-      expected: "Tuple or List of 2 elements",
+      expected: "Tuple of 2 elements",
       found: "List",
     ),
   ]))
@@ -607,7 +607,7 @@ pub fn tuple3_test() {
   |> should.equal(Error([
     DecodeError(
       path: [],
-      expected: "Tuple or List of 3 elements",
+      expected: "Tuple of 3 elements",
       found: "Tuple of 2 elements",
     ),
   ]))
@@ -627,7 +627,7 @@ pub fn tuple3_test() {
   |> should.equal(Error([
     DecodeError(
       path: [],
-      expected: "Tuple or List of 3 elements",
+      expected: "Tuple of 3 elements",
       found: "List",
     ),
   ]))
@@ -636,7 +636,7 @@ pub fn tuple3_test() {
   |> dynamic.from
   |> dynamic.tuple3(dynamic.int, dynamic.int, dynamic.int)
   |> should.equal(Error([
-    DecodeError(path: [], expected: "Tuple or List of 3 elements", found: "Int"),
+    DecodeError(path: [], expected: "Tuple of 3 elements", found: "Int"),
   ]))
 }
 
@@ -684,7 +684,7 @@ pub fn tuple4_test() {
   |> should.equal(Error([
     DecodeError(
       path: [],
-      expected: "Tuple or List of 4 elements",
+      expected: "Tuple of 4 elements",
       found: "Tuple of 2 elements",
     ),
   ]))
@@ -705,7 +705,7 @@ pub fn tuple4_test() {
   |> should.equal(Error([
     DecodeError(
       path: [],
-      expected: "Tuple or List of 4 elements",
+      expected: "Tuple of 4 elements",
       found: "List",
     ),
   ]))
@@ -714,7 +714,7 @@ pub fn tuple4_test() {
   |> dynamic.from
   |> dynamic.tuple4(dynamic.int, dynamic.int, dynamic.int, dynamic.int)
   |> should.equal(Error([
-    DecodeError(path: [], expected: "Tuple or List of 4 elements", found: "Int"),
+    DecodeError(path: [], expected: "Tuple of 4 elements", found: "Int"),
   ]))
 }
 
@@ -811,7 +811,7 @@ pub fn tuple5_test() {
   |> should.equal(Error([
     DecodeError(
       path: [],
-      expected: "Tuple or List of 5 elements",
+      expected: "Tuple of 5 elements",
       found: "Tuple of 2 elements",
     ),
   ]))
@@ -845,7 +845,7 @@ pub fn tuple5_test() {
   |> should.equal(Error([
     DecodeError(
       path: [],
-      expected: "Tuple or List of 5 elements",
+      expected: "Tuple of 5 elements",
       found: "List",
     ),
   ]))
@@ -860,7 +860,7 @@ pub fn tuple5_test() {
     dynamic.int,
   )
   |> should.equal(Error([
-    DecodeError(path: [], expected: "Tuple or List of 5 elements", found: "Int"),
+    DecodeError(path: [], expected: "Tuple of 5 elements", found: "Int"),
   ]))
 }
 
@@ -966,7 +966,7 @@ pub fn tuple6_test() {
   |> should.equal(Error([
     DecodeError(
       path: [],
-      expected: "Tuple or List of 6 elements",
+      expected: "Tuple of 6 elements",
       found: "Tuple of 2 elements",
     ),
   ]))
@@ -1003,7 +1003,7 @@ pub fn tuple6_test() {
   |> should.equal(Error([
     DecodeError(
       path: [],
-      expected: "Tuple or List of 6 elements",
+      expected: "Tuple of 6 elements",
       found: "List",
     ),
   ]))
@@ -1019,7 +1019,7 @@ pub fn tuple6_test() {
     dynamic.int,
   )
   |> should.equal(Error([
-    DecodeError(path: [], expected: "Tuple or List of 6 elements", found: "Int"),
+    DecodeError(path: [], expected: "Tuple of 6 elements", found: "Int"),
   ]))
 }
 

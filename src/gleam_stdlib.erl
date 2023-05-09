@@ -99,23 +99,23 @@ decode_tuple(Data) -> decode_error_msg(<<"Tuple">>, Data).
 
 decode_tuple2({_,_} = A) -> {ok, A};
 decode_tuple2([A,B]) -> {ok, {A,B}};
-decode_tuple2(Data) -> decode_error_msg(<<"Tuple or List of 2 elements">>, Data).
+decode_tuple2(Data) -> decode_error_msg(<<"Tuple of 2 elements">>, Data).
 
 decode_tuple3({_,_,_} = A) -> {ok, A};
 decode_tuple3([A,B,C]) -> {ok, {A,B,C}};
-decode_tuple3(Data) -> decode_error_msg(<<"Tuple or List of 3 elements">>, Data).
+decode_tuple3(Data) -> decode_error_msg(<<"Tuple of 3 elements">>, Data).
 
 decode_tuple4({_,_,_,_} = A) -> {ok, A};
 decode_tuple4([A,B,C,D]) -> {ok, {A,B,C,D}};
-decode_tuple4(Data) -> decode_error_msg(<<"Tuple or List of 4 elements">>, Data).
+decode_tuple4(Data) -> decode_error_msg(<<"Tuple of 4 elements">>, Data).
 
 decode_tuple5({_,_,_,_,_} = A) -> {ok, A};
 decode_tuple5([A,B,C,D,E]) -> {ok, {A,B,C,D,E}};
-decode_tuple5(Data) -> decode_error_msg(<<"Tuple or List of 5 elements">>, Data).
+decode_tuple5(Data) -> decode_error_msg(<<"Tuple of 5 elements">>, Data).
 
 decode_tuple6({_,_,_,_,_,_} = A) -> {ok, A};
 decode_tuple6([A,B,C,D,E,F]) -> {ok, {A,B,C,D,E,F}};
-decode_tuple6(Data) -> decode_error_msg(<<"Tuple or List of 6 elements">>, Data).
+decode_tuple6(Data) -> decode_error_msg(<<"Tuple of 6 elements">>, Data).
 
 decode_option(Term, F) ->
     Decode = fun(Inner) ->

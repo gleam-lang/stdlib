@@ -637,26 +637,29 @@ export function decode_tuple6(data) {
 }
 
 function decode_tupleN(data, n) {
-  let error_message = `Tuple or List of ${n} elements`;
-
-  if (!(List.isList(data) || Array.isArray(data))) {
-    return decoder_error(error_message, data);
+  if (Array.isArray(data) && data.length == n) {
+    return new Ok(data)
   }
 
-  let array = List.isList(data) ? [...data] : data; 
+  let list = decode_exact_length_list(data, n)
+  if (list) return new Ok(list)
 
-  let i = 0;
-  for (; i < n; i++) {
-    if (array[i] === undefined) {
-      return decoder_error(error_message, data);
-    }
+  return decoder_error(`Tuple of ${n} elements`, data);
+}
+
+function decode_exact_length_list(data, n) {
+  if (!List.isList(data)) return;
+
+  let elements = []
+  let current = data
+
+  for (let i = 0; i < n; i++) {
+    if (current.isEmpty()) break;
+    elements.push(current.head)
+    current = current.tail
   }
 
-  if (array[i] === undefined) {
-    return new Ok(array);
-  } else {
-    return decoder_error(error_message, data);
-  }
+  if (elements.length === n && current.isEmpty()) return elements
 }
 
 export function tuple_get(data, index) {
