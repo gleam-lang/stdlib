@@ -3,6 +3,7 @@
 ## Unreleased
 
 - The `result` module gains the `partition` function.
+- `dynamic.tupleN` functions now support lists.
 
 ## v0.28.2 - 2023-05-09
 
