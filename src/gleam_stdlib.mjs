@@ -45,7 +45,7 @@ export function to_string(term) {
 }
 
 export function float_to_string(float) {
-  let string = float.toString();
+  const string = float.toString();
   if (string.indexOf(".") >= 0) {
     return string;
   } else {
@@ -133,10 +133,10 @@ export function string_length(string) {
   if (string === "") {
     return 0;
   }
-  let iterator = graphemes_iterator(string);
+  const iterator = graphemes_iterator(string);
   if (iterator) {
     let i = 0;
-    for (let _ of iterator) {
+    for (const _ of iterator) {
       i++;
     }
     return i;
@@ -159,7 +159,7 @@ function graphemes_iterator(string) {
 
 export function pop_grapheme(string) {
   let first;
-  let iterator = graphemes_iterator(string);
+  const iterator = graphemes_iterator(string);
   if (iterator) {
     first = iterator.next().value?.segment;
   } else {
@@ -221,10 +221,10 @@ export function ends_with(haystack, needle) {
 }
 
 export function split_once(haystack, needle) {
-  let index = haystack.indexOf(needle);
+  const index = haystack.indexOf(needle);
   if (index >= 0) {
-    let before = haystack.slice(0, index);
-    let after = haystack.slice(index + needle.length);
+    const before = haystack.slice(0, index);
+    const after = haystack.slice(index + needle.length);
     return new Ok([before, after]);
   } else {
     return new Error(Nil);
@@ -265,7 +265,7 @@ export function crash(message) {
 
 export function bit_string_to_string(bit_string) {
   try {
-    let decoder = new TextDecoder("utf-8", { fatal: true });
+    const decoder = new TextDecoder("utf-8", { fatal: true });
     return new Ok(decoder.decode(bit_string.buffer));
   } catch (_error) {
     return new Error(Nil);
@@ -283,7 +283,7 @@ export function print(string) {
 }
 
 export function print_error(string) {
-  if (typeof process === "object") {
+  if (typeof process === "object" && process.stderr?.write) {
     process.stderr.write(string); // We can write without a trailing newline
   } else if (typeof Deno === "object") {
     Deno.stderr.writeSync(new TextEncoder().encode(string)); // We can write without a trailing newline
@@ -293,7 +293,7 @@ export function print_error(string) {
 }
 
 export function print_debug(string) {
-  if (typeof process === "object") {
+  if (typeof process === "object" && process.stderr?.write) {
     process.stderr.write(string + "\n"); // If we're in Node.js, use `stderr`
   } else if (typeof Deno === "object") {
     Deno.stderr.writeSync(new TextEncoder().encode(string + "\n")); // If we're in Deno, use `stderr`
@@ -329,7 +329,7 @@ export function power(base, exponent) {
 }
 
 export function random_uniform() {
-  let random_uniform_result = Math.random();
+  const random_uniform_result = Math.random();
   // With round-to-nearest-even behavior, the ranges claimed for the functions below
   // (excluding the one for Math.random() itself) aren't exact.
   // If extremely large bounds are chosen (2^53 or higher),
@@ -344,10 +344,10 @@ export function random_uniform() {
 }
 
 export function bit_string_slice(bits, position, length) {
-  let start = Math.min(position, position + length);
-  let end = Math.max(position, position + length);
+  const start = Math.min(position, position + length);
+  const end = Math.max(position, position + length);
   if (start < 0 || end > bits.length) return new Error(Nil);
-  let buffer = new Uint8Array(bits.buffer.buffer, start, Math.abs(length));
+  const buffer = new Uint8Array(bits.buffer.buffer, start, Math.abs(length));
   return new Ok(new BitString(buffer));
 }
 
@@ -381,13 +381,13 @@ export function compile_regex(pattern, options) {
     if (options.multi_line) flags += "m";
     return new Ok(new RegExp(pattern, flags));
   } catch (error) {
-    let number = (error.columnNumber || 0) | 0;
+    const number = (error.columnNumber || 0) | 0;
     return new Error(new RegexCompileError(error.message, number));
   }
 }
 
 export function regex_scan(regex, string) {
-  let matches = Array.from(string.matchAll(regex)).map((match) => {
+  const matches = Array.from(string.matchAll(regex)).map((match) => {
     const content = match[0];
     const submatches = [];
     for (let n = match.length - 1; n > 0; n--) {
@@ -439,7 +439,7 @@ function unsafe_percent_decode(string) {
 export function percent_decode(string) {
   try {
     return new Ok(unsafe_percent_decode(string));
-  } catch (error) {
+  } catch (_error) {
     return new Error(Nil);
   }
 }
@@ -450,23 +450,23 @@ export function percent_encode(string) {
 
 export function parse_query(query) {
   try {
-    let pairs = [];
-    for (let section of query.split("&")) {
-      let [key, value] = section.split("=");
+    const pairs = [];
+    for (const section of query.split("&")) {
+      const [key, value] = section.split("=");
       if (!key) continue;
       pairs.push([unsafe_percent_decode(key), unsafe_percent_decode(value)]);
     }
     return new Ok(List.fromArray(pairs));
-  } catch (error) {
+  } catch (_error) {
     return new Error(Nil);
   }
 }
 
 // From https://developer.mozilla.org/en-US/docs/Glossary/Base64#Solution_2_%E2%80%93_rewrite_the_DOMs_atob()_and_btoa()_using_JavaScript's_TypedArrays_and_UTF-8
 export function encode64(bit_string) {
-  let aBytes = bit_string.buffer;
-  let nMod3 = 2,
-    sB64Enc = "";
+  const aBytes = bit_string.buffer;
+  let nMod3 = 2;
+  let sB64Enc = "";
 
   for (let nLen = aBytes.length, nUint24 = 0, nIdx = 0; nIdx < nLen; nIdx++) {
     nMod3 = nIdx % 3;
@@ -524,10 +524,10 @@ function b64ToUint6(nChr) {
 // From https://developer.mozilla.org/en-US/docs/Glossary/Base64#Solution_2_%E2%80%93_rewrite_the_DOMs_atob()_and_btoa()_using_JavaScript's_TypedArrays_and_UTF-8
 export function decode64(sBase64) {
   if (sBase64.match(/[^A-Za-z0-9\+\/=]/g)) return new Error(Nil);
-  let sB64Enc = sBase64.replace(/=/g, "");
-  let nInLen = sB64Enc.length;
-  let nOutLen = (nInLen * 3 + 1) >> 2;
-  let taBytes = new Uint8Array(nOutLen);
+  const sB64Enc = sBase64.replace(/=/g, "");
+  const nInLen = sB64Enc.length;
+  const nOutLen = (nInLen * 3 + 1) >> 2;
+  const taBytes = new Uint8Array(nOutLen);
 
   for (
     let nMod3, nMod4, nUint24 = 0, nOutIdx = 0, nInIdx = 0;
@@ -569,7 +569,7 @@ export function classify_dynamic(data) {
   } else if (data === undefined) {
     return "Nil";
   } else {
-    let type = typeof data;
+    const type = typeof data;
     return type.charAt(0).toUpperCase() + type.slice(1);
   }
 }
@@ -654,7 +654,7 @@ export function decode_option(data, decoder) {
   if (data === null || data === undefined || data instanceof None)
     return new Ok(new None());
   if (data instanceof Some) data = data[0];
-  let result = decoder(data);
+  const result = decoder(data);
   if (result.isOk()) {
     return new Ok(new Some(result[0]));
   } else {
@@ -663,10 +663,14 @@ export function decode_option(data, decoder) {
 }
 
 export function decode_field(value, name) {
-  let not_a_map_error = () => decoder_error("Map", value);
+  const not_a_map_error = () => decoder_error("Map", value);
 
-  if (value instanceof PMap || value instanceof WeakMap || value instanceof Map) {
-    let entry = map_get(value, name);
+  if (
+    value instanceof PMap ||
+    value instanceof WeakMap ||
+    value instanceof Map
+  ) {
+    const entry = map_get(value, name);
     return new Ok(entry.isOk() ? new Some(entry[0]) : new None());
   } else if (Object.getPrototypeOf(value) == Object.prototype) {
     return try_get_field(value, name, () => new Ok(new None()));
