@@ -203,15 +203,15 @@ pub fn partition_test() {
 
   [Ok(1), Ok(2), Ok(3)]
   |> result.partition
-  |> should.equal(#([1, 2, 3], []))
+  |> should.equal(#([3, 2, 1], []))
 
   [Error("a"), Error("b"), Error("c")]
   |> result.partition
-  |> should.equal(#([], ["a", "b", "c"]))
+  |> should.equal(#([], ["c", "b", "a"]))
 
   [Ok(1), Error("a"), Ok(2), Error("b"), Error("c")]
   |> result.partition
-  |> should.equal(#([1, 2], ["a", "b", "c"]))
+  |> should.equal(#([2, 1], ["c", "b", "a"]))
 
   // TCO test
   list.repeat(Ok(1), 1_000_000)
