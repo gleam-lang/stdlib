@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.28.2 - 2023-05-09
 
 - Fixed a bug where `dynamic.map` would crash when passed the JavaScript values
   of `null` or `undefined`.
