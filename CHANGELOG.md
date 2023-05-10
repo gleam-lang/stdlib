@@ -1,12 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- The `result` module gains the `partition` function.
+
 ## v0.28.2 - 2023-05-09
 
 - Fixed a bug where `dynamic.map` would crash when passed the JavaScript values
   of `null` or `undefined`.
 - Fixed a bug where `io.debug` would crash when called in a React Native
   environment.
-- The `result` module gains the `partition` function.
 
 ## v0.28.1 - 2023-04-10
 
