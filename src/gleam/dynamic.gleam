@@ -619,19 +619,32 @@ if erlang {
   external fn decode_tuple(Dynamic) -> Result(UnknownTuple, DecodeErrors) =
     "gleam_stdlib" "decode_tuple"
 
-  external fn decode_tuple2(Dynamic) -> Result(#(Dynamic, Dynamic), DecodeErrors) =
+  external fn decode_tuple2(
+    Dynamic,
+  ) -> Result(#(Dynamic, Dynamic), DecodeErrors) =
     "gleam_stdlib" "decode_tuple2"
 
-  external fn decode_tuple3(Dynamic) -> Result(#(Dynamic, Dynamic, Dynamic), DecodeErrors) =
+  external fn decode_tuple3(
+    Dynamic,
+  ) -> Result(#(Dynamic, Dynamic, Dynamic), DecodeErrors) =
     "gleam_stdlib" "decode_tuple3"
 
-  external fn decode_tuple4(Dynamic) -> Result(#(Dynamic, Dynamic, Dynamic, Dynamic), DecodeErrors) =
+  external fn decode_tuple4(
+    Dynamic,
+  ) -> Result(#(Dynamic, Dynamic, Dynamic, Dynamic), DecodeErrors) =
     "gleam_stdlib" "decode_tuple4"
 
-  external fn decode_tuple5(Dynamic) -> Result(#(Dynamic, Dynamic, Dynamic, Dynamic, Dynamic), DecodeErrors) =
+  external fn decode_tuple5(
+    Dynamic,
+  ) -> Result(#(Dynamic, Dynamic, Dynamic, Dynamic, Dynamic), DecodeErrors) =
     "gleam_stdlib" "decode_tuple5"
 
-  external fn decode_tuple6(Dynamic) -> Result(#(Dynamic, Dynamic, Dynamic, Dynamic, Dynamic, Dynamic), DecodeErrors) =
+  external fn decode_tuple6(
+    Dynamic,
+  ) -> Result(
+    #(Dynamic, Dynamic, Dynamic, Dynamic, Dynamic, Dynamic),
+    DecodeErrors,
+  ) =
     "gleam_stdlib" "decode_tuple6"
 
   external fn tuple_get(UnknownTuple, Int) -> Result(Dynamic, DecodeErrors) =
@@ -645,19 +658,32 @@ if javascript {
   external fn decode_tuple(Dynamic) -> Result(UnknownTuple, DecodeErrors) =
     "../gleam_stdlib.mjs" "decode_tuple"
 
-  external fn decode_tuple2(Dynamic) -> Result(#(Dynamic, Dynamic), DecodeErrors) =
+  external fn decode_tuple2(
+    Dynamic,
+  ) -> Result(#(Dynamic, Dynamic), DecodeErrors) =
     "../gleam_stdlib.mjs" "decode_tuple2"
 
-  external fn decode_tuple3(Dynamic) -> Result(#(Dynamic, Dynamic, Dynamic), DecodeErrors) =
+  external fn decode_tuple3(
+    Dynamic,
+  ) -> Result(#(Dynamic, Dynamic, Dynamic), DecodeErrors) =
     "../gleam_stdlib.mjs" "decode_tuple3"
 
-  external fn decode_tuple4(Dynamic) -> Result(#(Dynamic, Dynamic, Dynamic, Dynamic), DecodeErrors) =
+  external fn decode_tuple4(
+    Dynamic,
+  ) -> Result(#(Dynamic, Dynamic, Dynamic, Dynamic), DecodeErrors) =
     "../gleam_stdlib.mjs" "decode_tuple4"
 
-  external fn decode_tuple5(Dynamic) -> Result(#(Dynamic, Dynamic, Dynamic, Dynamic, Dynamic), DecodeErrors) =
+  external fn decode_tuple5(
+    Dynamic,
+  ) -> Result(#(Dynamic, Dynamic, Dynamic, Dynamic, Dynamic), DecodeErrors) =
     "../gleam_stdlib.mjs" "decode_tuple5"
 
-  external fn decode_tuple6(Dynamic) -> Result(#(Dynamic, Dynamic, Dynamic, Dynamic, Dynamic, Dynamic), DecodeErrors) =
+  external fn decode_tuple6(
+    Dynamic,
+  ) -> Result(
+    #(Dynamic, Dynamic, Dynamic, Dynamic, Dynamic, Dynamic),
+    DecodeErrors,
+  ) =
     "../gleam_stdlib.mjs" "decode_tuple6"
 
   external fn tuple_get(UnknownTuple, Int) -> Result(Dynamic, DecodeErrors) =
