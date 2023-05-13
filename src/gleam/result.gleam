@@ -166,6 +166,35 @@ pub fn try(
   }
 }
 
+/// Given a condition, will either return the provided
+/// error value wrapped in `Error` if the condition is true,
+/// or call the provided function to get the result if the condition
+/// is false.
+///
+/// Useful for ad-hoc constructing errors based on given conditions.
+/// 
+/// ## Examples
+///
+/// ```gleam
+/// > err_if(True, "some error", fn() { Ok(0) })
+/// Error("some error")
+/// ```
+///
+/// ```gleam
+/// > err_if(False, "some error", fn() { Ok(0) })
+/// Ok(0)
+/// ```
+pub fn err_if(
+  condition: Bool,
+  error: e,
+  apply fun: fn() -> Result(b, e),
+) -> Result(b, e) {
+  case condition {
+    True -> Error(error)
+    False -> fun()
+  }
+}
+
 /// An alias for `try`. See the documentation for that function for more information.
 ///
 pub fn then(

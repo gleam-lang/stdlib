@@ -78,6 +78,20 @@ pub fn try_test() {
   |> should.equal(Error(1))
 }
 
+pub fn err_if_test() {
+  {
+    use <- result.err_if(True, "Should Error")
+    Ok(7)
+  }
+  |> should.equal(Error("Should Error"))
+
+  {
+    use <- result.err_if(False, "Should Not Error")
+    Ok(7)
+  }
+  |> should.equal(Ok(7))
+}
+
 pub fn then_test() {
   Error(1)
   |> result.then(fn(x) { Ok(x + 1) })
