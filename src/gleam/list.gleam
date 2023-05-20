@@ -1414,7 +1414,7 @@ fn do_pop(haystack, predicate, checked) {
   }
 }
 
-/// Removes the first element in a given list for which the predicate funtion returns `True`.
+/// Removes the first element in a given list for which the predicate function returns `True`.
 ///
 /// Returns `Error(Nil)` if no such element is found.
 ///
@@ -1702,7 +1702,7 @@ pub fn window_by_2(l: List(a)) -> List(#(a, a)) {
   zip(l, drop(l, 1))
 }
 
-/// Drops the first elements in a given list for which the predicate funtion returns `True`.
+/// Drops the first elements in a given list for which the predicate function returns `True`.
 ///
 /// ## Examples
 ///
@@ -1740,7 +1740,7 @@ fn do_take_while(
   }
 }
 
-/// Takes the first elements in a given list for which the predicate funtion returns `True`.
+/// Takes the first elements in a given list for which the predicate function returns `True`.
 ///
 /// ## Examples
 ///
