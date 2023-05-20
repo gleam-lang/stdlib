@@ -324,9 +324,9 @@ pub fn to_string(bool: Bool) -> String {
   }
 }
 
-/// Run a callback function if the given bool is `True`, otherwise return a
+/// Run a callback function if the given bool is `False`, otherwise return a
 /// default value.
-/// 
+///
 /// With a `use` expression this function can simulate the early-return pattern
 /// found in some other programming languages.
 ///
