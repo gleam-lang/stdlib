@@ -40,14 +40,14 @@ pub type Options {
 ///
 /// ```gleam
 /// > let options = Options(case_insensitive: False, multi_line: True)
-/// > assert Ok(re) = compile("^[0-9]", with: options)
+/// > let assert Ok(re) = compile("^[0-9]", with: options)
 /// > check(re, "abc\n123")
 /// True
 /// ```
 ///
 /// ```gleam
 /// > let options = Options(case_insensitive: True, multi_line: False)
-/// > assert Ok(re) = compile("[A-Z]", with: options)
+/// > let assert Ok(re) = compile("[A-Z]", with: options)
 /// > check(re, "abc123")
 /// True
 /// ```
@@ -74,7 +74,7 @@ if javascript {
 /// ## Examples
 ///
 /// ```gleam
-/// > assert Ok(re) = from_string("[0-9]")
+/// > let assert Ok(re) = from_string("[0-9]")
 /// > check(re, "abc123")
 /// True
 /// ```
@@ -103,7 +103,7 @@ pub fn from_string(pattern: String) -> Result(Regex, CompileError) {
 /// ## Examples
 ///
 /// ```gleam
-/// > assert Ok(re) = from_string("^f.o.?")
+/// > let assert Ok(re) = from_string("^f.o.?")
 /// > check(with: re, content: "foo")
 /// True
 /// ```
@@ -132,7 +132,7 @@ if javascript {
 /// ## Examples
 ///
 /// ```gleam
-/// > assert Ok(re) = from_string(" *, *")
+/// > let assert Ok(re) = from_string(" *, *")
 /// > split(with: re, content: "foo,32, 4, 9  ,0")
 /// ["foo", "32", "4", "9", "0"]
 /// ```

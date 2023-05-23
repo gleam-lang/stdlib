@@ -381,7 +381,7 @@ pub fn to_string(uri: Uri) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// > assert Ok(uri) = parse("http://example.com/path?foo#bar")
+/// > let assert Ok(uri) = parse("http://example.com/path?foo#bar")
 /// > origin(uri)
 /// Ok("http://example.com")
 /// ```
