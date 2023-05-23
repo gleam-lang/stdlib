@@ -840,7 +840,7 @@ if javascript {
 ///
 /// ```gleam
 /// > {
-/// >   assert #(Ok(a), Ok(b), Ok(c)) = #(
+/// >   let assert #(Ok(a), Ok(b), Ok(c)) = #(
 /// >     utf_codepoint(97),
 /// >     utf_codepoint(98),
 /// >     utf_codepoint(99),
