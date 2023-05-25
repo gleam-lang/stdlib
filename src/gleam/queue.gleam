@@ -24,7 +24,7 @@ pub fn new() -> Queue(a) {
 }
 
 /// Converts a list of elements into a queue of the same elements in the same
-/// order. The head element in the list becomes the front element in the queue.
+/// order. The first element in the list becomes the front element in the queue.
 ///
 /// This function runs in constant time.
 ///
@@ -40,7 +40,7 @@ pub fn from_list(list: List(a)) -> Queue(a) {
 }
 
 /// Converts a queue of elements into a list of the same elements in the same
-/// order. The front element in the queue becomes the head element in the list.
+/// order. The front element in the queue becomes the first element in the list.
 ///
 /// This function runs in linear time.
 ///
