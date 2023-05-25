@@ -812,8 +812,8 @@ if erlang {
     acc: List(UtfCodepoint),
   ) -> List(UtfCodepoint) {
     case bit_string {
-      <<head:utf8_codepoint, rest:binary>> ->
-        do_to_utf_codepoints_impl(rest, [head, ..acc])
+      <<first:utf8_codepoint, rest:binary>> ->
+        do_to_utf_codepoints_impl(rest, [first, ..acc])
       <<>> -> acc
     }
   }
@@ -868,10 +868,10 @@ if erlang {
     acc: BitString,
   ) -> BitString {
     case utf_codepoints {
-      [head, ..tail] ->
+      [first, ..rest] ->
         do_from_utf_codepoints_impl(
-          tail,
-          <<acc:bit_string, head:utf8_codepoint>>,
+          rest,
+          <<acc:bit_string, first:utf8_codepoint>>,
         )
       [] -> acc
     }
