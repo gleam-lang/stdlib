@@ -189,8 +189,8 @@ pub fn is_empty(list: List(a)) -> Bool {
 pub fn contains(list: List(a), any elem: a) -> Bool {
   case list {
     [] -> False
-    [head, ..] if head == elem -> True
-    [_, ..tail] -> contains(tail, elem)
+    [first, ..] if first == elem -> True
+    [_, ..rest] -> contains(rest, elem)
   }
 }
 
@@ -624,7 +624,7 @@ pub fn prepend(to list: List(a), this item: a) -> List(a) {
 fn reverse_and_prepend(list prefix: List(a), to suffix: List(a)) -> List(a) {
   case prefix {
     [] -> suffix
-    [head, ..tail] -> reverse_and_prepend(list: tail, to: [head, ..suffix])
+    [first, ..rest] -> reverse_and_prepend(list: rest, to: [first, ..suffix])
   }
 }
 
@@ -903,9 +903,9 @@ pub fn find_map(
 pub fn all(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
   case list {
     [] -> True
-    [head, ..tail] ->
-      case predicate(head) {
-        True -> all(tail, predicate)
+    [first, ..rest] ->
+      case predicate(first) {
+        True -> all(rest, predicate)
         False -> False
       }
   }
@@ -940,10 +940,10 @@ pub fn all(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
 pub fn any(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
   case list {
     [] -> False
-    [head, ..tail] ->
-      case predicate(head) {
+    [first, ..rest] ->
+      case predicate(first) {
         True -> True
-        False -> any(tail, predicate)
+        False -> any(rest, predicate)
       }
   }
 }
@@ -1732,9 +1732,9 @@ fn do_take_while(
 ) -> List(a) {
   case list {
     [] -> reverse(acc)
-    [head, ..tail] ->
-      case predicate(head) {
-        True -> do_take_while(tail, predicate, [head, ..acc])
+    [first, ..rest] ->
+      case predicate(first) {
+        True -> do_take_while(rest, predicate, [first, ..acc])
         False -> reverse(acc)
       }
   }
@@ -1764,14 +1764,14 @@ fn do_chunk(
   acc: List(List(a)),
 ) -> List(List(a)) {
   case list {
-    [head, ..tail] -> {
-      let key = f(head)
+    [first, ..rest] -> {
+      let key = f(first)
       case key == previous_key {
         False -> {
           let new_acc = [reverse(current_chunk), ..acc]
-          do_chunk(tail, f, key, [head], new_acc)
+          do_chunk(rest, f, key, [first], new_acc)
         }
-        _true -> do_chunk(tail, f, key, [head, ..current_chunk], acc)
+        _true -> do_chunk(rest, f, key, [first, ..current_chunk], acc)
       }
     }
     _empty -> reverse([reverse(current_chunk), ..acc])
@@ -1791,7 +1791,7 @@ fn do_chunk(
 pub fn chunk(in list: List(a), by f: fn(a) -> key) -> List(List(a)) {
   case list {
     [] -> []
-    [head, ..tail] -> do_chunk(tail, f, f(head), [head], [])
+    [first, ..rest] -> do_chunk(rest, f, f(first), [first], [])
   }
 }
 
@@ -1808,11 +1808,11 @@ fn do_sized_chunk(
         [] -> reverse(acc)
         remaining -> reverse([reverse(remaining), ..acc])
       }
-    [head, ..tail] -> {
-      let chunk = [head, ..current_chunk]
+    [first, ..rest] -> {
+      let chunk = [first, ..current_chunk]
       case left > 1 {
-        False -> do_sized_chunk(tail, count, count, [], [reverse(chunk), ..acc])
-        True -> do_sized_chunk(tail, count, left - 1, chunk, acc)
+        False -> do_sized_chunk(rest, count, count, [], [reverse(chunk), ..acc])
+        True -> do_sized_chunk(rest, count, left - 1, chunk, acc)
       }
     }
   }
@@ -1864,7 +1864,7 @@ pub fn sized_chunk(in list: List(a), into count: Int) -> List(List(a)) {
 pub fn reduce(over list: List(a), with fun: fn(a, a) -> a) -> Result(a, Nil) {
   case list {
     [] -> Error(Nil)
-    [head, ..tail] -> Ok(fold(tail, head, fun))
+    [first, ..rest] -> Ok(fold(rest, first, fun))
   }
 }
 
