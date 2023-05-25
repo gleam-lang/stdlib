@@ -245,15 +245,15 @@ pub fn to_list(iterator: Iterator(element)) -> List(element) {
 /// ## Examples
 ///
 /// ```gleam
-/// > let assert Next(head, tail) = [1, 2, 3, 4]
+/// > let assert Next(first, rest) = [1, 2, 3, 4]
 /// >   |> from_list
 /// >   |> step
-/// > head
+/// > first
 /// 1
 /// ```
 ///
 /// ```gleam
-/// > tail |> to_list
+/// > rest |> to_list
 /// [2, 3, 4]
 /// ```
 ///

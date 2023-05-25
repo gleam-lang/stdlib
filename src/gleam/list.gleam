@@ -480,12 +480,12 @@ fn do_try_map(
 /// ```
 ///
 /// ```gleam
-/// > try_map([[1], [2, 3]], head)
+/// > try_map([[1], [2, 3]], first)
 /// Ok([1, 2])
 /// ```
 ///
 /// ```gleam
-/// > try_map([[1], [], [2]], head)
+/// > try_map([[1], [], [2]], first)
 /// Error(Nil)
 /// ```
 ///
@@ -851,17 +851,17 @@ pub fn find(
 /// ## Examples
 ///
 /// ```gleam
-/// > find_map([[], [2], [3]], head)
+/// > find_map([[], [2], [3]], first)
 /// Ok(2)
 /// ```
 ///
 /// ```gleam
-/// > find_map([[], []], head)
+/// > find_map([[], []], first)
 /// Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// > find_map([], head)
+/// > find_map([], first)
 /// Error(Nil)
 /// ```
 ///
@@ -1461,17 +1461,17 @@ fn do_pop_map(haystack, mapper, checked) {
 /// ## Examples
 ///
 /// ```gleam
-/// > pop_map([[], [2], [3]], head)
+/// > pop_map([[], [2], [3]], first)
 /// Ok(#(2, [[], [3]]))
 /// ```
 ///
 /// ```gleam
-/// > pop_map([[], []], head)
+/// > pop_map([[], []], first)
 /// Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// > pop_map([], head)
+/// > pop_map([], first)
 /// Error(Nil)
 /// ```
 ///
