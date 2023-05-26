@@ -371,8 +371,8 @@ export function utf_codepoint_to_int(utf_codepoint) {
   return utf_codepoint.value;
 }
 
-export function regex_check(regex_compilable, string) {
-  return regex_compilable().test(string);
+export function regex_check(regex_constructor, string) {
+  return regex_constructor().test(string);
 }
 
 export function compile_regex(pattern, options) {
@@ -391,8 +391,8 @@ export function compile_regex(pattern, options) {
   }
 }
 
-export function regex_scan(regex_compilable, string) {
-  const matches = Array.from(string.matchAll(regex_compilable())).map((match) => {
+export function regex_scan(regex_constructor, string) {
+  const matches = Array.from(string.matchAll(regex_constructor())).map((match) => {
     const content = match[0];
     const submatches = [];
     for (let n = match.length - 1; n > 0; n--) {
