@@ -2062,9 +2062,9 @@ fn do_shuffle_by_pair_indexes(
 /// ## Example
 ///
 /// ```gleam
-/// list.range(1, 10)
-/// |> list.shuffle()
-/// > [1, 6, 9, 10, 3, 8, 4, 2, 7, 5]
+/// > range(1, 10)
+/// > |> shuffle()
+/// [1, 6, 9, 10, 3, 8, 4, 2, 7, 5]
 /// ```
 ///
 pub fn shuffle(list: List(a)) -> List(a) {
