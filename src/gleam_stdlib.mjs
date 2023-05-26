@@ -193,7 +193,8 @@ export function equal(a, b) {
 }
 
 export function split(xs, regex_maybe_lazy) {
-  let regex = typeof regex_maybe_lazy == "function" ? regex_maybe_lazy() : regex_maybe_lazy;
+  const regex = typeof regex_maybe_lazy == "function" ?
+		regex_maybe_lazy() : regex_maybe_lazy;
   return List.fromArray(xs.split(regex));
 }
 
@@ -380,7 +381,7 @@ export function compile_regex(pattern, options) {
     let flags = "gu";
     if (options.case_insensitive) flags += "i";
     if (options.multi_line) flags += "m";
-    let regex_constructor = function () {
+    const regex_constructor = function () {
       return new RegExp(pattern, flags);
     };
     regex_constructor();
