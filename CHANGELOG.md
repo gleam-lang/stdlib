@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Fixed `regex.check` to correctly execute checks while using the one and the
+  same regex for multiple consecutive calls on target JavaScript.
+
 ## v0.29.0 - 2023-05-23
 
 - The `result` module gains the `partition` function.
