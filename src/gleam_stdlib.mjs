@@ -192,8 +192,9 @@ export function equal(a, b) {
   return a === b;
 }
 
-export function split(xs, pattern) {
-  return List.fromArray(xs.split(pattern));
+export function split(xs, regex_maybe_lazy) {
+  let regex = typeof regex_maybe_lazy == "function" ? regex_maybe_lazy() : regex_maybe_lazy;
+  return List.fromArray(xs.split(regex));
 }
 
 export function join(xs) {
@@ -370,8 +371,8 @@ export function utf_codepoint_to_int(utf_codepoint) {
   return utf_codepoint.value;
 }
 
-export function regex_check(regex, string) {
-  return regex.test(string);
+export function regex_check(regex_compilable, string) {
+  return regex_compilable().test(string);
 }
 
 export function compile_regex(pattern, options) {
@@ -379,15 +380,19 @@ export function compile_regex(pattern, options) {
     let flags = "gu";
     if (options.case_insensitive) flags += "i";
     if (options.multi_line) flags += "m";
-    return new Ok(new RegExp(pattern, flags));
+    let regex_constructor = function () {
+      return new RegExp(pattern, flags);
+    };
+    regex_constructor();
+    return new Ok(regex_constructor);
   } catch (error) {
     const number = (error.columnNumber || 0) | 0;
     return new Error(new RegexCompileError(error.message, number));
   }
 }
 
-export function regex_scan(regex, string) {
-  const matches = Array.from(string.matchAll(regex)).map((match) => {
+export function regex_scan(regex_compilable, string) {
+  const matches = Array.from(string.matchAll(regex_compilable())).map((match) => {
     const content = match[0];
     const submatches = [];
     for (let n = match.length - 1; n > 0; n--) {
@@ -496,14 +501,14 @@ function uint6ToB64(nUint6) {
   return nUint6 < 26
     ? nUint6 + 65
     : nUint6 < 52
-    ? nUint6 + 71
-    : nUint6 < 62
-    ? nUint6 - 4
-    : nUint6 === 62
-    ? 43
-    : nUint6 === 63
-    ? 47
-    : 65;
+      ? nUint6 + 71
+      : nUint6 < 62
+        ? nUint6 - 4
+        : nUint6 === 62
+          ? 43
+          : nUint6 === 63
+            ? 47
+            : 65;
 }
 
 // From https://developer.mozilla.org/en-US/docs/Glossary/Base64#Solution_2_%E2%80%93_rewrite_the_DOMs_atob()_and_btoa()_using_JavaScript's_TypedArrays_and_UTF-8
@@ -511,14 +516,14 @@ function b64ToUint6(nChr) {
   return nChr > 64 && nChr < 91
     ? nChr - 65
     : nChr > 96 && nChr < 123
-    ? nChr - 71
-    : nChr > 47 && nChr < 58
-    ? nChr + 4
-    : nChr === 43
-    ? 62
-    : nChr === 47
-    ? 63
-    : 0;
+      ? nChr - 71
+      : nChr > 47 && nChr < 58
+        ? nChr + 4
+        : nChr === 43
+          ? 62
+          : nChr === 47
+            ? 63
+            : 0;
 }
 
 // From https://developer.mozilla.org/en-US/docs/Glossary/Base64#Solution_2_%E2%80%93_rewrite_the_DOMs_atob()_and_btoa()_using_JavaScript's_TypedArrays_and_UTF-8
