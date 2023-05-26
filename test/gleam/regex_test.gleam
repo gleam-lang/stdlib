@@ -42,6 +42,22 @@ pub fn check_test() {
 
   regex.check(re, "boo")
   |> should.be_false
+
+  // On target JavaScript state is carried over for global regexp:
+  // JavaScript RegExp objects are stateful when they have the global or sticky
+  // flags set (e.g., /foo/g or /foo/y).
+  // This probably allies handling regexp matches as a stream / mutating store
+  // These tests make sure that our implementation circumvents this.
+  let assert Ok(re) = regex.from_string("^-*[0-9]+")
+
+  regex.check(re, "1")
+  |> should.be_true
+
+  regex.check(re, "12")
+  |> should.be_true
+
+  regex.check(re, "123")
+  |> should.be_true
 }
 
 pub fn split_test() {
