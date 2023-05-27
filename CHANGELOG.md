@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- The `zip` function's second argument in the `list` module gains the `with` label.
+- The `strict_zip` function's second argument in the `list` module gains the `with` label.
+
 ## v0.29.0 - 2023-05-23
 
 - The `result` module gains the `partition` function.
