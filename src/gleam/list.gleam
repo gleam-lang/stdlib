@@ -982,8 +982,8 @@ fn do_zip(xs: List(a), ys: List(b), acc: List(#(a, b))) -> List(#(a, b)) {
 /// [#(1, 3), #(2, 4)]
 /// ```
 ///
-pub fn zip(xs: List(a), ys: List(b)) -> List(#(a, b)) {
-  do_zip(xs, ys, [])
+pub fn zip(list: List(a), with other: List(b)) -> List(#(a, b)) {
+  do_zip(list, other, [])
 }
 
 /// Takes two lists and returns a single list of 2-element tuples.
@@ -1013,11 +1013,11 @@ pub fn zip(xs: List(a), ys: List(b)) -> List(#(a, b)) {
 /// ```
 ///
 pub fn strict_zip(
-  l1: List(a),
-  l2: List(b),
+  list: List(a),
+  with other: List(b),
 ) -> Result(List(#(a, b)), LengthMismatch) {
-  case length(of: l1) == length(of: l2) {
-    True -> Ok(zip(l1, l2))
+  case length(of: list) == length(of: other) {
+    True -> Ok(zip(list, other))
     False -> Error(LengthMismatch)
   }
 }
@@ -2062,9 +2062,9 @@ fn do_shuffle_by_pair_indexes(
 /// ## Example
 ///
 /// ```gleam
-/// list.range(1, 10)
-/// |> list.shuffle()
-/// > [1, 6, 9, 10, 3, 8, 4, 2, 7, 5]
+/// > range(1, 10)
+/// > |> shuffle()
+/// [1, 6, 9, 10, 3, 8, 4, 2, 7, 5]
 /// ```
 ///
 pub fn shuffle(list: List(a)) -> List(a) {
