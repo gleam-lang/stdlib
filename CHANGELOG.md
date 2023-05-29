@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Fixed a bug on target JavaScript where `regex.check` would not correctly execute
+  while using the same regular expression in consecutive calls.
 - The `zip` function's second argument in the `list` module gains the `with` label.
 - The `strict_zip` function's second argument in the `list` module gains the `with` label.
 

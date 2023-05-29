@@ -371,6 +371,7 @@ export function utf_codepoint_to_int(utf_codepoint) {
 }
 
 export function regex_check(regex, string) {
+	regex.lastIndex = 0;
   return regex.test(string);
 }
 
