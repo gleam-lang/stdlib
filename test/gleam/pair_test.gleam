@@ -56,3 +56,8 @@ pub fn map_second_test() {
   pair.map_second(#(-10, 20), dec)
   |> should.equal(#(-10, 19))
 }
+
+pub fn new_test() {
+  pair.new(1, 2)
+  |> should.equal(#(1, 2))
+}
