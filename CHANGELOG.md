@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.29.1 - 2023-06-01
 
 - Fixed a bug on target JavaScript where `regex.check` would not correctly execute
   while using the same regular expression in consecutive calls.
