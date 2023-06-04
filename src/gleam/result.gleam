@@ -444,3 +444,40 @@ pub fn replace_error(result: Result(a, e1), error: e2) -> Result(a, e2) {
 pub fn values(results: List(Result(a, e))) -> List(a) {
   list.filter_map(results, fn(r) { r })
 }
+
+/// Updates a value held within the `Error` of a result by calling a given function
+/// on it, where the given function also returns a result. The two results are
+/// then merged together into one result.
+///
+/// If the result is an `Ok` rather than `Error` the function is not called and the
+/// result stays the same.
+/// 
+/// This function is useful for chaining together computations that may fail
+/// and trying to recover from possible errors.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > Ok(1) |> recover(with: fn(_) { Error("failed to recover") })
+/// Ok(1)
+/// ```
+///
+/// ```gleam
+/// > Error(1) |> recover(with: fn(error) { Ok(error + 1) })
+/// Ok(2)
+/// ```
+///
+/// ```gleam
+/// > Error(1) |> recover(with: fn(error) { Error("failed to recover") })
+/// Error("failed to recover")
+/// ```
+///
+pub fn recover(
+  result: Result(a, e),
+  with fun: fn(e) -> Result(a, f),
+) -> Result(a, f) {
+  case result {
+    Ok(value) -> Ok(value)
+    Error(error) -> fun(error)
+  }
+}
