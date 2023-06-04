@@ -249,3 +249,17 @@ pub fn values_test() {
   result.values([Ok(1), Error(""), Ok(3)])
   |> should.equal([1, 3])
 }
+
+pub fn recover_test() {
+  Ok(1)
+  |> result.recover(fn(_) { panic })
+  |> should.equal(Ok(1))
+
+  Error(1)
+  |> result.recover(fn(n) { Ok(n + 1) })
+  |> should.equal(Ok(2))
+
+  Error(1)
+  |> result.recover(fn(_) { Error("failed to recover") })
+  |> should.equal(Error("failed to recover"))
+}
