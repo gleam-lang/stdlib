@@ -28,7 +28,7 @@ if javascript {
 
 /// Writes a string to standard error.
 ///
-/// If you want your output to be printed on its own line see `eprintln`.
+/// If you want your output to be printed on its own line see `println_error`.
 ///
 /// ## Example
 ///
