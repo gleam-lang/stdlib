@@ -55,7 +55,7 @@ if javascript {
     |> string.join_old("\n")
     let timing = read_timer(bench_timer)
     io.print(
-      "string.join (current_impl) took " <> int.to_string(timing) <> "ms\n",
+      "string.join (current impl) took " <> int.to_string(timing) <> "ms\n",
     )
 
     let bench_timer = create_timer()
