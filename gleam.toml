@@ -10,6 +10,7 @@ links = [
 ]
 
 [dependencies]
+glychee = "~> 0.2"
 
 [dev-dependencies]
 

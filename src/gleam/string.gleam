@@ -562,9 +562,46 @@ pub fn repeat(string: String, times times: Int) -> String {
 /// ```
 ///
 pub fn join(strings: List(String), with separator: String) -> String {
+  do_join(strings, separator)
+}
+
+pub fn join_gleam(strings: List(String), with separator: String) -> String {
+  do_join_gleam(strings, separator, "", "")
+}
+
+fn do_join_gleam(
+  strings: List(String),
+  separator: String,
+  previous: String,
+  current: String,
+) -> String {
+  case strings {
+    [] -> previous
+    [string, ..strings] -> {
+      let previous = current <> string
+      let current = previous <> separator
+      do_join_gleam(strings, separator, previous, current)
+    }
+  }
+}
+
+pub fn join_old(strings: List(String), with separator: String) -> String {
   strings
   |> list.intersperse(with: separator)
   |> concat
+}
+
+if erlang {
+  fn do_join(strings: List(String), separator: String) -> String {
+    strings
+    |> list.intersperse(with: separator)
+    |> concat
+  }
+}
+
+if javascript {
+  external fn do_join(strings: List(String), string: String) -> String =
+    "../gleam_stdlib.mjs" "join"
 }
 
 /// Pads a `String` on the left until it has at least given number of graphemes.
@@ -717,8 +754,8 @@ if javascript {
     "../gleam_stdlib.mjs" "trim_right"
 }
 
-/// Splits a non-empty `String` into its head and tail. This lets you
-/// pattern match on `String`s exactly as you would with lists.
+/// Splits a non-empty `String` into its first element (head) and rest (tail).
+/// This lets you pattern match on `String`s exactly as you would with lists.
 ///
 /// ## Examples
 ///

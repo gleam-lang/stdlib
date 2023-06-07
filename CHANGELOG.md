@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- improve `string.join` and `string.concat` performance on JavaScript target.
+
 ## v0.29.1 - 2023-06-01
 
 - Fixed a bug on target JavaScript where `regex.check` would not correctly execute
