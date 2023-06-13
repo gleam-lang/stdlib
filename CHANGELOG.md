@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- The `result` module gains the `recover` function.
+- The `result` module gains the `try_recover` function.
 
 ## v0.29.1 - 2023-06-01
 

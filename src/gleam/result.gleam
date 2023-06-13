@@ -458,21 +458,21 @@ pub fn values(results: List(Result(a, e))) -> List(a) {
 /// ## Examples
 ///
 /// ```gleam
-/// > Ok(1) |> recover(with: fn(_) { Error("failed to recover") })
+/// > Ok(1) |> try_recover(with: fn(_) { Error("failed to recover") })
 /// Ok(1)
 /// ```
 ///
 /// ```gleam
-/// > Error(1) |> recover(with: fn(error) { Ok(error + 1) })
+/// > Error(1) |> try_recover(with: fn(error) { Ok(error + 1) })
 /// Ok(2)
 /// ```
 ///
 /// ```gleam
-/// > Error(1) |> recover(with: fn(error) { Error("failed to recover") })
+/// > Error(1) |> try_recover(with: fn(error) { Error("failed to recover") })
 /// Error("failed to recover")
 /// ```
 ///
-pub fn recover(
+pub fn try_recover(
   result: Result(a, e),
   with fun: fn(e) -> Result(a, f),
 ) -> Result(a, f) {
