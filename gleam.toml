@@ -8,7 +8,6 @@ links = [
   { title = "Website", href = "https://gleam.run" },
   { title = "Sponsor", href = "https://github.com/sponsors/lpil" },
 ]
-dev-dependencies = { glychee = "~> 0.2"}
 
 [javascript.deno]
 allow_read = [

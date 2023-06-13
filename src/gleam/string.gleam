@@ -565,32 +565,6 @@ pub fn join(strings: List(String), with separator: String) -> String {
   do_join(strings, separator)
 }
 
-pub fn join_gleam(strings: List(String), with separator: String) -> String {
-  do_join_gleam(strings, separator, "", "")
-}
-
-fn do_join_gleam(
-  strings: List(String),
-  separator: String,
-  previous: String,
-  current: String,
-) -> String {
-  case strings {
-    [] -> previous
-    [string, ..strings] -> {
-      let previous = current <> string
-      let current = previous <> separator
-      do_join_gleam(strings, separator, previous, current)
-    }
-  }
-}
-
-pub fn join_old(strings: List(String), with separator: String) -> String {
-  strings
-  |> list.intersperse(with: separator)
-  |> concat
-}
-
 if erlang {
   fn do_join(strings: List(String), separator: String) -> String {
     strings
