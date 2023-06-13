@@ -250,16 +250,16 @@ pub fn values_test() {
   |> should.equal([1, 3])
 }
 
-pub fn recover_test() {
+pub fn try_recover_test() {
   Ok(1)
-  |> result.recover(fn(_) { panic })
+  |> result.try_recover(fn(_) { panic })
   |> should.equal(Ok(1))
 
   Error(1)
-  |> result.recover(fn(n) { Ok(n + 1) })
+  |> result.try_recover(fn(n) { Ok(n + 1) })
   |> should.equal(Ok(2))
 
   Error(1)
-  |> result.recover(fn(_) { Error("failed to recover") })
+  |> result.try_recover(fn(_) { Error("failed to recover") })
   |> should.equal(Error("failed to recover"))
 }
