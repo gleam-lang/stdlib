@@ -359,6 +359,7 @@ pub fn lazy_or(
 /// ```gleam
 /// > Err("oh no!") |> ok
 /// None
+/// ```
 pub fn ok(
   result: Result(a, e)
 ) -> option.Option(a) {
