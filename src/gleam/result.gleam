@@ -2,6 +2,7 @@
 //// `Ok` means it was successful, `Error` means it was not successful.
 
 import gleam/list
+import gleam/function
 
 /// Checks whether the result is an `Ok` value.
 ///
@@ -364,6 +365,60 @@ pub fn lazy_or(
 ///
 pub fn all(results: List(Result(a, e))) -> Result(List(a), e) {
   list.try_map(results, fn(x) { x })
+}
+
+/// Iterates through a list of results and returns the first success, if any.
+/// Returns the list otherwise, which will thus be a list of errors.
+/// 
+/// ## Examples
+/// 
+/// ```gleam
+/// > any([Error("e"), Ok(1), Error("2")])
+/// Ok(1)
+/// ```
+/// 
+/// ```gleam
+/// > any([Error("e"), Error("b"), Error("c")])
+/// [Error("e"), Error("b"), Error("c")]
+/// ```
+pub fn any(results: List(Result(a, e))) -> Result(a, List(e)) {
+  case list.find_map(results, function.identity) {
+    Ok(result) -> Ok(result)
+    Error(_) -> results |> list.map(fn(err) {
+      case err {
+        Error(e) -> e
+        _ -> panic
+      }
+    }) |> Error
+  }
+}
+
+/// Iterates through a list of result-returning functions and returns the first success, if any.
+/// Returns the list of errors otherwise.
+/// 
+/// ## Examples
+/// 
+/// ```gleam
+/// > any([fn() { Error("e") }, fn() { Ok(1) }, fn() { Error("2") }])
+/// Ok(1)
+/// ```
+/// 
+/// ```gleam
+/// > any([fn() { Error("e") }, fn() { Error("b") }, fn() { Error("c") }])
+/// [Error("e"), Error("b"), Error("c")]
+/// ```
+pub fn lazy_any(results: List(fn() -> Result(a, e))) -> Result(a, List(e)) {
+  list.fold_until(results, Error([]), fn(acc, elem) {
+    let acc = case acc {
+      Error(ls) -> ls
+      _ -> panic
+    }
+    case elem() {
+      Ok(res) -> list.Stop(Ok(res))
+      Error(e) -> list.Continue(Error([e, ..acc]))
+    }
+  })
+  |> map_error(list.reverse)
 }
 
 /// Given a list of results, returns a pair where the first element is a list

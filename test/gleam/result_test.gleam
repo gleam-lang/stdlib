@@ -196,6 +196,34 @@ pub fn all_test() {
   |> should.equal(Error("a"))
 }
 
+pub fn any_test() {
+  [Error(1), Ok(2), Ok(3)]
+  |> result.any
+  |> should.equal(Ok(2))
+
+  [Ok(1), Error("a"), Error("b"), Ok(3)]
+  |> result.any
+  |> should.equal(Ok(1))
+
+  [Error("a"), Error("b"), Error("c")]
+  |> result.any
+  |> should.equal(Error(["a", "b", "c"]))
+}
+
+pub fn lazy_any_test() {
+  [fn() { Error(1) }, fn() { Ok(2) }, fn() { Ok(3) }]
+  |> result.lazy_any
+  |> should.equal(Ok(2))
+
+  [fn() { Ok(1) }, fn() { Error("a") }, fn() { Error("b") }, fn() { Ok(3) }] 
+  |> result.lazy_any
+  |> should.equal(Ok(1))
+
+  [fn() { Error("a") }, fn() { Error("b") }, fn() { Error("c") }]
+  |> result.lazy_any
+  |> should.equal(Error(["a", "b", "c"]))
+}
+
 pub fn partition_test() {
   []
   |> result.partition
