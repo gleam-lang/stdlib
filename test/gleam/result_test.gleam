@@ -1,6 +1,7 @@
 import gleam/list
 import gleam/result
 import gleam/should
+import gleam/option
 
 pub fn is_ok_test() {
   result.is_ok(Ok(1))
@@ -184,6 +185,16 @@ pub fn lazy_or_test() {
   Error("Error 1")
   |> result.lazy_or(fn() { Error("Error 2") })
   |> should.equal(Error("Error 2"))
+}
+
+pub fn ok_test() {
+  Ok(1)
+  |> result.ok
+  |> should.equal(option.Some(1))
+
+  Error("uh oh")
+  |> result.ok
+  |> should.equal(option.None)
 }
 
 pub fn all_test() {

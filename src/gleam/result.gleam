@@ -2,6 +2,7 @@
 //// `Ok` means it was successful, `Error` means it was not successful.
 
 import gleam/list
+import gleam/option
 
 /// Checks whether the result is an `Ok` value.
 ///
@@ -343,6 +344,27 @@ pub fn lazy_or(
   case first {
     Ok(_) -> first
     Error(_) -> second()
+  }
+}
+
+/// Returns `Some(a)` if it is `Ok`, otherwise returns `None`.
+/// 
+/// ## Examples
+/// 
+/// ```gleam
+/// > Ok(1) |> ok
+/// Some(1)
+/// ```
+/// 
+/// ```gleam
+/// > Err("oh no!") |> ok
+/// None
+pub fn ok(
+  result: Result(a, e)
+) -> option.Option(a) {
+  case result {
+    Ok(val) -> option.Some(val)
+    Error(_) -> option.None
   }
 }
 
