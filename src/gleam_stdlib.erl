@@ -8,10 +8,11 @@
          bit_string_int_to_u32/1, bit_string_int_from_u32/1, decode_result/1,
          bit_string_slice/3, decode_bit_string/1, compile_regex/2, regex_scan/2,
          percent_encode/1, percent_decode/1, regex_check/2, regex_split/2,
-         base_decode64/1, parse_query/1, bit_string_concat/1, size_of_tuple/1,
-         decode_tuple/1, tuple_get/2, classify_dynamic/1, print/1, println/1,
-         print_error/1, println_error/1, inspect/1, float_to_string/1,
-         int_from_base_string/2]).
+         base_decode64/1, parse_query/1, bit_string_concat/1, size_of_tuple/1, 
+         decode_tuple/1, decode_tuple2/1, decode_tuple3/1, decode_tuple4/1,
+         decode_tuple5/1, decode_tuple6/1, tuple_get/2, classify_dynamic/1, 
+         print/1, println/1, print_error/1, println_error/1, inspect/1, 
+         float_to_string/1, int_from_base_string/2]).
 
 %% Taken from OTP's uri_string module
 -define(DEC2HEX(X),
@@ -41,6 +42,7 @@ decode_error_msg(Expected, Data) when is_binary(Expected) ->
 decode_error(Expected, Got) when is_binary(Expected) andalso is_binary(Got) ->
     {error, [{decode_error, Expected, Got, []}]}.
 
+classify_dynamic(nil) -> <<"Nil">>;
 classify_dynamic(X) when is_atom(X) -> <<"Atom">>;
 classify_dynamic(X) when is_binary(X) -> <<"String">>;
 classify_dynamic(X) when is_bitstring(X) -> <<"BitString">>;
@@ -77,12 +79,14 @@ decode_bool(Data) -> decode_error_msg(<<"Bool">>, Data).
 decode_list(Data) when is_list(Data) -> {ok, Data};
 decode_list(Data) -> decode_error_msg(<<"List">>, Data).
 
-decode_field(Data, Key) ->
+decode_field(Data, Key) when is_map(Data) ->
     case Data of
-        #{Key := Value} -> {ok, Value};
+        #{Key := Value} -> {ok, {some, Value}};
         _ ->
-            decode_error(<<"field"/utf8>>, <<"nothing"/utf8>>)
-    end.
+            {ok, none}
+    end;
+decode_field(Data, _) ->
+    decode_error_msg(<<"Map">>, Data).
 
 size_of_tuple(Data) -> tuple_size(Data).
 
@@ -92,6 +96,26 @@ tuple_get(Data, Index) -> {ok, element(Index + 1, Data)}.
 
 decode_tuple(Data) when is_tuple(Data) -> {ok, Data};
 decode_tuple(Data) -> decode_error_msg(<<"Tuple">>, Data).
+
+decode_tuple2({_,_} = A) -> {ok, A};
+decode_tuple2([A,B]) -> {ok, {A,B}};
+decode_tuple2(Data) -> decode_error_msg(<<"Tuple of 2 elements">>, Data).
+
+decode_tuple3({_,_,_} = A) -> {ok, A};
+decode_tuple3([A,B,C]) -> {ok, {A,B,C}};
+decode_tuple3(Data) -> decode_error_msg(<<"Tuple of 3 elements">>, Data).
+
+decode_tuple4({_,_,_,_} = A) -> {ok, A};
+decode_tuple4([A,B,C,D]) -> {ok, {A,B,C,D}};
+decode_tuple4(Data) -> decode_error_msg(<<"Tuple of 4 elements">>, Data).
+
+decode_tuple5({_,_,_,_,_} = A) -> {ok, A};
+decode_tuple5([A,B,C,D,E]) -> {ok, {A,B,C,D,E}};
+decode_tuple5(Data) -> decode_error_msg(<<"Tuple of 5 elements">>, Data).
+
+decode_tuple6({_,_,_,_,_,_} = A) -> {ok, A};
+decode_tuple6([A,B,C,D,E,F]) -> {ok, {A,B,C,D,E,F}};
+decode_tuple6(Data) -> decode_error_msg(<<"Tuple of 6 elements">>, Data).
 
 decode_option(Term, F) ->
     Decode = fun(Inner) ->
@@ -415,3 +439,4 @@ inspect_maybe_utf8_string(Binary, Acc) ->
 
 float_to_string(Float) when is_float(Float) ->
     erlang:iolist_to_binary(io_lib_format:fwrite_g(Float)).
+

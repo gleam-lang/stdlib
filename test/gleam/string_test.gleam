@@ -424,10 +424,8 @@ pub fn to_utf_codepoints_test() {
     [g, l, e, a, m]
   })
 
-  "🏳️‍🌈"
-  |> string.to_utf_codepoints
-  |> should.equal({
-    // ["🏳", "️", "‍", "🌈"]
+  // ["🏳", "️", "‍", "🌈"]
+  let expected = {
     let assert #(
       Ok(waving_white_flag),
       Ok(variant_selector_16),
@@ -440,7 +438,11 @@ pub fn to_utf_codepoints_test() {
       string.utf_codepoint(127_752),
     )
     [waving_white_flag, variant_selector_16, zero_width_joiner, rainbow]
-  })
+  }
+
+  "🏳️‍🌈"
+  |> string.to_utf_codepoints
+  |> should.equal(expected)
 }
 
 pub fn from_utf_codepoints_test() {

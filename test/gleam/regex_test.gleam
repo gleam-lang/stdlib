@@ -27,7 +27,7 @@ pub fn compile_test() {
   regex.check(re, "abc\n123")
   |> should.be_true
 
-  // For Erlang: This test will only passes if unicode and ucp flags are set
+  // On target Erlang this test will only pass if unicode and ucp flags are set
   let assert Ok(re) = regex.compile("\\s", options)
   // Em space == U+2003 == " " == used below
   regex.check(re, " ")
@@ -42,6 +42,28 @@ pub fn check_test() {
 
   regex.check(re, "boo")
   |> should.be_false
+
+  re
+  |> regex.check(content: "foo")
+  |> should.be_true
+
+  "boo"
+  |> regex.check(with: re)
+  |> should.be_false
+
+  // On target JavaScript internal `RegExp` objects are stateful when they
+  // have the global or sticky flags set (e.g., /foo/g or /foo/y).
+  // These following tests make sure that our implementation circumvents this.
+  let assert Ok(re) = regex.from_string("^-*[0-9]+")
+
+  regex.check(re, "1")
+  |> should.be_true
+
+  regex.check(re, "12")
+  |> should.be_true
+
+  regex.check(re, "123")
+  |> should.be_true
 }
 
 pub fn split_test() {

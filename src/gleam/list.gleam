@@ -189,8 +189,8 @@ pub fn is_empty(list: List(a)) -> Bool {
 pub fn contains(list: List(a), any elem: a) -> Bool {
   case list {
     [] -> False
-    [head, ..] if head == elem -> True
-    [_, ..tail] -> contains(tail, elem)
+    [first, ..] if first == elem -> True
+    [_, ..rest] -> contains(rest, elem)
   }
 }
 
@@ -480,12 +480,12 @@ fn do_try_map(
 /// ```
 ///
 /// ```gleam
-/// > try_map([[1], [2, 3]], head)
+/// > try_map([[1], [2, 3]], first)
 /// Ok([1, 2])
 /// ```
 ///
 /// ```gleam
-/// > try_map([[1], [], [2]], head)
+/// > try_map([[1], [], [2]], first)
 /// Error(Nil)
 /// ```
 ///
@@ -624,7 +624,7 @@ pub fn prepend(to list: List(a), this item: a) -> List(a) {
 fn reverse_and_prepend(list prefix: List(a), to suffix: List(a)) -> List(a) {
   case prefix {
     [] -> suffix
-    [head, ..tail] -> reverse_and_prepend(list: tail, to: [head, ..suffix])
+    [first, ..rest] -> reverse_and_prepend(list: rest, to: [first, ..suffix])
   }
 }
 
@@ -851,17 +851,17 @@ pub fn find(
 /// ## Examples
 ///
 /// ```gleam
-/// > find_map([[], [2], [3]], head)
+/// > find_map([[], [2], [3]], first)
 /// Ok(2)
 /// ```
 ///
 /// ```gleam
-/// > find_map([[], []], head)
+/// > find_map([[], []], first)
 /// Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// > find_map([], head)
+/// > find_map([], first)
 /// Error(Nil)
 /// ```
 ///
@@ -903,9 +903,9 @@ pub fn find_map(
 pub fn all(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
   case list {
     [] -> True
-    [head, ..tail] ->
-      case predicate(head) {
-        True -> all(tail, predicate)
+    [first, ..rest] ->
+      case predicate(first) {
+        True -> all(rest, predicate)
         False -> False
       }
   }
@@ -940,10 +940,10 @@ pub fn all(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
 pub fn any(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
   case list {
     [] -> False
-    [head, ..tail] ->
-      case predicate(head) {
+    [first, ..rest] ->
+      case predicate(first) {
         True -> True
-        False -> any(tail, predicate)
+        False -> any(rest, predicate)
       }
   }
 }
@@ -982,8 +982,8 @@ fn do_zip(xs: List(a), ys: List(b), acc: List(#(a, b))) -> List(#(a, b)) {
 /// [#(1, 3), #(2, 4)]
 /// ```
 ///
-pub fn zip(xs: List(a), ys: List(b)) -> List(#(a, b)) {
-  do_zip(xs, ys, [])
+pub fn zip(list: List(a), with other: List(b)) -> List(#(a, b)) {
+  do_zip(list, other, [])
 }
 
 /// Takes two lists and returns a single list of 2-element tuples.
@@ -1013,11 +1013,11 @@ pub fn zip(xs: List(a), ys: List(b)) -> List(#(a, b)) {
 /// ```
 ///
 pub fn strict_zip(
-  l1: List(a),
-  l2: List(b),
+  list: List(a),
+  with other: List(b),
 ) -> Result(List(#(a, b)), LengthMismatch) {
-  case length(of: l1) == length(of: l2) {
-    True -> Ok(zip(l1, l2))
+  case length(of: list) == length(of: other) {
+    True -> Ok(zip(list, other))
     False -> Error(LengthMismatch)
   }
 }
@@ -1414,7 +1414,7 @@ fn do_pop(haystack, predicate, checked) {
   }
 }
 
-/// Removes the first element in a given list for which the predicate funtion returns `True`.
+/// Removes the first element in a given list for which the predicate function returns `True`.
 ///
 /// Returns `Error(Nil)` if no such element is found.
 ///
@@ -1461,17 +1461,17 @@ fn do_pop_map(haystack, mapper, checked) {
 /// ## Examples
 ///
 /// ```gleam
-/// > pop_map([[], [2], [3]], head)
+/// > pop_map([[], [2], [3]], first)
 /// Ok(#(2, [[], [3]]))
 /// ```
 ///
 /// ```gleam
-/// > pop_map([[], []], head)
+/// > pop_map([[], []], first)
 /// Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// > pop_map([], head)
+/// > pop_map([], first)
 /// Error(Nil)
 /// ```
 ///
@@ -1562,6 +1562,36 @@ pub fn each(list: List(a), f: fn(a) -> b) -> Nil {
       f(x)
       each(xs, f)
     }
+  }
+}
+
+/// Calls a `Result` returning function for each element in a list, discarding
+/// the return value. If the function returns `Error` then the iteration is
+/// stopped and the error is returned.
+///
+/// Useful for calling a side effect for every item of a list.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > try_each(
+/// >   over: [1, 2, 3],
+/// >   with: function_that_might_fail,
+/// > )
+/// Ok(Nil)
+/// ```
+///
+pub fn try_each(
+  over list: List(a),
+  with fun: fn(a) -> Result(b, e),
+) -> Result(Nil, e) {
+  case list {
+    [] -> Ok(Nil)
+    [x, ..xs] ->
+      case fun(x) {
+        Ok(_) -> try_each(over: xs, with: fun)
+        Error(e) -> Error(e)
+      }
   }
 }
 
@@ -1672,7 +1702,7 @@ pub fn window_by_2(l: List(a)) -> List(#(a, a)) {
   zip(l, drop(l, 1))
 }
 
-/// Drops the first elements in a given list for which the predicate funtion returns `True`.
+/// Drops the first elements in a given list for which the predicate function returns `True`.
 ///
 /// ## Examples
 ///
@@ -1702,15 +1732,15 @@ fn do_take_while(
 ) -> List(a) {
   case list {
     [] -> reverse(acc)
-    [head, ..tail] ->
-      case predicate(head) {
-        True -> do_take_while(tail, predicate, [head, ..acc])
+    [first, ..rest] ->
+      case predicate(first) {
+        True -> do_take_while(rest, predicate, [first, ..acc])
         False -> reverse(acc)
       }
   }
 }
 
-/// Takes the first elements in a given list for which the predicate funtion returns `True`.
+/// Takes the first elements in a given list for which the predicate function returns `True`.
 ///
 /// ## Examples
 ///
@@ -1734,14 +1764,14 @@ fn do_chunk(
   acc: List(List(a)),
 ) -> List(List(a)) {
   case list {
-    [head, ..tail] -> {
-      let key = f(head)
+    [first, ..rest] -> {
+      let key = f(first)
       case key == previous_key {
         False -> {
           let new_acc = [reverse(current_chunk), ..acc]
-          do_chunk(tail, f, key, [head], new_acc)
+          do_chunk(rest, f, key, [first], new_acc)
         }
-        _true -> do_chunk(tail, f, key, [head, ..current_chunk], acc)
+        _true -> do_chunk(rest, f, key, [first, ..current_chunk], acc)
       }
     }
     _empty -> reverse([reverse(current_chunk), ..acc])
@@ -1761,7 +1791,7 @@ fn do_chunk(
 pub fn chunk(in list: List(a), by f: fn(a) -> key) -> List(List(a)) {
   case list {
     [] -> []
-    [head, ..tail] -> do_chunk(tail, f, f(head), [head], [])
+    [first, ..rest] -> do_chunk(rest, f, f(first), [first], [])
   }
 }
 
@@ -1778,11 +1808,11 @@ fn do_sized_chunk(
         [] -> reverse(acc)
         remaining -> reverse([reverse(remaining), ..acc])
       }
-    [head, ..tail] -> {
-      let chunk = [head, ..current_chunk]
+    [first, ..rest] -> {
+      let chunk = [first, ..current_chunk]
       case left > 1 {
-        False -> do_sized_chunk(tail, count, count, [], [reverse(chunk), ..acc])
-        True -> do_sized_chunk(tail, count, left - 1, chunk, acc)
+        False -> do_sized_chunk(rest, count, count, [], [reverse(chunk), ..acc])
+        True -> do_sized_chunk(rest, count, left - 1, chunk, acc)
       }
     }
   }
@@ -1834,7 +1864,7 @@ pub fn sized_chunk(in list: List(a), into count: Int) -> List(List(a)) {
 pub fn reduce(over list: List(a), with fun: fn(a, a) -> a) -> Result(a, Nil) {
   case list {
     [] -> Error(Nil)
-    [head, ..tail] -> Ok(fold(tail, head, fun))
+    [first, ..rest] -> Ok(fold(rest, first, fun))
   }
 }
 
@@ -2032,9 +2062,9 @@ fn do_shuffle_by_pair_indexes(
 /// ## Example
 ///
 /// ```gleam
-/// list.range(1, 10)
-/// |> list.shuffle()
-/// > [1, 6, 9, 10, 3, 8, 4, 2, 7, 5]
+/// > range(1, 10)
+/// > |> shuffle()
+/// [1, 6, 9, 10, 3, 8, 4, 2, 7, 5]
 /// ```
 ///
 pub fn shuffle(list: List(a)) -> List(a) {

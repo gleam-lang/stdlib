@@ -237,7 +237,7 @@ pub fn to_list(iterator: Iterator(element)) -> List(element) {
   |> list.reverse
 }
 
-/// Eagerly accesses the first value of an interator, returning a `Next`
+/// Eagerly accesses the first value of an iterator, returning a `Next`
 /// that contains the first value and the rest of the iterator.
 ///
 /// If called on an empty iterator, `Done` is returned.
@@ -245,15 +245,15 @@ pub fn to_list(iterator: Iterator(element)) -> List(element) {
 /// ## Examples
 ///
 /// ```gleam
-/// > assert Next(head, tail) = [1, 2, 3, 4]
+/// > let assert Next(first, rest) = [1, 2, 3, 4]
 /// >   |> from_list
 /// >   |> step
-/// > head
+/// > first
 /// 1
 /// ```
 ///
 /// ```gleam
-/// > tail |> to_list
+/// > rest |> to_list
 /// [2, 3, 4]
 /// ```
 ///
@@ -1304,7 +1304,7 @@ fn do_try_fold(
   case continuation() {
     Stop -> Ok(accumulator)
     Continue(elem, next) -> {
-      use accumulator <- result.then(f(accumulator, elem))
+      use accumulator <- result.try(f(accumulator, elem))
       do_try_fold(next, f, accumulator)
     }
   }

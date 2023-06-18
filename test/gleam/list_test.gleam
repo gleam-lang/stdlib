@@ -846,11 +846,47 @@ pub fn key_set_test() {
 }
 
 pub fn each_test() {
-  list.each([1, 1, 1], fn(x) { let assert 1 = x })
+  list.each(
+    [1, 1, 1],
+    fn(x) {
+      let assert 1 = x
+    },
+  )
   |> should.equal(Nil)
 
   // TCO test
-  list.each(list.repeat(1, recursion_test_cycles), fn(x) { let assert 1 = x })
+  list.each(
+    list.repeat(1, recursion_test_cycles),
+    fn(x) {
+      let assert 1 = x
+    },
+  )
+}
+
+pub fn try_each_test() {
+  let assert Ok(Nil) =
+    list.try_each(
+      over: [1, 1, 1],
+      with: fn(x) {
+        should.equal(x, 1)
+        Ok(Nil)
+      },
+    )
+
+  // `try_each` actually stops when `fun` returns error
+  let assert Error(1) =
+    list.try_each(
+      over: [1, 2, 3],
+      with: fn(x) {
+        should.equal(x, 1)
+        Error(x)
+      },
+    )
+
+  // TCO test
+  let assert Ok(Nil) =
+    list.repeat(1, recursion_test_cycles)
+    |> list.try_each(with: fn(_) { Ok(Nil) })
 }
 
 pub fn partition_test() {
