@@ -3,6 +3,7 @@
 ## Unreleased
 
 - improve `string.join` and `string.concat` performance on JavaScript target.
+- The `result` module gains the `try_recover` function.
 
 ## v0.29.1 - 2023-06-01
 
