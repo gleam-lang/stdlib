@@ -208,6 +208,10 @@ pub fn any_test() {
   [Error("a"), Error("b"), Error("c")]
   |> result.any
   |> should.equal(Error(["a", "b", "c"]))
+
+  []
+  |> result.any
+  |> should.equal(Error([]))
 }
 
 pub fn lazy_any_test() {
@@ -222,6 +226,10 @@ pub fn lazy_any_test() {
   [fn() { Error("a") }, fn() { Error("b") }, fn() { Error("c") }]
   |> result.lazy_any
   |> should.equal(Error(["a", "b", "c"]))
+
+  []
+  |> result.lazy_any
+  |> should.equal(Error([]))
 }
 
 pub fn partition_test() {

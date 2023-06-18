@@ -367,8 +367,9 @@ pub fn all(results: List(Result(a, e))) -> Result(List(a), e) {
   list.try_map(results, fn(x) { x })
 }
 
-/// Iterates through a list of results and returns the first success, if any.
-/// Returns the list otherwise, which will thus be a list of errors.
+/// Iterates through a list of results and returns the first success, if any,
+/// and does not continue iterating after encountering the first success.
+/// Returns the entire list otherwise, which will thus be a list of errors.
 /// 
 /// ## Examples
 /// 
@@ -379,7 +380,7 @@ pub fn all(results: List(Result(a, e))) -> Result(List(a), e) {
 /// 
 /// ```gleam
 /// > any([Error("e"), Error("b"), Error("c")])
-/// [Error("e"), Error("b"), Error("c")]
+/// Error(["e", "b", "c"])
 /// ```
 pub fn any(results: List(Result(a, e))) -> Result(a, List(e)) {
   case list.find_map(results, function.identity) {
@@ -393,18 +394,19 @@ pub fn any(results: List(Result(a, e))) -> Result(a, List(e)) {
   }
 }
 
-/// Iterates through a list of result-returning functions and returns the first success, if any.
-/// Returns the list of errors otherwise.
+/// Iterates through a list of result-returning functions and returns the first success, if any,
+/// and does not continue iterating after encountering the first success.
+/// Returns the entire list of errors otherwise.
 /// 
 /// ## Examples
 /// 
 /// ```gleam
-/// > any([fn() { Error("e") }, fn() { Ok(1) }, fn() { Error("2") }])
+/// > lazy_any([fn() { Error("e") }, fn() { Ok(1) }, fn() { Error("2") }])
 /// Ok(1)
 /// ```
 /// 
 /// ```gleam
-/// > any([fn() { Error("e") }, fn() { Error("b") }, fn() { Error("c") }])
+/// > lazy_any([fn() { Error("e") }, fn() { Error("b") }, fn() { Error("c") }])
 /// [Error("e"), Error("b"), Error("c")]
 /// ```
 pub fn lazy_any(results: List(fn() -> Result(a, e))) -> Result(a, List(e)) {
