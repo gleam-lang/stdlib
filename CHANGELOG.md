@@ -3,6 +3,7 @@
 ## Unreleased
 
 - The `result` module gains the `try_recover` function.
+- The `result` module gains the `any` and `lazy_any` functions.
 
 ## v0.29.1 - 2023-06-01
 
