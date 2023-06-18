@@ -196,13 +196,28 @@ export function split(xs, pattern) {
   return List.fromArray(xs.split(pattern));
 }
 
+// export function join(xs, separator) {
+//   let result = "";
+//   for (const x of xs) {
+//     result = result + x + separator;
+//   }
+//   return result.slice(0, -separator.length);
+// }
+
 export function join(xs, separator) {
   let result = "";
+  let i = 0;
   for (const x of xs) {
-    result = result + x + separator;
+    if (i == 0) {
+      result = x
+    } else {
+      result = result + separator + x;
+    }
+    i++;
   }
-  return result.slice(0, -separator.length);
+  return result;
 }
+
 
 export function concat(xs) {
   let result = "";
