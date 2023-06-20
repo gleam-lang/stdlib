@@ -751,11 +751,3 @@ function try_get_field(value, field, or_else) {
     return or_else();
   }
 }
-
-export function create_timer() {
-  return new Date();
-};
-
-export function read_timer(timer) {
-  return create_timer().getTime() - timer.getTime();
-};
