@@ -985,3 +985,17 @@ if erlang {
   ) -> List(anything) =
     "gleam_stdlib_test_ffi" "improper_list_append"
 }
+
+pub fn byte_size_test() {
+  let assert 0 = string.byte_size("")
+  let assert 1 = string.byte_size("a")
+  let assert 2 = string.byte_size("ab")
+  let assert 3 = string.byte_size("abc")
+
+  // Unicode graphemes. These will be multiple bytes.
+  let assert 1 = string.byte_size("a")
+  let assert 2 = string.byte_size("ä")
+  let assert 4 = string.byte_size("👩")
+  let assert 8 = string.byte_size("👩🏾")
+  let assert 15 = string.byte_size("👩🏾‍🦰")
+}

@@ -439,4 +439,3 @@ inspect_maybe_utf8_string(Binary, Acc) ->
 
 float_to_string(Float) when is_float(Float) ->
     erlang:iolist_to_binary(io_lib_format:fwrite_g(Float)).
-

@@ -733,3 +733,7 @@ function try_get_field(value, field, or_else) {
     return or_else();
   }
 }
+
+export function byte_size(string) {
+  return new TextEncoder().encode(string).length;
+}

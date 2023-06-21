@@ -1025,3 +1025,22 @@ if erlang {
   external fn do_inspect(term: anything) -> StringBuilder =
     "gleam_stdlib" "inspect"
 }
+
+/// Returns the number of bytes in a `String`.
+/// 
+/// This function runs in constant time on Erlang and in linear time on
+/// JavaScript.
+///
+pub fn byte_size(string: String) -> Int {
+  do_byte_size(string)
+}
+
+if javascript {
+  external fn do_byte_size(String) -> Int =
+    "../gleam_stdlib.mjs" "byte_size"
+}
+
+if erlang {
+  external fn do_byte_size(String) -> Int =
+    "erlang" "byte_size"
+}
