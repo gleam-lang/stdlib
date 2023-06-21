@@ -3,6 +3,7 @@
 ## Unreleased
 
 - The `result` module gains the `try_recover` function.
+- The `string` module gains the `byte_size` function.
 
 ## v0.29.1 - 2023-06-01
 
