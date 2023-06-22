@@ -9,10 +9,6 @@ links = [
   { title = "Sponsor", href = "https://github.com/sponsors/lpil" },
 ]
 
-[dependencies]
-
-[dev-dependencies]
-
 [javascript.deno]
 allow_read = [
   "./",

@@ -2,6 +2,7 @@
 
 ## v0.29.2 - 2023-06-21
 
+- improve `string.join` and `string.concat` performance on JavaScript target.
 - The `result` module gains the `try_recover` function.
 - The `string` module gains the `byte_size` function.
 
