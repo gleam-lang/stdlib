@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- The `list` module gains the `list.map2` function.
+
 ## v0.29.2 - 2023-06-21
 
 - improve `string.join` and `string.concat` performance on JavaScript target.
