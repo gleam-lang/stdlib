@@ -189,6 +189,29 @@ pub fn map2_test() {
   list.map2(list, list, int.add)
 }
 
+pub fn map3_test() {
+  let add3 = fn(x, y, z) { x + y + z }
+
+  list.map3([], [1, 2, 3], [4, 5, 6], add3)
+  |> should.equal([])
+
+  list.map3([1, 2, 3], [], [4, 5, 6], add3)
+  |> should.equal([])
+
+  list.map3([1, 2, 3], [4, 5, 6], [], add3)
+  |> should.equal([])
+
+  list.map3([1, 2, 3], [4, 5], [6], add3)
+  |> should.equal([11])
+
+  list.map3([1, 2, 3], [4, 5, 6], [7, 8, 9], add3)
+  |> should.equal([12, 15, 18])
+
+  // TCO test
+  let list = list.repeat(0, recursion_test_cycles)
+  list.map3(list, list, list, add3)
+}
+
 pub fn map_fold_test() {
   [1, 2, 3, 4]
   |> list.map_fold(from: 0, with: fn(acc, i) { #(acc + i, i * 2) })
