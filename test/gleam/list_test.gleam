@@ -1,4 +1,5 @@
 import gleam/float
+import gleam/pair
 import gleam/int
 import gleam/list
 import gleam/map
@@ -183,6 +184,9 @@ pub fn map2_test() {
 
   list.map2([1, 2, 3], [4, 5, 6], int.add)
   |> should.equal([5, 7, 9])
+
+  list.map2([1, 2, 3], ["1", "2"], pair.new)
+  |> should.equal([#(1, "1"), #(2, "2")])
 
   // TCO test
   let list = list.repeat(0, recursion_test_cycles)
