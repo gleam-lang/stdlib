@@ -380,6 +380,38 @@ pub fn map(list: List(a), with fun: fn(a) -> b) -> List(b) {
   do_map(list, fun, [])
 }
 
+/// Combines two lists into a single list using the given function.
+/// 
+/// If a list is longer than the other the extra elements are dropped.
+/// 
+/// ## Examples
+/// 
+/// ```gleam
+/// > map2([1, 2, 3], [4, 5, 6], fn(x, y) { x + y })
+/// [5, 7, 9]
+/// ```
+/// 
+/// ```gleam
+/// > map2([1, 2], ["a", "b", "c"], fn(i, x) { #(i, x) })
+/// [#(1, "a"), #(2, "b")]
+/// ```
+/// 
+pub fn map2(list1: List(a), list2: List(b), with fun: fn(a, b) -> c) -> List(c) {
+  do_map2(list1, list2, fun, [])
+}
+
+fn do_map2(
+  list1: List(a),
+  list2: List(b),
+  fun: fn(a, b) -> c,
+  acc: List(c),
+) -> List(c) {
+  case list1, list2 {
+    [], _ | _, [] -> reverse(acc)
+    [a, ..as_], [b, ..bs] -> do_map2(as_, bs, fun, [fun(a, b), ..acc])
+  }
+}
+
 /// Similar to `map` but also lets you pass around an accumulated value.
 ///
 /// ## Examples
