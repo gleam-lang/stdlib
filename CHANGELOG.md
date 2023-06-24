@@ -3,6 +3,7 @@
 ## Unreleased
 
 - The `list` module gains the `list.map2` function.
+- The `list` module gains the `list.map3` function.
 
 ## v0.29.2 - 2023-06-21
 

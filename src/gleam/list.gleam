@@ -412,6 +412,33 @@ fn do_map2(
   }
 }
 
+/// Combines three lists into a single list using the given function.
+///
+/// If a list is longer than the others the extra elements are dropped.
+///
+pub fn map3(
+  list1: List(a),
+  list2: List(b),
+  list3: List(c),
+  with fun: fn(a, b, c) -> d,
+) -> List(d) {
+  do_map3(list1, list2, list3, fun, [])
+}
+
+fn do_map3(
+  list1: List(a),
+  list2: List(b),
+  list3: List(c),
+  fun: fn(a, b, c) -> d,
+  acc: List(d),
+) -> List(d) {
+  case list1, list2, list3 {
+    [], _, _ | _, [], _ | _, _, [] -> reverse(acc)
+    [a, ..as_], [b, ..bs], [c, ..cs] ->
+      do_map3(as_, bs, cs, fun, [fun(a, b, c), ..acc])
+  }
+}
+
 /// Similar to `map` but also lets you pass around an accumulated value.
 ///
 /// ## Examples
