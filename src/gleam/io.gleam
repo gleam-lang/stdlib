@@ -16,15 +16,9 @@ pub fn print(string: String) -> Nil {
   do_print(string)
 }
 
-if erlang {
-  external fn do_print(string: String) -> Nil =
-    "gleam_stdlib" "print"
-}
-
-if javascript {
-  external fn do_print(String) -> Nil =
-    "../gleam_stdlib.mjs" "print"
-}
+@external(erlang, "gleam_stdlib", "print")
+@external(javascript, "../gleam_stdlib.mjs", "print")
+fn do_print(string string: String) -> Nil
 
 /// Writes a string to standard error.
 ///
@@ -42,15 +36,9 @@ pub fn print_error(string: String) -> Nil {
   do_print_error(string)
 }
 
-if erlang {
-  external fn do_print_error(string: String) -> Nil =
-    "gleam_stdlib" "print_error"
-}
-
-if javascript {
-  external fn do_print_error(String) -> Nil =
-    "../gleam_stdlib.mjs" "print_error"
-}
+@external(erlang, "gleam_stdlib", "print_error")
+@external(javascript, "../gleam_stdlib.mjs", "print_error")
+fn do_print_error(string string: String) -> Nil
 
 /// Writes a string to standard output, appending a newline to the end.
 ///
@@ -66,15 +54,9 @@ pub fn println(string: String) -> Nil {
   do_println(string)
 }
 
-if erlang {
-  external fn do_println(string: String) -> Nil =
-    "gleam_stdlib" "println"
-}
-
-if javascript {
-  external fn do_println(String) -> Nil =
-    "../gleam_stdlib.mjs" "console_log"
-}
+@external(erlang, "gleam_stdlib", "println")
+@external(javascript, "../gleam_stdlib.mjs", "console_log")
+fn do_println(string string: String) -> Nil
 
 /// Writes a string to standard error, appending a newline to the end.
 ///
@@ -90,15 +72,9 @@ pub fn println_error(string: String) -> Nil {
   do_println_error(string)
 }
 
-if erlang {
-  external fn do_println_error(string: String) -> Nil =
-    "gleam_stdlib" "println_error"
-}
-
-if javascript {
-  external fn do_println_error(String) -> Nil =
-    "../gleam_stdlib.mjs" "console_error"
-}
+@external(erlang, "gleam_stdlib", "println_error")
+@external(javascript, "../gleam_stdlib.mjs", "console_error")
+fn do_println_error(string string: String) -> Nil
 
 /// Prints a value to standard error (stderr) yielding Gleam syntax.
 ///
@@ -136,12 +112,6 @@ pub fn debug(term: anything) -> anything {
   term
 }
 
-if erlang {
-  external fn do_debug_println(string: String) -> Nil =
-    "gleam_stdlib" "println_error"
-}
-
-if javascript {
-  external fn do_debug_println(String) -> Nil =
-    "../gleam_stdlib.mjs" "print_debug"
-}
+@external(erlang, "gleam_stdlib", "println_error")
+@external(javascript, "../gleam_stdlib.mjs", "print_debug")
+fn do_debug_println(string string: String) -> Nil

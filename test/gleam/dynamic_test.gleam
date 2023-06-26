@@ -30,54 +30,49 @@ pub fn bit_string_test() {
   ]))
 }
 
-if erlang {
-  pub fn bit_string_erlang_test() {
-    <<65_535:16>>
-    |> dynamic.from
-    |> dynamic.bit_string
-    |> should.equal(Ok(<<65_535:16>>))
-  }
+@target(erlang)
+pub fn bit_string_erlang_test() {
+  <<65_535:16>>
+  |> dynamic.from
+  |> dynamic.bit_string
+  |> should.equal(Ok(<<65_535:16>>))
 }
 
-if javascript {
-  external fn uint8array(List(Int)) -> dynamic.Dynamic =
-    "../gleam_stdlib_test_ffi.mjs" "uint8array"
+@target(javascript)
+@external(javascript, "../gleam_stdlib_test_ffi.mjs", "uint8array")
+fn uint8array(a: List(Int)) -> dynamic.Dynamic
 
-  pub fn bit_string_erlang_test() {
-    [1, 1, 2, 3, 5, 8]
-    |> uint8array
-    |> dynamic.bit_string
-    |> should.equal(Ok(<<1, 1, 2, 3, 5, 8>>))
-  }
+@target(javascript)
+pub fn bit_string_erlang_test() {
+  [1, 1, 2, 3, 5, 8]
+  |> uint8array
+  |> dynamic.bit_string
+  |> should.equal(Ok(<<1, 1, 2, 3, 5, 8>>))
 }
 
-if erlang {
-  pub type MyAtom {
-    ThisIsAnAtom
-  }
-
-  pub fn map_from_atom_test() {
-    ThisIsAnAtom
-    |> dynamic.from
-    |> dynamic.map(dynamic.string, dynamic.int)
-    |> should.equal(Error([
-      DecodeError(expected: "Map", found: "Atom", path: []),
-    ]))
-  }
+@target(erlang)
+pub type MyAtom {
+  ThisIsAnAtom
 }
 
-if javascript {
-  external fn get_null() -> dynamic.Dynamic =
-    "../gleam_stdlib_test_ffi.mjs" "get_null"
+@target(erlang)
+pub fn map_from_atom_test() {
+  ThisIsAnAtom
+  |> dynamic.from
+  |> dynamic.map(dynamic.string, dynamic.int)
+  |> should.equal(Error([DecodeError(expected: "Map", found: "Atom", path: [])]))
+}
 
-  pub fn map_from_null_test() {
-    get_null()
-    |> dynamic.from
-    |> dynamic.map(dynamic.string, dynamic.int)
-    |> should.equal(Error([
-      DecodeError(expected: "Map", found: "Null", path: []),
-    ]))
-  }
+@target(javascript)
+@external(javascript, "../gleam_stdlib_test_ffi.mjs", "get_null")
+fn get_null() -> dynamic.Dynamic
+
+@target(javascript)
+pub fn map_from_null_test() {
+  get_null()
+  |> dynamic.from
+  |> dynamic.map(dynamic.string, dynamic.int)
+  |> should.equal(Error([DecodeError(expected: "Map", found: "Null", path: [])]))
 }
 
 pub fn string_test() {
@@ -106,15 +101,14 @@ pub fn string_test() {
   ]))
 }
 
-if erlang {
-  pub fn string_non_utf8_test() {
-    <<65_535:16>>
-    |> dynamic.from
-    |> dynamic.string
-    |> should.equal(Error([
-      DecodeError(expected: "String", found: "BitString", path: []),
-    ]))
-  }
+@target(erlang)
+pub fn string_non_utf8_test() {
+  <<65_535:16>>
+  |> dynamic.from
+  |> dynamic.string
+  |> should.equal(Error([
+    DecodeError(expected: "String", found: "BitString", path: []),
+  ]))
 }
 
 pub fn int_test() {
@@ -153,36 +147,30 @@ pub fn float_test() {
   ]))
 }
 
-if erlang {
-  pub fn float_on_js_is_also_int_test() {
-    1
-    |> dynamic.from
-    |> dynamic.float
-    |> should.equal(Error([
-      DecodeError(expected: "Float", found: "Int", path: []),
-    ]))
+@target(erlang)
+pub fn float_on_js_is_also_int_test() {
+  1
+  |> dynamic.from
+  |> dynamic.float
+  |> should.equal(Error([DecodeError(expected: "Float", found: "Int", path: [])]))
 
-    1.0
-    |> dynamic.from
-    |> dynamic.int
-    |> should.equal(Error([
-      DecodeError(expected: "Int", found: "Float", path: []),
-    ]))
-  }
+  1.0
+  |> dynamic.from
+  |> dynamic.int
+  |> should.equal(Error([DecodeError(expected: "Int", found: "Float", path: [])]))
 }
 
-if javascript {
-  pub fn float_on_js_is_also_int_test() {
-    1
-    |> dynamic.from
-    |> dynamic.float
-    |> should.equal(Ok(1.0))
+@target(javascript)
+pub fn float_on_js_is_also_int_test() {
+  1
+  |> dynamic.from
+  |> dynamic.float
+  |> should.equal(Ok(1.0))
 
-    1.0
-    |> dynamic.from
-    |> dynamic.int
-    |> should.equal(Ok(1))
-  }
+  1.0
+  |> dynamic.from
+  |> dynamic.int
+  |> should.equal(Ok(1))
 }
 
 pub fn bool_test() {
@@ -284,25 +272,24 @@ pub fn optional_test() {
   |> should.be_error
 }
 
-if javascript {
-  pub fn javascript_object_field_test() {
-    Ok(123)
-    |> dynamic.from
-    |> dynamic.field("0", dynamic.int)
-    |> should.equal(Ok(123))
+@target(javascript)
+pub fn javascript_object_field_test() {
+  Ok(123)
+  |> dynamic.from
+  |> dynamic.field("0", dynamic.int)
+  |> should.equal(Ok(123))
 
-    Ok(123)
-    |> dynamic.from
-    |> dynamic.field(0, dynamic.int)
-    |> should.equal(Ok(123))
+  Ok(123)
+  |> dynamic.from
+  |> dynamic.field(0, dynamic.int)
+  |> should.equal(Ok(123))
 
-    Ok(123)
-    |> dynamic.from
-    |> dynamic.field("Nope", dynamic.int)
-    |> should.equal(Error([
-      DecodeError(expected: "Map", found: "Result", path: []),
-    ]))
-  }
+  Ok(123)
+  |> dynamic.from
+  |> dynamic.field("Nope", dynamic.int)
+  |> should.equal(Error([
+    DecodeError(expected: "Map", found: "Result", path: []),
+  ]))
 }
 
 pub fn field_test() {
@@ -1083,18 +1070,17 @@ pub fn shallow_list_test() {
   |> should.equal(Error([DecodeError(expected: "List", found: "Int", path: [])]))
 }
 
-if javascript {
-  pub fn array_on_js_is_also_list_test() {
-    #()
-    |> dynamic.from
-    |> dynamic.shallow_list
-    |> should.equal(Ok([]))
+@target(javascript)
+pub fn array_on_js_is_also_list_test() {
+  #()
+  |> dynamic.from
+  |> dynamic.shallow_list
+  |> should.equal(Ok([]))
 
-    #(1, 2)
-    |> dynamic.from
-    |> dynamic.list(of: dynamic.int)
-    |> should.equal(Ok([1, 2]))
-  }
+  #(1, 2)
+  |> dynamic.from
+  |> dynamic.list(of: dynamic.int)
+  |> should.equal(Ok([1, 2]))
 }
 
 pub fn result_test() {

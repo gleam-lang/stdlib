@@ -13,22 +13,19 @@
 //// On Erlang this type is compatible with Erlang's iolists.
 
 import gleam/string_builder.{StringBuilder}
+@target(javascript)
+import gleam/list
+@target(javascript)
+import gleam/bit_string
 
-if javascript {
-  import gleam/list
-  import gleam/bit_string
-}
+@target(erlang)
+pub type BitBuilder
 
-if erlang {
-  pub external type BitBuilder
-}
-
-if javascript {
-  pub opaque type BitBuilder {
-    Bits(BitString)
-    Text(StringBuilder)
-    Many(List(BitBuilder))
-  }
+@target(javascript)
+pub opaque type BitBuilder {
+  Bits(BitString)
+  Text(StringBuilder)
+  Many(List(BitBuilder))
 }
 
 /// Create an empty `BitBuilder`. Useful as the start of a pipe chaning many
@@ -73,20 +70,15 @@ pub fn append_builder(
   do_append_builder(first, second)
 }
 
-if erlang {
-  external fn do_append_builder(
-    to: BitBuilder,
-    suffix: BitBuilder,
-  ) -> BitBuilder =
-    "gleam_stdlib" "iodata_append"
-}
+@target(erlang)
+@external(erlang, "gleam_stdlib", "iodata_append")
+fn do_append_builder(to to: BitBuilder, suffix suffix: BitBuilder) -> BitBuilder
 
-if javascript {
-  fn do_append_builder(first: BitBuilder, second: BitBuilder) -> BitBuilder {
-    case second {
-      Many(builders) -> Many([first, ..builders])
-      _ -> Many([first, second])
-    }
+@target(javascript)
+fn do_append_builder(first: BitBuilder, second: BitBuilder) -> BitBuilder {
+  case second {
+    Many(builders) -> Many([first, ..builders])
+    _ -> Many([first, second])
   }
 }
 
@@ -116,15 +108,13 @@ pub fn concat(builders: List(BitBuilder)) -> BitBuilder {
   do_concat(builders)
 }
 
-if erlang {
-  external fn do_concat(List(BitBuilder)) -> BitBuilder =
-    "gleam_stdlib" "identity"
-}
+@target(erlang)
+@external(erlang, "gleam_stdlib", "identity")
+fn do_concat(a: List(BitBuilder)) -> BitBuilder
 
-if javascript {
-  fn do_concat(builders: List(BitBuilder)) -> BitBuilder {
-    Many(builders)
-  }
+@target(javascript)
+fn do_concat(builders: List(BitBuilder)) -> BitBuilder {
+  Many(builders)
 }
 
 /// Joins a list of bit strings into a single builder.
@@ -135,17 +125,15 @@ pub fn concat_bit_strings(bits: List(BitString)) -> BitBuilder {
   do_concat_bit_strings(bits)
 }
 
-if erlang {
-  external fn do_concat_bit_strings(List(BitString)) -> BitBuilder =
-    "gleam_stdlib" "identity"
-}
+@target(erlang)
+@external(erlang, "gleam_stdlib", "identity")
+fn do_concat_bit_strings(a: List(BitString)) -> BitBuilder
 
-if javascript {
-  fn do_concat_bit_strings(bits: List(BitString)) -> BitBuilder {
-    bits
-    |> list.map(fn(b) { from_bit_string(b) })
-    |> concat()
-  }
+@target(javascript)
+fn do_concat_bit_strings(bits: List(BitString)) -> BitBuilder {
+  bits
+  |> list.map(fn(b) { from_bit_string(b) })
+  |> concat()
 }
 
 /// Creates a new builder from a string.
@@ -157,15 +145,13 @@ pub fn from_string(string: String) -> BitBuilder {
   do_from_string(string)
 }
 
-if erlang {
-  external fn do_from_string(String) -> BitBuilder =
-    "gleam_stdlib" "wrap_list"
-}
+@target(erlang)
+@external(erlang, "gleam_stdlib", "wrap_list")
+fn do_from_string(a: String) -> BitBuilder
 
-if javascript {
-  fn do_from_string(string: String) -> BitBuilder {
-    Text(string_builder.from_string(string))
-  }
+@target(javascript)
+fn do_from_string(string: String) -> BitBuilder {
+  Text(string_builder.from_string(string))
 }
 
 /// Creates a new builder from a string builder.
@@ -177,15 +163,13 @@ pub fn from_string_builder(builder: StringBuilder) -> BitBuilder {
   do_from_string_builder(builder)
 }
 
-if erlang {
-  external fn do_from_string_builder(StringBuilder) -> BitBuilder =
-    "gleam_stdlib" "wrap_list"
-}
+@target(erlang)
+@external(erlang, "gleam_stdlib", "wrap_list")
+fn do_from_string_builder(a: StringBuilder) -> BitBuilder
 
-if javascript {
-  fn do_from_string_builder(builder: StringBuilder) -> BitBuilder {
-    Text(builder)
-  }
+@target(javascript)
+fn do_from_string_builder(builder: StringBuilder) -> BitBuilder {
+  Text(builder)
 }
 
 /// Creates a new builder from a bit string.
@@ -196,15 +180,13 @@ pub fn from_bit_string(bits: BitString) -> BitBuilder {
   do_from_bit_string(bits)
 }
 
-if erlang {
-  external fn do_from_bit_string(BitString) -> BitBuilder =
-    "gleam_stdlib" "wrap_list"
-}
+@target(erlang)
+@external(erlang, "gleam_stdlib", "wrap_list")
+fn do_from_bit_string(a: BitString) -> BitBuilder
 
-if javascript {
-  fn do_from_bit_string(bits: BitString) -> BitBuilder {
-    Bits(bits)
-  }
+@target(javascript)
+fn do_from_bit_string(bits: BitString) -> BitBuilder {
+  Bits(bits)
 }
 
 /// Turns an builder into a bit string.
@@ -218,39 +200,38 @@ pub fn to_bit_string(builder: BitBuilder) -> BitString {
   do_to_bit_string(builder)
 }
 
-if erlang {
-  external fn do_to_bit_string(BitBuilder) -> BitString =
-    "erlang" "list_to_bitstring"
+@target(erlang)
+@external(erlang, "erlang", "list_to_bitstring")
+fn do_to_bit_string(a: BitBuilder) -> BitString
+
+@target(javascript)
+fn do_to_bit_string(builder: BitBuilder) -> BitString {
+  [[builder]]
+  |> to_list([])
+  |> list.reverse
+  |> bit_string.concat
 }
 
-if javascript {
-  fn do_to_bit_string(builder: BitBuilder) -> BitString {
-    [[builder]]
-    |> to_list([])
-    |> list.reverse
-    |> bit_string.concat
-  }
+@target(javascript)
+fn to_list(
+  stack: List(List(BitBuilder)),
+  acc: List(BitString),
+) -> List(BitString) {
+  case stack {
+    [] -> acc
 
-  fn to_list(
-    stack: List(List(BitBuilder)),
-    acc: List(BitString),
-  ) -> List(BitString) {
-    case stack {
-      [] -> acc
+    [[], ..remaining_stack] -> to_list(remaining_stack, acc)
 
-      [[], ..remaining_stack] -> to_list(remaining_stack, acc)
+    [[Bits(bits), ..rest], ..remaining_stack] ->
+      to_list([rest, ..remaining_stack], [bits, ..acc])
 
-      [[Bits(bits), ..rest], ..remaining_stack] ->
-        to_list([rest, ..remaining_stack], [bits, ..acc])
-
-      [[Text(builder), ..rest], ..remaining_stack] -> {
-        let bits = bit_string.from_string(string_builder.to_string(builder))
-        to_list([rest, ..remaining_stack], [bits, ..acc])
-      }
-
-      [[Many(builders), ..rest], ..remaining_stack] ->
-        to_list([builders, rest, ..remaining_stack], acc)
+    [[Text(builder), ..rest], ..remaining_stack] -> {
+      let bits = bit_string.from_string(string_builder.to_string(builder))
+      to_list([rest, ..remaining_stack], [bits, ..acc])
     }
+
+    [[Many(builders), ..rest], ..remaining_stack] ->
+      to_list([builders, rest, ..remaining_stack], acc)
   }
 }
 
@@ -262,15 +243,13 @@ pub fn byte_size(builder: BitBuilder) -> Int {
   do_byte_size(builder)
 }
 
-if erlang {
-  external fn do_byte_size(BitBuilder) -> Int =
-    "erlang" "iolist_size"
-}
+@target(erlang)
+@external(erlang, "erlang", "iolist_size")
+fn do_byte_size(a: BitBuilder) -> Int
 
-if javascript {
-  fn do_byte_size(builder: BitBuilder) -> Int {
-    [[builder]]
-    |> to_list([])
-    |> list.fold(0, fn(acc, builder) { bit_string.byte_size(builder) + acc })
-  }
+@target(javascript)
+fn do_byte_size(builder: BitBuilder) -> Int {
+  [[builder]]
+  |> to_list([])
+  |> list.fold(0, fn(acc, builder) { bit_string.byte_size(builder) + acc })
 }
