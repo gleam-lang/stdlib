@@ -125,6 +125,14 @@ export function string_replace(string, target, substitute) {
   );
 }
 
+export function string_replace_with_regex(string, regex, substitute) {
+  return string.replace(new RegExp(regex), substitute);
+}
+
+export function string_replace_all_with_regex(string, regex, substitute) {
+  return string.replace(new RegExp(regex, "g"), substitute);
+}
+
 export function string_reverse(string) {
   return [...string].reverse().join("");
 }

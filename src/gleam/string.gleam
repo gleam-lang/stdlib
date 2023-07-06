@@ -6,6 +6,7 @@ import gleam/list
 import gleam/option.{None, Option, Some}
 import gleam/order
 import gleam/string_builder.{StringBuilder}
+import gleam/regex.{Regex}
 
 if erlang {
   import gleam/bit_string
@@ -126,7 +127,29 @@ pub fn replace(
   |> string_builder.to_string
 }
 
-@external(erlang, "erlang_helpers", "regex_replace")
+// Creates a new `String` by replacing the first occurrence of a given Regex.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > use re <- try(regex.from_string("[.]+"))
+/// > replace_with_regex("www.example.com", each: re, with: "-")
+/// "www-example.com"
+/// ```
+///
+pub fn replace_with_regex(
+  in string: String,
+  each pattern: Regex,
+  with substitute: String,
+) -> String {
+  string
+  |> string_builder.from_string
+  |> regex_replace(each: pattern, with: string_builder.from_string(substitute))
+  |> string_builder.to_string
+}
+
+@external(erlang, "gleam_stdlib", "regex_replace")
+@external(javascript, "../gleam_stdlib.mjs", "string_replace_with_regex")
 fn regex_replace(
   in string: StringBuilder,
   each pattern: Regex,
@@ -139,20 +162,28 @@ fn regex_replace(
 ///
 /// ```gleam
 /// > use re <- try(regex.from_string("[.]+"))
-/// > replace("www.example.com", each: re, with: "-")
+/// > replace_all_with_regex("www.example.com", each: re, with: "-")
 /// "www-example-com"
 /// ```
 ///
-pub fn replace_with_regex(
+pub fn replace_all_with_regex(
   in string: String,
   each pattern: Regex,
   with substitute: String,
 ) -> String {
   string
-  |> from_string
-  |> regex_replace(each: pattern, with: from_string(substitute))
+  |> string_builder.from_string
+  |> regex_replace_all(each: pattern, with: string_builder.from_string(substitute))
   |> string_builder.to_string
 }
+
+@external(erlang, "gleam_stdlib", "regex_replace_all")
+@external(javascript, "../gleam_stdlib.mjs", "string_replace_all_with_regex")
+fn regex_replace_all(
+  in string: StringBuilder,
+  each pattern: Regex,
+  with substitute: StringBuilder,
+) -> StringBuilder 
 
 /// Creates a new `String` with all the graphemes in the input `String` converted to
 /// lowercase.

@@ -2,7 +2,6 @@ import gleam/option.{None, Some}
 import gleam/order
 import gleam/should
 import gleam/string
-import gleam/regex
 import gleam/result.{try}
 
 pub fn length_test() {
@@ -97,7 +96,14 @@ pub fn replace_with_regex_test() {
   use re <- try(regex.from_string("[,]+"))
   "Gleam,Erlang,Elixir"
   |> string.replace_with_regex(re, "++")
-  |> should.equal("Gleam++Erlang++Elixir")
+  |> should.equal("Gleam++Erlang,Elixir") |> Ok
+}
+
+pub fn replace_all_with_regex_test() {
+  use re <- try(regex.from_string("[,]+"))
+  "Gleam,Erlang,Elixir"
+  |> string.replace_all_with_regex(re, "++")
+  |> should.equal("Gleam++Erlang++Elixir") |> Ok
 }
 
 pub fn append_test() {
