@@ -126,6 +126,34 @@ pub fn replace(
   |> string_builder.to_string
 }
 
+@external(erlang, "erlang_helpers", "regex_replace")
+fn regex_replace(
+  in string: StringBuilder,
+  each pattern: Regex,
+  with substitute: StringBuilder,
+) -> StringBuilder 
+
+// Creates a new `String` by replacing all occurrences of a given Regex.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > use re <- try(regex.from_string("[.]+"))
+/// > replace("www.example.com", each: re, with: "-")
+/// "www-example-com"
+/// ```
+///
+pub fn replace_with_regex(
+  in string: String,
+  each pattern: Regex,
+  with substitute: String,
+) -> String {
+  string
+  |> from_string
+  |> regex_replace(each: pattern, with: from_string(substitute))
+  |> string_builder.to_string
+}
+
 /// Creates a new `String` with all the graphemes in the input `String` converted to
 /// lowercase.
 ///

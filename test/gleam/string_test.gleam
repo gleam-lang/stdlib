@@ -2,6 +2,8 @@ import gleam/option.{None, Some}
 import gleam/order
 import gleam/should
 import gleam/string
+import gleam/regex
+import gleam/result.{try}
 
 pub fn length_test() {
   string.length("ß↑e̊")
@@ -88,6 +90,13 @@ pub fn split_once_test() {
 pub fn replace_test() {
   "Gleam,Erlang,Elixir"
   |> string.replace(",", "++")
+  |> should.equal("Gleam++Erlang++Elixir")
+}
+
+pub fn replace_with_regex_test() {
+  use re <- try(regex.from_string("[,]+"))
+  "Gleam,Erlang,Elixir"
+  |> string.replace_with_regex(re, "++")
   |> should.equal("Gleam++Erlang++Elixir")
 }
 

@@ -7,7 +7,7 @@
          string_ends_with/2, string_pad/4, decode_map/1, uri_parse/1,
          bit_string_int_to_u32/1, bit_string_int_from_u32/1, decode_result/1,
          bit_string_slice/3, decode_bit_string/1, compile_regex/2, regex_scan/2,
-         percent_encode/1, percent_decode/1, regex_check/2, regex_split/2,
+         percent_encode/1, percent_decode/1, regex_check/2, regex_split/2, regex_replace/3,
          base_decode64/1, parse_query/1, bit_string_concat/1, size_of_tuple/1, 
          decode_tuple/1, decode_tuple2/1, decode_tuple3/1, decode_tuple4/1,
          decode_tuple5/1, decode_tuple6/1, tuple_get/2, classify_dynamic/1, 
@@ -228,6 +228,9 @@ regex_check(Regex, String) ->
 
 regex_split(Regex, String) ->
     re:split(String, Regex).
+
+regex_replace(Str, Regex, Repl) ->
+    re:replace(Str, Regex, Repl).
 
 regex_submatches(_, {-1, 0}) -> none;
 regex_submatches(String, {Start, Length}) ->
