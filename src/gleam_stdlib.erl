@@ -231,9 +231,9 @@ regex_split(Regex, String) ->
     re:split(String, Regex).
 
 regex_replace_all(Str, Regex, Repl, true) ->
-    re:replace(Str, Regex, Repl, [global]);
+    re:replace(Str, Regex, Repl, [global, {return, binary}]);
 regex_replace_all(Str, Regex, Repl, false) ->
-    re:replace(Str, Regex, Repl, []).
+    re:replace(Str, Regex, Repl, [{return, binary}]).
 
 regex_submatches(_, {-1, 0}) -> none;
 regex_submatches(String, {Start, Length}) ->

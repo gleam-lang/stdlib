@@ -231,9 +231,11 @@ external fn do_scan(Regex, String) -> List(Match) =
 /// ## Examples
 ///
 /// ```gleam
-/// > use re <- try(regex.from_string("[.]+"))
-/// > replace_all_with_regex("www.example.com", each: re, with: "-")
+/// > let assert Ok(re) = regex.from_string("[.]+")
+/// > regex.replace("www.example.com", each: re, with: "-", global: True)
 /// "www-example-com"
+/// > regex.replace("www.example.com", each: re, with: "-", global: False)
+/// "www-example.com"
 /// ```
 ///
 pub fn replace(
@@ -242,16 +244,14 @@ pub fn replace(
   with substitute: String,
   global replace_all: Bool,
 ) -> String {
-  string
-  |> string_builder.from_string
-  |> regex_replace_all(
+  regex_replace_all(
+    in: string,
     each: pattern,
-    with: string_builder.from_string(substitute),
+    with: substitute,
     global: replace_all,
   )
-  |> string_builder.to_string
 }
 
 @external(erlang, "gleam_stdlib", "regex_replace_all")
 @external(javascript, "../gleam_stdlib.mjs", "string_replace_all_with_regex")
-fn regex_replace_all(in string: StringBuilder, each pattern: Regex, with substitute: StringBuilder, global replace_all: Bool) -> StringBuilder
+fn regex_replace_all(in string: String, each pattern: Regex, with substitute: String, global replace_all: Bool) -> String
