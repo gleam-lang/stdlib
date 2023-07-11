@@ -4,8 +4,9 @@
 //// what PCRE offers. Currently PCRE version 8.40 (release date 2017-01-11) is used.
 
 import gleam/option.{Option}
+import gleam/string_builder.{StringBuilder}
 
-pub external type Regex
+pub type Regex
 
 /// The details about a particular match:
 ///
@@ -59,15 +60,13 @@ pub fn compile(
   do_compile(pattern, options)
 }
 
-if erlang {
-  external fn do_compile(String, with: Options) -> Result(Regex, CompileError) =
-    "gleam_stdlib" "compile_regex"
-}
+@target(erlang)
+external fn do_compile(String, with: Options) -> Result(Regex, CompileError) =
+  "gleam_stdlib" "compile_regex"
 
-if javascript {
-  external fn do_compile(String, with: Options) -> Result(Regex, CompileError) =
-    "../gleam_stdlib.mjs" "compile_regex"
-}
+@target(javascript)
+external fn do_compile(String, with: Options) -> Result(Regex, CompileError) =
+  "../gleam_stdlib.mjs" "compile_regex"
 
 /// Creates a new `Regex`.
 ///
@@ -117,15 +116,13 @@ pub fn check(with regex: Regex, content content: String) -> Bool {
   do_check(regex, content)
 }
 
-if erlang {
-  external fn do_check(Regex, String) -> Bool =
-    "gleam_stdlib" "regex_check"
-}
+@target(erlang)
+external fn do_check(Regex, String) -> Bool =
+  "gleam_stdlib" "regex_check"
 
-if javascript {
-  external fn do_check(Regex, String) -> Bool =
-    "../gleam_stdlib.mjs" "regex_check"
-}
+@target(javascript)
+external fn do_check(Regex, String) -> Bool =
+  "../gleam_stdlib.mjs" "regex_check"
 
 /// Splits a string.
 ///
@@ -141,19 +138,18 @@ pub fn split(with regex: Regex, content string: String) -> List(String) {
   do_split(regex, string)
 }
 
-if erlang {
-  external fn do_split(Regex, String) -> List(String) =
-    "gleam_stdlib" "regex_split"
+@target(erlang)
+external fn do_split(Regex, String) -> List(String) =
+  "gleam_stdlib" "regex_split"
+
+@target(javascript)
+fn do_split(regex, string) -> List(String) {
+  js_split(string, regex)
 }
 
-if javascript {
-  fn do_split(regex, string) -> List(String) {
-    js_split(string, regex)
-  }
-
-  external fn js_split(String, Regex) -> List(String) =
-    "../gleam_stdlib.mjs" "split"
-}
+@target(javascript)
+external fn js_split(String, Regex) -> List(String) =
+  "../gleam_stdlib.mjs" "split"
 
 /// Collects all matches of the regular expression.
 ///
@@ -222,12 +218,40 @@ pub fn scan(with regex: Regex, content string: String) -> List(Match) {
   do_scan(regex, string)
 }
 
-if erlang {
-  external fn do_scan(Regex, String) -> List(Match) =
-    "gleam_stdlib" "regex_scan"
+@target(erlang)
+external fn do_scan(Regex, String) -> List(Match) =
+  "gleam_stdlib" "regex_scan"
+
+@target(javascript)
+external fn do_scan(Regex, String) -> List(Match) =
+  "../gleam_stdlib.mjs" "regex_scan"
+
+// Creates a new `String` by replacing all occurrences of a given Regex.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > use re <- try(regex.from_string("[.]+"))
+/// > replace_all_with_regex("www.example.com", each: re, with: "-")
+/// "www-example-com"
+/// ```
+///
+pub fn replace(
+  in string: String,
+  each pattern: Regex,
+  with substitute: String,
+  global replace_all: Bool,
+) -> String {
+  string
+  |> string_builder.from_string
+  |> regex_replace_all(
+    each: pattern,
+    with: string_builder.from_string(substitute),
+    global: replace_all,
+  )
+  |> string_builder.to_string
 }
 
-if javascript {
-  external fn do_scan(Regex, String) -> List(Match) =
-    "../gleam_stdlib.mjs" "regex_scan"
-}
+@external(erlang, "gleam_stdlib", "regex_replace_all")
+@external(javascript, "../gleam_stdlib.mjs", "string_replace_all_with_regex")
+fn regex_replace_all(in string: StringBuilder, each pattern: Regex, with substitute: StringBuilder, global replace_all: Bool) -> StringBuilder

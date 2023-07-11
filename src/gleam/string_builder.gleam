@@ -14,7 +14,7 @@ import gleam/list
 /// On Erlang this type is compatible with Erlang's iodata. On JavaScript this
 /// type is compatible with normal strings.
 ///
-pub external type StringBuilder
+pub type StringBuilder
 
 /// Create an empty `StringBuilder`. Useful as the start of a pipe chaining many
 /// builders together.
@@ -64,15 +64,13 @@ pub fn append_builder(
   do_append(builder, suffix)
 }
 
-if erlang {
-  external fn do_append(StringBuilder, StringBuilder) -> StringBuilder =
-    "gleam_stdlib" "iodata_append"
-}
+@target(erlang)
+external fn do_append(StringBuilder, StringBuilder) -> StringBuilder =
+  "gleam_stdlib" "iodata_append"
 
-if javascript {
-  external fn do_append(StringBuilder, StringBuilder) -> StringBuilder =
-    "../gleam_stdlib.mjs" "add"
-}
+@target(javascript)
+external fn do_append(StringBuilder, StringBuilder) -> StringBuilder =
+  "../gleam_stdlib.mjs" "add"
 
 /// Converts a list of strings into a builder.
 ///
@@ -82,15 +80,13 @@ pub fn from_strings(strings: List(String)) -> StringBuilder {
   do_from_strings(strings)
 }
 
-if erlang {
-  external fn do_from_strings(List(String)) -> StringBuilder =
-    "gleam_stdlib" "identity"
-}
+@target(erlang)
+external fn do_from_strings(List(String)) -> StringBuilder =
+  "gleam_stdlib" "identity"
 
-if javascript {
-  external fn do_from_strings(List(String)) -> StringBuilder =
-    "../gleam_stdlib.mjs" "concat"
-}
+@target(javascript)
+external fn do_from_strings(List(String)) -> StringBuilder =
+  "../gleam_stdlib.mjs" "concat"
 
 /// Joins a list of builders into a single builder.
 ///
@@ -100,15 +96,13 @@ pub fn concat(builders: List(StringBuilder)) -> StringBuilder {
   do_concat(builders)
 }
 
-if erlang {
-  external fn do_concat(List(StringBuilder)) -> StringBuilder =
-    "gleam_stdlib" "identity"
-}
+@target(erlang)
+external fn do_concat(List(StringBuilder)) -> StringBuilder =
+  "gleam_stdlib" "identity"
 
-if javascript {
-  external fn do_concat(List(StringBuilder)) -> StringBuilder =
-    "../gleam_stdlib.mjs" "concat"
-}
+@target(javascript)
+external fn do_concat(List(StringBuilder)) -> StringBuilder =
+  "../gleam_stdlib.mjs" "concat"
 
 /// Converts a string into a builder.
 ///
@@ -118,15 +112,13 @@ pub fn from_string(string: String) -> StringBuilder {
   do_from_string(string)
 }
 
-if erlang {
-  external fn do_from_string(String) -> StringBuilder =
-    "gleam_stdlib" "identity"
-}
+@target(erlang)
+external fn do_from_string(String) -> StringBuilder =
+  "gleam_stdlib" "identity"
 
-if javascript {
-  external fn do_from_string(String) -> StringBuilder =
-    "../gleam_stdlib.mjs" "identity"
-}
+@target(javascript)
+external fn do_from_string(String) -> StringBuilder =
+  "../gleam_stdlib.mjs" "identity"
 
 /// Turns an `StringBuilder` into a `String`
 ///
@@ -137,15 +129,13 @@ pub fn to_string(builder: StringBuilder) -> String {
   do_to_string(builder)
 }
 
-if erlang {
-  external fn do_to_string(StringBuilder) -> String =
-    "unicode" "characters_to_binary"
-}
+@target(erlang)
+external fn do_to_string(StringBuilder) -> String =
+  "unicode" "characters_to_binary"
 
-if javascript {
-  external fn do_to_string(StringBuilder) -> String =
-    "../gleam_stdlib.mjs" "identity"
-}
+@target(javascript)
+external fn do_to_string(StringBuilder) -> String =
+  "../gleam_stdlib.mjs" "identity"
 
 /// Returns the size of the `StringBuilder` in bytes.
 ///
@@ -153,15 +143,13 @@ pub fn byte_size(builder: StringBuilder) -> Int {
   do_byte_size(builder)
 }
 
-if erlang {
-  external fn do_byte_size(StringBuilder) -> Int =
-    "erlang" "iolist_size"
-}
+@target(erlang)
+external fn do_byte_size(StringBuilder) -> Int =
+  "erlang" "iolist_size"
 
-if javascript {
-  external fn do_byte_size(StringBuilder) -> Int =
-    "../gleam_stdlib.mjs" "length"
-}
+@target(javascript)
+external fn do_byte_size(StringBuilder) -> Int =
+  "../gleam_stdlib.mjs" "length"
 
 /// Joins the given builders into a new builder separated with the given string
 ///
@@ -178,15 +166,13 @@ pub fn lowercase(builder: StringBuilder) -> StringBuilder {
   do_lowercase(builder)
 }
 
-if erlang {
-  external fn do_lowercase(StringBuilder) -> StringBuilder =
-    "string" "lowercase"
-}
+@target(erlang)
+external fn do_lowercase(StringBuilder) -> StringBuilder =
+  "string" "lowercase"
 
-if javascript {
-  external fn do_lowercase(StringBuilder) -> StringBuilder =
-    "../gleam_stdlib.mjs" "lowercase"
-}
+@target(javascript)
+external fn do_lowercase(StringBuilder) -> StringBuilder =
+  "../gleam_stdlib.mjs" "lowercase"
 
 /// Converts a builder to a new builder where the contents have been
 /// uppercased.
@@ -195,15 +181,13 @@ pub fn uppercase(builder: StringBuilder) -> StringBuilder {
   do_uppercase(builder)
 }
 
-if erlang {
-  external fn do_uppercase(StringBuilder) -> StringBuilder =
-    "string" "uppercase"
-}
+@target(erlang)
+external fn do_uppercase(StringBuilder) -> StringBuilder =
+  "string" "uppercase"
 
-if javascript {
-  external fn do_uppercase(StringBuilder) -> StringBuilder =
-    "../gleam_stdlib.mjs" "uppercase"
-}
+@target(javascript)
+external fn do_uppercase(StringBuilder) -> StringBuilder =
+  "../gleam_stdlib.mjs" "uppercase"
 
 /// Converts a builder to a new builder with the contents reversed.
 ///
@@ -211,23 +195,22 @@ pub fn reverse(builder: StringBuilder) -> StringBuilder {
   do_reverse(builder)
 }
 
-if erlang {
-  external fn do_reverse(StringBuilder) -> StringBuilder =
-    "string" "reverse"
+@target(erlang)
+external fn do_reverse(StringBuilder) -> StringBuilder =
+  "string" "reverse"
+
+@target(javascript)
+fn do_reverse(builder: StringBuilder) -> StringBuilder {
+  builder
+  |> to_string
+  |> do_to_graphemes
+  |> list.reverse
+  |> from_strings
 }
 
-if javascript {
-  fn do_reverse(builder: StringBuilder) -> StringBuilder {
-    builder
-    |> to_string
-    |> do_to_graphemes
-    |> list.reverse
-    |> from_strings
-  }
-
-  external fn do_to_graphemes(string: String) -> List(String) =
-    "../gleam_stdlib.mjs" "graphemes"
-}
+@target(javascript)
+external fn do_to_graphemes(string: String) -> List(String) =
+  "../gleam_stdlib.mjs" "graphemes"
 
 /// Splits a builder on a given pattern into a list of builders.
 ///
@@ -235,26 +218,26 @@ pub fn split(iodata: StringBuilder, on pattern: String) -> List(StringBuilder) {
   do_split(iodata, pattern)
 }
 
-if erlang {
-  type Direction {
-    All
-  }
-
-  external fn erl_split(StringBuilder, String, Direction) -> List(StringBuilder) =
-    "string" "split"
-
-  fn do_split(iodata: StringBuilder, pattern: String) -> List(StringBuilder) {
-    erl_split(iodata, pattern, All)
-  }
+@target(erlang)
+type Direction {
+  All
 }
 
-if javascript {
-  external fn do_split(
-    builder: StringBuilder,
-    pattern: String,
-  ) -> List(StringBuilder) =
-    "../gleam_stdlib.mjs" "split"
+@target(erlang)
+external fn erl_split(StringBuilder, String, Direction) -> List(StringBuilder) =
+  "string" "split"
+
+@target(erlang)
+fn do_split(iodata: StringBuilder, pattern: String) -> List(StringBuilder) {
+  erl_split(iodata, pattern, All)
 }
+
+@target(javascript)
+external fn do_split(
+  builder: StringBuilder,
+  pattern: String,
+) -> List(StringBuilder) =
+  "../gleam_stdlib.mjs" "split"
 
 /// Replaces all instances of a pattern with a given string substitute.
 ///
@@ -266,28 +249,27 @@ pub fn replace(
   do_replace(builder, pattern, substitute)
 }
 
-if erlang {
-  fn do_replace(
-    iodata: StringBuilder,
-    pattern: String,
-    substitute: String,
-  ) -> StringBuilder {
-    erl_replace(iodata, pattern, substitute, All)
-  }
-
-  external fn erl_replace(
-    StringBuilder,
-    String,
-    String,
-    Direction,
-  ) -> StringBuilder =
-    "string" "replace"
+@target(erlang)
+fn do_replace(
+  iodata: StringBuilder,
+  pattern: String,
+  substitute: String,
+) -> StringBuilder {
+  erl_replace(iodata, pattern, substitute, All)
 }
 
-if javascript {
-  external fn do_replace(StringBuilder, String, String) -> StringBuilder =
-    "../gleam_stdlib.mjs" "string_replace"
-}
+@target(erlang)
+external fn erl_replace(
+  StringBuilder,
+  String,
+  String,
+  Direction,
+) -> StringBuilder =
+  "string" "replace"
+
+@target(javascript)
+external fn do_replace(StringBuilder, String, String) -> StringBuilder =
+  "../gleam_stdlib.mjs" "string_replace"
 
 /// Compares two builders to determine if they have the same textual content.
 ///
@@ -311,15 +293,13 @@ pub fn is_equal(a: StringBuilder, b: StringBuilder) -> Bool {
   do_is_equal(a, b)
 }
 
-if erlang {
-  external fn do_is_equal(StringBuilder, StringBuilder) -> Bool =
-    "string" "equal"
-}
+@target(erlang)
+external fn do_is_equal(StringBuilder, StringBuilder) -> Bool =
+  "string" "equal"
 
-if javascript {
-  external fn do_is_equal(StringBuilder, StringBuilder) -> Bool =
-    "../gleam_stdlib.mjs" "equal"
-}
+@target(javascript)
+external fn do_is_equal(StringBuilder, StringBuilder) -> Bool =
+  "../gleam_stdlib.mjs" "equal"
 
 /// Inspects a builder to determine if it is equivalent to an empty string.
 ///
@@ -344,13 +324,11 @@ pub fn is_empty(builder: StringBuilder) -> Bool {
   do_is_empty(builder)
 }
 
-if erlang {
-  external fn do_is_empty(StringBuilder) -> Bool =
-    "string" "is_empty"
-}
+@target(erlang)
+external fn do_is_empty(StringBuilder) -> Bool =
+  "string" "is_empty"
 
-if javascript {
-  fn do_is_empty(builder: StringBuilder) -> Bool {
-    from_string("") == builder
-  }
+@target(javascript)
+fn do_is_empty(builder: StringBuilder) -> Bool {
+  from_string("") == builder
 }

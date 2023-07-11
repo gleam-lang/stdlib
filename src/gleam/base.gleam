@@ -11,15 +11,13 @@ pub fn encode64(input: BitString, padding: Bool) -> String {
   }
 }
 
-if erlang {
-  external fn do_encode64(BitString) -> String =
-    "base64" "encode"
-}
+@target(erlang)
+external fn do_encode64(BitString) -> String =
+  "base64" "encode"
 
-if javascript {
-  external fn do_encode64(BitString) -> String =
-    "../gleam_stdlib.mjs" "encode64"
-}
+@target(javascript)
+external fn do_encode64(BitString) -> String =
+  "../gleam_stdlib.mjs" "encode64"
 
 /// Decodes a base 64 encoded string into a `BitString`.
 ///
@@ -31,15 +29,13 @@ pub fn decode64(encoded: String) -> Result(BitString, Nil) {
   do_decode64(padded)
 }
 
-if erlang {
-  external fn do_decode64(String) -> Result(BitString, Nil) =
-    "gleam_stdlib" "base_decode64"
-}
+@target(erlang)
+external fn do_decode64(String) -> Result(BitString, Nil) =
+  "gleam_stdlib" "base_decode64"
 
-if javascript {
-  external fn do_decode64(String) -> Result(BitString, Nil) =
-    "../gleam_stdlib.mjs" "decode64"
-}
+@target(javascript)
+external fn do_decode64(String) -> Result(BitString, Nil) =
+  "../gleam_stdlib.mjs" "decode64"
 
 /// Encodes a `BitString` into a base 64 encoded string with URL and filename safe alphabet.
 ///

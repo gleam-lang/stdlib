@@ -2,21 +2,21 @@ import gleam/list
 import gleam/map.{Map}
 import gleam/result
 
-if erlang {
-  // A list is used as the map value as an empty list has the smallest
-  // representation in Erlang's binary format
-  type Token =
-    List(Nil)
+// A list is used as the map value as an empty list has the smallest
+// representation in Erlang's binary format
+@target(erlang)
+type Token =
+  List(Nil)
 
-  const token = []
-}
+@target(erlang)
+const token = []
 
-if javascript {
-  type Token =
-    Nil
+@target(javascript)
+type Token =
+  Nil
 
-  const token = Nil
-}
+@target(javascript)
+const token = Nil
 
 /// A set is a collection of unique members of the same type.
 ///

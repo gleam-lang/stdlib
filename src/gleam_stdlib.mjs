@@ -125,12 +125,13 @@ export function string_replace(string, target, substitute) {
   );
 }
 
-export function string_replace_with_regex(string, regex, substitute) {
-  return string.replace(new RegExp(regex), substitute);
-}
-
-export function string_replace_all_with_regex(string, regex, substitute) {
-  return string.replace(new RegExp(regex, "g"), substitute);
+export function string_replace_all_with_regex(
+  string,
+  regex,
+  substitute,
+  is_global
+) {
+  return string.replace(new RegExp(regex, is_global ? "g" : ""), substitute);
 }
 
 export function string_reverse(string) {

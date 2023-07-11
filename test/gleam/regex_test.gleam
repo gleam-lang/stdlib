@@ -151,3 +151,13 @@ pub fn scan_test() {
   regex.scan(re, "const age = 32")
   |> should.equal([])
 }
+
+pub fn replace_test() {
+  let assert Ok(re) = regex.from_string("[,]+")
+  "Gleam,Erlang,Elixir"
+  |> regex.replace(re, "++", True)
+  |> should.equal("Gleam++Erlang++Elixir")
+  "Gleam,Erlang,Elixir"
+  |> regex.replace(re, "++", False)
+  |> should.equal("Gleam++Erlang,Elixir")
+}

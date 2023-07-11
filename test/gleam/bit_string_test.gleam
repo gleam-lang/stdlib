@@ -28,12 +28,11 @@ pub fn append_test() {
   |> should.equal(<<1, 2, 3, 4>>)
 }
 
-if erlang {
-  pub fn append_erlang_only_test() {
-    <<1, 2:4>>
-    |> bit_string.append(<<3>>)
-    |> should.equal(<<1, 2:4, 3>>)
-  }
+@target(erlang)
+pub fn append_erlang_only_test() {
+  <<1, 2:4>>
+  |> bit_string.append(<<3>>)
+  |> should.equal(<<1, 2:4, 3>>)
 }
 
 pub fn concat_test() {
@@ -46,12 +45,11 @@ pub fn concat_test() {
   |> should.equal(<<1, 2, 3, 4>>)
 }
 
-if erlang {
-  pub fn concat_erlang_only_test() {
-    [<<1, 2:4>>, <<3>>]
-    |> bit_string.concat
-    |> should.equal(<<1, 2:4, 3>>)
-  }
+@target(erlang)
+pub fn concat_erlang_only_test() {
+  [<<1, 2:4>>, <<3>>]
+  |> bit_string.concat
+  |> should.equal(<<1, 2:4, 3>>)
 }
 
 pub fn slice_test() {

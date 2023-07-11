@@ -6,13 +6,12 @@ import gleam/list
 import gleam/option.{None, Option, Some}
 import gleam/order
 import gleam/string_builder.{StringBuilder}
-import gleam/regex.{Regex}
-
-if erlang {
-  import gleam/bit_string
-  import gleam/dynamic.{Dynamic}
-  import gleam/result
-}
+@target(erlang)
+import gleam/bit_string
+@target(erlang)
+import gleam/dynamic.{Dynamic}
+@target(erlang)
+import gleam/result
 
 /// Determines if a `String` is empty.
 ///
@@ -58,15 +57,13 @@ pub fn length(string: String) -> Int {
   do_length(string)
 }
 
-if erlang {
-  external fn do_length(String) -> Int =
-    "string" "length"
-}
+@target(erlang)
+external fn do_length(String) -> Int =
+  "string" "length"
 
-if javascript {
-  external fn do_length(String) -> Int =
-    "../gleam_stdlib.mjs" "string_length"
-}
+@target(javascript)
+external fn do_length(String) -> Int =
+  "../gleam_stdlib.mjs" "string_length"
 
 /// Reverses a `String`.
 ///
@@ -84,22 +81,20 @@ pub fn reverse(string: String) -> String {
   do_reverse(string)
 }
 
-if erlang {
-  fn do_reverse(string: String) -> String {
-    string
-    |> string_builder.from_string
-    |> string_builder.reverse
-    |> string_builder.to_string
-  }
+@target(erlang)
+fn do_reverse(string: String) -> String {
+  string
+  |> string_builder.from_string
+  |> string_builder.reverse
+  |> string_builder.to_string
 }
 
-if javascript {
-  fn do_reverse(string: String) -> String {
-    string
-    |> to_graphemes
-    |> list.reverse
-    |> concat
-  }
+@target(javascript)
+fn do_reverse(string: String) -> String {
+  string
+  |> to_graphemes
+  |> list.reverse
+  |> concat
 }
 
 /// Creates a new `String` by replacing all occurrences of a given substring.
@@ -127,64 +122,6 @@ pub fn replace(
   |> string_builder.to_string
 }
 
-// Creates a new `String` by replacing the first occurrence of a given Regex.
-///
-/// ## Examples
-///
-/// ```gleam
-/// > use re <- try(regex.from_string("[.]+"))
-/// > replace_with_regex("www.example.com", each: re, with: "-")
-/// "www-example.com"
-/// ```
-///
-pub fn replace_with_regex(
-  in string: String,
-  each pattern: Regex,
-  with substitute: String,
-) -> String {
-  string
-  |> string_builder.from_string
-  |> regex_replace(each: pattern, with: string_builder.from_string(substitute))
-  |> string_builder.to_string
-}
-
-@external(erlang, "gleam_stdlib", "regex_replace")
-@external(javascript, "../gleam_stdlib.mjs", "string_replace_with_regex")
-fn regex_replace(
-  in string: StringBuilder,
-  each pattern: Regex,
-  with substitute: StringBuilder,
-) -> StringBuilder 
-
-// Creates a new `String` by replacing all occurrences of a given Regex.
-///
-/// ## Examples
-///
-/// ```gleam
-/// > use re <- try(regex.from_string("[.]+"))
-/// > replace_all_with_regex("www.example.com", each: re, with: "-")
-/// "www-example-com"
-/// ```
-///
-pub fn replace_all_with_regex(
-  in string: String,
-  each pattern: Regex,
-  with substitute: String,
-) -> String {
-  string
-  |> string_builder.from_string
-  |> regex_replace_all(each: pattern, with: string_builder.from_string(substitute))
-  |> string_builder.to_string
-}
-
-@external(erlang, "gleam_stdlib", "regex_replace_all")
-@external(javascript, "../gleam_stdlib.mjs", "string_replace_all_with_regex")
-fn regex_replace_all(
-  in string: StringBuilder,
-  each pattern: Regex,
-  with substitute: StringBuilder,
-) -> StringBuilder 
-
 /// Creates a new `String` with all the graphemes in the input `String` converted to
 /// lowercase.
 ///
@@ -201,15 +138,13 @@ pub fn lowercase(string: String) -> String {
   do_lowercase(string)
 }
 
-if erlang {
-  external fn do_lowercase(String) -> String =
-    "string" "lowercase"
-}
+@target(erlang)
+external fn do_lowercase(String) -> String =
+  "string" "lowercase"
 
-if javascript {
-  external fn do_lowercase(String) -> String =
-    "../gleam_stdlib.mjs" "lowercase"
-}
+@target(javascript)
+external fn do_lowercase(String) -> String =
+  "../gleam_stdlib.mjs" "lowercase"
 
 /// Creates a new `String` with all the graphemes in the input `String` converted to
 /// uppercase.
@@ -227,15 +162,13 @@ pub fn uppercase(string: String) -> String {
   do_uppercase(string)
 }
 
-if erlang {
-  external fn do_uppercase(String) -> String =
-    "string" "uppercase"
-}
+@target(erlang)
+external fn do_uppercase(String) -> String =
+  "string" "uppercase"
 
-if javascript {
-  external fn do_uppercase(String) -> String =
-    "../gleam_stdlib.mjs" "uppercase"
-}
+@target(javascript)
+external fn do_uppercase(String) -> String =
+  "../gleam_stdlib.mjs" "uppercase"
 
 /// Compares two `String`s to see which is "larger" by comparing their graphemes.
 ///
@@ -264,15 +197,13 @@ pub fn compare(a: String, b: String) -> order.Order {
   }
 }
 
-if erlang {
-  external fn less_than(String, String) -> Bool =
-    "gleam_stdlib" "less_than"
-}
+@target(erlang)
+external fn less_than(String, String) -> Bool =
+  "gleam_stdlib" "less_than"
 
-if javascript {
-  external fn less_than(String, String) -> Bool =
-    "../gleam_stdlib.mjs" "less_than"
-}
+@target(javascript)
+external fn less_than(String, String) -> Bool =
+  "../gleam_stdlib.mjs" "less_than"
 
 /// Takes a substring given a start and end grapheme indexes. Negative indexes
 /// are taken starting from the *end* of the list.
@@ -321,19 +252,17 @@ pub fn slice(from string: String, at_index idx: Int, length len: Int) -> String 
   }
 }
 
-if erlang {
-  external fn do_slice(String, Int, Int) -> String =
-    "string" "slice"
-}
+@target(erlang)
+external fn do_slice(String, Int, Int) -> String =
+  "string" "slice"
 
-if javascript {
-  fn do_slice(string: String, idx: Int, len: Int) -> String {
-    string
-    |> to_graphemes
-    |> list.drop(idx)
-    |> list.take(len)
-    |> concat
-  }
+@target(javascript)
+fn do_slice(string: String, idx: Int, len: Int) -> String {
+  string
+  |> to_graphemes
+  |> list.drop(idx)
+  |> list.take(len)
+  |> concat
 }
 
 /// Drops contents of the first `String` that occur before the second `String`.
@@ -350,22 +279,21 @@ pub fn crop(from string: String, before substring: String) -> String {
   do_crop(string, substring)
 }
 
-if erlang {
-  fn do_crop(string: String, substring: String) -> String {
-    string
-    |> erl_contains(substring)
-    |> dynamic.string()
-    |> result.unwrap(string)
-  }
-
-  external fn erl_contains(String, String) -> Dynamic =
-    "string" "find"
+@target(erlang)
+fn do_crop(string: String, substring: String) -> String {
+  string
+  |> erl_contains(substring)
+  |> dynamic.string()
+  |> result.unwrap(string)
 }
 
-if javascript {
-  external fn do_crop(String, String) -> String =
-    "../gleam_stdlib.mjs" "crop_string"
-}
+@target(erlang)
+external fn erl_contains(String, String) -> Dynamic =
+  "string" "find"
+
+@target(javascript)
+external fn do_crop(String, String) -> String =
+  "../gleam_stdlib.mjs" "crop_string"
 
 /// Drops *n* graphemes from the left side of a `String`.
 ///
@@ -422,23 +350,22 @@ pub fn contains(does haystack: String, contain needle: String) -> Bool {
   do_contains(haystack, needle)
 }
 
-if erlang {
-  fn do_contains(haystack: String, needle: String) -> Bool {
-    haystack
-    |> erl_contains(needle)
-    |> dynamic.bit_string
-    |> result.is_ok
-  }
+@target(erlang)
+fn do_contains(haystack: String, needle: String) -> Bool {
+  haystack
+  |> erl_contains(needle)
+  |> dynamic.bit_string
+  |> result.is_ok
 }
 
-if javascript {
-  fn do_contains(haystack: String, needle: String) -> Bool {
-    index_of(haystack, needle) != -1
-  }
-
-  external fn index_of(String, String) -> Int =
-    "../gleam_stdlib.mjs" "index_of"
+@target(javascript)
+fn do_contains(haystack: String, needle: String) -> Bool {
+  index_of(haystack, needle) != -1
 }
+
+@target(javascript)
+external fn index_of(String, String) -> Int =
+  "../gleam_stdlib.mjs" "index_of"
 
 /// Checks whether the first `String` starts with the second one.
 ///
@@ -453,15 +380,13 @@ pub fn starts_with(string: String, prefix: String) -> Bool {
   do_starts_with(string, prefix)
 }
 
-if erlang {
-  external fn do_starts_with(String, String) -> Bool =
-    "gleam_stdlib" "string_starts_with"
-}
+@target(erlang)
+external fn do_starts_with(String, String) -> Bool =
+  "gleam_stdlib" "string_starts_with"
 
-if javascript {
-  external fn do_starts_with(String, String) -> Bool =
-    "../gleam_stdlib.mjs" "starts_with"
-}
+@target(javascript)
+external fn do_starts_with(String, String) -> Bool =
+  "../gleam_stdlib.mjs" "starts_with"
 
 /// Checks whether the first `String` ends with the second one.
 ///
@@ -476,15 +401,13 @@ pub fn ends_with(string: String, suffix: String) -> Bool {
   do_ends_with(string, suffix)
 }
 
-if erlang {
-  external fn do_ends_with(String, String) -> Bool =
-    "gleam_stdlib" "string_ends_with"
-}
+@target(erlang)
+external fn do_ends_with(String, String) -> Bool =
+  "gleam_stdlib" "string_ends_with"
 
-if javascript {
-  external fn do_ends_with(String, String) -> Bool =
-    "../gleam_stdlib.mjs" "ends_with"
-}
+@target(javascript)
+external fn do_ends_with(String, String) -> Bool =
+  "../gleam_stdlib.mjs" "ends_with"
 
 /// Creates a list of `String`s by splitting a given string on a given substring.
 ///
@@ -529,28 +452,24 @@ pub fn split_once(
   do_split_once(x, substring)
 }
 
-if erlang {
-  external fn erl_split(String, String) -> List(String) =
-    "string" "split"
+@target(erlang)
+external fn erl_split(String, String) -> List(String) =
+  "string" "split"
 
-  fn do_split_once(
-    x: String,
-    substring: String,
-  ) -> Result(#(String, String), Nil) {
-    case erl_split(x, substring) {
-      [first, rest] -> Ok(#(first, rest))
-      _ -> Error(Nil)
-    }
+@target(erlang)
+fn do_split_once(x: String, substring: String) -> Result(#(String, String), Nil) {
+  case erl_split(x, substring) {
+    [first, rest] -> Ok(#(first, rest))
+    _ -> Error(Nil)
   }
 }
 
-if javascript {
-  external fn do_split_once(
-    x: String,
-    substring: String,
-  ) -> Result(#(String, String), Nil) =
-    "../gleam_stdlib.mjs" "split_once"
-}
+@target(javascript)
+external fn do_split_once(
+  x: String,
+  substring: String,
+) -> Result(#(String, String), Nil) =
+  "../gleam_stdlib.mjs" "split_once"
 
 /// Creates a new `String` by joining two `String`s together.
 ///
@@ -624,18 +543,16 @@ pub fn join(strings: List(String), with separator: String) -> String {
   do_join(strings, separator)
 }
 
-if erlang {
-  fn do_join(strings: List(String), separator: String) -> String {
-    strings
-    |> list.intersperse(with: separator)
-    |> concat
-  }
+@target(erlang)
+fn do_join(strings: List(String), separator: String) -> String {
+  strings
+  |> list.intersperse(with: separator)
+  |> concat
 }
 
-if javascript {
-  external fn do_join(strings: List(String), string: String) -> String =
-    "../gleam_stdlib.mjs" "join"
-}
+@target(javascript)
+external fn do_join(strings: List(String), string: String) -> String =
+  "../gleam_stdlib.mjs" "join"
 
 /// Pads a `String` on the left until it has at least given number of graphemes.
 ///
@@ -719,25 +636,25 @@ pub fn trim(string: String) -> String {
   do_trim(string)
 }
 
-if erlang {
-  fn do_trim(string: String) -> String {
-    erl_trim(string, Both)
-  }
-
-  type Direction {
-    Leading
-    Trailing
-    Both
-  }
-
-  external fn erl_trim(String, Direction) -> String =
-    "string" "trim"
+@target(erlang)
+fn do_trim(string: String) -> String {
+  erl_trim(string, Both)
 }
 
-if javascript {
-  external fn do_trim(string: String) -> String =
-    "../gleam_stdlib.mjs" "trim"
+@target(erlang)
+type Direction {
+  Leading
+  Trailing
+  Both
 }
+
+@target(erlang)
+external fn erl_trim(String, Direction) -> String =
+  "string" "trim"
+
+@target(javascript)
+external fn do_trim(string: String) -> String =
+  "../gleam_stdlib.mjs" "trim"
 
 /// Removes whitespace on the left of a `String`.
 ///
@@ -752,16 +669,14 @@ pub fn trim_left(string: String) -> String {
   do_trim_left(string)
 }
 
-if erlang {
-  fn do_trim_left(string: String) -> String {
-    erl_trim(string, Leading)
-  }
+@target(erlang)
+fn do_trim_left(string: String) -> String {
+  erl_trim(string, Leading)
 }
 
-if javascript {
-  external fn do_trim_left(string: String) -> String =
-    "../gleam_stdlib.mjs" "trim_left"
-}
+@target(javascript)
+external fn do_trim_left(string: String) -> String =
+  "../gleam_stdlib.mjs" "trim_left"
 
 /// Removes whitespace on the right of a `String`.
 ///
@@ -776,16 +691,14 @@ pub fn trim_right(string: String) -> String {
   do_trim_right(string)
 }
 
-if erlang {
-  fn do_trim_right(string: String) -> String {
-    erl_trim(string, Trailing)
-  }
+@target(erlang)
+fn do_trim_right(string: String) -> String {
+  erl_trim(string, Trailing)
 }
 
-if javascript {
-  external fn do_trim_right(string: String) -> String =
-    "../gleam_stdlib.mjs" "trim_right"
-}
+@target(javascript)
+external fn do_trim_right(string: String) -> String =
+  "../gleam_stdlib.mjs" "trim_right"
 
 /// Splits a non-empty `String` into its first element (head) and rest (tail).
 /// This lets you pattern match on `String`s exactly as you would with lists.
@@ -806,15 +719,13 @@ pub fn pop_grapheme(string: String) -> Result(#(String, String), Nil) {
   do_pop_grapheme(string)
 }
 
-if erlang {
-  external fn do_pop_grapheme(string: String) -> Result(#(String, String), Nil) =
-    "gleam_stdlib" "string_pop_grapheme"
-}
+@target(erlang)
+external fn do_pop_grapheme(string: String) -> Result(#(String, String), Nil) =
+  "gleam_stdlib" "string_pop_grapheme"
 
-if javascript {
-  external fn do_pop_grapheme(string: String) -> Result(#(String, String), Nil) =
-    "../gleam_stdlib.mjs" "pop_grapheme"
-}
+@target(javascript)
+external fn do_pop_grapheme(string: String) -> Result(#(String, String), Nil) =
+  "../gleam_stdlib.mjs" "pop_grapheme"
 
 /// Converts a `String` to a list of
 /// [graphemes](https://en.wikipedia.org/wiki/Grapheme).
@@ -836,15 +747,13 @@ fn do_to_graphemes(string: String, acc: List(String)) -> List(String) {
   }
 }
 
-if erlang {
-  external fn unsafe_int_to_utf_codepoint(Int) -> UtfCodepoint =
-    "gleam_stdlib" "identity"
-}
+@target(erlang)
+external fn unsafe_int_to_utf_codepoint(Int) -> UtfCodepoint =
+  "gleam_stdlib" "identity"
 
-if javascript {
-  external fn unsafe_int_to_utf_codepoint(Int) -> UtfCodepoint =
-    "../gleam_stdlib.mjs" "codepoint"
-}
+@target(javascript)
+external fn unsafe_int_to_utf_codepoint(Int) -> UtfCodepoint =
+  "../gleam_stdlib.mjs" "codepoint"
 
 /// Converts a `String` to a `List` of `UtfCodepoint`.
 ///
@@ -871,34 +780,34 @@ pub fn to_utf_codepoints(string: String) -> List(UtfCodepoint) {
   do_to_utf_codepoints(string)
 }
 
-if erlang {
-  fn do_to_utf_codepoints(string: String) -> List(UtfCodepoint) {
-    do_to_utf_codepoints_impl(bit_string.from_string(string), [])
-    |> list.reverse
-  }
+@target(erlang)
+fn do_to_utf_codepoints(string: String) -> List(UtfCodepoint) {
+  do_to_utf_codepoints_impl(bit_string.from_string(string), [])
+  |> list.reverse
+}
 
-  fn do_to_utf_codepoints_impl(
-    bit_string: BitString,
-    acc: List(UtfCodepoint),
-  ) -> List(UtfCodepoint) {
-    case bit_string {
-      <<first:utf8_codepoint, rest:binary>> ->
-        do_to_utf_codepoints_impl(rest, [first, ..acc])
-      <<>> -> acc
-    }
+@target(erlang)
+fn do_to_utf_codepoints_impl(
+  bit_string: BitString,
+  acc: List(UtfCodepoint),
+) -> List(UtfCodepoint) {
+  case bit_string {
+    <<first:utf8_codepoint, rest:binary>> ->
+      do_to_utf_codepoints_impl(rest, [first, ..acc])
+    <<>> -> acc
   }
 }
 
-if javascript {
-  fn do_to_utf_codepoints(string: String) -> List(UtfCodepoint) {
-    string
-    |> string_to_codepoint_integer_list
-    |> list.map(unsafe_int_to_utf_codepoint)
-  }
-
-  external fn string_to_codepoint_integer_list(String) -> List(Int) =
-    "../gleam_stdlib.mjs" "string_to_codepoint_integer_list"
+@target(javascript)
+fn do_to_utf_codepoints(string: String) -> List(UtfCodepoint) {
+  string
+  |> string_to_codepoint_integer_list
+  |> list.map(unsafe_int_to_utf_codepoint)
 }
+
+@target(javascript)
+external fn string_to_codepoint_integer_list(String) -> List(Int) =
+  "../gleam_stdlib.mjs" "string_to_codepoint_integer_list"
 
 /// Converts a `List` of `UtfCodepoint`s to a `String`.
 ///
@@ -925,37 +834,37 @@ pub fn from_utf_codepoints(utf_codepoints: List(UtfCodepoint)) -> String {
   do_from_utf_codepoints(utf_codepoints)
 }
 
-if erlang {
-  fn do_from_utf_codepoints(utf_codepoints: List(UtfCodepoint)) -> String {
-    let assert Ok(string) =
-      do_from_utf_codepoints_impl(utf_codepoints, bit_string.from_string(""))
-      |> bit_string.to_string
-    string
-  }
+@target(erlang)
+fn do_from_utf_codepoints(utf_codepoints: List(UtfCodepoint)) -> String {
+  let assert Ok(string) =
+    do_from_utf_codepoints_impl(utf_codepoints, bit_string.from_string(""))
+    |> bit_string.to_string
+  string
+}
 
-  fn do_from_utf_codepoints_impl(
-    utf_codepoints: List(UtfCodepoint),
-    acc: BitString,
-  ) -> BitString {
-    case utf_codepoints {
-      [first, ..rest] ->
-        do_from_utf_codepoints_impl(
-          rest,
-          <<acc:bit_string, first:utf8_codepoint>>,
-        )
-      [] -> acc
-    }
+@target(erlang)
+fn do_from_utf_codepoints_impl(
+  utf_codepoints: List(UtfCodepoint),
+  acc: BitString,
+) -> BitString {
+  case utf_codepoints {
+    [first, ..rest] ->
+      do_from_utf_codepoints_impl(
+        rest,
+        <<acc:bit_string, first:utf8_codepoint>>,
+      )
+    [] -> acc
   }
 }
 
-if javascript {
-  fn do_from_utf_codepoints(utf_codepoints: List(UtfCodepoint)) -> String {
-    utf_codepoint_list_to_string(utf_codepoints)
-  }
-
-  external fn utf_codepoint_list_to_string(List(UtfCodepoint)) -> String =
-    "../gleam_stdlib.mjs" "utf_codepoint_list_to_string"
+@target(javascript)
+fn do_from_utf_codepoints(utf_codepoints: List(UtfCodepoint)) -> String {
+  utf_codepoint_list_to_string(utf_codepoints)
 }
+
+@target(javascript)
+external fn utf_codepoint_list_to_string(List(UtfCodepoint)) -> String =
+  "../gleam_stdlib.mjs" "utf_codepoint_list_to_string"
 
 /// Converts an integer to a `UtfCodepoint`.
 ///
@@ -983,15 +892,13 @@ pub fn utf_codepoint_to_int(cp: UtfCodepoint) -> Int {
   do_utf_codepoint_to_int(cp)
 }
 
-if erlang {
-  external fn do_utf_codepoint_to_int(cp: UtfCodepoint) -> Int =
-    "gleam_stdlib" "identity"
-}
+@target(erlang)
+external fn do_utf_codepoint_to_int(cp: UtfCodepoint) -> Int =
+  "gleam_stdlib" "identity"
 
-if javascript {
-  external fn do_utf_codepoint_to_int(cp: UtfCodepoint) -> Int =
-    "../gleam_stdlib.mjs" "utf_codepoint_to_int"
-}
+@target(javascript)
+external fn do_utf_codepoint_to_int(cp: UtfCodepoint) -> Int =
+  "../gleam_stdlib.mjs" "utf_codepoint_to_int"
 
 /// Converts a `String` into `Option(String)` where an empty `String` becomes
 /// `None`.
@@ -1086,15 +993,13 @@ pub fn inspect(term: anything) -> String {
   |> string_builder.to_string
 }
 
-if javascript {
-  external fn do_inspect(term: anything) -> StringBuilder =
-    "../gleam.mjs" "inspect"
-}
+@target(javascript)
+external fn do_inspect(term: anything) -> StringBuilder =
+  "../gleam.mjs" "inspect"
 
-if erlang {
-  external fn do_inspect(term: anything) -> StringBuilder =
-    "gleam_stdlib" "inspect"
-}
+@target(erlang)
+external fn do_inspect(term: anything) -> StringBuilder =
+  "gleam_stdlib" "inspect"
 
 /// Returns the number of bytes in a `String`.
 /// 
@@ -1105,12 +1010,10 @@ pub fn byte_size(string: String) -> Int {
   do_byte_size(string)
 }
 
-if javascript {
-  external fn do_byte_size(String) -> Int =
-    "../gleam_stdlib.mjs" "byte_size"
-}
+@target(javascript)
+external fn do_byte_size(String) -> Int =
+  "../gleam_stdlib.mjs" "byte_size"
 
-if erlang {
-  external fn do_byte_size(String) -> Int =
-    "erlang" "byte_size"
-}
+@target(erlang)
+external fn do_byte_size(String) -> Int =
+  "erlang" "byte_size"

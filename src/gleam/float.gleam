@@ -19,15 +19,13 @@ pub fn parse(string: String) -> Result(Float, Nil) {
   do_parse(string)
 }
 
-if erlang {
-  external fn do_parse(String) -> Result(Float, Nil) =
-    "gleam_stdlib" "parse_float"
-}
+@target(erlang)
+external fn do_parse(String) -> Result(Float, Nil) =
+  "gleam_stdlib" "parse_float"
 
-if javascript {
-  external fn do_parse(String) -> Result(Float, Nil) =
-    "../gleam_stdlib.mjs" "parse_float"
-}
+@target(javascript)
+external fn do_parse(String) -> Result(Float, Nil) =
+  "../gleam_stdlib.mjs" "parse_float"
 
 /// Returns the string representation of the provided `Float`.
 ///
@@ -42,15 +40,13 @@ pub fn to_string(x: Float) -> String {
   do_to_string(x)
 }
 
-if erlang {
-  external fn do_to_string(Float) -> String =
-    "gleam_stdlib" "float_to_string"
-}
+@target(erlang)
+external fn do_to_string(Float) -> String =
+  "gleam_stdlib" "float_to_string"
 
-if javascript {
-  external fn do_to_string(Float) -> String =
-    "../gleam_stdlib.mjs" "float_to_string"
-}
+@target(javascript)
+external fn do_to_string(Float) -> String =
+  "../gleam_stdlib.mjs" "float_to_string"
 
 /// Restricts a `Float` between a lower and upper bound.
 ///
@@ -198,15 +194,13 @@ pub fn ceiling(x: Float) -> Float {
   do_ceiling(x)
 }
 
-if erlang {
-  external fn do_ceiling(Float) -> Float =
-    "math" "ceil"
-}
+@target(erlang)
+external fn do_ceiling(Float) -> Float =
+  "math" "ceil"
 
-if javascript {
-  external fn do_ceiling(Float) -> Float =
-    "../gleam_stdlib.mjs" "ceiling"
-}
+@target(javascript)
+external fn do_ceiling(Float) -> Float =
+  "../gleam_stdlib.mjs" "ceiling"
 
 /// Rounds the value to the next lowest whole number as a `Float`.
 ///
@@ -221,15 +215,13 @@ pub fn floor(x: Float) -> Float {
   do_floor(x)
 }
 
-if erlang {
-  external fn do_floor(Float) -> Float =
-    "math" "floor"
-}
+@target(erlang)
+external fn do_floor(Float) -> Float =
+  "math" "floor"
 
-if javascript {
-  external fn do_floor(Float) -> Float =
-    "../gleam_stdlib.mjs" "floor"
-}
+@target(javascript)
+external fn do_floor(Float) -> Float =
+  "../gleam_stdlib.mjs" "floor"
 
 /// Rounds the value to the nearest whole number as an `Int`.
 ///
@@ -249,22 +241,21 @@ pub fn round(x: Float) -> Int {
   do_round(x)
 }
 
-if erlang {
-  external fn do_round(Float) -> Int =
-    "erlang" "round"
-}
+@target(erlang)
+external fn do_round(Float) -> Int =
+  "erlang" "round"
 
-if javascript {
-  fn do_round(x: Float) -> Int {
-    case x >=. 0.0 {
-      True -> js_round(x)
-      _ -> 0 - js_round(negate(x))
-    }
+@target(javascript)
+fn do_round(x: Float) -> Int {
+  case x >=. 0.0 {
+    True -> js_round(x)
+    _ -> 0 - js_round(negate(x))
   }
-
-  external fn js_round(Float) -> Int =
-    "../gleam_stdlib.mjs" "round"
 }
+
+@target(javascript)
+external fn js_round(Float) -> Int =
+  "../gleam_stdlib.mjs" "round"
 
 /// Returns the value as an `Int`, truncating all decimal digits.
 ///
@@ -279,15 +270,13 @@ pub fn truncate(x: Float) -> Int {
   do_truncate(x)
 }
 
-if erlang {
-  external fn do_truncate(Float) -> Int =
-    "erlang" "trunc"
-}
+@target(erlang)
+external fn do_truncate(Float) -> Int =
+  "erlang" "trunc"
 
-if javascript {
-  external fn do_truncate(Float) -> Int =
-    "../gleam_stdlib.mjs" "truncate"
-}
+@target(javascript)
+external fn do_truncate(Float) -> Int =
+  "../gleam_stdlib.mjs" "truncate"
 
 /// Returns the absolute value of the input as a `Float`.
 ///
@@ -354,15 +343,13 @@ pub fn power(base: Float, of exponent: Float) -> Result(Float, Nil) {
   }
 }
 
-if erlang {
-  external fn do_power(Float, Float) -> Float =
-    "math" "pow"
-}
+@target(erlang)
+external fn do_power(Float, Float) -> Float =
+  "math" "pow"
 
-if javascript {
-  external fn do_power(Float, Float) -> Float =
-    "../gleam_stdlib.mjs" "power"
-}
+@target(javascript)
+external fn do_power(Float, Float) -> Float =
+  "../gleam_stdlib.mjs" "power"
 
 /// Returns the square root of the input as a `Float`.
 ///
@@ -467,19 +454,17 @@ pub fn random(boundary_a: Float, boundary_b: Float) -> Float {
   }
 }
 
-if erlang {
-  /// Returns a random float uniformly distributed in the value range
-  /// 0.0 =< X < 1.0 and updates the state in the process dictionary.
-  /// See: <https://www.erlang.org/doc/man/rand.html#uniform-0>
-  ///
-  external fn do_random_uniform() -> Float =
-    "rand" "uniform"
-}
+@target(erlang)
+/// Returns a random float uniformly distributed in the value range
+/// 0.0 =< X < 1.0 and updates the state in the process dictionary.
+/// See: <https://www.erlang.org/doc/man/rand.html#uniform-0>
+///
+external fn do_random_uniform() -> Float =
+  "rand" "uniform"
 
-if javascript {
-  external fn do_random_uniform() -> Float =
-    "../gleam_stdlib.mjs" "random_uniform"
-}
+@target(javascript)
+external fn do_random_uniform() -> Float =
+  "../gleam_stdlib.mjs" "random_uniform"
 
 /// Returns division of the inputs as a `Result`.
 ///

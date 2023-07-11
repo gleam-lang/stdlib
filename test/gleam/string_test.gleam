@@ -2,7 +2,6 @@ import gleam/option.{None, Some}
 import gleam/order
 import gleam/should
 import gleam/string
-import gleam/result.{try}
 
 pub fn length_test() {
   string.length("ß↑e̊")
@@ -90,20 +89,6 @@ pub fn replace_test() {
   "Gleam,Erlang,Elixir"
   |> string.replace(",", "++")
   |> should.equal("Gleam++Erlang++Elixir")
-}
-
-pub fn replace_with_regex_test() {
-  use re <- try(regex.from_string("[,]+"))
-  "Gleam,Erlang,Elixir"
-  |> string.replace_with_regex(re, "++")
-  |> should.equal("Gleam++Erlang,Elixir") |> Ok
-}
-
-pub fn replace_all_with_regex_test() {
-  use re <- try(regex.from_string("[,]+"))
-  "Gleam,Erlang,Elixir"
-  |> string.replace_all_with_regex(re, "++")
-  |> should.equal("Gleam++Erlang++Elixir") |> Ok
 }
 
 pub fn append_test() {
@@ -897,109 +882,112 @@ pub fn inspect_test() {
   |> should.equal("<<255, 2, 0>>")
 }
 
-if javascript {
-  pub fn target_inspect_test() {
-    // Due to Erlang's internal representation, on Erlang this passes, instead:
-    // string.inspect(#(InspectTypeZero, InspectTypeZero))
-    // |> should.equal("InspectTypeZero(InspectTypeZero)")
-    string.inspect(#(InspectTypeZero, InspectTypeZero))
-    |> should.equal("#(InspectTypeZero, InspectTypeZero)")
+@target(javascript)
+pub fn target_inspect_test() {
+  // Due to Erlang's internal representation, on Erlang this passes, instead:
+  // string.inspect(#(InspectTypeZero, InspectTypeZero))
+  // |> should.equal("InspectTypeZero(InspectTypeZero)")
+  string.inspect(#(InspectTypeZero, InspectTypeZero))
+  |> should.equal("#(InspectTypeZero, InspectTypeZero)")
 
-    // Due to JavaScript's `Number` type `Float`s without digits return as
-    // `Int`s.
-    string.inspect(-1.0)
-    |> should.equal("-1")
+  // Due to JavaScript's `Number` type `Float`s without digits return as
+  // `Int`s.
+  string.inspect(-1.0)
+  |> should.equal("-1")
 
-    string.inspect(0.0)
-    |> should.equal("0")
+  string.inspect(0.0)
+  |> should.equal("0")
 
-    string.inspect(1.0)
-    |> should.equal("1")
+  string.inspect(1.0)
+  |> should.equal("1")
 
-    string.inspect([1.0])
-    |> should.equal("[1]")
+  string.inspect([1.0])
+  |> should.equal("[1]")
 
-    string.inspect(#(1.0))
-    |> should.equal("#(1)")
+  string.inspect(#(1.0))
+  |> should.equal("#(1)")
 
-    // Unlike on Erlang, on JavaScript `BitString` and `String` do have a
-    // different runtime representation.
-    <<"abc":utf8>>
-    |> string.inspect()
-    |> should.equal("<<97, 98, 99>>")
-  }
+  // Unlike on Erlang, on JavaScript `BitString` and `String` do have a
+  // different runtime representation.
+  <<"abc":utf8>>
+  |> string.inspect()
+  |> should.equal("<<97, 98, 99>>")
 }
 
-if erlang {
-  import gleam/regex
+@target(erlang)
+import gleam/regex
 
-  external fn create_erlang_pid() -> String =
-    "erlang" "self"
+@target(erlang)
+external fn create_erlang_pid() -> String =
+  "erlang" "self"
 
-  external fn create_erlang_reference() -> String =
-    "erlang" "make_ref"
+@target(erlang)
+external fn create_erlang_reference() -> String =
+  "erlang" "make_ref"
 
-  pub fn target_inspect_test() {
-    // Erlang's internal representation does not allow a correct
-    // differentiation at runtime and thus this does not pass:
-    // string.inspect(#(InspectTypeZero, InspectTypeZero))
-    // |> should.equal("#(InspectTypeZero, InspectTypeZero)")
-    string.inspect(#(InspectTypeZero, InspectTypeZero))
-    |> should.equal("InspectTypeZero(InspectTypeZero)")
+@target(erlang)
+pub fn target_inspect_test() {
+  // Erlang's internal representation does not allow a correct
+  // differentiation at runtime and thus this does not pass:
+  // string.inspect(#(InspectTypeZero, InspectTypeZero))
+  // |> should.equal("#(InspectTypeZero, InspectTypeZero)")
+  string.inspect(#(InspectTypeZero, InspectTypeZero))
+  |> should.equal("InspectTypeZero(InspectTypeZero)")
 
-    // Unlike JavaScript, Erlang correctly differentiates between `1` and `1.0`
-    // at runtime.
-    string.inspect(-1.0)
-    |> should.equal("-1.0")
+  // Unlike JavaScript, Erlang correctly differentiates between `1` and `1.0`
+  // at runtime.
+  string.inspect(-1.0)
+  |> should.equal("-1.0")
 
-    string.inspect(0.0)
-    |> should.equal("0.0")
+  string.inspect(0.0)
+  |> should.equal("0.0")
 
-    string.inspect(1.0)
-    |> should.equal("1.0")
+  string.inspect(1.0)
+  |> should.equal("1.0")
 
-    string.inspect([1.0])
-    |> should.equal("[1.0]")
+  string.inspect([1.0])
+  |> should.equal("[1.0]")
 
-    string.inspect(#(1.0))
-    |> should.equal("#(1.0)")
+  string.inspect(#(1.0))
+  |> should.equal("#(1.0)")
 
-    // Looks like `//erl(<0.83.0>)`.
-    let assert Ok(regular_expression) =
-      regex.from_string("^\\/\\/erl\\(<[0-9]+\\.[0-9]+\\.[0-9]+>\\)$")
-    string.inspect(create_erlang_pid())
-    |> regex.check(regular_expression, _)
-    |> should.be_true
+  // Looks like `//erl(<0.83.0>)`.
+  let assert Ok(regular_expression) =
+    regex.from_string("^\\/\\/erl\\(<[0-9]+\\.[0-9]+\\.[0-9]+>\\)$")
+  string.inspect(create_erlang_pid())
+  |> regex.check(regular_expression, _)
+  |> should.be_true
 
-    // Looks like: `//erl(#Ref<0.1809744150.4035444737.100468>)`.
-    let assert Ok(regular_expression) =
-      regex.from_string(
-        "^\\/\\/erl\\(#Ref<[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+>\\)$",
-      )
-    string.inspect(create_erlang_reference())
-    |> regex.check(regular_expression, _)
-    |> should.be_true
+  // Looks like: `//erl(#Ref<0.1809744150.4035444737.100468>)`.
+  let assert Ok(regular_expression) =
+    regex.from_string(
+      "^\\/\\/erl\\(#Ref<[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+>\\)$",
+    )
+  string.inspect(create_erlang_reference())
+  |> regex.check(regular_expression, _)
+  |> should.be_true
 
-    // On Erlang the representation between `String` and `BitString` is
-    // indistinguishable at runtime.
-    <<"abc":utf8>>
-    |> string.inspect()
-    |> should.equal("\"abc\"")
-  }
-
-  pub fn improper_list_inspect_test() {
-    let list = improper_list_append(1, 2, 3)
-    let assert "//erl([1, 2 | 3])" = string.inspect(list)
-  }
-
-  // Warning: The type of this function is incorrect
-  external fn improper_list_append(
-    item_a,
-    item_b,
-    improper_tail,
-  ) -> List(anything) =
-    "gleam_stdlib_test_ffi" "improper_list_append"
+  // On Erlang the representation between `String` and `BitString` is
+  // indistinguishable at runtime.
+  <<"abc":utf8>>
+  |> string.inspect()
+  |> should.equal("\"abc\"")
 }
+
+@target(erlang)
+pub fn improper_list_inspect_test() {
+  let list = improper_list_append(1, 2, 3)
+  let assert "//erl([1, 2 | 3])" = string.inspect(list)
+}
+
+// Warning: The type of this function is incorrect
+@target(erlang)
+external fn improper_list_append(
+  item_a,
+  item_b,
+  improper_tail,
+) -> List(anything) =
+  "gleam_stdlib_test_ffi" "improper_list_append"
 
 pub fn byte_size_test() {
   let assert 0 = string.byte_size("")
