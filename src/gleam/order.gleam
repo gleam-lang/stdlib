@@ -18,21 +18,21 @@ pub type Order {
 /// ## Examples
 ///
 /// ```gleam
-/// > reverse(Lt)
+/// > negate(Lt)
 /// Gt
 /// ```
 ///
 /// ```gleam
-/// > reverse(Eq)
+/// > negate(Eq)
 /// Eq
 /// ```
 ///
 /// ```gleam
-/// > reverse(Lt)
+/// > negate(Lt)
 /// Gt
 /// ```
 ///
-pub fn reverse(order: Order) -> Order {
+pub fn negate(order: Order) -> Order {
   case order {
     Lt -> Gt
     Eq -> Eq
@@ -124,10 +124,10 @@ pub fn min(a: Order, b: Order) -> Order {
 /// ## Examples
 ///
 /// ```gleam
-/// > list.sort([1, 5, 4], by: inverse(int.compare))
+/// > list.sort([1, 5, 4], by: reverse(int.compare))
 /// [5, 4, 1]
 /// ```
 ///
-pub fn inverse(orderer: fn(a, a) -> Order) -> fn(a, a) -> Order {
+pub fn reverse(orderer: fn(a, a) -> Order) -> fn(a, a) -> Order {
   fn(a, b) { orderer(b, a) }
 }
