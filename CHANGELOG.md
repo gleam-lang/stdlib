@@ -6,7 +6,7 @@
   results in drastically improved performance when constructing or updating
   maps, especially with large maps.
 - `reverse` has been renamed to `negate` in the `order` module.
-- A new `reverse` function is added to the`order` module, which reverses an ordering function.
+- A new `reverse` function is added to the `order` module, which reverses an ordering function.
 
 ## v0.27.0 - 2023-02-26
 
