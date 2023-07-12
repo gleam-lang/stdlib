@@ -129,5 +129,5 @@ pub fn min(a: Order, b: Order) -> Order {
 /// ```
 ///
 pub fn inverse(orderer: fn(a, a) -> Order) -> fn(a, a) -> Order {
-  fn(a, b) { reverse(orderer(a, b)) }
+  fn(a, b) { orderer(b, a) }
 }
