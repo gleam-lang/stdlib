@@ -117,3 +117,17 @@ pub fn min(a: Order, b: Order) -> Order {
     _, _ -> b
   }
 }
+
+/// Inverts an ordering function, so less-than becomes greater-than and greater-than
+/// becomes less-than.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > list.sort([1, 5, 4], by: inverse(int.compare))
+/// [5, 4, 1]
+/// ```
+///
+pub fn inverse(orderer: fn(a, a) -> Order) -> fn(a, a) -> Order {
+  fn(a, b) { reverse(orderer(a, b)) }
+}
