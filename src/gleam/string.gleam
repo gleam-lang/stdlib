@@ -562,9 +562,20 @@ pub fn repeat(string: String, times times: Int) -> String {
 /// ```
 ///
 pub fn join(strings: List(String), with separator: String) -> String {
-  strings
-  |> list.intersperse(with: separator)
-  |> concat
+  do_join(strings, separator)
+}
+
+if erlang {
+  fn do_join(strings: List(String), separator: String) -> String {
+    strings
+    |> list.intersperse(with: separator)
+    |> concat
+  }
+}
+
+if javascript {
+  external fn do_join(strings: List(String), string: String) -> String =
+    "../gleam_stdlib.mjs" "join"
 }
 
 /// Pads a `String` on the left until it has at least given number of graphemes.
@@ -717,8 +728,8 @@ if javascript {
     "../gleam_stdlib.mjs" "trim_right"
 }
 
-/// Splits a non-empty `String` into its head and tail. This lets you
-/// pattern match on `String`s exactly as you would with lists.
+/// Splits a non-empty `String` into its first element (head) and rest (tail).
+/// This lets you pattern match on `String`s exactly as you would with lists.
 ///
 /// ## Examples
 ///
@@ -812,8 +823,8 @@ if erlang {
     acc: List(UtfCodepoint),
   ) -> List(UtfCodepoint) {
     case bit_string {
-      <<head:utf8_codepoint, rest:binary>> ->
-        do_to_utf_codepoints_impl(rest, [head, ..acc])
+      <<first:utf8_codepoint, rest:binary>> ->
+        do_to_utf_codepoints_impl(rest, [first, ..acc])
       <<>> -> acc
     }
   }
@@ -840,7 +851,7 @@ if javascript {
 ///
 /// ```gleam
 /// > {
-/// >   assert #(Ok(a), Ok(b), Ok(c)) = #(
+/// >   let assert #(Ok(a), Ok(b), Ok(c)) = #(
 /// >     utf_codepoint(97),
 /// >     utf_codepoint(98),
 /// >     utf_codepoint(99),
@@ -868,10 +879,10 @@ if erlang {
     acc: BitString,
   ) -> BitString {
     case utf_codepoints {
-      [head, ..tail] ->
+      [first, ..rest] ->
         do_from_utf_codepoints_impl(
-          tail,
-          <<acc:bit_string, head:utf8_codepoint>>,
+          rest,
+          <<acc:bit_string, first:utf8_codepoint>>,
         )
       [] -> acc
     }
@@ -1024,4 +1035,23 @@ if javascript {
 if erlang {
   external fn do_inspect(term: anything) -> StringBuilder =
     "gleam_stdlib" "inspect"
+}
+
+/// Returns the number of bytes in a `String`.
+/// 
+/// This function runs in constant time on Erlang and in linear time on
+/// JavaScript.
+///
+pub fn byte_size(string: String) -> Int {
+  do_byte_size(string)
+}
+
+if javascript {
+  external fn do_byte_size(String) -> Int =
+    "../gleam_stdlib.mjs" "byte_size"
+}
+
+if erlang {
+  external fn do_byte_size(String) -> Int =
+    "erlang" "byte_size"
 }

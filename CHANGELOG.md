@@ -2,11 +2,52 @@
 
 ## Unreleased
 
+- The `list` module gains the `list.map2` function.
+- `reverse` has been renamed to `negate` in the `order` module.
+- A new `reverse` function is added to the `order` module, which reverses an ordering function.
+
+## v0.29.2 - 2023-06-21
+
+- improve `string.join` and `string.concat` performance on JavaScript target.
+- The `result` module gains the `try_recover` function.
+- The `string` module gains the `byte_size` function.
+
+## v0.29.1 - 2023-06-01
+
+- Fixed a bug on target JavaScript where `regex.check` would not correctly execute
+  while using the same regular expression in consecutive calls.
+- The `zip` function's second argument in the `list` module gains the `with` label.
+- The `strict_zip` function's second argument in the `list` module gains the `with` label.
+- The `pair` module gains the `new` function.
+
+## v0.29.0 - 2023-05-23
+
+- The `result` module gains the `partition` function.
+- `dynamic.tupleN` functions now support lists.
+
+## v0.28.2 - 2023-05-09
+
+- Fixed a bug where `dynamic.map` would crash when passed the JavaScript values
+  of `null` or `undefined`.
+- Fixed a bug where `io.debug` would crash when called in a React Native
+  environment.
+
+## v0.28.1 - 2023-04-10
+
+- The `iterator` module gains the `each` function.
+- Fixed a bug in maps when running on JavaScript where value membership could be
+  incorrectly stated in some cases.
+- `result.then` is now an alias of `result.try`; both do the same.
+- The `list` module gains the `try_each` function.
+- The `dynamic` module gains the `optional_field` function.
+
+## v0.28.0 - 2023-03-26
+
+- `regex.scan` now behaves consistently across both targets when a capture group does not capture anything.
 - The `Map` type was rewritten as a persistent immutable data structure. This
   results in drastically improved performance when constructing or updating
   maps, especially with large maps.
-- `reverse` has been renamed to `negate` in the `order` module.
-- A new `reverse` function is added to the `order` module, which reverses an ordering function.
+- The `all` and `any` functions in the `iterator` module are now tail recursive.
 
 ## v0.27.0 - 2023-02-26
 

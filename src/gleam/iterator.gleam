@@ -237,7 +237,7 @@ pub fn to_list(iterator: Iterator(element)) -> List(element) {
   |> list.reverse
 }
 
-/// Eagerly accesses the first value of an interator, returning a `Next`
+/// Eagerly accesses the first value of an iterator, returning a `Next`
 /// that contains the first value and the rest of the iterator.
 ///
 /// If called on an empty iterator, `Done` is returned.
@@ -245,15 +245,15 @@ pub fn to_list(iterator: Iterator(element)) -> List(element) {
 /// ## Examples
 ///
 /// ```gleam
-/// > assert Next(head, tail) = [1, 2, 3, 4]
+/// > let assert Next(first, rest) = [1, 2, 3, 4]
 /// >   |> from_list
 /// >   |> step
-/// > head
+/// > first
 /// 1
 /// ```
 ///
 /// ```gleam
-/// > tail |> to_list
+/// > rest |> to_list
 /// [2, 3, 4]
 /// ```
 ///
@@ -995,7 +995,11 @@ fn do_any(
 ) -> Bool {
   case continuation() {
     Stop -> False
-    Continue(e, next) -> predicate(e) || do_any(next, predicate)
+    Continue(e, next) ->
+      case predicate(e) {
+        True -> True
+        False -> do_any(next, predicate)
+      }
   }
 }
 
@@ -1037,7 +1041,11 @@ fn do_all(
 ) -> Bool {
   case continuation() {
     Stop -> True
-    Continue(e, next) -> predicate(e) && do_all(next, predicate)
+    Continue(e, next) ->
+      case predicate(e) {
+        True -> do_all(next, predicate)
+        False -> False
+      }
   }
 }
 
@@ -1296,7 +1304,7 @@ fn do_try_fold(
   case continuation() {
     Stop -> Ok(accumulator)
     Continue(elem, next) -> {
-      use accumulator <- result.then(f(accumulator, elem))
+      use accumulator <- result.try(f(accumulator, elem))
       do_try_fold(next, f, accumulator)
     }
   }
@@ -1391,10 +1399,10 @@ fn do_length(over continuation: fn() -> Action(e), with length: Int) -> Int {
 /// Counts the number of elements in the given iterator.
 ///
 /// This function has to traverse the entire iterator to count its elements,
-/// so it runs in linear time. 
+/// so it runs in linear time.
 ///
 /// ## Examples
-/// 
+///
 /// ```gleam
 /// > empty() |> length
 /// 0
@@ -1408,4 +1416,27 @@ fn do_length(over continuation: fn() -> Action(e), with length: Int) -> Int {
 pub fn length(over iterator: Iterator(e)) -> Int {
   iterator.continuation
   |> do_length(0)
+}
+
+/// Traverse an iterator, calling a function on each element.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > empty() |> each(io.println)
+/// Nil
+/// ```
+///
+/// ```gleam
+/// > from_list(["Tom", "Malory", "Louis"]) |> each(io.println)
+/// // -> Tom
+/// // -> Malory
+/// // -> Louis
+/// Nil
+/// ```
+///
+pub fn each(over iterator: Iterator(a), with f: fn(a) -> b) -> Nil {
+  iterator
+  |> map(f)
+  |> run
 }

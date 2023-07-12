@@ -336,3 +336,42 @@ pub fn size_test() {
   |> map.size()
   |> should.equal(18)
 }
+
+// https://github.com/gleam-lang/stdlib/issues/435
+pub fn peters_bug_test() {
+  map.new()
+  |> map.insert(22, Nil)
+  |> map.insert(21, Nil)
+  |> map.insert(23, Nil)
+  |> map.insert(18, Nil)
+  |> map.insert(17, Nil)
+  |> map.insert(19, Nil)
+  |> map.insert(14, Nil)
+  |> map.insert(13, Nil)
+  |> map.insert(15, Nil)
+  |> map.insert(10, Nil)
+  |> map.insert(9, Nil)
+  |> map.insert(11, Nil)
+  |> map.insert(6, Nil)
+  |> map.insert(5, Nil)
+  |> map.insert(7, Nil)
+  |> map.insert(2, Nil)
+  |> map.insert(1, Nil)
+  |> map.insert(3, Nil)
+  |> map.get(0)
+  |> should.equal(Error(Nil))
+}
+
+pub fn zero_must_be_contained_test() {
+  let map =
+    map.new()
+    |> map.insert(0, Nil)
+
+  map
+  |> map.get(0)
+  |> should.equal(Ok(Nil))
+
+  map
+  |> map.has_key(0)
+  |> should.equal(True)
+}

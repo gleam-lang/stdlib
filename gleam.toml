@@ -1,5 +1,5 @@
 name = "gleam_stdlib"
-version = "0.27.0"
+version = "0.29.2"
 licences = ["Apache-2.0"]
 description = "A standard library for the Gleam programming language"
 
@@ -8,10 +8,6 @@ links = [
   { title = "Website", href = "https://gleam.run" },
   { title = "Sponsor", href = "https://github.com/sponsors/lpil" },
 ]
-
-[dependencies]
-
-[dev-dependencies]
 
 [javascript.deno]
 allow_read = [

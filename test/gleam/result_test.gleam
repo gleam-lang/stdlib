@@ -1,3 +1,4 @@
+import gleam/list
 import gleam/result
 import gleam/should
 
@@ -57,6 +58,24 @@ pub fn flatten_test() {
   Error(Error(1))
   |> result.flatten
   |> should.equal(Error(Error(1)))
+}
+
+pub fn try_test() {
+  Error(1)
+  |> result.try(fn(x) { Ok(x + 1) })
+  |> should.equal(Error(1))
+
+  Ok(1)
+  |> result.try(fn(x) { Ok(x + 1) })
+  |> should.equal(Ok(2))
+
+  Ok(1)
+  |> result.try(fn(_) { Ok("type change") })
+  |> should.equal(Ok("type change"))
+
+  Ok(1)
+  |> result.try(fn(_) { Error(1) })
+  |> should.equal(Error(1))
 }
 
 pub fn then_test() {
@@ -177,6 +196,31 @@ pub fn all_test() {
   |> should.equal(Error("a"))
 }
 
+pub fn partition_test() {
+  []
+  |> result.partition
+  |> should.equal(#([], []))
+
+  [Ok(1), Ok(2), Ok(3)]
+  |> result.partition
+  |> should.equal(#([3, 2, 1], []))
+
+  [Error("a"), Error("b"), Error("c")]
+  |> result.partition
+  |> should.equal(#([], ["c", "b", "a"]))
+
+  [Ok(1), Error("a"), Ok(2), Error("b"), Error("c")]
+  |> result.partition
+  |> should.equal(#([2, 1], ["c", "b", "a"]))
+
+  // TCO test
+  list.repeat(Ok(1), 1_000_000)
+  |> result.partition
+
+  list.repeat(Error("a"), 1_000_000)
+  |> result.partition
+}
+
 pub fn replace_error_test() {
   Error(Nil)
   |> result.replace_error("Invalid")
@@ -204,4 +248,18 @@ pub fn replace_with_ok_test() {
 pub fn values_test() {
   result.values([Ok(1), Error(""), Ok(3)])
   |> should.equal([1, 3])
+}
+
+pub fn try_recover_test() {
+  Ok(1)
+  |> result.try_recover(fn(_) { panic })
+  |> should.equal(Ok(1))
+
+  Error(1)
+  |> result.try_recover(fn(n) { Ok(n + 1) })
+  |> should.equal(Ok(2))
+
+  Error(1)
+  |> result.try_recover(fn(_) { Error("failed to recover") })
+  |> should.equal(Error("failed to recover"))
 }

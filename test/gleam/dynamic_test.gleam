@@ -51,6 +51,35 @@ if javascript {
   }
 }
 
+if erlang {
+  pub type MyAtom {
+    ThisIsAnAtom
+  }
+
+  pub fn map_from_atom_test() {
+    ThisIsAnAtom
+    |> dynamic.from
+    |> dynamic.map(dynamic.string, dynamic.int)
+    |> should.equal(Error([
+      DecodeError(expected: "Map", found: "Atom", path: []),
+    ]))
+  }
+}
+
+if javascript {
+  external fn get_null() -> dynamic.Dynamic =
+    "../gleam_stdlib_test_ffi.mjs" "get_null"
+
+  pub fn map_from_null_test() {
+    get_null()
+    |> dynamic.from
+    |> dynamic.map(dynamic.string, dynamic.int)
+    |> should.equal(Error([
+      DecodeError(expected: "Map", found: "Null", path: []),
+    ]))
+  }
+}
+
 pub fn string_test() {
   ""
   |> dynamic.from
@@ -271,7 +300,7 @@ if javascript {
     |> dynamic.from
     |> dynamic.field("Nope", dynamic.int)
     |> should.equal(Error([
-      DecodeError(expected: "field", found: "nothing", path: ["Nope"]),
+      DecodeError(expected: "Map", found: "Result", path: []),
     ]))
   }
 }
@@ -314,16 +343,76 @@ pub fn field_test() {
   1
   |> dynamic.from
   |> dynamic.field("ok", dynamic.int)
-  |> should.equal(Error([
-    DecodeError(expected: "field", found: "nothing", path: ["ok"]),
-  ]))
+  |> should.equal(Error([DecodeError(expected: "Map", found: "Int", path: [])]))
 
   []
   |> dynamic.from
   |> dynamic.field("ok", dynamic.int)
+  |> should.equal(Error([DecodeError(expected: "Map", found: "List", path: [])]))
+
+  map.new()
+  |> map.insert("ok", 1)
+  |> dynamic.from
+  |> dynamic.field("ok", dynamic.field("not_a_field", dynamic.int))
   |> should.equal(Error([
-    DecodeError(expected: "field", found: "nothing", path: ["ok"]),
+    DecodeError(expected: "Map", found: "Int", path: ["ok"]),
   ]))
+}
+
+pub fn optional_field_test() {
+  map.new()
+  |> map.insert("ok", 1)
+  |> dynamic.from
+  |> dynamic.optional_field(named: "ok", of: dynamic.int)
+  |> should.equal(Ok(Some(1)))
+
+  map.new()
+  |> map.insert("ok", 1.0)
+  |> dynamic.from
+  |> dynamic.optional_field(named: "ok", of: dynamic.float)
+  |> should.equal(Ok(Some(1.0)))
+
+  map.new()
+  |> map.insert("ok", 3)
+  |> map.insert("error", 1)
+  |> dynamic.from
+  |> dynamic.optional_field("ok", dynamic.int)
+  |> should.equal(Ok(Some(3)))
+
+  map.new()
+  |> map.insert("ok", 3)
+  |> dynamic.from
+  |> dynamic.optional_field("ok", dynamic.string)
+  |> should.equal(Error([
+    DecodeError(expected: "String", found: "Int", path: ["ok"]),
+  ]))
+
+  map.new()
+  |> map.insert("ok", None)
+  |> dynamic.from
+  |> dynamic.optional_field("ok", dynamic.int)
+  |> should.equal(Ok(None))
+
+  map.new()
+  |> map.insert("ok", Nil)
+  |> dynamic.from
+  |> dynamic.optional_field("ok", dynamic.int)
+  |> should.equal(Ok(None))
+
+  map.new()
+  |> dynamic.from
+  |> dynamic.optional_field("ok", dynamic.int)
+  |> should.equal(Ok(None))
+
+  1
+  |> dynamic.from
+  |> dynamic.optional_field("ok", dynamic.int)
+  |> should.equal(Error([DecodeError(expected: "Map", found: "Int", path: [])]))
+
+  []
+  |> dynamic.from
+  |> dynamic.optional_field("ok", dynamic.int)
+  |> should.equal(Error([DecodeError(expected: "Map", found: "List", path: [])]))
 }
 
 pub fn element_test() {
@@ -433,6 +522,38 @@ pub fn tuple2_test() {
   |> should.equal(Error([
     DecodeError(path: [], expected: "Tuple of 2 elements", found: "Int"),
   ]))
+
+  [1, 2]
+  |> dynamic.from
+  |> dynamic.tuple2(dynamic.int, dynamic.int)
+  |> should.equal(Ok(#(1, 2)))
+
+  [dynamic.from(1), dynamic.from("a")]
+  |> dynamic.from
+  |> dynamic.tuple2(dynamic.int, dynamic.string)
+  |> should.equal(Ok(#(1, "a")))
+
+  ["", ""]
+  |> dynamic.from
+  |> dynamic.tuple2(dynamic.int, dynamic.int)
+  |> should.equal(Error([
+    DecodeError(expected: "Int", found: "String", path: ["0"]),
+    DecodeError(expected: "Int", found: "String", path: ["1"]),
+  ]))
+
+  [1, 2, 3]
+  |> dynamic.from
+  |> dynamic.tuple2(dynamic.int, dynamic.int)
+  |> should.equal(Error([
+    DecodeError(path: [], expected: "Tuple of 2 elements", found: "List"),
+  ]))
+
+  []
+  |> dynamic.from
+  |> dynamic.tuple2(dynamic.int, dynamic.int)
+  |> should.equal(Error([
+    DecodeError(path: [], expected: "Tuple of 2 elements", found: "List"),
+  ]))
 }
 
 pub fn tuple3_test() {
@@ -445,6 +566,16 @@ pub fn tuple3_test() {
   |> dynamic.from
   |> dynamic.tuple3(dynamic.int, dynamic.string, dynamic.float)
   |> should.equal(Ok(#(1, "", 3.0)))
+
+  [1, 2, 3]
+  |> dynamic.from
+  |> dynamic.tuple3(dynamic.int, dynamic.int, dynamic.int)
+  |> should.equal(Ok(#(1, 2, 3)))
+
+  [dynamic.from(1), dynamic.from("a"), dynamic.from(3.0)]
+  |> dynamic.from
+  |> dynamic.tuple3(dynamic.int, dynamic.string, dynamic.float)
+  |> should.equal(Ok(#(1, "a", 3.0)))
 
   #(1, 2, "")
   |> dynamic.from
@@ -473,6 +604,22 @@ pub fn tuple3_test() {
     ),
   ]))
 
+  ["", "", ""]
+  |> dynamic.from
+  |> dynamic.tuple3(dynamic.int, dynamic.int, dynamic.int)
+  |> should.equal(Error([
+    DecodeError(expected: "Int", found: "String", path: ["0"]),
+    DecodeError(expected: "Int", found: "String", path: ["1"]),
+    DecodeError(expected: "Int", found: "String", path: ["2"]),
+  ]))
+
+  [1, 2]
+  |> dynamic.from
+  |> dynamic.tuple3(dynamic.int, dynamic.int, dynamic.int)
+  |> should.equal(Error([
+    DecodeError(path: [], expected: "Tuple of 3 elements", found: "List"),
+  ]))
+
   1
   |> dynamic.from
   |> dynamic.tuple3(dynamic.int, dynamic.int, dynamic.int)
@@ -491,6 +638,16 @@ pub fn tuple4_test() {
   |> dynamic.from
   |> dynamic.tuple4(dynamic.int, dynamic.string, dynamic.float, dynamic.int)
   |> should.equal(Ok(#(1, "", 3.0, 4)))
+
+  [1, 2, 3, 4]
+  |> dynamic.from
+  |> dynamic.tuple4(dynamic.int, dynamic.int, dynamic.int, dynamic.int)
+  |> should.equal(Ok(#(1, 2, 3, 4)))
+
+  [dynamic.from(1), dynamic.from("a"), dynamic.from(3.0), dynamic.from(4.0)]
+  |> dynamic.from
+  |> dynamic.tuple4(dynamic.int, dynamic.string, dynamic.float, dynamic.float)
+  |> should.equal(Ok(#(1, "a", 3.0, 4.0)))
 
   #(1, 2, 3, "")
   |> dynamic.from
@@ -518,6 +675,23 @@ pub fn tuple4_test() {
       expected: "Tuple of 4 elements",
       found: "Tuple of 2 elements",
     ),
+  ]))
+
+  ["", "", "", ""]
+  |> dynamic.from
+  |> dynamic.tuple4(dynamic.int, dynamic.int, dynamic.int, dynamic.int)
+  |> should.equal(Error([
+    DecodeError(expected: "Int", found: "String", path: ["0"]),
+    DecodeError(expected: "Int", found: "String", path: ["1"]),
+    DecodeError(expected: "Int", found: "String", path: ["2"]),
+    DecodeError(expected: "Int", found: "String", path: ["3"]),
+  ]))
+
+  [1, 2]
+  |> dynamic.from
+  |> dynamic.tuple4(dynamic.int, dynamic.int, dynamic.int, dynamic.int)
+  |> should.equal(Error([
+    DecodeError(path: [], expected: "Tuple of 4 elements", found: "List"),
   ]))
 
   1
@@ -550,6 +724,34 @@ pub fn tuple5_test() {
     dynamic.int,
   )
   |> should.equal(Ok(#(1, "", 3.0, 4, 5)))
+
+  [1, 2, 3, 4, 5]
+  |> dynamic.from
+  |> dynamic.tuple5(
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+  )
+  |> should.equal(Ok(#(1, 2, 3, 4, 5)))
+
+  [
+    dynamic.from(1),
+    dynamic.from("a"),
+    dynamic.from(3.0),
+    dynamic.from(4.0),
+    dynamic.from(True),
+  ]
+  |> dynamic.from
+  |> dynamic.tuple5(
+    dynamic.int,
+    dynamic.string,
+    dynamic.float,
+    dynamic.float,
+    dynamic.bool,
+  )
+  |> should.equal(Ok(#(1, "a", 3.0, 4.0, True)))
 
   #(1, 2, 3, 4, "")
   |> dynamic.from
@@ -598,6 +800,36 @@ pub fn tuple5_test() {
     ),
   ]))
 
+  ["", "", "", "", ""]
+  |> dynamic.from
+  |> dynamic.tuple5(
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+  )
+  |> should.equal(Error([
+    DecodeError(expected: "Int", found: "String", path: ["0"]),
+    DecodeError(expected: "Int", found: "String", path: ["1"]),
+    DecodeError(expected: "Int", found: "String", path: ["2"]),
+    DecodeError(expected: "Int", found: "String", path: ["3"]),
+    DecodeError(expected: "Int", found: "String", path: ["4"]),
+  ]))
+
+  [1, 2]
+  |> dynamic.from
+  |> dynamic.tuple5(
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+  )
+  |> should.equal(Error([
+    DecodeError(path: [], expected: "Tuple of 5 elements", found: "List"),
+  ]))
+
   1
   |> dynamic.from
   |> dynamic.tuple5(
@@ -636,6 +868,37 @@ pub fn tuple6_test() {
     dynamic.int,
   )
   |> should.equal(Ok(#(1, "", 3.0, 4, 5, 6)))
+
+  [1, 2, 3, 4, 5, 6]
+  |> dynamic.from
+  |> dynamic.tuple6(
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+  )
+  |> should.equal(Ok(#(1, 2, 3, 4, 5, 6)))
+
+  [
+    dynamic.from(1),
+    dynamic.from("a"),
+    dynamic.from(3.0),
+    dynamic.from(4.0),
+    dynamic.from(True),
+    dynamic.from(6.0),
+  ]
+  |> dynamic.from
+  |> dynamic.tuple6(
+    dynamic.int,
+    dynamic.string,
+    dynamic.float,
+    dynamic.float,
+    dynamic.bool,
+    dynamic.float,
+  )
+  |> should.equal(Ok(#(1, "a", 3.0, 4.0, True, 6.0)))
 
   #(1, 2, 3, 4, 5, "")
   |> dynamic.from
@@ -686,6 +949,39 @@ pub fn tuple6_test() {
       expected: "Tuple of 6 elements",
       found: "Tuple of 2 elements",
     ),
+  ]))
+
+  ["", "", "", "", "", ""]
+  |> dynamic.from
+  |> dynamic.tuple6(
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+  )
+  |> should.equal(Error([
+    DecodeError(expected: "Int", found: "String", path: ["0"]),
+    DecodeError(expected: "Int", found: "String", path: ["1"]),
+    DecodeError(expected: "Int", found: "String", path: ["2"]),
+    DecodeError(expected: "Int", found: "String", path: ["3"]),
+    DecodeError(expected: "Int", found: "String", path: ["4"]),
+    DecodeError(expected: "Int", found: "String", path: ["5"]),
+  ]))
+
+  [1, 2]
+  |> dynamic.from
+  |> dynamic.tuple6(
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+    dynamic.int,
+  )
+  |> should.equal(Error([
+    DecodeError(path: [], expected: "Tuple of 6 elements", found: "List"),
   ]))
 
   1
@@ -758,6 +1054,11 @@ pub fn map_test() {
   |> should.equal(Error([
     DecodeError(expected: "Map", found: "Function", path: []),
   ]))
+
+  Nil
+  |> dynamic.from
+  |> dynamic.map(dynamic.string, dynamic.int)
+  |> should.equal(Error([DecodeError(expected: "Map", found: "Nil", path: [])]))
 }
 
 pub fn shallow_list_test() {

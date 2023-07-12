@@ -1,0 +1,10 @@
+{
+  "tasks": {
+    "test": "deno test"
+  },
+  "test": {
+    "files": {
+      "exclude": ["src/", "build/"]
+    }
+  }
+}

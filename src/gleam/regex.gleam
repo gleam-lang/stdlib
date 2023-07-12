@@ -40,14 +40,14 @@ pub type Options {
 ///
 /// ```gleam
 /// > let options = Options(case_insensitive: False, multi_line: True)
-/// > assert Ok(re) = compile("^[0-9]", with: options)
+/// > let assert Ok(re) = compile("^[0-9]", with: options)
 /// > check(re, "abc\n123")
 /// True
 /// ```
 ///
 /// ```gleam
 /// > let options = Options(case_insensitive: True, multi_line: False)
-/// > assert Ok(re) = compile("[A-Z]", with: options)
+/// > let assert Ok(re) = compile("[A-Z]", with: options)
 /// > check(re, "abc123")
 /// True
 /// ```
@@ -74,7 +74,7 @@ if javascript {
 /// ## Examples
 ///
 /// ```gleam
-/// > assert Ok(re) = from_string("[0-9]")
+/// > let assert Ok(re) = from_string("[0-9]")
 /// > check(re, "abc123")
 /// True
 /// ```
@@ -103,7 +103,7 @@ pub fn from_string(pattern: String) -> Result(Regex, CompileError) {
 /// ## Examples
 ///
 /// ```gleam
-/// > assert Ok(re) = from_string("^f.o.?")
+/// > let assert Ok(re) = from_string("^f.o.?")
 /// > check(with: re, content: "foo")
 /// True
 /// ```
@@ -132,7 +132,7 @@ if javascript {
 /// ## Examples
 ///
 /// ```gleam
-/// > assert Ok(re) = from_string(" *, *")
+/// > let assert Ok(re) = from_string(" *, *")
 /// > split(with: re, content: "foo,32, 4, 9  ,0")
 /// ["foo", "32", "4", "9", "0"]
 /// ```
@@ -160,7 +160,7 @@ if javascript {
 /// ## Examples
 ///
 /// ```gleam
-/// > assert Ok(re) = from_string("[oi]n a (\\w+)")
+/// > let assert Ok(re) = from_string("[oi]n a (\\w+)")
 /// > scan(with: re, content: "I am on a boat in a lake.")
 /// [
 ///   Match(
@@ -172,6 +172,50 @@ if javascript {
 ///     submatches: [Some("lake")]
 ///   )
 /// ]
+/// ```
+///
+/// ```gleam
+/// > let assert Ok(re) = regex.from_string("([+|\\-])?(\\d+)(\\w+)?")
+/// > scan(with: re, content: "-36")
+/// [
+///   Match(
+///     content: "-36",
+///     submatches: [Some("-"), Some("36")]
+///   )
+/// ]
+///
+/// > scan(with: re, content: "36")
+/// [
+///   Match(
+///     content: "36",
+///     submatches: [None, Some("36")]
+///   )
+/// ]
+/// ```
+///
+/// ```gleam
+/// > let assert Ok(re) = regex.from_string("var\\s*(\\w+)\\s*(int|string)?\\s*=\\s*(.*)")
+/// > scan(with: re, content: "var age = 32")
+/// [
+///   Match(
+///     content: "var age = 32",
+///     submatches: [Some("age"), None, Some("32")]
+///   )
+/// ]
+/// ```
+///
+/// ```gleam
+/// > let assert Ok(re) = regex.from_string("let (\\w+) = (\\w+)")
+/// > scan(with: re, content: "let age = 32")
+/// [
+///   Match(
+///     content: "let age = 32",
+///     submatches: [Some("age"), Some("32")]
+///   )
+/// ]
+///
+/// > scan(with: re, content: "const age = 32")
+/// []
 /// ```
 ///
 pub fn scan(with regex: Regex, content string: String) -> List(Match) {

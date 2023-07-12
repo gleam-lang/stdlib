@@ -84,7 +84,7 @@ pub fn compare(a: Order, with b: Order) -> Order {
   }
 }
 
-/// Returns the largest of two orders.
+/// Returns the largest of two orders given that `Gt > Eq > Lt`.
 ///
 /// ## Examples
 ///
@@ -101,7 +101,7 @@ pub fn max(a: Order, b: Order) -> Order {
   }
 }
 
-/// Returns the smallest of two orders.
+/// Returns the smallest of two orders given that `Gt > Eq > Lt`.
 ///
 /// ## Examples
 ///
