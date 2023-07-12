@@ -27,7 +27,7 @@ pub fn compile_test() {
   regex.check(re, "abc\n123")
   |> should.be_true
 
-  // For Erlang: This test will only passes if unicode and ucp flags are set
+  // On target Erlang this test will only pass if unicode and ucp flags are set
   let assert Ok(re) = regex.compile("\\s", options)
   // Em space == U+2003 == " " == used below
   regex.check(re, " ")
@@ -42,6 +42,28 @@ pub fn check_test() {
 
   regex.check(re, "boo")
   |> should.be_false
+
+  re
+  |> regex.check(content: "foo")
+  |> should.be_true
+
+  "boo"
+  |> regex.check(with: re)
+  |> should.be_false
+
+  // On target JavaScript internal `RegExp` objects are stateful when they
+  // have the global or sticky flags set (e.g., /foo/g or /foo/y).
+  // These following tests make sure that our implementation circumvents this.
+  let assert Ok(re) = regex.from_string("^-*[0-9]+")
+
+  regex.check(re, "1")
+  |> should.be_true
+
+  regex.check(re, "12")
+  |> should.be_true
+
+  regex.check(re, "123")
+  |> should.be_true
 }
 
 pub fn split_test() {
@@ -84,4 +106,48 @@ pub fn scan_test() {
 
   regex.scan(re, "你好 42 世界")
   |> should.equal([Match(content: "42", submatches: [Some("42")])])
+
+  let assert Ok(re) = regex.from_string("([+|\\-])?(\\d+)(\\w+)?")
+  regex.scan(re, "+36kg")
+  |> should.equal([
+    Match(content: "+36kg", submatches: [Some("+"), Some("36"), Some("kg")]),
+  ])
+
+  regex.scan(re, "36kg")
+  |> should.equal([
+    Match(content: "36kg", submatches: [None, Some("36"), Some("kg")]),
+  ])
+
+  regex.scan(re, "36")
+  |> should.equal([Match(content: "36", submatches: [None, Some("36")])])
+
+  regex.scan(re, "-36")
+  |> should.equal([Match(content: "-36", submatches: [Some("-"), Some("36")])])
+
+  regex.scan(re, "-kg")
+  |> should.equal([])
+
+  let assert Ok(re) =
+    regex.from_string("var\\s*(\\w+)\\s*(int|string)?\\s*=\\s*(.*)")
+  regex.scan(re, "var age int = 32")
+  |> should.equal([
+    Match(
+      content: "var age int = 32",
+      submatches: [Some("age"), Some("int"), Some("32")],
+    ),
+  ])
+
+  regex.scan(re, "var age = 32")
+  |> should.equal([
+    Match(content: "var age = 32", submatches: [Some("age"), None, Some("32")]),
+  ])
+
+  let assert Ok(re) = regex.from_string("let (\\w+) = (\\w+)")
+  regex.scan(re, "let age = 32")
+  |> should.equal([
+    Match(content: "let age = 32", submatches: [Some("age"), Some("32")]),
+  ])
+
+  regex.scan(re, "const age = 32")
+  |> should.equal([])
 }

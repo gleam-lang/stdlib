@@ -137,26 +137,26 @@ pub fn flatten(result: Result(Result(a, e), e)) -> Result(a, e) {
 /// ## Examples
 ///
 /// ```gleam
-/// > then(Ok(1), fn(x) { Ok(x + 1) })
+/// > try(Ok(1), fn(x) { Ok(x + 1) })
 /// Ok(2)
 /// ```
 ///
 /// ```gleam
-/// > then(Ok(1), fn(x) { Ok(#("a", x)) })
+/// > try(Ok(1), fn(x) { Ok(#("a", x)) })
 /// Ok(#("a", 1))
 /// ```
 ///
 /// ```gleam
-/// > then(Ok(1), fn(_) { Error("Oh no") })
+/// > try(Ok(1), fn(_) { Error("Oh no") })
 /// Error("Oh no")
 /// ```
 ///
 /// ```gleam
-/// > then(Error(Nil), fn(x) { Ok(x + 1) })
+/// > try(Error(Nil), fn(x) { Ok(x + 1) })
 /// Error(Nil)
 /// ```
 ///
-pub fn then(
+pub fn try(
   result: Result(a, e),
   apply fun: fn(a) -> Result(b, e),
 ) -> Result(b, e) {
@@ -164,6 +164,15 @@ pub fn then(
     Ok(x) -> fun(x)
     Error(e) -> Error(e)
   }
+}
+
+/// An alias for `try`. See the documentation for that function for more information.
+///
+pub fn then(
+  result: Result(a, e),
+  apply fun: fn(a) -> Result(b, e),
+) -> Result(b, e) {
+  try(result, fun)
 }
 
 /// Extracts the `Ok` value from a result, returning a default value if the result
@@ -357,6 +366,30 @@ pub fn all(results: List(Result(a, e))) -> Result(List(a), e) {
   list.try_map(results, fn(x) { x })
 }
 
+/// Given a list of results, returns a pair where the first element is a list
+/// of all the values inside `Ok` and the second element is a list with all the
+/// values inside `Error`. The values in both lists appear in reverse order with
+/// respect to their position in the original list of results. 
+///
+/// ## Examples
+///
+/// ```gleam
+/// > partition([Ok(1), Error("a"), Error("b"), Ok(2)])
+/// #([2, 1], ["b", "a"])
+/// ```
+///
+pub fn partition(results: List(Result(a, e))) -> #(List(a), List(e)) {
+  do_partition(results, [], [])
+}
+
+fn do_partition(results: List(Result(a, e)), oks: List(a), errors: List(e)) {
+  case results {
+    [] -> #(oks, errors)
+    [Ok(a), ..rest] -> do_partition(rest, [a, ..oks], errors)
+    [Error(e), ..rest] -> do_partition(rest, oks, [e, ..errors])
+  }
+}
+
 /// Replace the value within a result
 ///
 /// ## Examples
@@ -410,4 +443,41 @@ pub fn replace_error(result: Result(a, e1), error: e2) -> Result(a, e2) {
 ///
 pub fn values(results: List(Result(a, e))) -> List(a) {
   list.filter_map(results, fn(r) { r })
+}
+
+/// Updates a value held within the `Error` of a result by calling a given function
+/// on it, where the given function also returns a result. The two results are
+/// then merged together into one result.
+///
+/// If the result is an `Ok` rather than `Error` the function is not called and the
+/// result stays the same.
+/// 
+/// This function is useful for chaining together computations that may fail
+/// and trying to recover from possible errors.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > Ok(1) |> try_recover(with: fn(_) { Error("failed to recover") })
+/// Ok(1)
+/// ```
+///
+/// ```gleam
+/// > Error(1) |> try_recover(with: fn(error) { Ok(error + 1) })
+/// Ok(2)
+/// ```
+///
+/// ```gleam
+/// > Error(1) |> try_recover(with: fn(error) { Error("failed to recover") })
+/// Error("failed to recover")
+/// ```
+///
+pub fn try_recover(
+  result: Result(a, e),
+  with fun: fn(e) -> Result(a, f),
+) -> Result(a, f) {
+  case result {
+    Ok(value) -> Ok(value)
+    Error(error) -> fun(error)
+  }
 }

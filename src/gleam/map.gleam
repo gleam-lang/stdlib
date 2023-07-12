@@ -557,7 +557,7 @@ pub fn update(
 fn do_fold(list: List(#(k, v)), initial: acc, fun: fn(acc, k, v) -> acc) -> acc {
   case list {
     [] -> initial
-    [#(k, v), ..tail] -> do_fold(tail, fun(initial, k, v), fun)
+    [#(k, v), ..rest] -> do_fold(rest, fun(initial, k, v), fun)
   }
 }
 

@@ -89,7 +89,7 @@ if erlang {
 
 if javascript {
   external fn do_from_strings(List(String)) -> StringBuilder =
-    "../gleam_stdlib.mjs" "join"
+    "../gleam_stdlib.mjs" "concat"
 }
 
 /// Joins a list of builders into a single builder.
@@ -107,7 +107,7 @@ if erlang {
 
 if javascript {
   external fn do_concat(List(StringBuilder)) -> StringBuilder =
-    "../gleam_stdlib.mjs" "join"
+    "../gleam_stdlib.mjs" "concat"
 }
 
 /// Converts a string into a builder.

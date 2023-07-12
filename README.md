@@ -21,15 +21,9 @@ Import the modules you want to use and write some code!
 
 ```gleam
 import gleam/string
-import gleam/list.{contains}
 
-fn usage() {
-  string.append("str", "ing")
-}
-
-fn more_usage() {
-  [1, 2, 3]
-  |> contains(any: 2)
+pub fn greet(name: String) -> String {
+  string.concat(["Hello ", name, "!"])
 }
 ```
 

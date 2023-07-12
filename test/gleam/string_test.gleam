@@ -424,10 +424,8 @@ pub fn to_utf_codepoints_test() {
     [g, l, e, a, m]
   })
 
-  "🏳️‍🌈"
-  |> string.to_utf_codepoints
-  |> should.equal({
-    // ["🏳", "️", "‍", "🌈"]
+  // ["🏳", "️", "‍", "🌈"]
+  let expected = {
     let assert #(
       Ok(waving_white_flag),
       Ok(variant_selector_16),
@@ -440,7 +438,11 @@ pub fn to_utf_codepoints_test() {
       string.utf_codepoint(127_752),
     )
     [waving_white_flag, variant_selector_16, zero_width_joiner, rainbow]
-  })
+  }
+
+  "🏳️‍🌈"
+  |> string.to_utf_codepoints
+  |> should.equal(expected)
 }
 
 pub fn from_utf_codepoints_test() {
@@ -982,4 +984,18 @@ if erlang {
     improper_tail,
   ) -> List(anything) =
     "gleam_stdlib_test_ffi" "improper_list_append"
+}
+
+pub fn byte_size_test() {
+  let assert 0 = string.byte_size("")
+  let assert 1 = string.byte_size("a")
+  let assert 2 = string.byte_size("ab")
+  let assert 3 = string.byte_size("abc")
+
+  // Unicode graphemes. These will be multiple bytes.
+  let assert 1 = string.byte_size("a")
+  let assert 2 = string.byte_size("ä")
+  let assert 4 = string.byte_size("👩")
+  let assert 8 = string.byte_size("👩🏾")
+  let assert 15 = string.byte_size("👩🏾‍🦰")
 }

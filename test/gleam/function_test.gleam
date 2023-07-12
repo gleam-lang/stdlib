@@ -16,7 +16,7 @@ pub fn compose_test() {
   |> add_five
   |> should.equal(6)
 
-  // Takes a list of ints and returns the head as a string (if there is one, or
+  // Takes a list of ints and returns the first as a string (if there is one, or
   // else "0" if there is not)
   let first_to_string =
     list.first
