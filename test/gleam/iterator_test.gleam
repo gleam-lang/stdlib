@@ -167,7 +167,7 @@ pub fn flat_map_test() {
       subject
       |> list.map(f)
       |> list.map(iterator.to_list)
-      |> list.flatten,
+      |> list.concat,
     )
   }
 
@@ -185,7 +185,7 @@ pub fn append_test() {
     |> iterator.from_list
     |> iterator.append(iterator.from_list(right))
     |> iterator.to_list
-    |> should.equal(list.flatten([left, right]))
+    |> should.equal(list.concat([left, right]))
   }
 
   test([], [])
@@ -201,7 +201,7 @@ pub fn flatten_test() {
     |> iterator.from_list
     |> iterator.flatten
     |> iterator.to_list
-    |> should.equal(list.flatten(lists))
+    |> should.equal(list.concat(lists))
   }
 
   test([[], []])
