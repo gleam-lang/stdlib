@@ -683,6 +683,12 @@ pub fn concat(lists: List(List(a))) -> List(a) {
   do_concat(lists, [])
 }
 
+// TODO: Add deprecation attribute and then remove later.
+/// This function is deprecated, see `concat` instead.
+pub fn flatten(lists: List(List(a))) -> List(a) {
+  do_concat(lists, [])
+}
+
 /// Maps the list with the given function into a list of lists, and then flattens it.
 ///
 /// ## Examples
