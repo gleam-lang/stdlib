@@ -287,23 +287,23 @@ pub fn append_test() {
   |> list.append([1])
 }
 
-pub fn flatten_test() {
-  list.flatten([])
+pub fn concat_test() {
+  list.concat([])
   |> should.equal([])
 
-  list.flatten([[]])
+  list.concat([[]])
   |> should.equal([])
 
-  list.flatten([[], [], []])
+  list.concat([[], [], []])
   |> should.equal([])
 
-  list.flatten([[1, 2], [], [3, 4]])
+  list.concat([[1, 2], [], [3, 4]])
   |> should.equal([1, 2, 3, 4])
   // // TCO test
   // case recursion_test_cycles > 2 {
   //   True ->
   //     list.repeat([[1]], recursion_test_cycles / 50)
-  //     |> list.flatten()
+  //     |> list.concat()
   //   False -> []
   // }
 }
