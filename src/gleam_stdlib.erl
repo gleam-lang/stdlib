@@ -388,10 +388,10 @@ inspect_maybe_gleam_atom(["_" | Rest], Acc, _PrevChar) ->
     inspect_maybe_gleam_atom(Rest, Acc, "_");
 % Handle first char: uppercase
 inspect_maybe_gleam_atom([Head | Rest], Acc, none) ->
-    inspect_maybe_gleam_atom(Rest, [string:uppercase(<<Head>>) | Acc], Head);
+    inspect_maybe_gleam_atom(Rest, [string:uppercase([Head]) | Acc], Head);
 % Handle char after underscore: uppercase
 inspect_maybe_gleam_atom([Head | Rest], Acc, "_") ->
-    inspect_maybe_gleam_atom(Rest, [string:uppercase(<<Head>>) | Acc], Head);
+    inspect_maybe_gleam_atom(Rest, [string:uppercase([Head]) | Acc], Head);
 % Handle any other char: prepend
 inspect_maybe_gleam_atom([Head | Rest], Acc, _PrevChar) ->
     inspect_maybe_gleam_atom(Rest, [Head | Acc], Head).
