@@ -374,7 +374,7 @@ inspect(nil) ->
 inspect(Any) when is_atom(Any) ->
     AtomAsList = erlang:atom_to_list(Any),
     case inspect_maybe_gleam_atom(AtomAsList, [], none) of
-        {ok, GleamCompatibleAtomString} -> list_to_binary(GleamCompatibleAtomString);
+        {ok, GleamCompatibleAtomString} -> erlang:list_to_binary(GleamCompatibleAtomString);
         {error, Reason} -> case Reason of
             % These Erlang atoms are quoted:
             cannot_be_an_empty_string -> ["//erl('')"];
