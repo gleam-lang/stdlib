@@ -373,13 +373,13 @@ inspect_maybe_gleam_atom(["_" | _Rest], [], none) ->
     {error, cannot_start_with_an_underscore};
 inspect_maybe_gleam_atom(["_" | _Rest], _Acc, "_") ->
     {error, cannot_contain_double_underscores};
+inspect_maybe_gleam_atom(["_" | []], _Acc, _PrevChar) ->
+    {error, cannot_end_with_an_underscore};
 inspect_maybe_gleam_atom([" " | _Rest], _Acc, _PrevChar) ->
     {error, cannot_contain_any_whitespace};
 inspect_maybe_gleam_atom([Head | _Rest], _Acc, _PrevChar)
 	when ?is_lowercase_char(Head) == false andalso ?is_underscore_char(Head) == false andalso ?is_digit_char(Head) == false ->
     {error, can_only_contain_lower_case_letters_and_digits_and_underscores};
-inspect_maybe_gleam_atom(["_" | []], _Acc, _PrevChar) ->
-    {error, cannot_end_with_an_underscore};
 % Handle end of string: return reversed acc
 inspect_maybe_gleam_atom([], Acc, _PrevChar) ->
     {ok, lists:reverse(Acc)};
