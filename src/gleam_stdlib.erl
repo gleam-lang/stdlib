@@ -365,37 +365,6 @@ println_error(String) ->
     io:put_chars(standard_error, [String, $\n]),
     nil.
 
-inspect_maybe_gleam_atom([], [], none) ->
-    {error, cannot_be_an_empty_string};
-inspect_maybe_gleam_atom([Head | _Rest], [], none) when ?is_digit_char(Head) ->
-    {error, cannot_start_with_a_digit};
-inspect_maybe_gleam_atom(["_" | _Rest], [], none) ->
-    {error, cannot_start_with_an_underscore};
-inspect_maybe_gleam_atom(["_" | []], _Acc, _PrevChar) ->
-    {error, cannot_end_with_an_underscore};
-inspect_maybe_gleam_atom(["_" | _Rest], _Acc, "_") ->
-    {error, cannot_contain_consecutive_underscores};
-inspect_maybe_gleam_atom([" " | _Rest], _Acc, _PrevChar) ->
-    {error, cannot_contain_any_whitespace};
-inspect_maybe_gleam_atom([Head | _Rest], _Acc, _PrevChar)
-    when ?is_lowercase_char(Head) == false andalso ?is_underscore_char(Head) == false andalso ?is_digit_char(Head) == false ->
-    {error, need_to_only_contain_lower_case_letters_and_digits_and_underscores};
-% Handle first char -> uppercase
-inspect_maybe_gleam_atom([Head | Rest], Acc, none) ->
-    inspect_maybe_gleam_atom(Rest, [string:uppercase([Head]) | Acc], Head);
-% Handle underscore -> skip while setting it as a PrevChar
-inspect_maybe_gleam_atom(["_" | Rest], Acc, _PrevChar) ->
-    inspect_maybe_gleam_atom(Rest, Acc, "_");
-% Handle char after underscore -> uppercase
-inspect_maybe_gleam_atom([Head | Rest], Acc, "_") ->
-    inspect_maybe_gleam_atom(Rest, [string:uppercase([Head]) | Acc], Head);
-% Handle any other char -> prepend
-inspect_maybe_gleam_atom([Head | Rest], Acc, _PrevChar) ->
-    inspect_maybe_gleam_atom(Rest, [Head | Acc], Head);
-% Handle end of string -> return reversed acc
-inspect_maybe_gleam_atom([], Acc, _PrevChar) ->
-    {ok, lists:reverse(Acc)}.
-
 inspect(true) ->
     "True";
 inspect(false) ->
@@ -409,13 +378,13 @@ inspect(Any) when is_atom(Any) ->
         {error, Reason} -> case Reason of
             % These Erlang atoms are quoted:
             cannot_be_an_empty_string -> ["//erl('')"];
-            cannot_start_with_a_digit -> ["//erl('", erlang:atom_to_binary(Any) ,"')"];
-            cannot_start_with_an_underscore -> ["//erl('", erlang:atom_to_binary(Any) ,"')"];
-            cannot_contain_any_whitespace -> ["//erl('", erlang:atom_to_binary(Any) ,"')"];
-            need_to_only_contain_lower_case_letters_and_digits_and_underscores -> ["//erl('", erlang:atom_to_binary(Any) ,"')"];
-            % These Erlang are not quoted:
-            cannot_contain_consecutive_underscores -> ["//erl(", erlang:atom_to_binary(Any) ,")"];
-            cannot_end_with_an_underscore -> ["//erl(", erlang:atom_to_binary(Any) ,")"]
+            cannot_start_with_a_digit -> ["//erl('", erlang:atom_to_binary(Any), "')"];
+            cannot_start_with_an_underscore -> ["//erl('", erlang:atom_to_binary(Any), "')"];
+            cannot_contain_any_whitespace -> ["//erl('", erlang:atom_to_binary(Any), "')"];
+            need_to_only_contain_lower_case_letters_and_digits_and_underscores -> ["//erl('", erlang:atom_to_binary(Any), "')"];
+            % These Erlang atoms are not quoted:
+            cannot_contain_consecutive_underscores -> ["//erl(", erlang:atom_to_binary(Any), ")"];
+            cannot_end_with_an_underscore -> ["//erl(", erlang:atom_to_binary(Any), ")"]
         end
     end;
 inspect(Any) when is_integer(Any) ->
@@ -457,6 +426,37 @@ inspect(Any) when is_function(Any) ->
     ["//fn(", Args, ") { ... }"];
 inspect(Any) ->
     ["//erl(", io_lib:format("~p", [Any]), ")"].
+
+inspect_maybe_gleam_atom([], [], none) ->
+    {error, cannot_be_an_empty_string};
+inspect_maybe_gleam_atom([Head | _Rest], [], none) when ?is_digit_char(Head) ->
+    {error, cannot_start_with_a_digit};
+inspect_maybe_gleam_atom(["_" | _Rest], [], none) ->
+    {error, cannot_start_with_an_underscore};
+inspect_maybe_gleam_atom(["_" | []], _Acc, _PrevChar) ->
+    {error, cannot_end_with_an_underscore};
+inspect_maybe_gleam_atom(["_" | _Rest], _Acc, "_") ->
+    {error, cannot_contain_consecutive_underscores};
+inspect_maybe_gleam_atom([" " | _Rest], _Acc, _PrevChar) ->
+    {error, cannot_contain_any_whitespace};
+inspect_maybe_gleam_atom([Head | _Rest], _Acc, _PrevChar)
+    when ?is_lowercase_char(Head) == false andalso ?is_underscore_char(Head) == false andalso ?is_digit_char(Head) == false ->
+    {error, need_to_only_contain_lower_case_letters_and_digits_and_underscores};
+% Handle first char -> uppercase
+inspect_maybe_gleam_atom([Head | Rest], Acc, none) ->
+    inspect_maybe_gleam_atom(Rest, [string:uppercase([Head]) | Acc], Head);
+% Handle underscore -> skip while setting it as a PrevChar
+inspect_maybe_gleam_atom(["_" | Rest], Acc, _PrevChar) ->
+    inspect_maybe_gleam_atom(Rest, Acc, "_");
+% Handle char after underscore -> uppercase
+inspect_maybe_gleam_atom([Head | Rest], Acc, "_") ->
+    inspect_maybe_gleam_atom(Rest, [string:uppercase([Head]) | Acc], Head);
+% Handle any other char -> prepend
+inspect_maybe_gleam_atom([Head | Rest], Acc, _PrevChar) ->
+    inspect_maybe_gleam_atom(Rest, [Head | Acc], Head);
+% Handle end of string -> return reversed acc
+inspect_maybe_gleam_atom([], Acc, _PrevChar) ->
+    {ok, lists:reverse(Acc)}.
 
 inspect_list([]) ->
     {proper, []};
