@@ -8,10 +8,10 @@
          bit_string_int_to_u32/1, bit_string_int_from_u32/1, decode_result/1,
          bit_string_slice/3, decode_bit_string/1, compile_regex/2, regex_scan/2,
          percent_encode/1, percent_decode/1, regex_check/2, regex_split/2,
-         base_decode64/1, parse_query/1, bit_string_concat/1, size_of_tuple/1, 
+         base_decode64/1, parse_query/1, bit_string_concat/1, size_of_tuple/1,
          decode_tuple/1, decode_tuple2/1, decode_tuple3/1, decode_tuple4/1,
-         decode_tuple5/1, decode_tuple6/1, tuple_get/2, classify_dynamic/1, 
-         print/1, println/1, print_error/1, println_error/1, inspect/1, 
+         decode_tuple5/1, decode_tuple6/1, tuple_get/2, classify_dynamic/1,
+         print/1, println/1, print_error/1, println_error/1, inspect/1,
          float_to_string/1, int_from_base_string/2]).
 
 %% Taken from OTP's uri_string module
@@ -26,6 +26,12 @@
            ((X) >= $A) andalso ((X) =< $F) -> (X) - $A + 10;
            ((X) >= $a) andalso ((X) =< $f) -> (X) - $a + 10
         end).
+
+-define(is_lowercase_char(X), (X > 96 andalso X < 123)).
+
+-define(is_underscore_char(X), (X == 95)).
+
+-define(is_digit_char(X), (X > 47 andalso X < 58)).
 
 map_get(Map, Key) ->
     case maps:find(Key, Map) of
@@ -359,18 +365,57 @@ println_error(String) ->
     io:put_chars(standard_error, [String, $\n]),
     nil.
 
+inspect_maybe_gleam_atom([], [], none) ->
+    {error, cannot_be_an_empty_string};
+inspect_maybe_gleam_atom([Head | _Rest], [], none) when ?is_digit_char(Head) ->
+    {error, cannot_start_with_a_digit};
+inspect_maybe_gleam_atom(["_" | _Rest], [], none) ->
+    {error, cannot_start_with_an_underscore};
+inspect_maybe_gleam_atom(["_" | _Rest], _Acc, "_") ->
+    {error, cannot_contain_double_underscores};
+inspect_maybe_gleam_atom([" " | _Rest], _Acc, _PrevChar) ->
+    {error, cannot_contain_any_whitespace};
+inspect_maybe_gleam_atom([Head | _Rest], _Acc, _PrevChar) when ?is_lowercase_char(Head) == false andalso ?is_underscore_char(Head) == false andalso ?is_digit_char(Head) == false ->
+    {error, can_only_contain_lower_case_letters_and_digits_and_underscores};
+inspect_maybe_gleam_atom(["_" | []], _Acc, _PrevChar) ->
+    {error, cannot_end_with_underscore};
+inspect_maybe_gleam_atom([Head | Rest], Acc, PrevChar) ->
+    case Rest of
+        [] -> case PrevChar of
+            none -> {ok, lists:reverse([string:uppercase(Head) | Acc])};
+            "_" -> {ok, lists:reverse([string:uppercase(Head) | Acc])};
+            _PrevChar -> {ok, lists:reverse([Head | Acc])}
+        end;
+        Rest -> case PrevChar of
+            none -> inspect_maybe_gleam_atom(Rest, [string:uppercase(Head) | Acc], Head);
+            "_" ->  inspect_maybe_gleam_atom(Rest, [string:uppercase(Head) | Acc], Head);
+            _PrevChar -> inspect_maybe_gleam_atom(Rest, [Head | Acc], Head)
+        end
+    end.
+
 inspect(true) ->
     "True";
 inspect(false) ->
     "False";
+inspect(nil) ->
+    "Nil";
 inspect(Any) when is_atom(Any) ->
-    lists:map(
-        fun(Part) ->
-            [Head | Tail] = string:next_grapheme(unicode:characters_to_binary(Part)),
-            [string:uppercase([Head]), Tail]
-        end,
-        re:split(erlang:atom_to_list(Any), "_+", [{return, iodata}])
-    );
+    AtomAsList = erlang:atom_to_list(Any),
+    case inspect_maybe_gleam_atom(AtomAsList, [], none) of
+        {ok, GleamCompatibleAtomString} -> list_to_binary(GleamCompatibleAtomString);
+        {error, Reason} -> case Reason of
+            cannot_be_an_empty_string -> ["//erl('')"];
+			% These Erlang atoms are quoted:
+            cannot_be_an_empty_string -> ["//erl('')"];
+            cannot_start_with_a_digit -> ["//erl('", erlang:atom_to_binary(Any) ,"')"];
+            cannot_start_with_an_underscore -> ["//erl('", erlang:atom_to_binary(Any) ,"')"];
+            cannot_contain_any_whitespace -> ["//erl('", erlang:atom_to_binary(Any) ,"')"];
+            can_only_contain_lower_case_letters_and_digits_and_underscores -> ["//erl('", erlang:atom_to_binary(Any) ,"')"];
+			% These Erlang are not quoted:
+			cannot_contain_double_underscores -> ["//erl(", erlang:atom_to_binary(Any) ,")"];
+			cannot_end_with_underscore -> ["//erl(", erlang:atom_to_binary(Any) ,")"]
+        end
+    end;
 inspect(Any) when is_integer(Any) ->
     erlang:integer_to_list(Any);
 inspect(Any) when is_float(Any) ->
