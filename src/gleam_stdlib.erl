@@ -439,16 +439,19 @@ inspect_maybe_gleam_atom(["_" | _Rest], _Acc, "_") ->
 inspect_maybe_gleam_atom([Head | _Rest], _Acc, _PrevChar)
     when ?is_lowercase_char(Head) == false andalso ?is_underscore_char(Head) == false andalso ?is_digit_char(Head) == false ->
     {error, need_to_only_contain_lower_case_letters_aor_digits_aor_underscores};
-% Handle first char -> uppercase
+% Handle first char -> uppercase and prepend
 inspect_maybe_gleam_atom([Head | Rest], Acc, none) ->
     inspect_maybe_gleam_atom(Rest, [string:uppercase([Head]) | Acc], Head);
-% Handle underscore -> skip while setting it as a PrevChar
+% Handle underscore -> only set as PrevChar
 inspect_maybe_gleam_atom(["_" | Rest], Acc, _PrevChar) ->
     inspect_maybe_gleam_atom(Rest, Acc, "_");
-% Handle char after underscore -> uppercase
+% Handle char after underscore -> uppercase and prepend
 inspect_maybe_gleam_atom([Head | Rest], Acc, "_") ->
     inspect_maybe_gleam_atom(Rest, [string:uppercase([Head]) | Acc], Head);
-% Handle any other char -> prepend
+% Handle char after number -> uppercase and prepend
+inspect_maybe_gleam_atom([Head | Rest], Acc, PrevChar) when ?is_digit_char(PrevChar) ->
+    inspect_maybe_gleam_atom(Rest, [string:uppercase([Head]) | Acc], Head);
+% Handle any other char -> prepend only
 inspect_maybe_gleam_atom([Head | Rest], Acc, _PrevChar) ->
     inspect_maybe_gleam_atom(Rest, [Head | Acc], Head);
 % Handle end of string -> return reversed acc
