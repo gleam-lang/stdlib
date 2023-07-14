@@ -991,7 +991,7 @@ if erlang {
   external fn string_to_erlang_atom(String) -> Dynamic =
     "erlang" "binary_to_atom"
 
-  pub fn inspect_valid_atom_in_gleam_test() {
+  pub fn inspect_erlang_atom_is_valid_in_gleam_test() {
     string_to_erlang_atom("a_common_erlang_atom_is_valid_in_gleam")
     |> string.inspect
     |> should.equal("ACommonErlangAtomIsValidInGleam")
@@ -1031,7 +1031,7 @@ if erlang {
     )
   }
 
-  pub fn inspect_erlang_atom_with_white_spaces_invalid_in_gleam_test() {
+  pub fn inspect_erlang_atom_with_white_spaces_is_invalid_in_gleam_test() {
     string_to_erlang_atom(
       "an erlang atom with white spaces is invalid in gleam",
     )
@@ -1041,20 +1041,20 @@ if erlang {
     )
   }
 
-  pub fn inspect_atom_that_is_an_empty_string_in_gleam_test() {
-    // an empty string based atom is invalid in gleam
+  pub fn inspect_erlang_atom_that_is_an_empty_string_is_invalid_in_gleam_test() {
+  	/// an empty string based atom is invalid in gleam
     string_to_erlang_atom("")
     |> string.inspect
     |> should.equal("//erl('')")
   }
 
-  pub fn inspect_atom_with_uppercases_invalid_in_gleam_test() {
+  pub fn inspect_erlang_atom_with_uppercases_invalid_in_gleam_test() {
     string_to_erlang_atom("AnErlangAtomWithUpperCasesIsInvalidInGleam")
     |> string.inspect
     |> should.equal("//erl('AnErlangAtomWithUpperCasesIsInvalidInGleam')")
   }
 
-  pub fn inspect_atom_with_leading_digit_invalid_in_gleam_test() {
+  pub fn inspect_erlang_atom_with_leading_digit_invalid_in_gleam_test() {
     string_to_erlang_atom(
       "1_erlang_atom_with_a_leading_digit_is_invalid_in_gleam",
     )
