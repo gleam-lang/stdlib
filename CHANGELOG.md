@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.30.0 - 2023-07-16
 
 - The `list` module gains the `list.map2` function.
 - `reverse` has been renamed to `negate` in the `order` module.
@@ -16,10 +16,12 @@
 
 ## v0.29.1 - 2023-06-01
 
-- Fixed a bug on target JavaScript where `regex.check` would not correctly execute
-  while using the same regular expression in consecutive calls.
-- The `zip` function's second argument in the `list` module gains the `with` label.
-- The `strict_zip` function's second argument in the `list` module gains the `with` label.
+- Fixed a bug on target JavaScript where `regex.check` would not correctly
+  execute while using the same regular expression in consecutive calls.
+- The `zip` function's second argument in the `list` module gains the `with`
+  label.
+- The `strict_zip` function's second argument in the `list` module gains the
+  `with` label.
 - The `pair` module gains the `new` function.
 
 ## v0.29.0 - 2023-05-23
