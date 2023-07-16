@@ -3,6 +3,8 @@
 ## Unreleased
 
 - The `list` module gains the `list.map2` function.
+- `reverse` has been renamed to `negate` in the `order` module.
+- A new `reverse` function is added to the `order` module, which reverses an ordering function.
 - `flatten` has been renamed to `concat` in the `list` module. The old name is
   still available as an alias and is deprecated.
 

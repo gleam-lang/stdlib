@@ -1,14 +1,16 @@
+import gleam/int
+import gleam/list
 import gleam/order.{Eq, Gt, Lt}
 import gleam/should
 
-pub fn reverse_test() {
-  order.reverse(Lt)
+pub fn negate_test() {
+  order.negate(Lt)
   |> should.equal(Gt)
 
-  order.reverse(Eq)
+  order.negate(Eq)
   |> should.equal(Eq)
 
-  order.reverse(Gt)
+  order.negate(Gt)
   |> should.equal(Lt)
 }
 
@@ -108,4 +110,10 @@ pub fn min_test() {
 
   order.min(Gt, Gt)
   |> should.equal(Gt)
+}
+
+pub fn reverse_test() {
+  [4, 5, 1]
+  |> list.sort(by: order.reverse(int.compare))
+  |> should.equal([5, 4, 1])
 }
