@@ -454,7 +454,7 @@ inspect_maybe_gleam_atom([Head | Rest], PrevChar, Acc) when ?is_digit_char(PrevC
 % Handle any other char -> prepend only
 inspect_maybe_gleam_atom([Head | Rest], _PrevChar, Acc) ->
     inspect_maybe_gleam_atom(Rest, Head, [Head | Acc]);
-% Handle end of string -> return reversed acc
+% Handle end of string -> return reversed acc ok tuple
 inspect_maybe_gleam_atom([], _PrevChar, Acc) ->
     {ok, lists:reverse(Acc)}.
 

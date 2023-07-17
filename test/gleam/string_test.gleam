@@ -1042,7 +1042,7 @@ if erlang {
   }
 
   pub fn inspect_erlang_atom_that_is_an_empty_string_is_invalid_in_gleam_test() {
-  	/// an empty string based atom is invalid in gleam
+    // An empty string based atom is invalid in gleam
     string_to_erlang_atom("")
     |> string.inspect
     |> should.equal("//erl('')")
