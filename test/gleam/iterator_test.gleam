@@ -590,3 +590,16 @@ pub fn each_test() {
   it
   |> should.equal(1)
 }
+
+pub fn yield_test() {
+  let items = {
+    use <- iterator.yield(1)
+    use <- iterator.yield(2)
+    use <- iterator.yield(3)
+    iterator.empty()
+  }
+
+  items
+  |> iterator.to_list
+  |> should.equal([1, 2, 3])
+}

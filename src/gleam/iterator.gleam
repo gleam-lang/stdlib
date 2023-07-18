@@ -1440,3 +1440,7 @@ pub fn each(over iterator: Iterator(a), with f: fn(a) -> b) -> Nil {
   |> map(f)
   |> run
 }
+
+pub fn yield(element: a, next: fn() -> Iterator(a)) -> Iterator(a) {
+  Iterator(fn() { Continue(element, next().continuation) })
+}
