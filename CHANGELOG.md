@@ -4,7 +4,8 @@
 
 - The `list` module gains the `list.map2` function.
 - `reverse` has been renamed to `negate` in the `order` module.
-- A new `reverse` function is added to the `order` module, which reverses an ordering function.
+- A new `reverse` function is added to the `order` module, which reverses an
+  ordering function.
 - `flatten` has been renamed to `concat` in the `list` module. The old name is
   still available as an alias and is deprecated.
 
@@ -47,7 +48,8 @@
 
 ## v0.28.0 - 2023-03-26
 
-- `regex.scan` now behaves consistently across both targets when a capture group does not capture anything.
+- `regex.scan` now behaves consistently across both targets when a capture group
+  does not capture anything.
 - The `Map` type was rewritten as a persistent immutable data structure. This
   results in drastically improved performance when constructing or updating
   maps, especially with large maps.
@@ -128,7 +130,8 @@
 
 ## v0.23.0 - 2022-09-15
 
-- Fixed `string.inspect` and `io.debug` crashing on improper Erlang lists (#333).
+- Fixed `string.inspect` and `io.debug` crashing on improper Erlang lists
+  (#333).
 
 ## v0.22.3 - 2022-08-09
 
@@ -142,26 +145,37 @@
   ranges when compiled to JavaScript.
 - Fixed a bug where the `list` module's `contains`, `any`, and `all` could
   exhaust the stack when compiling to JavaScript.
-- `list.range` and `iterator.range` return values are now inclusive of both start and end bounds.
+- `list.range` and `iterator.range` return values are now inclusive of both
+  start and end bounds.
 
 ## v0.22.1 - 2022-06-27
 
 - Fixed a bug where `big_string.concat` could crash.
 - The `bit_builder` module gains the `from_bit_strings` function.
-- Changed `list.contains`, `list.any`, `list.all` so that Gleam can do tail call optimization which fixes stack size crashes on Firefox, Chrome and NodeJS (#322).
+- Changed `list.contains`, `list.any`, `list.all` so that Gleam can do tail call
+  optimization which fixes stack size crashes on Firefox, Chrome and NodeJS
+  (#322).
 
 ## v0.22.0 - 2022-06-15
 
 - The `float` module gains the `divide` function.
 - The `int` module gains the `divide`, `power`, and `square_root` functions.
-- The `string` module gains the `first`, `last`, `capitalise` and `inspect` functions.
-- Fixed a bug where `string_builder.reverse` would break utf8 strings on target JavaScript.
-- Fixed a bug where `string.reverse` would break utf8 strings on target JavaScript.
-- Fixed a bug where `string.slice` would break utf8 strings on target JavaScript.
-- The `string_builder` module loses the `from_float` function. Use `float.to_string` instead.
-- Fixed the `int.power` and `float.power` functions by properly handling error cases.
-- The grapheme iterator used by `string.graphemes` is now locale independent on target JavaScript.
-- Unified `io.debug` to yield Gleam syntax to standard output (stdout) not just on JavaScript but also Erlang.
+- The `string` module gains the `first`, `last`, `capitalise` and `inspect`
+  functions.
+- Fixed a bug where `string_builder.reverse` would break utf8 strings on target
+  JavaScript.
+- Fixed a bug where `string.reverse` would break utf8 strings on target
+  JavaScript.
+- Fixed a bug where `string.slice` would break utf8 strings on target
+  JavaScript.
+- The `string_builder` module loses the `from_float` function. Use
+  `float.to_string` instead.
+- Fixed the `int.power` and `float.power` functions by properly handling error
+  cases.
+- The grapheme iterator used by `string.graphemes` is now locale independent on
+  target JavaScript.
+- Unified `io.debug` to yield Gleam syntax to standard output (stdout) not just
+  on JavaScript but also Erlang.
 
 ## v0.21.0 - 2022-04-24
 
@@ -238,10 +252,12 @@
 
 - Converted to use the Gleam build tool, not rebar3.
 - The `iterator` module gains the `first` and `at` functions.
-- The `list` module renames the `head` and `tail` functions to `first` and `rest`.
+- The `list` module renames the `head` and `tail` functions to `first` and
+  `rest`.
 - The `list.at` function now behaves uniformly to `iterator.at`.
 - `int.to_base_string` now returns a `Result(Int, InvalidBase)`.
-- The `int` module gains the `to_base2`, `to_base8`, `to_base16` and `to_base36` functions.
+- The `int` module gains the `to_base2`, `to_base8`, `to_base16` and `to_base36`
+  functions.
 
 ## v0.17.1 - 2021-09-15
 
@@ -257,11 +273,14 @@
   of target specific versions in Erlang and JavaScript specific libraries.
 - The `map.update` function now uses `Option` rather than `Result`.
 - The `iterator` module gains the `fold_until` and `try_fold` functions.
-- The `bit_string` module loses the u32 functions in favour of bit string literals.
-- The `dynamic` module loses the `atom` function and gains the `classify` function.
+- The `bit_string` module loses the u32 functions in favour of bit string
+  literals.
+- The `dynamic` module loses the `atom` function and gains the `classify`
+  function.
 - The `dynamic.option` function has been renamed to `optional` and made more
   permissive to other null values.
-- The `dynamic.result` function has been made more permissive to other result values.
+- The `dynamic.result` function has been made more permissive to other result
+  values.
 - The `dynamic.thunk` function has been removed.
 - The `dynamic.element` label `postion` was renamed to `get`.
 - The `dynamic.element` now accepts negative indexes.
@@ -285,7 +304,8 @@
 
 ## v0.16.0 - 2021-06-17
 
-- The `list` module gains the `interleave`, `flat_map` and `transpose` functions.
+- The `list` module gains the `interleave`, `flat_map` and `transpose`
+  functions.
 - The `option` module gains the `all` and `values` functions.
 - The `os` module now uses unicode to encode/decode environment variables.
   This fixes an issue when non-latin characters are present in environment.
@@ -303,14 +323,16 @@
   `map_fold`, `take_while`, `reduce`, `chunk`, `sized_chunk`, `last` and `scan`
   functions.
 - The `iterator` module gains the `index`, `iterate`, `zip`, `scan`, `last`,
-  `take_while`, `drop_while`, `chunk`, `sized_chunk`, `intersperse`, `interleave`, `reduce`,
-  `any`, `all`, `empty`, `once` and `single` functions.
-- Breaking change in `iterator.take`. Now it returns an iterator instead of a list.
+  `take_while`, `drop_while`, `chunk`, `sized_chunk`, `intersperse`,
+  `interleave`, `reduce`, `any`, `all`, `empty`, `once` and `single` functions.
+- Breaking change in `iterator.take`. Now it returns an iterator instead of a
+  list.
 - The `string` module gains the `crop` function.
 
 ## v0.14.0 - 2021-02-18
 
-- The `list` modules gains the `fold_until`, `window`, and `window_by_2` functions.
+- The `list` modules gains the `fold_until`, `window`, and `window_by_2`
+  functions.
 - The `int` module gains the `clamp` function.
 - The `float` module gains the `clamp` function.
 - The `io` module gains the `get_line` function.
@@ -319,10 +341,13 @@
 
 - The `int` module gains the `absolute_value`, `sum` and `product` functions.
 - The `float` module gains the `sum` and `product` functions.
-- The `result` module gains the `lazy_or`, `lazy_unwrap`, and `replace_error` functions.
-- The `bool` module gains the `nand`, `nor`, `exclusive_nor`, and `exclusive_or` functions.
+- The `result` module gains the `lazy_or`, `lazy_unwrap`, and `replace_error`
+  functions.
+- The `bool` module gains the `nand`, `nor`, `exclusive_nor`, and `exclusive_or`
+  functions.
 - The `bit_builder` module gains the `from_string_builder` function.
-- The `list` modules gains the `index_fold`, `permutations`, and `try_fold` functions.
+- The `list` modules gains the `index_fold`, `permutations`, and `try_fold`
+  functions.
 - Breaking change in `queue.from_list`. The head element in the list becomes the
   first element in the queue.
 - Fix `queue.pop_back` and `queue.pop_front`
