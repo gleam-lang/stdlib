@@ -7,6 +7,7 @@
   `string.inspect`.
 - Fixed a bug where `string.inspect` would show atoms as Gleam custom types even
   when the format is invalid.
+- The `iterator` module gains the `yield` function.
 
 ## v0.30.0 - 2023-07-16
 
