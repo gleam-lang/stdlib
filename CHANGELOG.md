@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Fixed a bug on target Erlang where `string.inspect` would show atoms created
+  from strings, which are valid in Erlang but invalid in Gleam, as if they were
+  similar equivalent Gleam atoms. Now for atoms created from strings, which are
+  invalid in Gleam, the Erlang representation is shown, instead.
+
 ## v0.30.0 - 2023-07-16
 
 - The `list` module gains the `list.map2` function.
