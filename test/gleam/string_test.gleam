@@ -917,8 +917,9 @@ if javascript {
 
 if erlang {
   import gleam/regex
-  // Test inspect on Erlang atoms valid and invalid in Gleam
   import gleam/dynamic.{Dynamic}
+
+  // Test inspect on Erlang atoms valid and invalid in Gleam
 
   external fn create_erlang_pid() -> String =
     "erlang" "self"
