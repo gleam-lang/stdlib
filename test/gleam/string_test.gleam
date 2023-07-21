@@ -917,6 +917,8 @@ if javascript {
 
 if erlang {
   import gleam/regex
+  // Test inspect on Erlang atoms valid and invalid in Gleam
+  import gleam/dynamic.{Dynamic}
 
   external fn create_erlang_pid() -> String =
     "erlang" "self"
@@ -984,9 +986,6 @@ if erlang {
     improper_tail,
   ) -> List(anything) =
     "gleam_stdlib_test_ffi" "improper_list_append"
-
-  // Test inspect on Erlang atoms valid and invalid in Gleam
-  pub external type Dynamic
 
   external fn string_to_erlang_atom(String) -> Dynamic =
     "erlang" "binary_to_atom"
