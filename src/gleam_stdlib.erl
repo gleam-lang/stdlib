@@ -417,22 +417,16 @@ inspect(Any) when is_function(Any) ->
 inspect(Any) ->
     ["//erl(", io_lib:format("~p", [Any]), ")"].
 
-% Cannot be an empty string
 inspect_maybe_gleam_atom([], none, []) ->
     {error, no_gleam_atom};
-% Cannot start with a digit
 inspect_maybe_gleam_atom([Head | _Rest], none, []) when ?is_digit_char(Head) ->
     {error, no_gleam_atom};
-% Cannot start with an underscore
 inspect_maybe_gleam_atom([$_ | _Rest], none, []) ->
     {error, no_gleam_atom};
-% Cannot end with an underscore
 inspect_maybe_gleam_atom([$_ | []], _PrevChar, _Acc) ->
     {error, no_gleam_atom};
-% Cannot contain consecutive underscores
 inspect_maybe_gleam_atom([$_ | _Rest], $_, _Acc) ->
     {error, no_gleam_atom};
-% Need to only contain lowercase letters, digits, underscores
 inspect_maybe_gleam_atom([Head | _Rest], _PrevChar, _Acc)
     when ?is_lowercase_char(Head) == false andalso ?is_underscore_char(Head) == false andalso ?is_digit_char(Head) == false ->
     {error, no_gleam_atom};
