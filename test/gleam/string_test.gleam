@@ -1019,7 +1019,7 @@ if erlang {
     )
     |> string.inspect
     |> should.equal(
-      "//erl(an_erlang_atom_with_a_trailing_underscore_is_invalid_in_gleam_)",
+      "//erl('an_erlang_atom_with_a_trailing_underscore_is_invalid_in_gleam_')",
     )
   }
 
@@ -1027,7 +1027,7 @@ if erlang {
     string_to_erlang_atom("an_erlang_atom_with_a_double__underscore_is_invalid")
     |> string.inspect
     |> should.equal(
-      "//erl(an_erlang_atom_with_a_double__underscore_is_invalid)",
+      "//erl('an_erlang_atom_with_a_double__underscore_is_invalid')",
     )
   }
 
