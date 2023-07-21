@@ -428,7 +428,7 @@ inspect_maybe_gleam_atom([$_ | []], _PrevChar, _Acc) ->
 inspect_maybe_gleam_atom([$_ | _Rest], $_, _Acc) ->
     {error, no_gleam_atom};
 inspect_maybe_gleam_atom([Head | _Rest], _PrevChar, _Acc)
-    when ?is_lowercase_char(Head) == false andalso ?is_underscore_char(Head) == false andalso ?is_digit_char(Head) == false ->
+    when not (?is_lowercase_char(Head) orelse ?is_underscore_char(Head) orelse ?is_digit_char(Head)) ->
     {error, no_gleam_atom};
 inspect_maybe_gleam_atom([Head | Rest], none, Acc) ->
     inspect_maybe_gleam_atom(Rest, Head, [string:uppercase([Head]) | Acc]);
