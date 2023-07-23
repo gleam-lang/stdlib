@@ -3,6 +3,8 @@
 ## Unreleased
 
 - Updated to Gleam v0.30.0 syntax.
+- Atoms are now shown using `atom.create_from_string` when passed to
+  `string.inspect`.
 - Fixed a bug where `string.inspect` would show atoms as Gleam custom types even
   when the format is invalid.
 
