@@ -8,10 +8,10 @@
          bit_string_int_to_u32/1, bit_string_int_from_u32/1, decode_result/1,
          bit_string_slice/3, decode_bit_string/1, compile_regex/2, regex_scan/2,
          percent_encode/1, percent_decode/1, regex_check/2, regex_split/2,
-         base_decode64/1, parse_query/1, bit_string_concat/1, size_of_tuple/1, 
+         base_decode64/1, parse_query/1, bit_string_concat/1, size_of_tuple/1,
          decode_tuple/1, decode_tuple2/1, decode_tuple3/1, decode_tuple4/1,
-         decode_tuple5/1, decode_tuple6/1, tuple_get/2, classify_dynamic/1, 
-         print/1, println/1, print_error/1, println_error/1, inspect/1, 
+         decode_tuple5/1, decode_tuple6/1, tuple_get/2, classify_dynamic/1,
+         print/1, println/1, print_error/1, println_error/1, inspect/1,
          float_to_string/1, int_from_base_string/2]).
 
 %% Taken from OTP's uri_string module
@@ -26,6 +26,12 @@
            ((X) >= $A) andalso ((X) =< $F) -> (X) - $A + 10;
            ((X) >= $a) andalso ((X) =< $f) -> (X) - $a + 10
         end).
+
+-define(is_lowercase_char(X), (X > 96 andalso X < 123)).
+
+-define(is_underscore_char(X), (X == 95)).
+
+-define(is_digit_char(X), (X > 47 andalso X < 58)).
 
 map_get(Map, Key) ->
     case maps:find(Key, Map) of
@@ -363,14 +369,14 @@ inspect(true) ->
     "True";
 inspect(false) ->
     "False";
+inspect(nil) ->
+    "Nil";
 inspect(Any) when is_atom(Any) ->
-    lists:map(
-        fun(Part) ->
-            [Head | Tail] = string:next_grapheme(unicode:characters_to_binary(Part)),
-            [string:uppercase([Head]), Tail]
-        end,
-        re:split(erlang:atom_to_list(Any), "_+", [{return, iodata}])
-    );
+    AtomAsList = erlang:atom_to_list(Any),
+    case inspect_maybe_gleam_atom(AtomAsList, none, []) of
+        {ok, GleamCompatibleAtomString} -> erlang:list_to_binary(GleamCompatibleAtomString);
+        {error, no_gleam_atom} -> ["//erl('", erlang:atom_to_binary(Any), "')"]
+	end;
 inspect(Any) when is_integer(Any) ->
     erlang:integer_to_list(Any);
 inspect(Any) when is_float(Any) ->
@@ -410,6 +416,32 @@ inspect(Any) when is_function(Any) ->
     ["//fn(", Args, ") { ... }"];
 inspect(Any) ->
     ["//erl(", io_lib:format("~p", [Any]), ")"].
+
+inspect_maybe_gleam_atom([], none, []) ->
+    {error, no_gleam_atom};
+inspect_maybe_gleam_atom([Head | _Rest], none, []) when ?is_digit_char(Head) ->
+    {error, no_gleam_atom};
+inspect_maybe_gleam_atom([$_ | _Rest], none, []) ->
+    {error, no_gleam_atom};
+inspect_maybe_gleam_atom([$_ | []], _PrevChar, _Acc) ->
+    {error, no_gleam_atom};
+inspect_maybe_gleam_atom([$_ | _Rest], $_, _Acc) ->
+    {error, no_gleam_atom};
+inspect_maybe_gleam_atom([Head | _Rest], _PrevChar, _Acc)
+    when not (?is_lowercase_char(Head) orelse ?is_underscore_char(Head) orelse ?is_digit_char(Head)) ->
+    {error, no_gleam_atom};
+inspect_maybe_gleam_atom([Head | Rest], none, Acc) ->
+    inspect_maybe_gleam_atom(Rest, Head, [string:uppercase([Head]) | Acc]);
+inspect_maybe_gleam_atom([$_ | Rest], _PrevChar, Acc) ->
+    inspect_maybe_gleam_atom(Rest, $_, Acc);
+inspect_maybe_gleam_atom([Head | Rest], $_, Acc) ->
+    inspect_maybe_gleam_atom(Rest, Head, [string:uppercase([Head]) | Acc]);
+inspect_maybe_gleam_atom([Head | Rest], PrevChar, Acc) when ?is_digit_char(PrevChar) ->
+    inspect_maybe_gleam_atom(Rest, Head, [string:uppercase([Head]) | Acc]);
+inspect_maybe_gleam_atom([Head | Rest], _PrevChar, Acc) ->
+    inspect_maybe_gleam_atom(Rest, Head, [Head | Acc]);
+inspect_maybe_gleam_atom([], _PrevChar, Acc) ->
+    {ok, lists:reverse(Acc)}.
 
 inspect_list([]) ->
     {proper, []};

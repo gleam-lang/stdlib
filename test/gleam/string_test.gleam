@@ -917,6 +917,9 @@ if javascript {
 
 if erlang {
   import gleam/regex
+  import gleam/dynamic.{Dynamic}
+
+  // Test inspect on Erlang atoms valid and invalid in Gleam
 
   external fn create_erlang_pid() -> String =
     "erlang" "self"
@@ -984,6 +987,86 @@ if erlang {
     improper_tail,
   ) -> List(anything) =
     "gleam_stdlib_test_ffi" "improper_list_append"
+
+  external fn string_to_erlang_atom(String) -> Dynamic =
+    "erlang" "binary_to_atom"
+
+  pub fn inspect_erlang_atom_is_valid_in_gleam_test() {
+    string_to_erlang_atom("a_common_erlang_atom_is_valid_in_gleam")
+    |> string.inspect
+    |> should.equal("ACommonErlangAtomIsValidInGleam")
+
+    string_to_erlang_atom(
+      "an_erlang_atom_with_1_or_many_non_leading_digits_is_valid_in_gleam",
+    )
+    |> string.inspect
+    |> should.equal("AnErlangAtomWith1OrManyNonLeadingDigitsIsValidInGleam")
+  }
+
+  pub fn inspect_erlang_atom_with_a_leading_underscore_is_invalid_in_gleam_test() {
+    string_to_erlang_atom(
+      "_an_erlang_atom_with_a_leading_underscore_is_invalid_in_gleam",
+    )
+    |> string.inspect
+    |> should.equal(
+      "//erl('_an_erlang_atom_with_a_leading_underscore_is_invalid_in_gleam')",
+    )
+  }
+
+  pub fn inspect_erlang_atom_with_a_trailing_underscore_is_invalid_in_gleam_test() {
+    string_to_erlang_atom(
+      "an_erlang_atom_with_a_trailing_underscore_is_invalid_in_gleam_",
+    )
+    |> string.inspect
+    |> should.equal(
+      "//erl('an_erlang_atom_with_a_trailing_underscore_is_invalid_in_gleam_')",
+    )
+  }
+
+  pub fn inspect_erlang_atom_with_a_double_underscore_is_invalid_in_gleam_test() {
+    string_to_erlang_atom("an_erlang_atom_with_a_double__underscore_is_invalid")
+    |> string.inspect
+    |> should.equal(
+      "//erl('an_erlang_atom_with_a_double__underscore_is_invalid')",
+    )
+  }
+
+  pub fn inspect_erlang_atom_with_white_spaces_is_invalid_in_gleam_test() {
+    string_to_erlang_atom(
+      "an erlang atom with white spaces is invalid in gleam",
+    )
+    |> string.inspect
+    |> should.equal(
+      "//erl('an erlang atom with white spaces is invalid in gleam')",
+    )
+  }
+
+  pub fn inspect_erlang_atom_that_is_an_empty_string_is_invalid_in_gleam_test() {
+    // An empty string based atom is invalid in gleam
+    string_to_erlang_atom("")
+    |> string.inspect
+    |> should.equal("//erl('')")
+  }
+
+  pub fn inspect_erlang_atom_with_uppercases_invalid_in_gleam_test() {
+    string_to_erlang_atom("AnErlangAtomWithUpperCasesIsInvalidInGleam")
+    |> string.inspect
+    |> should.equal("//erl('AnErlangAtomWithUpperCasesIsInvalidInGleam')")
+  }
+
+  pub fn inspect_erlang_atom_with_leading_digit_invalid_in_gleam_test() {
+    string_to_erlang_atom(
+      "1_erlang_atom_with_a_leading_digit_is_invalid_in_gleam",
+    )
+    |> string.inspect
+    |> should.equal(
+      "//erl('1_erlang_atom_with_a_leading_digit_is_invalid_in_gleam')",
+    )
+
+    string_to_erlang_atom("1ErlangAtomWithALeadingDigitIsInvalidInGleam")
+    |> string.inspect
+    |> should.equal("//erl('1ErlangAtomWithALeadingDigitIsInvalidInGleam')")
+  }
 }
 
 pub fn byte_size_test() {
