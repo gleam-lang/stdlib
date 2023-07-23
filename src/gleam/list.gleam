@@ -384,7 +384,7 @@ pub fn map(list: List(a), with fun: fn(a) -> b) -> List(b) {
 /// 
 /// If a list is longer than the other the extra elements are dropped.
 /// 
-/// ## Examples
+/// ## Examples
 /// 
 /// ```gleam
 /// > map2([1, 2, 3], [4, 5, 6], fn(x, y) { x + y })
