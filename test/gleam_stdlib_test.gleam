@@ -1,9 +1,3 @@
-if erlang {
-  pub external fn main() -> Nil =
-    "gleam_stdlib_test_ffi" "main"
-}
-
-if javascript {
-  pub external fn main() -> Nil =
-    "././gleeunit.mjs" "main"
-}
+@external(erlang, "gleam_stdlib_test_ffi", "main")
+@external(javascript, "././gleeunit.mjs", "main")
+pub fn main() -> Nil

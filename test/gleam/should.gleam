@@ -4,67 +4,74 @@
 //// More information on running eunit can be found in [the rebar3
 //// documentation](https://rebar3.org/docs/testing/eunit/).
 
-if erlang {
-  pub external fn equal(a, a) -> Nil =
-    "gleam_stdlib_test_ffi" "should_equal"
+@target(erlang)
+@external(erlang, "gleam_stdlib_test_ffi", "should_equal")
+pub fn equal(a: a, b: a) -> Nil
 
-  pub external fn not_equal(a, a) -> Nil =
-    "gleam_stdlib_test_ffi" "should_not_equal"
+@target(erlang)
+@external(erlang, "gleam_stdlib_test_ffi", "should_not_equal")
+pub fn not_equal(a: a, b: a) -> Nil
 
-  pub external fn be_ok(Result(a, b)) -> Nil =
-    "gleam_stdlib_test_ffi" "should_be_ok"
+@target(erlang)
+@external(erlang, "gleam_stdlib_test_ffi", "should_be_ok")
+pub fn be_ok(a: Result(a, b)) -> Nil
 
-  pub external fn be_error(Result(a, b)) -> Nil =
-    "gleam_stdlib_test_ffi" "should_be_error"
+@target(erlang)
+@external(erlang, "gleam_stdlib_test_ffi", "should_be_error")
+pub fn be_error(a: Result(a, b)) -> Nil
+
+@target(javascript)
+import gleam/string
+
+@target(javascript)
+@external(javascript, "../gleam.mjs", "inspect")
+fn stringify(a: anything) -> String
+
+@target(javascript)
+@external(javascript, "../gleam_stdlib.mjs", "crash")
+fn crash(a: String) -> anything
+
+@target(javascript)
+pub fn equal(a, b) {
+  case a == b {
+    True -> Nil
+    _ ->
+      crash(string.concat([
+        "\n\t",
+        stringify(a),
+        "\n\tshould equal \n\t",
+        stringify(b),
+      ]))
+  }
 }
 
-if javascript {
-  import gleam/string
-
-  external fn stringify(anything) -> String =
-    "../gleam.mjs" "inspect"
-
-  external fn crash(String) -> anything =
-    "../gleam_stdlib.mjs" "crash"
-
-  pub fn equal(a, b) {
-    case a == b {
-      True -> Nil
-      _ ->
-        crash(string.concat([
-          "\n\t",
-          stringify(a),
-          "\n\tshould equal \n\t",
-          stringify(b),
-        ]))
-    }
+@target(javascript)
+pub fn not_equal(a, b) {
+  case a != b {
+    True -> Nil
+    _ ->
+      crash(string.concat([
+        "\n",
+        stringify(a),
+        "\nshould not equal \n",
+        stringify(b),
+      ]))
   }
+}
 
-  pub fn not_equal(a, b) {
-    case a != b {
-      True -> Nil
-      _ ->
-        crash(string.concat([
-          "\n",
-          stringify(a),
-          "\nshould not equal \n",
-          stringify(b),
-        ]))
-    }
+@target(javascript)
+pub fn be_ok(a) {
+  case a {
+    Ok(_) -> Nil
+    _ -> crash(string.concat(["\n", stringify(a), "\nshould be ok"]))
   }
+}
 
-  pub fn be_ok(a) {
-    case a {
-      Ok(_) -> Nil
-      _ -> crash(string.concat(["\n", stringify(a), "\nshould be ok"]))
-    }
-  }
-
-  pub fn be_error(a) {
-    case a {
-      Error(_) -> Nil
-      _ -> crash(string.concat(["\n", stringify(a), "\nshould be error"]))
-    }
+@target(javascript)
+pub fn be_error(a) {
+  case a {
+    Error(_) -> Nil
+    _ -> crash(string.concat(["\n", stringify(a), "\nshould be error"]))
   }
 }
 

@@ -96,15 +96,9 @@ pub fn parse(string: String) -> Result(Int, Nil) {
   do_parse(string)
 }
 
-if erlang {
-  external fn do_parse(String) -> Result(Int, Nil) =
-    "gleam_stdlib" "parse_int"
-}
-
-if javascript {
-  external fn do_parse(String) -> Result(Int, Nil) =
-    "../gleam_stdlib.mjs" "parse_int"
-}
+@external(erlang, "gleam_stdlib", "parse_int")
+@external(javascript, "../gleam_stdlib.mjs", "parse_int")
+fn do_parse(a: String) -> Result(Int, Nil)
 
 /// Parses a given string as an int in a given base if possible.
 /// Supports only bases 2 to 36, for values outside of which this function returns an `Error(Nil)`.
@@ -135,15 +129,9 @@ pub fn base_parse(string: String, base: Int) -> Result(Int, Nil) {
   }
 }
 
-if erlang {
-  external fn do_base_parse(String, Int) -> Result(Int, Nil) =
-    "gleam_stdlib" "int_from_base_string"
-}
-
-if javascript {
-  external fn do_base_parse(String, Int) -> Result(Int, Nil) =
-    "../gleam_stdlib.mjs" "int_from_base_string"
-}
+@external(erlang, "gleam_stdlib", "int_from_base_string")
+@external(javascript, "../gleam_stdlib.mjs", "int_from_base_string")
+fn do_base_parse(a: String, b: Int) -> Result(Int, Nil)
 
 /// Prints a given int to a string.
 ///
@@ -158,15 +146,9 @@ pub fn to_string(x: Int) {
   do_to_string(x)
 }
 
-if erlang {
-  external fn do_to_string(Int) -> String =
-    "erlang" "integer_to_binary"
-}
-
-if javascript {
-  external fn do_to_string(Int) -> String =
-    "../gleam_stdlib.mjs" "to_string"
-}
+@external(erlang, "erlang", "integer_to_binary")
+@external(javascript, "../gleam_stdlib.mjs", "to_string")
+fn do_to_string(a: Int) -> String
 
 /// Error value when trying to operate with a base out of the allowed range.
 ///
@@ -212,15 +194,9 @@ pub fn to_base_string(x: Int, base: Int) -> Result(String, InvalidBase) {
   }
 }
 
-if erlang {
-  external fn do_to_base_string(Int, Int) -> String =
-    "erlang" "integer_to_binary"
-}
-
-if javascript {
-  external fn do_to_base_string(Int, Int) -> String =
-    "../gleam_stdlib.mjs" "int_to_base_string"
-}
+@external(erlang, "erlang", "integer_to_binary")
+@external(javascript, "../gleam_stdlib.mjs", "int_to_base_string")
+fn do_to_base_string(a: Int, b: Int) -> String
 
 /// Prints a given int to a string using base-2.
 ///
@@ -297,15 +273,9 @@ pub fn to_float(x: Int) -> Float {
   do_to_float(x)
 }
 
-if erlang {
-  external fn do_to_float(Int) -> Float =
-    "erlang" "float"
-}
-
-if javascript {
-  external fn do_to_float(Int) -> Float =
-    "../gleam_stdlib.mjs" "identity"
-}
+@external(erlang, "erlang", "float")
+@external(javascript, "../gleam_stdlib.mjs", "identity")
+fn do_to_float(a: Int) -> Float
 
 /// Restricts an int between a lower and upper bound.
 ///

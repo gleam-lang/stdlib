@@ -63,21 +63,20 @@ pub fn length(of list: List(a)) -> Int {
   do_length(list)
 }
 
-if erlang {
-  external fn do_length(List(a)) -> Int =
-    "erlang" "length"
+@target(erlang)
+@external(erlang, "erlang", "length")
+fn do_length(a: List(a)) -> Int
+
+@target(javascript)
+fn do_length(list: List(a)) -> Int {
+  do_length_acc(list, 0)
 }
 
-if javascript {
-  fn do_length(list: List(a)) -> Int {
-    do_length_acc(list, 0)
-  }
-
-  fn do_length_acc(list: List(a), count: Int) -> Int {
-    case list {
-      [_, ..list] -> do_length_acc(list, count + 1)
-      _ -> count
-    }
+@target(javascript)
+fn do_length_acc(list: List(a), count: Int) -> Int {
+  case list {
+    [_, ..list] -> do_length_acc(list, count + 1)
+    _ -> count
   }
 }
 
@@ -111,21 +110,20 @@ pub fn reverse(xs: List(a)) -> List(a) {
   do_reverse(xs)
 }
 
-if erlang {
-  external fn do_reverse(List(a)) -> List(a) =
-    "lists" "reverse"
+@target(erlang)
+@external(erlang, "lists", "reverse")
+fn do_reverse(a: List(a)) -> List(a)
+
+@target(javascript)
+fn do_reverse(list) {
+  do_reverse_acc(list, [])
 }
 
-if javascript {
-  fn do_reverse(list) {
-    do_reverse_acc(list, [])
-  }
-
-  fn do_reverse_acc(remaining, accumulator) {
-    case remaining {
-      [] -> accumulator
-      [item, ..rest] -> do_reverse_acc(rest, [item, ..accumulator])
-    }
+@target(javascript)
+fn do_reverse_acc(remaining, accumulator) {
+  case remaining {
+    [] -> accumulator
+    [item, ..rest] -> do_reverse_acc(rest, [item, ..accumulator])
   }
 }
 
@@ -623,21 +621,20 @@ pub fn append(first: List(a), second: List(a)) -> List(a) {
   do_append(first, second)
 }
 
-if erlang {
-  external fn do_append(List(a), List(a)) -> List(a) =
-    "lists" "append"
+@target(erlang)
+@external(erlang, "lists", "append")
+fn do_append(a: List(a), b: List(a)) -> List(a)
+
+@target(javascript)
+fn do_append(first: List(a), second: List(a)) -> List(a) {
+  do_append_acc(reverse(first), second)
 }
 
-if javascript {
-  fn do_append(first: List(a), second: List(a)) -> List(a) {
-    do_append_acc(reverse(first), second)
-  }
-
-  fn do_append_acc(first: List(a), second: List(a)) -> List(a) {
-    case first {
-      [] -> second
-      [item, ..rest] -> do_append_acc(rest, [item, ..second])
-    }
+@target(javascript)
+fn do_append_acc(first: List(a), second: List(a)) -> List(a) {
+  case first {
+    [] -> second
+    [item, ..rest] -> do_append_acc(rest, [item, ..second])
   }
 }
 

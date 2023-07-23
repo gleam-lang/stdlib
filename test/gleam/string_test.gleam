@@ -882,191 +882,202 @@ pub fn inspect_test() {
   |> should.equal("<<255, 2, 0>>")
 }
 
-if javascript {
-  pub fn target_inspect_test() {
-    // Due to Erlang's internal representation, on Erlang this passes, instead:
-    // string.inspect(#(InspectTypeZero, InspectTypeZero))
-    // |> should.equal("InspectTypeZero(InspectTypeZero)")
-    string.inspect(#(InspectTypeZero, InspectTypeZero))
-    |> should.equal("#(InspectTypeZero, InspectTypeZero)")
+@target(javascript)
+pub fn target_inspect_test() {
+  // Due to Erlang's internal representation, on Erlang this passes, instead:
+  // string.inspect(#(InspectTypeZero, InspectTypeZero))
+  // |> should.equal("InspectTypeZero(InspectTypeZero)")
+  string.inspect(#(InspectTypeZero, InspectTypeZero))
+  |> should.equal("#(InspectTypeZero, InspectTypeZero)")
 
-    // Due to JavaScript's `Number` type `Float`s without digits return as
-    // `Int`s.
-    string.inspect(-1.0)
-    |> should.equal("-1")
+  // Due to JavaScript's `Number` type `Float`s without digits return as
+  // `Int`s.
+  string.inspect(-1.0)
+  |> should.equal("-1")
 
-    string.inspect(0.0)
-    |> should.equal("0")
+  string.inspect(0.0)
+  |> should.equal("0")
 
-    string.inspect(1.0)
-    |> should.equal("1")
+  string.inspect(1.0)
+  |> should.equal("1")
 
-    string.inspect([1.0])
-    |> should.equal("[1]")
+  string.inspect([1.0])
+  |> should.equal("[1]")
 
-    string.inspect(#(1.0))
-    |> should.equal("#(1)")
+  string.inspect(#(1.0))
+  |> should.equal("#(1)")
 
-    // Unlike on Erlang, on JavaScript `BitString` and `String` do have a
-    // different runtime representation.
-    <<"abc":utf8>>
-    |> string.inspect()
-    |> should.equal("<<97, 98, 99>>")
-  }
+  // Unlike on Erlang, on JavaScript `BitString` and `String` do have a
+  // different runtime representation.
+  <<"abc":utf8>>
+  |> string.inspect()
+  |> should.equal("<<97, 98, 99>>")
 }
 
-if erlang {
-  import gleam/regex
-  import gleam/dynamic.{Dynamic}
+@target(erlang)
+import gleam/regex
+@target(erlang)
+import gleam/dynamic.{Dynamic}
 
-  // Test inspect on Erlang atoms valid and invalid in Gleam
+// Test inspect on Erlang atoms valid and invalid in Gleam
 
-  external fn create_erlang_pid() -> String =
-    "erlang" "self"
+@target(erlang)
+@external(erlang, "erlang", "self")
+fn create_erlang_pid() -> String
 
-  external fn create_erlang_reference() -> String =
-    "erlang" "make_ref"
+@target(erlang)
+@external(erlang, "erlang", "make_ref")
+fn create_erlang_reference() -> String
 
-  pub fn target_inspect_test() {
-    // Erlang's internal representation does not allow a correct
-    // differentiation at runtime and thus this does not pass:
-    // string.inspect(#(InspectTypeZero, InspectTypeZero))
-    // |> should.equal("#(InspectTypeZero, InspectTypeZero)")
-    string.inspect(#(InspectTypeZero, InspectTypeZero))
-    |> should.equal("InspectTypeZero(InspectTypeZero)")
+@target(erlang)
+pub fn target_inspect_test() {
+  // Erlang's internal representation does not allow a correct
+  // differentiation at runtime and thus this does not pass:
+  // string.inspect(#(InspectTypeZero, InspectTypeZero))
+  // |> should.equal("#(InspectTypeZero, InspectTypeZero)")
+  string.inspect(#(InspectTypeZero, InspectTypeZero))
+  |> should.equal("InspectTypeZero(InspectTypeZero)")
 
-    // Unlike JavaScript, Erlang correctly differentiates between `1` and `1.0`
-    // at runtime.
-    string.inspect(-1.0)
-    |> should.equal("-1.0")
+  // Unlike JavaScript, Erlang correctly differentiates between `1` and `1.0`
+  // at runtime.
+  string.inspect(-1.0)
+  |> should.equal("-1.0")
 
-    string.inspect(0.0)
-    |> should.equal("0.0")
+  string.inspect(0.0)
+  |> should.equal("0.0")
 
-    string.inspect(1.0)
-    |> should.equal("1.0")
+  string.inspect(1.0)
+  |> should.equal("1.0")
 
-    string.inspect([1.0])
-    |> should.equal("[1.0]")
+  string.inspect([1.0])
+  |> should.equal("[1.0]")
 
-    string.inspect(#(1.0))
-    |> should.equal("#(1.0)")
+  string.inspect(#(1.0))
+  |> should.equal("#(1.0)")
 
-    // Looks like `//erl(<0.83.0>)`.
-    let assert Ok(regular_expression) =
-      regex.from_string("^\\/\\/erl\\(<[0-9]+\\.[0-9]+\\.[0-9]+>\\)$")
-    string.inspect(create_erlang_pid())
-    |> regex.check(regular_expression, _)
-    |> should.be_true
+  // Looks like `//erl(<0.83.0>)`.
+  let assert Ok(regular_expression) =
+    regex.from_string("^\\/\\/erl\\(<[0-9]+\\.[0-9]+\\.[0-9]+>\\)$")
+  string.inspect(create_erlang_pid())
+  |> regex.check(regular_expression, _)
+  |> should.be_true
 
-    // Looks like: `//erl(#Ref<0.1809744150.4035444737.100468>)`.
-    let assert Ok(regular_expression) =
-      regex.from_string(
-        "^\\/\\/erl\\(#Ref<[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+>\\)$",
-      )
-    string.inspect(create_erlang_reference())
-    |> regex.check(regular_expression, _)
-    |> should.be_true
-
-    // On Erlang the representation between `String` and `BitString` is
-    // indistinguishable at runtime.
-    <<"abc":utf8>>
-    |> string.inspect()
-    |> should.equal("\"abc\"")
-  }
-
-  pub fn improper_list_inspect_test() {
-    let list = improper_list_append(1, 2, 3)
-    let assert "//erl([1, 2 | 3])" = string.inspect(list)
-  }
-
-  // Warning: The type of this function is incorrect
-  external fn improper_list_append(
-    item_a,
-    item_b,
-    improper_tail,
-  ) -> List(anything) =
-    "gleam_stdlib_test_ffi" "improper_list_append"
-
-  external fn string_to_erlang_atom(String) -> Dynamic =
-    "erlang" "binary_to_atom"
-
-  pub fn inspect_erlang_atom_is_valid_in_gleam_test() {
-    string_to_erlang_atom("a_common_erlang_atom_is_valid_in_gleam")
-    |> string.inspect
-    |> should.equal("ACommonErlangAtomIsValidInGleam")
-
-    string_to_erlang_atom(
-      "an_erlang_atom_with_1_or_many_non_leading_digits_is_valid_in_gleam",
+  // Looks like: `//erl(#Ref<0.1809744150.4035444737.100468>)`.
+  let assert Ok(regular_expression) =
+    regex.from_string(
+      "^\\/\\/erl\\(#Ref<[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+>\\)$",
     )
-    |> string.inspect
-    |> should.equal("AnErlangAtomWith1OrManyNonLeadingDigitsIsValidInGleam")
-  }
+  string.inspect(create_erlang_reference())
+  |> regex.check(regular_expression, _)
+  |> should.be_true
 
-  pub fn inspect_erlang_atom_with_a_leading_underscore_is_invalid_in_gleam_test() {
-    string_to_erlang_atom(
-      "_an_erlang_atom_with_a_leading_underscore_is_invalid_in_gleam",
-    )
-    |> string.inspect
-    |> should.equal(
-      "//erl('_an_erlang_atom_with_a_leading_underscore_is_invalid_in_gleam')",
-    )
-  }
+  // On Erlang the representation between `String` and `BitString` is
+  // indistinguishable at runtime.
+  <<"abc":utf8>>
+  |> string.inspect()
+  |> should.equal("\"abc\"")
+}
 
-  pub fn inspect_erlang_atom_with_a_trailing_underscore_is_invalid_in_gleam_test() {
-    string_to_erlang_atom(
-      "an_erlang_atom_with_a_trailing_underscore_is_invalid_in_gleam_",
-    )
-    |> string.inspect
-    |> should.equal(
-      "//erl('an_erlang_atom_with_a_trailing_underscore_is_invalid_in_gleam_')",
-    )
-  }
+@target(erlang)
+pub fn improper_list_inspect_test() {
+  let list = improper_list_append(1, 2, 3)
+  let assert "//erl([1, 2 | 3])" = string.inspect(list)
+}
 
-  pub fn inspect_erlang_atom_with_a_double_underscore_is_invalid_in_gleam_test() {
-    string_to_erlang_atom("an_erlang_atom_with_a_double__underscore_is_invalid")
-    |> string.inspect
-    |> should.equal(
-      "//erl('an_erlang_atom_with_a_double__underscore_is_invalid')",
-    )
-  }
+// Warning: The type of this function is incorrect
+@target(erlang)
+@external(erlang, "gleam_stdlib_test_ffi", "improper_list_append")
+fn improper_list_append(
+  a: item_a,
+  b: item_b,
+  c: improper_tail,
+) -> List(anything)
 
-  pub fn inspect_erlang_atom_with_white_spaces_is_invalid_in_gleam_test() {
-    string_to_erlang_atom(
-      "an erlang atom with white spaces is invalid in gleam",
-    )
-    |> string.inspect
-    |> should.equal(
-      "//erl('an erlang atom with white spaces is invalid in gleam')",
-    )
-  }
+@target(erlang)
+@external(erlang, "erlang", "binary_to_atom")
+fn string_to_erlang_atom(a: String) -> Dynamic
 
-  pub fn inspect_erlang_atom_that_is_an_empty_string_is_invalid_in_gleam_test() {
-    // An empty string based atom is invalid in gleam
-    string_to_erlang_atom("")
-    |> string.inspect
-    |> should.equal("//erl('')")
-  }
+@target(erlang)
+pub fn inspect_erlang_atom_is_valid_in_gleam_test() {
+  string_to_erlang_atom("a_common_erlang_atom_is_valid_in_gleam")
+  |> string.inspect
+  |> should.equal("ACommonErlangAtomIsValidInGleam")
 
-  pub fn inspect_erlang_atom_with_uppercases_invalid_in_gleam_test() {
-    string_to_erlang_atom("AnErlangAtomWithUpperCasesIsInvalidInGleam")
-    |> string.inspect
-    |> should.equal("//erl('AnErlangAtomWithUpperCasesIsInvalidInGleam')")
-  }
+  string_to_erlang_atom(
+    "an_erlang_atom_with_1_or_many_non_leading_digits_is_valid_in_gleam",
+  )
+  |> string.inspect
+  |> should.equal("AnErlangAtomWith1OrManyNonLeadingDigitsIsValidInGleam")
+}
 
-  pub fn inspect_erlang_atom_with_leading_digit_invalid_in_gleam_test() {
-    string_to_erlang_atom(
-      "1_erlang_atom_with_a_leading_digit_is_invalid_in_gleam",
-    )
-    |> string.inspect
-    |> should.equal(
-      "//erl('1_erlang_atom_with_a_leading_digit_is_invalid_in_gleam')",
-    )
+@target(erlang)
+pub fn inspect_erlang_atom_with_a_leading_underscore_is_invalid_in_gleam_test() {
+  string_to_erlang_atom(
+    "_an_erlang_atom_with_a_leading_underscore_is_invalid_in_gleam",
+  )
+  |> string.inspect
+  |> should.equal(
+    "//erl('_an_erlang_atom_with_a_leading_underscore_is_invalid_in_gleam')",
+  )
+}
 
-    string_to_erlang_atom("1ErlangAtomWithALeadingDigitIsInvalidInGleam")
-    |> string.inspect
-    |> should.equal("//erl('1ErlangAtomWithALeadingDigitIsInvalidInGleam')")
-  }
+@target(erlang)
+pub fn inspect_erlang_atom_with_a_trailing_underscore_is_invalid_in_gleam_test() {
+  string_to_erlang_atom(
+    "an_erlang_atom_with_a_trailing_underscore_is_invalid_in_gleam_",
+  )
+  |> string.inspect
+  |> should.equal(
+    "//erl('an_erlang_atom_with_a_trailing_underscore_is_invalid_in_gleam_')",
+  )
+}
+
+@target(erlang)
+pub fn inspect_erlang_atom_with_a_double_underscore_is_invalid_in_gleam_test() {
+  string_to_erlang_atom("an_erlang_atom_with_a_double__underscore_is_invalid")
+  |> string.inspect
+  |> should.equal(
+    "//erl('an_erlang_atom_with_a_double__underscore_is_invalid')",
+  )
+}
+
+@target(erlang)
+pub fn inspect_erlang_atom_with_white_spaces_is_invalid_in_gleam_test() {
+  string_to_erlang_atom("an erlang atom with white spaces is invalid in gleam")
+  |> string.inspect
+  |> should.equal(
+    "//erl('an erlang atom with white spaces is invalid in gleam')",
+  )
+}
+
+@target(erlang)
+pub fn inspect_erlang_atom_that_is_an_empty_string_is_invalid_in_gleam_test() {
+  // An empty string based atom is invalid in gleam
+  string_to_erlang_atom("")
+  |> string.inspect
+  |> should.equal("//erl('')")
+}
+
+@target(erlang)
+pub fn inspect_erlang_atom_with_uppercases_invalid_in_gleam_test() {
+  string_to_erlang_atom("AnErlangAtomWithUpperCasesIsInvalidInGleam")
+  |> string.inspect
+  |> should.equal("//erl('AnErlangAtomWithUpperCasesIsInvalidInGleam')")
+}
+
+@target(erlang)
+pub fn inspect_erlang_atom_with_leading_digit_invalid_in_gleam_test() {
+  string_to_erlang_atom(
+    "1_erlang_atom_with_a_leading_digit_is_invalid_in_gleam",
+  )
+  |> string.inspect
+  |> should.equal(
+    "//erl('1_erlang_atom_with_a_leading_digit_is_invalid_in_gleam')",
+  )
+
+  string_to_erlang_atom("1ErlangAtomWithALeadingDigitIsInvalidInGleam")
+  |> string.inspect
+  |> should.equal("//erl('1ErlangAtomWithALeadingDigitIsInvalidInGleam')")
 }
 
 pub fn byte_size_test() {

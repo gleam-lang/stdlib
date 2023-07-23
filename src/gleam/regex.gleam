@@ -5,7 +5,7 @@
 
 import gleam/option.{Option}
 
-pub external type Regex
+pub type Regex
 
 /// The details about a particular match:
 ///
@@ -59,15 +59,9 @@ pub fn compile(
   do_compile(pattern, options)
 }
 
-if erlang {
-  external fn do_compile(String, with: Options) -> Result(Regex, CompileError) =
-    "gleam_stdlib" "compile_regex"
-}
-
-if javascript {
-  external fn do_compile(String, with: Options) -> Result(Regex, CompileError) =
-    "../gleam_stdlib.mjs" "compile_regex"
-}
+@external(erlang, "gleam_stdlib", "compile_regex")
+@external(javascript, "../gleam_stdlib.mjs", "compile_regex")
+fn do_compile(a: String, with with: Options) -> Result(Regex, CompileError)
 
 /// Creates a new `Regex`.
 ///
@@ -117,15 +111,9 @@ pub fn check(with regex: Regex, content content: String) -> Bool {
   do_check(regex, content)
 }
 
-if erlang {
-  external fn do_check(Regex, String) -> Bool =
-    "gleam_stdlib" "regex_check"
-}
-
-if javascript {
-  external fn do_check(Regex, String) -> Bool =
-    "../gleam_stdlib.mjs" "regex_check"
-}
+@external(erlang, "gleam_stdlib", "regex_check")
+@external(javascript, "../gleam_stdlib.mjs", "regex_check")
+fn do_check(a: Regex, b: String) -> Bool
 
 /// Splits a string.
 ///
@@ -141,19 +129,18 @@ pub fn split(with regex: Regex, content string: String) -> List(String) {
   do_split(regex, string)
 }
 
-if erlang {
-  external fn do_split(Regex, String) -> List(String) =
-    "gleam_stdlib" "regex_split"
+@target(erlang)
+@external(erlang, "gleam_stdlib", "regex_split")
+fn do_split(a: Regex, b: String) -> List(String)
+
+@target(javascript)
+fn do_split(regex, string) -> List(String) {
+  js_split(string, regex)
 }
 
-if javascript {
-  fn do_split(regex, string) -> List(String) {
-    js_split(string, regex)
-  }
-
-  external fn js_split(String, Regex) -> List(String) =
-    "../gleam_stdlib.mjs" "split"
-}
+@target(javascript)
+@external(javascript, "../gleam_stdlib.mjs", "split")
+fn js_split(a: String, b: Regex) -> List(String)
 
 /// Collects all matches of the regular expression.
 ///
@@ -222,12 +209,6 @@ pub fn scan(with regex: Regex, content string: String) -> List(Match) {
   do_scan(regex, string)
 }
 
-if erlang {
-  external fn do_scan(Regex, String) -> List(Match) =
-    "gleam_stdlib" "regex_scan"
-}
-
-if javascript {
-  external fn do_scan(Regex, String) -> List(Match) =
-    "../gleam_stdlib.mjs" "regex_scan"
-}
+@external(erlang, "gleam_stdlib", "regex_scan")
+@external(javascript, "../gleam_stdlib.mjs", "regex_scan")
+fn do_scan(a: Regex, b: String) -> List(Match)

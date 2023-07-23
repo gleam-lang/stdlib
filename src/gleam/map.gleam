@@ -14,7 +14,7 @@ import gleam/option.{Option}
 /// See [the Erlang map module](https://erlang.org/doc/man/maps.html) for more
 /// information.
 ///
-pub external type Map(key, value)
+pub type Map(key, value)
 
 /// Determines the number of key-value pairs in the map.
 /// This function runs in constant time and does not need to iterate the map.
@@ -35,15 +35,9 @@ pub fn size(map: Map(k, v)) -> Int {
   do_size(map)
 }
 
-if erlang {
-  external fn do_size(Map(k, v)) -> Int =
-    "maps" "size"
-}
-
-if javascript {
-  external fn do_size(Map(k, v)) -> Int =
-    "../gleam_stdlib.mjs" "map_size"
-}
+@external(erlang, "maps", "size")
+@external(javascript, "../gleam_stdlib.mjs", "map_size")
+fn do_size(a: Map(k, v)) -> Int
 
 /// Converts the map to a list of 2-element tuples `#(key, value)`, one for
 /// each key-value pair in the map.
@@ -66,15 +60,9 @@ pub fn to_list(map: Map(key, value)) -> List(#(key, value)) {
   do_to_list(map)
 }
 
-if erlang {
-  external fn do_to_list(Map(key, value)) -> List(#(key, value)) =
-    "maps" "to_list"
-}
-
-if javascript {
-  external fn do_to_list(Map(key, value)) -> List(#(key, value)) =
-    "../gleam_stdlib.mjs" "map_to_list"
-}
+@external(erlang, "maps", "to_list")
+@external(javascript, "../gleam_stdlib.mjs", "map_to_list")
+fn do_to_list(a: Map(key, value)) -> List(#(key, value))
 
 /// Converts a list of 2-element tuples `#(key, value)` to a map.
 ///
@@ -85,25 +73,24 @@ pub fn from_list(list: List(#(k, v))) -> Map(k, v) {
   do_from_list(list)
 }
 
-if erlang {
-  external fn do_from_list(List(#(key, value))) -> Map(key, value) =
-    "maps" "from_list"
+@target(erlang)
+@external(erlang, "maps", "from_list")
+fn do_from_list(a: List(#(key, value))) -> Map(key, value)
+
+@target(javascript)
+fn fold_list_of_pair(
+  over list: List(#(k, v)),
+  from initial: Map(k, v),
+) -> Map(k, v) {
+  case list {
+    [] -> initial
+    [x, ..rest] -> fold_list_of_pair(rest, insert(initial, x.0, x.1))
+  }
 }
 
-if javascript {
-  fn fold_list_of_pair(
-    over list: List(#(k, v)),
-    from initial: Map(k, v),
-  ) -> Map(k, v) {
-    case list {
-      [] -> initial
-      [x, ..rest] -> fold_list_of_pair(rest, insert(initial, x.0, x.1))
-    }
-  }
-
-  fn do_from_list(list: List(#(k, v))) -> Map(k, v) {
-    fold_list_of_pair(list, new())
-  }
+@target(javascript)
+fn do_from_list(list: List(#(k, v))) -> Map(k, v) {
+  fold_list_of_pair(list, new())
 }
 
 /// Determines whether or not a value present in the map for a given key.
@@ -124,15 +111,13 @@ pub fn has_key(map: Map(k, v), key: k) -> Bool {
   do_has_key(key, map)
 }
 
-if erlang {
-  external fn do_has_key(key, Map(key, v)) -> Bool =
-    "maps" "is_key"
-}
+@target(erlang)
+@external(erlang, "maps", "is_key")
+fn do_has_key(a: key, b: Map(key, v)) -> Bool
 
-if javascript {
-  fn do_has_key(key: k, map: Map(k, v)) -> Bool {
-    get(map, key) != Error(Nil)
-  }
+@target(javascript)
+fn do_has_key(key: k, map: Map(k, v)) -> Bool {
+  get(map, key) != Error(Nil)
 }
 
 /// Creates a fresh map that contains no values.
@@ -141,15 +126,9 @@ pub fn new() -> Map(key, value) {
   do_new()
 }
 
-if erlang {
-  external fn do_new() -> Map(key, value) =
-    "maps" "new"
-}
-
-if javascript {
-  external fn do_new() -> Map(key, value) =
-    "../gleam_stdlib.mjs" "new_map"
-}
+@external(erlang, "maps", "new")
+@external(javascript, "../gleam_stdlib.mjs", "new_map")
+fn do_new() -> Map(key, value)
 
 /// Fetches a value from a map for a given key.
 ///
@@ -172,15 +151,9 @@ pub fn get(from: Map(key, value), get: key) -> Result(value, Nil) {
   do_get(from, get)
 }
 
-if erlang {
-  external fn do_get(Map(key, value), key) -> Result(value, Nil) =
-    "gleam_stdlib" "map_get"
-}
-
-if javascript {
-  external fn do_get(Map(key, value), key) -> Result(value, Nil) =
-    "../gleam_stdlib.mjs" "map_get"
-}
+@external(erlang, "gleam_stdlib", "map_get")
+@external(javascript, "../gleam_stdlib.mjs", "map_get")
+fn do_get(a: Map(key, value), b: key) -> Result(value, Nil)
 
 /// Inserts a value into the map with the given key.
 ///
@@ -203,15 +176,9 @@ pub fn insert(into map: Map(k, v), for key: k, insert value: v) -> Map(k, v) {
   do_insert(key, value, map)
 }
 
-if erlang {
-  external fn do_insert(key, value, Map(key, value)) -> Map(key, value) =
-    "maps" "put"
-}
-
-if javascript {
-  external fn do_insert(key, value, Map(key, value)) -> Map(key, value) =
-    "../gleam_stdlib.mjs" "map_insert"
-}
+@external(erlang, "maps", "put")
+@external(javascript, "../gleam_stdlib.mjs", "map_insert")
+fn do_insert(a: key, b: value, c: Map(key, value)) -> Map(key, value)
 
 /// Updates all values in a given map by calling a given function on each key
 /// and value.
@@ -229,17 +196,15 @@ pub fn map_values(in map: Map(k, v), with fun: fn(k, v) -> w) -> Map(k, w) {
   do_map_values(fun, map)
 }
 
-if erlang {
-  external fn do_map_values(fn(key, value) -> b, Map(key, value)) -> Map(key, b) =
-    "maps" "map"
-}
+@target(erlang)
+@external(erlang, "maps", "map")
+fn do_map_values(a: fn(key, value) -> b, b: Map(key, value)) -> Map(key, b)
 
-if javascript {
-  fn do_map_values(f: fn(key, value) -> b, map: Map(key, value)) -> Map(key, b) {
-    let f = fn(map, k, v) { insert(map, k, f(k, v)) }
-    map
-    |> fold(from: new(), with: f)
-  }
+@target(javascript)
+fn do_map_values(f: fn(key, value) -> b, map: Map(key, value)) -> Map(key, b) {
+  let f = fn(map, k, v) { insert(map, k, f(k, v)) }
+  map
+  |> fold(from: new(), with: f)
 }
 
 /// Gets a list of all keys in a given map.
@@ -259,32 +224,32 @@ pub fn keys(map: Map(keys, v)) -> List(keys) {
   do_keys(map)
 }
 
-if erlang {
-  external fn do_keys(Map(keys, v)) -> List(keys) =
-    "maps" "keys"
+@target(erlang)
+@external(erlang, "maps", "keys")
+fn do_keys(a: Map(keys, v)) -> List(keys)
+
+@target(javascript)
+fn reverse_and_concat(remaining, accumulator) {
+  case remaining {
+    [] -> accumulator
+    [item, ..rest] -> reverse_and_concat(rest, [item, ..accumulator])
+  }
 }
 
-if javascript {
-  fn reverse_and_concat(remaining, accumulator) {
-    case remaining {
-      [] -> accumulator
-      [item, ..rest] -> reverse_and_concat(rest, [item, ..accumulator])
-    }
+@target(javascript)
+fn do_keys_acc(list: List(#(k, v)), acc: List(k)) -> List(k) {
+  case list {
+    [] -> reverse_and_concat(acc, [])
+    [x, ..xs] -> do_keys_acc(xs, [x.0, ..acc])
   }
+}
 
-  fn do_keys_acc(list: List(#(k, v)), acc: List(k)) -> List(k) {
-    case list {
-      [] -> reverse_and_concat(acc, [])
-      [x, ..xs] -> do_keys_acc(xs, [x.0, ..acc])
-    }
-  }
-
-  fn do_keys(map: Map(k, v)) -> List(k) {
-    let list_of_pairs =
-      map
-      |> to_list
-    do_keys_acc(list_of_pairs, [])
-  }
+@target(javascript)
+fn do_keys(map: Map(k, v)) -> List(k) {
+  let list_of_pairs =
+    map
+    |> to_list
+  do_keys_acc(list_of_pairs, [])
 }
 
 /// Gets a list of all values in a given map.
@@ -304,25 +269,24 @@ pub fn values(map: Map(k, values)) -> List(values) {
   do_values(map)
 }
 
-if erlang {
-  external fn do_values(Map(k, values)) -> List(values) =
-    "maps" "values"
+@target(erlang)
+@external(erlang, "maps", "values")
+fn do_values(a: Map(k, values)) -> List(values)
+
+@target(javascript)
+fn do_values_acc(list: List(#(k, v)), acc: List(v)) -> List(v) {
+  case list {
+    [] -> reverse_and_concat(acc, [])
+    [x, ..xs] -> do_values_acc(xs, [x.1, ..acc])
+  }
 }
 
-if javascript {
-  fn do_values_acc(list: List(#(k, v)), acc: List(v)) -> List(v) {
-    case list {
-      [] -> reverse_and_concat(acc, [])
-      [x, ..xs] -> do_values_acc(xs, [x.1, ..acc])
-    }
-  }
-
-  fn do_values(map: Map(k, v)) -> List(v) {
-    let list_of_pairs =
-      map
-      |> to_list
-    do_values_acc(list_of_pairs, [])
-  }
+@target(javascript)
+fn do_values(map: Map(k, v)) -> List(v) {
+  let list_of_pairs =
+    map
+    |> to_list
+  do_values_acc(list_of_pairs, [])
 }
 
 /// Creates a new map from a given map, minus any entries that a given function
@@ -346,28 +310,20 @@ pub fn filter(in map: Map(k, v), for property: fn(k, v) -> Bool) -> Map(k, v) {
   do_filter(property, map)
 }
 
-if erlang {
-  external fn do_filter(
-    fn(key, value) -> Bool,
-    Map(key, value),
-  ) -> Map(key, value) =
-    "maps" "filter"
-}
+@target(erlang)
+@external(erlang, "maps", "filter")
+fn do_filter(a: fn(key, value) -> Bool, b: Map(key, value)) -> Map(key, value)
 
-if javascript {
-  fn do_filter(
-    f: fn(key, value) -> Bool,
-    map: Map(key, value),
-  ) -> Map(key, value) {
-    let insert = fn(map, k, v) {
-      case f(k, v) {
-        True -> insert(map, k, v)
-        _ -> map
-      }
+@target(javascript)
+fn do_filter(f: fn(key, value) -> Bool, map: Map(key, value)) -> Map(key, value) {
+  let insert = fn(map, k, v) {
+    case f(k, v) {
+      True -> insert(map, k, v)
+      _ -> map
     }
-    map
-    |> fold(from: new(), with: insert)
   }
+  map
+  |> fold(from: new(), with: insert)
 }
 
 /// Creates a new map from a given map, only including any entries for which the
@@ -391,32 +347,31 @@ pub fn take(from map: Map(k, v), keeping desired_keys: List(k)) -> Map(k, v) {
   do_take(desired_keys, map)
 }
 
-if erlang {
-  external fn do_take(List(k), Map(k, v)) -> Map(k, v) =
-    "maps" "with"
+@target(erlang)
+@external(erlang, "maps", "with")
+fn do_take(a: List(k), b: Map(k, v)) -> Map(k, v)
+
+@target(javascript)
+fn insert_taken(
+  map: Map(k, v),
+  desired_keys: List(k),
+  acc: Map(k, v),
+) -> Map(k, v) {
+  let insert = fn(taken, key) {
+    case get(map, key) {
+      Ok(value) -> insert(taken, key, value)
+      _ -> taken
+    }
+  }
+  case desired_keys {
+    [] -> acc
+    [x, ..xs] -> insert_taken(map, xs, insert(acc, x))
+  }
 }
 
-if javascript {
-  fn insert_taken(
-    map: Map(k, v),
-    desired_keys: List(k),
-    acc: Map(k, v),
-  ) -> Map(k, v) {
-    let insert = fn(taken, key) {
-      case get(map, key) {
-        Ok(value) -> insert(taken, key, value)
-        _ -> taken
-      }
-    }
-    case desired_keys {
-      [] -> acc
-      [x, ..xs] -> insert_taken(map, xs, insert(acc, x))
-    }
-  }
-
-  fn do_take(desired_keys: List(k), map: Map(k, v)) -> Map(k, v) {
-    insert_taken(map, desired_keys, new())
-  }
+@target(javascript)
+fn do_take(desired_keys: List(k), map: Map(k, v)) -> Map(k, v) {
+  insert_taken(map, desired_keys, new())
 }
 
 /// Creates a new map from a pair of given maps by combining their entries.
@@ -437,28 +392,28 @@ pub fn merge(into map: Map(k, v), from new_entries: Map(k, v)) -> Map(k, v) {
   do_merge(map, new_entries)
 }
 
-if erlang {
-  external fn do_merge(Map(k, v), Map(k, v)) -> Map(k, v) =
-    "maps" "merge"
+@target(erlang)
+@external(erlang, "maps", "merge")
+fn do_merge(a: Map(k, v), b: Map(k, v)) -> Map(k, v)
+
+@target(javascript)
+fn insert_pair(map: Map(k, v), pair: #(k, v)) -> Map(k, v) {
+  insert(map, pair.0, pair.1)
 }
 
-if javascript {
-  fn insert_pair(map: Map(k, v), pair: #(k, v)) -> Map(k, v) {
-    insert(map, pair.0, pair.1)
+@target(javascript)
+fn fold_inserts(new_entries: List(#(k, v)), map: Map(k, v)) -> Map(k, v) {
+  case new_entries {
+    [] -> map
+    [x, ..xs] -> fold_inserts(xs, insert_pair(map, x))
   }
+}
 
-  fn fold_inserts(new_entries: List(#(k, v)), map: Map(k, v)) -> Map(k, v) {
-    case new_entries {
-      [] -> map
-      [x, ..xs] -> fold_inserts(xs, insert_pair(map, x))
-    }
-  }
-
-  fn do_merge(map: Map(k, v), new_entries: Map(k, v)) -> Map(k, v) {
-    new_entries
-    |> to_list
-    |> fold_inserts(map)
-  }
+@target(javascript)
+fn do_merge(map: Map(k, v), new_entries: Map(k, v)) -> Map(k, v) {
+  new_entries
+  |> to_list
+  |> fold_inserts(map)
 }
 
 /// Creates a new map from a given map with all the same entries except for the
@@ -480,15 +435,9 @@ pub fn delete(from map: Map(k, v), delete key: k) -> Map(k, v) {
   do_delete(key, map)
 }
 
-if erlang {
-  external fn do_delete(k, Map(k, v)) -> Map(k, v) =
-    "maps" "remove"
-}
-
-if javascript {
-  external fn do_delete(k, Map(k, v)) -> Map(k, v) =
-    "../gleam_stdlib.mjs" "map_remove"
-}
+@external(erlang, "maps", "remove")
+@external(javascript, "../gleam_stdlib.mjs", "map_remove")
+fn do_delete(a: k, b: Map(k, v)) -> Map(k, v)
 
 /// Creates a new map from a given map with all the same entries except any with
 /// keys found in a given list.

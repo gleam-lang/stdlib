@@ -8,15 +8,9 @@ pub fn from_string(x: String) -> BitString {
   do_from_string(x)
 }
 
-if erlang {
-  external fn do_from_string(String) -> BitString =
-    "gleam_stdlib" "identity"
-}
-
-if javascript {
-  external fn do_from_string(String) -> BitString =
-    "../gleam_stdlib.mjs" "bit_string_from_string"
-}
+@external(erlang, "gleam_stdlib", "identity")
+@external(javascript, "../gleam_stdlib.mjs", "bit_string_from_string")
+fn do_from_string(a: String) -> BitString
 
 /// Returns an integer which is the number of bytes in the bit string.
 ///
@@ -24,15 +18,9 @@ pub fn byte_size(x: BitString) -> Int {
   do_byte_size(x)
 }
 
-if erlang {
-  external fn do_byte_size(BitString) -> Int =
-    "erlang" "byte_size"
-}
-
-if javascript {
-  external fn do_byte_size(BitString) -> Int =
-    "../gleam_stdlib.mjs" "length"
-}
+@external(erlang, "erlang", "byte_size")
+@external(javascript, "../gleam_stdlib.mjs", "length")
+fn do_byte_size(a: BitString) -> Int
 
 /// Creates a new bit string by joining two binaries.
 ///
@@ -63,23 +51,13 @@ pub fn slice(
   do_slice(string, position, length)
 }
 
-if erlang {
-  external fn do_slice(
-    string: BitString,
-    position: Int,
-    length: Int,
-  ) -> Result(BitString, Nil) =
-    "gleam_stdlib" "bit_string_slice"
-}
-
-if javascript {
-  external fn do_slice(
-    string: BitString,
-    position: Int,
-    length: Int,
-  ) -> Result(BitString, Nil) =
-    "../gleam_stdlib.mjs" "bit_string_slice"
-}
+@external(erlang, "gleam_stdlib", "bit_string_slice")
+@external(javascript, "../gleam_stdlib.mjs", "bit_string_slice")
+fn do_slice(
+  string string: BitString,
+  position position: Int,
+  length length: Int,
+) -> Result(BitString, Nil)
 
 /// Tests to see whether a bit string is valid UTF-8.
 ///
@@ -87,22 +65,20 @@ pub fn is_utf8(bits: BitString) -> Bool {
   do_is_utf8(bits)
 }
 
-if erlang {
-  fn do_is_utf8(bits: BitString) -> Bool {
-    case bits {
-      <<>> -> True
-      <<_:utf8, rest:binary>> -> do_is_utf8(rest)
-      _ -> False
-    }
+@target(erlang)
+fn do_is_utf8(bits: BitString) -> Bool {
+  case bits {
+    <<>> -> True
+    <<_:utf8, rest:binary>> -> do_is_utf8(rest)
+    _ -> False
   }
 }
 
-if javascript {
-  fn do_is_utf8(bits: BitString) -> Bool {
-    case to_string(bits) {
-      Ok(_) -> True
-      _ -> False
-    }
+@target(javascript)
+fn do_is_utf8(bits: BitString) -> Bool {
+  case to_string(bits) {
+    Ok(_) -> True
+    _ -> False
   }
 }
 
@@ -114,22 +90,21 @@ pub fn to_string(bits: BitString) -> Result(String, Nil) {
   do_to_string(bits)
 }
 
-if erlang {
-  external fn unsafe_to_string(BitString) -> String =
-    "gleam_stdlib" "identity"
+@target(erlang)
+@external(erlang, "gleam_stdlib", "identity")
+fn unsafe_to_string(a: BitString) -> String
 
-  fn do_to_string(bits: BitString) -> Result(String, Nil) {
-    case is_utf8(bits) {
-      True -> Ok(unsafe_to_string(bits))
-      False -> Error(Nil)
-    }
+@target(erlang)
+fn do_to_string(bits: BitString) -> Result(String, Nil) {
+  case is_utf8(bits) {
+    True -> Ok(unsafe_to_string(bits))
+    False -> Error(Nil)
   }
 }
 
-if javascript {
-  external fn do_to_string(BitString) -> Result(String, Nil) =
-    "../gleam_stdlib.mjs" "bit_string_to_string"
-}
+@target(javascript)
+@external(javascript, "../gleam_stdlib.mjs", "bit_string_to_string")
+fn do_to_string(a: BitString) -> Result(String, Nil)
 
 /// Creates a new bit string by joining multiple binaries.
 ///
@@ -144,12 +119,6 @@ pub fn concat(bit_strings: List(BitString)) -> BitString {
   do_concat(bit_strings)
 }
 
-if erlang {
-  external fn do_concat(List(BitString)) -> BitString =
-    "gleam_stdlib" "bit_string_concat"
-}
-
-if javascript {
-  external fn do_concat(List(BitString)) -> BitString =
-    "../gleam_stdlib.mjs" "bit_string_concat"
-}
+@external(erlang, "gleam_stdlib", "bit_string_concat")
+@external(javascript, "../gleam_stdlib.mjs", "bit_string_concat")
+fn do_concat(a: List(BitString)) -> BitString
