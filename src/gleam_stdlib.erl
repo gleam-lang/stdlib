@@ -28,10 +28,10 @@
         end).
 
 -define(is_lowercase_char(X), (X > 96 andalso X < 123)).
-
 -define(is_underscore_char(X), (X == 95)).
-
 -define(is_digit_char(X), (X > 47 andalso X < 58)).
+
+uppercase(X) -> X - 32.
 
 map_get(Map, Key) ->
     case maps:find(Key, Map) of
@@ -371,11 +371,11 @@ inspect(false) ->
     "False";
 inspect(nil) ->
     "Nil";
-inspect(Any) when is_atom(Any) ->
-    AtomAsList = erlang:atom_to_list(Any),
-    case inspect_maybe_gleam_atom(AtomAsList, none, []) of
-        {ok, GleamCompatibleAtomString} -> erlang:list_to_binary(GleamCompatibleAtomString);
-        {error, no_gleam_atom} -> ["//erl('", erlang:atom_to_binary(Any), "')"]
+inspect(Atom) when is_atom(Atom) ->
+    Binary = erlang:atom_to_binary(Atom),
+    case inspect_maybe_gleam_atom(Binary, none, <<>>) of
+        {ok, Inspected} -> Inspected;
+        {error, _} -> ["//erl('", Binary, "')"]
 	end;
 inspect(Any) when is_integer(Any) ->
     erlang:integer_to_list(Any);
@@ -417,36 +417,38 @@ inspect(Any) when is_function(Any) ->
 inspect(Any) ->
     ["//erl(", io_lib:format("~p", [Any]), ")"].
 
-inspect_maybe_gleam_atom([], none, []) ->
-    {error, no_gleam_atom};
-inspect_maybe_gleam_atom([Head | _Rest], none, []) when ?is_digit_char(Head) ->
-    {error, no_gleam_atom};
-inspect_maybe_gleam_atom([$_ | _Rest], none, []) ->
-    {error, no_gleam_atom};
-inspect_maybe_gleam_atom([$_ | []], _PrevChar, _Acc) ->
-    {error, no_gleam_atom};
-inspect_maybe_gleam_atom([$_ | _Rest], $_, _Acc) ->
-    {error, no_gleam_atom};
-inspect_maybe_gleam_atom([Head | _Rest], _PrevChar, _Acc)
-    when not (?is_lowercase_char(Head) orelse ?is_underscore_char(Head) orelse ?is_digit_char(Head)) ->
-    {error, no_gleam_atom};
-inspect_maybe_gleam_atom([Head | Rest], none, Acc) ->
-    inspect_maybe_gleam_atom(Rest, Head, [string:uppercase([Head]) | Acc]);
-inspect_maybe_gleam_atom([$_ | Rest], _PrevChar, Acc) ->
+
+inspect_maybe_gleam_atom(<<>>, none, _) ->
+    {error, nil};
+inspect_maybe_gleam_atom(<<First, _Rest/binary>>, none, _) when ?is_digit_char(First) ->
+    {error, nil};
+inspect_maybe_gleam_atom(<<"_", _Rest/binary>>, none, _) ->
+    {error, nil};
+inspect_maybe_gleam_atom(<<"_">>, _PrevChar, _Acc) ->
+    {error, nil};
+inspect_maybe_gleam_atom(<<"_",  _Rest/binary>>, $_, _Acc) ->
+    {error, nil};
+inspect_maybe_gleam_atom(<<First, _Rest/binary>>, _PrevChar, _Acc)
+    when not (?is_lowercase_char(First) orelse ?is_underscore_char(First) orelse ?is_digit_char(First)) ->
+    {error, nil};
+inspect_maybe_gleam_atom(<<First, Rest/binary>>, none, Acc) ->
+    inspect_maybe_gleam_atom(Rest, First, <<Acc/binary, (uppercase(First))>>);
+inspect_maybe_gleam_atom(<<"_", Rest/binary>>, _PrevChar, Acc) ->
     inspect_maybe_gleam_atom(Rest, $_, Acc);
-inspect_maybe_gleam_atom([Head | Rest], $_, Acc) ->
-    inspect_maybe_gleam_atom(Rest, Head, [string:uppercase([Head]) | Acc]);
-inspect_maybe_gleam_atom([Head | Rest], PrevChar, Acc) when ?is_digit_char(PrevChar) ->
-    inspect_maybe_gleam_atom(Rest, Head, [string:uppercase([Head]) | Acc]);
-inspect_maybe_gleam_atom([Head | Rest], _PrevChar, Acc) ->
-    inspect_maybe_gleam_atom(Rest, Head, [Head | Acc]);
-inspect_maybe_gleam_atom([], _PrevChar, Acc) ->
-    {ok, lists:reverse(Acc)}.
+inspect_maybe_gleam_atom(<<First, Rest/binary>>, $_, Acc) ->
+    inspect_maybe_gleam_atom(Rest, First, <<Acc/binary, (uppercase(First))>>);
+inspect_maybe_gleam_atom(<<First, Rest/binary>>, _PrevChar, Acc) ->
+    inspect_maybe_gleam_atom(Rest, First, <<Acc/binary, First>>);
+inspect_maybe_gleam_atom(<<>>, _PrevChar, Acc) ->
+    {ok, Acc};
+inspect_maybe_gleam_atom(A, B, C) ->
+    erlang:display({A, B, C}),
+    throw({gleam_error, A, B, C}).
 
 inspect_list([]) ->
     {proper, []};
-inspect_list([Head]) ->
-    {proper, [inspect(Head)]};
+inspect_list([First]) ->
+    {proper, [inspect(First)]};
 inspect_list([First | Rest]) when is_list(Rest) ->
     {Kind, Inspected} = inspect_list(Rest),
     {Kind, [inspect(First), <<", ">> | Inspected]};
@@ -456,8 +458,8 @@ inspect_list([First | ImproperTail]) ->
 inspect_maybe_utf8_string(Binary, Acc) ->
     case Binary of
         <<>> -> {ok, <<$", Acc/binary, $">>};
-        <<Head/utf8, Rest/binary>> ->
-            Escaped = case Head of
+        <<First/utf8, Rest/binary>> ->
+            Escaped = case First of
                 $" -> <<$\\, $">>;
                 $\\ -> <<$\\, $\\>>;
                 $\r -> <<$\\, $r>>;
