@@ -375,7 +375,7 @@ inspect(Atom) when is_atom(Atom) ->
     Binary = erlang:atom_to_binary(Atom),
     case inspect_maybe_gleam_atom(Binary, none, <<>>) of
         {ok, Inspected} -> Inspected;
-        {error, _} -> ["//erl('", Binary, "')"]
+        {error, _} -> ["atom.create_from_string(\"", Binary, "\")"]
 	end;
 inspect(Any) when is_integer(Any) ->
     erlang:integer_to_list(Any);
