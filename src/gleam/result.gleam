@@ -437,7 +437,7 @@ pub fn replace_error(result: Result(a, e1), error: e2) -> Result(a, e2) {
 /// ## Examples
 ///
 /// ```gleam
-/// > values([Ok(1), None, Ok(3)])
+/// > values([Ok(1), Error("a"), Ok(3)])
 /// [1, 3]
 /// ```
 ///
