@@ -1441,6 +1441,21 @@ pub fn each(over iterator: Iterator(a), with f: fn(a) -> b) -> Nil {
   |> run
 }
 
+/// Add a new element to the start of an iterator.
+/// 
+/// This function is for use with `use` expressions, to replicate the behaviour
+/// of the `yield` keyword found in other languages.
+/// 
+/// ## Examples
+/// 
+/// ```gleam
+/// > use <- iterator.yield(1)
+/// > use <- iterator.yield(2)
+/// > use <- iterator.yield(3)
+/// > iterator.empty()
+/// iterator.from_list([1, 2, 3])
+/// ```
+/// 
 pub fn yield(element: a, next: fn() -> Iterator(a)) -> Iterator(a) {
   Iterator(fn() { Continue(element, next().continuation) })
 }
