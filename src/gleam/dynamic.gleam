@@ -544,28 +544,27 @@ fn decode_tuple2(a: Dynamic) -> Result(#(Dynamic, Dynamic), DecodeErrors)
 
 @external(erlang, "gleam_stdlib", "decode_tuple3")
 @external(javascript, "../gleam_stdlib.mjs", "decode_tuple3")
-fn decode_tuple3(a: Dynamic) -> Result(
-  #(Dynamic, Dynamic, Dynamic),
-  DecodeErrors,
-)
+fn decode_tuple3(
+  a: Dynamic,
+) -> Result(#(Dynamic, Dynamic, Dynamic), DecodeErrors)
 
 @external(erlang, "gleam_stdlib", "decode_tuple4")
 @external(javascript, "../gleam_stdlib.mjs", "decode_tuple4")
-fn decode_tuple4(a: Dynamic) -> Result(
-  #(Dynamic, Dynamic, Dynamic, Dynamic),
-  DecodeErrors,
-)
+fn decode_tuple4(
+  a: Dynamic,
+) -> Result(#(Dynamic, Dynamic, Dynamic, Dynamic), DecodeErrors)
 
 @external(erlang, "gleam_stdlib", "decode_tuple5")
 @external(javascript, "../gleam_stdlib.mjs", "decode_tuple5")
-fn decode_tuple5(a: Dynamic) -> Result(
-  #(Dynamic, Dynamic, Dynamic, Dynamic, Dynamic),
-  DecodeErrors,
-)
+fn decode_tuple5(
+  a: Dynamic,
+) -> Result(#(Dynamic, Dynamic, Dynamic, Dynamic, Dynamic), DecodeErrors)
 
 @external(erlang, "gleam_stdlib", "decode_tuple6")
 @external(javascript, "../gleam_stdlib.mjs", "decode_tuple6")
-fn decode_tuple6(a: Dynamic) -> Result(
+fn decode_tuple6(
+  a: Dynamic,
+) -> Result(
   #(Dynamic, Dynamic, Dynamic, Dynamic, Dynamic, Dynamic),
   DecodeErrors,
 )
