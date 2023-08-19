@@ -514,8 +514,7 @@ fn do_undigits(
   }
 }
 
-/// Returns `0` if `boundary_a` and `boundary_b` are equal,
-/// otherwise returns an `Int x` where `lower_boundary =< x < upper_boundary`.
+/// Generates a random int between the given minimum and maximum values.
 ///
 /// ## Examples
 ///
@@ -524,29 +523,8 @@ fn do_undigits(
 /// 2
 /// ```
 ///
-pub fn random(boundary_a: Int, boundary_b: Int) -> Int {
-  // Based on:
-  //
-  // ```javascript
-  // min = Math.ceil(min);
-  // max = Math.floor(max);
-  // return Math.floor(Math.random() * (max - min) + min); // The minimum is inclusive and the maximum is exclusive
-  // ```
-  //
-  // See: <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#getting_a_random_integer_between_two_values>
-  let #(min, max) = case boundary_a, boundary_b {
-    a, b if a <= b -> #(a, b)
-    a, b if a > b -> #(b, a)
-  }
-
-  let min =
-    to_float(min)
-    |> float.ceiling()
-  let max =
-    to_float(max)
-    |> float.floor()
-
-  float.random(min, max)
+pub fn random(min: Int, max: Int) -> Int {
+  float.random(to_float(min), to_float(max))
   |> float.floor()
   |> float.round()
 }

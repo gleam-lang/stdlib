@@ -402,8 +402,8 @@ fn do_product(numbers: List(Float), initial: Float) -> Float {
   }
 }
 
-/// Returns `0.0` if `boundary_a` and `boundary_b` are equal,
-/// otherwise returns a `Float x` where `lower_boundary =< x < upper_boundary`.
+/// Generates a random float between the given minimum and maximum values.
+///
 ///
 /// ## Examples
 ///
@@ -412,22 +412,8 @@ fn do_product(numbers: List(Float), initial: Float) -> Float {
 /// 2.646355926896028
 /// ```
 ///
-pub fn random(boundary_a: Float, boundary_b: Float) -> Float {
-  // Based on:
-  //
-  // ```javascript
-  // return Math.random() * (max - min) + min; // The minimum is inclusive and the maximum is exclusive
-  // ```
-  //
-  // See: <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#getting_a_random_number_between_two_values>
-  let #(min, max) = case boundary_a, boundary_b {
-    a, b if a <=. b -> #(a, b)
-    a, b if a >. b -> #(b, a)
-  }
-  case min, max {
-    min, _max if min == max -> min
-    min, max -> do_random_uniform() *. { max -. min } +. min
-  }
+pub fn random(min: Float, max: Float) -> Float {
+  do_random_uniform() *. { max -. min } +. min
 }
 
 /// Returns a random float uniformly distributed in the value range
