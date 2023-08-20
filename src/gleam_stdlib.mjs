@@ -343,19 +343,26 @@ export function power(base, exponent) {
   return Math.pow(base, exponent);
 }
 
-export function random_uniform() {
-  const random_uniform_result = Math.random();
-  // With round-to-nearest-even behavior, the ranges claimed for the functions below
-  // (excluding the one for Math.random() itself) aren't exact.
-  // If extremely large bounds are chosen (2^53 or higher),
-  // it's possible in extremely rare cases to calculate the usually-excluded upper bound.
-  // Note that as numbers in JavaScript are IEEE 754 floating point numbers
-  // See: <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random>
-  // Because of this, we just loop 'until' we get a valid result where 0.0 <= x < 1.0:
-  if (random_uniform_result === 1.0) {
-    return random_uniform();
+export function random_int_range(inclusive, exclusive) {
+  // There are rare rounding error here with IEEE 754 floating point
+  // multiplication/addition could round the result to `exclusive`
+  // if the range is too large
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#examples
+  if (inclusive === exclusive) {
+    return inclusive;
+  } else {
+    let result = random_uniform() * (exclusive - inclusive) + inclusive;
+    if (inclusive < exclusive) {
+      result = Math.floor(result);
+    } else {
+      result = Math.ceil(result);
+    }
+    return (result !== exclusive) ? result : random_int_range(inclusive, exclusive);
   }
-  return random_uniform_result;
+}
+
+export function random_uniform() {
+  return Math.random();
 }
 
 export function bit_string_slice(bits, position, length) {

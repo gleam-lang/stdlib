@@ -515,19 +515,23 @@ fn do_undigits(
 }
 
 /// Generates a random int between the given minimum and maximum values.
-///
+/// if `inclusive < exclusive`, returns a value in `[inclusive, exclusive)`
+/// if `exclusive < inclusive`, returns a value in `(exclusive, inclusive]`
+/// if `inclusive == exclusive`, always returns `inclusive`
+/// 
 /// ## Examples
 ///
 /// ```gleam
 /// > random(1, 5)
 /// 2
 /// ```
-///
-pub fn random(min: Int, max: Int) -> Int {
-  float.random(to_float(min), to_float(max))
-  |> float.floor()
-  |> float.round()
+pub fn random(inclusive: Int, exclusive: Int) -> Int {
+  do_random(inclusive, exclusive)
 }
+
+@external(erlang, "gleam_stdlib", "random_int_range")
+@external(javascript, "../gleam_stdlib.mjs", "random_int_range")
+fn do_random(inclusive: Int, exclusive: Int) -> Int
 
 /// Performs a truncated integer division.
 ///

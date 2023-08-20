@@ -1,4 +1,5 @@
 import gleam/int
+import gleam/float
 import gleam/iterator
 import gleam/list
 import gleam/order
@@ -398,7 +399,7 @@ pub fn random_test() {
     |> should.equal(0)
 
     int.random(-1, 0)
-    |> list.contains([-1, 0], _)
+    |> list.contains([-1], _)
     |> should.be_true
 
     int.random(-1, 1)
@@ -408,30 +409,53 @@ pub fn random_test() {
     int.random(-1, 2)
     |> list.contains([-1, 0, 1], _)
     |> should.be_true
+
+    int.random(2, -1)
+    |> list.contains([2, 1, 0], _)
+    |> should.be_true
+
+    int.random(2, 2)
+    |> should.equal(2)
+
+    // two consecutive double precision floats to test possible rounding error
+    // javascript uses IEEE 754 double precision to represent ints
+    // 9007199254740993 rounds to 9007199254740992 when in float
+    // 9007199254740995 rounds to 9007199254740996 when in float
+    int.random(9007199254740992, 9007199254740994)
+    |> list.contains([9007199254740992, 9007199254740993], _)
+    |> should.be_true
+
+    int.random(9007199254740996, 9007199254740994)
+    |> list.contains([9007199254740996, 9007199254740995], _)
+    |> should.be_true
   }
   list.range(0, 100)
   |> iterator.from_list
   |> iterator.fold(Nil, test_boundaries)
 
-  let test_average = fn(iterations: Int, min: Int, max: Int, tolerance: Int) {
-    let expected_average = int.sum([min, max]) / 2
+  let test_average = fn(iterations: Int, inclusive: Int, exclusive: Int, tolerance: Float) {
+    let expected_average = case inclusive == exclusive {
+      True -> int.to_float(inclusive)
+      False -> case inclusive < exclusive {
+        True -> int.to_float(inclusive + exclusive - 1) /. 2.0
+        False -> int.to_float(inclusive + exclusive + 1) /. 2.0
+      }
+    }
     list.range(0, iterations)
     |> iterator.from_list
     |> iterator.fold(
       from: 0,
-      with: fn(accumulator, _element) { accumulator + int.random(min, max) },
+      with: fn(accumulator, _element) { accumulator + int.random(inclusive, exclusive) },
     )
-    |> fn(sum) { sum / iterations }
-    |> fn(average) {
-      average - tolerance <= expected_average || average + tolerance >= expected_average
-    }
+    |> fn(sum) { int.to_float(sum) /. int.to_float(iterations) }
+    |> float.loosely_equals(expected_average, tolerance)
     |> should.be_true
   }
-  test_average(100, 0, 0, 5)
-  test_average(1000, 0, 100, 5)
-  test_average(1000, -100, 100, 5)
-  test_average(1000, -100, 0, 5)
-  test_average(1000, 0, -100, 5)
+  test_average(100, 0, 0, 0.0001)
+  test_average(1000, 0, 100, 3.0)
+  test_average(1000, -100, 100, 6.0)
+  test_average(1000, -100, 0, 3.0)
+  test_average(1000, 0, -100, 3.0)
 }
 
 pub fn divide_test() {

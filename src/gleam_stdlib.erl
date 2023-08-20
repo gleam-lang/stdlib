@@ -2,7 +2,7 @@
 
 -export([map_get/2, iodata_append/2, identity/1, decode_int/1, decode_bool/1,
          decode_float/1, decode_list/1, decode_option/2,
-         decode_field/2, parse_int/1, parse_float/1, less_than/2,
+         decode_field/2, parse_int/1, parse_float/1, random_int_range/2, less_than/2,
          string_pop_grapheme/1, string_starts_with/2, wrap_list/1,
          string_ends_with/2, string_pad/4, decode_map/1, uri_parse/1,
          bit_string_int_to_u32/1, bit_string_int_from_u32/1, decode_result/1,
@@ -165,6 +165,16 @@ parse_float(String) ->
     case catch binary_to_float(String) of
         Float when is_float(Float) -> {ok, Float};
         _ -> {error, nil}
+    end.
+
+random_int_range(Inclusive, Exclusive) ->
+    case {Inclusive, Exclusive} of
+        {_, _} when Inclusive =:= Exclusive ->
+            Inclusive;
+        {Max, Min} when Inclusive > Exclusive ->
+            Exclusive + rand:uniform(Max - Min);
+        {Min@1, Max@1} when Inclusive < Exclusive ->
+            Exclusive - rand:uniform(Max@1 - Min@1)
     end.
 
 less_than(Lhs, Rhs) ->

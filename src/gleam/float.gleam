@@ -403,7 +403,9 @@ fn do_product(numbers: List(Float), initial: Float) -> Float {
 }
 
 /// Generates a random float between the given minimum and maximum values.
-///
+/// if `inclusive < exclusive`, returns a value in `[inclusive, exclusive)`
+/// if `exclusive < inclusive`, returns a value in `(exclusive, inclusive]`
+/// if `inclusive == exclusive`, always returns `inclusive`
 ///
 /// ## Examples
 ///
@@ -412,8 +414,21 @@ fn do_product(numbers: List(Float), initial: Float) -> Float {
 /// 2.646355926896028
 /// ```
 ///
-pub fn random(min: Float, max: Float) -> Float {
-  do_random_uniform() *. { max -. min } +. min
+pub fn random(inclusive: Float, exclusive: Float) -> Float {
+  case inclusive == exclusive {
+    True -> inclusive
+    False -> {
+      let result =
+        do_random_uniform() *. { exclusive -. inclusive } +. inclusive
+      // There are rare rounding error here with IEEE 754 floating point
+      // multiplication/addition could round the result to `exclusive`
+      // if the range is too large
+      case result != exclusive {
+        True -> result
+        False -> random(inclusive, exclusive)
+      }
+    }
+  }
 }
 
 /// Returns a random float uniformly distributed in the value range
