@@ -343,24 +343,6 @@ export function power(base, exponent) {
   return Math.pow(base, exponent);
 }
 
-export function random_int_range(inclusive, exclusive) {
-  // There are rare rounding error here with IEEE 754 floating point
-  // multiplication/addition could round the result to `exclusive`
-  // if the range is too large
-  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#examples
-  if (inclusive === exclusive) {
-    return inclusive;
-  } else {
-    let result = random_uniform() * (exclusive - inclusive) + inclusive;
-    if (inclusive < exclusive) {
-      result = Math.floor(result);
-    } else {
-      result = Math.ceil(result);
-    }
-    return (result !== exclusive) ? result : random_int_range(inclusive, exclusive);
-  }
-}
-
 export function random_uniform() {
   return Math.random();
 }
@@ -519,14 +501,14 @@ function uint6ToB64(nUint6) {
   return nUint6 < 26
     ? nUint6 + 65
     : nUint6 < 52
-    ? nUint6 + 71
-    : nUint6 < 62
-    ? nUint6 - 4
-    : nUint6 === 62
-    ? 43
-    : nUint6 === 63
-    ? 47
-    : 65;
+      ? nUint6 + 71
+      : nUint6 < 62
+        ? nUint6 - 4
+        : nUint6 === 62
+          ? 43
+          : nUint6 === 63
+            ? 47
+            : 65;
 }
 
 // From https://developer.mozilla.org/en-US/docs/Glossary/Base64#Solution_2_%E2%80%93_rewrite_the_DOMs_atob()_and_btoa()_using_JavaScript's_TypedArrays_and_UTF-8
@@ -534,14 +516,14 @@ function b64ToUint6(nChr) {
   return nChr > 64 && nChr < 91
     ? nChr - 65
     : nChr > 96 && nChr < 123
-    ? nChr - 71
-    : nChr > 47 && nChr < 58
-    ? nChr + 4
-    : nChr === 43
-    ? 62
-    : nChr === 47
-    ? 63
-    : 0;
+      ? nChr - 71
+      : nChr > 47 && nChr < 58
+        ? nChr + 4
+        : nChr === 43
+          ? 62
+          : nChr === 47
+            ? 63
+            : 0;
 }
 
 // From https://developer.mozilla.org/en-US/docs/Glossary/Base64#Solution_2_%E2%80%93_rewrite_the_DOMs_atob()_and_btoa()_using_JavaScript's_TypedArrays_and_UTF-8

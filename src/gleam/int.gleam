@@ -525,13 +525,15 @@ fn do_undigits(
 /// > random(1, 5)
 /// 2
 /// ```
-pub fn random(inclusive: Int, exclusive: Int) -> Int {
-  do_random(inclusive, exclusive)
-}
-
 @external(erlang, "gleam_stdlib", "random_int_range")
-@external(javascript, "../gleam_stdlib.mjs", "random_int_range")
-fn do_random(inclusive: Int, exclusive: Int) -> Int
+pub fn random(inclusive: Int, exclusive: Int) -> Int {
+  let result = float.random(to_float(inclusive), to_float(exclusive))
+  case inclusive < exclusive {
+    True -> float.floor(result)
+    False -> float.ceiling(result)
+  }
+  |> float.round()
+}
 
 /// Performs a truncated integer division.
 ///

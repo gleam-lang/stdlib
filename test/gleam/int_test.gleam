@@ -452,6 +452,8 @@ pub fn random_test() {
     |> should.be_true
   }
   test_average(100, 0, 0, 0.0001)
+  test_average(1000, 1, 0, 0.03)
+  test_average(1000, 0, 1, 0.03)
   test_average(1000, 0, 100, 3.0)
   test_average(1000, -100, 100, 6.0)
   test_average(1000, -100, 0, 3.0)
