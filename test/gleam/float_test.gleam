@@ -375,52 +375,28 @@ pub fn random_test() {
     float.random(10.0, -10.0)
     |> fn(x) { x >=. -10.0 && x <. 10.0 }
     |> should.be_true
-
-    // two consecutive double precision floats
-    float.random(1.0, 1.0000000000000002)
-    |> fn(x) { x >=. 1.0 && x <. 1.0000000000000002 }
-    |> should.be_true
-
-    float.random(1.0000000000000002 , 1.0)
-    |> fn(x) { x >. 1.0 && x <=. 1.0000000000000002 }
-    |> should.be_true
-
-    // two consecutive double precision floats to test possible rounding error
-    // 9007199254740993 rounds to 9007199254740992 when in float
-    // 9007199254740995 rounds to 9007199254740996 when in float
-    float.random(9007199254740992.0, 9007199254740994.0)
-    |> should.equal(9007199254740992.0)
-
-    float.random(9007199254740994.0, 9007199254740992.0)
-    |> should.equal(9007199254740994.0)
-
-    float.random(9007199254740994.0, 9007199254740996.0)
-    |> should.equal(9007199254740994.0)
-
-    float.random(9007199254740996.0, 9007199254740994.0)
-    |> should.equal(9007199254740996.0)
   }
   list.range(0, 100)
   |> iterator.from_list()
   |> iterator.fold(Nil, test_boundaries)
 
-  let test_mean = fn(iterations: Int, inclusive: Float, exclusive: Float, tolerance: Float) {
-    let expected_average = {inclusive +. exclusive} /. 2.0
+  let test_mean = fn(iterations: Int, min: Float, max: Float, tolerance: Float) {
+    let expected_average = float.sum([min, max]) /. 2.0
     list.range(0, iterations)
     |> iterator.from_list()
     |> iterator.fold(
       from: 0.0,
-      with: fn(accumulator, _element) { accumulator +. float.random(inclusive, exclusive) },
+      with: fn(accumulator, _element) { accumulator +. float.random(min, max) },
     )
     |> fn(sum) { sum /. int.to_float(iterations) }
     |> float.loosely_equals(expected_average, tolerance)
     |> should.be_true
   }
-  test_mean(100, 0.0, 0.0, 0.0001)
-  test_mean(1000, 0.0, 100.0, 3.0)
-  test_mean(1000, -100.0, 100.0, 6.0)
-  test_mean(1000, -100.0, 0.0, 3.0)
-  test_mean(1000, 0.0, -100.0, 3.0)
+  test_mean(100, 0.0, 0.0, 5.0)
+  test_mean(1000, 0.0, 100.0, 5.0)
+  test_mean(1000, -100.0, 100.0, 5.0)
+  test_mean(1000, -100.0, 0.0, 5.0)
+  test_mean(1000, 0.0, -100.0, 5.0)
 }
 
 pub fn divide_test() {

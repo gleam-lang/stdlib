@@ -406,6 +406,7 @@ fn do_product(numbers: List(Float), initial: Float) -> Float {
 /// if `inclusive < exclusive`, returns a value in `[inclusive, exclusive)`
 /// if `exclusive < inclusive`, returns a value in `(exclusive, inclusive]`
 /// if `inclusive == exclusive`, always returns `inclusive`
+/// May rarely return `exclusive`, due to floating point round errors
 ///
 /// ## Examples
 ///
@@ -415,20 +416,7 @@ fn do_product(numbers: List(Float), initial: Float) -> Float {
 /// ```
 ///
 pub fn random(inclusive: Float, exclusive: Float) -> Float {
-  case inclusive == exclusive {
-    True -> inclusive
-    False -> {
-      let result =
-        do_random_uniform() *. { exclusive -. inclusive } +. inclusive
-      // There are rare rounding error here with IEEE 754 floating point
-      // multiplication/addition could round the result to `exclusive`
-      // if the range is too large
-      case result != exclusive {
-        True -> result
-        False -> random(inclusive, exclusive)
-      }
-    }
-  }
+  do_random_uniform() *. { exclusive -. inclusive } +. inclusive
 }
 
 /// Returns a random float uniformly distributed in the value range

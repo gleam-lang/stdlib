@@ -518,6 +518,7 @@ fn do_undigits(
 /// if `inclusive < exclusive`, returns a value in `[inclusive, exclusive)`
 /// if `exclusive < inclusive`, returns a value in `(exclusive, inclusive]`
 /// if `inclusive == exclusive`, always returns `inclusive`
+/// May rarely return `exclusive` for the javascript target, due to floating point round errors
 /// 
 /// ## Examples
 ///

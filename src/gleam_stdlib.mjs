@@ -344,7 +344,18 @@ export function power(base, exponent) {
 }
 
 export function random_uniform() {
-  return Math.random();
+  const random_uniform_result = Math.random();
+  // With round-to-nearest-even behavior, the ranges claimed for the functions below
+  // (excluding the one for Math.random() itself) aren't exact.
+  // If extremely large bounds are chosen (2^53 or higher),
+  // it's possible in extremely rare cases to calculate the usually-excluded upper bound.
+  // Note that as numbers in JavaScript are IEEE 754 floating point numbers
+  // See: <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random>
+  // Because of this, we just loop 'until' we get a valid result where 0.0 <= x < 1.0:
+  if (random_uniform_result === 1.0) {
+    return random_uniform();
+  }
+  return random_uniform_result;
 }
 
 export function bit_string_slice(bits, position, length) {
@@ -501,14 +512,14 @@ function uint6ToB64(nUint6) {
   return nUint6 < 26
     ? nUint6 + 65
     : nUint6 < 52
-      ? nUint6 + 71
-      : nUint6 < 62
-        ? nUint6 - 4
-        : nUint6 === 62
-          ? 43
-          : nUint6 === 63
-            ? 47
-            : 65;
+    ? nUint6 + 71
+    : nUint6 < 62
+    ? nUint6 - 4
+    : nUint6 === 62
+    ? 43
+    : nUint6 === 63
+    ? 47
+    : 65;
 }
 
 // From https://developer.mozilla.org/en-US/docs/Glossary/Base64#Solution_2_%E2%80%93_rewrite_the_DOMs_atob()_and_btoa()_using_JavaScript's_TypedArrays_and_UTF-8
@@ -516,14 +527,14 @@ function b64ToUint6(nChr) {
   return nChr > 64 && nChr < 91
     ? nChr - 65
     : nChr > 96 && nChr < 123
-      ? nChr - 71
-      : nChr > 47 && nChr < 58
-        ? nChr + 4
-        : nChr === 43
-          ? 62
-          : nChr === 47
-            ? 63
-            : 0;
+    ? nChr - 71
+    : nChr > 47 && nChr < 58
+    ? nChr + 4
+    : nChr === 43
+    ? 62
+    : nChr === 47
+    ? 63
+    : 0;
 }
 
 // From https://developer.mozilla.org/en-US/docs/Glossary/Base64#Solution_2_%E2%80%93_rewrite_the_DOMs_atob()_and_btoa()_using_JavaScript's_TypedArrays_and_UTF-8
