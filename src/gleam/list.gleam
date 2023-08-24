@@ -1289,9 +1289,9 @@ pub fn range(from start: Int, to stop: Int) -> List(Int) {
 
 fn tail_recursive_range(start: Int, stop: Int, acc: List(Int)) -> List(Int) {
   case int.compare(start, stop) {
-    order.Eq -> reverse([stop, ..acc])
-    order.Gt -> tail_recursive_range(start - 1, stop, [start, ..acc])
-    order.Lt -> tail_recursive_range(start + 1, stop, [start, ..acc])
+    order.Eq -> [stop, ..acc]
+    order.Gt -> tail_recursive_range(start, stop + 1, [stop, ..acc])
+    order.Lt -> tail_recursive_range(start, stop - 1, [stop, ..acc])
   }
 }
 
