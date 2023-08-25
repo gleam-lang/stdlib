@@ -413,11 +413,11 @@ pub fn append(to first: Iterator(a), suffix second: Iterator(a)) -> Iterator(a) 
   |> Iterator
 }
 
-fn do_flatten(flattened: fn() -> Action(Iterator(a))) -> Action(a) {
+fn do_concat(flattened: fn() -> Action(Iterator(a))) -> Action(a) {
   case flattened() {
     Stop -> Stop
     Continue(it, next_iterator) ->
-      do_append(it.continuation, fn() { do_flatten(next_iterator) })
+      do_append(it.continuation, fn() { do_concat(next_iterator) })
   }
 }
 
@@ -431,13 +431,21 @@ fn do_flatten(flattened: fn() -> Action(Iterator(a))) -> Action(a) {
 /// ```gleam
 /// > from_list([[1, 2], [3, 4]])
 /// > |> map(from_list)
-/// > |> flatten
+/// > |> from_list
+/// > |> concat
 /// > |> to_list
 /// [1, 2, 3, 4]
 /// ```
 ///
+pub fn concat(iterator: Iterator(Iterator(a))) -> Iterator(a) {
+  fn() { do_concat(iterator.continuation) }
+  |> Iterator
+}
+
+// TODO: Add deprecation attribute and then remove later.
+/// This function is deprecated, see `concat` instead.
 pub fn flatten(iterator: Iterator(Iterator(a))) -> Iterator(a) {
-  fn() { do_flatten(iterator.continuation) }
+  fn() { do_concat(iterator.continuation) }
   |> Iterator
 }
 
@@ -466,7 +474,7 @@ pub fn flat_map(
 ) -> Iterator(b) {
   iterator
   |> map(f)
-  |> flatten
+  |> concat
 }
 
 fn do_filter(
@@ -525,7 +533,7 @@ pub fn filter(
 ///
 pub fn cycle(iterator: Iterator(a)) -> Iterator(a) {
   repeat(iterator)
-  |> flatten
+  |> concat
 }
 
 /// Creates an iterator of ints, starting at a given start int and stepping by
