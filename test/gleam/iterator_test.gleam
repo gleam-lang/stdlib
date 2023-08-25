@@ -156,7 +156,7 @@ pub fn map_test() {
 }
 
 // a |> from_list |> flat_map(f) |> to_list ==
-//   a |> list.map(f) |> list.map(to_list) |> list.flatten
+//   a |> list.map(f) |> list.map(to_list) |> list.concat
 pub fn flat_map_test() {
   let test = fn(subject, f) {
     subject
@@ -178,7 +178,7 @@ pub fn flat_map_test() {
   test([1, 2], f)
 }
 
-// a |> from_list |> append(from_list(b)) |> to_list == list.flatten([a, b])
+// a |> from_list |> append(from_list(b)) |> to_list == list.concat([a, b])
 pub fn append_test() {
   let test = fn(left, right) {
     left
@@ -193,13 +193,13 @@ pub fn append_test() {
   test([1, 2], [3, 4])
 }
 
-// a |> list.map(from_list) |> flatten |> to_list == list.flatten(a)
-pub fn flatten_test() {
+// a |> list.map(from_list) |> concat |> to_list == list.concat(a)
+pub fn concat_test() {
   let test = fn(lists) {
     lists
     |> list.map(iterator.from_list)
     |> iterator.from_list
-    |> iterator.flatten
+    |> iterator.concat
     |> iterator.to_list
     |> should.equal(list.concat(lists))
   }
