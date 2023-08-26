@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- `list.flatten` is no longer deprecated and is kept as a synonym of
+  `list.concat`
+- `flatten` has been renamed to `concat` in the `iterator` module. The old name
+  is still available as an alias and is deprecated.
+
 ## v0.30.2 - 2023-08-31
 
 - Fixed a bug where `base.decode64` could crash on the Erlang target.

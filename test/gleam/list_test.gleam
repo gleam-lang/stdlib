@@ -306,6 +306,20 @@ pub fn concat_test() {
   // }
 }
 
+pub fn flatten_test() {
+  list.flatten([])
+  |> should.equal([])
+
+  list.flatten([[]])
+  |> should.equal([])
+
+  list.flatten([[], [], []])
+  |> should.equal([])
+
+  list.flatten([[1, 2], [], [3, 4]])
+  |> should.equal([1, 2, 3, 4])
+}
+
 pub fn flat_map_test() {
   list.flat_map([1, 10, 20], fn(x) { [x, x + 1] })
   |> should.equal([1, 2, 10, 11, 20, 21])
