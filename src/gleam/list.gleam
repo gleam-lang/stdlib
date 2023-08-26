@@ -680,8 +680,18 @@ pub fn concat(lists: List(List(a))) -> List(a) {
   do_concat(lists, [])
 }
 
-// TODO: Add deprecation attribute and then remove later.
-/// This function is deprecated, see `concat` instead.
+/// This is the same as `concat`: it joins a list of lists into a single
+/// list.
+/// 
+/// This function traverses all elements twice.
+/// 
+/// ## Examples
+/// 
+/// ```gleam
+/// > flatten([[1], [2, 3], []])
+/// [1, 2, 3]
+/// ```
+/// 
 pub fn flatten(lists: List(List(a))) -> List(a) {
   do_concat(lists, [])
 }
