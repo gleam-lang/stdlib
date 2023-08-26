@@ -4,8 +4,8 @@
 
 - `list.flatten` is no longer deprecated and is kept as a synonym of
   `list.concat`
-- `flatten` has been renamed to `concat` in the `iterator` module. The old name
-  is still available as an alias and is deprecated.
+- The `iterator` module gains the `concat` function.
+- The type of `iterator.flatten` was changed to accept a list of iterators.
 
 ## v0.30.2 - 2023-08-31
 

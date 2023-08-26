@@ -421,7 +421,7 @@ fn do_concat(flattened: fn() -> Action(Iterator(a))) -> Action(a) {
   }
 }
 
-/// Flattens an iterator of iterators, creating a new iterator.
+/// Joins an iterator of iterators into a single iterator.
 ///
 /// This function does not evaluate the elements of the iterator, the
 /// computation is performed when the iterator is later run.
@@ -442,11 +442,23 @@ pub fn concat(iterator: Iterator(Iterator(a))) -> Iterator(a) {
   |> Iterator
 }
 
-// TODO: Add deprecation attribute and then remove later.
-/// This function is deprecated, see `concat` instead.
-pub fn flatten(iterator: Iterator(Iterator(a))) -> Iterator(a) {
-  fn() { do_concat(iterator.continuation) }
-  |> Iterator
+/// Joins a list of iterators into a single iterator.
+///
+/// This function does not evaluate the elements of the iterator, the
+/// computation is performed when the iterator is later run.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > [[1, 2], [3, 4]]
+/// > |> map(from_list)
+/// > |> flatten
+/// > |> to_list
+/// [1, 2, 3, 4]
+/// ```
+///
+pub fn flatten(iterators: List(Iterator(a))) -> Iterator(a) {
+  concat(from_list(iterators))
 }
 
 /// Creates an iterator from an existing iterator and a transformation function.
