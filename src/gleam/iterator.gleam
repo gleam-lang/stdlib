@@ -413,11 +413,11 @@ pub fn append(to first: Iterator(a), suffix second: Iterator(a)) -> Iterator(a) 
   |> Iterator
 }
 
-fn do_concat(flattened: fn() -> Action(Iterator(a))) -> Action(a) {
+fn do_flatten(flattened: fn() -> Action(Iterator(a))) -> Action(a) {
   case flattened() {
     Stop -> Stop
     Continue(it, next_iterator) ->
-      do_append(it.continuation, fn() { do_concat(next_iterator) })
+      do_append(it.continuation, fn() { do_flatten(next_iterator) })
   }
 }
 
@@ -432,13 +432,13 @@ fn do_concat(flattened: fn() -> Action(Iterator(a))) -> Action(a) {
 /// > from_list([[1, 2], [3, 4]])
 /// > |> map(from_list)
 /// > |> from_list
-/// > |> concat
+/// > |> flatten
 /// > |> to_list
 /// [1, 2, 3, 4]
 /// ```
 ///
-pub fn concat(iterator: Iterator(Iterator(a))) -> Iterator(a) {
-  fn() { do_concat(iterator.continuation) }
+pub fn flatten(iterator: Iterator(Iterator(a))) -> Iterator(a) {
+  fn() { do_flatten(iterator.continuation) }
   |> Iterator
 }
 
@@ -452,13 +452,13 @@ pub fn concat(iterator: Iterator(Iterator(a))) -> Iterator(a) {
 /// ```gleam
 /// > [[1, 2], [3, 4]]
 /// > |> map(from_list)
-/// > |> flatten
+/// > |> concat
 /// > |> to_list
 /// [1, 2, 3, 4]
 /// ```
 ///
-pub fn flatten(iterators: List(Iterator(a))) -> Iterator(a) {
-  concat(from_list(iterators))
+pub fn concat(iterators: List(Iterator(a))) -> Iterator(a) {
+  flatten(from_list(iterators))
 }
 
 /// Creates an iterator from an existing iterator and a transformation function.
@@ -486,7 +486,7 @@ pub fn flat_map(
 ) -> Iterator(b) {
   iterator
   |> map(f)
-  |> concat
+  |> flatten
 }
 
 fn do_filter(
@@ -545,7 +545,7 @@ pub fn filter(
 ///
 pub fn cycle(iterator: Iterator(a)) -> Iterator(a) {
   repeat(iterator)
-  |> concat
+  |> flatten
 }
 
 /// Creates an iterator of ints, starting at a given start int and stepping by
