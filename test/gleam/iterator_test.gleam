@@ -193,13 +193,13 @@ pub fn append_test() {
   test([1, 2], [3, 4])
 }
 
-// a |> list.map(from_list) |> from_list |> concat |> to_list == list.concat(a)
-pub fn concat_test() {
+// a |> list.map(from_list) |> from_list |> flatten |> to_list == list.concat(a)
+pub fn flatten_test() {
   let test = fn(lists) {
     lists
     |> list.map(iterator.from_list)
     |> iterator.from_list
-    |> iterator.concat
+    |> iterator.flatten
     |> iterator.to_list
     |> should.equal(list.concat(lists))
   }
@@ -209,12 +209,12 @@ pub fn concat_test() {
   test([[1, 2], [3, 4]])
 }
 
-// a |> list.map(from_list) |> flatten |> to_list == list.concat(a)
-pub fn flatten_test() {
+// a |> list.map(from_list) |> concat |> to_list == list.concat(a)
+pub fn concat_test() {
   let test = fn(lists) {
     lists
     |> list.map(iterator.from_list)
-    |> iterator.flatten
+    |> iterator.concat
     |> iterator.to_list
     |> should.equal(list.concat(lists))
   }
