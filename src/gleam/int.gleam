@@ -515,8 +515,8 @@ fn do_undigits(
 }
 
 /// Generates a random int between the given minimum and maximum values.
-/// if `inclusive < exclusive`, returns a value in `[inclusive, exclusive)`
-/// if `exclusive < inclusive`, returns a value in `(exclusive, inclusive]`
+/// if `inclusive < exclusive`, returns a value in `inclusive <= x < exclusive`
+/// if `exclusive < inclusive`, returns a value in `exclusive < x <= inclusive`
 /// if `inclusive == exclusive`, always returns `inclusive`
 /// May rarely return `exclusive` for the javascript target, due to floating point round errors
 /// 
