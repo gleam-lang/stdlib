@@ -403,8 +403,8 @@ fn do_product(numbers: List(Float), initial: Float) -> Float {
 }
 
 /// Generates a random float between the given minimum and maximum values.
-/// if `inclusive < exclusive`, returns a value in `[inclusive, exclusive)`
-/// if `exclusive < inclusive`, returns a value in `(exclusive, inclusive]`
+/// if `inclusive < exclusive`, returns a value in `inclusive <= x < exclusive`
+/// if `exclusive < inclusive`, returns a value in `exclusive < x <= inclusive`
 /// if `inclusive == exclusive`, always returns `inclusive`
 /// May rarely return `exclusive`, due to floating point round errors
 ///
