@@ -80,3 +80,9 @@ pub fn url_decode64_test() {
   |> base.url_decode64()
   |> should.equal(Error(Nil))
 }
+
+pub fn decode64_crash_regression_1_test() {
+  "aGktdGhlcmU.uWUWvrAleKQ2jsWcU97H-RPJ5qRRcE_s"
+  |> base.decode64()
+  |> should.equal(Error(Nil))
+}

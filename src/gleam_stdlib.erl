@@ -255,7 +255,7 @@ regex_scan(Regex, String) ->
 
 base_decode64(S) ->
     try {ok, base64:decode(S)}
-    catch error:badarith -> {error, nil}
+    catch error:_ -> {error, nil}
     end.
 
 wrap_list(X) when is_list(X) -> X;
