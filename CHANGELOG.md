@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.30.2 - Unreleased
+
+- Fixed a bug where `base.decode64` could crash on the Erlang target.
+
 ## v0.30.1 - 2023-08-06
 
 - Updated to Gleam v0.30.0 syntax.
