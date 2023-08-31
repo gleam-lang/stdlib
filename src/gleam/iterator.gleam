@@ -421,7 +421,7 @@ fn do_flatten(flattened: fn() -> Action(Iterator(a))) -> Action(a) {
   }
 }
 
-/// Joins an iterator of iterators into a single iterator.
+/// Flattens an iterator of iterators, creating a new iterator.
 ///
 /// This function does not evaluate the elements of the iterator, the
 /// computation is performed when the iterator is later run.
@@ -431,7 +431,6 @@ fn do_flatten(flattened: fn() -> Action(Iterator(a))) -> Action(a) {
 /// ```gleam
 /// > from_list([[1, 2], [3, 4]])
 /// > |> map(from_list)
-/// > |> from_list
 /// > |> flatten
 /// > |> to_list
 /// [1, 2, 3, 4]
