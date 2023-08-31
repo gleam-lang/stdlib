@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.30.2 - Unreleased
+## v0.30.2 - 2023-08-31
 
 - Fixed a bug where `base.decode64` could crash on the Erlang target.
 
