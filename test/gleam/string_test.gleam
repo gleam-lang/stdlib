@@ -1079,3 +1079,9 @@ pub fn byte_size_test() {
   let assert 8 = string.byte_size("👩🏾")
   let assert 15 = string.byte_size("👩🏾‍🦰")
 }
+
+pub fn inspect_erlang_non_byte_aligned_bit_string() {
+  <<251, 3:size(3)>>
+  |> string.inspect
+  |> should.equal("<<251, 3:size(3)>>")
+}
