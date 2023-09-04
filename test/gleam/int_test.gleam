@@ -556,3 +556,69 @@ pub fn subtract_test() {
   |> int.subtract(2, _)
   |> should.equal(-1)
 }
+
+pub fn and_test() {
+  int.bitwise_and(9, 3)
+  |> should.equal(1)
+
+  // To check compatibility with JavaScript, try a 32 bit unsigned integer
+  // (signed integers are in the range -2147483648 to +2147483647, while
+  //  32 bit unsigned integers are in the range 0 to +4294967295).
+  int.bitwise_and(2_147_483_648, 2_147_483_648)
+  |> should.equal(2_147_483_648)
+}
+
+pub fn not_test() {
+  int.bitwise_not(2)
+  |> should.equal(-3)
+
+  // To check compatibility with JavaScript, try a 32 bit unsigned integer.
+  int.bitwise_not(2_147_483_648)
+  |> should.equal(-2_147_483_649)
+}
+
+pub fn or_test() {
+  int.bitwise_or(9, 3)
+  |> should.equal(11)
+
+  // To check compatibility with JavaScript, try a 32 bit unsigned integer.
+  int.bitwise_or(1, 2_147_483_648)
+  |> should.equal(2_147_483_649)
+}
+
+pub fn exclusive_or_test() {
+  int.bitwise_exclusive_or(9, 3)
+  |> should.equal(10)
+
+  // To check compatibility with JavaScript, try a 32 bit unsigned integer.
+  int.bitwise_exclusive_or(0, 2_147_483_648)
+  |> should.equal(2_147_483_648)
+}
+
+pub fn shift_left_test() {
+  int.bitwise_shift_left(1, 2)
+  |> should.equal(4)
+
+  int.bitwise_shift_left(1, -2)
+  |> should.equal(0)
+
+  int.bitwise_shift_left(-1, 2)
+  |> should.equal(-4)
+
+  int.bitwise_shift_left(-1, -2)
+  |> should.equal(-1)
+}
+
+pub fn shift_right_test() {
+  int.bitwise_shift_right(1, 2)
+  |> should.equal(0)
+
+  int.bitwise_shift_right(1, -2)
+  |> should.equal(4)
+
+  int.bitwise_shift_right(-1, 2)
+  |> should.equal(-1)
+
+  int.bitwise_shift_right(-1, -2)
+  |> should.equal(-4)
+}
