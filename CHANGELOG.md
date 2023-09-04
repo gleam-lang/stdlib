@@ -5,6 +5,9 @@
 - `list.flatten` is no longer deprecated and is kept as a synonym of
   `list.concat`
 - The `iterator` module gains the `concat` function.
+- The `int` module gains the `bitwise_and`, `bitwise_or`,
+  `bitwise_exclusive_or`, `bitwise_not`, `bitwise_shift_left`, and
+  `bitwise_shift_right` functions.
 
 ## v0.30.2 - 2023-08-31
 
