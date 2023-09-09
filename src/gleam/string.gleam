@@ -189,7 +189,7 @@ pub fn compare(a: String, b: String) -> order.Order {
 @external(javascript, "../gleam_stdlib.mjs", "less_than")
 fn less_than(a: String, b: String) -> Bool
 
-/// Takes a substring given a start and end grapheme indexes. Negative indexes
+/// Takes a substring given a start grapheme index and a length. Negative indexes
 /// are taken starting from the *end* of the list.
 ///
 /// ## Examples
