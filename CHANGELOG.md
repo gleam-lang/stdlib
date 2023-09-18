@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- The `iterator` module gains the `map2` function.
 - `list.flatten` is no longer deprecated and is kept as a synonym of
   `list.concat`
 - The `iterator` module gains the `concat` function.
