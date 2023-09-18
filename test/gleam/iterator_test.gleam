@@ -155,6 +155,34 @@ pub fn map_test() {
   test([1, 2, 3, 4, 5, 6, 7, 8], f)
 }
 
+// map2(from_list(a), from_list(b), f)  == list.map2(a, b, f)
+pub fn map2_test() {
+  let test = fn(one, other, f) {
+    iterator.map2(iterator.from_list(one), iterator.from_list(other), f)
+    |> iterator.to_list
+    |> should.equal(list.map2(one, other, f))
+  }
+
+  let f = fn(a, b) { a / b }
+  test([], [], f)
+  test([], [2, 10, 3], f)
+  test([10], [2, 10, 3], f)
+  test([10, 20], [2, 10, 3], f)
+  test([10, 20, 30], [2, 10, 3], f)
+  test([10, 20, 30], [2, 10], f)
+  test([10, 20, 30], [2], f)
+  test([10, 20, 30], [], f)
+}
+
+pub fn map2_is_lazy_test() {
+  let one = iterator.from_list([])
+  let other = iterator.once(fn() { panic as "unreachable" })
+
+  iterator.map2(one, other, fn(x, y) { x + y })
+  |> iterator.to_list
+  |> should.equal([])
+}
+
 // a |> from_list |> flat_map(f) |> to_list ==
 //   a |> list.map(f) |> list.map(to_list) |> list.concat
 pub fn flat_map_test() {
