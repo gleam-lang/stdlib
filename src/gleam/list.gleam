@@ -2102,7 +2102,7 @@ fn do_shuffle_by_pair_indexes(
 /// Takes a list, randomly sorts all items and returns the shuffled list.
 ///
 /// This function uses Erlang's `:rand` module or Javascript's
-/// `Math.random()` to calcuate the index shuffling.
+/// `Math.random()` to calculate the index shuffling.
 ///
 /// ## Example
 ///
