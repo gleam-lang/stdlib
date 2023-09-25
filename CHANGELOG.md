@@ -93,7 +93,7 @@
 - The `dynamic` module is able to decode simple JavaScript objects to maps.
   So, the behaviour of the `field` and `object` functions are consistent.
 - For a given empty list as an argument, `int.product` now returns `1` instead
-  of `0`, and `float.product` now returns `1.0` instead of `0.0`. This mimicks
+  of `0`, and `float.product` now returns `1.0` instead of `0.0`. This mimics
   the behavior of Elixir's `Enum.product/1`.
 
 ## v0.26.0 - 2023-01-12
@@ -304,7 +304,7 @@
 - The `dynamic.result` function has been made more permissive to other result
   values.
 - The `dynamic.thunk` function has been removed.
-- The `dynamic.element` label `postion` was renamed to `get`.
+- The `dynamic.element` label `position` was renamed to `get`.
 - The `dynamic.element` now accepts negative indexes.
 - The `io.get_line` function has been moved to the `gleam_erlang` library.
 - The `atom` module has been moved to the `gleam_erlang` library.
@@ -464,7 +464,7 @@
 - The `list.sort` label `sort_by` has been changed to `by`.
 - The `list.fold`'s first argument gained the label `over`.
 - The `map.fold`'s first argument gained the label `over`.
-- The `map.take`'s `drop` arguement has been changed to `keeping`.
+- The `map.take`'s `drop` argument has been changed to `keeping`.
 
 ## v0.8.0 - 2020-04-28
 
@@ -472,7 +472,7 @@
 - The `string` module gains `contains` and `repeat` functions.
 - The `expect` module has been renamed to `should`. Functions in the module
   starting with `is_` have been changed to `be_`.
-- The `string.replace` and `iodata.replace` `all` arguement label has been
+- The `string.replace` and `iodata.replace` `all` argument label has been
   changed to `each`.
 - The `string` module gains `is_empty`, `join` and `concat` functions.
 - The `int` module gains `is_even` and `is_odd` functions.

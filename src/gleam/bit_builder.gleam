@@ -28,7 +28,7 @@ pub opaque type BitBuilder {
   Many(List(BitBuilder))
 }
 
-/// Create an empty `BitBuilder`. Useful as the start of a pipe chaning many
+/// Create an empty `BitBuilder`. Useful as the start of a pipe chaining many
 /// builders together.
 ///
 pub fn new() -> BitBuilder {
