@@ -1260,3 +1260,31 @@ pub fn shuffle_test() {
   list.range(0, recursion_test_cycles)
   |> list.shuffle()
 }
+
+pub fn index_of_test() {
+  []
+  |> list.index_of(1)
+  |> should.equal(Error(Nil))
+
+  [1, 2, 3, 4]
+  |> list.index_of(3)
+  |> should.equal(Ok(2))
+
+  ["A", "B", "C"]
+  |> list.index_of("D")
+  |> should.equal(Error(Nil))
+}
+
+pub fn find_index_test() {
+  []
+  |> list.find_index(fn(x) { x == 2 })
+  |> should.equal(Error(Nil))
+
+  [1, 2, 3, 4]
+  |> list.find_index(fn(x) { x >= 3 })
+  |> should.equal(2)
+
+  [1, 2, 3]
+  |> list.find_index(fn(x) { x >= 4 })
+  |> should.equal(Error(Nil))
+}
