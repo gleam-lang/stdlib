@@ -2118,3 +2118,70 @@ pub fn shuffle(list: List(a)) -> List(a) {
   |> do_shuffle_by_pair_indexes()
   |> do_shuffle_pair_unwrap([])
 }
+
+fn do_find_index(
+  haystack: List(a),
+  is_desired: fn(a) -> Bool,
+  index_acc: Int,
+) -> Result(Int, Nil) {
+  case haystack {
+    [] -> Error(Nil)
+    [first, ..rest] ->
+      case is_desired(first) {
+        True -> Ok(index_acc)
+        False -> do_find_index(rest, is_desired, index_acc + 1)
+      }
+  }
+}
+
+/// Finds the index of the first element in a given list for which the given function returns
+/// `True`.
+///
+/// Returns `Error(Nil)` if no such element is found.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > find_index(["A", "B", "C"], fn(x) { x == "C" })
+/// ```
+///
+/// ```gleam
+/// > find_index([1, 2, 3], fn(x) { x > 1 })
+/// Ok(1)
+/// ```
+///
+/// ```gleam
+/// > find_index([], fn(_) { True })
+/// Error(Nil)
+/// ```
+///
+pub fn find_index(
+  in haystack: List(a),
+  one_that is_desired: fn(a) -> Bool,
+) -> Result(Int, Nil) {
+  do_find_index(haystack, is_desired, 0)
+}
+
+/// Finds the index of the first element in a given list that is equivalent to
+/// the given item.
+///
+/// Returns `Error(Nil)` if no such element is found.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > index_of(["A", "B", "C"], "C")
+/// Ok(2)
+/// ```
+///
+/// ```gleam
+/// > find_index([], True)
+/// Error(Nil)
+/// ```
+///
+pub fn index_of(
+  in haystack: List(a), 
+  the_first match_to: a,
+  ) -> Result(Int, Nil) {
+  find_index(haystack, fn(x) { x == match_to })
+}
