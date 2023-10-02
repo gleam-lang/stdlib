@@ -3,6 +3,7 @@
 ## Unreleased
 
 - The `iterator` module gains the `map2` function.
+- The `list` module gains the `index_of` and `find_index` functions.
 
 ## v0.31.0 - 2023-09-25
 
