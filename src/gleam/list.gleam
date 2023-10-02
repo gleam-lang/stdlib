@@ -1448,6 +1448,40 @@ pub fn key_find(
   )
 }
 
+/// Given a list of 2-element tuples, finds all tuples that have a given
+/// key as the first element and returns the second element.
+///
+/// This function may be useful for interacting with Erlang code where lists of
+/// tuples are common.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > key_filter([#("a", 0), #("b", 1), #("a", 2)], "a")
+/// [0, 2]
+/// ```
+///
+/// ```gleam
+/// > key_filter([#("a", 0), #("b", 1)], "c")
+/// []
+/// ```
+///
+pub fn key_filter(
+  in keyword_list: List(#(k, v)),
+  find desired_key: k,
+) -> List(v) {
+  filter_map(
+    keyword_list,
+    fn(keyword) {
+      let #(key, value) = keyword
+      case key == desired_key {
+        True -> Ok(value)
+        False -> Error(Nil)
+      }
+    },
+  )
+}
+
 fn do_pop(haystack, predicate, checked) {
   case haystack {
     [] -> Error(Nil)

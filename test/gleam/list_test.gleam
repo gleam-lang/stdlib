@@ -821,6 +821,26 @@ pub fn key_find_test() {
   |> should.equal(Error(Nil))
 }
 
+pub fn key_filter_test() {
+  let proplist = [#(0, "1"), #(1, "2"), #(0, "3"), #(1, "4"), #(2, "5")]
+
+  proplist
+  |> list.key_filter(0)
+  |> should.equal(["1", "3"])
+
+  proplist
+  |> list.key_filter(1)
+  |> should.equal(["2", "4"])
+
+  proplist
+  |> list.key_filter(2)
+  |> should.equal(["5"])
+
+  proplist
+  |> list.key_filter(3)
+  |> should.equal([])
+}
+
 pub fn pop_test() {
   [1, 2, 3]
   |> list.pop(fn(x) { x > 2 })
