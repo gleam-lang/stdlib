@@ -3,6 +3,7 @@
 ## Unreleased
 
 - The `iterator` module gains the `map2` function.
+- The `list` module gains the `key_filter` function.
 
 ## v0.31.0 - 2023-09-25
 
