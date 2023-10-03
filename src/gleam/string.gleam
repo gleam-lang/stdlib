@@ -679,6 +679,10 @@ fn do_trim_right(string string: String) -> String
 /// Splits a non-empty `String` into its first element (head) and rest (tail).
 /// This lets you pattern match on `String`s exactly as you would with lists.
 ///
+/// Note on JavaScript using the function to iterate over a string will likely
+/// be slower than using `to_graphemes` due to string slicing being more
+/// expensive on JavaScript than Erlang.
+///
 /// ## Examples
 ///
 /// ```gleam
@@ -707,6 +711,7 @@ fn do_pop_grapheme(string string: String) -> Result(#(String, String), Nil)
 /// ["a", "b", "c"]
 /// ```
 ///
+@external(javascript, "../gleam_stdlib.mjs", "graphemes")
 pub fn to_graphemes(string: String) -> List(String) {
   do_to_graphemes(string, [])
   |> list.reverse
