@@ -5,6 +5,8 @@
 - Improved performance of `string.to_graphemes` on JavaScript.
 - The `iterator` module gains the `map2` function.
 - The `list` module gains the `key_filter` function.
+- Fixed a bug on target JavaScript where `Map` equality would not be correctly
+  checked for maps of different sizes.
 
 ## v0.31.0 - 2023-09-25
 

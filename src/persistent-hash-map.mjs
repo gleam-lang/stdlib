@@ -945,7 +945,7 @@ export default class PMap {
    * @returns {boolean}
    */
   equals(o) {
-    if (!(o instanceof PMap)) {
+    if (!(o instanceof PMap) || this.size !== o.size) {
       return false;
     }
     let equal = true;
