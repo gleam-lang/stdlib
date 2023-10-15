@@ -375,3 +375,19 @@ pub fn zero_must_be_contained_test() {
   |> map.has_key(0)
   |> should.equal(True)
 }
+
+pub fn empty_map_equality_test() {
+  let map1 = map.new()
+  let map2 = map.from_list([#(1, 2)])
+
+  should.be_false(map1 == map2)
+  should.be_false(map2 == map1)
+}
+
+pub fn extra_keys_equality_test() {
+  let map1 = map.from_list([#(1, 2), #(3, 4)])
+  let map2 = map.from_list([#(1, 2), #(3, 4), #(4, 5)])
+
+  should.be_false(map1 == map2)
+  should.be_false(map2 == map1)
+}
