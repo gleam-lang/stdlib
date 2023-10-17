@@ -124,12 +124,11 @@ pub fn flatten(result: Result(Result(a, e), e)) -> Result(a, e) {
   }
 }
 
-/// Updates a value held within the `Ok` of a result by calling a given function
-/// on it, where the given function also returns a result. The two results are
-/// then merged together into one result.
+/// "Updates" an `Ok` result by passing its value to a function that yields a result,
+/// and returning the yielded result. (This may "replace" the `Ok` with an `Error`.)
 ///
-/// If the result is an `Error` rather than `Ok` the function is not called and the
-/// result stays the same.
+/// If the input is an `Error` rather than an `Ok`, the function is not called and
+/// the original `Error` is returned.
 ///
 /// This function is the equivalent of calling `map` followed by `flatten`, and
 /// it is useful for chaining together multiple functions that may fail.
@@ -147,6 +146,11 @@ pub fn flatten(result: Result(Result(a, e), e)) -> Result(a, e) {
 /// ```
 ///
 /// ```gleam
+/// > try(yield_ok_containing_1(), fn(x) { Ok(x + 1) })
+/// Ok(2)
+/// ```
+///
+/// ```gleam
 /// > try(Ok(1), fn(_) { Error("Oh no") })
 /// Error("Oh no")
 /// ```
@@ -154,6 +158,11 @@ pub fn flatten(result: Result(Result(a, e), e)) -> Result(a, e) {
 /// ```gleam
 /// > try(Error(Nil), fn(x) { Ok(x + 1) })
 /// Error(Nil)
+/// ```
+///
+/// ```gleam
+/// > try(yield_deliberate_error(), fn(x) { Ok(x + 1) })
+/// Error(Deliberate)
 /// ```
 ///
 pub fn try(
