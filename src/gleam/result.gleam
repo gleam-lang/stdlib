@@ -146,11 +146,6 @@ pub fn flatten(result: Result(Result(a, e), e)) -> Result(a, e) {
 /// ```
 ///
 /// ```gleam
-/// > try(yield_ok_containing_1(), fn(x) { Ok(x + 1) })
-/// Ok(2)
-/// ```
-///
-/// ```gleam
 /// > try(Ok(1), fn(_) { Error("Oh no") })
 /// Error("Oh no")
 /// ```
@@ -158,11 +153,6 @@ pub fn flatten(result: Result(Result(a, e), e)) -> Result(a, e) {
 /// ```gleam
 /// > try(Error(Nil), fn(x) { Ok(x + 1) })
 /// Error(Nil)
-/// ```
-///
-/// ```gleam
-/// > try(yield_deliberate_error(), fn(x) { Ok(x + 1) })
-/// Error(Deliberate)
 /// ```
 ///
 pub fn try(
