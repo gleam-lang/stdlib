@@ -5,7 +5,6 @@ import {
   Ok,
   Result,
   UtfCodepoint,
-  inspect,
   stringBits,
   toBitString,
 } from "./gleam.mjs";
