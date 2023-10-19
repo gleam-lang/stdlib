@@ -3,7 +3,7 @@
 //// all of the PCRE library is interfaced and some parts of the library go beyond
 //// what PCRE offers. Currently PCRE version 8.40 (release date 2017-01-11) is used.
 
-import gleam/option.{Option}
+import gleam/option.{type Option}
 
 pub type Regex
 

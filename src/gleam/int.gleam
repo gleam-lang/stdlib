@@ -1,5 +1,5 @@
 import gleam/float
-import gleam/order.{Order}
+import gleam/order.{type Order}
 
 /// Returns the absolute value of the input.
 ///

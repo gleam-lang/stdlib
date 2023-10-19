@@ -24,9 +24,9 @@
 
 import gleam/int
 import gleam/float
-import gleam/order.{Order}
+import gleam/order.{type Order}
 import gleam/pair
-import gleam/map.{Map}
+import gleam/map.{type Map}
 
 /// An error value returned by the `strict_zip` function.
 ///

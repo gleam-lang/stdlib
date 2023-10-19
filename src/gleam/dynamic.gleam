@@ -1,7 +1,7 @@
 import gleam/int
 import gleam/list
-import gleam/map.{Map}
-import gleam/option.{Option}
+import gleam/map.{type Map}
+import gleam/option.{type Option}
 import gleam/result
 import gleam/string_builder
 @target(erlang)
@@ -75,13 +75,13 @@ pub fn dynamic(value: Dynamic) -> Result(Dynamic, List(DecodeError)) {
 /// Error([DecodeError(expected: "BitString", found: "Int", path: [])])
 /// ```
 ///
-pub fn bit_string(from data: Dynamic) -> Result(BitString, DecodeErrors) {
+pub fn bit_string(from data: Dynamic) -> Result(BitArray, DecodeErrors) {
   decode_bit_string(data)
 }
 
 @external(erlang, "gleam_stdlib", "decode_bit_string")
 @external(javascript, "../gleam_stdlib.mjs", "decode_bit_string")
-fn decode_bit_string(a: Dynamic) -> Result(BitString, DecodeErrors)
+fn decode_bit_string(a: Dynamic) -> Result(BitArray, DecodeErrors)
 
 /// Checks to see whether a `Dynamic` value is a string, and returns that string if
 /// it is.

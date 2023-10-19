@@ -6,7 +6,7 @@
 //// field consider having a `role: SchoolRole` field where `SchoolRole` is a custom
 //// type that can be either `Student` or `Teacher`.
 
-import gleam/order.{Order}
+import gleam/order.{type Order}
 
 /// Returns the and of two bools, but it evaluates both arguments.
 ///

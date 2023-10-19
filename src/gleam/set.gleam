@@ -1,5 +1,5 @@
 import gleam/list
-import gleam/map.{Map}
+import gleam/map.{type Map}
 import gleam/result
 
 // A list is used as the map value as an empty list has the smallest

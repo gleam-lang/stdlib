@@ -3,7 +3,7 @@ import gleam/string
 
 /// Encodes a BitString into a base 64 encoded string.
 ///
-pub fn encode64(input: BitString, padding: Bool) -> String {
+pub fn encode64(input: BitArray, padding: Bool) -> String {
   let encoded = do_encode64(input)
   case padding {
     True -> encoded
@@ -13,11 +13,11 @@ pub fn encode64(input: BitString, padding: Bool) -> String {
 
 @external(erlang, "base64", "encode")
 @external(javascript, "../gleam_stdlib.mjs", "encode64")
-fn do_encode64(a: BitString) -> String
+fn do_encode64(a: BitArray) -> String
 
 /// Decodes a base 64 encoded string into a `BitString`.
 ///
-pub fn decode64(encoded: String) -> Result(BitString, Nil) {
+pub fn decode64(encoded: String) -> Result(BitArray, Nil) {
   let padded = case bit_string.byte_size(bit_string.from_string(encoded)) % 4 {
     0 -> encoded
     n -> string.append(encoded, string.repeat("=", 4 - n))
@@ -27,11 +27,11 @@ pub fn decode64(encoded: String) -> Result(BitString, Nil) {
 
 @external(erlang, "gleam_stdlib", "base_decode64")
 @external(javascript, "../gleam_stdlib.mjs", "decode64")
-fn do_decode64(a: String) -> Result(BitString, Nil)
+fn do_decode64(a: String) -> Result(BitArray, Nil)
 
 /// Encodes a `BitString` into a base 64 encoded string with URL and filename safe alphabet.
 ///
-pub fn url_encode64(input: BitString, padding: Bool) -> String {
+pub fn url_encode64(input: BitArray, padding: Bool) -> String {
   encode64(input, padding)
   |> string.replace("+", "-")
   |> string.replace("/", "_")
@@ -39,7 +39,7 @@ pub fn url_encode64(input: BitString, padding: Bool) -> String {
 
 /// Decodes a base 64 encoded string with URL and filename safe alphabet into a `BitString`.
 ///
-pub fn url_decode64(encoded: String) -> Result(BitString, Nil) {
+pub fn url_decode64(encoded: String) -> Result(BitArray, Nil) {
   encoded
   |> string.replace("-", "+")
   |> string.replace("_", "/")
