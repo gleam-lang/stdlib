@@ -7,6 +7,7 @@ import {
   UtfCodepoint,
   stringBits,
   toBitString,
+  NonEmpty,
 } from "./gleam.mjs";
 import {
   CompileError as RegexCompileError,
@@ -565,18 +566,18 @@ export function decode64(sBase64) {
 export function classify_dynamic(data) {
   if (typeof data === "string") {
     return "String";
-  } else if (Result.isResult(data)) {
+  } else if (data instanceof Result) {
     return "Result";
-  } else if (List.isList(data)) {
+  } else if (data instanceof List) {
     return "List";
+  } else if (data instanceof BitString) {
+    return "BitString";
+  } else if (data instanceof PMap) {
+    return "Map";
   } else if (Number.isInteger(data)) {
     return "Int";
   } else if (Array.isArray(data)) {
     return `Tuple of ${data.length} elements`;
-  } else if (BitString.isBitString(data)) {
-    return "BitString";
-  } else if (data instanceof PMap) {
-    return "Map";
   } else if (typeof data === "number") {
     return "Float";
   } else if (data === null) {
@@ -618,7 +619,7 @@ export function decode_bool(data) {
 }
 
 export function decode_bit_string(data) {
-  if (BitString.isBitString(data)) {
+  if (data instanceof BitString) {
     return new Ok(data);
   }
   if (data instanceof Uint8Array) {
@@ -663,18 +664,18 @@ function decode_tupleN(data, n) {
 }
 
 function decode_exact_length_list(data, n) {
-  if (!List.isList(data)) return;
+  if (!(data instanceof List)) return;
 
   const elements = [];
   let current = data;
 
   for (let i = 0; i < n; i++) {
-    if (current.isEmpty()) break;
+    if (!(current instanceof NonEmpty)) break;
     elements.push(current.head);
     current = current.tail;
   }
 
-  if (elements.length === n && current.isEmpty()) return elements;
+  if (elements.length === n && !(current instanceof NonEmpty)) return elements;
 }
 
 export function tuple_get(data, index) {
@@ -687,11 +688,11 @@ export function decode_list(data) {
   if (Array.isArray(data)) {
     return new Ok(List.fromArray(data));
   }
-  return List.isList(data) ? new Ok(data) : decoder_error("List", data);
+  return data instanceof List ? new Ok(data) : decoder_error("List", data);
 }
 
 export function decode_result(data) {
-  return Result.isResult(data) ? new Ok(data) : decoder_error("Result", data);
+  return data instanceof Result ? new Ok(data) : decoder_error("Result", data);
 }
 
 export function decode_map(data) {
