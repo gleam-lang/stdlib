@@ -37,24 +37,27 @@ pub fn new() -> BytesBuilder {
 ///
 /// Runs in constant time.
 ///
-pub fn prepend(to: BytesBuilder, prefix: BitArray) -> BytesBuilder {
-  append_builder(from_bit_array(prefix), to)
+pub fn prepend(to second: BytesBuilder, prefix first: BitArray) -> BytesBuilder {
+  append_builder(from_bit_array(first), second)
 }
 
 /// Appends a bit array to the end of a builder.
 ///
 /// Runs in constant time.
 ///
-pub fn append(to: BytesBuilder, suffix: BitArray) -> BytesBuilder {
-  append_builder(to, from_bit_array(suffix))
+pub fn append(to first: BytesBuilder, suffix second: BitArray) -> BytesBuilder {
+  append_builder(first, from_bit_array(second))
 }
 
 /// Prepends a builder onto the start of another.
 ///
 /// Runs in constant time.
 ///
-pub fn prepend_builder(to: BytesBuilder, prefix: BytesBuilder) -> BytesBuilder {
-  append_builder(prefix, to)
+pub fn prepend_builder(
+  to second: BytesBuilder,
+  prefix first: BytesBuilder,
+) -> BytesBuilder {
+  append_builder(first, second)
 }
 
 /// Appends a builder onto the end of another.
@@ -77,8 +80,11 @@ pub fn append_builder(
 /// Runs in constant time when running on Erlang.
 /// Runs in linear time with the length of the string otherwise.
 ///
-pub fn prepend_string(to: BytesBuilder, prefix: String) -> BytesBuilder {
-  append_builder(from_string(prefix), to)
+pub fn prepend_string(
+  to second: BytesBuilder,
+  prefix first: String,
+) -> BytesBuilder {
+  append_builder(from_string(first), second)
 }
 
 /// Appends a string onto the end of a builder.
@@ -86,8 +92,11 @@ pub fn prepend_string(to: BytesBuilder, prefix: String) -> BytesBuilder {
 /// Runs in constant time when running on Erlang.
 /// Runs in linear time with the length of the string otherwise.
 ///
-pub fn append_string(to: BytesBuilder, suffix: String) -> BytesBuilder {
-  append_builder(to, from_string(suffix))
+pub fn append_string(
+  to first: BytesBuilder,
+  suffix second: String,
+) -> BytesBuilder {
+  append_builder(first, from_string(second))
 }
 
 /// Joins a list of builders into a single builder.
