@@ -6,6 +6,11 @@
 - The `map.filter` label `for` was renamed to `keeping`.
 - The `iterator.filter` label `for` was renamed to `keeping`.
 - The `list.filter` label `for` was renamed to `keeping`.
+- Updated for Gleam v0.32.0 syntax.
+- The `bit_string` module has been deprecated in favour of the new `bit_array`
+  module.
+- The `bit_builder` module has been deprecated in favour of the new
+  `bytes_builder` module.
 - Improved performance of `string.to_graphemes` on JavaScript.
 - The `iterator` module gains the `map2` function.
 - The `list` module gains the `key_filter` function.
