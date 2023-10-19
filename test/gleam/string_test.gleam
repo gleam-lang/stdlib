@@ -917,7 +917,7 @@ pub fn target_inspect_test() {
 @target(erlang)
 import gleam/regex
 @target(erlang)
-import gleam/dynamic.{Dynamic}
+import gleam/dynamic.{type Dynamic}
 
 // Test inspect on Erlang atoms valid and invalid in Gleam
 

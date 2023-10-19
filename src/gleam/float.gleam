@@ -1,4 +1,4 @@
-import gleam/order.{Order}
+import gleam/order.{type Order}
 
 /// Attempts to parse a string as a `Float`, returning `Error(Nil)` if it was
 /// not possible.

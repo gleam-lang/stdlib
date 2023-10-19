@@ -9,9 +9,9 @@
 
 import gleam/int
 import gleam/list
-import gleam/option.{None, Option, Some}
+import gleam/option.{type Option, None, Some}
 import gleam/string
-import gleam/string_builder.{StringBuilder}
+import gleam/string_builder.{type StringBuilder}
 @target(javascript)
 import gleam/pair
 @target(javascript)

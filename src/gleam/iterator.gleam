@@ -1,8 +1,8 @@
 import gleam/result
 import gleam/int
 import gleam/list
-import gleam/map.{Map}
-import gleam/option.{None, Option, Some}
+import gleam/map.{type Map}
+import gleam/option.{type Option, None, Some}
 import gleam/order
 
 // Internal private representation of an Iterator

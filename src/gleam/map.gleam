@@ -1,4 +1,4 @@
-import gleam/option.{Option}
+import gleam/option.{type Option}
 
 /// A dictionary of keys and values.
 ///

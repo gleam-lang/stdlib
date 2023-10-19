@@ -1,15 +1,15 @@
 //// Strings in Gleam are UTF-8 binaries. They can be written in your code as
 //// text surrounded by `"double quotes"`.
 
-import gleam/iterator.{Iterator}
+import gleam/iterator.{type Iterator}
 import gleam/list
-import gleam/option.{None, Option, Some}
+import gleam/option.{type Option, None, Some}
 import gleam/order
-import gleam/string_builder.{StringBuilder}
+import gleam/string_builder.{type StringBuilder}
 @target(erlang)
 import gleam/bit_string
 @target(erlang)
-import gleam/dynamic.{Dynamic}
+import gleam/dynamic.{type Dynamic}
 @target(erlang)
 import gleam/result
 
@@ -761,11 +761,11 @@ fn do_to_utf_codepoints(string: String) -> List(UtfCodepoint) {
 
 @target(erlang)
 fn do_to_utf_codepoints_impl(
-  bit_string: BitString,
+  bit_string: BitArray,
   acc: List(UtfCodepoint),
 ) -> List(UtfCodepoint) {
   case bit_string {
-    <<first:utf8_codepoint, rest:binary>> ->
+    <<first:utf8_codepoint, rest:bytes>> ->
       do_to_utf_codepoints_impl(rest, [first, ..acc])
     <<>> -> acc
   }
@@ -818,14 +818,11 @@ fn do_from_utf_codepoints(utf_codepoints: List(UtfCodepoint)) -> String {
 @target(erlang)
 fn do_from_utf_codepoints_impl(
   utf_codepoints: List(UtfCodepoint),
-  acc: BitString,
-) -> BitString {
+  acc: BitArray,
+) -> BitArray {
   case utf_codepoints {
     [first, ..rest] ->
-      do_from_utf_codepoints_impl(
-        rest,
-        <<acc:bit_string, first:utf8_codepoint>>,
-      )
+      do_from_utf_codepoints_impl(rest, <<acc:bits, first:utf8_codepoint>>)
     [] -> acc
   }
 }

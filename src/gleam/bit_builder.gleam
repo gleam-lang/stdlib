@@ -12,7 +12,7 @@
 ////
 //// On Erlang this type is compatible with Erlang's iolists.
 
-import gleam/string_builder.{StringBuilder}
+import gleam/string_builder.{type StringBuilder}
 @target(javascript)
 import gleam/list
 @target(javascript)
@@ -23,7 +23,7 @@ pub type BitBuilder
 
 @target(javascript)
 pub opaque type BitBuilder {
-  Bits(BitString)
+  Bits(BitArray)
   Text(StringBuilder)
   Many(List(BitBuilder))
 }
@@ -39,7 +39,7 @@ pub fn new() -> BitBuilder {
 ///
 /// Runs in constant time.
 ///
-pub fn prepend(to: BitBuilder, prefix: BitString) -> BitBuilder {
+pub fn prepend(to: BitBuilder, prefix: BitArray) -> BitBuilder {
   append_builder(from_bit_string(prefix), to)
 }
 
@@ -47,7 +47,7 @@ pub fn prepend(to: BitBuilder, prefix: BitString) -> BitBuilder {
 ///
 /// Runs in constant time.
 ///
-pub fn append(to: BitBuilder, suffix: BitString) -> BitBuilder {
+pub fn append(to: BitBuilder, suffix: BitArray) -> BitBuilder {
   append_builder(to, from_bit_string(suffix))
 }
 
@@ -121,16 +121,16 @@ fn do_concat(builders: List(BitBuilder)) -> BitBuilder {
 ///
 /// Runs in constant time.
 ///
-pub fn concat_bit_strings(bits: List(BitString)) -> BitBuilder {
+pub fn concat_bit_strings(bits: List(BitArray)) -> BitBuilder {
   do_concat_bit_strings(bits)
 }
 
 @target(erlang)
 @external(erlang, "gleam_stdlib", "identity")
-fn do_concat_bit_strings(a: List(BitString)) -> BitBuilder
+fn do_concat_bit_strings(a: List(BitArray)) -> BitBuilder
 
 @target(javascript)
-fn do_concat_bit_strings(bits: List(BitString)) -> BitBuilder {
+fn do_concat_bit_strings(bits: List(BitArray)) -> BitBuilder {
   bits
   |> list.map(fn(b) { from_bit_string(b) })
   |> concat()
@@ -176,16 +176,16 @@ fn do_from_string_builder(builder: StringBuilder) -> BitBuilder {
 ///
 /// Runs in constant time.
 ///
-pub fn from_bit_string(bits: BitString) -> BitBuilder {
+pub fn from_bit_string(bits: BitArray) -> BitBuilder {
   do_from_bit_string(bits)
 }
 
 @target(erlang)
 @external(erlang, "gleam_stdlib", "wrap_list")
-fn do_from_bit_string(a: BitString) -> BitBuilder
+fn do_from_bit_string(a: BitArray) -> BitBuilder
 
 @target(javascript)
-fn do_from_bit_string(bits: BitString) -> BitBuilder {
+fn do_from_bit_string(bits: BitArray) -> BitBuilder {
   Bits(bits)
 }
 
@@ -196,16 +196,16 @@ fn do_from_bit_string(bits: BitString) -> BitBuilder {
 /// When running on Erlang this function is implemented natively by the
 /// virtual machine and is highly optimised.
 ///
-pub fn to_bit_string(builder: BitBuilder) -> BitString {
+pub fn to_bit_string(builder: BitBuilder) -> BitArray {
   do_to_bit_string(builder)
 }
 
 @target(erlang)
 @external(erlang, "erlang", "list_to_bitstring")
-fn do_to_bit_string(a: BitBuilder) -> BitString
+fn do_to_bit_string(a: BitBuilder) -> BitArray
 
 @target(javascript)
-fn do_to_bit_string(builder: BitBuilder) -> BitString {
+fn do_to_bit_string(builder: BitBuilder) -> BitArray {
   [[builder]]
   |> to_list([])
   |> list.reverse
@@ -213,10 +213,7 @@ fn do_to_bit_string(builder: BitBuilder) -> BitString {
 }
 
 @target(javascript)
-fn to_list(
-  stack: List(List(BitBuilder)),
-  acc: List(BitString),
-) -> List(BitString) {
+fn to_list(stack: List(List(BitBuilder)), acc: List(BitArray)) -> List(BitArray) {
   case stack {
     [] -> acc
 
