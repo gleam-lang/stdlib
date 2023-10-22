@@ -960,7 +960,7 @@ pub fn inspect(term: anything) -> String {
 }
 
 @external(erlang, "gleam_stdlib", "inspect")
-@external(javascript, "../gleam.mjs", "inspect")
+@external(javascript, "../gleam_stdlib.mjs", "inspect")
 fn do_inspect(term term: anything) -> StringBuilder
 
 /// Returns the number of bytes in a `String`.
