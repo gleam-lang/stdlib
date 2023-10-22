@@ -317,7 +317,7 @@ fn do_filter(list: List(a), fun: fn(a) -> Bool, acc: List(a)) -> List(a) {
 /// []
 /// ```
 ///
-pub fn filter(list: List(a), for predicate: fn(a) -> Bool) -> List(a) {
+pub fn filter(list: List(a), keeping predicate: fn(a) -> Bool) -> List(a) {
   do_filter(list, predicate, [])
 }
 
