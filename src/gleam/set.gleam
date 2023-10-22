@@ -196,7 +196,7 @@ pub fn filter(
   in set: Set(member),
   for property: fn(member) -> Bool,
 ) -> Set(member) {
-  Set(map.filter(in: set.map, for: fn(m, _) { property(m) }))
+  Set(map.filter(in: set.map, keeping: fn(m, _) { property(m) }))
 }
 
 pub fn drop(from set: Set(member), drop disallowed: List(member)) -> Set(member) {

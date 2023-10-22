@@ -306,7 +306,10 @@ fn do_values(map: Map(k, v)) -> List(v) {
 /// from_list([#("a", 0), #("b", 1)])
 /// ```
 ///
-pub fn filter(in map: Map(k, v), for property: fn(k, v) -> Bool) -> Map(k, v) {
+pub fn filter(
+  in map: Map(k, v),
+  keeping property: fn(k, v) -> Bool,
+) -> Map(k, v) {
   do_filter(property, map)
 }
 
