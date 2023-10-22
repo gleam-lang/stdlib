@@ -194,9 +194,9 @@ pub fn fold(
 ///
 pub fn filter(
   in set: Set(member),
-  keeping property: fn(member) -> Bool,
+  keeping predicate: fn(member) -> Bool,
 ) -> Set(member) {
-  Set(map.filter(in: set.map, keeping: fn(m, _) { property(m) }))
+  Set(map.filter(in: set.map, keeping: fn(m, _) { predicate(m) }))
 }
 
 pub fn drop(from set: Set(member), drop disallowed: List(member)) -> Set(member) {

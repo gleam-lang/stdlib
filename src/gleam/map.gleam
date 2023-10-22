@@ -308,9 +308,9 @@ fn do_values(map: Map(k, v)) -> List(v) {
 ///
 pub fn filter(
   in map: Map(k, v),
-  keeping property: fn(k, v) -> Bool,
+  keeping predicate: fn(k, v) -> Bool,
 ) -> Map(k, v) {
-  do_filter(property, map)
+  do_filter(predicate, map)
 }
 
 @target(erlang)
