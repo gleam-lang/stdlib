@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- The `set.filter` label `for` was renamed to `keeping`.
 - The `map.filter` label `for` was renamed to `keeping`.
 - The `iterator.filter` label `for` was renamed to `keeping`.
 - The `list.filter` label `for` was renamed to `keeping`.

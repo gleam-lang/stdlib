@@ -194,7 +194,7 @@ pub fn fold(
 ///
 pub fn filter(
   in set: Set(member),
-  for property: fn(member) -> Bool,
+  keeping property: fn(member) -> Bool,
 ) -> Set(member) {
   Set(map.filter(in: set.map, keeping: fn(m, _) { property(m) }))
 }
