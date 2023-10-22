@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- The `iterator.filter` label `for` was renamed to `keeping`.
 - The `list.filter` label `for` was renamed to `keeping`.
 - Improved performance of `string.to_graphemes` on JavaScript.
 - The `iterator` module gains the `map2` function.
