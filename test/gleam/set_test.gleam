@@ -68,7 +68,7 @@ pub fn fold_test() {
 pub fn filter_test() {
   [1, 4, 6, 3, 675, 44, 67]
   |> set.from_list()
-  |> set.filter(for: int.is_even)
+  |> set.filter(keeping: int.is_even)
   |> set.to_list
   |> list.sort(int.compare)
   |> should.equal([4, 6, 44])
