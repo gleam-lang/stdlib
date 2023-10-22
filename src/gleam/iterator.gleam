@@ -573,7 +573,7 @@ fn do_filter(
 ///
 pub fn filter(
   iterator: Iterator(a),
-  for predicate: fn(a) -> Bool,
+  keeping predicate: fn(a) -> Bool,
 ) -> Iterator(a) {
   fn() { do_filter(iterator.continuation, predicate) }
   |> Iterator
