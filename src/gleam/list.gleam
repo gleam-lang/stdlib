@@ -280,7 +280,7 @@ fn update_group(
 ///   #("Successful", [Ok(73), Ok(200), Ok(3)])
 /// ]
 ///
-/// > group(from: [1,2,3,4,5], with: fn(i) {fn(i) { i - i / 3 * 3 }})
+/// > group([1,2,3,4,5], by: fn(i) { i - i / 3 * 3 })
 /// |> map.to_list
 /// [#(0, [3]), #(1, [4, 1]), #(2, [5, 2])]
 /// ```
