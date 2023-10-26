@@ -4,37 +4,37 @@ import gleam/option.{None, Some}
 import gleam/result
 import gleam/should
 
-pub fn bit_string_test() {
+pub fn bit_array_test() {
   <<>>
   |> dynamic.from
-  |> dynamic.bit_string
+  |> dynamic.bit_array
   |> should.equal(Ok(<<>>))
 
   <<"Hello":utf8>>
   |> dynamic.from
-  |> dynamic.bit_string
+  |> dynamic.bit_array
   |> should.equal(Ok(<<"Hello":utf8>>))
 
   1
   |> dynamic.from
-  |> dynamic.bit_string
+  |> dynamic.bit_array
   |> should.equal(Error([
-    DecodeError(expected: "BitString", found: "Int", path: []),
+    DecodeError(expected: "BitArray", found: "Int", path: []),
   ]))
 
   []
   |> dynamic.from
-  |> dynamic.bit_string
+  |> dynamic.bit_array
   |> should.equal(Error([
-    DecodeError(expected: "BitString", found: "List", path: []),
+    DecodeError(expected: "BitArray", found: "List", path: []),
   ]))
 }
 
 @target(erlang)
-pub fn bit_string_erlang_test() {
+pub fn bit_array_erlang_test() {
   <<65_535:16>>
   |> dynamic.from
-  |> dynamic.bit_string
+  |> dynamic.bit_array
   |> should.equal(Ok(<<65_535:16>>))
 }
 
@@ -43,10 +43,10 @@ pub fn bit_string_erlang_test() {
 fn uint8array(a: List(Int)) -> dynamic.Dynamic
 
 @target(javascript)
-pub fn bit_string_erlang_test() {
+pub fn bit_array_erlang_test() {
   [1, 1, 2, 3, 5, 8]
   |> uint8array
-  |> dynamic.bit_string
+  |> dynamic.bit_array
   |> should.equal(Ok(<<1, 1, 2, 3, 5, 8>>))
 }
 
@@ -107,7 +107,7 @@ pub fn string_non_utf8_test() {
   |> dynamic.from
   |> dynamic.string
   |> should.equal(Error([
-    DecodeError(expected: "String", found: "BitString", path: []),
+    DecodeError(expected: "String", found: "BitArray", path: []),
   ]))
 }
 

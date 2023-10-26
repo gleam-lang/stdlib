@@ -5,10 +5,10 @@
          decode_field/2, parse_int/1, parse_float/1, less_than/2,
          string_pop_grapheme/1, string_starts_with/2, wrap_list/1,
          string_ends_with/2, string_pad/4, decode_map/1, uri_parse/1,
-         bit_string_int_to_u32/1, bit_string_int_from_u32/1, decode_result/1,
-         bit_string_slice/3, decode_bit_string/1, compile_regex/2, regex_scan/2,
+         bit_array_int_to_u32/1, bit_array_int_from_u32/1, decode_result/1,
+         bit_array_slice/3, decode_bit_array/1, compile_regex/2, regex_scan/2,
          percent_encode/1, percent_decode/1, regex_check/2, regex_split/2,
-         base_decode64/1, parse_query/1, bit_string_concat/1, size_of_tuple/1,
+         base_decode64/1, parse_query/1, bit_array_concat/1, size_of_tuple/1,
          decode_tuple/1, decode_tuple2/1, decode_tuple3/1, decode_tuple4/1,
          decode_tuple5/1, decode_tuple6/1, tuple_get/2, classify_dynamic/1,
          print/1, println/1, print_error/1, println_error/1, inspect/1,
@@ -51,7 +51,7 @@ decode_error(Expected, Got) when is_binary(Expected) andalso is_binary(Got) ->
 classify_dynamic(nil) -> <<"Nil">>;
 classify_dynamic(X) when is_atom(X) -> <<"Atom">>;
 classify_dynamic(X) when is_binary(X) -> <<"String">>;
-classify_dynamic(X) when is_bitstring(X) -> <<"BitString">>;
+classify_dynamic(X) when is_bitstring(X) -> <<"BitArray">>;
 classify_dynamic(X) when is_integer(X) -> <<"Int">>;
 classify_dynamic(X) when is_float(X) -> <<"Float">>;
 classify_dynamic(X) when is_list(X) -> <<"List">>;
@@ -70,8 +70,8 @@ classify_dynamic(_) -> <<"Some other type">>.
 decode_map(Data) when is_map(Data) -> {ok, Data};
 decode_map(Data) -> decode_error_msg(<<"Map">>, Data).
 
-decode_bit_string(Data) when is_bitstring(Data) -> {ok, Data};
-decode_bit_string(Data) -> decode_error_msg(<<"BitString">>, Data).
+decode_bit_array(Data) when is_bitstring(Data) -> {ok, Data};
+decode_bit_array(Data) -> decode_error_msg(<<"BitArray">>, Data).
 
 decode_int(Data) when is_integer(Data) -> {ok, Data};
 decode_int(Data) -> decode_error_msg(<<"Int">>, Data).
@@ -196,22 +196,22 @@ string_pop_grapheme(String) ->
         _ -> {error, nil}
     end.
 
-bit_string_concat(BitStrings) ->
-    list_to_bitstring(BitStrings).
+bit_array_concat(BitArrays) ->
+    list_to_bitstring(BitArrays).
 
-bit_string_slice(Bin, Pos, Len) ->
+bit_array_slice(Bin, Pos, Len) ->
     try {ok, binary:part(Bin, Pos, Len)}
     catch error:badarg -> {error, nil}
     end.
 
-bit_string_int_to_u32(I) when 0 =< I, I < 4294967296 ->
+bit_array_int_to_u32(I) when 0 =< I, I < 4294967296 ->
     {ok, <<I:32>>};
-bit_string_int_to_u32(_) ->
+bit_array_int_to_u32(_) ->
     {error, nil}.
 
-bit_string_int_from_u32(<<I:32>>) ->
+bit_array_int_from_u32(<<I:32>>) ->
     {ok, I};
-bit_string_int_from_u32(_) ->
+bit_array_int_from_u32(_) ->
     {error, nil}.
 
 compile_regex(String, Options) ->

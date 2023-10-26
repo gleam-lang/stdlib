@@ -484,7 +484,7 @@ pub fn utf_codepoint_test() {
   |> should.be_error
 }
 
-pub fn bit_string_utf_codepoint_test() {
+pub fn bit_array_utf_codepoint_test() {
   let assert Ok(snake) = string.utf_codepoint(128_013)
   should.equal(<<snake:utf8_codepoint>>, <<"🐍":utf8>>)
 }
@@ -907,7 +907,7 @@ pub fn target_inspect_test() {
   string.inspect(#(1.0))
   |> should.equal("#(1)")
 
-  // Unlike on Erlang, on JavaScript `BitString` and `String` do have a
+  // Unlike on Erlang, on JavaScript `BitArray` and `String` do have a
   // different runtime representation.
   <<"abc":utf8>>
   |> string.inspect()
@@ -971,7 +971,7 @@ pub fn target_inspect_test() {
   |> regex.check(regular_expression, _)
   |> should.be_true
 
-  // On Erlang the representation between `String` and `BitString` is
+  // On Erlang the representation between `String` and `BitArray` is
   // indistinguishable at runtime.
   <<"abc":utf8>>
   |> string.inspect()

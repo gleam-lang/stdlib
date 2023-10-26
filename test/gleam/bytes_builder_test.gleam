@@ -61,7 +61,7 @@ pub fn concat_test() {
   |> should.equal(<<1, 2, 3, 4, 5, 6>>)
 }
 
-pub fn concat_bit_strings_test() {
+pub fn concat_bit_arrays_test() {
   bytes_builder.concat_bit_arrays([<<"h":utf8>>, <<"e":utf8>>, <<"y":utf8>>])
   |> bytes_builder.to_bit_array
   |> should.equal(<<"hey":utf8>>)

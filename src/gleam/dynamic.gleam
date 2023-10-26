@@ -5,7 +5,7 @@ import gleam/option.{type Option}
 import gleam/result
 import gleam/string_builder
 @target(erlang)
-import gleam/bit_string
+import gleam/bit_array
 
 /// `Dynamic` data is data that we don't know the type of yet.
 /// We likely get data like this from interop with Erlang, or from
@@ -60,28 +60,33 @@ pub fn dynamic(value: Dynamic) -> Result(Dynamic, List(DecodeError)) {
   Ok(value)
 }
 
-/// Checks to see whether a `Dynamic` value is a bit_string, and returns that bit string if
-/// it is.
+/// Checks to see whether a `Dynamic` value is a bit array, and returns that bit
+/// array if it is.
 ///
 /// ## Examples
 ///
 /// ```gleam
-/// > bit_string(from("Hello")) == bit_string.from_string("Hello")
+/// > bit_array(from("Hello")) == bit_array.from_string("Hello")
 /// True
 /// ```
 ///
 /// ```gleam
-/// > bit_string(from(123))
-/// Error([DecodeError(expected: "BitString", found: "Int", path: [])])
+/// > bit_array(from(123))
+/// Error([DecodeError(expected: "BitArray", found: "Int", path: [])])
 /// ```
 ///
-pub fn bit_string(from data: Dynamic) -> Result(BitArray, DecodeErrors) {
-  decode_bit_string(data)
+pub fn bit_array(from data: Dynamic) -> Result(BitArray, DecodeErrors) {
+  decode_bit_array(data)
 }
 
-@external(erlang, "gleam_stdlib", "decode_bit_string")
-@external(javascript, "../gleam_stdlib.mjs", "decode_bit_string")
-fn decode_bit_string(a: Dynamic) -> Result(BitArray, DecodeErrors)
+@deprecated("Please use `bit_array` instead")
+pub fn bit_string(from data: Dynamic) -> Result(BitArray, DecodeErrors) {
+  bit_array(data)
+}
+
+@external(erlang, "gleam_stdlib", "decode_bit_array")
+@external(javascript, "../gleam_stdlib.mjs", "decode_bit_array")
+fn decode_bit_array(a: Dynamic) -> Result(BitArray, DecodeErrors)
 
 /// Checks to see whether a `Dynamic` value is a string, and returns that string if
 /// it is.
@@ -111,13 +116,13 @@ fn map_errors(
 
 @target(erlang)
 fn decode_string(data: Dynamic) -> Result(String, DecodeErrors) {
-  bit_string(data)
+  bit_array(data)
   |> map_errors(put_expected(_, "String"))
   |> result.try(fn(raw) {
-    case bit_string.to_string(raw) {
+    case bit_array.to_string(raw) {
       Ok(string) -> Ok(string)
       Error(Nil) ->
-        Error([DecodeError(expected: "String", found: "BitString", path: [])])
+        Error([DecodeError(expected: "String", found: "BitArray", path: [])])
     }
   })
 }

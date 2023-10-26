@@ -1,7 +1,7 @@
-import gleam/bit_string
+import gleam/bit_array
 import gleam/string
 
-/// Encodes a BitString into a base 64 encoded string.
+/// Encodes a BitArray into a base 64 encoded string.
 ///
 pub fn encode64(input: BitArray, padding: Bool) -> String {
   let encoded = do_encode64(input)
@@ -15,10 +15,10 @@ pub fn encode64(input: BitArray, padding: Bool) -> String {
 @external(javascript, "../gleam_stdlib.mjs", "encode64")
 fn do_encode64(a: BitArray) -> String
 
-/// Decodes a base 64 encoded string into a `BitString`.
+/// Decodes a base 64 encoded string into a `BitArray`.
 ///
 pub fn decode64(encoded: String) -> Result(BitArray, Nil) {
-  let padded = case bit_string.byte_size(bit_string.from_string(encoded)) % 4 {
+  let padded = case bit_array.byte_size(bit_array.from_string(encoded)) % 4 {
     0 -> encoded
     n -> string.append(encoded, string.repeat("=", 4 - n))
   }
@@ -29,7 +29,7 @@ pub fn decode64(encoded: String) -> Result(BitArray, Nil) {
 @external(javascript, "../gleam_stdlib.mjs", "decode64")
 fn do_decode64(a: String) -> Result(BitArray, Nil)
 
-/// Encodes a `BitString` into a base 64 encoded string with URL and filename safe alphabet.
+/// Encodes a `BitArray` into a base 64 encoded string with URL and filename safe alphabet.
 ///
 pub fn url_encode64(input: BitArray, padding: Bool) -> String {
   encode64(input, padding)
@@ -37,7 +37,7 @@ pub fn url_encode64(input: BitArray, padding: Bool) -> String {
   |> string.replace("/", "_")
 }
 
-/// Decodes a base 64 encoded string with URL and filename safe alphabet into a `BitString`.
+/// Decodes a base 64 encoded string with URL and filename safe alphabet into a `BitArray`.
 ///
 pub fn url_decode64(encoded: String) -> Result(BitArray, Nil) {
   encoded
