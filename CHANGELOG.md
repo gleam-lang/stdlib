@@ -7,6 +7,8 @@
 - The `iterator.filter` label `for` was renamed to `keeping`.
 - The `list.filter` label `for` was renamed to `keeping`.
 - Updated for Gleam v0.32.0 syntax.
+- The `base` module has been deprecated in favour of the new `bit_array`
+  module.
 - The `bit_string` module has been deprecated in favour of the new `bit_array`
   module.
 - The `bit_builder` module has been deprecated in favour of the new
