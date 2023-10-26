@@ -900,10 +900,6 @@ fn do_inspect(term term: anything) -> StringBuilder
 /// This function runs in constant time on Erlang and in linear time on
 /// JavaScript.
 ///
-pub fn byte_size(string: String) -> Int {
-  do_byte_size(string)
-}
-
 @external(erlang, "erlang", "byte_size")
 @external(javascript, "../gleam_stdlib.mjs", "byte_size")
-fn do_byte_size(a: String) -> Int
+pub fn byte_size(string: String) -> Int
