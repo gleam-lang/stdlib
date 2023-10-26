@@ -13,6 +13,8 @@
   module.
 - The `bit_builder` module has been deprecated in favour of the new
   `bytes_builder` module.
+- The `bit_array` module also contains the `base16_encode` and `base16_decode`
+  functions.
 - Improved performance of `string.to_graphemes` on JavaScript.
 - The `iterator` module gains the `map2` function.
 - The `list` module gains the `key_filter` function.
