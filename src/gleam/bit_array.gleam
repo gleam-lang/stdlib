@@ -1,5 +1,7 @@
 //// BitArrays are a sequence of binary data of any length.
 
+import gleam/string
+
 /// Converts a UTF-8 `String` type into a `BitArray`.
 ///
 @external(erlang, "gleam_stdlib", "identity")
@@ -100,3 +102,48 @@ fn do_to_string(a: BitArray) -> Result(String, Nil)
 @external(erlang, "gleam_stdlib", "bit_array_concat")
 @external(javascript, "../gleam_stdlib.mjs", "bit_array_concat")
 pub fn concat(bit_arrays: List(BitArray)) -> BitArray
+
+/// Encodes a BitArray into a base 64 encoded string.
+///
+pub fn base64_encode(input: BitArray, padding: Bool) -> String {
+  let encoded = encode64(input)
+  case padding {
+    True -> encoded
+    False -> string.replace(encoded, "=", "")
+  }
+}
+
+@external(erlang, "base64", "encode")
+@external(javascript, "../gleam_stdlib.mjs", "encode64")
+fn encode64(a: BitArray) -> String
+
+/// Decodes a base 64 encoded string into a `BitArray`.
+///
+pub fn base64_decode(encoded: String) -> Result(BitArray, Nil) {
+  let padded = case byte_size(from_string(encoded)) % 4 {
+    0 -> encoded
+    n -> string.append(encoded, string.repeat("=", 4 - n))
+  }
+  decode64(padded)
+}
+
+@external(erlang, "gleam_stdlib", "base_decode64")
+@external(javascript, "../gleam_stdlib.mjs", "decode64")
+fn decode64(a: String) -> Result(BitArray, Nil)
+
+/// Encodes a `BitArray` into a base 64 encoded string with URL and filename safe alphabet.
+///
+pub fn base64_url_encode(input: BitArray, padding: Bool) -> String {
+  base64_encode(input, padding)
+  |> string.replace("+", "-")
+  |> string.replace("/", "_")
+}
+
+/// Decodes a base 64 encoded string with URL and filename safe alphabet into a `BitArray`.
+///
+pub fn base64_url_decode(encoded: String) -> Result(BitArray, Nil) {
+  encoded
+  |> string.replace("-", "+")
+  |> string.replace("_", "/")
+  |> base64_decode()
+}

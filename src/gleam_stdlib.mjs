@@ -9,7 +9,6 @@ import {
   toBitArray,
   NonEmpty,
   CustomType,
-  BitArray,
 } from "./gleam.mjs";
 import {
   CompileError as RegexCompileError,
@@ -225,8 +224,8 @@ export function crop_string(string, substring) {
   return string.substring(string.indexOf(substring));
 }
 
-export function index_of(haystack, needle) {
-  return haystack.indexOf(needle) | 0;
+export function contains_string(haystack, needle) {
+  return haystack.indexOf(needle) >= 0;
 }
 
 export function starts_with(haystack, needle) {

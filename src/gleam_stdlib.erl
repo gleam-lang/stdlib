@@ -1,31 +1,33 @@
 -module(gleam_stdlib).
 
--export([map_get/2, iodata_append/2, identity/1, decode_int/1, decode_bool/1,
-         decode_float/1, decode_list/1, decode_option/2,
-         decode_field/2, parse_int/1, parse_float/1, less_than/2,
-         string_pop_grapheme/1, string_starts_with/2, wrap_list/1,
-         string_ends_with/2, string_pad/4, decode_map/1, uri_parse/1,
-         bit_array_int_to_u32/1, bit_array_int_from_u32/1, decode_result/1,
-         bit_array_slice/3, decode_bit_array/1, compile_regex/2, regex_scan/2,
-         percent_encode/1, percent_decode/1, regex_check/2, regex_split/2,
-         base_decode64/1, parse_query/1, bit_array_concat/1, size_of_tuple/1,
-         decode_tuple/1, decode_tuple2/1, decode_tuple3/1, decode_tuple4/1,
-         decode_tuple5/1, decode_tuple6/1, tuple_get/2, classify_dynamic/1,
-         print/1, println/1, print_error/1, println_error/1, inspect/1,
-         float_to_string/1, int_from_base_string/2]).
+-export([
+    map_get/2, iodata_append/2, identity/1, decode_int/1, decode_bool/1,
+    decode_float/1, decode_list/1, decode_option/2, decode_field/2, parse_int/1,
+    parse_float/1, less_than/2, string_pop_grapheme/1, string_starts_with/2,
+    wrap_list/1, string_ends_with/2, string_pad/4, decode_map/1, uri_parse/1,
+    bit_array_int_to_u32/1, bit_array_int_from_u32/1, decode_result/1,
+    bit_array_slice/3, decode_bit_array/1, compile_regex/2, regex_scan/2,
+    percent_encode/1, percent_decode/1, regex_check/2, regex_split/2,
+    base_decode64/1, parse_query/1, bit_array_concat/1, size_of_tuple/1,
+    decode_tuple/1, decode_tuple2/1, decode_tuple3/1, decode_tuple4/1,
+    decode_tuple5/1, decode_tuple6/1, tuple_get/2, classify_dynamic/1, print/1,
+    println/1, print_error/1, println_error/1, inspect/1, float_to_string/1,
+    int_from_base_string/2, utf_codepoint_list_to_string/1, contains_string/2,
+    crop_string/2
+]).
 
 %% Taken from OTP's uri_string module
 -define(DEC2HEX(X),
-        if ((X) >= 0) andalso ((X) =< 9) -> (X) + $0;
-           ((X) >= 10) andalso ((X) =< 15) -> (X) + $A - 10
-        end).
+    if ((X) >= 0) andalso ((X) =< 9) -> (X) + $0;
+        ((X) >= 10) andalso ((X) =< 15) -> (X) + $A - 10
+    end).
 
 %% Taken from OTP's uri_string module
 -define(HEX2DEC(X),
-        if ((X) >= $0) andalso ((X) =< $9) -> (X) - $0;
-           ((X) >= $A) andalso ((X) =< $F) -> (X) - $A + 10;
-           ((X) >= $a) andalso ((X) =< $f) -> (X) - $a + 10
-        end).
+    if ((X) >= $0) andalso ((X) =< $9) -> (X) - $0;
+        ((X) >= $A) andalso ((X) =< $F) -> (X) - $A + 10;
+        ((X) >= $a) andalso ((X) =< $f) -> (X) - $a + 10
+    end).
 
 -define(is_lowercase_char(X), (X > 96 andalso X < 123)).
 -define(is_underscore_char(X), (X == 95)).
@@ -473,3 +475,18 @@ inspect_maybe_utf8_string(Binary, Acc) ->
 
 float_to_string(Float) when is_float(Float) ->
     erlang:iolist_to_binary(io_lib_format:fwrite_g(Float)).
+
+utf_codepoint_list_to_string(List) ->
+    case unicode:characters_to_binary(List) of
+        {error, _} -> erlang:error({gleam_error, {string_invalid_utf8, List}});
+        Binary -> Binary
+    end.
+
+crop_string(String, Prefix) ->
+    case string:find(String, Prefix) of
+        nomatch -> String;
+        New -> New
+    end.
+
+contains_string(String, Substring) ->
+    is_bitstring(string:find(String, Substring)).
