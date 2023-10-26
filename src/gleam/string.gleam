@@ -7,7 +7,7 @@ import gleam/option.{type Option, None, Some}
 import gleam/order
 import gleam/string_builder.{type StringBuilder}
 @target(erlang)
-import gleam/bit_string
+import gleam/bit_array
 @target(erlang)
 import gleam/dynamic.{type Dynamic}
 @target(erlang)
@@ -338,7 +338,7 @@ pub fn contains(does haystack: String, contain needle: String) -> Bool {
 fn do_contains(haystack: String, needle: String) -> Bool {
   haystack
   |> erl_contains(needle)
-  |> dynamic.bit_string
+  |> dynamic.bit_array
   |> result.is_ok
 }
 
@@ -755,16 +755,16 @@ pub fn to_utf_codepoints(string: String) -> List(UtfCodepoint) {
 
 @target(erlang)
 fn do_to_utf_codepoints(string: String) -> List(UtfCodepoint) {
-  do_to_utf_codepoints_impl(bit_string.from_string(string), [])
+  do_to_utf_codepoints_impl(bit_array.from_string(string), [])
   |> list.reverse
 }
 
 @target(erlang)
 fn do_to_utf_codepoints_impl(
-  bit_string: BitArray,
+  bit_array: BitArray,
   acc: List(UtfCodepoint),
 ) -> List(UtfCodepoint) {
-  case bit_string {
+  case bit_array {
     <<first:utf8_codepoint, rest:bytes>> ->
       do_to_utf_codepoints_impl(rest, [first, ..acc])
     <<>> -> acc
@@ -810,8 +810,8 @@ pub fn from_utf_codepoints(utf_codepoints: List(UtfCodepoint)) -> String {
 @target(erlang)
 fn do_from_utf_codepoints(utf_codepoints: List(UtfCodepoint)) -> String {
   let assert Ok(string) =
-    do_from_utf_codepoints_impl(utf_codepoints, bit_string.from_string(""))
-    |> bit_string.to_string
+    do_from_utf_codepoints_impl(utf_codepoints, bit_array.from_string(""))
+    |> bit_array.to_string
   string
 }
 

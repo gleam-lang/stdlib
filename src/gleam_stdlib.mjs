@@ -1,12 +1,12 @@
 import {
-  BitString,
+  BitArray,
   Error,
   List,
   Ok,
   Result,
   UtfCodepoint,
   stringBits,
-  toBitString,
+  toBitArray,
   NonEmpty,
   CustomType,
   BitArray,
@@ -260,12 +260,12 @@ export function trim_right(string) {
   return string.trimRight();
 }
 
-export function bit_string_from_string(string) {
-  return toBitString([stringBits(string)]);
+export function bit_array_from_string(string) {
+  return toBitArray([stringBits(string)]);
 }
 
-export function bit_string_concat(bit_strings) {
-  return toBitString(bit_strings.toArray().map((b) => b.buffer));
+export function bit_array_concat(bit_arrays) {
+  return toBitArray(bit_arrays.toArray().map((b) => b.buffer));
 }
 
 export function console_log(term) {
@@ -280,10 +280,10 @@ export function crash(message) {
   throw new globalThis.Error(message);
 }
 
-export function bit_string_to_string(bit_string) {
+export function bit_array_to_string(bit_array) {
   try {
     const decoder = new TextDecoder("utf-8", { fatal: true });
-    return new Ok(decoder.decode(bit_string.buffer));
+    return new Ok(decoder.decode(bit_array.buffer));
   } catch (_error) {
     return new Error(Nil);
   }
@@ -360,12 +360,12 @@ export function random_uniform() {
   return random_uniform_result;
 }
 
-export function bit_string_slice(bits, position, length) {
+export function bit_array_slice(bits, position, length) {
   const start = Math.min(position, position + length);
   const end = Math.max(position, position + length);
   if (start < 0 || end > bits.length) return new Error(Nil);
   const buffer = new Uint8Array(bits.buffer.buffer, start, Math.abs(length));
-  return new Ok(new BitString(buffer));
+  return new Ok(new BitArray(buffer));
 }
 
 export function codepoint(int) {
@@ -481,8 +481,8 @@ export function parse_query(query) {
 }
 
 // From https://developer.mozilla.org/en-US/docs/Glossary/Base64#Solution_2_%E2%80%93_rewrite_the_DOMs_atob()_and_btoa()_using_JavaScript's_TypedArrays_and_UTF-8
-export function encode64(bit_string) {
-  const aBytes = bit_string.buffer;
+export function encode64(bit_array) {
+  const aBytes = bit_array.buffer;
   let nMod3 = 2;
   let sB64Enc = "";
 
@@ -562,7 +562,7 @@ export function decode64(sBase64) {
     }
   }
 
-  return new Ok(new BitString(taBytes));
+  return new Ok(new BitArray(taBytes));
 }
 
 export function classify_dynamic(data) {
@@ -572,8 +572,8 @@ export function classify_dynamic(data) {
     return "Result";
   } else if (data instanceof List) {
     return "List";
-  } else if (data instanceof BitString) {
-    return "BitString";
+  } else if (data instanceof BitArray) {
+    return "BitArray";
   } else if (data instanceof PMap) {
     return "Map";
   } else if (Number.isInteger(data)) {
@@ -620,14 +620,14 @@ export function decode_bool(data) {
   return typeof data === "boolean" ? new Ok(data) : decoder_error("Bool", data);
 }
 
-export function decode_bit_string(data) {
-  if (data instanceof BitString) {
+export function decode_bit_array(data) {
+  if (data instanceof BitArray) {
     return new Ok(data);
   }
   if (data instanceof Uint8Array) {
-    return new Ok(new BitString(data));
+    return new Ok(new BitArray(data));
   }
-  return decoder_error("BitString", data);
+  return decoder_error("BitArray", data);
 }
 
 export function decode_tuple(data) {

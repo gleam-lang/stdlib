@@ -3,7 +3,7 @@
 /// Converts a UTF-8 `String` type into a `BitArray`.
 ///
 @external(erlang, "gleam_stdlib", "identity")
-@external(javascript, "../gleam_stdlib.mjs", "bit_string_from_string")
+@external(javascript, "../gleam_stdlib.mjs", "bit_array_from_string")
 pub fn from_string(x: String) -> BitArray
 
 /// Returns an integer which is the number of bytes in the bit array.
@@ -33,8 +33,8 @@ pub fn append(to first: BitArray, suffix second: BitArray) -> BitArray {
 ///
 /// This function runs in constant time.
 ///
-@external(erlang, "gleam_stdlib", "bit_string_slice")
-@external(javascript, "../gleam_stdlib.mjs", "bit_string_slice")
+@external(erlang, "gleam_stdlib", "bit_array_slice")
+@external(javascript, "../gleam_stdlib.mjs", "bit_array_slice")
 pub fn slice(
   from string: BitArray,
   at position: Int,
@@ -85,7 +85,7 @@ fn do_to_string(bits: BitArray) -> Result(String, Nil) {
 }
 
 @target(javascript)
-@external(javascript, "../gleam_stdlib.mjs", "bit_string_to_string")
+@external(javascript, "../gleam_stdlib.mjs", "bit_array_to_string")
 fn do_to_string(a: BitArray) -> Result(String, Nil)
 
 /// Creates a new bit array by joining multiple binaries.
@@ -97,6 +97,6 @@ fn do_to_string(a: BitArray) -> Result(String, Nil)
 /// from_string("butterfly")
 /// ```
 ///
-@external(erlang, "gleam_stdlib", "bit_string_concat")
-@external(javascript, "../gleam_stdlib.mjs", "bit_string_concat")
-pub fn concat(bit_strings: List(BitArray)) -> BitArray
+@external(erlang, "gleam_stdlib", "bit_array_concat")
+@external(javascript, "../gleam_stdlib.mjs", "bit_array_concat")
+pub fn concat(bit_arrays: List(BitArray)) -> BitArray
