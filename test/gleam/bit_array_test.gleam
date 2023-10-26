@@ -133,3 +133,89 @@ pub fn is_utf8_test() {
   |> bit_array.is_utf8
   |> should.be_false
 }
+
+pub fn base64_encode_test() {
+  <<255, 127, 254, 252>>
+  |> bit_array.base64_encode(True)
+  |> should.equal("/3/+/A==")
+
+  <<255, 127, 254, 252>>
+  |> bit_array.base64_encode(False)
+  |> should.equal("/3/+/A")
+
+  <<0, 0, 0>>
+  |> bit_array.base64_encode(True)
+  |> should.equal("AAAA")
+
+  <<>>
+  |> bit_array.base64_encode(True)
+  |> should.equal("")
+}
+
+pub fn base64_decode_test() {
+  "/3/+/A=="
+  |> bit_array.base64_decode()
+  |> should.equal(Ok(<<255, 127, 254, 252>>))
+
+  "/3/+/A"
+  |> bit_array.base64_decode()
+  |> should.equal(Ok(<<255, 127, 254, 252>>))
+
+  "AAAA"
+  |> bit_array.base64_decode()
+  |> should.equal(Ok(<<0, 0, 0>>))
+
+  ""
+  |> bit_array.base64_decode()
+  |> should.equal(Ok(<<>>))
+
+  ")!"
+  |> bit_array.base64_decode()
+  |> should.equal(Error(Nil))
+}
+
+pub fn base64_url_encode_test() {
+  <<255, 127, 254, 252>>
+  |> bit_array.base64_url_encode(True)
+  |> should.equal("_3_-_A==")
+
+  <<255, 127, 254, 252>>
+  |> bit_array.base64_url_encode(False)
+  |> should.equal("_3_-_A")
+
+  <<0, 0, 0>>
+  |> bit_array.base64_url_encode(True)
+  |> should.equal("AAAA")
+
+  <<>>
+  |> bit_array.base64_url_encode(True)
+  |> should.equal("")
+}
+
+pub fn base64_url_decode_test() {
+  "_3_-_A=="
+  |> bit_array.base64_url_decode()
+  |> should.equal(Ok(<<255, 127, 254, 252>>))
+
+  "_3_-_A"
+  |> bit_array.base64_url_decode()
+  |> should.equal(Ok(<<255, 127, 254, 252>>))
+
+  "AAAA"
+  |> bit_array.base64_url_decode()
+  |> should.equal(Ok(<<0, 0, 0>>))
+
+  ""
+  |> bit_array.base64_url_decode()
+  |> should.equal(Ok(<<>>))
+
+  ")!"
+  |> bit_array.base64_url_decode()
+  |> should.equal(Error(Nil))
+}
+
+pub fn decode64_crash_regression_1_test() {
+  "aGktdGhlcmU.uWUWvrAleKQ2jsWcU97H-RPJ5qRRcE_s"
+  |> bit_array.base64_decode()
+  |> should.equal(Error(Nil))
+}

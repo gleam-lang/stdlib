@@ -6,12 +6,6 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/order
 import gleam/string_builder.{type StringBuilder}
-@target(erlang)
-import gleam/bit_array
-@target(erlang)
-import gleam/dynamic.{type Dynamic}
-@target(erlang)
-import gleam/result
 
 /// Determines if a `String` is empty.
 ///
@@ -259,25 +253,9 @@ fn do_slice(string: String, idx: Int, len: Int) -> String {
 /// "Lone Gunmen"
 /// ```
 ///
-pub fn crop(from string: String, before substring: String) -> String {
-  do_crop(string, substring)
-}
-
-@target(erlang)
-fn do_crop(string: String, substring: String) -> String {
-  string
-  |> erl_contains(substring)
-  |> dynamic.string()
-  |> result.unwrap(string)
-}
-
-@target(erlang)
-@external(erlang, "string", "find")
-fn erl_contains(a: String, b: String) -> Dynamic
-
-@target(javascript)
+@external(erlang, "gleam_stdlib", "crop_string")
 @external(javascript, "../gleam_stdlib.mjs", "crop_string")
-fn do_crop(a: String, b: String) -> String
+pub fn crop(from string: String, before substring: String) -> String
 
 /// Drops *n* graphemes from the left side of a `String`.
 ///
@@ -330,26 +308,9 @@ pub fn drop_right(from string: String, up_to num_graphemes: Int) -> String {
 /// False
 /// ```
 ///
-pub fn contains(does haystack: String, contain needle: String) -> Bool {
-  do_contains(haystack, needle)
-}
-
-@target(erlang)
-fn do_contains(haystack: String, needle: String) -> Bool {
-  haystack
-  |> erl_contains(needle)
-  |> dynamic.bit_array
-  |> result.is_ok
-}
-
-@target(javascript)
-fn do_contains(haystack: String, needle: String) -> Bool {
-  index_of(haystack, needle) != -1
-}
-
-@target(javascript)
-@external(javascript, "../gleam_stdlib.mjs", "index_of")
-fn index_of(a: String, b: String) -> Int
+@external(erlang, "gleam_stdlib", "contains_string")
+@external(javascript, "../gleam_stdlib.mjs", "contains_string")
+pub fn contains(does haystack: String, contain needle: String) -> Bool
 
 /// Checks whether the first `String` starts with the second one.
 ///
@@ -755,7 +716,7 @@ pub fn to_utf_codepoints(string: String) -> List(UtfCodepoint) {
 
 @target(erlang)
 fn do_to_utf_codepoints(string: String) -> List(UtfCodepoint) {
-  do_to_utf_codepoints_impl(bit_array.from_string(string), [])
+  do_to_utf_codepoints_impl(<<string:utf8>>, [])
   |> list.reverse
 }
 
@@ -803,38 +764,9 @@ fn string_to_codepoint_integer_list(a: String) -> List(Int)
 /// "abc"
 /// ```
 ///
-pub fn from_utf_codepoints(utf_codepoints: List(UtfCodepoint)) -> String {
-  do_from_utf_codepoints(utf_codepoints)
-}
-
-@target(erlang)
-fn do_from_utf_codepoints(utf_codepoints: List(UtfCodepoint)) -> String {
-  let assert Ok(string) =
-    do_from_utf_codepoints_impl(utf_codepoints, bit_array.from_string(""))
-    |> bit_array.to_string
-  string
-}
-
-@target(erlang)
-fn do_from_utf_codepoints_impl(
-  utf_codepoints: List(UtfCodepoint),
-  acc: BitArray,
-) -> BitArray {
-  case utf_codepoints {
-    [first, ..rest] ->
-      do_from_utf_codepoints_impl(rest, <<acc:bits, first:utf8_codepoint>>)
-    [] -> acc
-  }
-}
-
-@target(javascript)
-fn do_from_utf_codepoints(utf_codepoints: List(UtfCodepoint)) -> String {
-  utf_codepoint_list_to_string(utf_codepoints)
-}
-
-@target(javascript)
+@external(erlang, "gleam_stdlib", "utf_codepoint_list_to_string")
 @external(javascript, "../gleam_stdlib.mjs", "utf_codepoint_list_to_string")
-fn utf_codepoint_list_to_string(a: List(UtfCodepoint)) -> String
+pub fn from_utf_codepoints(utf_codepoints: List(UtfCodepoint)) -> String
 
 /// Converts an integer to a `UtfCodepoint`.
 ///
