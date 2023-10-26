@@ -147,3 +147,11 @@ pub fn base64_url_decode(encoded: String) -> Result(BitArray, Nil) {
   |> string.replace("_", "/")
   |> base64_decode()
 }
+
+@external(erlang, "binary", "encode_hex")
+@external(javascript, "../gleam_stdlib.mjs", "base16_encode")
+pub fn base16_encode(input: BitArray) -> String
+
+@external(erlang, "gleam_stdlib", "base16_decode")
+@external(javascript, "../gleam_stdlib.mjs", "base16_decode")
+pub fn base16_decode(input: String) -> Result(BitArray, Nil)

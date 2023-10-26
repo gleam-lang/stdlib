@@ -842,3 +842,22 @@ export function inspectBitArray(bits) {
 export function inspectUtfCodepoint(codepoint) {
   return `//utfcodepoint(${String.fromCodePoint(codepoint.value)})`;
 }
+
+export function base16_encode(bit_array) {
+  let result = "";
+  for (const byte of bit_array.buffer) {
+    result += byte.toString(16).padStart(2, "0").toUpperCase();
+  }
+  return result;
+}
+
+export function base16_decode(string) {
+  const bytes = new Uint8Array(string.length / 2);
+  for (let i = 0; i < string.length; i += 2) {
+    const a = parseInt(string[i], 16);
+    const b = parseInt(string[i + 1], 16);
+    if (isNaN(a) || isNaN(b)) return new Error(Nil);
+    bytes[i / 2] = a * 16 + b;
+  }
+  return new Ok(new BitArray(bytes));
+}
