@@ -390,6 +390,8 @@ inspect(Binary) when is_binary(Binary) ->
             Segments = [erlang:integer_to_list(X) || <<X>> <= Binary],
             ["<<", lists:join(", ", Segments), ">>"]
     end;
+inspect(Bits) when is_bitstring(Bits) ->
+    inspect_bit_array(Bits);
 inspect(List) when is_list(List) ->
     case inspect_list(List) of
         {proper, Elements} -> ["[", Elements, "]"];
@@ -456,6 +458,28 @@ inspect_list([First | Rest]) when is_list(Rest) ->
     {Kind, [inspect(First), <<", ">> | Inspected]};
 inspect_list([First | ImproperTail]) ->
     {improper, [inspect(First), <<" | ">>, inspect(ImproperTail)]}.
+
+inspect_bit_array(Bits) ->
+    Text = inspect_bit_array(Bits, <<"<<">>),
+    <<Text/binary, ">>">>.
+
+inspect_bit_array(<<>>, Acc) ->
+    Acc;
+inspect_bit_array(<<X, Rest/bitstring>>, Acc) ->
+    inspect_bit_array(Rest, append_segment(Acc, erlang:integer_to_binary(X)));
+inspect_bit_array(Rest, Acc) ->
+    Size = bit_size(Rest),
+    <<X:Size>> = Rest,
+    X1 = erlang:integer_to_binary(X),
+    Size1 = erlang:integer_to_binary(Size),
+    Segment = <<X1/binary, ":size(", Size1/binary, ")">>,
+    inspect_bit_array(<<>>, append_segment(Acc, Segment)).
+
+append_segment(<<"<<">>, Segment) ->
+    <<"<<", Segment/binary>>;
+append_segment(Acc, Segment) ->
+    <<Acc/binary, ", ", Segment/binary>>.
+
 
 inspect_maybe_utf8_string(Binary, Acc) ->
     case Binary of

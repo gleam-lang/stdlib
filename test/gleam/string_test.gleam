@@ -1066,6 +1066,13 @@ pub fn inspect_erlang_atom_with_leading_digit_invalid_in_gleam_test() {
   |> should.equal("atom.create_from_string(\"1Ok\")")
 }
 
+@target(erlang)
+pub fn fifteen_bit_int_test() {
+  <<2, 3:size(7)>>
+  |> string.inspect
+  |> should.equal("<<2, 3:size(7)>>")
+}
+
 pub fn byte_size_test() {
   let assert 0 = string.byte_size("")
   let assert 1 = string.byte_size("a")
