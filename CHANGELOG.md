@@ -20,6 +20,8 @@
 - The `list` module gains the `key_filter` function.
 - Fixed a bug on target JavaScript where `Map` equality would not be correctly
   checked for maps of different sizes.
+- Fixed a bug where non-byte aligned bit arrays would be printed suboptimally by
+  `string.inspect`.
 
 ## v0.31.0 - 2023-09-25
 
