@@ -786,8 +786,9 @@ pub fn utf_codepoint(value: Int) -> Result(UtfCodepoint, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// > utf_codepoint_to_int(128013) |> to_utf_codepoint_int
-/// 128013
+/// > let [utf_codepoint, ..] = to_utf_codepoints("💜")
+/// > utf_codepoint_to_int(utf_codepoint)
+/// 128156
 /// ```
 ///
 pub fn utf_codepoint_to_int(cp: UtfCodepoint) -> Int {
@@ -896,7 +897,7 @@ pub fn inspect(term: anything) -> String {
 fn do_inspect(term term: anything) -> StringBuilder
 
 /// Returns the number of bytes in a `String`.
-/// 
+///
 /// This function runs in constant time on Erlang and in linear time on
 /// JavaScript.
 ///
