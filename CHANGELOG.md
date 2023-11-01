@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.32.0 - 2023-11-01
 
 - The `set.filter` label `for` was renamed to `keeping`.
 - The `map.filter` label `for` was renamed to `keeping`.
