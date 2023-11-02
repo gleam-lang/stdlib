@@ -786,7 +786,7 @@ pub fn utf_codepoint(value: Int) -> Result(UtfCodepoint, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// > let [utf_codepoint, ..] = to_utf_codepoints("💜")
+/// > let assert [utf_codepoint, ..] = to_utf_codepoints("💜")
 /// > utf_codepoint_to_int(utf_codepoint)
 /// 128156
 /// ```
