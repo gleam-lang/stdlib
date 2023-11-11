@@ -1,3 +1,17 @@
+//// Functions for working with floats.
+////
+//// ## Division by zero
+////
+//// Gleam runs on the Erlang virtual machine, which does not follow the IEEE
+//// 754 standard for floating point arithmetic and does not have an `Infinity`
+//// value.  In Erlang division by zero results in a crash, however Gleam does
+//// not have partial functions and operators in core so instead division by zero
+//// returns zero, a behaviour taken from Pony, Coq, and Lean.
+////
+//// This may seem unexpected at first, but it is no less mathematically valid
+//// than crashing or returning a special value. Division by zero is undefined
+//// in mathematics.
+
 import gleam/order.{type Order}
 
 /// Attempts to parse a string as a `Float`, returning `Error(Nil)` if it was

@@ -1,3 +1,15 @@
+//// Functions for working with integers.
+////
+//// ## Division by zero
+////
+//// In Erlang division by zero results in a crash, however Gleam does not have
+//// partial functions and operators in core so instead division by zero returns
+//// zero, a behaviour taken from Pony, Coq, and Lean.
+////
+//// This may seem unexpected at first, but it is no less mathematically valid
+//// than crashing or returning a special value. Division by zero is undefined
+//// in mathematics.
+
 import gleam/float
 import gleam/order.{type Order}
 
