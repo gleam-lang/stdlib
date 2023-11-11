@@ -796,6 +796,7 @@ export function inspect(v) {
   if (v instanceof UtfCodepoint) return inspectUtfCodepoint(v);
   if (v instanceof BitArray) return inspectBitArray(v);
   if (v instanceof CustomType) return inspectCustomType(v);
+  if (v instanceof PMap) return inspectMap(v);
   if (v instanceof Set) return `//js(Set(${[...v].map(inspect).join(", ")}))`;
   if (v instanceof RegExp) return `//js(${v})`;
   if (v instanceof Date) return `//js(Date("${v.toISOString()}"))`;
@@ -806,6 +807,17 @@ export function inspect(v) {
     return `//fn(${args.join(", ")}) { ... }`;
   }
   return inspectObject(v);
+}
+
+function inspectMap(map) {
+  let body = "map.from_list([";
+  let first = true;
+  map.forEach((value, key) => {
+    if (!first) body = body + ", ";
+    body = body + "#(" + inspect(key) + ", " + inspect(value) + ")";
+    first = false;
+  });
+  return body + "])";
 }
 
 function inspectObject(v) {
