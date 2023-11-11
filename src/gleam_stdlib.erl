@@ -373,6 +373,12 @@ inspect(false) ->
     "False";
 inspect(nil) ->
     "Nil";
+inspect(Data) when is_map(Data) ->
+    Fields = [
+        [<<"#(">>, inspect(Key), <<", ">>, inspect(Value), <<")">>]
+        || {Key, Value} <- maps:to_list(Data)
+    ],
+    ["map.from_list([", lists:join(", ", Fields), "])"];
 inspect(Atom) when is_atom(Atom) ->
     Binary = erlang:atom_to_binary(Atom),
     case inspect_maybe_gleam_atom(Binary, none, <<>>) of

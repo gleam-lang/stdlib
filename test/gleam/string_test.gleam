@@ -1,4 +1,5 @@
 import gleam/option.{None, Some}
+import gleam/map
 import gleam/order
 import gleam/should
 import gleam/string
@@ -1085,4 +1086,10 @@ pub fn byte_size_test() {
   let assert 4 = string.byte_size("👩")
   let assert 8 = string.byte_size("👩🏾")
   let assert 15 = string.byte_size("👩🏾‍🦰")
+}
+
+pub fn inspect_map_test() {
+  map.from_list([#("a", 1), #("b", 2)])
+  |> string.inspect
+  |> should.equal("map.from_list([#(\"a\", 1), #(\"b\", 2)])")
 }
