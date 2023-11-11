@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.32.1 - 2023-11-11
+
+- The printing of maps by `string.inspect` has been improved.
+
 ## v0.32.0 - 2023-11-01
 
 - The `set.filter` label `for` was renamed to `keeping`.
