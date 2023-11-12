@@ -742,6 +742,7 @@ pub fn tuple3(
 /// > from(#(1, 2.0, "3", 4))
 /// > |> tuple4(int, float, string, int)
 /// Ok(#(1, 2.0, "3", 4))
+/// ```
 ///
 /// ```gleam
 /// > from([1, 2, 3, 4])
@@ -755,6 +756,7 @@ pub fn tuple3(
 /// Ok(#(1, 2.0, "3", 4))
 /// ```
 ///
+/// ```gleam
 /// > from(#(1, 2))
 /// > |> tuple4(int, float, string, int)
 /// Error([
