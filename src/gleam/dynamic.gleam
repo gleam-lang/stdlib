@@ -827,7 +827,9 @@ pub fn tuple4(
 /// Error([
 ///   DecodeError(expected: "Tuple of 5 elements", found: "Tuple of 2 elements", path: [])),
 /// ])
+/// ```
 ///
+/// ```gleam
 /// > from("")
 /// > |> tuple5(int, float, string, int, int)
 /// Error([DecodeError(expected: "Tuple of 5 elements", found: "String", path: [])])
