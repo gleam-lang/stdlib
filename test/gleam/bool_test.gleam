@@ -167,3 +167,15 @@ pub fn guard_test() {
     1
   }
 }
+
+pub fn lazy_guard_test() {
+  let assert 2 = {
+    use <- bool.lazy_guard(when: True, return: fn() { 2 })
+    1
+  }
+
+  let assert 1 = {
+    use <- bool.lazy_guard(when: False, return: fn() { 2 })
+    1
+  }
+}
