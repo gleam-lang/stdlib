@@ -386,3 +386,43 @@ pub fn guard(
     False -> alternative()
   }
 }
+
+/// Runs a callback function if the given bool is `True`, otherwise runs an
+/// alternative callback function.
+///
+/// Useful when further computation should be delayed regardless of the given
+/// bool's value.
+///
+/// See [`guard`](#guard) for more info.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > let name = "Kamaka"
+/// > let inquiry = fn() { "How may we address you?" }
+/// > use <- lazy_guard(when: name == "", return: inquiry)
+/// > "Hello, " <> name
+/// "Hello, Kamaka"
+/// ```
+///
+/// ```gleam
+/// > import gleam/int
+/// > let name = ""
+/// > let greeting = fn() { "Hello, " <> name }
+/// > use <- lazy_guard(when: name == "", otherwise: greeting)
+/// > let number = int.random(1, 99)
+/// > let name = "User " <> int.to_string(number)
+/// > "Welcome, " <> name
+/// "Welcome, User 54"
+/// ```
+///
+pub fn lazy_guard(
+  when requirement: Bool,
+  return consequence: fn() -> a,
+  otherwise alternative: fn() -> a,
+) -> a {
+  case requirement {
+    True -> consequence()
+    False -> alternative()
+  }
+}

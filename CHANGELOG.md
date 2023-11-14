@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- The `bool` module gains the `lazy_guard` function.
+
 ## v0.32.1 - 2023-11-11
 
 - The printing of maps by `string.inspect` has been improved.
