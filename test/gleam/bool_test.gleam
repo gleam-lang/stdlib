@@ -169,13 +169,15 @@ pub fn guard_test() {
 }
 
 pub fn lazy_guard_test() {
+  let oops = fn() { panic as "this shouldn't run!" }
+
   let assert 2 = {
-    use <- bool.lazy_guard(when: True, return: fn() { 2 })
-    1
+    use <- bool.lazy_guard(when: True, otherwise: oops)
+    2
   }
 
   let assert 1 = {
-    use <- bool.lazy_guard(when: False, return: fn() { 2 })
+    use <- bool.lazy_guard(when: False, return: oops)
     1
   }
 }
