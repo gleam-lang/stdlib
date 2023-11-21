@@ -951,7 +951,7 @@ pub fn tuple6(
 /// Error(DecodeError(expected: "Map", found: "String", path: []))
 /// ```
 ///
-pub fn map(
+pub fn dict(
   of key_type: Decoder(k),
   to value_type: Decoder(v),
 ) -> Decoder(Dict(k, v)) {
@@ -975,6 +975,14 @@ pub fn map(
     )
     Ok(dict.from_list(pairs))
   }
+}
+
+@deprecated("Use `dict` instead")
+pub fn map(
+  of key_type: Decoder(k),
+  to value_type: Decoder(v),
+) -> Decoder(Dict(k, v)) {
+  dict(key_type, value_type)
 }
 
 @external(erlang, "gleam_stdlib", "decode_map")
