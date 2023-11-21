@@ -5,6 +5,8 @@
 - The `bool` module gains the `lazy_guard` function.
 - The `gleam/map` module has been deprecated in favour of the `gleam/dict`
   module.
+- The `map` function in the `gleam/dynamic` module has been deprecated in favour
+  of the `dict` function.
 
 ## v0.32.1 - 2023-11-11
 
