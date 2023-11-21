@@ -814,19 +814,19 @@ function forEach(root, fn) {
   }
 }
 /**
- * Extra wrapper to keep track of map size and clean up the API
+ * Extra wrapper to keep track of Dict size and clean up the API
  * @template K,V
  */
-export default class PMap {
+export default class Dict {
   /**
    * @template V
    * @param {Record<string,V>} o
-   * @returns {PMap<string,V>}
+   * @returns {Dict<string,V>}
    */
   static fromObject(o) {
     const keys = Object.keys(o);
-    /** @type PMap<string,V> */
-    let m = PMap.new();
+    /** @type Dict<string,V> */
+    let m = Dict.new();
     for (let i = 0; i < keys.length; i++) {
       const k = keys[i];
       m = m.set(k, o[k]);
@@ -836,18 +836,18 @@ export default class PMap {
   /**
    * @template K,V
    * @param {Map<K,V>} o
-   * @returns {PMap<K,V>}
+   * @returns {Dict<K,V>}
    */
   static fromMap(o) {
-    /** @type PMap<K,V> */
-    let m = PMap.new();
+    /** @type Dict<K,V> */
+    let m = Dict.new();
     o.forEach((v, k) => {
       m = m.set(k, v);
     });
     return m;
   }
   static new() {
-    return new PMap(undefined, 0);
+    return new Dict(undefined, 0);
   }
   /**
    * @param {undefined | Node<K,V>} root
@@ -876,7 +876,7 @@ export default class PMap {
   /**
    * @param {K} key
    * @param {V} val
-   * @returns {PMap<K,V>}
+   * @returns {Dict<K,V>}
    */
   set(key, val) {
     const addedLeaf = { val: false };
@@ -885,11 +885,11 @@ export default class PMap {
     if (newRoot === this.root) {
       return this;
     }
-    return new PMap(newRoot, addedLeaf.val ? this.size + 1 : this.size);
+    return new Dict(newRoot, addedLeaf.val ? this.size + 1 : this.size);
   }
   /**
    * @param {K} key
-   * @returns {PMap<K,V>}
+   * @returns {Dict<K,V>}
    */
   delete(key) {
     if (this.root === undefined) {
@@ -900,9 +900,9 @@ export default class PMap {
       return this;
     }
     if (newRoot === undefined) {
-      return PMap.new();
+      return Dict.new();
     }
-    return new PMap(newRoot, this.size - 1);
+    return new Dict(newRoot, this.size - 1);
   }
   /**
    * @param {K} key
@@ -945,7 +945,7 @@ export default class PMap {
    * @returns {boolean}
    */
   equals(o) {
-    if (!(o instanceof PMap) || this.size !== o.size) {
+    if (!(o instanceof Dict) || this.size !== o.size) {
       return false;
     }
     let equal = true;
