@@ -2,7 +2,7 @@ import gleam/float
 import gleam/pair
 import gleam/int
 import gleam/list
-import gleam/map
+import gleam/dict
 import gleam/should
 
 @target(erlang)
@@ -103,17 +103,17 @@ pub fn group_test() {
     }
   })
   |> should.equal(
-    map.new()
-    |> map.insert("Failed", [Error("Wrong")])
-    |> map.insert("Successful", [Ok(1), Ok(200), Ok(10)]),
+    dict.new()
+    |> dict.insert("Failed", [Error("Wrong")])
+    |> dict.insert("Successful", [Ok(1), Ok(200), Ok(10)]),
   )
 
   list.group([1, 2, 3, 4, 5], fn(i) { i - i / 3 * 3 })
   |> should.equal(
-    map.new()
-    |> map.insert(0, [3])
-    |> map.insert(1, [4, 1])
-    |> map.insert(2, [5, 2]),
+    dict.new()
+    |> dict.insert(0, [3])
+    |> dict.insert(1, [4, 1])
+    |> dict.insert(2, [5, 2]),
   )
 }
 

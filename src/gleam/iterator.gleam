@@ -1,7 +1,7 @@
 import gleam/result
 import gleam/int
 import gleam/list
-import gleam/map.{type Map}
+import gleam/dict.{type Dict}
 import gleam/option.{type Option, None, Some}
 import gleam/order
 
@@ -1161,14 +1161,14 @@ fn update_group_with(el: element) -> fn(Option(List(element))) -> List(element) 
 
 fn group_updater(
   f: fn(element) -> key,
-) -> fn(Map(key, List(element)), element) -> Map(key, List(element)) {
+) -> fn(Dict(key, List(element)), element) -> Dict(key, List(element)) {
   fn(groups, elem) {
     groups
-    |> map.update(f(elem), update_group_with(elem))
+    |> dict.update(f(elem), update_group_with(elem))
   }
 }
 
-/// Returns a `Map(k, List(element))` of elements from the given iterator
+/// Returns a `Dict(k, List(element))` of elements from the given iterator
 /// grouped with the given key function.
 ///
 /// The order within each group is preserved from the iterator.
@@ -1177,16 +1177,16 @@ fn group_updater(
 ///
 /// ```gleam
 /// > from_list([1, 2, 3, 4, 5, 6]) |> group(by: fn(n) { n % 3 })
-/// map.from_list([#(0, [3, 6]), #(1, [1, 4]), #(2, [2, 5])])
+/// dict.from_list([#(0, [3, 6]), #(1, [1, 4]), #(2, [2, 5])])
 /// ```
 ///
 pub fn group(
   in iterator: Iterator(element),
   by key: fn(element) -> key,
-) -> Map(key, List(element)) {
+) -> Dict(key, List(element)) {
   iterator
-  |> fold(map.new(), group_updater(key))
-  |> map.map_values(fn(_, group) { list.reverse(group) })
+  |> fold(dict.new(), group_updater(key))
+  |> dict.map_values(fn(_, group) { list.reverse(group) })
 }
 
 /// This function acts similar to fold, but does not take an initial state.

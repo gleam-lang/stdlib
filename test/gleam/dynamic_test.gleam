@@ -1,5 +1,5 @@
 import gleam/dynamic.{DecodeError}
-import gleam/map
+import gleam/dict
 import gleam/option.{None, Some}
 import gleam/result
 import gleam/should
@@ -293,34 +293,34 @@ pub fn javascript_object_field_test() {
 }
 
 pub fn field_test() {
-  map.new()
-  |> map.insert("ok", 1)
+  dict.new()
+  |> dict.insert("ok", 1)
   |> dynamic.from
   |> dynamic.field(named: "ok", of: dynamic.int)
   |> should.equal(Ok(1))
 
-  map.new()
-  |> map.insert("ok", 1.0)
+  dict.new()
+  |> dict.insert("ok", 1.0)
   |> dynamic.from
   |> dynamic.field(named: "ok", of: dynamic.float)
   |> should.equal(Ok(1.0))
 
-  map.new()
-  |> map.insert("ok", 3)
-  |> map.insert("error", 1)
+  dict.new()
+  |> dict.insert("ok", 3)
+  |> dict.insert("error", 1)
   |> dynamic.from
   |> dynamic.field("ok", dynamic.int)
   |> should.equal(Ok(3))
 
-  map.new()
-  |> map.insert("ok", 3)
+  dict.new()
+  |> dict.insert("ok", 3)
   |> dynamic.from
   |> dynamic.field("ok", dynamic.string)
   |> should.equal(Error([
     DecodeError(expected: "String", found: "Int", path: ["ok"]),
   ]))
 
-  map.new()
+  dict.new()
   |> dynamic.from
   |> dynamic.field("ok", dynamic.int)
   |> should.equal(Error([
@@ -337,8 +337,8 @@ pub fn field_test() {
   |> dynamic.field("ok", dynamic.int)
   |> should.equal(Error([DecodeError(expected: "Map", found: "List", path: [])]))
 
-  map.new()
-  |> map.insert("ok", 1)
+  dict.new()
+  |> dict.insert("ok", 1)
   |> dynamic.from
   |> dynamic.field("ok", dynamic.field("not_a_field", dynamic.int))
   |> should.equal(Error([
@@ -347,46 +347,46 @@ pub fn field_test() {
 }
 
 pub fn optional_field_test() {
-  map.new()
-  |> map.insert("ok", 1)
+  dict.new()
+  |> dict.insert("ok", 1)
   |> dynamic.from
   |> dynamic.optional_field(named: "ok", of: dynamic.int)
   |> should.equal(Ok(Some(1)))
 
-  map.new()
-  |> map.insert("ok", 1.0)
+  dict.new()
+  |> dict.insert("ok", 1.0)
   |> dynamic.from
   |> dynamic.optional_field(named: "ok", of: dynamic.float)
   |> should.equal(Ok(Some(1.0)))
 
-  map.new()
-  |> map.insert("ok", 3)
-  |> map.insert("error", 1)
+  dict.new()
+  |> dict.insert("ok", 3)
+  |> dict.insert("error", 1)
   |> dynamic.from
   |> dynamic.optional_field("ok", dynamic.int)
   |> should.equal(Ok(Some(3)))
 
-  map.new()
-  |> map.insert("ok", 3)
+  dict.new()
+  |> dict.insert("ok", 3)
   |> dynamic.from
   |> dynamic.optional_field("ok", dynamic.string)
   |> should.equal(Error([
     DecodeError(expected: "String", found: "Int", path: ["ok"]),
   ]))
 
-  map.new()
-  |> map.insert("ok", None)
+  dict.new()
+  |> dict.insert("ok", None)
   |> dynamic.from
   |> dynamic.optional_field("ok", dynamic.int)
   |> should.equal(Ok(None))
 
-  map.new()
-  |> map.insert("ok", Nil)
+  dict.new()
+  |> dict.insert("ok", Nil)
   |> dynamic.from
   |> dynamic.optional_field("ok", dynamic.int)
   |> should.equal(Ok(None))
 
-  map.new()
+  dict.new()
   |> dynamic.from
   |> dynamic.optional_field("ok", dynamic.int)
   |> should.equal(Ok(None))
@@ -459,8 +459,8 @@ pub fn element_test() {
   |> dynamic.element(0, dynamic.int)
   |> should.equal(Error([DecodeError(expected: "Tuple", found: "Int", path: [])]))
 
-  map.new()
-  |> map.insert(1, "ok")
+  dict.new()
+  |> dict.insert(1, "ok")
   |> dynamic.from
   |> dynamic.element(0, dynamic.int)
   |> should.equal(Error([DecodeError(expected: "Tuple", found: "Map", path: [])]))
@@ -999,24 +999,24 @@ pub fn nested_tuples_test() {
 }
 
 pub fn map_test() {
-  map.new()
+  dict.new()
   |> dynamic.from
   |> dynamic.map(dynamic.string, dynamic.int)
-  |> should.equal(Ok(map.new()))
+  |> should.equal(Ok(dict.new()))
 
-  map.from_list([#("a", 1), #("b", 2)])
+  dict.from_list([#("a", 1), #("b", 2)])
   |> dynamic.from
   |> dynamic.map(dynamic.string, dynamic.int)
-  |> should.equal(Ok(map.from_list([#("a", 1), #("b", 2)])))
+  |> should.equal(Ok(dict.from_list([#("a", 1), #("b", 2)])))
 
-  map.from_list([#("a", 1), #("b", 2)])
+  dict.from_list([#("a", 1), #("b", 2)])
   |> dynamic.from
   |> dynamic.map(dynamic.int, dynamic.int)
   |> should.equal(Error([
     DecodeError(expected: "Int", found: "String", path: ["keys"]),
   ]))
 
-  map.from_list([#("a", 1), #("b", 2)])
+  dict.from_list([#("a", 1), #("b", 2)])
   |> dynamic.from
   |> dynamic.map(dynamic.string, dynamic.string)
   |> should.equal(Error([
