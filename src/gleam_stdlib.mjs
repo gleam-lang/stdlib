@@ -16,7 +16,7 @@ import {
 } from "./gleam/regex.mjs";
 import { DecodeError } from "./gleam/dynamic.mjs";
 import { Some, None } from "./gleam/option.mjs";
-import PMap from "./persistent-hash-map.mjs";
+import Dict from "./dict.mjs";
 
 const Nil = undefined;
 const NOT_FOUND = {};
@@ -422,7 +422,7 @@ export function regex_scan(regex, string) {
 }
 
 export function new_map() {
-  return PMap.new();
+  return Dict.new();
 }
 
 export function map_size(map) {
@@ -573,7 +573,7 @@ export function classify_dynamic(data) {
     return "List";
   } else if (data instanceof BitArray) {
     return "BitArray";
-  } else if (data instanceof PMap) {
+  } else if (data instanceof Dict) {
     return "Map";
   } else if (Number.isInteger(data)) {
     return "Int";
@@ -697,8 +697,8 @@ export function decode_result(data) {
 }
 
 export function decode_map(data) {
-  if (data instanceof PMap) {
-    return new Ok(PMap.fromMap(data));
+  if (data instanceof Dict) {
+    return new Ok(Dict.fromMap(data));
   }
   if (data == null) {
     return decoder_error("Map", data);
@@ -708,7 +708,7 @@ export function decode_map(data) {
   }
   const proto = Object.getPrototypeOf(data);
   if (proto === Object.prototype || proto === null) {
-    return new Ok(PMap.fromObject(data));
+    return new Ok(Dict.fromObject(data));
   }
   return decoder_error("Map", data);
 }
@@ -729,7 +729,7 @@ export function decode_field(value, name) {
   const not_a_map_error = () => decoder_error("Map", value);
 
   if (
-    value instanceof PMap ||
+    value instanceof Dict ||
     value instanceof WeakMap ||
     value instanceof Map
   ) {
@@ -796,7 +796,7 @@ export function inspect(v) {
   if (v instanceof UtfCodepoint) return inspectUtfCodepoint(v);
   if (v instanceof BitArray) return inspectBitArray(v);
   if (v instanceof CustomType) return inspectCustomType(v);
-  if (v instanceof PMap) return inspectMap(v);
+  if (v instanceof Dict) return inspectDict(v);
   if (v instanceof Set) return `//js(Set(${[...v].map(inspect).join(", ")}))`;
   if (v instanceof RegExp) return `//js(${v})`;
   if (v instanceof Date) return `//js(Date("${v.toISOString()}"))`;
@@ -809,8 +809,8 @@ export function inspect(v) {
   return inspectObject(v);
 }
 
-function inspectMap(map) {
-  let body = "map.from_list([";
+function inspectDict(map) {
+  let body = "dict.from_list([";
   let first = true;
   map.forEach((value, key) => {
     if (!first) body = body + ", ";
