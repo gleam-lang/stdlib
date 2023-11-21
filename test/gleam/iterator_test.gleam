@@ -1,6 +1,6 @@
 import gleam/iterator.{Done, Next}
 import gleam/list
-import gleam/map
+import gleam/dict
 import gleam/should
 
 // a |> from_list |> to_list == a
@@ -480,7 +480,7 @@ pub fn all_test() {
 pub fn group_test() {
   iterator.from_list([1, 2, 3, 4, 5, 6])
   |> iterator.group(by: fn(n) { n % 3 })
-  |> should.equal(map.from_list([#(0, [3, 6]), #(1, [1, 4]), #(2, [2, 5])]))
+  |> should.equal(dict.from_list([#(0, [3, 6]), #(1, [1, 4]), #(2, [2, 5])]))
 }
 
 pub fn reduce_test() {

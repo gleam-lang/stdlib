@@ -1,6 +1,6 @@
 import gleam/int
 import gleam/list
-import gleam/map.{type Map}
+import gleam/dict.{type Dict}
 import gleam/option.{type Option}
 import gleam/result
 import gleam/string_builder
@@ -400,9 +400,9 @@ fn decode_optional(a: Dynamic, b: Decoder(a)) -> Result(Option(a), DecodeErrors)
 /// ## Examples
 ///
 /// ```gleam
-/// > import gleam/map
-/// > map.new()
-/// > |> map.insert("Hello", "World")
+/// > import gleam/dict
+/// > dict.new()
+/// > |> dict.insert("Hello", "World")
 /// > |> from
 /// > |> field(named: "Hello", of: string)
 /// Ok("World")
@@ -434,17 +434,17 @@ pub fn field(named name: a, of inner_type: Decoder(t)) -> Decoder(t) {
 /// ## Examples
 ///
 /// ```gleam
-/// > import gleam/map
-/// > map.new()
-/// > |> map.insert("Hello", "World")
+/// > import gleam/dict
+/// > dict.new()
+/// > |> dict.insert("Hello", "World")
 /// > |> from
 /// > |> field(named: "Hello", of: string)
 /// Ok(Some("World"))
 /// ```
 ///
 /// ```gleam
-/// > import gleam/map
-/// > map.new()
+/// > import gleam/dict
+/// > dict.new()
 /// > |> from
 /// > |> field(named: "Hello", of: string)
 /// Ok(None)
@@ -931,14 +931,14 @@ pub fn tuple6(
   }
 }
 
-/// Checks to see if a `Dynamic` value is a map.
+/// Checks to see if a `Dynamic` value is a dict.
 ///
 /// ## Examples
 ///
 /// ```gleam
-/// > import gleam/map
-/// > map.new() |> from |> map(string, int)
-/// Ok(map.new())
+/// > import gleam/dict
+/// > dict.new() |> from |> map(string, int)
+/// Ok(dict.new())
 /// ```
 ///
 /// ```gleam
@@ -954,12 +954,12 @@ pub fn tuple6(
 pub fn map(
   of key_type: Decoder(k),
   to value_type: Decoder(v),
-) -> Decoder(Map(k, v)) {
+) -> Decoder(Dict(k, v)) {
   fn(value) {
     use map <- result.try(decode_map(value))
     use pairs <- result.try(
       map
-      |> map.to_list
+      |> dict.to_list
       |> list.try_map(fn(pair) {
         let #(k, v) = pair
         use k <- result.try(
@@ -973,13 +973,13 @@ pub fn map(
         Ok(#(k, v))
       }),
     )
-    Ok(map.from_list(pairs))
+    Ok(dict.from_list(pairs))
   }
 }
 
 @external(erlang, "gleam_stdlib", "decode_map")
 @external(javascript, "../gleam_stdlib.mjs", "decode_map")
-fn decode_map(a: Dynamic) -> Result(Map(Dynamic, Dynamic), DecodeErrors)
+fn decode_map(a: Dynamic) -> Result(Dict(Dynamic, Dynamic), DecodeErrors)
 
 /// Joins multiple decoders into one. When run they will each be tried in turn
 /// until one succeeds, or they all fail.

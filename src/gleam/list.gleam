@@ -26,7 +26,7 @@ import gleam/int
 import gleam/float
 import gleam/order.{type Order}
 import gleam/pair
-import gleam/map.{type Map}
+import gleam/dict.{type Dict}
 
 /// An error value returned by the `strict_zip` function.
 ///
@@ -249,11 +249,11 @@ pub fn rest(list: List(a)) -> Result(List(a), Nil) {
 
 fn update_group(
   f: fn(element) -> key,
-) -> fn(Map(key, List(element)), element) -> Map(key, List(element)) {
+) -> fn(Dict(key, List(element)), element) -> Dict(key, List(element)) {
   fn(groups, elem) {
-    case map.get(groups, f(elem)) {
-      Ok(existing) -> map.insert(groups, f(elem), [elem, ..existing])
-      Error(_) -> map.insert(groups, f(elem), [elem])
+    case dict.get(groups, f(elem)) {
+      Ok(existing) -> dict.insert(groups, f(elem), [elem, ..existing])
+      Error(_) -> dict.insert(groups, f(elem), [elem])
     }
   }
 }
@@ -273,7 +273,7 @@ fn update_group(
 ///       Error(_) -> "Failed"
 ///     }
 ///   })
-///   |> map.to_list
+///   |> dict.to_list
 ///
 /// [
 ///   #("Failed", [Error("Wrong")]),
@@ -281,12 +281,12 @@ fn update_group(
 /// ]
 ///
 /// > group([1,2,3,4,5], by: fn(i) { i - i / 3 * 3 })
-/// |> map.to_list
+/// |> dict.to_list
 /// [#(0, [3]), #(1, [4, 1]), #(2, [5, 2])]
 /// ```
 ///
-pub fn group(list: List(v), by key: fn(v) -> k) -> Map(k, List(v)) {
-  fold(list, map.new(), update_group(key))
+pub fn group(list: List(v), by key: fn(v) -> k) -> Dict(k, List(v)) {
+  fold(list, dict.new(), update_group(key))
 }
 
 fn do_filter(list: List(a), fun: fn(a) -> Bool, acc: List(a)) -> List(a) {

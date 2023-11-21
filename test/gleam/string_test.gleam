@@ -1,5 +1,5 @@
 import gleam/option.{None, Some}
-import gleam/map
+import gleam/dict
 import gleam/order
 import gleam/should
 import gleam/string
@@ -1089,7 +1089,7 @@ pub fn byte_size_test() {
 }
 
 pub fn inspect_map_test() {
-  map.from_list([#("a", 1), #("b", 2)])
+  dict.from_list([#("a", 1), #("b", 2)])
   |> string.inspect
-  |> should.equal("map.from_list([#(\"a\", 1), #(\"b\", 2)])")
+  |> should.equal("dict.from_list([#(\"a\", 1), #(\"b\", 2)])")
 }
