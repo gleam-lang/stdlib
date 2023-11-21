@@ -2,10 +2,10 @@ import gleam/option.{type Option}
 
 /// A dictionary of keys and values.
 ///
-/// Any type can be used for the keys and values of a map, but all the keys
+/// Any type can be used for the keys and values of a dict, but all the keys
 /// must be of the same type and all the values must be of the same type.
 ///
-/// Each key can only be present in a map once.
+/// Each key can only be present in a dict once.
 ///
 /// Dicts are not ordered in any way, and any unintentional ordering is not to
 /// be relied upon in your code as it may change in future versions of Erlang
@@ -31,15 +31,15 @@ pub type Dict(key, value)
 /// 1
 /// ```
 ///
-pub fn size(map: Dict(k, v)) -> Int {
-  do_size(map)
+pub fn size(dict: Dict(k, v)) -> Int {
+  do_size(dict)
 }
 
 @external(erlang, "maps", "size")
 @external(javascript, "../gleam_stdlib.mjs", "map_size")
 fn do_size(a: Dict(k, v)) -> Int
 
-/// Converts the map to a list of 2-element tuples `#(key, value)`, one for
+/// Converts the dict to a list of 2-element tuples `#(key, value)`, one for
 /// each key-value pair in the dict.
 ///
 /// The tuples in the list have no specific order.
@@ -56,8 +56,8 @@ fn do_size(a: Dict(k, v)) -> Int
 /// [#("key", 0)]
 /// ```
 ///
-pub fn to_list(map: Dict(key, value)) -> List(#(key, value)) {
-  do_to_list(map)
+pub fn to_list(dict: Dict(key, value)) -> List(#(key, value)) {
+  do_to_list(dict)
 }
 
 @external(erlang, "maps", "to_list")
@@ -93,7 +93,7 @@ fn do_from_list(list: List(#(k, v))) -> Dict(k, v) {
   fold_list_of_pair(list, new())
 }
 
-/// Determines whether or not a value present in the map for a given key.
+/// Determines whether or not a value present in the dict for a given key.
 ///
 /// ## Examples
 ///
@@ -107,8 +107,8 @@ fn do_from_list(list: List(#(k, v))) -> Dict(k, v) {
 /// False
 /// ```
 ///
-pub fn has_key(map: Dict(k, v), key: k) -> Bool {
-  do_has_key(key, map)
+pub fn has_key(dict: Dict(k, v), key: k) -> Bool {
+  do_has_key(key, dict)
 }
 
 @target(erlang)
@@ -116,11 +116,11 @@ pub fn has_key(map: Dict(k, v), key: k) -> Bool {
 fn do_has_key(a: key, b: Dict(key, v)) -> Bool
 
 @target(javascript)
-fn do_has_key(key: k, map: Dict(k, v)) -> Bool {
-  get(map, key) != Error(Nil)
+fn do_has_key(key: k, dict: Dict(k, v)) -> Bool {
+  get(dict, key) != Error(Nil)
 }
 
-/// Creates a fresh map that contains no values.
+/// Creates a fresh dict that contains no values.
 ///
 pub fn new() -> Dict(key, value) {
   do_new()
@@ -130,9 +130,9 @@ pub fn new() -> Dict(key, value) {
 @external(javascript, "../gleam_stdlib.mjs", "new_map")
 fn do_new() -> Dict(key, value)
 
-/// Fetches a value from a map for a given key.
+/// Fetches a value from a dict for a given key.
 ///
-/// The map may not have a value for the key, so the value is wrapped in a
+/// The dict may not have a value for the key, so the value is wrapped in a
 /// `Result`.
 ///
 /// ## Examples
@@ -155,9 +155,9 @@ pub fn get(from: Dict(key, value), get: key) -> Result(value, Nil) {
 @external(javascript, "../gleam_stdlib.mjs", "map_get")
 fn do_get(a: Dict(key, value), b: key) -> Result(value, Nil)
 
-/// Inserts a value into the map with the given key.
+/// Inserts a value into the dict with the given key.
 ///
-/// If the map already has a value for the given key then the value is
+/// If the dict already has a value for the given key then the value is
 /// replaced with the new value.
 ///
 /// ## Examples
@@ -172,15 +172,15 @@ fn do_get(a: Dict(key, value), b: key) -> Result(value, Nil)
 /// [#("a", 5)]
 /// ```
 ///
-pub fn insert(into map: Dict(k, v), for key: k, insert value: v) -> Dict(k, v) {
-  do_insert(key, value, map)
+pub fn insert(into dict: Dict(k, v), for key: k, insert value: v) -> Dict(k, v) {
+  do_insert(key, value, dict)
 }
 
 @external(erlang, "maps", "put")
 @external(javascript, "../gleam_stdlib.mjs", "map_insert")
 fn do_insert(a: key, b: value, c: Dict(key, value)) -> Dict(key, value)
 
-/// Updates all values in a given map by calling a given function on each key
+/// Updates all values in a given dict by calling a given function on each key
 /// and value.
 ///
 /// ## Examples
@@ -192,8 +192,8 @@ fn do_insert(a: key, b: value, c: Dict(key, value)) -> Dict(key, value)
 /// [#(3, 9), #(2, 8)]
 /// ```
 ///
-pub fn map_values(in map: Dict(k, v), with fun: fn(k, v) -> w) -> Dict(k, w) {
-  do_map_values(fun, map)
+pub fn map_values(in dict: Dict(k, v), with fun: fn(k, v) -> w) -> Dict(k, w) {
+  do_map_values(fun, dict)
 }
 
 @target(erlang)
@@ -201,9 +201,9 @@ pub fn map_values(in map: Dict(k, v), with fun: fn(k, v) -> w) -> Dict(k, w) {
 fn do_map_values(a: fn(key, value) -> b, b: Dict(key, value)) -> Dict(key, b)
 
 @target(javascript)
-fn do_map_values(f: fn(key, value) -> b, map: Dict(key, value)) -> Dict(key, b) {
-  let f = fn(map, k, v) { insert(map, k, f(k, v)) }
-  map
+fn do_map_values(f: fn(key, value) -> b, dict: Dict(key, value)) -> Dict(key, b) {
+  let f = fn(dict, k, v) { insert(dict, k, f(k, v)) }
+  dict
   |> fold(from: new(), with: f)
 }
 
@@ -220,8 +220,8 @@ fn do_map_values(f: fn(key, value) -> b, map: Dict(key, value)) -> Dict(key, b) 
 /// ["a", "b"]
 /// ```
 ///
-pub fn keys(map: Dict(keys, v)) -> List(keys) {
-  do_keys(map)
+pub fn keys(dict: Dict(keys, v)) -> List(keys) {
+  do_keys(dict)
 }
 
 @target(erlang)
@@ -245,10 +245,8 @@ fn do_keys_acc(list: List(#(k, v)), acc: List(k)) -> List(k) {
 }
 
 @target(javascript)
-fn do_keys(map: Dict(k, v)) -> List(k) {
-  let list_of_pairs =
-    map
-    |> to_list
+fn do_keys(dict: Dict(k, v)) -> List(k) {
+  let list_of_pairs = to_list(dict)
   do_keys_acc(list_of_pairs, [])
 }
 
@@ -265,8 +263,8 @@ fn do_keys(map: Dict(k, v)) -> List(k) {
 /// [0, 1]
 /// ```
 ///
-pub fn values(map: Dict(k, values)) -> List(values) {
-  do_values(map)
+pub fn values(dict: Dict(k, values)) -> List(values) {
+  do_values(dict)
 }
 
 @target(erlang)
@@ -282,14 +280,12 @@ fn do_values_acc(list: List(#(k, v)), acc: List(v)) -> List(v) {
 }
 
 @target(javascript)
-fn do_values(map: Dict(k, v)) -> List(v) {
-  let list_of_pairs =
-    map
-    |> to_list
+fn do_values(dict: Dict(k, v)) -> List(v) {
+  let list_of_pairs = to_list(dict)
   do_values_acc(list_of_pairs, [])
 }
 
-/// Creates a new map from a given map, minus any entries that a given function
+/// Creates a new dict from a given dict, minus any entries that a given function
 /// returns `False` for.
 ///
 /// ## Examples
@@ -307,10 +303,10 @@ fn do_values(map: Dict(k, v)) -> List(v) {
 /// ```
 ///
 pub fn filter(
-  in map: Dict(k, v),
+  in dict: Dict(k, v),
   keeping predicate: fn(k, v) -> Bool,
 ) -> Dict(k, v) {
-  do_filter(predicate, map)
+  do_filter(predicate, dict)
 }
 
 @target(erlang)
@@ -320,19 +316,19 @@ fn do_filter(a: fn(key, value) -> Bool, b: Dict(key, value)) -> Dict(key, value)
 @target(javascript)
 fn do_filter(
   f: fn(key, value) -> Bool,
-  map: Dict(key, value),
+  dict: Dict(key, value),
 ) -> Dict(key, value) {
-  let insert = fn(map, k, v) {
+  let insert = fn(dict, k, v) {
     case f(k, v) {
-      True -> insert(map, k, v)
-      _ -> map
+      True -> insert(dict, k, v)
+      _ -> dict
     }
   }
-  map
+  dict
   |> fold(from: new(), with: insert)
 }
 
-/// Creates a new map from a given map, only including any entries for which the
+/// Creates a new dict from a given dict, only including any entries for which the
 /// keys are in a given list.
 ///
 /// ## Examples
@@ -349,8 +345,8 @@ fn do_filter(
 /// from_list([#("a", 0), #("b", 1)])
 /// ```
 ///
-pub fn take(from map: Dict(k, v), keeping desired_keys: List(k)) -> Dict(k, v) {
-  do_take(desired_keys, map)
+pub fn take(from dict: Dict(k, v), keeping desired_keys: List(k)) -> Dict(k, v) {
+  do_take(desired_keys, dict)
 }
 
 @target(erlang)
@@ -359,31 +355,31 @@ fn do_take(a: List(k), b: Dict(k, v)) -> Dict(k, v)
 
 @target(javascript)
 fn insert_taken(
-  map: Dict(k, v),
+  dict: Dict(k, v),
   desired_keys: List(k),
   acc: Dict(k, v),
 ) -> Dict(k, v) {
   let insert = fn(taken, key) {
-    case get(map, key) {
+    case get(dict, key) {
       Ok(value) -> insert(taken, key, value)
       _ -> taken
     }
   }
   case desired_keys {
     [] -> acc
-    [x, ..xs] -> insert_taken(map, xs, insert(acc, x))
+    [x, ..xs] -> insert_taken(dict, xs, insert(acc, x))
   }
 }
 
 @target(javascript)
-fn do_take(desired_keys: List(k), map: Dict(k, v)) -> Dict(k, v) {
-  insert_taken(map, desired_keys, new())
+fn do_take(desired_keys: List(k), dict: Dict(k, v)) -> Dict(k, v) {
+  insert_taken(dict, desired_keys, new())
 }
 
-/// Creates a new map from a pair of given maps by combining their entries.
+/// Creates a new dict from a pair of given dicts by combining their entries.
 ///
-/// If there are entries with the same keys in both maps the entry from the
-/// second map takes precedence.
+/// If there are entries with the same keys in both dicts the entry from the
+/// second dict takes precedence.
 ///
 /// ## Examples
 ///
@@ -394,8 +390,8 @@ fn do_take(desired_keys: List(k), map: Dict(k, v)) -> Dict(k, v) {
 /// from_list([#("a", 0), #("b", 2), #("c", 3)])
 /// ```
 ///
-pub fn merge(into map: Dict(k, v), from new_entries: Dict(k, v)) -> Dict(k, v) {
-  do_merge(map, new_entries)
+pub fn merge(into dict: Dict(k, v), from new_entries: Dict(k, v)) -> Dict(k, v) {
+  do_merge(dict, new_entries)
 }
 
 @target(erlang)
@@ -403,26 +399,26 @@ pub fn merge(into map: Dict(k, v), from new_entries: Dict(k, v)) -> Dict(k, v) {
 fn do_merge(a: Dict(k, v), b: Dict(k, v)) -> Dict(k, v)
 
 @target(javascript)
-fn insert_pair(map: Dict(k, v), pair: #(k, v)) -> Dict(k, v) {
-  insert(map, pair.0, pair.1)
+fn insert_pair(dict: Dict(k, v), pair: #(k, v)) -> Dict(k, v) {
+  insert(dict, pair.0, pair.1)
 }
 
 @target(javascript)
-fn fold_inserts(new_entries: List(#(k, v)), map: Dict(k, v)) -> Dict(k, v) {
+fn fold_inserts(new_entries: List(#(k, v)), dict: Dict(k, v)) -> Dict(k, v) {
   case new_entries {
-    [] -> map
-    [x, ..xs] -> fold_inserts(xs, insert_pair(map, x))
+    [] -> dict
+    [x, ..xs] -> fold_inserts(xs, insert_pair(dict, x))
   }
 }
 
 @target(javascript)
-fn do_merge(map: Dict(k, v), new_entries: Dict(k, v)) -> Dict(k, v) {
+fn do_merge(dict: Dict(k, v), new_entries: Dict(k, v)) -> Dict(k, v) {
   new_entries
   |> to_list
-  |> fold_inserts(map)
+  |> fold_inserts(dict)
 }
 
-/// Creates a new map from a given map with all the same entries except for the
+/// Creates a new dict from a given dict with all the same entries except for the
 /// one with a given key, if it exists.
 ///
 /// ## Examples
@@ -437,15 +433,15 @@ fn do_merge(map: Dict(k, v), new_entries: Dict(k, v)) -> Dict(k, v) {
 /// from_list([#("a", 0), #("b", 1)])
 /// ```
 ///
-pub fn delete(from map: Dict(k, v), delete key: k) -> Dict(k, v) {
-  do_delete(key, map)
+pub fn delete(from dict: Dict(k, v), delete key: k) -> Dict(k, v) {
+  do_delete(key, dict)
 }
 
 @external(erlang, "maps", "remove")
 @external(javascript, "../gleam_stdlib.mjs", "map_remove")
 fn do_delete(a: k, b: Dict(k, v)) -> Dict(k, v)
 
-/// Creates a new map from a given map with all the same entries except any with
+/// Creates a new dict from a given dict with all the same entries except any with
 /// keys found in a given list.
 ///
 /// ## Examples
@@ -465,16 +461,16 @@ fn do_delete(a: k, b: Dict(k, v)) -> Dict(k, v)
 /// from_list([])
 /// ```
 ///
-pub fn drop(from map: Dict(k, v), drop disallowed_keys: List(k)) -> Dict(k, v) {
+pub fn drop(from dict: Dict(k, v), drop disallowed_keys: List(k)) -> Dict(k, v) {
   case disallowed_keys {
-    [] -> map
-    [x, ..xs] -> drop(delete(map, x), xs)
+    [] -> dict
+    [x, ..xs] -> drop(delete(dict, x), xs)
   }
 }
 
-/// Creates a new map with one entry updated using a given function.
+/// Creates a new dict with one entry updated using a given function.
 ///
-/// If there was not an entry in the map for the given key then the function
+/// If there was not an entry in the dict for the given key then the function
 /// gets `None` as its argument, otherwise it gets `Some(value)`.
 ///
 /// ## Example
@@ -486,27 +482,27 @@ pub fn drop(from map: Dict(k, v), drop disallowed_keys: List(k)) -> Dict(k, v) {
 /// >     None -> 0
 /// >   }
 /// > }
-/// > let map = from_list([#("a", 0)])
+/// > let dict = from_list([#("a", 0)])
 /// >
-/// > update(map, "a", increment)
+/// > update(dict, "a", increment)
 /// from_list([#("a", 1)])
 /// ```
 ///
 /// ```gleam
-/// > update(map, "b", increment)
+/// > update(dict, "b", increment)
 /// from_list([#("a", 0), #("b", 0)])
 /// ```
 ///
 pub fn update(
-  in map: Dict(k, v),
+  in dict: Dict(k, v),
   update key: k,
   with fun: fn(Option(v)) -> v,
 ) -> Dict(k, v) {
-  map
+  dict
   |> get(key)
   |> option.from_result
   |> fun
-  |> insert(map, key, _)
+  |> insert(dict, key, _)
 }
 
 fn do_fold(list: List(#(k, v)), initial: acc, fun: fn(acc, k, v) -> acc) -> acc {
@@ -526,23 +522,23 @@ fn do_fold(list: List(#(k, v)), initial: acc, fun: fn(acc, k, v) -> acc) -> acc 
 /// # Examples
 ///
 /// ```gleam
-/// > let map = from_list([#("a", 1), #("b", 3), #("c", 9)])
-/// > fold(map, 0, fn(accumulator, key, value) { accumulator + value })
+/// > let dict = from_list([#("a", 1), #("b", 3), #("c", 9)])
+/// > fold(dict, 0, fn(accumulator, key, value) { accumulator + value })
 /// 13
 /// ```
 ///
 /// ```gleam
 /// > import gleam/string.{append}
-/// > fold(map, "", fn(accumulator, key, value) { append(accumulator, key) })
+/// > fold(dict, "", fn(accumulator, key, value) { append(accumulator, key) })
 /// "abc"
 /// ```
 ///
 pub fn fold(
-  over map: Dict(k, v),
+  over dict: Dict(k, v),
   from initial: acc,
   with fun: fn(acc, k, v) -> acc,
 ) -> acc {
-  map
+  dict
   |> to_list
   |> do_fold(initial, fun)
 }
