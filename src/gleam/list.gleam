@@ -1188,6 +1188,7 @@ fn merge_up(
         order.Gt -> merge_up(na, nb - 1, a, br, [bx, ..acc], compare)
         _ -> merge_up(na - 1, nb, ar, b, [ax, ..acc], compare)
       }
+    _, _, _, _ -> acc
   }
 }
 
@@ -1211,6 +1212,7 @@ fn merge_down(
         order.Lt -> merge_down(na - 1, nb, ar, b, [ax, ..acc], compare)
         _ -> merge_down(na, nb - 1, a, br, [bx, ..acc], compare)
       }
+    _, _, _, _ -> acc
   }
 }
 

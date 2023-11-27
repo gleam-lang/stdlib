@@ -728,7 +728,7 @@ fn do_to_utf_codepoints_impl(
   case bit_array {
     <<first:utf8_codepoint, rest:bytes>> ->
       do_to_utf_codepoints_impl(rest, [first, ..acc])
-    <<>> -> acc
+    _ -> acc
   }
 }
 

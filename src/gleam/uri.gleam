@@ -351,7 +351,7 @@ pub fn to_string(uri: Uri) -> String {
     Some(s), None, Some(h) -> [s, "://", h, ..parts]
     Some(s), Some(_), None | Some(s), None, None -> [s, ":", ..parts]
     None, None, Some(h) -> ["//", h, ..parts]
-    None, Some(_), None | None, None, None -> parts
+    _, _, _ -> parts
   }
   string.concat(parts)
 }
@@ -426,7 +426,7 @@ pub fn merge(base: Uri, relative: Uri) -> Result(Uri, Nil) {
             )
           Ok(resolved)
         }
-        Uri(scheme: None, host: None, ..) -> {
+        _ -> {
           let #(new_path, new_query) = case relative.path {
             "" -> #(base.path, option.or(relative.query, base.query))
             _ -> {
