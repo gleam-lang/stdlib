@@ -2117,8 +2117,7 @@ pub fn transpose(list_of_list: List(List(a))) -> List(List(a)) {
 fn do_shuffle_pair_unwrap(list: List(#(Float, a)), acc: List(a)) -> List(a) {
   case list {
     [] -> acc
-    _ -> {
-      let [elem_pair, ..enumerable] = list
+    [elem_pair, ..enumerable] ->
       do_shuffle_pair_unwrap(enumerable, [elem_pair.1, ..acc])
     }
   }
