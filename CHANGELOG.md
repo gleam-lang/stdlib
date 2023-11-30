@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.33.0 - 2023-11-30
 
 - The `bool` module gains the `lazy_guard` function.
 - The `gleam/map` module has been deprecated in favour of the `gleam/dict`
