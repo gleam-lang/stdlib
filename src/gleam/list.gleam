@@ -2119,7 +2119,6 @@ fn do_shuffle_pair_unwrap(list: List(#(Float, a)), acc: List(a)) -> List(a) {
     [] -> acc
     [elem_pair, ..enumerable] ->
       do_shuffle_pair_unwrap(enumerable, [elem_pair.1, ..acc])
-    }
   }
 }
 
