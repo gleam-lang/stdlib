@@ -147,9 +147,12 @@ export function string_length(string) {
 }
 
 export function graphemes(string) {
-  return List.fromArray(
-    Array.from(graphemes_iterator(string)).map((item) => item.segment)
-  );
+  const iterator = graphemes_iterator(string);
+  if (iterator) {
+    return List.fromArray(Array.from(iterator).map((item) => item.segment));
+  } else {
+    return List.fromArray(string.match(/./gsu));
+  }
 }
 
 function graphemes_iterator(string) {
