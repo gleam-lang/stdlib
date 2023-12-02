@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.33.1 - Unreleased
+## v0.33.1 - 2023-12-02
 
 - Fixed `string.to_graphemes` failing on JavaScript runtimes when the
   `Intl.Segmenter` class is not available.
