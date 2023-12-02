@@ -901,6 +901,13 @@ fn do_inspect(term term: anything) -> StringBuilder
 /// This function runs in constant time on Erlang and in linear time on
 /// JavaScript.
 ///
+/// ## Examples
+/// 
+/// ```gleam
+/// > byte_size("🏳️‍⚧️🏳️‍🌈👩🏾‍❤️‍👨🏻")
+/// 58
+/// ```
+///
 @external(erlang, "erlang", "byte_size")
 @external(javascript, "../gleam_stdlib.mjs", "byte_size")
 pub fn byte_size(string: String) -> Int
