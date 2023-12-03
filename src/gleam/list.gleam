@@ -442,14 +442,14 @@ pub fn map_fold(
 
 fn do_index_map(
   list: List(a),
-  fun: fn(Int, a) -> b,
+  fun: fn(a, Int) -> b,
   index: Int,
   acc: List(b),
 ) -> List(b) {
   case list {
     [] -> reverse(acc)
     [x, ..xs] -> {
-      let acc = [fun(index, x), ..acc]
+      let acc = [fun(x, index), ..acc]
       do_index_map(xs, fun, index + 1, acc)
     }
   }
@@ -464,11 +464,11 @@ fn do_index_map(
 /// ## Examples
 ///
 /// ```gleam
-/// > index_map(["a", "b"], fn(i, x) { #(i, x) })
+/// > index_map(["a", "b"], fn(x, i) { #(i, x) })
 /// [#(0, "a"), #(1, "b")]
 /// ```
 ///
-pub fn index_map(list: List(a), with fun: fn(Int, a) -> b) -> List(b) {
+pub fn index_map(list: List(a), with fun: fn(a, Int) -> b) -> List(b) {
   do_index_map(list, fun, 0, [])
 }
 
@@ -1718,7 +1718,7 @@ pub fn permutations(l: List(a)) -> List(List(a)) {
     [] -> [[]]
     _ ->
       l
-      |> index_map(fn(i_idx, i) {
+      |> index_map(fn(i, i_idx) {
         l
         |> index_fold(
           [],
