@@ -697,14 +697,14 @@ pub fn sort_test() {
 }
 
 pub fn index_map_test() {
-  list.index_map([3, 4, 5], fn(i, x) { #(i, x) })
+  list.index_map([3, 4, 5], fn(x, i) { #(i, x) })
   |> should.equal([#(0, 3), #(1, 4), #(2, 5)])
 
-  let f = fn(i, x) { #(x, i) }
+  let f = fn(x, i) { #(x, i) }
   list.index_map(["a", "b"], f)
   |> should.equal([#("a", 0), #("b", 1)])
 
-  let f = fn(i, x) { #(x, i) }
+  let f = fn(x, i) { #(x, i) }
   list.index_map(["a", "b", "c"], f)
   |> should.equal([#("a", 0), #("b", 1), #("c", 2)])
 }

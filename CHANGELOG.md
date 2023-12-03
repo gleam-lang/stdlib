@@ -1,5 +1,7 @@
 # Changelog
 
+- Changed `list.index_map` callback signature to `fn(a, Int) -> b` from `fn(Int, a) -> b`, to be consistent with `list.index_fold`.
+
 ## v0.33.1 - 2023-12-02
 
 - Fixed `string.to_graphemes` failing on JavaScript runtimes when the
