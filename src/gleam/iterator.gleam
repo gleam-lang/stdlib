@@ -689,12 +689,12 @@ pub fn find(
 fn do_index(
   continuation: fn() -> Action(element),
   next: Int,
-) -> fn() -> Action(#(Int, element)) {
+) -> fn() -> Action(#(element, Int)) {
   fn() {
     case continuation() {
       Stop -> Stop
       Continue(e, continuation) ->
-        Continue(#(next, e), do_index(continuation, next + 1))
+        Continue(#(e, next), do_index(continuation, next + 1))
     }
   }
 }
@@ -705,10 +705,10 @@ fn do_index(
 ///
 /// ```gleam
 /// > from_list(["a", "b", "c"]) |> index |> to_list
-/// [#(0, "a"), #(1, "b"), #(2, "c")]
+/// [#("a", 0), #("b", 1), #("c", 2)]
 /// ```
 ///
-pub fn index(over iterator: Iterator(element)) -> Iterator(#(Int, element)) {
+pub fn index(over iterator: Iterator(element)) -> Iterator(#(element, Int)) {
   iterator.continuation
   |> do_index(0)
   |> Iterator
