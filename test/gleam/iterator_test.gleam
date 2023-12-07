@@ -362,7 +362,7 @@ pub fn index_test() {
   iterator.from_list(["a", "b", "c"])
   |> iterator.index
   |> iterator.to_list
-  |> should.equal([#(0, "a"), #(1, "b"), #(2, "c")])
+  |> should.equal([#("a", 0), #("b", 1), #("c", 2)])
 }
 
 pub fn iterate_test() {
