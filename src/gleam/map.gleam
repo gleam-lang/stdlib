@@ -66,14 +66,6 @@ fn do_keys_acc(list: List(#(k, v)), acc: List(k)) -> List(k) {
   }
 }
 
-@target(javascript)
-fn do_keys(map) -> List(k) {
-  let list_of_pairs =
-    map
-    |> to_list
-  do_keys_acc(list_of_pairs, [])
-}
-
 @deprecated("Please use the `gleam/dict` module instead")
 pub fn values(map) -> List(values) {
   dict.values(map)
@@ -82,18 +74,6 @@ pub fn values(map) -> List(values) {
 @deprecated("Please use the `gleam/dict` module instead")
 pub fn filter(in map, keeping predicate: fn(k, v) -> Bool) {
   dict.filter(map, predicate)
-}
-
-@target(javascript)
-fn do_filter(f: fn(key, value) -> Bool, map) {
-  let insert = fn(map, k, v) {
-    case f(k, v) {
-      True -> insert(map, k, v)
-      _ -> map
-    }
-  }
-  map
-  |> fold(from: new(), with: insert)
 }
 
 @deprecated("Please use the `gleam/dict` module instead")
