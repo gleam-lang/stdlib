@@ -230,11 +230,7 @@ pub fn slice(from string: String, at_index idx: Int, length len: Int) -> String 
   }
 }
 
-@target(erlang)
 @external(erlang, "string", "slice")
-fn do_slice(a: String, b: Int, c: Int) -> String
-
-@target(javascript)
 fn do_slice(string: String, idx: Int, len: Int) -> String {
   string
   |> to_graphemes
@@ -480,16 +476,12 @@ pub fn join(strings: List(String), with separator: String) -> String {
   do_join(strings, separator)
 }
 
-@target(erlang)
+@external(javascript, "../gleam_stdlib.mjs", "join")
 fn do_join(strings: List(String), separator: String) -> String {
   strings
   |> list.intersperse(with: separator)
   |> concat
 }
-
-@target(javascript)
-@external(javascript, "../gleam_stdlib.mjs", "join")
-fn do_join(strings strings: List(String), string string: String) -> String
 
 /// Pads a `String` on the left until it has at least given number of graphemes.
 ///
