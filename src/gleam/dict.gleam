@@ -31,13 +31,9 @@ pub type Dict(key, value)
 /// 1
 /// ```
 ///
-pub fn size(dict: Dict(k, v)) -> Int {
-  do_size(dict)
-}
-
 @external(erlang, "maps", "size")
 @external(javascript, "../gleam_stdlib.mjs", "map_size")
-fn do_size(a: Dict(k, v)) -> Int
+pub fn size(dict: Dict(k, v)) -> Int
 
 /// Converts the dict to a list of 2-element tuples `#(key, value)`, one for
 /// each key-value pair in the dict.
@@ -56,28 +52,20 @@ fn do_size(a: Dict(k, v)) -> Int
 /// [#("key", 0)]
 /// ```
 ///
-pub fn to_list(dict: Dict(key, value)) -> List(#(key, value)) {
-  do_to_list(dict)
-}
-
 @external(erlang, "maps", "to_list")
 @external(javascript, "../gleam_stdlib.mjs", "map_to_list")
-fn do_to_list(a: Dict(key, value)) -> List(#(key, value))
+pub fn to_list(dict: Dict(key, value)) -> List(#(key, value))
 
 /// Converts a list of 2-element tuples `#(key, value)` to a dict.
 ///
 /// If two tuples have the same key the last one in the list will be the one
 /// that is present in the dict.
 ///
+@external(erlang, "maps", "from_list")
 pub fn from_list(list: List(#(k, v))) -> Dict(k, v) {
-  do_from_list(list)
+  fold_list_of_pair(list, new())
 }
 
-@target(erlang)
-@external(erlang, "maps", "from_list")
-fn do_from_list(a: List(#(key, value))) -> Dict(key, value)
-
-@target(javascript)
 fn fold_list_of_pair(
   over list: List(#(k, v)),
   from initial: Dict(k, v),
@@ -86,11 +74,6 @@ fn fold_list_of_pair(
     [] -> initial
     [x, ..rest] -> fold_list_of_pair(rest, insert(initial, x.0, x.1))
   }
-}
-
-@target(javascript)
-fn do_from_list(list: List(#(k, v))) -> Dict(k, v) {
-  fold_list_of_pair(list, new())
 }
 
 /// Determines whether or not a value present in the dict for a given key.
@@ -111,11 +94,7 @@ pub fn has_key(dict: Dict(k, v), key: k) -> Bool {
   do_has_key(key, dict)
 }
 
-@target(erlang)
 @external(erlang, "maps", "is_key")
-fn do_has_key(a: key, b: Dict(key, v)) -> Bool
-
-@target(javascript)
 fn do_has_key(key: k, dict: Dict(k, v)) -> Bool {
   get(dict, key) != Error(Nil)
 }
@@ -196,11 +175,7 @@ pub fn map_values(in dict: Dict(k, v), with fun: fn(k, v) -> w) -> Dict(k, w) {
   do_map_values(fun, dict)
 }
 
-@target(erlang)
 @external(erlang, "maps", "map")
-fn do_map_values(a: fn(key, value) -> b, b: Dict(key, value)) -> Dict(key, b)
-
-@target(javascript)
 fn do_map_values(f: fn(key, value) -> b, dict: Dict(key, value)) -> Dict(key, b) {
   let f = fn(dict, k, v) { insert(dict, k, f(k, v)) }
   dict
@@ -224,11 +199,12 @@ pub fn keys(dict: Dict(keys, v)) -> List(keys) {
   do_keys(dict)
 }
 
-@target(erlang)
 @external(erlang, "maps", "keys")
-fn do_keys(a: Dict(keys, v)) -> List(keys)
+fn do_keys(dict: Dict(k, v)) -> List(k) {
+  let list_of_pairs = to_list(dict)
+  do_keys_acc(list_of_pairs, [])
+}
 
-@target(javascript)
 fn reverse_and_concat(remaining, accumulator) {
   case remaining {
     [] -> accumulator
@@ -236,18 +212,11 @@ fn reverse_and_concat(remaining, accumulator) {
   }
 }
 
-@target(javascript)
 fn do_keys_acc(list: List(#(k, v)), acc: List(k)) -> List(k) {
   case list {
     [] -> reverse_and_concat(acc, [])
     [x, ..xs] -> do_keys_acc(xs, [x.0, ..acc])
   }
-}
-
-@target(javascript)
-fn do_keys(dict: Dict(k, v)) -> List(k) {
-  let list_of_pairs = to_list(dict)
-  do_keys_acc(list_of_pairs, [])
 }
 
 /// Gets a list of all values in a given dict.
@@ -267,22 +236,17 @@ pub fn values(dict: Dict(k, values)) -> List(values) {
   do_values(dict)
 }
 
-@target(erlang)
 @external(erlang, "maps", "values")
-fn do_values(a: Dict(k, values)) -> List(values)
+fn do_values(dict: Dict(k, v)) -> List(v) {
+  let list_of_pairs = to_list(dict)
+  do_values_acc(list_of_pairs, [])
+}
 
-@target(javascript)
 fn do_values_acc(list: List(#(k, v)), acc: List(v)) -> List(v) {
   case list {
     [] -> reverse_and_concat(acc, [])
     [x, ..xs] -> do_values_acc(xs, [x.1, ..acc])
   }
-}
-
-@target(javascript)
-fn do_values(dict: Dict(k, v)) -> List(v) {
-  let list_of_pairs = to_list(dict)
-  do_values_acc(list_of_pairs, [])
 }
 
 /// Creates a new dict from a given dict, minus any entries that a given function
@@ -309,11 +273,7 @@ pub fn filter(
   do_filter(predicate, dict)
 }
 
-@target(erlang)
 @external(erlang, "maps", "filter")
-fn do_filter(a: fn(key, value) -> Bool, b: Dict(key, value)) -> Dict(key, value)
-
-@target(javascript)
 fn do_filter(
   f: fn(key, value) -> Bool,
   dict: Dict(key, value),
@@ -349,11 +309,11 @@ pub fn take(from dict: Dict(k, v), keeping desired_keys: List(k)) -> Dict(k, v) 
   do_take(desired_keys, dict)
 }
 
-@target(erlang)
 @external(erlang, "maps", "with")
-fn do_take(a: List(k), b: Dict(k, v)) -> Dict(k, v)
+fn do_take(desired_keys: List(k), dict: Dict(k, v)) -> Dict(k, v) {
+  insert_taken(dict, desired_keys, new())
+}
 
-@target(javascript)
 fn insert_taken(
   dict: Dict(k, v),
   desired_keys: List(k),
@@ -369,11 +329,6 @@ fn insert_taken(
     [] -> acc
     [x, ..xs] -> insert_taken(dict, xs, insert(acc, x))
   }
-}
-
-@target(javascript)
-fn do_take(desired_keys: List(k), dict: Dict(k, v)) -> Dict(k, v) {
-  insert_taken(dict, desired_keys, new())
 }
 
 /// Creates a new dict from a pair of given dicts by combining their entries.
@@ -394,28 +349,22 @@ pub fn merge(into dict: Dict(k, v), from new_entries: Dict(k, v)) -> Dict(k, v) 
   do_merge(dict, new_entries)
 }
 
-@target(erlang)
 @external(erlang, "maps", "merge")
-fn do_merge(a: Dict(k, v), b: Dict(k, v)) -> Dict(k, v)
+fn do_merge(dict: Dict(k, v), new_entries: Dict(k, v)) -> Dict(k, v) {
+  new_entries
+  |> to_list
+  |> fold_inserts(dict)
+}
 
-@target(javascript)
 fn insert_pair(dict: Dict(k, v), pair: #(k, v)) -> Dict(k, v) {
   insert(dict, pair.0, pair.1)
 }
 
-@target(javascript)
 fn fold_inserts(new_entries: List(#(k, v)), dict: Dict(k, v)) -> Dict(k, v) {
   case new_entries {
     [] -> dict
     [x, ..xs] -> fold_inserts(xs, insert_pair(dict, x))
   }
-}
-
-@target(javascript)
-fn do_merge(dict: Dict(k, v), new_entries: Dict(k, v)) -> Dict(k, v) {
-  new_entries
-  |> to_list
-  |> fold_inserts(dict)
 }
 
 /// Creates a new dict from a given dict with all the same entries except for the
