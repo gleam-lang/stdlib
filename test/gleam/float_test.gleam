@@ -348,55 +348,27 @@ pub fn product_test() {
 }
 
 pub fn random_test() {
-  let test_boundaries = fn(_accumulator, _element) {
-    float.random(0.0, 0.0)
-    |> should.equal(0.0)
-
-    float.random(0.0, 10.0)
-    |> fn(x) { x >=. 0.0 && x <. 10.0 }
-    |> should.be_true
-
-    float.random(10.0, 0.0)
-    |> fn(x) { x >=. 0.0 && x <. 10.0 }
-    |> should.be_true
-
-    float.random(0.0, -10.0)
-    |> fn(x) { x >=. -10.0 && x <. 0.0 }
-    |> should.be_true
-
-    float.random(-10.0, 0.0)
-    |> fn(x) { x >=. -10.0 && x <. 0.0 }
-    |> should.be_true
-
-    float.random(-10.0, 10.0)
-    |> fn(x) { x >=. -10.0 && x <. 10.0 }
-    |> should.be_true
-
-    float.random(10.0, -10.0)
-    |> fn(x) { x >=. -10.0 && x <. 10.0 }
-    |> should.be_true
-  }
-  list.range(0, 100)
-  |> iterator.from_list()
-  |> iterator.fold(Nil, test_boundaries)
-
-  let test_mean = fn(iterations: Int, min: Float, max: Float, tolerance: Float) {
-    let expected_average = float.sum([min, max]) /. 2.0
+  let expected_average = 0.5
+  let iterations = 10_000
+  let sum =
     list.range(0, iterations)
     |> iterator.from_list()
-    |> iterator.fold(
-      from: 0.0,
-      with: fn(accumulator, _element) { accumulator +. float.random(min, max) },
-    )
-    |> fn(sum) { sum /. int.to_float(iterations) }
-    |> float.loosely_equals(expected_average, tolerance)
-    |> should.be_true
-  }
-  test_mean(100, 0.0, 0.0, 5.0)
-  test_mean(1000, 0.0, 100.0, 5.0)
-  test_mean(1000, -100.0, 100.0, 5.0)
-  test_mean(1000, -100.0, 0.0, 5.0)
-  test_mean(1000, 0.0, -100.0, 5.0)
+    |> iterator.fold(from: 0.0, with: fn(accumulator, _element) {
+      let i = float.random()
+
+      { i <. 1.0 }
+      |> should.be_true
+      { i >=. 0.0 }
+      |> should.be_true
+
+      accumulator +. i
+    })
+  let average = sum /. int.to_float(iterations)
+
+  { average <. expected_average +. 0.1 }
+  |> should.be_true
+  { average >. expected_average -. 0.1 }
+  |> should.be_true
 }
 
 pub fn divide_test() {

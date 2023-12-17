@@ -526,17 +526,29 @@ fn do_undigits(
   }
 }
 
-/// Generates a random int between the given minimum and maximum values.
+/// Generates a random int between zero and the given maximum.
+///
+/// The lower number is inclusive, the upper number is exclusive.
 ///
 /// ## Examples
 ///
 /// ```gleam
-/// > random(1, 5)
-/// 2
+/// > random(10)
+/// 4
 /// ```
 ///
-pub fn random(min: Int, max: Int) -> Int {
-  float.random(to_float(min), to_float(max))
+/// ```gleam
+/// > random(1)
+/// 0
+/// ```
+///
+/// ```gleam
+/// > random(-1)
+/// -1
+/// ```
+///
+pub fn random(max: Int) -> Int {
+  { float.random() *. to_float(max) }
   |> float.floor()
   |> float.round()
 }

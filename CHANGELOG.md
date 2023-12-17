@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- The `int.random` function now takes a single argument.
+- The `float.random` function no longer takes any arguments.
 - Changed `list.index_map` callback signature to `fn(a, Int) -> b` from
   `fn(Int, a) -> b`, to be consistent with `list.index_fold`.
 - Changed `iterator.index` to return `Iterator(#(a, Int))` instead of

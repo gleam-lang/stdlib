@@ -416,27 +416,22 @@ fn do_product(numbers: List(Float), initial: Float) -> Float {
   }
 }
 
-/// Generates a random float between the given minimum and maximum values.
+/// Generates a random float between the given zero (inclusive) and one
+/// (exclusive).
 ///
+/// On Erlang this updates the random state in the process dictionary.
+/// See: <https://www.erlang.org/doc/man/rand.html#uniform-0>
 ///
 /// ## Examples
 ///
 /// ```gleam
-/// > random(1.0, 5.0)
-/// 2.646355926896028
+/// > random()
+/// 0.646355926896028
 /// ```
-///
-pub fn random(min: Float, max: Float) -> Float {
-  do_random_uniform() *. { max -. min } +. min
-}
-
-/// Returns a random float uniformly distributed in the value range
-/// 0.0 =< X < 1.0 and updates the state in the process dictionary.
-/// See: <https://www.erlang.org/doc/man/rand.html#uniform-0>
 ///
 @external(erlang, "rand", "uniform")
 @external(javascript, "../gleam_stdlib.mjs", "random_uniform")
-fn do_random_uniform() -> Float
+pub fn random() -> Float
 
 /// Returns division of the inputs as a `Result`.
 ///

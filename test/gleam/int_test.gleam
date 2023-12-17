@@ -394,44 +394,26 @@ pub fn undigits_test() {
 
 pub fn random_test() {
   let test_boundaries = fn(_accumulator, _element) {
-    int.random(0, 0)
+    int.random(0)
     |> should.equal(0)
 
-    int.random(-1, 0)
-    |> list.contains([-1, 0], _)
+    int.random(1)
+    |> should.equal(0)
+
+    int.random(-1)
+    |> should.equal(-1)
+
+    int.random(2)
+    |> list.contains([0, 1], _)
     |> should.be_true
 
-    int.random(-1, 1)
-    |> list.contains([-1, 0], _)
-    |> should.be_true
-
-    int.random(-1, 2)
-    |> list.contains([-1, 0, 1], _)
+    int.random(3)
+    |> list.contains([0, 1, 2], _)
     |> should.be_true
   }
   list.range(0, 100)
   |> iterator.from_list
   |> iterator.fold(Nil, test_boundaries)
-
-  let test_average = fn(iterations: Int, min: Int, max: Int, tolerance: Int) {
-    let expected_average = int.sum([min, max]) / 2
-    list.range(0, iterations)
-    |> iterator.from_list
-    |> iterator.fold(
-      from: 0,
-      with: fn(accumulator, _element) { accumulator + int.random(min, max) },
-    )
-    |> fn(sum) { sum / iterations }
-    |> fn(average) {
-      average - tolerance <= expected_average || average + tolerance >= expected_average
-    }
-    |> should.be_true
-  }
-  test_average(100, 0, 0, 5)
-  test_average(1000, 0, 100, 5)
-  test_average(1000, -100, 100, 5)
-  test_average(1000, -100, 0, 5)
-  test_average(1000, 0, -100, 5)
 }
 
 pub fn divide_test() {

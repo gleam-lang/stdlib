@@ -428,15 +428,11 @@ pub fn map_fold(
   from acc: acc,
   with fun: fn(acc, a) -> #(acc, b),
 ) -> #(acc, List(b)) {
-  fold(
-    over: list,
-    from: #(acc, []),
-    with: fn(acc, item) {
-      let #(current_acc, items) = acc
-      let #(next_acc, next_item) = fun(current_acc, item)
-      #(next_acc, [next_item, ..items])
-    },
-  )
+  fold(over: list, from: #(acc, []), with: fn(acc, item) {
+    let #(current_acc, items) = acc
+    let #(next_acc, next_item) = fun(current_acc, item)
+    #(next_acc, [next_item, ..items])
+  })
   |> pair.map_second(reverse)
 }
 
@@ -1438,16 +1434,13 @@ pub fn key_find(
   in keyword_list: List(#(k, v)),
   find desired_key: k,
 ) -> Result(v, Nil) {
-  find_map(
-    keyword_list,
-    fn(keyword) {
-      let #(key, value) = keyword
-      case key == desired_key {
-        True -> Ok(value)
-        False -> Error(Nil)
-      }
-    },
-  )
+  find_map(keyword_list, fn(keyword) {
+    let #(key, value) = keyword
+    case key == desired_key {
+      True -> Ok(value)
+      False -> Error(Nil)
+    }
+  })
 }
 
 /// Given a list of 2-element tuples, finds all tuples that have a given
@@ -1472,16 +1465,13 @@ pub fn key_filter(
   in keyword_list: List(#(k, v)),
   find desired_key: k,
 ) -> List(v) {
-  filter_map(
-    keyword_list,
-    fn(keyword) {
-      let #(key, value) = keyword
-      case key == desired_key {
-        True -> Ok(value)
-        False -> Error(Nil)
-      }
-    },
-  )
+  filter_map(keyword_list, fn(keyword) {
+    let #(key, value) = keyword
+    case key == desired_key {
+      True -> Ok(value)
+      False -> Error(Nil)
+    }
+  })
 }
 
 fn do_pop(haystack, predicate, checked) {
@@ -1590,16 +1580,13 @@ pub fn key_pop(
   haystack: List(#(k, v)),
   key: k,
 ) -> Result(#(v, List(#(k, v))), Nil) {
-  pop_map(
-    haystack,
-    fn(entry) {
-      let #(k, v) = entry
-      case k {
-        k if k == key -> Ok(v)
-        _ -> Error(Nil)
-      }
-    },
-  )
+  pop_map(haystack, fn(entry) {
+    let #(k, v) = entry
+    case k {
+      k if k == key -> Ok(v)
+      _ -> Error(Nil)
+    }
+  })
 }
 
 /// Given a list of 2-element tuples, inserts a key and value into the list.
@@ -1720,15 +1707,12 @@ pub fn permutations(l: List(a)) -> List(List(a)) {
       l
       |> index_map(fn(i, i_idx) {
         l
-        |> index_fold(
-          [],
-          fn(acc, j, j_idx) {
-            case i_idx == j_idx {
-              True -> acc
-              False -> [j, ..acc]
-            }
-          },
-        )
+        |> index_fold([], fn(acc, j, j_idx) {
+          case i_idx == j_idx {
+            True -> acc
+            False -> [j, ..acc]
+          }
+        })
         |> reverse
         |> permutations
         |> map(fn(permutation) { [i, ..permutation] })
@@ -2030,11 +2014,9 @@ pub fn combinations(items: List(a), by n: Int) -> List(List(a)) {
           let first_combinations =
             map(combinations(xs, n - 1), with: fn(com) { [x, ..com] })
             |> reverse
-          fold(
-            first_combinations,
-            combinations(xs, n),
-            fn(acc, c) { [c, ..acc] },
-          )
+          fold(first_combinations, combinations(xs, n), fn(acc, c) {
+            [c, ..acc]
+          })
         }
       }
   }
@@ -2125,18 +2107,14 @@ fn do_shuffle_pair_unwrap(list: List(#(Float, a)), acc: List(a)) -> List(a) {
 fn do_shuffle_by_pair_indexes(
   list_of_pairs: List(#(Float, a)),
 ) -> List(#(Float, a)) {
-  sort(
-    list_of_pairs,
-    fn(a_pair: #(Float, a), b_pair: #(Float, a)) -> Order {
-      float.compare(a_pair.0, b_pair.0)
-    },
-  )
+  sort(list_of_pairs, fn(a_pair: #(Float, a), b_pair: #(Float, a)) -> Order {
+    float.compare(a_pair.0, b_pair.0)
+  })
 }
 
 /// Takes a list, randomly sorts all items and returns the shuffled list.
 ///
-/// This function uses Erlang's `:rand` module or Javascript's
-/// `Math.random()` to calculate the index shuffling.
+/// This function uses `float.random` to decide the order of the elements.
 ///
 /// ## Example
 ///
@@ -2148,7 +2126,7 @@ fn do_shuffle_by_pair_indexes(
 ///
 pub fn shuffle(list: List(a)) -> List(a) {
   list
-  |> fold(from: [], with: fn(acc, a) { [#(float.random(0.0, 1.0), a), ..acc] })
+  |> fold(from: [], with: fn(acc, a) { [#(float.random(), a), ..acc] })
   |> do_shuffle_by_pair_indexes()
   |> do_shuffle_pair_unwrap([])
 }
