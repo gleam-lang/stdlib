@@ -131,10 +131,11 @@ pub fn scan_test() {
     regex.from_string("var\\s*(\\w+)\\s*(int|string)?\\s*=\\s*(.*)")
   regex.scan(re, "var age int = 32")
   |> should.equal([
-    Match(
-      content: "var age int = 32",
-      submatches: [Some("age"), Some("int"), Some("32")],
-    ),
+    Match(content: "var age int = 32", submatches: [
+      Some("age"),
+      Some("int"),
+      Some("32"),
+    ]),
   ])
 
   regex.scan(re, "var age = 32")

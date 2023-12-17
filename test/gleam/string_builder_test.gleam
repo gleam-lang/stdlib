@@ -19,10 +19,12 @@ pub fn string_builder_test() {
   let data =
     string_builder.from_string("ello")
     |> string_builder.append_builder(string_builder.from_string(","))
-    |> string_builder.append_builder(string_builder.concat([
-      string_builder.from_string(" wo"),
-      string_builder.from_string("rld!"),
-    ]))
+    |> string_builder.append_builder(
+      string_builder.concat([
+        string_builder.from_string(" wo"),
+        string_builder.from_string("rld!"),
+      ]),
+    )
     |> string_builder.prepend_builder(string_builder.from_string("H"))
 
   data

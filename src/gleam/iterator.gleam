@@ -621,26 +621,20 @@ pub fn range(from start: Int, to stop: Int) -> Iterator(Int) {
   case int.compare(start, stop) {
     order.Eq -> once(fn() { start })
     order.Gt ->
-      unfold(
-        from: start,
-        with: fn(current) {
-          case current < stop {
-            False -> Next(current, current - 1)
-            True -> Done
-          }
-        },
-      )
+      unfold(from: start, with: fn(current) {
+        case current < stop {
+          False -> Next(current, current - 1)
+          True -> Done
+        }
+      })
 
     order.Lt ->
-      unfold(
-        from: start,
-        with: fn(current) {
-          case current > stop {
-            False -> Next(current, current + 1)
-            True -> Done
-          }
-        },
-      )
+      unfold(from: start, with: fn(current) {
+        case current > stop {
+          False -> Next(current, current + 1)
+          True -> Done
+        }
+      })
   }
 }
 

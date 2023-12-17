@@ -350,10 +350,9 @@ pub fn find_test() {
   |> iterator.find(fn(_x) { True })
   |> should.equal(Error(Nil))
 
-  iterator.unfold(
-    Cat(id: 1),
-    fn(cat: Cat) { iterator.Next(cat, Cat(id: cat.id + 1)) },
-  )
+  iterator.unfold(Cat(id: 1), fn(cat: Cat) {
+    iterator.Next(cat, Cat(id: cat.id + 1))
+  })
   |> iterator.find(fn(cat: Cat) { cat.id == 10 })
   |> should.equal(Ok(Cat(id: 10)))
 }

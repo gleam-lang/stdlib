@@ -42,111 +42,127 @@ pub fn parse_only_host_test() {
 
 pub fn parse_scheme_test() {
   uri.parse("http://one.com/path/to/something?one=two&two=one#fragment")
-  |> should.equal(Ok(uri.Uri(
-    scheme: Some("http"),
-    host: Some("one.com"),
-    path: "/path/to/something",
-    query: Some("one=two&two=one"),
-    fragment: Some("fragment"),
-    port: None,
-    userinfo: None,
-  )))
+  |> should.equal(
+    Ok(uri.Uri(
+      scheme: Some("http"),
+      host: Some("one.com"),
+      path: "/path/to/something",
+      query: Some("one=two&two=one"),
+      fragment: Some("fragment"),
+      port: None,
+      userinfo: None,
+    )),
+  )
 }
 
 pub fn parse_https_scheme_test() {
   uri.parse("https://foo.com")
-  |> should.equal(Ok(uri.Uri(
-    scheme: Some("https"),
-    host: Some("foo.com"),
-    path: "",
-    query: None,
-    fragment: None,
-    port: None,
-    userinfo: None,
-  )))
+  |> should.equal(
+    Ok(uri.Uri(
+      scheme: Some("https"),
+      host: Some("foo.com"),
+      path: "",
+      query: None,
+      fragment: None,
+      port: None,
+      userinfo: None,
+    )),
+  )
 }
 
 pub fn parse_file_scheme_test() {
   uri.parse("file:///one/two/three")
-  |> should.equal(Ok(uri.Uri(
-    scheme: Some("file"),
-    host: Some(""),
-    path: "/one/two/three",
-    query: None,
-    fragment: None,
-    port: None,
-    userinfo: None,
-  )))
+  |> should.equal(
+    Ok(uri.Uri(
+      scheme: Some("file"),
+      host: Some(""),
+      path: "/one/two/three",
+      query: None,
+      fragment: None,
+      port: None,
+      userinfo: None,
+    )),
+  )
 }
 
 pub fn parse_ftp_scheme_test() {
   "ftp://user001:password@private.ftp-server.example.com/my_directory/my_file.txt"
   |> uri.parse
-  |> should.equal(Ok(uri.Uri(
-    scheme: Some("ftp"),
-    host: Some("private.ftp-server.example.com"),
-    userinfo: Some("user001:password"),
-    path: "/my_directory/my_file.txt",
-    query: None,
-    fragment: None,
-    port: None,
-  )))
+  |> should.equal(
+    Ok(uri.Uri(
+      scheme: Some("ftp"),
+      host: Some("private.ftp-server.example.com"),
+      userinfo: Some("user001:password"),
+      path: "/my_directory/my_file.txt",
+      query: None,
+      fragment: None,
+      port: None,
+    )),
+  )
 }
 
 pub fn parse_sftp_scheme_test() {
   "sftp://user001:password@private.ftp-server.example.com/my_directory/my_file.txt"
   |> uri.parse
-  |> should.equal(Ok(uri.Uri(
-    scheme: Some("sftp"),
-    host: Some("private.ftp-server.example.com"),
-    userinfo: Some("user001:password"),
-    path: "/my_directory/my_file.txt",
-    query: None,
-    fragment: None,
-    port: None,
-  )))
+  |> should.equal(
+    Ok(uri.Uri(
+      scheme: Some("sftp"),
+      host: Some("private.ftp-server.example.com"),
+      userinfo: Some("user001:password"),
+      path: "/my_directory/my_file.txt",
+      query: None,
+      fragment: None,
+      port: None,
+    )),
+  )
 }
 
 pub fn parse_tftp_scheme_test() {
   "tftp://user001:password@private.ftp-server.example.com/my_directory/my_file.txt"
   |> uri.parse
-  |> should.equal(Ok(uri.Uri(
-    scheme: Some("tftp"),
-    host: Some("private.ftp-server.example.com"),
-    userinfo: Some("user001:password"),
-    path: "/my_directory/my_file.txt",
-    query: None,
-    fragment: None,
-    port: None,
-  )))
+  |> should.equal(
+    Ok(uri.Uri(
+      scheme: Some("tftp"),
+      host: Some("private.ftp-server.example.com"),
+      userinfo: Some("user001:password"),
+      path: "/my_directory/my_file.txt",
+      query: None,
+      fragment: None,
+      port: None,
+    )),
+  )
 }
 
 pub fn parse_ldap_scheme_test() {
   "ldap:///dc=example,dc=com??sub?(givenName=John)"
   |> uri.parse
-  |> should.equal(Ok(uri.Uri(
-    scheme: Some("ldap"),
-    host: Some(""),
-    userinfo: None,
-    path: "/dc=example,dc=com",
-    query: Some("?sub?(givenName=John)"),
-    fragment: None,
-    port: None,
-  )))
+  |> should.equal(
+    Ok(uri.Uri(
+      scheme: Some("ldap"),
+      host: Some(""),
+      userinfo: None,
+      path: "/dc=example,dc=com",
+      query: Some("?sub?(givenName=John)"),
+      fragment: None,
+      port: None,
+    )),
+  )
 }
 
 pub fn parse_ldap_2_scheme_test() {
   "ldap://ldap.example.com/cn=John%20Doe,dc=foo,dc=com"
   |> uri.parse
-  |> should.equal(Ok(uri.Uri(
-    scheme: Some("ldap"),
-    host: Some("ldap.example.com"),
-    userinfo: None,
-    path: "/cn=John%20Doe,dc=foo,dc=com",
-    query: None,
-    fragment: None,
-    port: None,
-  )))
+  |> should.equal(
+    Ok(uri.Uri(
+      scheme: Some("ldap"),
+      host: Some("ldap.example.com"),
+      userinfo: None,
+      path: "/cn=John%20Doe,dc=foo,dc=com",
+      query: None,
+      fragment: None,
+      port: None,
+    )),
+  )
 }
 
 fn assert_parse(s) {

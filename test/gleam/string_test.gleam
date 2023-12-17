@@ -965,8 +965,7 @@ pub fn target_inspect_test() {
 
   // Looks like: `//erl(#Ref<0.1809744150.4035444737.100468>)`.
   let assert Ok(regular_expression) =
-    regex.from_string(
-      "^\\/\\/erl\\(#Ref<[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+>\\)$",
+    regex.from_string("^\\/\\/erl\\(#Ref<[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+>\\)$",
     )
   string.inspect(create_erlang_reference())
   |> regex.check(regular_expression, _)

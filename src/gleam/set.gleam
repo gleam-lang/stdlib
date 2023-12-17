@@ -146,11 +146,9 @@ pub fn to_list(set: Set(member)) -> List(member) {
 ///
 pub fn from_list(members: List(member)) -> Set(member) {
   let map =
-    list.fold(
-      over: members,
-      from: dict.new(),
-      with: fn(m, k) { dict.insert(m, k, token) },
-    )
+    list.fold(over: members, from: dict.new(), with: fn(m, k) {
+      dict.insert(m, k, token)
+    })
   Set(map)
 }
 

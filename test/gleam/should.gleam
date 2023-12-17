@@ -36,12 +36,14 @@ pub fn equal(a, b) {
   case a == b {
     True -> Nil
     _ ->
-      crash(string.concat([
-        "\n\t",
-        stringify(a),
-        "\n\tshould equal \n\t",
-        stringify(b),
-      ]))
+      crash(
+        string.concat([
+          "\n\t",
+          stringify(a),
+          "\n\tshould equal \n\t",
+          stringify(b),
+        ]),
+      )
   }
 }
 
@@ -50,12 +52,14 @@ pub fn not_equal(a, b) {
   case a != b {
     True -> Nil
     _ ->
-      crash(string.concat([
-        "\n",
-        stringify(a),
-        "\nshould not equal \n",
-        stringify(b),
-      ]))
+      crash(
+        string.concat([
+          "\n",
+          stringify(a),
+          "\nshould not equal \n",
+          stringify(b),
+        ]),
+      )
   }
 }
 

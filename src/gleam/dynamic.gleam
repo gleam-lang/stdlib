@@ -1166,12 +1166,14 @@ pub fn decode4(
     case t1(x), t2(x), t3(x), t4(x) {
       Ok(a), Ok(b), Ok(c), Ok(d) -> Ok(constructor(a, b, c, d))
       a, b, c, d ->
-        Error(list.concat([
-          all_errors(a),
-          all_errors(b),
-          all_errors(c),
-          all_errors(d),
-        ]))
+        Error(
+          list.concat([
+            all_errors(a),
+            all_errors(b),
+            all_errors(c),
+            all_errors(d),
+          ]),
+        )
     }
   }
 }
@@ -1221,13 +1223,15 @@ pub fn decode5(
     case t1(x), t2(x), t3(x), t4(x), t5(x) {
       Ok(a), Ok(b), Ok(c), Ok(d), Ok(e) -> Ok(constructor(a, b, c, d, e))
       a, b, c, d, e ->
-        Error(list.concat([
-          all_errors(a),
-          all_errors(b),
-          all_errors(c),
-          all_errors(d),
-          all_errors(e),
-        ]))
+        Error(
+          list.concat([
+            all_errors(a),
+            all_errors(b),
+            all_errors(c),
+            all_errors(d),
+            all_errors(e),
+          ]),
+        )
     }
   }
 }
@@ -1281,14 +1285,16 @@ pub fn decode6(
       Ok(a), Ok(b), Ok(c), Ok(d), Ok(e), Ok(f) ->
         Ok(constructor(a, b, c, d, e, f))
       a, b, c, d, e, f ->
-        Error(list.concat([
-          all_errors(a),
-          all_errors(b),
-          all_errors(c),
-          all_errors(d),
-          all_errors(e),
-          all_errors(f),
-        ]))
+        Error(
+          list.concat([
+            all_errors(a),
+            all_errors(b),
+            all_errors(c),
+            all_errors(d),
+            all_errors(e),
+            all_errors(f),
+          ]),
+        )
     }
   }
 }
@@ -1345,15 +1351,17 @@ pub fn decode7(
       Ok(a), Ok(b), Ok(c), Ok(d), Ok(e), Ok(f), Ok(g) ->
         Ok(constructor(a, b, c, d, e, f, g))
       a, b, c, d, e, f, g ->
-        Error(list.concat([
-          all_errors(a),
-          all_errors(b),
-          all_errors(c),
-          all_errors(d),
-          all_errors(e),
-          all_errors(f),
-          all_errors(g),
-        ]))
+        Error(
+          list.concat([
+            all_errors(a),
+            all_errors(b),
+            all_errors(c),
+            all_errors(d),
+            all_errors(e),
+            all_errors(f),
+            all_errors(g),
+          ]),
+        )
     }
   }
 }
@@ -1413,16 +1421,18 @@ pub fn decode8(
       Ok(a), Ok(b), Ok(c), Ok(d), Ok(e), Ok(f), Ok(g), Ok(h) ->
         Ok(constructor(a, b, c, d, e, f, g, h))
       a, b, c, d, e, f, g, h ->
-        Error(list.concat([
-          all_errors(a),
-          all_errors(b),
-          all_errors(c),
-          all_errors(d),
-          all_errors(e),
-          all_errors(f),
-          all_errors(g),
-          all_errors(h),
-        ]))
+        Error(
+          list.concat([
+            all_errors(a),
+            all_errors(b),
+            all_errors(c),
+            all_errors(d),
+            all_errors(e),
+            all_errors(f),
+            all_errors(g),
+            all_errors(h),
+          ]),
+        )
     }
   }
 }
@@ -1485,17 +1495,19 @@ pub fn decode9(
       Ok(a), Ok(b), Ok(c), Ok(d), Ok(e), Ok(f), Ok(g), Ok(h), Ok(i) ->
         Ok(constructor(a, b, c, d, e, f, g, h, i))
       a, b, c, d, e, f, g, h, i ->
-        Error(list.concat([
-          all_errors(a),
-          all_errors(b),
-          all_errors(c),
-          all_errors(d),
-          all_errors(e),
-          all_errors(f),
-          all_errors(g),
-          all_errors(h),
-          all_errors(i),
-        ]))
+        Error(
+          list.concat([
+            all_errors(a),
+            all_errors(b),
+            all_errors(c),
+            all_errors(d),
+            all_errors(e),
+            all_errors(f),
+            all_errors(g),
+            all_errors(h),
+            all_errors(i),
+          ]),
+        )
     }
   }
 }
