@@ -1,7 +1,11 @@
 # Changelog
 
-- Changed `list.index_map` callback signature to `fn(a, Int) -> b` from `fn(Int, a) -> b`, to be consistent with `list.index_fold`.
-- Changed `iterator.index` to return `Iterator(#(a, Int))` instead of `Iterator(#(Int, a))`.
+## Unreleased
+
+- Changed `list.index_map` callback signature to `fn(a, Int) -> b` from
+  `fn(Int, a) -> b`, to be consistent with `list.index_fold`.
+- Changed `iterator.index` to return `Iterator(#(a, Int))` instead of
+  `Iterator(#(Int, a))`.
 
 ## v0.33.1 - 2023-12-02
 
