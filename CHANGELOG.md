@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.34.0 - 2023-12-17
 
 - The `int.random` function now takes a single argument.
 - The `float.random` function no longer takes any arguments.
