@@ -1238,7 +1238,8 @@ fn merge_sort(
         True ->
           merge_down(
             n,
-            ln - n,
+            ln
+            - n,
             merge_sort(a, n, compare, False),
             merge_sort(b, ln - n, compare, False),
             [],
@@ -1247,7 +1248,8 @@ fn merge_sort(
         False ->
           merge_up(
             n,
-            ln - n,
+            ln
+            - n,
             merge_sort(a, n, compare, True),
             merge_sort(b, ln - n, compare, True),
             [],
