@@ -163,7 +163,7 @@ pub fn from_list(members: List(member)) -> Set(member) {
 ///
 /// ```gleam
 /// > from_list([1, 3, 9])
-/// > |> fold(0, fn(member, accumulator) { accumulator + member })
+/// > |> fold(0, fn(accumulator, member) { accumulator + member })
 /// 13
 /// ```
 ///
