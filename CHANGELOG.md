@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- The `set` module gains the `difference` function.
+
 ## v0.34.0 - 2023-12-17
 
 - The `int.random` function now takes a single argument.

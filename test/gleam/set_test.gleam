@@ -63,6 +63,7 @@ pub fn fold_test() {
   [1, 3, 9]
   |> set.from_list
   |> set.fold(from: 0, with: fn(m, a) { m + a })
+  |> should.equal(13)
 }
 
 pub fn filter_test() {
@@ -99,4 +100,10 @@ pub fn intersection_test() {
   set.intersection(set.from_list([1, 2]), set.from_list([2, 3]))
   |> set.to_list
   |> should.equal([2])
+}
+
+pub fn difference_test() {
+  set.difference(set.from_list([1, 2]), set.from_list([2, 3, 4]))
+  |> set.to_list
+  |> should.equal([1])
 }
