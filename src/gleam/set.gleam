@@ -260,3 +260,20 @@ pub fn intersection(
   let #(larger, smaller) = order(first, second)
   take(from: larger, keeping: to_list(smaller))
 }
+
+/// Creates a new set that contains members that are present in the first set
+/// but not the second.
+///
+/// ## Examples
+///
+/// ```gleam
+/// > difference(from_list([1, 2]), from_list([2, 3, 4])) |> to_list
+/// [1]
+/// ```
+///
+pub fn difference(
+  from first: Set(member),
+  minus second: Set(member),
+) -> Set(member) {
+  drop(from: first, drop: to_list(second))
+}
