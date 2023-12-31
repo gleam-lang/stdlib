@@ -16,18 +16,18 @@ import gleam/order.{type Order}
 /// ## Examples
 ///
 /// ```gleam
-/// > and(True, True)
-/// True
+/// and(True, True)
+/// // -> True
 /// ```
 ///
 /// ```gleam
-/// > and(False, True)
-/// False
+/// and(False, True)
+/// // -> False
 /// ```
 ///
 /// ```gleam
-/// > False |> and(True)
-/// False
+/// False |> and(True)
+/// // -> False
 /// ```
 ///
 pub fn and(a: Bool, b: Bool) -> Bool {
@@ -42,18 +42,18 @@ pub fn and(a: Bool, b: Bool) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// > or(True, True)
-/// True
+/// or(True, True)
+/// // -> True
 /// ```
 ///
 /// ```gleam
-/// > or(False, True)
-/// True
+/// or(False, True)
+/// // -> True
 /// ```
 ///
 /// ```gleam
-/// > False |> or(True)
-/// True
+/// False |> or(True)
+/// // -> True
 /// ```
 ///
 pub fn or(a: Bool, b: Bool) -> Bool {
@@ -67,13 +67,13 @@ pub fn or(a: Bool, b: Bool) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// > negate(True)
-/// False
+/// negate(True)
+/// // -> False
 /// ```
 ///
 /// ```gleam
-/// > negate(False)
-/// True
+/// negate(False)
+/// // -> True
 /// ```
 ///
 pub fn negate(bool: Bool) -> Bool {
@@ -88,23 +88,23 @@ pub fn negate(bool: Bool) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// > nor(False, False)
-/// True
+/// nor(False, False)
+/// // -> True
 /// ```
 ///
 /// ```gleam
-/// > nor(False, True)
-/// False
+/// nor(False, True)
+/// // -> False
 /// ```
 ///
 /// ```gleam
-/// > nor(True, False)
-/// False
+/// nor(True, False)
+/// // -> False
 /// ```
 ///
 /// ```gleam
-/// > nor(True, True)
-/// False
+/// nor(True, True)
+/// // -> False
 /// ```
 ///
 pub fn nor(a: Bool, b: Bool) -> Bool {
@@ -121,23 +121,23 @@ pub fn nor(a: Bool, b: Bool) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// > nand(False, False)
-/// True
+/// nand(False, False)
+/// // -> True
 /// ```
 ///
 /// ```gleam
-/// > nand(False, True)
-/// True
+/// nand(False, True)
+/// // -> True
 /// ```
 ///
 /// ```gleam
-/// > nand(True, False)
-/// True
+/// nand(True, False)
+/// // -> True
 /// ```
 ///
 /// ```gleam
-/// > nand(True, True)
-/// False
+/// nand(True, True)
+/// // -> False
 /// ```
 ///
 pub fn nand(a: Bool, b: Bool) -> Bool {
@@ -154,23 +154,23 @@ pub fn nand(a: Bool, b: Bool) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// > exclusive_or(False, False)
-/// False
+/// exclusive_or(False, False)
+/// // -> False
 /// ```
 ///
 /// ```gleam
-/// > exclusive_or(False, True)
-/// True
+/// exclusive_or(False, True)
+/// // -> True
 /// ```
 ///
 /// ```gleam
-/// > exclusive_or(True, False)
-/// True
+/// exclusive_or(True, False)
+/// // -> True
 /// ```
 ///
 /// ```gleam
-/// > exclusive_or(True, True)
-/// False
+/// exclusive_or(True, True)
+/// // -> False
 /// ```
 ///
 pub fn exclusive_or(a: Bool, b: Bool) -> Bool {
@@ -187,23 +187,23 @@ pub fn exclusive_or(a: Bool, b: Bool) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// > exclusive_nor(False, False)
-/// True
+/// exclusive_nor(False, False)
+/// // -> True
 /// ```
 ///
 /// ```gleam
-/// > exclusive_nor(False, True)
-/// False
+/// exclusive_nor(False, True)
+/// // -> False
 /// ```
 ///
 /// ```gleam
-/// > exclusive_nor(True, False)
-/// False
+/// exclusive_nor(True, False)
+/// // -> False
 /// ```
 ///
 /// ```gleam
-/// > exclusive_nor(True, True)
-/// True
+/// exclusive_nor(True, True)
+/// // -> True
 /// ```
 ///
 pub fn exclusive_nor(a: Bool, b: Bool) -> Bool {
@@ -220,9 +220,9 @@ pub fn exclusive_nor(a: Bool, b: Bool) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// > import gleam/order
-/// > compare(True, False)
-/// order.Gt
+/// import gleam/order
+/// compare(True, False)
+/// // -> order.Gt
 /// ```
 ///
 pub fn compare(a: Bool, with b: Bool) -> Order {
@@ -239,18 +239,18 @@ pub fn compare(a: Bool, with b: Bool) -> Order {
 /// ## Examples
 ///
 /// ```gleam
-/// > max(True, False)
-/// True
+/// max(True, False)
+/// // -> True
 /// ```
 ///
 /// ```gleam
-/// > max(False, True)
-/// True
+/// max(False, True)
+/// // -> True
 /// ```
 ///
 /// ```gleam
-/// > max(False, False)
-/// False
+/// max(False, False)
+/// // -> False
 /// ```
 ///
 pub fn max(a: Bool, b: Bool) -> Bool {
@@ -265,16 +265,18 @@ pub fn max(a: Bool, b: Bool) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// > min(True, False)
-/// False
+/// min(True, False)
+/// // -> False
 /// ```
 ///
 /// ```gleam
-/// > min(False, True)
-/// False
+/// min(False, True)
+/// // -> False
+/// ```
 ///
-/// > min(False, False)
-/// False
+/// ```gleam
+/// min(False, False)
+/// // -> False
 /// ```
 ///
 pub fn min(a: Bool, b: Bool) -> Bool {
@@ -289,11 +291,13 @@ pub fn min(a: Bool, b: Bool) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// > to_int(True)
-/// 1
+/// to_int(True)
+/// // -> 1
+/// ```
 ///
-/// > to_int(False)
-/// 0
+/// ```gleam
+/// to_int(False)
+/// // -> 0
 /// ```
 ///
 pub fn to_int(bool: Bool) -> Int {
@@ -308,13 +312,13 @@ pub fn to_int(bool: Bool) -> Int {
 /// ## Examples
 ///
 /// ```gleam
-/// > to_string(True)
-/// "True"
+/// to_string(True)
+/// // -> "True"
 /// ```
 ///
 /// ```gleam
-/// > to_string(False)
-/// "False"
+/// to_string(False)
+/// // -> "False"
 /// ```
 ///
 pub fn to_string(bool: Bool) -> String {
@@ -363,17 +367,17 @@ pub fn to_string(bool: Bool) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// > let name = ""
-/// > use <- guard(when: name == "", return: "Welcome!")
-/// > "Hello, " <> name
-/// "Welcome!"
+/// let name = ""
+/// use <- guard(when: name == "", return: "Welcome!")
+/// "Hello, " <> name
+/// // -> "Welcome!"
 /// ```
 ///
 /// ```gleam
-/// > let name = "Kamaka"
-/// > use <- guard(when: name == "", return: "Welcome!")
-/// > "Hello, " <> name
-/// "Hello, Kamaka"
+/// let name = "Kamaka"
+/// use <- guard(when: name == "", return: "Welcome!")
+/// "Hello, " <> name
+/// // -> "Hello, Kamaka"
 /// ```
 ///
 pub fn guard(
@@ -398,22 +402,22 @@ pub fn guard(
 /// ## Examples
 ///
 /// ```gleam
-/// > let name = "Kamaka"
-/// > let inquiry = fn() { "How may we address you?" }
-/// > use <- lazy_guard(when: name == "", return: inquiry)
-/// > "Hello, " <> name
-/// "Hello, Kamaka"
+/// let name = "Kamaka"
+/// let inquiry = fn() { "How may we address you?" }
+/// use <- lazy_guard(when: name == "", return: inquiry)
+/// "Hello, " <> name
+/// // -> "Hello, Kamaka"
 /// ```
 ///
 /// ```gleam
-/// > import gleam/int
-/// > let name = ""
-/// > let greeting = fn() { "Hello, " <> name }
-/// > use <- lazy_guard(when: name == "", otherwise: greeting)
-/// > let number = int.random(1, 99)
-/// > let name = "User " <> int.to_string(number)
-/// > "Welcome, " <> name
-/// "Welcome, User 54"
+/// import gleam/int
+/// let name = ""
+/// let greeting = fn() { "Hello, " <> name }
+/// use <- lazy_guard(when: name == "", otherwise: greeting)
+/// let number = int.random(1, 99)
+/// let name = "User " <> int.to_string(number)
+/// "Welcome, " <> name
+/// // -> "Welcome, User 54"
 /// ```
 ///
 pub fn lazy_guard(
