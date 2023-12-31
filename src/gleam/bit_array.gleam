@@ -19,8 +19,8 @@ pub fn byte_size(x: BitArray) -> Int
 /// ## Examples
 ///
 /// ```gleam
-/// > append(to: from_string("butter"), suffix: from_string("fly"))
-/// from_string("butterfly")
+/// append(to: from_string("butter"), suffix: from_string("fly"))
+/// // -> from_string("butterfly")
 /// ```
 ///
 pub fn append(to first: BitArray, suffix second: BitArray) -> BitArray {
@@ -95,8 +95,8 @@ fn do_to_string(a: BitArray) -> Result(String, Nil)
 /// ## Examples
 ///
 /// ```gleam
-/// > concat([from_string("butter"), from_string("fly")])
-/// from_string("butterfly")
+/// concat([from_string("butter"), from_string("fly")])
+/// // -> from_string("butterfly")
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "bit_array_concat")
