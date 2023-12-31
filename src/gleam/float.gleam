@@ -20,13 +20,13 @@ import gleam/order.{type Order}
 /// ## Examples
 ///
 /// ```gleam
-/// > parse("2.3")
-/// Ok(2.3)
+/// parse("2.3")
+/// // -> Ok(2.3)
 /// ```
 ///
 /// ```gleam
-/// > parse("ABC")
-/// Error(Nil)
+/// parse("ABC")
+/// // -> Error(Nil)
 /// ```
 ///
 pub fn parse(string: String) -> Result(Float, Nil) {
@@ -42,8 +42,8 @@ fn do_parse(a: String) -> Result(Float, Nil)
 /// ## Examples
 ///
 /// ```gleam
-/// > to_string(2.3)
-/// "2.3"
+/// to_string(2.3)
+/// // -> "2.3"
 /// ```
 ///
 pub fn to_string(x: Float) -> String {
@@ -59,8 +59,8 @@ fn do_to_string(a: Float) -> String
 /// ## Examples
 ///
 /// ```gleam
-/// > clamp(1.2, min: 1.4, max: 1.6)
-/// 1.4
+/// clamp(1.2, min: 1.4, max: 1.6)
+/// // -> 1.4
 /// ```
 ///
 pub fn clamp(x: Float, min min_bound: Float, max max_bound: Float) -> Float {
@@ -75,8 +75,8 @@ pub fn clamp(x: Float, min min_bound: Float, max max_bound: Float) -> Float {
 /// ## Examples
 ///
 /// ```gleam
-/// > compare(2.0, 2.3)
-/// Lt
+/// compare(2.0, 2.3)
+/// // -> Lt
 /// ```
 ///
 /// To handle
@@ -106,8 +106,8 @@ pub fn compare(a: Float, with b: Float) -> Order {
 /// ## Examples
 ///
 /// ```gleam
-/// > loosely_compare(5.0, with: 5.3, tolerating: 0.5)
-/// Eq
+/// loosely_compare(5.0, with: 5.3, tolerating: 0.5)
+/// // -> Eq
 /// ```
 ///
 /// If you want to check only for equality you may use
@@ -137,13 +137,13 @@ pub fn loosely_compare(
 /// ## Examples
 ///
 /// ```gleam
-/// > loosely_equals(5.0, with: 5.3, tolerating: 0.5)
-/// True
+/// loosely_equals(5.0, with: 5.3, tolerating: 0.5)
+/// // -> True
 /// ```
 ///
 /// ```gleam
-/// > loosely_equals(5.0, with: 5.1, tolerating: 0.1)
-/// False
+/// loosely_equals(5.0, with: 5.1, tolerating: 0.1)
+/// // -> False
 /// ```
 ///
 pub fn loosely_equals(
@@ -160,8 +160,8 @@ pub fn loosely_equals(
 /// ## Examples
 ///
 /// ```gleam
-/// > min(2.0, 2.3)
-/// 2.0
+/// min(2.0, 2.3)
+/// // -> 2.0
 /// ```
 ///
 pub fn min(a: Float, b: Float) -> Float {
@@ -176,8 +176,8 @@ pub fn min(a: Float, b: Float) -> Float {
 /// ## Examples
 ///
 /// ```gleam
-/// > max(2.0, 2.3)
-/// 2.3
+/// max(2.0, 2.3)
+/// // -> 2.3
 /// ```
 ///
 pub fn max(a: Float, b: Float) -> Float {
@@ -192,8 +192,8 @@ pub fn max(a: Float, b: Float) -> Float {
 /// ## Examples
 ///
 /// ```gleam
-/// > ceiling(2.3)
-/// 3.0
+/// ceiling(2.3)
+/// // -> 3.0
 /// ```
 ///
 pub fn ceiling(x: Float) -> Float {
@@ -209,8 +209,8 @@ fn do_ceiling(a: Float) -> Float
 /// ## Examples
 ///
 /// ```gleam
-/// > floor(2.3)
-/// 2.0
+/// floor(2.3)
+/// // -> 2.0
 /// ```
 ///
 pub fn floor(x: Float) -> Float {
@@ -226,13 +226,13 @@ fn do_floor(a: Float) -> Float
 /// ## Examples
 ///
 /// ```gleam
-/// > round(2.3)
-/// 2
+/// round(2.3)
+/// // -> 2
 /// ```
 ///
 /// ```gleam
-/// > round(2.5)
-/// 3
+/// round(2.5)
+/// // -> 3
 /// ```
 ///
 pub fn round(x: Float) -> Int {
@@ -260,8 +260,8 @@ fn js_round(a: Float) -> Int
 /// ## Examples
 ///
 /// ```gleam
-/// > truncate(2.4343434847383438)
-/// 2
+/// truncate(2.4343434847383438)
+/// // -> 2
 /// ```
 ///
 pub fn truncate(x: Float) -> Int {
@@ -277,13 +277,13 @@ fn do_truncate(a: Float) -> Int
 /// ## Examples
 ///
 /// ```gleam
-/// > absolute_value(-12.5)
-/// 12.5
+/// absolute_value(-12.5)
+/// // -> 12.5
 /// ```
 ///
 /// ```gleam
-/// > absolute_value(10.2)
-/// 10.2
+/// absolute_value(10.2)
+/// // -> 10.2
 /// ```
 ///
 pub fn absolute_value(x: Float) -> Float {
@@ -299,28 +299,28 @@ pub fn absolute_value(x: Float) -> Float {
 /// ## Examples
 ///
 /// ```gleam
-/// > power(2.0, -1.0)
-/// Ok(0.5)
+/// power(2.0, -1.0)
+/// // -> Ok(0.5)
 /// ```
 ///
 /// ```gleam
-/// > power(2.0, 2.0)
-/// Ok(4.0)
+/// power(2.0, 2.0)
+/// // -> Ok(4.0)
 /// ```
 ///
 /// ```gleam
-/// > power(8.0, 1.5)
-/// Ok(22.627416997969522)
+/// power(8.0, 1.5)
+/// // -> Ok(22.627416997969522)
 /// ```
 ///
 /// ```gleam
-/// > 4.0 |> power(of: 2.0)
-/// Ok(16.0)
+/// 4.0 |> power(of: 2.0)
+/// // -> Ok(16.0)
 /// ```
 ///
 /// ```gleam
-/// > power(-1.0, 0.5)
-/// Error(Nil)
+/// power(-1.0, 0.5)
+/// // -> Error(Nil)
 /// ```
 ///
 pub fn power(base: Float, of exponent: Float) -> Result(Float, Nil) {
@@ -346,13 +346,13 @@ fn do_power(a: Float, b: Float) -> Float
 /// ## Examples
 ///
 /// ```gleam
-/// > square_root(4.0)
-/// Ok(2.0)
+/// square_root(4.0)
+/// // -> Ok(2.0)
 /// ```
 ///
 /// ```gleam
-/// > square_root(-16.0)
-/// Error(Nil)
+/// square_root(-16.0)
+/// // -> Error(Nil)
 /// ```
 ///
 pub fn square_root(x: Float) -> Result(Float, Nil) {
@@ -364,8 +364,8 @@ pub fn square_root(x: Float) -> Result(Float, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// > negate(1.0)
-/// -1.0
+/// negate(1.0)
+/// // -> -1.0
 /// ```
 ///
 pub fn negate(x: Float) -> Float {
@@ -377,8 +377,8 @@ pub fn negate(x: Float) -> Float {
 /// ## Example
 ///
 /// ```gleam
-/// > sum([1.0, 2.2, 3.3])
-/// 6.5
+/// sum([1.0, 2.2, 3.3])
+/// // -> 6.5
 /// ```
 ///
 pub fn sum(numbers: List(Float)) -> Float {
@@ -398,8 +398,8 @@ fn do_sum(numbers: List(Float), initial: Float) -> Float {
 /// ## Example
 ///
 /// ```gleam
-/// > product([2.5, 3.2, 4.2])
-/// 33.6
+/// product([2.5, 3.2, 4.2])
+/// // -> 33.6
 /// ```
 ///
 pub fn product(numbers: List(Float)) -> Float {
@@ -425,8 +425,8 @@ fn do_product(numbers: List(Float), initial: Float) -> Float {
 /// ## Examples
 ///
 /// ```gleam
-/// > random()
-/// 0.646355926896028
+/// random()
+/// // -> 0.646355926896028
 /// ```
 ///
 @external(erlang, "rand", "uniform")
@@ -438,13 +438,13 @@ pub fn random() -> Float
 /// ## Examples
 ///
 /// ```gleam
-/// > divide(0.0, 1.0)
-/// Ok(1.0)
+/// divide(0.0, 1.0)
+/// // -> Ok(1.0)
 /// ```
 ///
 /// ```gleam
-/// > divide(1.0, 0.0)
-/// Error(Nil)
+/// divide(1.0, 0.0)
+/// // -> Error(Nil)
 /// ```
 ///
 pub fn divide(a: Float, by b: Float) -> Result(Float, Nil) {
@@ -462,19 +462,19 @@ pub fn divide(a: Float, by b: Float) -> Result(Float, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// > add(1.0, 2.0)
-/// 3.0
+/// add(1.0, 2.0)
+/// // -> 3.0
 /// ```
 ///
 /// ```gleam
-/// > import gleam/list
-/// > list.fold([1.0, 2.0, 3.0], 0.0, add)
-/// 6.0
+/// import gleam/list
+/// list.fold([1.0, 2.0, 3.0], 0.0, add)
+/// // -> 6.0
 /// ```
 ///
 /// ```gleam
-/// > 3.0 |> add(2.0)
-/// 5.0
+/// 3.0 |> add(2.0)
+/// // -> 5.0
 /// ```
 ///
 pub fn add(a: Float, b: Float) -> Float {
@@ -489,19 +489,19 @@ pub fn add(a: Float, b: Float) -> Float {
 /// ## Examples
 ///
 /// ```gleam
-/// > multiply(2.0, 4.0)
-/// 8.0
+/// multiply(2.0, 4.0)
+/// // -> 8.0
 /// ```
 ///
 /// ```gleam
 /// import gleam/list
-/// > list.fold([2.0, 3.0, 4.0], 1.0, multiply)
-/// 24.0
+/// list.fold([2.0, 3.0, 4.0], 1.0, multiply)
+/// // -> 24.0
 /// ```
 ///
 /// ```gleam
-/// > 3.0 |> multiply(2.0)
-/// 6.0
+/// 3.0 |> multiply(2.0)
+/// // -> 6.0
 /// ```
 ///
 pub fn multiply(a: Float, b: Float) -> Float {
@@ -516,24 +516,24 @@ pub fn multiply(a: Float, b: Float) -> Float {
 /// ## Examples
 ///
 /// ```gleam
-/// > subtract(3.0, 1.0)
-/// 2.0
+/// subtract(3.0, 1.0)
+/// // -> 2.0
 /// ```
 ///
 /// ```gleam
-/// > import gleam/list
-/// > list.fold([1.0, 2.0, 3.0], 10.0, subtract)
-/// 4.0
+/// import gleam/list
+/// list.fold([1.0, 2.0, 3.0], 10.0, subtract)
+/// // -> 4.0
 /// ```
 ///
 /// ```gleam
-/// > 3.0 |> subtract(_, 2.0)
-/// 1.0
+/// 3.0 |> subtract(_, 2.0)
+/// // -> 1.0
 /// ```
 ///
 /// ```gleam
-/// > 3.0 |> subtract(2.0, _)
-/// -1.0
+/// 3.0 |> subtract(2.0, _)
+/// // -> -1.0
 /// ```
 ///
 pub fn subtract(a: Float, b: Float) -> Float {
