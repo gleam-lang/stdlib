@@ -18,12 +18,12 @@ import gleam/order.{type Order}
 /// ## Examples
 ///
 /// ```gleam
-/// > absolute_value(-12)
+/// absolute_value(-12)
 /// 12
 /// ```
 ///
 /// ```gleam
-/// > absolute_value(10)
+/// absolute_value(10)
 /// 10
 /// ```
 ///
@@ -40,27 +40,27 @@ pub fn absolute_value(x: Int) -> Int {
 /// ## Examples
 ///
 /// ```gleam
-/// > power(2, -1.0)
+/// power(2, -1.0)
 /// Ok(0.5)
 /// ```
 ///
 /// ```gleam
-/// > power(2, 2.0)
+/// power(2, 2.0)
 /// Ok(4.0)
 /// ```
 ///
 /// ```gleam
-/// > power(8, 1.5)
+/// power(8, 1.5)
 /// Ok(22.627416997969522)
 /// ```
 ///
 /// ```gleam
-/// > 4 |> power(of: 2.0)
+/// 4 |> power(of: 2.0)
 /// Ok(16.0)
 /// ```
 ///
 /// ```gleam
-/// > power(-1, 0.5)
+/// power(-1, 0.5)
 /// Error(Nil)
 /// ```
 ///
@@ -75,12 +75,12 @@ pub fn power(base: Int, of exponent: Float) -> Result(Float, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// > square_root(4)
+/// square_root(4)
 /// Ok(2.0)
 /// ```
 ///
 /// ```gleam
-/// > square_root(-16)
+/// square_root(-16)
 /// Error(Nil)
 /// ```
 ///
@@ -95,12 +95,12 @@ pub fn square_root(x: Int) -> Result(Float, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// > parse("2")
+/// parse("2")
 /// Ok(2)
 /// ```
 ///
 /// ```gleam
-/// > parse("ABC")
+/// parse("ABC")
 /// Error(Nil)
 /// ```
 ///
@@ -118,19 +118,19 @@ fn do_parse(a: String) -> Result(Int, Nil)
 /// ## Examples
 ///
 /// ```gleam
-/// > base_parse("10", 2)
+/// base_parse("10", 2)
 /// Ok(2)
 ///
-/// > base_parse("30", 16)
+/// base_parse("30", 16)
 /// Ok(48)
 ///
-/// > base_parse("1C", 36)
+/// base_parse("1C", 36)
 /// Ok(48)
 ///
-/// > base_parse("48", 1)
+/// base_parse("48", 1)
 /// Error(Nil)
 ///
-/// > base_parse("48", 37)
+/// base_parse("48", 37)
 /// Error(Nil)
 /// ```
 ///
@@ -150,7 +150,7 @@ fn do_base_parse(a: String, b: Int) -> Result(Int, Nil)
 /// ## Examples
 ///
 /// ```gleam
-/// > to_string(2)
+/// to_string(2)
 /// "2"
 /// ```
 ///
@@ -175,27 +175,27 @@ pub type InvalidBase {
 /// ## Examples
 ///
 /// ```gleam
-/// > to_base_string(2, 2)
+/// to_base_string(2, 2)
 /// Ok("10")
 /// ```
 ///
 /// ```gleam
-/// > to_base_string(48, 16)
+/// to_base_string(48, 16)
 /// Ok("30")
 /// ```
 ///
 /// ```gleam
-/// > to_base_string(48, 36)
+/// to_base_string(48, 36)
 /// Ok("1C")
 /// ```
 ///
 /// ```gleam
-/// > to_base_string(48, 1)
+/// to_base_string(48, 1)
 /// Error(InvalidBase)
 /// ```
 ///
 /// ```gleam
-/// > to_base_string(48, 37)
+/// to_base_string(48, 37)
 /// Error(InvalidBase)
 /// ```
 ///
@@ -215,7 +215,7 @@ fn do_to_base_string(a: Int, b: Int) -> String
 /// ## Examples
 ///
 /// ```gleam
-/// > to_base2(2)
+/// to_base2(2)
 /// "10"
 /// ```
 ///
@@ -228,7 +228,7 @@ pub fn to_base2(x: Int) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// > to_base8(15)
+/// to_base8(15)
 /// "17"
 /// ```
 ///
@@ -241,7 +241,7 @@ pub fn to_base8(x: Int) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// > to_base16(48)
+/// to_base16(48)
 /// "30"
 /// ```
 ///
@@ -254,7 +254,7 @@ pub fn to_base16(x: Int) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// > to_base36(48)
+/// to_base36(48)
 /// "1C"
 /// ```
 ///
@@ -267,17 +267,17 @@ pub fn to_base36(x: Int) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// > to_float(5)
+/// to_float(5)
 /// 5.0
 /// ```
 ///
 /// ```gleam
-/// > to_float(0)
+/// to_float(0)
 /// 0.0
 /// ```
 ///
 /// ```gleam
-/// > to_float(-3)
+/// to_float(-3)
 /// -3.0
 /// ```
 ///
@@ -294,7 +294,7 @@ fn do_to_float(a: Int) -> Float
 /// ## Examples
 ///
 /// ```gleam
-/// > clamp(40, min: 50, max: 60)
+/// clamp(40, min: 50, max: 60)
 /// 50
 /// ```
 ///
@@ -309,17 +309,17 @@ pub fn clamp(x: Int, min min_bound: Int, max max_bound: Int) -> Int {
 /// ## Examples
 ///
 /// ```gleam
-/// > compare(2, 3)
+/// compare(2, 3)
 /// Lt
 /// ```
 ///
 /// ```gleam
-/// > compare(4, 3)
+/// compare(4, 3)
 /// Gt
 /// ```
 ///
 /// ```gleam
-/// > compare(3, 3)
+/// compare(3, 3)
 /// Eq
 /// ```
 ///
@@ -339,7 +339,7 @@ pub fn compare(a: Int, with b: Int) -> Order {
 /// ## Examples
 ///
 /// ```gleam
-/// > min(2, 3)
+/// min(2, 3)
 /// 2
 /// ```
 ///
@@ -355,7 +355,7 @@ pub fn min(a: Int, b: Int) -> Int {
 /// ## Examples
 ///
 /// ```gleam
-/// > max(2, 3)
+/// max(2, 3)
 /// 3
 /// ```
 ///
@@ -371,12 +371,12 @@ pub fn max(a: Int, b: Int) -> Int {
 /// ## Examples
 ///
 /// ```gleam
-/// > is_even(2)
+/// is_even(2)
 /// True
 /// ```
 ///
 /// ```gleam
-/// > is_even(3)
+/// is_even(3)
 /// False
 /// ```
 ///
@@ -389,12 +389,12 @@ pub fn is_even(x: Int) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// > is_odd(3)
+/// is_odd(3)
 /// True
 /// ```
 ///
 /// ```gleam
-/// > is_odd(2)
+/// is_odd(2)
 /// False
 /// ```
 ///
@@ -407,7 +407,7 @@ pub fn is_odd(x: Int) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// > negate(1)
+/// negate(1)
 /// -1
 /// ```
 ///
@@ -420,7 +420,7 @@ pub fn negate(x: Int) -> Int {
 /// ## Example
 ///
 /// ```gleam
-/// > sum([1, 2, 3])
+/// sum([1, 2, 3])
 /// 6
 /// ```
 ///
@@ -441,7 +441,7 @@ fn do_sum(numbers: List(Int), initial: Int) -> Int {
 /// ## Example
 ///
 /// ```gleam
-/// > product([2, 3, 4])
+/// product([2, 3, 4])
 /// 24
 /// ```
 ///
@@ -464,12 +464,12 @@ fn do_product(numbers: List(Int), initial: Int) -> Int {
 /// ## Examples
 ///
 /// ```gleam
-/// > digits(234, 10)
+/// digits(234, 10)
 /// Ok([2,3,4])
 /// ```
 ///
 /// ```gleam
-/// > digits(234, 1)
+/// digits(234, 1)
 /// Error(InvalidBase)
 /// ```
 ///
@@ -493,17 +493,17 @@ fn do_digits(x: Int, base: Int, acc: List(Int)) -> List(Int) {
 /// ## Examples
 ///
 /// ```gleam
-/// > undigits([2,3,4], 10)
+/// undigits([2,3,4], 10)
 /// Ok(234)
 /// ```
 ///
 /// ```gleam
-/// > undigits([2,3,4], 1)
+/// undigits([2,3,4], 1)
 /// Error(InvalidBase)
 /// ```
 ///
 /// ```gleam
-/// > undigits([2,3,4], 2)
+/// undigits([2,3,4], 2)
 /// Error(InvalidBase)
 /// ```
 ///
@@ -533,18 +533,18 @@ fn do_undigits(
 /// ## Examples
 ///
 /// ```gleam
-/// > random(10)
-/// 4
+/// random(10)
+/// // -> 4
 /// ```
 ///
 /// ```gleam
-/// > random(1)
-/// 0
+/// random(1)
+/// // -> 0
 /// ```
 ///
 /// ```gleam
-/// > random(-1)
-/// -1
+/// random(-1)
+/// // -> -1
 /// ```
 ///
 pub fn random(max: Int) -> Int {
@@ -561,23 +561,23 @@ pub fn random(max: Int) -> Int {
 /// ## Examples
 ///
 /// ```gleam
-/// > divide(0, 1)
-/// Ok(1)
+/// divide(0, 1)
+/// // -> Ok(1)
 /// ```
 ///
 /// ```gleam
-/// > divide(1, 0)
-/// Error(Nil)
+/// divide(1, 0)
+/// // -> Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// > divide(5, 2)
-/// Ok(2)
+/// divide(5, 2)
+/// // -> Ok(2)
 /// ```
 ///
 /// ```gleam
-/// > divide(-99, 2)
-/// Ok(-49)
+/// divide(-99, 2)
+/// // -> Ok(-49)
 /// ```
 ///
 pub fn divide(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
@@ -598,38 +598,38 @@ pub fn divide(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// > remainder(3, 2)
-/// Ok(1)
+/// remainder(3, 2)
+/// // -> Ok(1)
 /// ```
 ///
 /// ```gleam
-/// > remainder(1, 0)
-/// Error(Nil)
+/// remainder(1, 0)
+/// // -> Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// > remainder(10, -1)
-/// Ok(0)
+/// remainder(10, -1)
+/// // -> Ok(0)
 /// ```
 ///
 /// ```gleam
-/// > remainder(13, by: 3)
-/// Ok(1)
+/// remainder(13, by: 3)
+/// // -> Ok(1)
 /// ```
 ///
 /// ```gleam
-/// > remainder(-13, by: 3)
-/// Ok(-1)
+/// remainder(-13, by: 3)
+/// // -> Ok(-1)
 /// ```
 ///
 /// ```gleam
-/// > remainder(13, by: -3)
-/// Ok(1)
+/// remainder(13, by: -3)
+/// // -> Ok(1)
 /// ```
 ///
 /// ```gleam
-/// > remainder(-13, by: -3)
-/// Ok(-1)
+/// remainder(-13, by: -3)
+/// // -> Ok(-1)
 /// ```
 ///
 pub fn remainder(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
@@ -650,38 +650,38 @@ pub fn remainder(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// > modulo(3, 2)
-/// Ok(1)
+/// modulo(3, 2)
+/// // -> Ok(1)
 /// ```
 ///
 /// ```gleam
-/// > modulo(1, 0)
-/// Error(Nil)
+/// modulo(1, 0)
+/// // -> Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// > modulo(10, -1)
-/// Ok(0)
+/// modulo(10, -1)
+/// // -> Ok(0)
 /// ```
 ///
 /// ```gleam
-/// > modulo(13, by: 3)
-/// Ok(1)
+/// modulo(13, by: 3)
+/// // -> Ok(1)
 /// ```
 ///
 /// ```gleam
-/// > modulo(-13, by: 3)
-/// Ok(2)
+/// modulo(-13, by: 3)
+/// // -> Ok(2)
 /// ```
 ///
 /// ```gleam
-/// > modulo(13, by: -3)
-/// Ok(-2)
+/// modulo(13, by: -3)
+/// // -> Ok(-2)
 /// ```
 ///
 /// ```gleam
-/// > modulo(-13, by: -3)
-/// Ok(-1)
+/// modulo(-13, by: -3)
+/// // -> Ok(-1)
 /// ```
 ///
 pub fn modulo(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
@@ -709,23 +709,23 @@ pub fn modulo(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// > floor_divide(1, 0)
-/// Error(Nil)
+/// floor_divide(1, 0)
+/// // -> Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// > floor_divide(5, 2)
-/// Ok(2)
+/// floor_divide(5, 2)
+/// // -> Ok(2)
 /// ```
 ///
 /// ```gleam
-/// > floor_divide(6, -4)
-/// Ok(-2)
+/// floor_divide(6, -4)
+/// // -> Ok(-2)
 /// ```
 ///
 /// ```gleam
-/// > floor_divide(-99, 2)
-/// Ok(-50)
+/// floor_divide(-99, 2)
+/// // -> Ok(-50)
 /// ```
 ///
 pub fn floor_divide(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
@@ -747,19 +747,19 @@ pub fn floor_divide(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// > add(1, 2)
-/// 3
+/// add(1, 2)
+/// // -> 3
 /// ```
 ///
 /// ```gleam
 /// import gleam/list
-/// > list.fold([1, 2, 3], 0, add)
-/// 6
+/// list.fold([1, 2, 3], 0, add)
+/// // -> 6
 /// ```
 ///
 /// ```gleam
-/// > 3 |> add(2)
-/// 5
+/// 3 |> add(2)
+/// // -> 5
 /// ```
 ///
 pub fn add(a: Int, b: Int) -> Int {
@@ -774,19 +774,19 @@ pub fn add(a: Int, b: Int) -> Int {
 /// ## Examples
 ///
 /// ```gleam
-/// > multiply(2, 4)
-/// 8
+/// multiply(2, 4)
+/// // -> 8
 /// ```
 ///
 /// ```gleam
 /// import gleam/list
-/// > list.fold([2, 3, 4], 1, multiply)
-/// 24
+/// list.fold([2, 3, 4], 1, multiply)
+/// // -> 24
 /// ```
 ///
 /// ```gleam
-/// > 3 |> multiply(2)
-/// 6
+/// 3 |> multiply(2)
+/// // -> 6
 /// ```
 ///
 pub fn multiply(a: Int, b: Int) -> Int {
@@ -801,24 +801,24 @@ pub fn multiply(a: Int, b: Int) -> Int {
 /// ## Examples
 ///
 /// ```gleam
-/// > subtract(3, 1)
-/// 2.0
+/// subtract(3, 1)
+/// // -> 2.0
 /// ```
 ///
 /// ```gleam
 /// import gleam/list
-/// > list.fold([1, 2, 3], 10, subtract)
-/// 4
+/// list.fold([1, 2, 3], 10, subtract)
+/// // -> 4
 /// ```
 ///
 /// ```gleam
-/// > 3 |> subtract(2)
-/// 1
+/// 3 |> subtract(2)
+/// // -> 1
 /// ```
 ///
 /// ```gleam
-/// > 3 |> subtract(2, _)
-/// -1
+/// 3 |> subtract(2, _)
+/// // -> -1
 /// ```
 ///
 pub fn subtract(a: Int, b: Int) -> Int {
