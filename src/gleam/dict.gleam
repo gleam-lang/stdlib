@@ -22,13 +22,13 @@ pub type Dict(key, value)
 /// ## Examples
 ///
 /// ```gleam
-/// > new() |> size()
-/// 0
+/// new() |> size
+/// // -> 0
 /// ```
 ///
 /// ```gleam
-/// > new() |> insert("key", "value") |> size()
-/// 1
+/// new() |> insert("key", "value") |> size
+/// // -> 1
 /// ```
 ///
 @external(erlang, "maps", "size")
@@ -43,13 +43,13 @@ pub fn size(dict: Dict(k, v)) -> Int
 /// ## Examples
 ///
 /// ```gleam
-/// > new() |> to_list()
-/// []
+/// new()
+/// // -> from_list([])
 /// ```
 ///
 /// ```gleam
-/// > new() |> insert("key", 0) |> to_list()
-/// [#("key", 0)]
+/// new() |> insert("key", 0)
+/// // -> from_list([#("key", 0)])
 /// ```
 ///
 @external(erlang, "maps", "to_list")
@@ -81,13 +81,13 @@ fn fold_list_of_pair(
 /// ## Examples
 ///
 /// ```gleam
-/// > new() |> insert("a", 0) |> has_key("a")
-/// True
+/// new() |> insert("a", 0) |> has_key("a")
+/// // -> True
 /// ```
 ///
 /// ```gleam
-/// > new() |> insert("a", 0) |> has_key("b")
-/// False
+/// new() |> insert("a", 0) |> has_key("b")
+/// // -> False
 /// ```
 ///
 pub fn has_key(dict: Dict(k, v), key: k) -> Bool {
@@ -117,13 +117,13 @@ fn do_new() -> Dict(key, value)
 /// ## Examples
 ///
 /// ```gleam
-/// > new() |> insert("a", 0) |> get("a")
-/// Ok(0)
+/// new() |> insert("a", 0) |> get("a")
+/// // -> Ok(0)
 /// ```
 ///
 /// ```gleam
-/// > new() |> insert("a", 0) |> get("b")
-/// Error(Nil)
+/// new() |> insert("a", 0) |> get("b")
+/// // -> Error(Nil)
 /// ```
 ///
 pub fn get(from: Dict(key, value), get: key) -> Result(value, Nil) {
@@ -142,13 +142,13 @@ fn do_get(a: Dict(key, value), b: key) -> Result(value, Nil)
 /// ## Examples
 ///
 /// ```gleam
-/// > new() |> insert("a", 0) |> to_list
-/// [#("a", 0)]
+/// new() |> insert("a", 0)
+/// // -> from_list([#("a", 0)])
 /// ```
 ///
 /// ```gleam
-/// > new() |> insert("a", 0) |> insert("a", 5) |> to_list
-/// [#("a", 5)]
+/// new() |> insert("a", 0) |> insert("a", 5)
+/// // -> from_list([#("a", 5)])
 /// ```
 ///
 pub fn insert(into dict: Dict(k, v), for key: k, insert value: v) -> Dict(k, v) {
@@ -165,10 +165,9 @@ fn do_insert(a: key, b: value, c: Dict(key, value)) -> Dict(key, value)
 /// ## Examples
 ///
 /// ```gleam
-/// > [#(3, 3), #(2, 4)]
-/// > |> from_list
-/// > |> map_values(fn(key, value) { key * value })
-/// [#(3, 9), #(2, 8)]
+/// from_list([#(3, 3), #(2, 4)])
+/// |> map_values(fn(key, value) { key * value })
+/// // -> from_list([#(3, 9), #(2, 8)])
 /// ```
 ///
 pub fn map_values(in dict: Dict(k, v), with fun: fn(k, v) -> w) -> Dict(k, w) {
@@ -191,8 +190,8 @@ fn do_map_values(f: fn(key, value) -> b, dict: Dict(key, value)) -> Dict(key, b)
 /// ## Examples
 ///
 /// ```gleam
-/// > keys([#("a", 0), #("b", 1)])
-/// ["a", "b"]
+/// from_list([#("a", 0), #("b", 1)]) |> keys
+/// // -> ["a", "b"]
 /// ```
 ///
 pub fn keys(dict: Dict(keys, v)) -> List(keys) {
@@ -228,8 +227,8 @@ fn do_keys_acc(list: List(#(k, v)), acc: List(k)) -> List(k) {
 /// ## Examples
 ///
 /// ```gleam
-/// > values(from_list([#("a", 0), #("b", 1)]))
-/// [0, 1]
+/// from_list([#("a", 0), #("b", 1)]) |> values
+/// // -> [0, 1]
 /// ```
 ///
 pub fn values(dict: Dict(k, values)) -> List(values) {
@@ -255,15 +254,15 @@ fn do_values_acc(list: List(#(k, v)), acc: List(v)) -> List(v) {
 /// ## Examples
 ///
 /// ```gleam
-/// > from_list([#("a", 0), #("b", 1)])
-/// > |> filter(fn(key, value) { value != 0 })
-/// from_list([#("b", 1)])
+/// from_list([#("a", 0), #("b", 1)])
+/// |> filter(fn(key, value) { value != 0 })
+/// // -> from_list([#("b", 1)])
 /// ```
 ///
 /// ```gleam
-/// > from_list([#("a", 0), #("b", 1)])
-/// > |> filter(fn(key, value) { True })
 /// from_list([#("a", 0), #("b", 1)])
+/// |> filter(fn(key, value) { True })
+/// // -> from_list([#("a", 0), #("b", 1)])
 /// ```
 ///
 pub fn filter(
@@ -294,15 +293,15 @@ fn do_filter(
 /// ## Examples
 ///
 /// ```gleam
-/// > from_list([#("a", 0), #("b", 1)])
-/// > |> take(["b"])
-/// from_list([#("b", 1)])
+/// from_list([#("a", 0), #("b", 1)])
+/// |> take(["b"])
+/// // -> from_list([#("b", 1)])
 /// ```
 ///
 /// ```gleam
-/// > from_list([#("a", 0), #("b", 1)])
-/// > |> take(["a", "b", "c"])
 /// from_list([#("a", 0), #("b", 1)])
+/// |> take(["a", "b", "c"])
+/// // -> from_list([#("a", 0), #("b", 1)])
 /// ```
 ///
 pub fn take(from dict: Dict(k, v), keeping desired_keys: List(k)) -> Dict(k, v) {
@@ -339,10 +338,10 @@ fn insert_taken(
 /// ## Examples
 ///
 /// ```gleam
-/// > let a = from_list([#("a", 0), #("b", 1)])
-/// > let b = from_list([#("b", 2), #("c", 3)])
-/// > merge(a, b)
-/// from_list([#("a", 0), #("b", 2), #("c", 3)])
+/// let a = from_list([#("a", 0), #("b", 1)])
+/// let b = from_list([#("b", 2), #("c", 3)])
+/// merge(a, b)
+/// // -> from_list([#("a", 0), #("b", 2), #("c", 3)])
 /// ```
 ///
 pub fn merge(into dict: Dict(k, v), from new_entries: Dict(k, v)) -> Dict(k, v) {
@@ -373,13 +372,13 @@ fn fold_inserts(new_entries: List(#(k, v)), dict: Dict(k, v)) -> Dict(k, v) {
 /// ## Examples
 ///
 /// ```gleam
-/// > delete([#("a", 0), #("b", 1)], "a")
-/// from_list([#("b", 1)])
+/// from_list([#("a", 0), #("b", 1)]) |> delete("a")
+/// // -> from_list([#("b", 1)])
 /// ```
 ///
 /// ```gleam
-/// > delete([#("a", 0), #("b", 1)], "c")
-/// from_list([#("a", 0), #("b", 1)])
+/// from_list([#("a", 0), #("b", 1)]) |> delete("c")
+/// // -> from_list([#("a", 0), #("b", 1)])
 /// ```
 ///
 pub fn delete(from dict: Dict(k, v), delete key: k) -> Dict(k, v) {
@@ -396,18 +395,18 @@ fn do_delete(a: k, b: Dict(k, v)) -> Dict(k, v)
 /// ## Examples
 ///
 /// ```gleam
-/// > drop([#("a", 0), #("b", 1)], ["a"])
-/// from_list([#("b", 2)])
+/// from_list([#("a", 0), #("b", 1)]) |> drop(["a"])
+/// // -> from_list([#("b", 2)])
 /// ```
 ///
 /// ```gleam
-/// > delete([#("a", 0), #("b", 1)], ["c"])
-/// from_list([#("a", 0), #("b", 1)])
+/// from_list([#("a", 0), #("b", 1)]) |> drop(["c"])
+/// // -> from_list([#("a", 0), #("b", 1)])
 /// ```
 ///
 /// ```gleam
-/// > drop([#("a", 0), #("b", 1)], ["a", "b", "c"])
-/// from_list([])
+/// from_list([#("a", 0), #("b", 1)]) |> drop(["a", "b", "c"])
+/// // -> from_list([])
 /// ```
 ///
 pub fn drop(from dict: Dict(k, v), drop disallowed_keys: List(k)) -> Dict(k, v) {
@@ -425,21 +424,19 @@ pub fn drop(from dict: Dict(k, v), drop disallowed_keys: List(k)) -> Dict(k, v) 
 /// ## Example
 ///
 /// ```gleam
-/// > let increment = fn(x) {
-/// >   case x {
-/// >     Some(i) -> i + 1
-/// >     None -> 0
-/// >   }
-/// > }
-/// > let dict = from_list([#("a", 0)])
-/// >
-/// > update(dict, "a", increment)
-/// from_list([#("a", 1)])
-/// ```
+/// let dict = from_list([#("a", 0)])
+/// let increment = fn(x) {
+///   case x {
+///     Some(i) -> i + 1
+///     None -> 0
+///   }
+/// }
 ///
-/// ```gleam
-/// > update(dict, "b", increment)
-/// from_list([#("a", 0), #("b", 0)])
+///  update(dict, "a", increment)
+/// // -> from_list([#("a", 1)])
+///
+/// update(dict, "b", increment)
+/// // -> from_list([#("a", 0), #("b", 0)])
 /// ```
 ///
 pub fn update(
@@ -471,15 +468,19 @@ fn do_fold(list: List(#(k, v)), initial: acc, fun: fn(acc, k, v) -> acc) -> acc 
 /// # Examples
 ///
 /// ```gleam
-/// > let dict = from_list([#("a", 1), #("b", 3), #("c", 9)])
-/// > fold(dict, 0, fn(accumulator, key, value) { accumulator + value })
-/// 13
+/// let dict = from_list([#("a", 1), #("b", 3), #("c", 9)])
+/// fold(dict, 0, fn(accumulator, key, value) { accumulator + value })
+/// // -> 13
 /// ```
 ///
 /// ```gleam
-/// > import gleam/string.{append}
-/// > fold(dict, "", fn(accumulator, key, value) { append(accumulator, key) })
-/// "abc"
+/// import gleam/string
+///
+/// let dict = from_list([#("a", 1), #("b", 3), #("c", 9)])
+/// fold(dict, "", fn(accumulator, key, value) { 
+///   string.append(accumulator, key)
+/// })
+/// // -> "abc"
 /// ```
 ///
 pub fn fold(
