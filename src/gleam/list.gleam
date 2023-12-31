@@ -45,18 +45,18 @@ pub type LengthMismatch {
 /// ## Examples
 ///
 /// ```gleam
-/// > length([])
-/// 0
+/// length([])
+/// // -> 0
 /// ```
 ///
 /// ```gleam
-/// > length([1])
-/// 1
+/// length([1])
+/// // -> 1
 /// ```
 ///
 /// ```gleam
-/// > length([1, 2])
-/// 2
+/// length([1, 2])
+/// // -> 2
 /// ```
 ///
 pub fn length(of list: List(a)) -> Int {
@@ -92,18 +92,18 @@ fn do_length_acc(list: List(a), count: Int) -> Int {
 /// ## Examples
 ///
 /// ```gleam
-/// > reverse([])
-/// []
+/// reverse([])
+/// // -> []
 /// ```
 ///
 /// ```gleam
-/// > reverse([1])
-/// [1]
+/// reverse([1])
+/// // -> [1]
 /// ```
 ///
 /// ```gleam
-/// > reverse([1, 2])
-/// [2, 1]
+/// reverse([1, 2])
+/// // -> [2, 1]
 /// ```
 ///
 pub fn reverse(xs: List(a)) -> List(a) {
@@ -134,18 +134,18 @@ fn do_reverse_acc(remaining, accumulator) {
 /// ## Examples
 ///
 /// ```gleam
-/// > is_empty([])
-/// True
+/// is_empty([])
+/// // -> True
 /// ```
 ///
 /// ```gleam
-/// > is_empty([1])
-/// False
+/// is_empty([1])
+/// // -> False
 /// ```
 ///
 /// ```gleam
-/// > is_empty([1, 1])
-/// False
+/// is_empty([1, 1])
+/// // -> False
 /// ```
 ///
 pub fn is_empty(list: List(a)) -> Bool {
@@ -160,28 +160,28 @@ pub fn is_empty(list: List(a)) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// > [] |> contains(any: 0)
-/// False
+/// [] |> contains(any: 0)
+/// // -> False
 /// ```
 ///
 /// ```gleam
-/// > [0] |> contains(any: 0)
-/// True
+/// [0] |> contains(any: 0)
+/// // -> True
 /// ```
 ///
 /// ```gleam
-/// > [1] |> contains(any: 0)
-/// False
+/// [1] |> contains(any: 0)
+/// // -> False
 /// ```
 ///
 /// ```gleam
-/// > [1, 1] |> contains(any: 0)
-/// False
+/// [1, 1] |> contains(any: 0)
+/// // -> False
 /// ```
 ///
 /// ```gleam
-/// > [1, 0] |> contains(any: 0)
-/// True
+/// [1, 0] |> contains(any: 0)
+/// // -> True
 /// ```
 ///
 pub fn contains(list: List(a), any elem: a) -> Bool {
@@ -197,18 +197,18 @@ pub fn contains(list: List(a), any elem: a) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// > first([])
-/// Error(Nil)
+/// first([])
+/// // -> Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// > first([0])
-/// Ok(0)
+/// first([0])
+/// // -> Ok(0)
 /// ```
 ///
 /// ```gleam
-/// > first([1, 2])
-/// Ok(1)
+/// first([1, 2])
+/// // -> Ok(1)
 /// ```
 ///
 pub fn first(list: List(a)) -> Result(a, Nil) {
@@ -226,18 +226,18 @@ pub fn first(list: List(a)) -> Result(a, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// > rest([])
-/// Error(Nil)
+/// rest([])
+/// // -> Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// > rest([0])
-/// Ok([])
+/// rest([0])
+/// // -> Ok([])
 /// ```
 ///
 /// ```gleam
-/// > rest([1, 2])
-/// Ok([2])
+/// rest([1, 2])
+/// // -> Ok([2])
 /// ```
 ///
 pub fn rest(list: List(a)) -> Result(List(a), Nil) {
@@ -266,23 +266,27 @@ fn update_group(
 /// ## Examples
 ///
 /// ```gleam
-/// > [Ok(3), Error("Wrong"), Ok(200), Ok(73)]
-///   |> group(by: fn(i) {
-///     case i {
-///       Ok(_) -> "Successful"
-///       Error(_) -> "Failed"
-///     }
-///   })
-///   |> dict.to_list
-///
-/// [
-///   #("Failed", [Error("Wrong")]),
-///   #("Successful", [Ok(73), Ok(200), Ok(3)])
-/// ]
-///
-/// > group([1,2,3,4,5], by: fn(i) { i - i / 3 * 3 })
+/// import gleam/dict
+/// 
+/// [Ok(3), Error("Wrong"), Ok(200), Ok(73)]
+/// |> group(by: fn(i) {
+///   case i {
+///     Ok(_) -> "Successful"
+///     Error(_) -> "Failed"
+///   }
+/// })
 /// |> dict.to_list
-/// [#(0, [3]), #(1, [4, 1]), #(2, [5, 2])]
+/// // -> [
+/// //   #("Failed", [Error("Wrong")]),
+/// //   #("Successful", [Ok(73), Ok(200), Ok(3)])
+/// // ]
+/// ```
+/// 
+/// ```gleam
+/// import gleam/dict
+/// group([1,2,3,4,5], by: fn(i) { i - i / 3 * 3 })
+/// |> dict.to_list
+/// // -> [#(0, [3]), #(1, [4, 1]), #(2, [5, 2])]
 /// ```
 ///
 pub fn group(list: List(v), by key: fn(v) -> k) -> Dict(k, List(v)) {
@@ -308,13 +312,13 @@ fn do_filter(list: List(a), fun: fn(a) -> Bool, acc: List(a)) -> List(a) {
 /// ## Examples
 ///
 /// ```gleam
-/// > filter([2, 4, 6, 1], fn(x) { x > 2 })
-/// [4, 6]
+/// filter([2, 4, 6, 1], fn(x) { x > 2 })
+/// // -> [4, 6]
 /// ```
 ///
 /// ```gleam
-/// > filter([2, 4, 6, 1], fn(x) { x > 6 })
-/// []
+/// filter([2, 4, 6, 1], fn(x) { x > 6 })
+/// // -> []
 /// ```
 ///
 pub fn filter(list: List(a), keeping predicate: fn(a) -> Bool) -> List(a) {
@@ -344,13 +348,13 @@ fn do_filter_map(
 /// ## Examples
 ///
 /// ```gleam
-/// > filter_map([2, 4, 6, 1], Error)
-/// []
+/// filter_map([2, 4, 6, 1], Error)
+/// // -> []
 /// ```
 ///
 /// ```gleam
-/// > filter_map([2, 4, 6, 1], fn(x) { Ok(x + 1) })
-/// [3, 5, 7, 2]
+/// filter_map([2, 4, 6, 1], fn(x) { Ok(x + 1) })
+/// // -> [3, 5, 7, 2]
 /// ```
 ///
 pub fn filter_map(list: List(a), with fun: fn(a) -> Result(b, e)) -> List(b) {
@@ -370,8 +374,8 @@ fn do_map(list: List(a), fun: fn(a) -> b, acc: List(b)) -> List(b) {
 /// ## Examples
 ///
 /// ```gleam
-/// > map([2, 4, 6], fn(x) { x * 2 })
-/// [4, 8, 12]
+/// map([2, 4, 6], fn(x) { x * 2 })
+/// // -> [4, 8, 12]
 /// ```
 ///
 pub fn map(list: List(a), with fun: fn(a) -> b) -> List(b) {
@@ -385,13 +389,13 @@ pub fn map(list: List(a), with fun: fn(a) -> b) -> List(b) {
 /// ## Examples
 /// 
 /// ```gleam
-/// > map2([1, 2, 3], [4, 5, 6], fn(x, y) { x + y })
-/// [5, 7, 9]
+/// map2([1, 2, 3], [4, 5, 6], fn(x, y) { x + y })
+/// // -> [5, 7, 9]
 /// ```
 /// 
 /// ```gleam
-/// > map2([1, 2], ["a", "b", "c"], fn(i, x) { #(i, x) })
-/// [#(1, "a"), #(2, "b")]
+/// map2([1, 2], ["a", "b", "c"], fn(i, x) { #(i, x) })
+/// // -> [#(1, "a"), #(2, "b")]
 /// ```
 /// 
 pub fn map2(list1: List(a), list2: List(b), with fun: fn(a, b) -> c) -> List(c) {
@@ -415,12 +419,12 @@ fn do_map2(
 /// ## Examples
 ///
 /// ```gleam
-/// > map_fold(
-///     over: [1, 2, 3],
-///     from: 100,
-///     with: fn(memo, i) { #(memo + i, i * 2) }
-///   )
-/// #(106, [2, 4, 6])
+/// map_fold(
+///   over: [1, 2, 3],
+///   from: 100,
+///   with: fn(memo, i) { #(memo + i, i * 2) }
+/// )
+/// // -> #(106, [2, 4, 6])
 /// ```
 ///
 pub fn map_fold(
@@ -460,8 +464,8 @@ fn do_index_map(
 /// ## Examples
 ///
 /// ```gleam
-/// > index_map(["a", "b"], fn(x, i) { #(i, x) })
-/// [#(0, "a"), #(1, "b")]
+/// index_map(["a", "b"], fn(x, i) { #(i, x) })
+/// // -> [#(0, "a"), #(1, "b")]
 /// ```
 ///
 pub fn index_map(list: List(a), with fun: fn(a, Int) -> b) -> List(b) {
@@ -496,23 +500,23 @@ fn do_try_map(
 /// ## Examples
 ///
 /// ```gleam
-/// > try_map([1, 2, 3], fn(x) { Ok(x + 2) })
-/// Ok([3, 4, 5])
+/// try_map([1, 2, 3], fn(x) { Ok(x + 2) })
+/// // -> Ok([3, 4, 5])
 /// ```
 ///
 /// ```gleam
-/// > try_map([1, 2, 3], fn(_) { Error(0) })
-/// Error(0)
+/// try_map([1, 2, 3], fn(_) { Error(0) })
+/// // -> Error(0)
 /// ```
 ///
 /// ```gleam
-/// > try_map([[1], [2, 3]], first)
-/// Ok([1, 2])
+/// try_map([[1], [2, 3]], first)
+/// // -> Ok([1, 2])
 /// ```
 ///
 /// ```gleam
-/// > try_map([[1], [], [2]], first)
-/// Error(Nil)
+/// try_map([[1], [], [2]], first)
+/// // -> Error(Nil)
 /// ```
 ///
 pub fn try_map(
@@ -533,13 +537,13 @@ pub fn try_map(
 /// ## Examples
 ///
 /// ```gleam
-/// > drop([1, 2, 3, 4], 2)
-/// [3, 4]
+/// drop([1, 2, 3, 4], 2)
+/// // -> [3, 4]
 /// ```
 ///
 /// ```gleam
-/// > drop([1, 2, 3, 4], 9)
-/// []
+/// drop([1, 2, 3, 4], 9)
+/// // -> []
 /// ```
 ///
 pub fn drop(from list: List(a), up_to n: Int) -> List(a) {
@@ -575,13 +579,13 @@ fn do_take(list: List(a), n: Int, acc: List(a)) -> List(a) {
 /// ## Examples
 ///
 /// ```gleam
-/// > take([1, 2, 3, 4], 2)
-/// [1, 2]
+/// take([1, 2, 3, 4], 2)
+/// // -> [1, 2]
 /// ```
 ///
 /// ```gleam
-/// > take([1, 2, 3, 4], 9)
-/// [1, 2, 3, 4]
+/// take([1, 2, 3, 4], 9)
+/// // -> [1, 2, 3, 4]
 /// ```
 ///
 pub fn take(from list: List(a), up_to n: Int) -> List(a) {
@@ -593,8 +597,8 @@ pub fn take(from list: List(a), up_to n: Int) -> List(a) {
 /// ## Examples
 ///
 /// ```gleam
-/// > new()
-/// []
+/// new()
+/// // -> []
 /// ```
 ///
 pub fn new() -> List(a) {
@@ -609,8 +613,8 @@ pub fn new() -> List(a) {
 /// ## Examples
 ///
 /// ```gleam
-/// > append([1, 2], [3])
-/// [1, 2, 3]
+/// append([1, 2], [3])
+/// // -> [1, 2, 3]
 /// ```
 ///
 pub fn append(first: List(a), second: List(a)) -> List(a) {
@@ -638,7 +642,13 @@ fn do_append_acc(first: List(a), second: List(a)) -> List(a) {
 /// syntax instead
 ///
 /// ```gleam
-/// let new_list = [1, ..existing_list]
+/// let existing_list = [2, 3, 4]
+/// 
+/// [1, ..existing_list]
+/// // -> [1, 2, 3, 4]
+/// 
+/// prepend(to: existing_list, this: 1)
+/// // -> [1, 2, 3, 4]
 /// ```
 ///
 pub fn prepend(to list: List(a), this item: a) -> List(a) {
@@ -668,8 +678,8 @@ fn do_concat(lists: List(List(a)), acc: List(a)) -> List(a) {
 /// ## Examples
 ///
 /// ```gleam
-/// > concat([[1], [2, 3], []])
-/// [1, 2, 3]
+/// concat([[1], [2, 3], []])
+/// // -> [1, 2, 3]
 /// ```
 ///
 pub fn concat(lists: List(List(a))) -> List(a) {
@@ -684,8 +694,8 @@ pub fn concat(lists: List(List(a))) -> List(a) {
 /// ## Examples
 /// 
 /// ```gleam
-/// > flatten([[1], [2, 3], []])
-/// [1, 2, 3]
+/// flatten([[1], [2, 3], []])
+/// // -> [1, 2, 3]
 /// ```
 /// 
 pub fn flatten(lists: List(List(a))) -> List(a) {
@@ -697,8 +707,8 @@ pub fn flatten(lists: List(List(a))) -> List(a) {
 /// ## Examples
 ///
 /// ```gleam
-/// > flat_map([2, 4, 6], fn(x) { [x, x + 1] })
-/// [2, 3, 4, 5, 6, 7]
+/// flat_map([2, 4, 6], fn(x) { [x, x + 1] })
+/// // -> [2, 3, 4, 5, 6, 7]
 /// ```
 ///
 pub fn flat_map(over list: List(a), with fun: fn(a) -> List(b)) -> List(b) {
@@ -793,6 +803,7 @@ pub fn index_fold(
 ///     False -> Error(Nil)
 ///   }
 /// })
+/// // -> Error(Nil)
 /// ```
 ///
 pub fn try_fold(
@@ -831,6 +842,7 @@ pub type ContinueOrStop(a) {
 ///     False -> Stop(acc)
 ///   }
 /// })
+/// // -> 6
 /// ```
 ///
 pub fn fold_until(
@@ -856,18 +868,18 @@ pub fn fold_until(
 /// ## Examples
 ///
 /// ```gleam
-/// > find([1, 2, 3], fn(x) { x > 2 })
-/// Ok(3)
+/// find([1, 2, 3], fn(x) { x > 2 })
+/// // -> Ok(3)
 /// ```
 ///
 /// ```gleam
-/// > find([1, 2, 3], fn(x) { x > 4 })
-/// Error(Nil)
+/// find([1, 2, 3], fn(x) { x > 4 })
+/// // -> Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// > find([], fn(_) { True })
-/// Error(Nil)
+/// find([], fn(_) { True })
+/// // -> Error(Nil)
 /// ```
 ///
 pub fn find(
@@ -892,18 +904,18 @@ pub fn find(
 /// ## Examples
 ///
 /// ```gleam
-/// > find_map([[], [2], [3]], first)
-/// Ok(2)
+/// find_map([[], [2], [3]], first)
+/// // -> Ok(2)
 /// ```
 ///
 /// ```gleam
-/// > find_map([[], []], first)
-/// Error(Nil)
+/// find_map([[], []], first)
+/// // -> Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// > find_map([], first)
-/// Error(Nil)
+/// find_map([], first)
+/// // -> Error(Nil)
 /// ```
 ///
 pub fn find_map(
@@ -927,18 +939,18 @@ pub fn find_map(
 /// ## Examples
 ///
 /// ```gleam
-/// > all([], fn(x) { x > 3 })
-/// True
+/// all([], fn(x) { x > 3 })
+/// // -> True
 /// ```
 ///
 /// ```gleam
-/// > all([4, 5], fn(x) { x > 3 })
-/// True
+/// all([4, 5], fn(x) { x > 3 })
+/// // -> True
 /// ```
 ///
 /// ```gleam
-/// > all([4, 3], fn(x) { x > 3 })
-/// False
+/// all([4, 3], fn(x) { x > 3 })
+/// // -> False
 /// ```
 ///
 pub fn all(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
@@ -959,23 +971,23 @@ pub fn all(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// > any([], fn(x) { x > 3 })
-/// False
+/// any([], fn(x) { x > 3 })
+/// // -> False
 /// ```
 ///
 /// ```gleam
-/// > any([4, 5], fn(x) { x > 3 })
-/// True
+/// any([4, 5], fn(x) { x > 3 })
+/// // -> True
 /// ```
 ///
 /// ```gleam
-/// > any([4, 3], fn(x) { x > 4 })
-/// False
+/// any([4, 3], fn(x) { x > 4 })
+/// // -> False
 /// ```
 ///
 /// ```gleam
-/// > any([3, 4], fn(x) { x > 3 })
-/// True
+/// any([3, 4], fn(x) { x > 3 })
+/// // -> True
 /// ```
 ///
 pub fn any(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
@@ -1004,23 +1016,23 @@ fn do_zip(xs: List(a), ys: List(b), acc: List(#(a, b))) -> List(#(a, b)) {
 /// ## Examples
 ///
 /// ```gleam
-/// > zip([], [])
-/// []
+/// zip([], [])
+/// // -> []
 /// ```
 ///
 /// ```gleam
-/// > zip([1, 2], [3])
-/// [#(1, 3)]
+/// zip([1, 2], [3])
+/// // -> [#(1, 3)]
 /// ```
 ///
 /// ```gleam
-/// > zip([1], [3, 4])
-/// [#(1, 3)]
+/// zip([1], [3, 4])
+/// // -> [#(1, 3)]
 /// ```
 ///
 /// ```gleam
-/// > zip([1, 2], [3, 4])
-/// [#(1, 3), #(2, 4)]
+/// zip([1, 2], [3, 4])
+/// // -> [#(1, 3), #(2, 4)]
 /// ```
 ///
 pub fn zip(list: List(a), with other: List(b)) -> List(#(a, b)) {
@@ -1034,23 +1046,23 @@ pub fn zip(list: List(a), with other: List(b)) -> List(#(a, b)) {
 /// ## Examples
 ///
 /// ```gleam
-/// > strict_zip([], [])
-/// Ok([])
+/// strict_zip([], [])
+/// // -> Ok([])
 /// ```
 ///
 /// ```gleam
-/// > strict_zip([1, 2], [3])
-/// Error(LengthMismatch)
+/// strict_zip([1, 2], [3])
+/// // -> Error(LengthMismatch)
 /// ```
 ///
 /// ```gleam
-/// > strict_zip([1], [3, 4])
-/// Error(LengthMismatch)
+/// strict_zip([1], [3, 4])
+/// // -> Error(LengthMismatch)
 /// ```
 ///
 /// ```gleam
-/// > strict_zip([1, 2], [3, 4])
-/// Ok([#(1, 3), #(2, 4)])
+/// strict_zip([1, 2], [3, 4])
+/// // -> Ok([#(1, 3), #(2, 4)])
 /// ```
 ///
 pub fn strict_zip(
@@ -1075,13 +1087,13 @@ fn do_unzip(input, xs, ys) {
 /// ## Examples
 ///
 /// ```gleam
-/// > unzip([#(1, 2), #(3, 4)])
-/// #([1, 3], [2, 4])
+/// unzip([#(1, 2), #(3, 4)])
+/// // -> #([1, 3], [2, 4])
 /// ```
 ///
 /// ```gleam
-/// > unzip([])
-/// #([], [])
+/// unzip([])
+/// // -> #([], [])
 /// ```
 ///
 pub fn unzip(input: List(#(a, b))) -> #(List(a), List(b)) {
@@ -1102,13 +1114,13 @@ fn do_intersperse(list: List(a), separator: a, acc: List(a)) -> List(a) {
 /// ## Examples
 ///
 /// ```gleam
-/// > intersperse([1, 1, 1], 2)
-/// [1, 2, 1, 2, 1]
+/// intersperse([1, 1, 1], 2)
+/// // -> [1, 2, 1, 2, 1]
 /// ```
 ///
 /// ```gleam
-/// > intersperse([], 2)
-/// []
+/// intersperse([], 2)
+/// // -> []
 /// ```
 ///
 pub fn intersperse(list: List(a), with elem: a) -> List(a) {
@@ -1127,13 +1139,13 @@ pub fn intersperse(list: List(a), with elem: a) -> List(a) {
 /// ## Examples
 ///
 /// ```gleam
-/// > at([1, 2, 3], 1)
-/// Ok(2)
+/// at([1, 2, 3], 1)
+/// // -> Ok(2)
 /// ```
 ///
 /// ```gleam
-/// > at([1, 2, 3], 5)
-/// Error(Nil)
+/// at([1, 2, 3], 5)
+/// // -> Error(Nil)
 /// ```
 ///
 pub fn at(in list: List(a), get index: Int) -> Result(a, Nil) {
@@ -1153,8 +1165,8 @@ pub fn at(in list: List(a), get index: Int) -> Result(a, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// > unique([1, 1, 1, 4, 7, 3, 3, 4])
-/// [1, 4, 7, 3]
+/// unique([1, 1, 1, 4, 7, 3, 3, 4])
+/// // -> [1, 4, 7, 3]
 /// ```
 ///
 pub fn unique(list: List(a)) -> List(a) {
@@ -1265,9 +1277,9 @@ fn merge_sort(
 /// ## Examples
 ///
 /// ```gleam
-/// > import gleam/int
-/// > list.sort([4, 3, 6, 5, 4, 1, 2], by: int.compare)
-/// [1, 2, 3, 4, 4, 5, 6]
+/// import gleam/int
+/// sort([4, 3, 6, 5, 4, 1, 2], by: int.compare)
+/// // -> [1, 2, 3, 4, 4, 5, 6]
 /// ```
 ///
 pub fn sort(list: List(a), by compare: fn(a, a) -> Order) -> List(a) {
@@ -1279,18 +1291,18 @@ pub fn sort(list: List(a), by compare: fn(a, a) -> Order) -> List(a) {
 /// ## Examples
 ///
 /// ```gleam
-/// > range(0, 0)
-/// [0]
+/// range(0, 0)
+/// // -> [0]
 /// ```
 ///
 /// ```gleam
-/// > range(0, 5)
-/// [0, 1, 2, 3, 4, 5]
+/// range(0, 5)
+/// // -> [0, 1, 2, 3, 4, 5]
 /// ```
 ///
 /// ```gleam
-/// > range(1, -5)
-/// [1, 0, -1, -2, -3, -4, -5]
+/// range(1, -5)
+/// // -> [1, 0, -1, -2, -3, -4, -5]
 /// ```
 ///
 pub fn range(from start: Int, to stop: Int) -> List(Int) {
@@ -1317,13 +1329,13 @@ fn do_repeat(a: a, times: Int, acc: List(a)) -> List(a) {
 /// ## Examples
 ///
 /// ```gleam
-/// > repeat("a", times: 0)
-/// []
+/// repeat("a", times: 0)
+/// // -> []
 /// ```
 ///
 /// ```gleam
-/// > repeat("a", times: 5)
-/// ["a", "a", "a", "a", "a"]
+/// repeat("a", times: 5)
+/// // -> ["a", "a", "a", "a", "a"]
 /// ```
 ///
 pub fn repeat(item a: a, times times: Int) -> List(a) {
@@ -1349,18 +1361,18 @@ fn do_split(list: List(a), n: Int, taken: List(a)) -> #(List(a), List(a)) {
 /// ## Examples
 ///
 /// ```gleam
-/// > split([6, 7, 8, 9], 0)
-/// #([], [6, 7, 8, 9])
+/// split([6, 7, 8, 9], 0)
+/// // -> #([], [6, 7, 8, 9])
 /// ```
 ///
 /// ```gleam
-/// > split([6, 7, 8, 9], 2)
-/// #([6, 7], [8, 9])
+/// split([6, 7, 8, 9], 2)
+/// // -> #([6, 7], [8, 9])
 /// ```
 ///
 /// ```gleam
-/// > split([6, 7, 8, 9], 4)
-/// #([6, 7, 8, 9], [])
+/// split([6, 7, 8, 9], 4)
+/// // -> #([6, 7, 8, 9], [])
 /// ```
 ///
 pub fn split(list list: List(a), at index: Int) -> #(List(a), List(a)) {
@@ -1391,13 +1403,13 @@ fn do_split_while(
 /// ## Examples
 ///
 /// ```gleam
-/// > split_while([1, 2, 3, 4, 5], fn(x) { x <= 3 })
-/// #([1, 2, 3], [4, 5])
+/// split_while([1, 2, 3, 4, 5], fn(x) { x <= 3 })
+/// // -> #([1, 2, 3], [4, 5])
 /// ```
 ///
 /// ```gleam
-/// > split_while([1, 2, 3, 4, 5], fn(x) { x <= 5 })
-/// #([1, 2, 3, 4, 5], [])
+/// split_while([1, 2, 3, 4, 5], fn(x) { x <= 5 })
+/// // -> #([1, 2, 3, 4, 5], [])
 /// ```
 ///
 pub fn split_while(
@@ -1418,18 +1430,18 @@ pub fn split_while(
 /// ## Examples
 ///
 /// ```gleam
-/// > key_find([#("a", 0), #("b", 1)], "a")
-/// Ok(0)
+/// key_find([#("a", 0), #("b", 1)], "a")
+/// // -> Ok(0)
 /// ```
 ///
 /// ```gleam
-/// > key_find([#("a", 0), #("b", 1)], "b")
-/// Ok(1)
+/// key_find([#("a", 0), #("b", 1)], "b")
+/// // -> Ok(1)
 /// ```
 ///
 /// ```gleam
-/// > key_find([#("a", 0), #("b", 1)], "c")
-/// Error(Nil)
+/// key_find([#("a", 0), #("b", 1)], "c")
+/// // -> Error(Nil)
 /// ```
 ///
 pub fn key_find(
@@ -1454,13 +1466,13 @@ pub fn key_find(
 /// ## Examples
 ///
 /// ```gleam
-/// > key_filter([#("a", 0), #("b", 1), #("a", 2)], "a")
-/// [0, 2]
+/// key_filter([#("a", 0), #("b", 1), #("a", 2)], "a")
+/// // -> [0, 2]
 /// ```
 ///
 /// ```gleam
-/// > key_filter([#("a", 0), #("b", 1)], "c")
-/// []
+/// key_filter([#("a", 0), #("b", 1)], "c")
+/// // -> []
 /// ```
 ///
 pub fn key_filter(
@@ -1494,18 +1506,18 @@ fn do_pop(haystack, predicate, checked) {
 /// ## Examples
 ///
 /// ```gleam
-/// > pop([1, 2, 3], fn(x) { x > 2 })
-/// Ok(#(3, [1, 2]))
+/// pop([1, 2, 3], fn(x) { x > 2 })
+/// // -> Ok(#(3, [1, 2]))
 /// ```
 ///
 /// ```gleam
-/// > pop([1, 2, 3], fn(x) { x > 4 })
-/// Error(Nil)
+/// pop([1, 2, 3], fn(x) { x > 4 })
+/// // -> Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// > pop([], fn(_) { True })
-/// Error(Nil)
+/// pop([], fn(_) { True })
+/// // -> Error(Nil)
 /// ```
 ///
 pub fn pop(
@@ -1534,18 +1546,18 @@ fn do_pop_map(haystack, mapper, checked) {
 /// ## Examples
 ///
 /// ```gleam
-/// > pop_map([[], [2], [3]], first)
-/// Ok(#(2, [[], [3]]))
+/// pop_map([[], [2], [3]], first)
+/// // -> Ok(#(2, [[], [3]]))
 /// ```
 ///
 /// ```gleam
-/// > pop_map([[], []], first)
-/// Error(Nil)
+/// pop_map([[], []], first)
+/// // -> Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// > pop_map([], first)
-/// Error(Nil)
+/// pop_map([], first)
+/// // -> Error(Nil)
 /// ```
 ///
 pub fn pop_map(
@@ -1564,18 +1576,18 @@ pub fn pop_map(
 /// ## Examples
 ///
 /// ```gleam
-/// > key_pop([#("a", 0), #("b", 1)], "a")
-/// Ok(#(0, [#("b", 1)]))
+/// key_pop([#("a", 0), #("b", 1)], "a")
+/// // -> Ok(#(0, [#("b", 1)]))
 /// ```
 ///
 /// ```gleam
-/// > key_pop([#("a", 0), #("b", 1)], "b")
-/// Ok(#(1, [#("a", 0)]))
+/// key_pop([#("a", 0), #("b", 1)], "b")
+/// // -> Ok(#(1, [#("a", 0)]))
 /// ```
 ///
 /// ```gleam
-/// > key_pop([#("a", 0), #("b", 1)], "c")
-/// Error(Nil)
+/// key_pop([#("a", 0), #("b", 1)], "c")
+/// // -> Error(Nil)
 /// ```
 ///
 pub fn key_pop(
@@ -1599,13 +1611,13 @@ pub fn key_pop(
 /// ## Examples
 ///
 /// ```gleam
-/// > key_set([#(5, 0), #(4, 1)], 4, 100)
-/// [#(5, 0), #(4, 100)]
+/// key_set([#(5, 0), #(4, 1)], 4, 100)
+/// // -> [#(5, 0), #(4, 100)]
 /// ```
 ///
 /// ```gleam
-/// > key_set([#(5, 0), #(4, 1)], 1, 100)
-/// [#(5, 0), #(4, 1), #(1, 100)]
+/// key_set([#(5, 0), #(4, 1)], 1, 100)
+/// // -> [#(5, 0), #(4, 1), #(1, 100)]
 /// ```
 ///
 pub fn key_set(list: List(#(a, b)), key: a, value: b) -> List(#(a, b)) {
@@ -1621,8 +1633,12 @@ pub fn key_set(list: List(#(a, b)), key: a, value: b) -> List(#(a, b)) {
 /// Useful for calling a side effect for every item of a list.
 ///
 /// ```gleam
-/// > list.each([1, 2, 3], io.println)
-/// Nil
+/// import gleam/io
+/// each(["1", "2", "3"], io.println)
+/// // -> Nil
+/// // 1
+/// // 2
+/// // 3
 /// ```
 ///
 pub fn each(list: List(a), f: fn(a) -> b) -> Nil {
@@ -1644,11 +1660,11 @@ pub fn each(list: List(a), f: fn(a) -> b) -> Nil {
 /// ## Examples
 ///
 /// ```gleam
-/// > try_each(
-/// >   over: [1, 2, 3],
-/// >   with: function_that_might_fail,
-/// > )
-/// Ok(Nil)
+/// try_each(
+///   over: [1, 2, 3],
+///   with: function_that_might_fail,
+/// )
+/// // -> Ok(Nil)
 /// ```
 ///
 pub fn try_each(
@@ -1682,8 +1698,9 @@ fn do_partition(list, categorise, trues, falses) {
 /// ## Examples
 ///
 /// ```gleam
-/// > [1, 2, 3, 4, 5] |> list.partition(int.is_odd)
-/// #([1, 3, 5], [2, 4])
+/// import gleam/int
+/// [1, 2, 3, 4, 5] |> partition(int.is_odd)
+/// // -> #([1, 3, 5], [2, 4])
 /// ```
 ///
 pub fn partition(
@@ -1698,8 +1715,8 @@ pub fn partition(
 /// ## Examples
 ///
 /// ```gleam
-/// > permutations([1, 2])
-/// [[1, 2], [2, 1]]
+/// permutations([1, 2])
+/// // -> [[1, 2], [2, 1]]
 /// ```
 ///
 pub fn permutations(l: List(a)) -> List(List(a)) {
@@ -1737,13 +1754,13 @@ fn do_window(acc: List(List(a)), l: List(a), n: Int) -> List(List(a)) {
 /// ## Examples
 ///
 /// ```gleam
-/// > window([1,2,3,4,5], 3)
-/// [[1, 2, 3], [2, 3, 4], [3, 4, 5]]
+/// window([1,2,3,4,5], 3)
+/// // -> [[1, 2, 3], [2, 3, 4], [3, 4, 5]]
 /// ```
 ///
 /// ```gleam
-/// > window([1, 2], 4)
-/// []
+/// window([1, 2], 4)
+/// // -> []
 /// ```
 ///
 pub fn window(l: List(a), by n: Int) -> List(List(a)) {
@@ -1756,13 +1773,13 @@ pub fn window(l: List(a), by n: Int) -> List(List(a)) {
 /// ## Examples
 ///
 /// ```gleam
-/// > window_by_2([1,2,3,4])
-/// [#(1, 2), #(2, 3), #(3, 4)]
+/// window_by_2([1,2,3,4])
+/// // -> [#(1, 2), #(2, 3), #(3, 4)]
 /// ```
 ///
 /// ```gleam
-/// > window_by_2([1])
-/// []
+/// window_by_2([1])
+/// // -> []
 /// ```
 ///
 pub fn window_by_2(l: List(a)) -> List(#(a, a)) {
@@ -1774,8 +1791,8 @@ pub fn window_by_2(l: List(a)) -> List(#(a, a)) {
 /// ## Examples
 ///
 /// ```gleam
-/// > drop_while([1, 2, 3, 4], fn (x) { x < 3 })
-/// [3, 4]
+/// drop_while([1, 2, 3, 4], fn (x) { x < 3 })
+/// // -> [3, 4]
 /// ```
 ///
 pub fn drop_while(
@@ -1812,8 +1829,8 @@ fn do_take_while(
 /// ## Examples
 ///
 /// ```gleam
-/// > take_while([1, 2, 3, 2, 4], fn (x) { x < 3 })
-/// [1, 2]
+/// take_while([1, 2, 3, 2, 4], fn (x) { x < 3 })
+/// // -> [1, 2]
 /// ```
 ///
 pub fn take_while(
@@ -1851,8 +1868,8 @@ fn do_chunk(
 /// ## Examples
 ///
 /// ```gleam
-/// > [1, 2, 2, 3, 4, 4, 6, 7, 7] |> chunk(by: fn(n) { n % 2 })
-/// [[1], [2, 2], [3], [4, 4, 6], [7, 7]]
+/// [1, 2, 2, 3, 4, 4, 6, 7, 7] |> chunk(by: fn(n) { n % 2 })
+/// // -> [[1], [2, 2], [3], [4, 4, 6], [7, 7]]
 /// ```
 ///
 pub fn chunk(in list: List(a), by f: fn(a) -> key) -> List(List(a)) {
@@ -1895,13 +1912,13 @@ fn do_sized_chunk(
 /// ## Examples
 ///
 /// ```gleam
-/// > [1, 2, 3, 4, 5, 6] |> sized_chunk(into: 2)
-/// [[1, 2], [3, 4], [5, 6]]
+/// [1, 2, 3, 4, 5, 6] |> sized_chunk(into: 2)
+/// // -> [[1, 2], [3, 4], [5, 6]]
 /// ```
 ///
 /// ```gleam
-/// > [1, 2, 3, 4, 5, 6, 7, 8] |> sized_chunk(into: 3)
-/// [[1, 2, 3], [4, 5, 6], [7, 8]]
+/// [1, 2, 3, 4, 5, 6, 7, 8] |> sized_chunk(into: 3)
+/// // -> [[1, 2, 3], [4, 5, 6], [7, 8]]
 /// ```
 ///
 pub fn sized_chunk(in list: List(a), into count: Int) -> List(List(a)) {
@@ -1919,13 +1936,13 @@ pub fn sized_chunk(in list: List(a), into count: Int) -> List(List(a)) {
 /// ## Examples
 ///
 /// ```gleam
-/// > [] |> reduce(fn(acc, x) { acc + x })
-/// Error(Nil)
+/// [] |> reduce(fn(acc, x) { acc + x })
+/// // -> Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// > [1, 2, 3, 4, 5] |> reduce(fn(acc, x) { acc + x })
-/// Ok(15)
+/// [1, 2, 3, 4, 5] |> reduce(fn(acc, x) { acc + x })
+/// // -> Ok(15)
 /// ```
 ///
 pub fn reduce(over list: List(a), with fun: fn(a, a) -> a) -> Result(a, Nil) {
@@ -1955,8 +1972,8 @@ fn do_scan(
 /// ## Examples
 ///
 /// ```gleam
-/// > scan(over: [1, 2, 3], from: 100, with: fn(acc, i) { acc + i })
-/// [101, 103, 106]
+/// scan(over: [1, 2, 3], from: 100, with: fn(acc, i) { acc + i })
+/// // -> [101, 103, 106]
 /// ```
 ///
 pub fn scan(
@@ -1978,13 +1995,13 @@ pub fn scan(
 /// ## Examples
 ///
 /// ```gleam
-/// > last([])
-/// Error(Nil)
+/// last([])
+/// // -> Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// > last([1, 2, 3, 4, 5])
-/// Ok(5)
+/// last([1, 2, 3, 4, 5])
+/// // -> Ok(5)
 /// ```
 ///
 pub fn last(list: List(a)) -> Result(a, Nil) {
@@ -1997,13 +2014,13 @@ pub fn last(list: List(a)) -> Result(a, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// > combinations([1, 2, 3], 2)
-/// [[1, 2], [1, 3], [2, 3]]
+/// combinations([1, 2, 3], 2)
+/// // -> [[1, 2], [1, 3], [2, 3]]
 /// ```
 ///
 /// ```gleam
-/// > combinations([1, 2, 3, 4], 3)
-/// [[1, 2, 3], [1, 2, 4], [1, 3, 4], [2, 3, 4]]
+/// combinations([1, 2, 3, 4], 3)
+/// // -> [[1, 2, 3], [1, 2, 4], [1, 3, 4], [2, 3, 4]]
 /// ```
 ///
 pub fn combinations(items: List(a), by n: Int) -> List(List(a)) {
@@ -2039,8 +2056,8 @@ fn do_combination_pairs(items: List(a)) -> List(List(#(a, a))) {
 /// ## Examples
 ///
 /// ```gleam
-/// > combination_pairs([1, 2, 3])
-/// [#(1, 2), #(1, 3), #(2, 3)]
+/// combination_pairs([1, 2, 3])
+/// // -> [#(1, 2), #(1, 3), #(2, 3)]
 /// ```
 ///
 pub fn combination_pairs(items: List(a)) -> List(#(a, a)) {
@@ -2053,8 +2070,8 @@ pub fn combination_pairs(items: List(a)) -> List(#(a, a)) {
 /// ## Examples
 ///
 /// ```gleam
-/// > list.interleave([[1, 2], [101, 102], [201, 202]])
-/// [1, 101, 201, 2, 102, 202]
+/// interleave([[1, 2], [101, 102], [201, 202]])
+/// // -> [1, 101, 201, 2, 102, 202]
 /// ```
 ///
 pub fn interleave(list: List(List(a))) -> List(a) {
@@ -2071,8 +2088,8 @@ pub fn interleave(list: List(List(a))) -> List(a) {
 /// ## Examples
 ///
 /// ```gleam
-/// > transpose([[1, 2, 3], [101, 102, 103]])
-/// [[1, 101], [2, 102], [3, 103]]
+/// transpose([[1, 2, 3], [101, 102, 103]])
+/// // -> [[1, 101], [2, 102], [3, 103]]
 /// ```
 ///
 pub fn transpose(list_of_list: List(List(a))) -> List(List(a)) {
@@ -2121,9 +2138,8 @@ fn do_shuffle_by_pair_indexes(
 /// ## Example
 ///
 /// ```gleam
-/// > range(1, 10)
-/// > |> shuffle()
-/// [1, 6, 9, 10, 3, 8, 4, 2, 7, 5]
+/// range(1, 10) |> shuffle()
+/// // -> [1, 6, 9, 10, 3, 8, 4, 2, 7, 5]
 /// ```
 ///
 pub fn shuffle(list: List(a)) -> List(a) {
