@@ -18,24 +18,24 @@ pub fn compose(fun1: fn(a) -> b, fun2: fn(b) -> c) -> fn(a) -> c {
 /// and producing a sequence of `n` single-argument functions. Given:
 ///
 /// ```gleam
-/// > fn my_fun(i: Int, s: String) -> String { ... }
+/// fn my_fun(i: Int, s: String) -> String { ... }
 /// ```
 ///
 /// …calling `curry2(my_fun)` would return the curried equivalent, like so:
 ///
 /// ```gleam
-/// > curry2(my_fun)
-/// fn(Int) -> fn(String) -> String
+/// curry2(my_fun)
+/// // fn(Int) -> fn(String) -> String
 /// ```
 ///
 /// Currying is useful when you want to partially apply a function with
 /// some arguments and then pass it somewhere else, for example:
 ///
 /// ```gleam
-/// > import gleam/list
-/// > let multiply = curry2(fn(x, y) { x * y })
-/// > let doubles = list.map([1, 2, 3], multiply(2))
-/// [2, 4, 6]
+/// import gleam/list
+/// let multiply = curry2(fn(x, y) { x * y })
+/// list.map([1, 2, 3], multiply(2))
+/// // -> [2, 4, 6]
 /// ```
 ///
 pub fn curry2(fun: fn(a, b) -> value) {
@@ -128,13 +128,12 @@ pub fn tap(arg: a, effect: fn(a) -> b) -> a {
 /// ## Example
 ///
 /// ```gleam
-/// > let doubler = fn() {
-/// >  fn(x: Int) { x * 2 }
-/// > }
-/// >
-/// > doubler()
-/// > |> apply1(2)
-/// 4
+/// let doubler = fn() {
+///   fn(x: Int) { x * 2 }
+/// }
+/// 
+/// doubler() |> apply1(2)
+/// // -> 4
 /// ```
 ///
 pub fn apply1(fun: fn(a) -> value, arg1: a) -> value {
