@@ -12,13 +12,13 @@ import gleam/string_builder.{type StringBuilder}
 /// ## Examples
 ///
 /// ```gleam
-/// > is_empty("")
-/// True
+/// is_empty("")
+/// // -> True
 /// ```
 ///
 /// ```gleam
-/// > is_empty("the world")
-/// False
+/// is_empty("the world")
+/// // -> False
 /// ```
 ///
 pub fn is_empty(str: String) -> Bool {
@@ -33,18 +33,18 @@ pub fn is_empty(str: String) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// > length("Gleam")
-/// 5
+/// length("Gleam")
+/// // -> 5
 /// ```
 ///
 /// ```gleam
-/// > length("ß↑e̊")
-/// 3
+/// length("ß↑e̊")
+/// // -> 3
 /// ```
 ///
 /// ```gleam
-/// > length("")
-/// 0
+/// length("")
+/// // -> 0
 /// ```
 ///
 pub fn length(string: String) -> Int {
@@ -63,8 +63,8 @@ fn do_length(a: String) -> Int
 /// ## Examples
 ///
 /// ```gleam
-/// > reverse("stressed")
-/// "desserts"
+/// reverse("stressed")
+/// // -> "desserts"
 /// ```
 ///
 pub fn reverse(string: String) -> String {
@@ -92,13 +92,13 @@ fn do_reverse(string: String) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// > replace("www.example.com", each: ".", with: "-")
-/// "www-example-com"
+/// replace("www.example.com", each: ".", with: "-")
+/// // -> "www-example-com"
 /// ```
 ///
 /// ```gleam
-/// > replace("a,b,c,d,e", each: ",", with: "/")
-/// "a/b/c/d/e"
+/// replace("a,b,c,d,e", each: ",", with: "/")
+/// // -> "a/b/c/d/e"
 /// ```
 ///
 pub fn replace(
@@ -120,8 +120,8 @@ pub fn replace(
 /// ## Examples
 ///
 /// ```gleam
-/// > lowercase("X-FILES")
-/// "x-files"
+/// lowercase("X-FILES")
+/// // -> "x-files"
 /// ```
 ///
 pub fn lowercase(string: String) -> String {
@@ -140,8 +140,8 @@ fn do_lowercase(a: String) -> String
 /// ## Examples
 ///
 /// ```gleam
-/// > uppercase("skinner")
-/// "SKINNER"
+/// uppercase("skinner")
+/// // -> "SKINNER"
 /// ```
 ///
 pub fn uppercase(string: String) -> String {
@@ -159,13 +159,13 @@ fn do_uppercase(a: String) -> String
 /// ## Examples
 ///
 /// ```gleam
-/// > compare("Anthony", "Anthony")
-/// order.Eq
+/// compare("Anthony", "Anthony")
+/// // -> order.Eq
 /// ```
 ///
 /// ```gleam
-/// > compare("A", "B")
-/// order.Lt
+/// compare("A", "B")
+/// // -> order.Lt
 /// ```
 ///
 pub fn compare(a: String, b: String) -> order.Order {
@@ -189,28 +189,28 @@ fn less_than(a: String, b: String) -> Bool
 /// ## Examples
 ///
 /// ```gleam
-/// > slice(from: "gleam", at_index: 1, length: 2)
-/// "le"
+/// slice(from: "gleam", at_index: 1, length: 2)
+/// // -> "le"
 /// ```
 ///
 /// ```gleam
-/// > slice(from: "gleam", at_index: 1, length: 10)
-/// "leam"
+/// slice(from: "gleam", at_index: 1, length: 10)
+/// // -> "leam"
 /// ```
 ///
 /// ```gleam
-/// > slice(from: "gleam", at_index: 10, length: 3)
-/// ""
+/// slice(from: "gleam", at_index: 10, length: 3)
+/// // -> ""
 /// ```
 ///
 /// ```gleam
-/// > slice(from: "gleam", at_index: -2, length: 2)
-/// "am"
+/// slice(from: "gleam", at_index: -2, length: 2)
+/// // -> "am"
 /// ```
 ///
 /// ```gleam
-/// > slice(from: "gleam", at_index: -12, length: 2)
-/// ""
+/// slice(from: "gleam", at_index: -12, length: 2)
+/// // -> ""
 /// ```
 ///
 pub fn slice(from string: String, at_index idx: Int, length len: Int) -> String {
@@ -245,8 +245,8 @@ fn do_slice(string: String, idx: Int, len: Int) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// > crop(from: "The Lone Gunmen", before: "Lone")
-/// "Lone Gunmen"
+/// crop(from: "The Lone Gunmen", before: "Lone")
+/// // -> "Lone Gunmen"
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "crop_string")
@@ -258,8 +258,8 @@ pub fn crop(from string: String, before substring: String) -> String
 /// ## Examples
 ///
 /// ```gleam
-/// > drop_left(from: "The Lone Gunmen", up_to: 2)
-/// "e Lone Gunmen"
+/// drop_left(from: "The Lone Gunmen", up_to: 2)
+/// // -> "e Lone Gunmen"
 /// ```
 ///
 pub fn drop_left(from string: String, up_to num_graphemes: Int) -> String {
@@ -274,8 +274,8 @@ pub fn drop_left(from string: String, up_to num_graphemes: Int) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// > drop_right(from: "Cigarette Smoking Man", up_to: 2)
-/// "Cigarette Smoking M"
+/// drop_right(from: "Cigarette Smoking Man", up_to: 2)
+/// // -> "Cigarette Smoking M"
 /// ```
 ///
 pub fn drop_right(from string: String, up_to num_graphemes: Int) -> String {
@@ -290,18 +290,18 @@ pub fn drop_right(from string: String, up_to num_graphemes: Int) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// > contains(does: "theory", contain: "ory")
-/// True
+/// contains(does: "theory", contain: "ory")
+/// // -> True
 /// ```
 ///
 /// ```gleam
-/// > contains(does: "theory", contain: "the")
-/// True
+/// contains(does: "theory", contain: "the")
+/// // -> True
 /// ```
 ///
 /// ```gleam
-/// > contains(does: "theory", contain: "THE")
-/// False
+/// contains(does: "theory", contain: "THE")
+/// // -> False
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "contains_string")
@@ -313,8 +313,8 @@ pub fn contains(does haystack: String, contain needle: String) -> Bool
 /// ## Examples
 ///
 /// ```gleam
-/// > starts_with("theory", "ory")
-/// False
+/// starts_with("theory", "ory")
+/// // -> False
 /// ```
 ///
 pub fn starts_with(string: String, prefix: String) -> Bool {
@@ -330,8 +330,8 @@ fn do_starts_with(a: String, b: String) -> Bool
 /// ## Examples
 ///
 /// ```gleam
-/// > ends_with("theory", "ory")
-/// True
+/// ends_with("theory", "ory")
+/// // -> True
 /// ```
 ///
 pub fn ends_with(string: String, suffix: String) -> Bool {
@@ -347,8 +347,8 @@ fn do_ends_with(a: String, b: String) -> Bool
 /// ## Examples
 ///
 /// ```gleam
-/// > split("home/gleam/desktop/", on: "/")
-/// ["home", "gleam", "desktop", ""]
+/// split("home/gleam/desktop/", on: "/")
+/// // -> ["home", "gleam", "desktop", ""]
 /// ```
 ///
 pub fn split(x: String, on substring: String) -> List(String) {
@@ -369,13 +369,13 @@ pub fn split(x: String, on substring: String) -> List(String) {
 /// ## Examples
 ///
 /// ```gleam
-/// > split_once("home/gleam/desktop/", on: "/")
-/// Ok(#("home", "gleam/desktop/"))
+/// split_once("home/gleam/desktop/", on: "/")
+/// // -> Ok(#("home", "gleam/desktop/"))
 /// ```
 ///
 /// ```gleam
-/// > split_once("home/gleam/desktop/", on: "?")
-/// Error(Nil)
+/// split_once("home/gleam/desktop/", on: "?")
+/// // -> Error(Nil)
 /// ```
 ///
 pub fn split_once(
@@ -413,8 +413,8 @@ fn do_split_once(
 /// ## Examples
 ///
 /// ```gleam
-/// > append(to: "butter", suffix: "fly")
-/// "butterfly"
+/// append(to: "butter", suffix: "fly")
+/// // -> "butterfly"
 /// ```
 ///
 pub fn append(to first: String, suffix second: String) -> String {
@@ -433,8 +433,8 @@ pub fn append(to first: String, suffix second: String) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// > concat(["never", "the", "less"])
-/// "nevertheless"
+/// concat(["never", "the", "less"])
+/// // -> "nevertheless"
 /// ```
 ///
 pub fn concat(strings: List(String)) -> String {
@@ -450,8 +450,8 @@ pub fn concat(strings: List(String)) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// > repeat("ha", times: 3)
-/// "hahaha"
+/// repeat("ha", times: 3)
+/// // -> "hahaha"
 /// ```
 ///
 pub fn repeat(string: String, times times: Int) -> String {
@@ -468,8 +468,8 @@ pub fn repeat(string: String, times times: Int) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// > join(["home","evan","Desktop"], with: "/")
-/// "home/evan/Desktop"
+/// join(["home","evan","Desktop"], with: "/")
+/// // -> "home/evan/Desktop"
 /// ```
 ///
 pub fn join(strings: List(String), with separator: String) -> String {
@@ -488,18 +488,18 @@ fn do_join(strings: List(String), separator: String) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// > pad_left("121", to: 5, with: ".")
-/// "..121"
+/// pad_left("121", to: 5, with: ".")
+/// // -> "..121"
 /// ```
 ///
 /// ```gleam
-/// > pad_left("121", to: 3, with: ".")
-/// "121"
+/// pad_left("121", to: 3, with: ".")
+/// // -> "121"
 /// ```
 ///
 /// ```gleam
-/// > pad_left("121", to: 2, with: ".")
-/// "121"
+/// pad_left("121", to: 2, with: ".")
+/// // -> "121"
 /// ```
 ///
 pub fn pad_left(string: String, to desired_length: Int, with pad_string: String) {
@@ -516,18 +516,18 @@ pub fn pad_left(string: String, to desired_length: Int, with pad_string: String)
 /// ## Examples
 ///
 /// ```gleam
-/// > pad_right("123", to: 5, with: ".")
-/// "123.."
+/// pad_right("123", to: 5, with: ".")
+/// // -> "123.."
 /// ```
 ///
 /// ```gleam
-/// > pad_right("123", to: 3, with: ".")
-/// "123"
+/// pad_right("123", to: 3, with: ".")
+/// // -> "123"
 /// ```
 ///
 /// ```gleam
-/// > pad_right("123", to: 2, with: ".")
-/// "123"
+/// pad_right("123", to: 2, with: ".")
+/// // -> "123"
 /// ```
 ///
 pub fn pad_right(
@@ -557,8 +557,8 @@ fn padding(size: Int, pad_string: String) -> Iterator(String) {
 /// ## Examples
 ///
 /// ```gleam
-/// > trim("  hats  \n")
-/// "hats"
+/// trim("  hats  \n")
+/// // -> "hats"
 /// ```
 ///
 pub fn trim(string: String) -> String {
@@ -590,8 +590,8 @@ fn do_trim(string string: String) -> String
 /// ## Examples
 ///
 /// ```gleam
-/// > trim_left("  hats  \n")
-/// "hats  \n"
+/// trim_left("  hats  \n")
+/// // -> "hats  \n"
 /// ```
 ///
 pub fn trim_left(string: String) -> String {
@@ -612,8 +612,8 @@ fn do_trim_left(string string: String) -> String
 /// ## Examples
 ///
 /// ```gleam
-/// > trim_right("  hats  \n")
-/// "  hats"
+/// trim_right("  hats  \n")
+/// // -> "  hats"
 /// ```
 ///
 pub fn trim_right(string: String) -> String {
@@ -639,13 +639,13 @@ fn do_trim_right(string string: String) -> String
 /// ## Examples
 ///
 /// ```gleam
-/// > pop_grapheme("gleam")
-/// Ok(#("g", "leam"))
+/// pop_grapheme("gleam")
+/// // -> Ok(#("g", "leam"))
 /// ```
 ///
 /// ```gleam
-/// > pop_grapheme("")
-/// Error(Nil)
+/// pop_grapheme("")
+/// // -> Error(Nil)
 /// ```
 ///
 pub fn pop_grapheme(string: String) -> Result(#(String, String), Nil) {
@@ -660,8 +660,8 @@ fn do_pop_grapheme(string string: String) -> Result(#(String, String), Nil)
 /// [graphemes](https://en.wikipedia.org/wiki/Grapheme).
 ///
 /// ```gleam
-/// > to_graphemes("abc")
-/// ["a", "b", "c"]
+/// to_graphemes("abc")
+/// // -> ["a", "b", "c"]
 /// ```
 ///
 @external(javascript, "../gleam_stdlib.mjs", "graphemes")
@@ -690,16 +690,21 @@ fn unsafe_int_to_utf_codepoint(a: Int) -> UtfCodepoint
 /// ## Examples
 ///
 /// ```gleam
-/// > "a" |> to_utf_codepoints
-/// [UtfCodepoint(97)]
+/// "a" |> to_utf_codepoints
+/// // -> [UtfCodepoint(97)]
 /// ```
 ///
 /// ```gleam
 /// // Semantically the same as:
 /// // ["🏳", "️", "‍", "🌈"] or:
 /// // [waving_white_flag, variant_selector_16, zero_width_joiner, rainbow]
-/// > "🏳️‍🌈" |> to_utf_codepoints
-/// [UtfCodepoint(127987), UtfCodepoint(65039), UtfCodepoint(8205), UtfCodepoint(127752)]
+/// "🏳️‍🌈" |> to_utf_codepoints
+/// // -> [
+/// //   UtfCodepoint(127987),
+/// //   UtfCodepoint(65039),
+/// //   UtfCodepoint(8205),
+/// //   UtfCodepoint(127752),
+/// // ]
 /// ```
 ///
 pub fn to_utf_codepoints(string: String) -> List(UtfCodepoint) {
@@ -744,16 +749,11 @@ fn string_to_codepoint_integer_list(a: String) -> List(Int)
 /// ## Examples
 ///
 /// ```gleam
-/// > {
-/// >   let assert #(Ok(a), Ok(b), Ok(c)) = #(
-/// >     utf_codepoint(97),
-/// >     utf_codepoint(98),
-/// >     utf_codepoint(99),
-/// >   )
-/// >   [a, b, c]
-/// > }
-/// > |> from_utf_codepoints
-/// "abc"
+/// let assert Ok(a) = utf_codepoint(97)
+/// let assert Ok(b) = utf_codepoint(98)
+/// let assert Ok(c) = utf_codepoint(99)
+/// from_utf_codepoints([a, b, c])
+/// // -> "abc"
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "utf_codepoint_list_to_string")
@@ -778,9 +778,9 @@ pub fn utf_codepoint(value: Int) -> Result(UtfCodepoint, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// > let assert [utf_codepoint, ..] = to_utf_codepoints("💜")
-/// > utf_codepoint_to_int(utf_codepoint)
-/// 128156
+/// let assert [utf_codepoint, ..] = to_utf_codepoints("💜")
+/// utf_codepoint_to_int(utf_codepoint)
+/// // -> 128156
 /// ```
 ///
 pub fn utf_codepoint_to_int(cp: UtfCodepoint) -> Int {
@@ -797,13 +797,13 @@ fn do_utf_codepoint_to_int(cp cp: UtfCodepoint) -> Int
 /// ## Examples
 ///
 /// ```gleam
-/// > to_option("")
-/// None
+/// to_option("")
+/// // -> None
 /// ```
 ///
 /// ```gleam
-/// > to_option("hats")
-/// Some("hats")
+/// to_option("hats")
+/// // -> Some("hats")
 /// ```
 ///
 pub fn to_option(s: String) -> Option(String) {
@@ -820,13 +820,13 @@ pub fn to_option(s: String) -> Option(String) {
 /// ## Examples
 ///
 /// ```gleam
-/// > first("")
-/// Error(Nil)
+/// first("")
+/// // -> Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// > first("icecream")
-/// Ok("i")
+/// first("icecream")
+/// // -> Ok("i")
 /// ```
 ///
 pub fn first(s: String) -> Result(String, Nil) {
@@ -843,13 +843,13 @@ pub fn first(s: String) -> Result(String, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// > last("")
-/// Error(Nil)
+/// last("")
+/// // -> Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// > last("icecream")
-/// Ok("m")
+/// last("icecream")
+/// // -> Ok("m")
 /// ```
 ///
 pub fn last(s: String) -> Result(String, Nil) {
@@ -866,8 +866,8 @@ pub fn last(s: String) -> Result(String, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// > capitalise("mamouna")
-/// "Mamouna"
+/// capitalise("mamouna")
+/// // -> "Mamouna"
 /// ```
 ///
 pub fn capitalise(s: String) -> String {
@@ -896,8 +896,8 @@ fn do_inspect(term term: anything) -> StringBuilder
 /// ## Examples
 /// 
 /// ```gleam
-/// > byte_size("🏳️‍⚧️🏳️‍🌈👩🏾‍❤️‍👨🏻")
-/// 58
+/// byte_size("🏳️‍⚧️🏳️‍🌈👩🏾‍❤️‍👨🏻")
+/// // -> 58
 /// ```
 ///
 @external(erlang, "erlang", "byte_size")
