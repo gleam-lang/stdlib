@@ -248,13 +248,13 @@ fn do_replace(a: StringBuilder, b: String, c: String) -> StringBuilder
 /// ## Examples
 ///
 /// ```gleam
-/// > from_strings(["a", "b"]) == from_string("ab")
-/// False
+/// from_strings(["a", "b"]) == from_string("ab")
+/// // -> False
 /// ```
 ///
 /// ```gleam
-/// > is_equal(from_strings(["a", "b"]), from_string("ab"))
-/// True
+/// is_equal(from_strings(["a", "b"]), from_string("ab"))
+/// // -> True
 /// ```
 ///
 pub fn is_equal(a: StringBuilder, b: StringBuilder) -> Bool {
@@ -270,18 +270,18 @@ fn do_is_equal(a: StringBuilder, b: StringBuilder) -> Bool
 /// ## Examples
 ///
 /// ```gleam
-/// > from_string("ok") |> is_empty
-/// False
+/// from_string("ok") |> is_empty
+/// // -> False
 /// ```
 ///
 /// ```gleam
-/// > from_string("") |> is_empty
-/// True
+/// from_string("") |> is_empty
+/// // -> True
 /// ```
 ///
 /// ```gleam
-/// > from_strings([]) |> is_empty
-/// True
+/// from_strings([]) |> is_empty
+/// // -> True
 /// ```
 ///
 pub fn is_empty(builder: StringBuilder) -> Bool {
