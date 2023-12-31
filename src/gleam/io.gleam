@@ -7,9 +7,9 @@ import gleam/string
 /// ## Example
 ///
 /// ```gleam
-/// > io.print("Hi mum")
-/// // -> Hi mum
-/// Nil
+/// io.print("Hi mum")
+/// // -> Nil
+/// // Hi mum
 /// ```
 ///
 pub fn print(string: String) -> Nil {
@@ -27,9 +27,9 @@ fn do_print(string string: String) -> Nil
 /// ## Example
 ///
 /// ```
-/// > io.print_error("Hi pop")
-/// // -> Hi pop
-/// Nil
+/// io.print_error("Hi pop")
+/// // -> Nil
+/// // Hi pop
 /// ```
 ///
 pub fn print_error(string: String) -> Nil {
@@ -45,9 +45,9 @@ fn do_print_error(string string: String) -> Nil
 /// ## Example
 ///
 /// ```gleam
-/// > io.println("Hi mum")
-/// // -> Hi mum
-/// Nil
+/// io.println("Hi mum")
+/// // -> Nil
+/// // Hi mum
 /// ```
 ///
 pub fn println(string: String) -> Nil {
@@ -63,9 +63,9 @@ fn do_println(string string: String) -> Nil
 /// ## Example
 ///
 /// ```gleam
-/// > io.println_error("Hi pop")
-/// // -> Hi mum
-/// Nil
+/// io.println_error("Hi pop")
+/// // -> Nil
+/// // Hi mum
 /// ```
 ///
 pub fn println_error(string: String) -> Nil {
@@ -83,25 +83,25 @@ fn do_println_error(string string: String) -> Nil
 /// ## Example
 ///
 /// ```gleam
-/// > debug("Hi mum")
-/// // -> <<"Hi mum">>
-/// "Hi mum"
+/// debug("Hi mum")
+/// // -> "Hi mum"
+/// // <<"Hi mum">>
 /// ```
 ///
 /// ```gleam
-/// > debug(Ok(1))
-/// // -> {ok, 1}
-/// Ok(1)
+/// debug(Ok(1))
+/// // -> Ok(1)
+/// // {ok, 1}
 /// ```
 ///
 /// ```gleam
-/// > import list
-/// > [1, 2]
-/// > |> list.map(fn(x) { x + 1 })
-/// > |> debug
-/// > |> list.map(fn(x) { x * 2 })
-/// // -> [2, 3]
-/// [4, 6]
+/// import gleam/list
+/// [1, 2]
+/// |> list.map(fn(x) { x + 1 })
+/// |> debug
+/// |> list.map(fn(x) { x * 2 })
+/// // -> [4, 6]
+/// // [2, 3]
 /// ```
 ///
 pub fn debug(term: anything) -> anything {
