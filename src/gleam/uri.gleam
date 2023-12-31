@@ -42,18 +42,18 @@ pub type Uri {
 /// ## Examples
 ///
 /// ```gleam
-/// > parse("https://example.com:1234/a/b?query=true#fragment")
-/// Ok(
-///   Uri(
-///     scheme: Some("https"),
-///     userinfo: None,
-///     host: Some("example.com"),
-///     port: Some(1234),
-///     path: "/a/b",
-///     query: Some("query=true"),
-///     fragment: Some("fragment")
-///   )
-/// )
+/// parse("https://example.com:1234/a/b?query=true#fragment")
+/// // -> Ok(
+/// //   Uri(
+/// //     scheme: Some("https"),
+/// //     userinfo: None,
+/// //     host: Some("example.com"),
+/// //     port: Some(1234),
+/// //     path: "/a/b",
+/// //     query: Some("query=true"),
+/// //     fragment: Some("fragment")
+/// //   )
+/// // )
 /// ```
 ///
 pub fn parse(uri_string: String) -> Result(Uri, Nil) {
@@ -204,8 +204,8 @@ fn extra_required(list: List(a), remaining: Int) -> Int {
 /// ## Examples
 ///
 /// ```gleam
-/// > parse_query("a=1&b=2")
-/// Ok([#("a", "1"), #("b", "2")])
+/// parse_query("a=1&b=2")
+/// // -> Ok([#("a", "1"), #("b", "2")])
 /// ```
 ///
 pub fn parse_query(query: String) -> Result(List(#(String, String)), Nil) {
@@ -223,8 +223,8 @@ fn do_parse_query(a: String) -> Result(List(#(String, String)), Nil)
 /// ## Examples
 ///
 /// ```gleam
-/// > query_to_string([#("a", "1"), #("b", "2")])
-/// "a=1&b=2"
+/// query_to_string([#("a", "1"), #("b", "2")])
+/// // -> "a=1&b=2"
 /// ```
 ///
 pub fn query_to_string(query: List(#(String, String))) -> String {
@@ -248,8 +248,8 @@ fn query_pair(pair: #(String, String)) -> StringBuilder {
 /// ## Examples
 ///
 /// ```gleam
-/// > percent_encode("100% great")
-/// "100%25%20great"
+/// percent_encode("100% great")
+/// // -> "100%25%20great"
 /// ```
 ///
 pub fn percent_encode(value: String) -> String {
@@ -265,8 +265,8 @@ fn do_percent_encode(a: String) -> String
 /// ## Examples
 ///
 /// ```gleam
-/// > percent_decode("100%25+great")
-/// Ok("100% great")
+/// percent_decode("100%25+great")
+/// // -> Ok("100% great")
 /// ```
 ///
 pub fn percent_decode(value: String) -> Result(String, Nil) {
@@ -308,8 +308,8 @@ fn remove_dot_segments(input: List(String)) -> List(String) {
 /// ## Examples
 ///
 /// ```gleam
-/// > path_segments("/users/1")
-/// ["users" ,"1"]
+/// path_segments("/users/1")
+/// // -> ["users" ,"1"]
 /// ```
 ///
 pub fn path_segments(path: String) -> List(String) {
@@ -323,9 +323,9 @@ pub fn path_segments(path: String) -> List(String) {
 /// ## Examples
 ///
 /// ```gleam
-/// > let uri = Uri(Some("http"), None, Some("example.com"), ...)
-/// > to_string(uri)
-/// "http://example.com"
+/// let uri = Uri(Some("http"), None, Some("example.com"), ...)
+/// to_string(uri)
+/// // -> "http://example.com"
 /// ```
 ///
 pub fn to_string(uri: Uri) -> String {
@@ -367,9 +367,9 @@ pub fn to_string(uri: Uri) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// > let assert Ok(uri) = parse("http://example.com/path?foo#bar")
-/// > origin(uri)
-/// Ok("http://example.com")
+/// let assert Ok(uri) = parse("http://example.com/path?foo#bar")
+/// origin(uri)
+/// // -> Ok("http://example.com")
 /// ```
 ///
 pub fn origin(uri: Uri) -> Result(String, Nil) {
