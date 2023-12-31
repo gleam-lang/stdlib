@@ -18,18 +18,18 @@ pub type Order {
 /// ## Examples
 ///
 /// ```gleam
-/// > negate(Lt)
-/// Gt
+/// negate(Lt)
+/// // -> Gt
 /// ```
 ///
 /// ```gleam
-/// > negate(Eq)
-/// Eq
+/// negate(Eq)
+/// // -> Eq
 /// ```
 ///
 /// ```gleam
-/// > negate(Lt)
-/// Gt
+/// negate(Lt)
+/// // -> Gt
 /// ```
 ///
 pub fn negate(order: Order) -> Order {
@@ -45,18 +45,18 @@ pub fn negate(order: Order) -> Order {
 /// ## Examples
 ///
 /// ```gleam
-/// > to_int(Lt)
-/// -1
+/// to_int(Lt)
+/// // -> -1
 /// ```
 ///
 /// ```gleam
-/// > to_int(Eq)
-/// 0
+/// to_int(Eq)
+/// // -> 0
 /// ```
 ///
 /// ```gleam
-/// > to_int(Gt)
-/// 1
+/// to_int(Gt)
+/// // -> 1
 /// ```
 ///
 pub fn to_int(order: Order) -> Int {
@@ -72,8 +72,8 @@ pub fn to_int(order: Order) -> Int {
 /// ## Examples
 ///
 /// ```gleam
-/// > compare(Eq, with: Lt)
-/// Gt
+/// compare(Eq, with: Lt)
+/// // -> Gt
 /// ```
 ///
 pub fn compare(a: Order, with b: Order) -> Order {
@@ -89,8 +89,8 @@ pub fn compare(a: Order, with b: Order) -> Order {
 /// ## Examples
 ///
 /// ```gleam
-/// > max(Eq, Lt)
-/// Eq
+/// max(Eq, Lt)
+/// // -> Eq
 /// ```
 ///
 pub fn max(a: Order, b: Order) -> Order {
@@ -106,8 +106,8 @@ pub fn max(a: Order, b: Order) -> Order {
 /// ## Examples
 ///
 /// ```gleam
-/// > min(Eq, Lt)
-/// Lt
+/// min(Eq, Lt)
+/// // -> Lt
 /// ```
 ///
 pub fn min(a: Order, b: Order) -> Order {
@@ -124,8 +124,10 @@ pub fn min(a: Order, b: Order) -> Order {
 /// ## Examples
 ///
 /// ```gleam
-/// > list.sort([1, 5, 4], by: reverse(int.compare))
-/// [5, 4, 1]
+/// import gleam/int
+/// import gleam/list
+/// list.sort([1, 5, 4], by: reverse(int.compare))
+/// // -> [5, 4, 1]
 /// ```
 ///
 pub fn reverse(orderer: fn(a, a) -> Order) -> fn(a, a) -> Order {
