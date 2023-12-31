@@ -40,11 +40,11 @@ pub fn new() -> Set(member) {
 /// ## Examples
 ///
 /// ```gleam
-/// > new()
-/// > |> insert(1)
-/// > |> insert(2)
-/// > |> size
-/// 2
+/// new()
+/// |> insert(1)
+/// |> insert(2)
+/// |> size
+/// // -> 2
 /// ```
 ///
 pub fn size(set: Set(member)) -> Int {
@@ -58,11 +58,11 @@ pub fn size(set: Set(member)) -> Int {
 /// ## Examples
 ///
 /// ```gleam
-/// > new()
-/// > |> insert(1)
-/// > |> insert(2)
-/// > |> size
-/// 2
+/// new()
+/// |> insert(1)
+/// |> insert(2)
+/// |> size
+/// // -> 2
 /// ```
 ///
 pub fn insert(into set: Set(member), this member: member) -> Set(member) {
@@ -76,17 +76,17 @@ pub fn insert(into set: Set(member), this member: member) -> Set(member) {
 /// ## Examples
 ///
 /// ```gleam
-/// > new()
-/// > |> insert(2)
-/// > |> contains(2)
-/// True
+/// new()
+/// |> insert(2)
+/// |> contains(2)
+/// // -> True
 /// ```
 ///
 /// ```gleam
-/// > new()
-/// > |> insert(2)
-/// > |> contains(1)
-/// False
+/// new()
+/// |> insert(2)
+/// |> contains(1)
+/// // -> False
 /// ```
 ///
 pub fn contains(in set: Set(member), this member: member) -> Bool {
@@ -103,11 +103,11 @@ pub fn contains(in set: Set(member), this member: member) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// > new()
-/// > |> insert(2)
-/// > |> delete(2)
-/// > |> contains(1)
-/// False
+/// new()
+/// |> insert(2)
+/// |> delete(2)
+/// |> contains(1)
+/// // -> False
 /// ```
 ///
 pub fn delete(from set: Set(member), this member: member) -> Set(member) {
@@ -124,8 +124,8 @@ pub fn delete(from set: Set(member), this member: member) -> Set(member) {
 /// ## Examples
 ///
 /// ```gleam
-/// > new() |> insert(2) |> to_list
-/// [2]
+/// new() |> insert(2) |> to_list
+/// // -> [2]
 /// ```
 ///
 pub fn to_list(set: Set(member)) -> List(member) {
@@ -139,9 +139,9 @@ pub fn to_list(set: Set(member)) -> List(member) {
 /// ## Examples
 ///
 /// ```gleam
-/// > import gleam/list
-/// > [1, 1, 2, 4, 3, 2] |> from_list |> to_list |> list.sort
-/// [1, 3, 3, 4]
+/// import gleam/list
+/// [1, 1, 2, 4, 3, 2] |> from_list |> to_list |> list.sort
+/// // -> [1, 3, 3, 4]
 /// ```
 ///
 pub fn from_list(members: List(member)) -> Set(member) {
@@ -162,9 +162,9 @@ pub fn from_list(members: List(member)) -> Set(member) {
 /// # Examples
 ///
 /// ```gleam
-/// > from_list([1, 3, 9])
-/// > |> fold(0, fn(accumulator, member) { accumulator + member })
-/// 13
+/// from_list([1, 3, 9])
+/// |> fold(0, fn(accumulator, member) { accumulator + member })
+/// // -> 13
 /// ```
 ///
 pub fn fold(
@@ -183,11 +183,11 @@ pub fn fold(
 /// ## Examples
 ///
 /// ```gleam
-/// > import gleam/int
-/// > from_list([1, 4, 6, 3, 675, 44, 67])
-/// > |> filter(for: int.is_even)
-/// > |> to_list
-/// [4, 6, 44]
+/// import gleam/int
+/// from_list([1, 4, 6, 3, 675, 44, 67])
+/// |> filter(for: int.is_even)
+/// |> to_list
+/// // -> [4, 6, 44]
 /// ```
 ///
 pub fn filter(
@@ -209,10 +209,10 @@ pub fn drop(from set: Set(member), drop disallowed: List(member)) -> Set(member)
 /// ## Examples
 ///
 /// ```gleam
-/// > from_list([1, 2, 3])
-/// > |> take([1, 3, 5])
-/// > |> to_list
-/// [1, 3]
+/// from_list([1, 2, 3])
+/// |> take([1, 3, 5])
+/// |> to_list
+/// // -> [1, 3]
 /// ```
 ///
 pub fn take(from set: Set(member), keeping desired: List(member)) -> Set(member) {
@@ -233,8 +233,8 @@ fn order(first: Set(member), second: Set(member)) -> #(Set(member), Set(member))
 /// ## Examples
 ///
 /// ```gleam
-/// > union(from_list([1, 2]), from_list([2, 3])) |> to_list
-/// [1, 2, 3]
+/// union(from_list([1, 2]), from_list([2, 3])) |> to_list
+/// // -> [1, 2, 3]
 /// ```
 ///
 pub fn union(of first: Set(member), and second: Set(member)) -> Set(member) {
@@ -249,8 +249,8 @@ pub fn union(of first: Set(member), and second: Set(member)) -> Set(member) {
 /// ## Examples
 ///
 /// ```gleam
-/// > intersection(from_list([1, 2]), from_list([2, 3])) |> to_list
-/// [2]
+/// intersection(from_list([1, 2]), from_list([2, 3])) |> to_list
+/// // -> [2]
 /// ```
 ///
 pub fn intersection(
