@@ -8,13 +8,13 @@ import gleam/list
 /// ## Examples
 ///
 /// ```gleam
-/// > is_ok(Ok(1))
-/// True
+/// is_ok(Ok(1))
+/// // -> True
 /// ```
 ///
 /// ```gleam
-/// > is_ok(Error(Nil))
-/// False
+/// is_ok(Error(Nil))
+/// // -> False
 /// ```
 ///
 pub fn is_ok(result: Result(a, e)) -> Bool {
@@ -29,13 +29,13 @@ pub fn is_ok(result: Result(a, e)) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// > is_error(Ok(1))
-/// False
+/// is_error(Ok(1))
+/// // -> False
 /// ```
 ///
 /// ```gleam
-/// > is_error(Error(Nil))
-/// True
+/// is_error(Error(Nil))
+/// // -> True
 /// ```
 ///
 pub fn is_error(result: Result(a, e)) -> Bool {
@@ -54,13 +54,13 @@ pub fn is_error(result: Result(a, e)) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// > map(over: Ok(1), with: fn(x) { x + 1 })
-/// Ok(2)
+/// map(over: Ok(1), with: fn(x) { x + 1 })
+/// // -> Ok(2)
 /// ```
 ///
 /// ```gleam
-/// > map(over: Error(1), with: fn(x) { x + 1 })
-/// Error(1)
+/// map(over: Error(1), with: fn(x) { x + 1 })
+/// // -> Error(1)
 /// ```
 ///
 pub fn map(over result: Result(a, e), with fun: fn(a) -> b) -> Result(b, e) {
@@ -79,13 +79,13 @@ pub fn map(over result: Result(a, e), with fun: fn(a) -> b) -> Result(b, e) {
 /// ## Examples
 ///
 /// ```gleam
-/// > map_error(over: Error(1), with: fn(x) { x + 1 })
-/// Error(2)
+/// map_error(over: Error(1), with: fn(x) { x + 1 })
+/// // -> Error(2)
 /// ```
 ///
 /// ```gleam
-/// > map_error(over: Ok(1), with: fn(x) { x + 1 })
-/// Ok(1)
+/// map_error(over: Ok(1), with: fn(x) { x + 1 })
+/// // -> Ok(1)
 /// ```
 ///
 pub fn map_error(
@@ -103,18 +103,18 @@ pub fn map_error(
 /// ## Examples
 ///
 /// ```gleam
-/// > flatten(Ok(Ok(1)))
-/// Ok(1)
+/// flatten(Ok(Ok(1)))
+/// // -> Ok(1)
 /// ```
 ///
 /// ```gleam
-/// > flatten(Ok(Error("")))
-/// Error("")
+/// flatten(Ok(Error("")))
+/// // -> Error("")
 /// ```
 ///
 /// ```gleam
-/// > flatten(Error(Nil))
-/// Error(Nil)
+/// flatten(Error(Nil))
+/// // -> Error(Nil)
 /// ```
 ///
 pub fn flatten(result: Result(Result(a, e), e)) -> Result(a, e) {
@@ -136,23 +136,23 @@ pub fn flatten(result: Result(Result(a, e), e)) -> Result(a, e) {
 /// ## Examples
 ///
 /// ```gleam
-/// > try(Ok(1), fn(x) { Ok(x + 1) })
-/// Ok(2)
+/// try(Ok(1), fn(x) { Ok(x + 1) })
+/// // -> Ok(2)
 /// ```
 ///
 /// ```gleam
-/// > try(Ok(1), fn(x) { Ok(#("a", x)) })
-/// Ok(#("a", 1))
+/// try(Ok(1), fn(x) { Ok(#("a", x)) })
+/// // -> Ok(#("a", 1))
 /// ```
 ///
 /// ```gleam
-/// > try(Ok(1), fn(_) { Error("Oh no") })
-/// Error("Oh no")
+/// try(Ok(1), fn(_) { Error("Oh no") })
+/// // -> Error("Oh no")
 /// ```
 ///
 /// ```gleam
-/// > try(Error(Nil), fn(x) { Ok(x + 1) })
-/// Error(Nil)
+/// try(Error(Nil), fn(x) { Ok(x + 1) })
+/// // -> Error(Nil)
 /// ```
 ///
 pub fn try(
@@ -180,13 +180,13 @@ pub fn then(
 /// ## Examples
 ///
 /// ```gleam
-/// > unwrap(Ok(1), 0)
-/// 1
+/// unwrap(Ok(1), 0)
+/// // -> 1
 /// ```
 ///
 /// ```gleam
-/// > unwrap(Error(""), 0)
-/// 0
+/// unwrap(Error(""), 0)
+/// // -> 0
 /// ```
 ///
 pub fn unwrap(result: Result(a, e), or default: a) -> a {
@@ -202,13 +202,13 @@ pub fn unwrap(result: Result(a, e), or default: a) -> a {
 /// ## Examples
 ///
 /// ```gleam
-/// > lazy_unwrap(Ok(1), fn() { 0 })
-/// 1
+/// lazy_unwrap(Ok(1), fn() { 0 })
+/// // -> 1
 /// ```
 ///
 /// ```gleam
-/// > lazy_unwrap(Error(""), fn() { 0 })
-/// 0
+/// lazy_unwrap(Error(""), fn() { 0 })
+/// // -> 0
 /// ```
 ///
 pub fn lazy_unwrap(result: Result(a, e), or default: fn() -> a) -> a {
@@ -224,13 +224,13 @@ pub fn lazy_unwrap(result: Result(a, e), or default: fn() -> a) -> a {
 /// ## Examples
 ///
 /// ```gleam
-/// > unwrap_error(Error(1), 0)
-/// 1
+/// unwrap_error(Error(1), 0)
+/// // -> 1
 /// ```
 ///
 /// ```gleam
-/// > unwrap_error(Ok(""), 0)
-/// 0
+/// unwrap_error(Ok(""), 0)
+/// // -> 0
 /// ```
 ///
 pub fn unwrap_error(result: Result(a, e), or default: e) -> e {
@@ -246,13 +246,13 @@ pub fn unwrap_error(result: Result(a, e), or default: e) -> e {
 /// ## Examples
 ///
 /// ```gleam
-/// > unwrap_both(Error(1))
-/// 1
+/// unwrap_both(Error(1))
+/// // -> 1
 /// ```
 ///
 /// ```gleam
-/// > unwrap_both(Ok(2))
-/// 2
+/// unwrap_both(Ok(2))
+/// // -> 2
 /// ```
 ///
 pub fn unwrap_both(result: Result(a, a)) -> a {
@@ -267,13 +267,13 @@ pub fn unwrap_both(result: Result(a, a)) -> a {
 /// ## Examples
 ///
 /// ```gleam
-/// > nil_error(Error(1))
-/// Error(Nil)
+/// nil_error(Error(1))
+/// // -> Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// > nil_error(Ok(1))
-/// Ok(1)
+/// nil_error(Ok(1))
+/// // -> Ok(1)
 /// ```
 ///
 pub fn nil_error(result: Result(a, e)) -> Result(a, Nil) {
@@ -285,23 +285,23 @@ pub fn nil_error(result: Result(a, e)) -> Result(a, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// > or(Ok(1), Ok(2))
-/// Ok(1)
+/// or(Ok(1), Ok(2))
+/// // -> Ok(1)
 /// ```
 ///
 /// ```gleam
-/// > or(Ok(1), Error("Error 2"))
-/// Ok(1)
+/// or(Ok(1), Error("Error 2"))
+/// // -> Ok(1)
 /// ```
 ///
 /// ```gleam
-/// > or(Error("Error 1"), Ok(2))
-/// Ok(2)
+/// or(Error("Error 1"), Ok(2))
+/// // -> Ok(2)
 /// ```
 ///
 /// ```gleam
-/// > or(Error("Error 1"), Error("Error 2"))
-/// Error("Error 2")
+/// or(Error("Error 1"), Error("Error 2"))
+/// // -> Error("Error 2")
 /// ```
 ///
 pub fn or(first: Result(a, e), second: Result(a, e)) -> Result(a, e) {
@@ -316,23 +316,23 @@ pub fn or(first: Result(a, e), second: Result(a, e)) -> Result(a, e) {
 /// ## Examples
 ///
 /// ```gleam
-/// > lazy_or(Ok(1), fn() { Ok(2) })
-/// Ok(1)
+/// lazy_or(Ok(1), fn() { Ok(2) })
+/// // -> Ok(1)
 /// ```
 ///
 /// ```gleam
-/// > lazy_or(Ok(1), fn() { Error("Error 2") })
-/// Ok(1)
+/// lazy_or(Ok(1), fn() { Error("Error 2") })
+/// // -> Ok(1)
 /// ```
 ///
 /// ```gleam
-/// > lazy_or(Error("Error 1"), fn() { Ok(2) })
-/// Ok(2)
+/// lazy_or(Error("Error 1"), fn() { Ok(2) })
+/// // -> Ok(2)
 /// ```
 ///
 /// ```gleam
-/// > lazy_or(Error("Error 1"), fn() { Error("Error 2") })
-/// Error("Error 2")
+/// lazy_or(Error("Error 1"), fn() { Error("Error 2") })
+/// // -> Error("Error 2")
 /// ```
 ///
 pub fn lazy_or(
@@ -352,13 +352,13 @@ pub fn lazy_or(
 /// ## Examples
 ///
 /// ```gleam
-/// > all([Ok(1), Ok(2)])
-/// Ok([1, 2])
+/// all([Ok(1), Ok(2)])
+/// // -> Ok([1, 2])
 /// ```
 ///
 /// ```gleam
-/// > all([Ok(1), Error("e")])
-/// Error("e")
+/// all([Ok(1), Error("e")])
+/// // -> Error("e")
 /// ```
 ///
 pub fn all(results: List(Result(a, e))) -> Result(List(a), e) {
@@ -373,8 +373,8 @@ pub fn all(results: List(Result(a, e))) -> Result(List(a), e) {
 /// ## Examples
 ///
 /// ```gleam
-/// > partition([Ok(1), Error("a"), Error("b"), Ok(2)])
-/// #([2, 1], ["b", "a"])
+/// partition([Ok(1), Error("a"), Error("b"), Ok(2)])
+/// // -> #([2, 1], ["b", "a"])
 /// ```
 ///
 pub fn partition(results: List(Result(a, e))) -> #(List(a), List(e)) {
@@ -394,13 +394,13 @@ fn do_partition(results: List(Result(a, e)), oks: List(a), errors: List(e)) {
 /// ## Examples
 ///
 /// ```gleam
-/// > replace(Ok(1), Nil)
-/// Ok(Nil)
+/// replace(Ok(1), Nil)
+/// // -> Ok(Nil)
 /// ```
 ///
 /// ```gleam
-/// > replace(Error(1), Nil)
-/// Error(1)
+/// replace(Error(1), Nil)
+/// // -> Error(1)
 /// ```
 ///
 pub fn replace(result: Result(a, e), value: b) -> Result(b, e) {
@@ -415,13 +415,13 @@ pub fn replace(result: Result(a, e), value: b) -> Result(b, e) {
 /// ## Examples
 ///
 /// ```gleam
-/// > replace_error(Error(1), Nil)
-/// Error(Nil)
+/// replace_error(Error(1), Nil)
+/// // -> Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// > replace_error(Ok(1), Nil)
-/// Ok(1)
+/// replace_error(Ok(1), Nil)
+/// // -> Ok(1)
 /// ```
 ///
 pub fn replace_error(result: Result(a, e1), error: e2) -> Result(a, e2) {
@@ -436,8 +436,8 @@ pub fn replace_error(result: Result(a, e1), error: e2) -> Result(a, e2) {
 /// ## Examples
 ///
 /// ```gleam
-/// > values([Ok(1), Error("a"), Ok(3)])
-/// [1, 3]
+/// values([Ok(1), Error("a"), Ok(3)])
+/// // -> [1, 3]
 /// ```
 ///
 pub fn values(results: List(Result(a, e))) -> List(a) {
@@ -457,18 +457,18 @@ pub fn values(results: List(Result(a, e))) -> List(a) {
 /// ## Examples
 ///
 /// ```gleam
-/// > Ok(1) |> try_recover(with: fn(_) { Error("failed to recover") })
-/// Ok(1)
+/// Ok(1) |> try_recover(with: fn(_) { Error("failed to recover") })
+/// // -> Ok(1)
 /// ```
 ///
 /// ```gleam
-/// > Error(1) |> try_recover(with: fn(error) { Ok(error + 1) })
-/// Ok(2)
+/// Error(1) |> try_recover(with: fn(error) { Ok(error + 1) })
+/// // -> Ok(2)
 /// ```
 ///
 /// ```gleam
-/// > Error(1) |> try_recover(with: fn(error) { Error("failed to recover") })
-/// Error("failed to recover")
+/// Error(1) |> try_recover(with: fn(error) { Error("failed to recover") })
+/// // -> Error("failed to recover")
 /// ```
 ///
 pub fn try_recover(
