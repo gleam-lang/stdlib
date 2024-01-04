@@ -267,8 +267,8 @@ pub fn intersection(
 /// ## Examples
 ///
 /// ```gleam
-/// > difference(from_list([1, 2]), from_list([2, 3, 4])) |> to_list
-/// [1]
+/// difference(from_list([1, 2]), from_list([2, 3, 4])) |> to_list
+/// // -> [1]
 /// ```
 ///
 pub fn difference(
