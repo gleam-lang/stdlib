@@ -5,21 +5,21 @@ import gleam/should
 
 // a |> from_list |> to_list == a
 pub fn to_from_list_test() {
-  let test = fn(subject) {
+  let testcase = fn(subject) {
     subject
     |> iterator.from_list
     |> iterator.to_list
     |> should.equal(subject)
   }
 
-  test([])
-  test([1])
-  test([1, 2])
-  test([1, 2, 4, 8])
+  testcase([])
+  testcase([1])
+  testcase([1, 2])
+  testcase([1, 2, 4, 8])
 }
 
 pub fn step_test() {
-  let test = fn(subject) {
+  let testcase = fn(subject) {
     let step =
       subject
       |> iterator.from_list
@@ -41,15 +41,15 @@ pub fn step_test() {
     }
   }
 
-  test([])
-  test([1])
-  test([1, 2])
-  test([1, 2, 3])
+  testcase([])
+  testcase([1])
+  testcase([1, 2])
+  testcase([1, 2, 3])
 }
 
 // a |> from_list |> take(n) == a |> list.take(_, n)
 pub fn take_test() {
-  let test = fn(n, subject) {
+  let testcase = fn(n, subject) {
     subject
     |> iterator.from_list
     |> iterator.take(n)
@@ -57,16 +57,16 @@ pub fn take_test() {
     |> should.equal(list.take(subject, n))
   }
 
-  test(0, [])
-  test(1, [])
-  test(-1, [])
-  test(0, [0])
-  test(1, [0])
-  test(-1, [0])
-  test(0, [0, 1, 2, 3, 4])
-  test(1, [0, 1, 2, 3, 4])
-  test(2, [0, 1, 2, 3, 4])
-  test(22, [0, 1, 2, 3, 4])
+  testcase(0, [])
+  testcase(1, [])
+  testcase(-1, [])
+  testcase(0, [0])
+  testcase(1, [0])
+  testcase(-1, [0])
+  testcase(0, [0, 1, 2, 3, 4])
+  testcase(1, [0, 1, 2, 3, 4])
+  testcase(2, [0, 1, 2, 3, 4])
+  testcase(22, [0, 1, 2, 3, 4])
 }
 
 pub fn transform_index_test() {
@@ -124,7 +124,7 @@ pub fn transform_scan_test() {
 
 // a |> from_list |> fold(a, f) == a |> list.fold(_, a, f)
 pub fn fold_test() {
-  let test = fn(subject, acc, f) {
+  let testcase = fn(subject, acc, f) {
     subject
     |> iterator.from_list
     |> iterator.fold(acc, f)
@@ -132,15 +132,15 @@ pub fn fold_test() {
   }
 
   let f = fn(acc, e) { [e, ..acc] }
-  test([], [], f)
-  test([1], [], f)
-  test([1, 2, 3], [], f)
-  test([1, 2, 3, 4, 5, 6, 7, 8], [], f)
+  testcase([], [], f)
+  testcase([1], [], f)
+  testcase([1, 2, 3], [], f)
+  testcase([1, 2, 3, 4, 5, 6, 7, 8], [], f)
 }
 
 // a |> from_list |> map(f) |> to_list == a |> list.map(_, f)
 pub fn map_test() {
-  let test = fn(subject, f) {
+  let testcase = fn(subject, f) {
     subject
     |> iterator.from_list
     |> iterator.map(f)
@@ -149,29 +149,29 @@ pub fn map_test() {
   }
 
   let f = fn(e) { e * 2 }
-  test([], f)
-  test([1], f)
-  test([1, 2, 3], f)
-  test([1, 2, 3, 4, 5, 6, 7, 8], f)
+  testcase([], f)
+  testcase([1], f)
+  testcase([1, 2, 3], f)
+  testcase([1, 2, 3, 4, 5, 6, 7, 8], f)
 }
 
 // map2(from_list(a), from_list(b), f)  == list.map2(a, b, f)
 pub fn map2_test() {
-  let test = fn(one, other, f) {
+  let testcase = fn(one, other, f) {
     iterator.map2(iterator.from_list(one), iterator.from_list(other), f)
     |> iterator.to_list
     |> should.equal(list.map2(one, other, f))
   }
 
   let f = fn(a, b) { a / b }
-  test([], [], f)
-  test([], [2, 10, 3], f)
-  test([10], [2, 10, 3], f)
-  test([10, 20], [2, 10, 3], f)
-  test([10, 20, 30], [2, 10, 3], f)
-  test([10, 20, 30], [2, 10], f)
-  test([10, 20, 30], [2], f)
-  test([10, 20, 30], [], f)
+  testcase([], [], f)
+  testcase([], [2, 10, 3], f)
+  testcase([10], [2, 10, 3], f)
+  testcase([10, 20], [2, 10, 3], f)
+  testcase([10, 20, 30], [2, 10, 3], f)
+  testcase([10, 20, 30], [2, 10], f)
+  testcase([10, 20, 30], [2], f)
+  testcase([10, 20, 30], [], f)
 }
 
 pub fn map2_is_lazy_test() {
@@ -186,7 +186,7 @@ pub fn map2_is_lazy_test() {
 // a |> from_list |> flat_map(f) |> to_list ==
 //   a |> list.map(f) |> list.map(to_list) |> list.concat
 pub fn flat_map_test() {
-  let test = fn(subject, f) {
+  let testcase = fn(subject, f) {
     subject
     |> iterator.from_list
     |> iterator.flat_map(f)
@@ -201,14 +201,14 @@ pub fn flat_map_test() {
 
   let f = fn(i) { iterator.range(i, i + 2) }
 
-  test([], f)
-  test([1], f)
-  test([1, 2], f)
+  testcase([], f)
+  testcase([1], f)
+  testcase([1, 2], f)
 }
 
 // a |> from_list |> append(from_list(b)) |> to_list == list.concat([a, b])
 pub fn append_test() {
-  let test = fn(left, right) {
+  let testcase = fn(left, right) {
     left
     |> iterator.from_list
     |> iterator.append(iterator.from_list(right))
@@ -216,14 +216,14 @@ pub fn append_test() {
     |> should.equal(list.concat([left, right]))
   }
 
-  test([], [])
-  test([1], [2])
-  test([1, 2], [3, 4])
+  testcase([], [])
+  testcase([1], [2])
+  testcase([1, 2], [3, 4])
 }
 
 // a |> list.map(from_list) |> from_list |> flatten |> to_list == list.concat(a)
 pub fn flatten_test() {
-  let test = fn(lists) {
+  let testcase = fn(lists) {
     lists
     |> list.map(iterator.from_list)
     |> iterator.from_list
@@ -232,14 +232,14 @@ pub fn flatten_test() {
     |> should.equal(list.concat(lists))
   }
 
-  test([[], []])
-  test([[1], [2]])
-  test([[1, 2], [3, 4]])
+  testcase([[], []])
+  testcase([[1], [2]])
+  testcase([[1, 2], [3, 4]])
 }
 
 // a |> list.map(from_list) |> concat |> to_list == list.concat(a)
 pub fn concat_test() {
-  let test = fn(lists) {
+  let testcase = fn(lists) {
     lists
     |> list.map(iterator.from_list)
     |> iterator.concat
@@ -247,14 +247,14 @@ pub fn concat_test() {
     |> should.equal(list.concat(lists))
   }
 
-  test([[], []])
-  test([[1], [2]])
-  test([[1, 2], [3, 4]])
+  testcase([[], []])
+  testcase([[1], [2]])
+  testcase([[1, 2], [3, 4]])
 }
 
 // a |> from_list |> filter(f) |> to_list == a |> list.filter(_, f)
 pub fn filter_test() {
-  let test = fn(subject, f) {
+  let testcase = fn(subject, f) {
     subject
     |> iterator.from_list
     |> iterator.filter(f)
@@ -263,13 +263,13 @@ pub fn filter_test() {
   }
 
   let even = fn(x) { x % 2 == 0 }
-  test([], even)
-  test([1], even)
-  test([1, 2], even)
-  test([1, 2, 3], even)
-  test([1, 2, 3, 4], even)
-  test([1, 2, 3, 4, 5], even)
-  test([1, 2, 3, 4, 5, 6], even)
+  testcase([], even)
+  testcase([1], even)
+  testcase([1, 2], even)
+  testcase([1, 2, 3], even)
+  testcase([1, 2, 3, 4], even)
+  testcase([1, 2, 3, 4, 5], even)
+  testcase([1, 2, 3, 4, 5, 6], even)
 }
 
 pub fn repeat_test() {
@@ -312,18 +312,18 @@ pub fn unfold_test() {
 }
 
 pub fn range_test() {
-  let test = fn(a, b, expected) {
+  let testcase = fn(a, b, expected) {
     iterator.range(a, b)
     |> iterator.to_list
     |> should.equal(expected)
   }
 
-  test(0, 0, [0])
-  test(1, 1, [1])
-  test(-1, -1, [-1])
-  test(0, 1, [0, 1])
-  test(0, 5, [0, 1, 2, 3, 4, 5])
-  test(1, -5, [1, 0, -1, -2, -3, -4, -5])
+  testcase(0, 0, [0])
+  testcase(1, 1, [1])
+  testcase(-1, -1, [-1])
+  testcase(0, 1, [0, 1])
+  testcase(0, 5, [0, 1, 2, 3, 4, 5])
+  testcase(1, -5, [1, 0, -1, -2, -3, -4, -5])
 }
 
 pub fn drop_test() {
@@ -534,7 +534,7 @@ pub fn interleave_test() {
 
 // a |> from_list |> fold_until(acc, f) == a |> list.fold_until(acc, f)
 pub fn fold_until_test() {
-  let test = fn(subject, acc, f) {
+  let testcase = fn(subject, acc, f) {
     subject
     |> iterator.from_list()
     |> iterator.fold_until(acc, f)
@@ -547,10 +547,10 @@ pub fn fold_until_test() {
       _ -> list.Stop(acc)
     }
   }
-  test([], [], f)
-  test([1], [], f)
-  test([1, 2, 3], [], f)
-  test([1, 2, 3, 4, 5, 6, 7, 8], [], f)
+  testcase([], [], f)
+  testcase([1], [], f)
+  testcase([1, 2, 3], [], f)
+  testcase([1, 2, 3, 4, 5, 6, 7, 8], [], f)
 
   [1, 2, 3, 4, 5, 6, 7, 8]
   |> iterator.from_list()
@@ -560,7 +560,7 @@ pub fn fold_until_test() {
 
 // a |> from_list |> try_fold(acc, f) == a |> list.try_fold(acc, f)
 pub fn try_fold_test() {
-  let test = fn(subject, acc, fun) {
+  let testcase = fn(subject, acc, fun) {
     subject
     |> iterator.from_list()
     |> iterator.try_fold(acc, fun)
@@ -573,10 +573,10 @@ pub fn try_fold_test() {
       _ -> Error("tried to add an odd number")
     }
   }
-  test([], 0, f)
-  test([2, 4, 6], 0, f)
-  test([1, 2, 3], 0, f)
-  test([1, 2, 3, 4, 5, 6, 7, 8], 0, f)
+  testcase([], 0, f)
+  testcase([2, 4, 6], 0, f)
+  testcase([1, 2, 3], 0, f)
+  testcase([1, 2, 3, 4, 5, 6, 7, 8], 0, f)
 
   [0, 2, 4, 6]
   |> iterator.from_list()

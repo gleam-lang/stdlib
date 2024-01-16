@@ -35,17 +35,17 @@ pub fn is_empty_test() {
 }
 
 pub fn length_test() {
-  let test = fn(input) {
+  let testcase = fn(input) {
     queue.from_list(input)
     |> queue.length
     |> should.equal(list.length(input))
   }
 
-  test([])
-  test([1])
-  test([1, 2])
-  test([1, 2, 1])
-  test([1, 2, 1, 5, 2, 7, 2, 7, 8, 4, 545])
+  testcase([])
+  testcase([1])
+  testcase([1, 2])
+  testcase([1, 2, 1])
+  testcase([1, 2, 1, 5, 2, 7, 2, 7, 8, 4, 545])
 }
 
 pub fn push_back_test() {

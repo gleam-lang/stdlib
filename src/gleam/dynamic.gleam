@@ -80,11 +80,6 @@ pub fn bit_array(from data: Dynamic) -> Result(BitArray, DecodeErrors) {
   decode_bit_array(data)
 }
 
-@deprecated("Please use `bit_array` instead")
-pub fn bit_string(from data: Dynamic) -> Result(BitArray, DecodeErrors) {
-  bit_array(data)
-}
-
 @external(erlang, "gleam_stdlib", "decode_bit_array")
 @external(javascript, "../gleam_stdlib.mjs", "decode_bit_array")
 fn decode_bit_array(a: Dynamic) -> Result(BitArray, DecodeErrors)
@@ -239,7 +234,9 @@ fn decode_bool(a: Dynamic) -> Result(Bool, DecodeErrors)
 /// // -> Error([DecodeError(expected: "List", found: "Int", path: [])])
 /// ```
 ///
-pub fn shallow_list(from value: Dynamic) -> Result(List(Dynamic), DecodeErrors) {
+pub fn shallow_list(
+  from value: Dynamic,
+) -> Result(List(Dynamic), DecodeErrors) {
   decode_list(value)
 }
 
@@ -1012,14 +1009,6 @@ pub fn dict(
     )
     Ok(dict.from_list(pairs))
   }
-}
-
-@deprecated("Use `dict` instead")
-pub fn map(
-  of key_type: Decoder(k),
-  to value_type: Decoder(v),
-) -> Decoder(Dict(k, v)) {
-  dict(key_type, value_type)
 }
 
 @external(erlang, "gleam_stdlib", "decode_map")

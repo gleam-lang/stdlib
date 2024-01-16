@@ -122,7 +122,7 @@ export function string_replace(string, target, substitute) {
   return string.replace(
     // $& means the whole matched string
     new RegExp(target.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"),
-    substitute
+    substitute,
   );
 }
 
@@ -499,7 +499,7 @@ export function encode64(bit_array) {
         uint6ToB64((nUint24 >>> 18) & 63),
         uint6ToB64((nUint24 >>> 12) & 63),
         uint6ToB64((nUint24 >>> 6) & 63),
-        uint6ToB64(nUint24 & 63)
+        uint6ToB64(nUint24 & 63),
       );
       nUint24 = 0;
     }
@@ -516,14 +516,14 @@ function uint6ToB64(nUint6) {
   return nUint6 < 26
     ? nUint6 + 65
     : nUint6 < 52
-    ? nUint6 + 71
-    : nUint6 < 62
-    ? nUint6 - 4
-    : nUint6 === 62
-    ? 43
-    : nUint6 === 63
-    ? 47
-    : 65;
+      ? nUint6 + 71
+      : nUint6 < 62
+        ? nUint6 - 4
+        : nUint6 === 62
+          ? 43
+          : nUint6 === 63
+            ? 47
+            : 65;
 }
 
 // From https://developer.mozilla.org/en-US/docs/Glossary/Base64#Solution_2_%E2%80%93_rewrite_the_DOMs_atob()_and_btoa()_using_JavaScript's_TypedArrays_and_UTF-8
@@ -531,14 +531,14 @@ function b64ToUint6(nChr) {
   return nChr > 64 && nChr < 91
     ? nChr - 65
     : nChr > 96 && nChr < 123
-    ? nChr - 71
-    : nChr > 47 && nChr < 58
-    ? nChr + 4
-    : nChr === 43
-    ? 62
-    : nChr === 47
-    ? 63
-    : 0;
+      ? nChr - 71
+      : nChr > 47 && nChr < 58
+        ? nChr + 4
+        : nChr === 43
+          ? 62
+          : nChr === 47
+            ? 63
+            : 0;
 }
 
 // From https://developer.mozilla.org/en-US/docs/Glossary/Base64#Solution_2_%E2%80%93_rewrite_the_DOMs_atob()_and_btoa()_using_JavaScript's_TypedArrays_and_UTF-8
@@ -577,7 +577,7 @@ export function classify_dynamic(data) {
   } else if (data instanceof BitArray) {
     return "BitArray";
   } else if (data instanceof Dict) {
-    return "Map";
+    return "Dict";
   } else if (Number.isInteger(data)) {
     return "Int";
   } else if (Array.isArray(data)) {
@@ -600,7 +600,7 @@ function decoder_error(expected, got) {
 
 function decoder_error_no_classify(expected, got) {
   return new Error(
-    List.fromArray([new DecodeError(expected, got, List.fromArray([]))])
+    List.fromArray([new DecodeError(expected, got, List.fromArray([]))]),
   );
 }
 
@@ -701,19 +701,22 @@ export function decode_result(data) {
 
 export function decode_map(data) {
   if (data instanceof Dict) {
+    return new Ok(data);
+  }
+  if (data instanceof Map || data instanceof WeakMap) {
     return new Ok(Dict.fromMap(data));
   }
   if (data == null) {
-    return decoder_error("Map", data);
+    return decoder_error("Dict", data);
   }
   if (typeof data !== "object") {
-    return decoder_error("Map", data);
+    return decoder_error("Dict", data);
   }
   const proto = Object.getPrototypeOf(data);
   if (proto === Object.prototype || proto === null) {
     return new Ok(Dict.fromObject(data));
   }
-  return decoder_error("Map", data);
+  return decoder_error("Dict", data);
 }
 
 export function decode_option(data, decoder) {
@@ -729,7 +732,7 @@ export function decode_option(data, decoder) {
 }
 
 export function decode_field(value, name) {
-  const not_a_map_error = () => decoder_error("Map", value);
+  const not_a_map_error = () => decoder_error("Dict", value);
 
   if (
     value instanceof Dict ||

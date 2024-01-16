@@ -1,9 +1,6 @@
 -module(gleam_stdlib_test_ffi).
 
--export([
-    main/0, should_equal/2, should_not_equal/2, should_be_ok/1,
-    should_be_error/1, improper_list_append/3
-]).
+-export([main/0, should_equal/2, should_not_equal/2, improper_list_append/3]).
 
 -include_lib("eunit/include/eunit.hrl").
 
@@ -31,12 +28,6 @@ should_equal(Actual, Expected) ->
     nil.
 should_not_equal(Actual, Expected) ->
     ?assertNotEqual(Expected, Actual),
-    nil.
-should_be_ok(A) ->
-    ?assertMatch({ok, _}, A),
-    nil.
-should_be_error(A) ->
-    ?assertMatch({error, _}, A),
     nil.
 
 improper_list_append(ItemA, ItemB, ImproperTail) ->

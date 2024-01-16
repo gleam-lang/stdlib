@@ -3,6 +3,10 @@
 ## Unreleased
 
 - The `set` module gains the `difference` function.
+- The deprecated `bit_string`, `bit_builder`, `base`, and `map` modules have
+  been removed.
+- The deprecated `map`, and `bit_string` functions in the `dynamic` module have
+  been removed.
 
 ## v0.34.0 - 2023-12-17
 

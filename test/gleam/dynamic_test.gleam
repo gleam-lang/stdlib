@@ -56,11 +56,12 @@ pub type MyAtom {
 }
 
 @target(erlang)
-pub fn map_from_atom_test() {
+pub fn dict_from_atom_test() {
   ThisIsAnAtom
   |> dynamic.from
-  |> dynamic.map(dynamic.string, dynamic.int)
-  |> should.equal(Error([DecodeError(expected: "Map", found: "Atom", path: [])]),
+  |> dynamic.dict(dynamic.string, dynamic.int)
+  |> should.equal(
+    Error([DecodeError(expected: "Dict", found: "Atom", path: [])]),
   )
 }
 
@@ -69,11 +70,12 @@ pub fn map_from_atom_test() {
 fn get_null() -> dynamic.Dynamic
 
 @target(javascript)
-pub fn map_from_null_test() {
+pub fn dict_from_null_test() {
   get_null()
   |> dynamic.from
-  |> dynamic.map(dynamic.string, dynamic.int)
-  |> should.equal(Error([DecodeError(expected: "Map", found: "Null", path: [])]),
+  |> dynamic.dict(dynamic.string, dynamic.int)
+  |> should.equal(
+    Error([DecodeError(expected: "Dict", found: "Null", path: [])]),
   )
 }
 
@@ -127,7 +129,8 @@ pub fn int_test() {
   []
   |> dynamic.from
   |> dynamic.int
-  |> should.equal(Error([DecodeError(expected: "Int", found: "List", path: [])]),
+  |> should.equal(
+    Error([DecodeError(expected: "Int", found: "List", path: [])]),
   )
 }
 
@@ -194,7 +197,8 @@ pub fn bool_test() {
   1
   |> dynamic.from
   |> dynamic.bool
-  |> should.equal(Error([DecodeError(expected: "Bool", found: "Int", path: [])]),
+  |> should.equal(
+    Error([DecodeError(expected: "Bool", found: "Int", path: [])]),
   )
 
   1.5
@@ -236,7 +240,8 @@ pub fn list_test() {
   1
   |> dynamic.from
   |> dynamic.list(dynamic.string)
-  |> should.equal(Error([DecodeError(expected: "List", found: "Int", path: [])]),
+  |> should.equal(
+    Error([DecodeError(expected: "List", found: "Int", path: [])]),
   )
 
   1.1
@@ -299,7 +304,7 @@ pub fn javascript_object_field_test() {
   |> dynamic.from
   |> dynamic.field("Nope", dynamic.int)
   |> should.equal(
-    Error([DecodeError(expected: "Map", found: "Result", path: [])]),
+    Error([DecodeError(expected: "Dict", found: "Result", path: [])]),
   )
 }
 
@@ -341,12 +346,15 @@ pub fn field_test() {
   1
   |> dynamic.from
   |> dynamic.field("ok", dynamic.int)
-  |> should.equal(Error([DecodeError(expected: "Map", found: "Int", path: [])]))
+  |> should.equal(
+    Error([DecodeError(expected: "Dict", found: "Int", path: [])]),
+  )
 
   []
   |> dynamic.from
   |> dynamic.field("ok", dynamic.int)
-  |> should.equal(Error([DecodeError(expected: "Map", found: "List", path: [])]),
+  |> should.equal(
+    Error([DecodeError(expected: "Dict", found: "List", path: [])]),
   )
 
   dict.new()
@@ -354,7 +362,7 @@ pub fn field_test() {
   |> dynamic.from
   |> dynamic.field("ok", dynamic.field("not_a_field", dynamic.int))
   |> should.equal(
-    Error([DecodeError(expected: "Map", found: "Int", path: ["ok"])]),
+    Error([DecodeError(expected: "Dict", found: "Int", path: ["ok"])]),
   )
 }
 
@@ -406,12 +414,15 @@ pub fn optional_field_test() {
   1
   |> dynamic.from
   |> dynamic.optional_field("ok", dynamic.int)
-  |> should.equal(Error([DecodeError(expected: "Map", found: "Int", path: [])]))
+  |> should.equal(
+    Error([DecodeError(expected: "Dict", found: "Int", path: [])]),
+  )
 
   []
   |> dynamic.from
   |> dynamic.optional_field("ok", dynamic.int)
-  |> should.equal(Error([DecodeError(expected: "Map", found: "List", path: [])]),
+  |> should.equal(
+    Error([DecodeError(expected: "Dict", found: "List", path: [])]),
   )
 }
 
@@ -485,7 +496,7 @@ pub fn element_test() {
   |> dynamic.from
   |> dynamic.element(0, dynamic.int)
   |> should.equal(
-    Error([DecodeError(expected: "Tuple", found: "Map", path: [])]),
+    Error([DecodeError(expected: "Tuple", found: "Dict", path: [])]),
   )
 }
 
@@ -1063,54 +1074,60 @@ pub fn nested_tuples_test() {
   )
 }
 
-pub fn map_test() {
+pub fn dict_test() {
   dict.new()
   |> dynamic.from
-  |> dynamic.map(dynamic.string, dynamic.int)
+  |> dynamic.dict(dynamic.string, dynamic.int)
   |> should.equal(Ok(dict.new()))
 
   dict.from_list([#("a", 1), #("b", 2)])
   |> dynamic.from
-  |> dynamic.map(dynamic.string, dynamic.int)
+  |> dynamic.dict(dynamic.string, dynamic.int)
   |> should.equal(Ok(dict.from_list([#("a", 1), #("b", 2)])))
 
   dict.from_list([#("a", 1), #("b", 2)])
   |> dynamic.from
-  |> dynamic.map(dynamic.int, dynamic.int)
+  |> dynamic.dict(dynamic.int, dynamic.int)
   |> should.equal(
     Error([DecodeError(expected: "Int", found: "String", path: ["keys"])]),
   )
 
   dict.from_list([#("a", 1), #("b", 2)])
   |> dynamic.from
-  |> dynamic.map(dynamic.string, dynamic.string)
+  |> dynamic.dict(dynamic.string, dynamic.string)
   |> should.equal(
     Error([DecodeError(expected: "String", found: "Int", path: ["values"])]),
   )
 
   1
   |> dynamic.from
-  |> dynamic.map(dynamic.string, dynamic.int)
-  |> should.equal(Error([DecodeError(expected: "Map", found: "Int", path: [])]))
+  |> dynamic.dict(dynamic.string, dynamic.int)
+  |> should.equal(
+    Error([DecodeError(expected: "Dict", found: "Int", path: [])]),
+  )
 
   #()
   |> dynamic.from
-  |> dynamic.map(dynamic.string, dynamic.int)
+  |> dynamic.dict(dynamic.string, dynamic.int)
   |> should.equal(
-    Error([DecodeError(expected: "Map", found: "Tuple of 0 elements", path: [])]),
+    Error([
+      DecodeError(expected: "Dict", found: "Tuple of 0 elements", path: []),
+    ]),
   )
 
   fn() { Nil }
   |> dynamic.from
-  |> dynamic.map(dynamic.string, dynamic.int)
+  |> dynamic.dict(dynamic.string, dynamic.int)
   |> should.equal(
-    Error([DecodeError(expected: "Map", found: "Function", path: [])]),
+    Error([DecodeError(expected: "Dict", found: "Function", path: [])]),
   )
 
   Nil
   |> dynamic.from
-  |> dynamic.map(dynamic.string, dynamic.int)
-  |> should.equal(Error([DecodeError(expected: "Map", found: "Nil", path: [])]))
+  |> dynamic.dict(dynamic.string, dynamic.int)
+  |> should.equal(
+    Error([DecodeError(expected: "Dict", found: "Nil", path: [])]),
+  )
 }
 
 pub fn shallow_list_test() {
@@ -1132,7 +1149,8 @@ pub fn shallow_list_test() {
   1
   |> dynamic.from
   |> dynamic.shallow_list
-  |> should.equal(Error([DecodeError(expected: "List", found: "Int", path: [])]),
+  |> should.equal(
+    Error([DecodeError(expected: "List", found: "Int", path: [])]),
   )
 }
 

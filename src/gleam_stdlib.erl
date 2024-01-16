@@ -58,7 +58,7 @@ classify_dynamic(X) when is_integer(X) -> <<"Int">>;
 classify_dynamic(X) when is_float(X) -> <<"Float">>;
 classify_dynamic(X) when is_list(X) -> <<"List">>;
 classify_dynamic(X) when is_boolean(X) -> <<"Bool">>;
-classify_dynamic(X) when is_map(X) -> <<"Map">>;
+classify_dynamic(X) when is_map(X) -> <<"Dict">>;
 classify_dynamic(X) when is_tuple(X) ->
     iolist_to_binary(["Tuple of ", integer_to_list(tuple_size(X)), " elements"]);
 classify_dynamic(X) when
@@ -70,7 +70,7 @@ classify_dynamic(X) when
 classify_dynamic(_) -> <<"Some other type">>.
 
 decode_map(Data) when is_map(Data) -> {ok, Data};
-decode_map(Data) -> decode_error_msg(<<"Map">>, Data).
+decode_map(Data) -> decode_error_msg(<<"Dict">>, Data).
 
 decode_bit_array(Data) when is_bitstring(Data) -> {ok, Data};
 decode_bit_array(Data) -> decode_error_msg(<<"BitArray">>, Data).
@@ -94,7 +94,7 @@ decode_field(Data, Key) when is_map(Data) ->
             {ok, none}
     end;
 decode_field(Data, _) ->
-    decode_error_msg(<<"Map">>, Data).
+    decode_error_msg(<<"Dict">>, Data).
 
 size_of_tuple(Data) -> tuple_size(Data).
 
