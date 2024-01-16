@@ -213,7 +213,11 @@ fn less_than(a: String, b: String) -> Bool
 /// // -> ""
 /// ```
 ///
-pub fn slice(from string: String, at_index idx: Int, length len: Int) -> String {
+pub fn slice(
+  from string: String,
+  at_index idx: Int,
+  length len: Int,
+) -> String {
   case len < 0 {
     True -> ""
     False ->
@@ -390,7 +394,10 @@ pub fn split_once(
 fn erl_split(a: String, b: String) -> List(String)
 
 @target(erlang)
-fn do_split_once(x: String, substring: String) -> Result(#(String, String), Nil) {
+fn do_split_once(
+  x: String,
+  substring: String,
+) -> Result(#(String, String), Nil) {
   case erl_split(x, substring) {
     [first, rest] -> Ok(#(first, rest))
     _ -> Error(Nil)
@@ -502,7 +509,11 @@ fn do_join(strings: List(String), separator: String) -> String {
 /// // -> "121"
 /// ```
 ///
-pub fn pad_left(string: String, to desired_length: Int, with pad_string: String) {
+pub fn pad_left(
+  string: String,
+  to desired_length: Int,
+  with pad_string: String,
+) {
   let current_length = length(string)
   let to_pad_length = desired_length - current_length
   padding(to_pad_length, pad_string)

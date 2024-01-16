@@ -398,7 +398,11 @@ pub fn map(list: List(a), with fun: fn(a) -> b) -> List(b) {
 /// // -> [#(1, "a"), #(2, "b")]
 /// ```
 /// 
-pub fn map2(list1: List(a), list2: List(b), with fun: fn(a, b) -> c) -> List(c) {
+pub fn map2(
+  list1: List(a),
+  list2: List(b),
+  with fun: fn(a, b) -> c,
+) -> List(c) {
   do_map2(list1, list2, fun, [])
 }
 
@@ -1250,8 +1254,7 @@ fn merge_sort(
         True ->
           merge_down(
             n,
-            ln
-            - n,
+            ln - n,
             merge_sort(a, n, compare, False),
             merge_sort(b, ln - n, compare, False),
             [],
@@ -1260,8 +1263,7 @@ fn merge_sort(
         False ->
           merge_up(
             n,
-            ln
-            - n,
+            ln - n,
             merge_sort(a, n, compare, True),
             merge_sort(b, ln - n, compare, True),
             [],

@@ -38,7 +38,10 @@ pub fn prepend(
 ///
 /// Runs in constant time.
 ///
-pub fn append(to builder: StringBuilder, suffix second: String) -> StringBuilder {
+pub fn append(
+  to builder: StringBuilder,
+  suffix second: String,
+) -> StringBuilder {
   append_builder(builder, from_string(second))
 }
 

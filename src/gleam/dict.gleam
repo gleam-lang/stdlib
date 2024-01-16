@@ -151,7 +151,11 @@ fn do_get(a: Dict(key, value), b: key) -> Result(value, Nil)
 /// // -> from_list([#("a", 5)])
 /// ```
 ///
-pub fn insert(into dict: Dict(k, v), for key: k, insert value: v) -> Dict(k, v) {
+pub fn insert(
+  into dict: Dict(k, v),
+  for key: k,
+  insert value: v,
+) -> Dict(k, v) {
   do_insert(key, value, dict)
 }
 
@@ -273,10 +277,10 @@ pub fn filter(
 }
 
 @external(erlang, "maps", "filter")
-fn do_filter(
-  f: fn(key, value) -> Bool,
-  dict: Dict(key, value),
-) -> Dict(key, value) {
+fn do_filter(f: fn(key, value) -> Bool, dict: Dict(key, value)) -> Dict(
+  key,
+  value,
+) {
   let insert = fn(dict, k, v) {
     case f(k, v) {
       True -> insert(dict, k, v)
@@ -304,7 +308,10 @@ fn do_filter(
 /// // -> from_list([#("a", 0), #("b", 1)])
 /// ```
 ///
-pub fn take(from dict: Dict(k, v), keeping desired_keys: List(k)) -> Dict(k, v) {
+pub fn take(
+  from dict: Dict(k, v),
+  keeping desired_keys: List(k),
+) -> Dict(k, v) {
   do_take(desired_keys, dict)
 }
 
@@ -344,7 +351,10 @@ fn insert_taken(
 /// // -> from_list([#("a", 0), #("b", 2), #("c", 3)])
 /// ```
 ///
-pub fn merge(into dict: Dict(k, v), from new_entries: Dict(k, v)) -> Dict(k, v) {
+pub fn merge(
+  into dict: Dict(k, v),
+  from new_entries: Dict(k, v),
+) -> Dict(k, v) {
   do_merge(dict, new_entries)
 }
 
@@ -409,7 +419,10 @@ fn do_delete(a: k, b: Dict(k, v)) -> Dict(k, v)
 /// // -> from_list([])
 /// ```
 ///
-pub fn drop(from dict: Dict(k, v), drop disallowed_keys: List(k)) -> Dict(k, v) {
+pub fn drop(
+  from dict: Dict(k, v),
+  drop disallowed_keys: List(k),
+) -> Dict(k, v) {
   case disallowed_keys {
     [] -> dict
     [x, ..xs] -> drop(delete(dict, x), xs)
@@ -451,7 +464,11 @@ pub fn update(
   |> insert(dict, key, _)
 }
 
-fn do_fold(list: List(#(k, v)), initial: acc, fun: fn(acc, k, v) -> acc) -> acc {
+fn do_fold(
+  list: List(#(k, v)),
+  initial: acc,
+  fun: fn(acc, k, v) -> acc,
+) -> acc {
   case list {
     [] -> initial
     [#(k, v), ..rest] -> do_fold(rest, fun(initial, k, v), fun)

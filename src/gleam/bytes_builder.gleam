@@ -37,7 +37,10 @@ pub fn new() -> BytesBuilder {
 ///
 /// Runs in constant time.
 ///
-pub fn prepend(to second: BytesBuilder, prefix first: BitArray) -> BytesBuilder {
+pub fn prepend(
+  to second: BytesBuilder,
+  prefix first: BitArray,
+) -> BytesBuilder {
   append_builder(from_bit_array(first), second)
 }
 
@@ -65,10 +68,7 @@ pub fn prepend_builder(
 /// Runs in constant time.
 ///
 @external(erlang, "gleam_stdlib", "iodata_append")
-pub fn append_builder(
-  to first: BytesBuilder,
-  suffix second: BytesBuilder,
-) -> BytesBuilder {
+pub fn append_builder(to first: BytesBuilder, suffix second: BytesBuilder) -> BytesBuilder {
   case second {
     Many(builders) -> Many([first, ..builders])
     _ -> Many([first, second])

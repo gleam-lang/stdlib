@@ -448,7 +448,10 @@ fn do_append(first: fn() -> Action(a), second: fn() -> Action(a)) -> Action(a) {
 /// // -> [1, 2, 3, 4]
 /// ```
 ///
-pub fn append(to first: Iterator(a), suffix second: Iterator(a)) -> Iterator(a) {
+pub fn append(
+  to first: Iterator(a),
+  suffix second: Iterator(a),
+) -> Iterator(a) {
   fn() { do_append(first.continuation, second.continuation) }
   |> Iterator
 }
@@ -625,7 +628,10 @@ pub fn range(from start: Int, to stop: Int) -> Iterator(Int) {
   }
 }
 
-fn do_find(continuation: fn() -> Action(a), f: fn(a) -> Bool) -> Result(a, Nil) {
+fn do_find(
+  continuation: fn() -> Action(a),
+  f: fn(a) -> Bool,
+) -> Result(a, Nil) {
   case continuation() {
     Stop -> Error(Nil)
     Continue(e, next) ->
@@ -1141,7 +1147,9 @@ pub fn all(
   |> do_all(predicate)
 }
 
-fn update_group_with(el: element) -> fn(Option(List(element))) -> List(element) {
+fn update_group_with(
+  el: element,
+) -> fn(Option(List(element))) -> List(element) {
   fn(maybe_group) {
     case maybe_group {
       Some(group) -> [el, ..group]

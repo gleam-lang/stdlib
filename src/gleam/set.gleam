@@ -197,7 +197,10 @@ pub fn filter(
   Set(dict.filter(in: set.map, keeping: fn(m, _) { predicate(m) }))
 }
 
-pub fn drop(from set: Set(member), drop disallowed: List(member)) -> Set(member) {
+pub fn drop(
+  from set: Set(member),
+  drop disallowed: List(member),
+) -> Set(member) {
   list.fold(over: disallowed, from: set, with: delete)
 }
 
@@ -215,11 +218,17 @@ pub fn drop(from set: Set(member), drop disallowed: List(member)) -> Set(member)
 /// // -> [1, 3]
 /// ```
 ///
-pub fn take(from set: Set(member), keeping desired: List(member)) -> Set(member) {
+pub fn take(
+  from set: Set(member),
+  keeping desired: List(member),
+) -> Set(member) {
   Set(dict.take(from: set.map, keeping: desired))
 }
 
-fn order(first: Set(member), second: Set(member)) -> #(Set(member), Set(member)) {
+fn order(
+  first: Set(member),
+  second: Set(member),
+) -> #(Set(member), Set(member)) {
   case dict.size(first.map) > dict.size(second.map) {
     True -> #(first, second)
     False -> #(second, first)
