@@ -426,7 +426,7 @@ pub fn field(named name: a, of inner_type: Decoder(t)) -> Decoder(t) {
 /// dict.new()
 /// |> dict.insert("Hello", "World")
 /// |> from
-/// |> field(named: "Hello", of: string)
+/// |> optional_field(named: "Hello", of: string)
 /// // -> Ok(Some("World"))
 /// ```
 ///
@@ -434,13 +434,13 @@ pub fn field(named name: a, of inner_type: Decoder(t)) -> Decoder(t) {
 /// import gleam/dict
 /// dict.new()
 /// |> from
-/// |> field(named: "Hello", of: string)
+/// |> optional_field(named: "Hello", of: string)
 /// // -> Ok(None)
 /// ```
 ///
 /// ```gleam
 /// from(123)
-/// |> field("Hello", string)
+/// |> optional_field("Hello", string)
 /// // -> Error([DecodeError(expected: "Map", found: "Int", path: [])])
 /// ```
 ///
