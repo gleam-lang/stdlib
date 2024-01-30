@@ -289,15 +289,13 @@ pub fn inspect_test() {
 
   bit_array.inspect(<<0, 20, 0x20, 255>>)
   |> should.equal("<<0, 20, 32, 255>>")
-}
 
-pub fn inspect_base16_test() {
-  bit_array.inspect_base16(<<>>)
-  |> should.equal("<<>>")
+  bit_array.inspect(<<4:5>>)
+  |> should.equal("<<4:size(5)>>")
 
-  bit_array.inspect_base16(<<0x80>>)
-  |> should.equal("<<80>>")
+  bit_array.inspect(<<100, 5:3>>)
+  |> should.equal("<<100, 5:size(3)>>")
 
-  bit_array.inspect_base16(<<0, 20, 0x20, 255>>)
-  |> should.equal("<<00 14 20 FF>>")
+  bit_array.inspect(<<5:3, 11:4, 1:2>>)
+  |> should.equal("<<182, 1:size(1)>>")
 }
