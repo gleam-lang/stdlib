@@ -2,6 +2,7 @@
 
 import gleam/int
 import gleam/string
+import gleam/string_builder.{type StringBuilder}
 
 /// Converts a UTF-8 `String` type into a `BitArray`.
 ///
@@ -164,46 +165,48 @@ pub fn base16_decode(input: String) -> Result(BitArray, Nil)
 /// ```gleam
 /// inspect(<<0, 20, 0x20, 255>>)
 /// // -> "<<0, 20, 32, 255>>"
+///
+/// inspect(<<100, 5:3>>)
+/// // -> "<<100, 5:size(3)>>"
 /// ```
 /// 
 pub fn inspect(input: BitArray) -> String {
-  "<<"
-  <> input
-  |> do_inspect(int.to_string)
-  |> string.join(", ")
-  <> ">>"
+  string_builder.new()
+  |> string_builder.append("<<")
+  |> do_inspect(input)
+  |> string_builder.append(">>")
+  |> string_builder.to_string
 }
 
-/// Converts a bit array to a string containing the hexadecimal value of each
-/// byte.
-///
-/// ## Examples
-///
-/// ```gleam
-/// inspect(<<0, 20, 0x20, 255>>)
-/// // -> "<<00 14 20 FF>>"
-/// ```
-/// 
-pub fn inspect_base16(input: BitArray) -> String {
-  let byte_to_hex_string = fn(b) {
-    b
-    |> int.to_base16
-    |> string.pad_left(2, "0")
-  }
-
-  "<<"
-  <> input
-  |> do_inspect(byte_to_hex_string)
-  |> string.join(" ")
-  <> ">>"
-}
-
-fn do_inspect(
-  input: BitArray,
-  byte_to_string: fn(Int) -> String,
-) -> List(String) {
+fn do_inspect(builder: StringBuilder, input: BitArray) -> StringBuilder {
   case input {
-    <<b, rest:bytes>> -> [byte_to_string(b), ..do_inspect(rest, byte_to_string)]
-    _ -> []
+    <<>> -> builder
+
+    <<x:size(1)>> -> do_inspect_int(builder, x, ":size(1)")
+    <<x:size(2)>> -> do_inspect_int(builder, x, ":size(2)")
+    <<x:size(3)>> -> do_inspect_int(builder, x, ":size(3)")
+    <<x:size(4)>> -> do_inspect_int(builder, x, ":size(4)")
+    <<x:size(5)>> -> do_inspect_int(builder, x, ":size(5)")
+    <<x:size(6)>> -> do_inspect_int(builder, x, ":size(6)")
+    <<x:size(7)>> -> do_inspect_int(builder, x, ":size(7)")
+
+    <<x, rest:bits>> -> {
+      let suffix = case rest {
+        <<>> -> ""
+        _ -> ", "
+      }
+
+      builder
+      |> do_inspect_int(x, suffix)
+      |> do_inspect(rest)
+    }
+
+    _ -> builder
   }
+}
+
+fn do_inspect_int(builder: StringBuilder, value: Int, suffix: String) {
+  builder
+  |> string_builder.append(int.to_string(value))
+  |> string_builder.append(suffix)
 }
