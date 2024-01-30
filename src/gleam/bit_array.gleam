@@ -1,5 +1,6 @@
 //// BitArrays are a sequence of binary data of any length.
 
+import gleam/int
 import gleam/string
 
 /// Converts a UTF-8 `String` type into a `BitArray`.
@@ -155,3 +156,54 @@ pub fn base16_encode(input: BitArray) -> String
 @external(erlang, "gleam_stdlib", "base16_decode")
 @external(javascript, "../gleam_stdlib.mjs", "base16_decode")
 pub fn base16_decode(input: String) -> Result(BitArray, Nil)
+
+/// Converts a bit array to a string containing the decimal value of each byte.
+///
+/// ## Examples
+///
+/// ```gleam
+/// inspect(<<0, 20, 0x20, 255>>)
+/// // -> "<<0, 20, 32, 255>>"
+/// ```
+/// 
+pub fn inspect(input: BitArray) -> String {
+  "<<"
+  <> input
+  |> do_inspect(int.to_string)
+  |> string.join(", ")
+  <> ">>"
+}
+
+/// Converts a bit array to a string containing the hexadecimal value of each
+/// byte.
+///
+/// ## Examples
+///
+/// ```gleam
+/// inspect(<<0, 20, 0x20, 255>>)
+/// // -> "<<00 14 20 FF>>"
+/// ```
+/// 
+pub fn inspect_base16(input: BitArray) -> String {
+  let byte_to_hex_string = fn(b) {
+    b
+    |> int.to_base16
+    |> string.pad_left(2, "0")
+  }
+
+  "<<"
+  <> input
+  |> do_inspect(byte_to_hex_string)
+  |> string.join(" ")
+  <> ">>"
+}
+
+fn do_inspect(
+  input: BitArray,
+  byte_to_string: fn(Int) -> String,
+) -> List(String) {
+  case input {
+    <<b, rest:bytes>> -> [byte_to_string(b), ..do_inspect(rest, byte_to_string)]
+    _ -> []
+  }
+}

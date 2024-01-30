@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- The `bit_array` module gains the `inspect` and `inspect_base16` functions.
 - The `set` module gains the `difference` function.
 - The deprecated `bit_string`, `bit_builder`, `base`, and `map` modules have
   been removed.
