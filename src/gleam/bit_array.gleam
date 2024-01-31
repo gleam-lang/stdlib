@@ -2,7 +2,6 @@
 
 import gleam/int
 import gleam/string
-import gleam/string_builder.{type StringBuilder}
 
 /// Converts a UTF-8 `String` type into a `BitArray`.
 ///
@@ -171,24 +170,20 @@ pub fn base16_decode(input: String) -> Result(BitArray, Nil)
 /// ```
 /// 
 pub fn inspect(input: BitArray) -> String {
-  string_builder.new()
-  |> string_builder.append("<<")
-  |> do_inspect(input)
-  |> string_builder.append(">>")
-  |> string_builder.to_string
+  do_inspect(input, "<<") <> ">>"
 }
 
-fn do_inspect(builder: StringBuilder, input: BitArray) -> StringBuilder {
+fn do_inspect(input: BitArray, accumulator: String) -> String {
   case input {
-    <<>> -> builder
+    <<>> -> accumulator
 
-    <<x:size(1)>> -> do_inspect_int(builder, x, ":size(1)")
-    <<x:size(2)>> -> do_inspect_int(builder, x, ":size(2)")
-    <<x:size(3)>> -> do_inspect_int(builder, x, ":size(3)")
-    <<x:size(4)>> -> do_inspect_int(builder, x, ":size(4)")
-    <<x:size(5)>> -> do_inspect_int(builder, x, ":size(5)")
-    <<x:size(6)>> -> do_inspect_int(builder, x, ":size(6)")
-    <<x:size(7)>> -> do_inspect_int(builder, x, ":size(7)")
+    <<x:size(1)>> -> accumulator <> int.to_string(x) <> ":size(1)"
+    <<x:size(2)>> -> accumulator <> int.to_string(x) <> ":size(2)"
+    <<x:size(3)>> -> accumulator <> int.to_string(x) <> ":size(3)"
+    <<x:size(4)>> -> accumulator <> int.to_string(x) <> ":size(4)"
+    <<x:size(5)>> -> accumulator <> int.to_string(x) <> ":size(5)"
+    <<x:size(6)>> -> accumulator <> int.to_string(x) <> ":size(6)"
+    <<x:size(7)>> -> accumulator <> int.to_string(x) <> ":size(7)"
 
     <<x, rest:bits>> -> {
       let suffix = case rest {
@@ -196,17 +191,11 @@ fn do_inspect(builder: StringBuilder, input: BitArray) -> StringBuilder {
         _ -> ", "
       }
 
-      builder
-      |> do_inspect_int(x, suffix)
-      |> do_inspect(rest)
+      let accumulator = accumulator <> int.to_string(x) <> suffix
+
+      do_inspect(rest, accumulator)
     }
 
-    _ -> builder
+    _ -> accumulator
   }
-}
-
-fn do_inspect_int(builder: StringBuilder, value: Int, suffix: String) {
-  builder
-  |> string_builder.append(int.to_string(value))
-  |> string_builder.append(suffix)
 }
