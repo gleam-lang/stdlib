@@ -160,7 +160,7 @@ fn do_transform(
 /// |> to_list
 /// // -> [#(0, "a"), #(1, "b"), #(2, "c")]
 /// ```
-/// 
+///
 pub fn transform(
   over iterator: Iterator(a),
   from initial: acc,
@@ -245,7 +245,7 @@ pub fn to_list(iterator: Iterator(element)) -> List(element) {
 ///
 /// ```gleam
 /// let assert Next(first, rest) = from_list([1, 2, 3, 4]) |> step
-/// 
+///
 /// first
 /// // -> 1
 ///
@@ -396,28 +396,28 @@ fn do_map2(
 }
 
 /// Combines two interators into a single one using the given function.
-/// 
+///
 /// If an iterator is longer than the other the extra elements are dropped.
-/// 
+///
 /// This function does not evaluate the elements of the two iterators, the
 /// computation is performed when the resulting iterator is later run.
-/// 
+///
 /// ## Examples
-/// 
+///
 /// ```gleam
 /// let first = from_list([1, 2, 3])
 /// let second = from_list([4, 5, 6])
 /// map2(first, second, fn(x, y) { x + y }) |> to_list
 /// // -> [5, 7, 9]
 /// ```
-/// 
+///
 /// ```gleam
 /// let first = from_list([1, 2])
 /// let second = from_list(["a", "b", "c"])
 /// map2(first, second, fn(i, x) { #(i, x) }) |> to_list
 /// // -> [#(1, "a"), #(2, "b")]
 /// ```
-/// 
+///
 pub fn map2(
   iterator1: Iterator(a),
   iterator2: Iterator(b),
@@ -1021,14 +1021,14 @@ fn do_intersperse(
 /// |> to_list
 /// // -> []
 /// ```
-/// 
+///
 /// ```gleam
 /// from_list([1])
 /// |> intersperse(with: 0)
 /// |> to_list
 /// // -> [1]
 /// ```
-/// 
+///
 /// ```gleam
 /// from_list([1, 2, 3, 4, 5])
 /// |> intersperse(with: 0)
@@ -1516,12 +1516,12 @@ pub fn each(over iterator: Iterator(a), with f: fn(a) -> b) -> Nil {
 }
 
 /// Add a new element to the start of an iterator.
-/// 
+///
 /// This function is for use with `use` expressions, to replicate the behaviour
 /// of the `yield` keyword found in other languages.
-/// 
+///
 /// ## Examples
-/// 
+///
 /// ```gleam
 /// let iterator = {
 ///   use <- yield(1)
@@ -1532,7 +1532,7 @@ pub fn each(over iterator: Iterator(a), with f: fn(a) -> b) -> Nil {
 /// iterator |> to_list
 /// // -> [1, 2, 3]
 /// ```
-/// 
+///
 pub fn yield(element: a, next: fn() -> Iterator(a)) -> Iterator(a) {
   Iterator(fn() { Continue(element, next().continuation) })
 }

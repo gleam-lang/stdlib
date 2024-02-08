@@ -1022,12 +1022,12 @@ fn decode_map(a: Dynamic) -> Result(Dict(Dynamic, Dynamic), DecodeErrors)
 ///
 /// ```gleam
 /// import gleam/result
-/// 
+///
 /// let bool_or_string = any(of: [
 ///   string,
 ///   fn(x) { result.map(bool(x), fn(_) { "a bool" }) }
 /// ])
-/// 
+///
 /// bool_or_string(from("ok"))
 /// // -> Ok("ok")
 ///

@@ -905,7 +905,7 @@ fn do_inspect(term term: anything) -> StringBuilder
 /// JavaScript.
 ///
 /// ## Examples
-/// 
+///
 /// ```gleam
 /// byte_size("🏳️‍⚧️🏳️‍🌈👩🏾‍❤️‍👨🏻")
 /// // -> 58
