@@ -368,7 +368,7 @@ pub fn all(results: List(Result(a, e))) -> Result(List(a), e) {
 /// Given a list of results, returns a pair where the first element is a list
 /// of all the values inside `Ok` and the second element is a list with all the
 /// values inside `Error`. The values in both lists appear in reverse order with
-/// respect to their position in the original list of results. 
+/// respect to their position in the original list of results.
 ///
 /// ## Examples
 ///
@@ -450,7 +450,7 @@ pub fn values(results: List(Result(a, e))) -> List(a) {
 ///
 /// If the result is an `Ok` rather than `Error` the function is not called and the
 /// result stays the same.
-/// 
+///
 /// This function is useful for chaining together computations that may fail
 /// and trying to recover from possible errors.
 ///

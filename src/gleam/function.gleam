@@ -131,7 +131,7 @@ pub fn tap(arg: a, effect: fn(a) -> b) -> a {
 /// let doubler = fn() {
 ///   fn(x: Int) { x * 2 }
 /// }
-/// 
+///
 /// doubler() |> apply1(2)
 /// // -> 4
 /// ```

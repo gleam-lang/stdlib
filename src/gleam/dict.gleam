@@ -494,7 +494,7 @@ fn do_fold(
 /// import gleam/string
 ///
 /// let dict = from_list([#("a", 1), #("b", 3), #("c", 9)])
-/// fold(dict, "", fn(accumulator, key, value) { 
+/// fold(dict, "", fn(accumulator, key, value) {
 ///   string.append(accumulator, key)
 /// })
 /// // -> "abc"

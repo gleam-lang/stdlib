@@ -267,7 +267,7 @@ fn update_group(
 ///
 /// ```gleam
 /// import gleam/dict
-/// 
+///
 /// [Ok(3), Error("Wrong"), Ok(200), Ok(73)]
 /// |> group(by: fn(i) {
 ///   case i {
@@ -281,7 +281,7 @@ fn update_group(
 /// //   #("Successful", [Ok(73), Ok(200), Ok(3)])
 /// // ]
 /// ```
-/// 
+///
 /// ```gleam
 /// import gleam/dict
 /// group([1,2,3,4,5], by: fn(i) { i - i / 3 * 3 })
@@ -383,21 +383,21 @@ pub fn map(list: List(a), with fun: fn(a) -> b) -> List(b) {
 }
 
 /// Combines two lists into a single list using the given function.
-/// 
+///
 /// If a list is longer than the other the extra elements are dropped.
-/// 
+///
 /// ## Examples
-/// 
+///
 /// ```gleam
 /// map2([1, 2, 3], [4, 5, 6], fn(x, y) { x + y })
 /// // -> [5, 7, 9]
 /// ```
-/// 
+///
 /// ```gleam
 /// map2([1, 2], ["a", "b", "c"], fn(i, x) { #(i, x) })
 /// // -> [#(1, "a"), #(2, "b")]
 /// ```
-/// 
+///
 pub fn map2(
   list1: List(a),
   list2: List(b),
@@ -647,10 +647,10 @@ fn do_append_acc(first: List(a), second: List(a)) -> List(a) {
 ///
 /// ```gleam
 /// let existing_list = [2, 3, 4]
-/// 
+///
 /// [1, ..existing_list]
 /// // -> [1, 2, 3, 4]
-/// 
+///
 /// prepend(to: existing_list, this: 1)
 /// // -> [1, 2, 3, 4]
 /// ```
@@ -692,16 +692,16 @@ pub fn concat(lists: List(List(a))) -> List(a) {
 
 /// This is the same as `concat`: it joins a list of lists into a single
 /// list.
-/// 
+///
 /// This function traverses all elements twice.
-/// 
+///
 /// ## Examples
-/// 
+///
 /// ```gleam
 /// flatten([[1], [2, 3], []])
 /// // -> [1, 2, 3]
 /// ```
-/// 
+///
 pub fn flatten(lists: List(List(a))) -> List(a) {
   do_concat(lists, [])
 }
