@@ -19,7 +19,7 @@ type Action(element) {
 /// fit in memory (or those that are infinite in size) as they only require the
 /// elements currently being processed to be in memory.
 ///
-/// As a lazy data structure no work is done when an iterator is filters,
+/// As a lazy data structure no work is done when an iterator is filtered,
 /// mapped, etc, instead a new iterator is returned with these transformations
 /// applied to the stream. Once the stream has all the required transformations
 /// applied it can be evaluated using functions such as `fold` and `to_list`.
