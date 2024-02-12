@@ -289,7 +289,10 @@ pub fn inspect_test() {
 
   bit_array.inspect(<<0, 20, 0x20, 255>>)
   |> should.equal("<<0, 20, 32, 255>>")
+}
 
+@target(erlang)
+pub fn inspect_partial_bytes_test() {
   bit_array.inspect(<<4:5>>)
   |> should.equal("<<4:size(5)>>")
 
