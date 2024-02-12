@@ -9,7 +9,7 @@ import gleam/uri
 pub fn full_parse_test() {
   let assert Ok(parsed) =
     uri.parse("https://weebl:bob@example.com:1234/path?query=true#fragment")
-  should.equal(parsed.scheme, Some("https"))
+  should.equal(parsed.scheme, "https")
   should.equal(parsed.userinfo, Some("weebl:bob"))
   should.equal(parsed.host, Some("example.com"))
   should.equal(parsed.port, Some(1234))
@@ -18,9 +18,9 @@ pub fn full_parse_test() {
   should.equal(parsed.fragment, Some("fragment"))
 }
 
-pub fn parse_only_path_test() {
-  let assert Ok(parsed) = uri.parse("")
-  should.equal(parsed.scheme, None)
+pub fn parse_only_scheme_test() {
+  let assert Ok(parsed) = uri.parse("ws:")
+  should.equal(parsed.scheme, "ws")
   should.equal(parsed.userinfo, None)
   should.equal(parsed.host, None)
   should.equal(parsed.port, None)
@@ -30,8 +30,8 @@ pub fn parse_only_path_test() {
 }
 
 pub fn parse_only_host_test() {
-  let assert Ok(parsed) = uri.parse("//")
-  should.equal(parsed.scheme, None)
+  let assert Ok(parsed) = uri.parse("ws://")
+  should.equal(parsed.scheme, "ws")
   should.equal(parsed.userinfo, None)
   should.equal(parsed.host, Some(""))
   should.equal(parsed.port, None)
@@ -44,7 +44,7 @@ pub fn parse_scheme_test() {
   uri.parse("http://one.com/path/to/something?one=two&two=one#fragment")
   |> should.equal(
     Ok(uri.Uri(
-      scheme: Some("http"),
+      scheme: "http",
       host: Some("one.com"),
       path: "/path/to/something",
       query: Some("one=two&two=one"),
@@ -59,7 +59,7 @@ pub fn parse_https_scheme_test() {
   uri.parse("https://foo.com")
   |> should.equal(
     Ok(uri.Uri(
-      scheme: Some("https"),
+      scheme: "https",
       host: Some("foo.com"),
       path: "",
       query: None,
@@ -74,7 +74,7 @@ pub fn parse_file_scheme_test() {
   uri.parse("file:///one/two/three")
   |> should.equal(
     Ok(uri.Uri(
-      scheme: Some("file"),
+      scheme: "file",
       host: Some(""),
       path: "/one/two/three",
       query: None,
@@ -90,7 +90,7 @@ pub fn parse_ftp_scheme_test() {
   |> uri.parse
   |> should.equal(
     Ok(uri.Uri(
-      scheme: Some("ftp"),
+      scheme: "ftp",
       host: Some("private.ftp-server.example.com"),
       userinfo: Some("user001:password"),
       path: "/my_directory/my_file.txt",
@@ -106,7 +106,7 @@ pub fn parse_sftp_scheme_test() {
   |> uri.parse
   |> should.equal(
     Ok(uri.Uri(
-      scheme: Some("sftp"),
+      scheme: "sftp",
       host: Some("private.ftp-server.example.com"),
       userinfo: Some("user001:password"),
       path: "/my_directory/my_file.txt",
@@ -122,7 +122,7 @@ pub fn parse_tftp_scheme_test() {
   |> uri.parse
   |> should.equal(
     Ok(uri.Uri(
-      scheme: Some("tftp"),
+      scheme: "tftp",
       host: Some("private.ftp-server.example.com"),
       userinfo: Some("user001:password"),
       path: "/my_directory/my_file.txt",
@@ -138,7 +138,7 @@ pub fn parse_ldap_scheme_test() {
   |> uri.parse
   |> should.equal(
     Ok(uri.Uri(
-      scheme: Some("ldap"),
+      scheme: "ldap",
       host: Some(""),
       userinfo: None,
       path: "/dc=example,dc=com",
@@ -154,7 +154,7 @@ pub fn parse_ldap_2_scheme_test() {
   |> uri.parse
   |> should.equal(
     Ok(uri.Uri(
-      scheme: Some("ldap"),
+      scheme: "ldap",
       host: Some("ldap.example.com"),
       userinfo: None,
       path: "/cn=John%20Doe,dc=foo,dc=com",
@@ -172,14 +172,23 @@ fn assert_parse(s) {
 
 // TODO: Assert these do not parse
 // pub fn parse_bad_uris_test() {
-//   uri.parse("")
 //   uri.parse("https:??@?F?@#>F//23/")
-//   assert ":https" = uri.parse(":https").path
-//   assert "https" = uri.parse("https").path
 // }
+
+pub fn scheme_is_mandatory_test() {
+  uri.parse("")
+  |> should.equal(Error(Nil))
+  uri.parse(":")
+  |> should.equal(Error(Nil))
+  uri.parse(":https")
+  |> should.equal(Error(Nil))
+  uri.parse("https")
+  |> should.equal(Error(Nil))
+}
+
 pub fn parse_downcases_scheme() {
   let assert Ok(uri) = uri.parse("HTTPS://EXAMPLE.COM")
-  let assert Some("https") = uri.scheme
+  let assert "https" = uri.scheme
   let assert Some("EXAMPLE.COM") = uri.host
 }
 
@@ -198,7 +207,7 @@ pub fn parse_empty_queries_test() {
 pub fn full_uri_to_string_test() {
   let test_uri =
     uri.Uri(
-      Some("https"),
+      "https",
       Some("weebl:bob"),
       Some("example.com"),
       Some(1234),
@@ -213,95 +222,95 @@ pub fn full_uri_to_string_test() {
 }
 
 pub fn path_only_uri_to_string_test() {
-  uri.Uri(None, None, None, None, "/", None, None)
+  uri.Uri("ws", None, None, None, "/", None, None)
   |> uri.to_string
-  |> should.equal("/")
+  |> should.equal("ws:/")
 
-  uri.Uri(None, None, None, None, "/teapot", None, None)
+  uri.Uri("ws", None, None, None, "/teapot", None, None)
   |> uri.to_string
-  |> should.equal("/teapot")
+  |> should.equal("ws:/teapot")
 
-  uri.Uri(None, Some("user"), None, None, "/teapot", None, None)
+  uri.Uri("ws", Some("user"), None, None, "/teapot", None, None)
   |> uri.to_string
-  |> should.equal("/teapot")
+  |> should.equal("ws:/teapot")
 
-  uri.Uri(None, None, None, None, "", None, None)
+  uri.Uri("ws", None, None, None, "", None, None)
   |> uri.to_string
-  |> should.equal("")
+  |> should.equal("ws:")
 }
 
 pub fn scheme_to_string_test() {
-  uri.Uri(Some("ftp"), None, None, None, "thing.txt", None, None)
+  uri.Uri("ftp", None, None, None, "thing.txt", None, None)
   |> uri.to_string
   |> should.equal("ftp:thing.txt")
 
-  uri.Uri(Some("ftp"), None, None, None, "", None, None)
+  uri.Uri("ftp", None, None, None, "", None, None)
   |> uri.to_string
   |> should.equal("ftp:")
 
-  uri.Uri(Some("ftp"), Some("ignored"), None, None, "", None, None)
+  uri.Uri("ftp", Some("ignored"), None, None, "", None, None)
   |> uri.to_string
   |> should.equal("ftp:")
 
-  uri.Uri(Some("https"), None, None, None, "/one/two", None, None)
+  uri.Uri("https", None, None, None, "/one/two", None, None)
   |> uri.to_string
   |> should.equal("https:/one/two")
 
-  uri.Uri(None, None, None, None, "noslash", None, Some("frag"))
+  uri.Uri("ws", None, None, None, "noslash", None, Some("frag"))
   |> uri.to_string
-  |> should.equal("noslash#frag")
+  |> should.equal("ws:noslash#frag")
 }
 
 pub fn host_to_string_test() {
-  uri.Uri(Some("ftp"), None, Some("example.com"), None, "", None, None)
+  uri.Uri("ftp", None, Some("example.com"), None, "", None, None)
   |> uri.to_string
   |> should.equal("ftp://example.com/")
 
-  uri.Uri(None, None, Some("example.com"), None, "", None, None)
+  uri.Uri("ws", None, Some("example.com"), None, "", None, None)
   |> uri.to_string
-  |> should.equal("//example.com/")
+  |> should.equal("ws://example.com/")
 
-  uri.Uri(None, None, Some("example.com"), None, "/slash", None, None)
+  uri.Uri("ws", None, Some("example.com"), None, "/slash", None, None)
   |> uri.to_string
-  |> should.equal("//example.com/slash")
+  |> should.equal("ws://example.com/slash")
 
-  uri.Uri(None, None, Some("example.com"), None, "noslash", None, None)
+  uri.Uri("ws", None, Some("example.com"), None, "noslash", None, None)
   |> uri.to_string
-  |> should.equal("//example.com/noslash")
+  |> should.equal("ws://example.com/noslash")
 
-  uri.Uri(None, None, Some(""), None, "", None, None)
+  uri.Uri("ws", None, Some(""), None, "", None, None)
   |> uri.to_string
-  |> should.equal("//")
+  |> should.equal("ws://")
 
-  uri.Uri(None, None, Some("example.com"), None, "noslash", None, Some("ok"))
+  uri.Uri("ws", None, Some("example.com"), None, "noslash", None, Some("ok"))
   |> uri.to_string
-  |> should.equal("//example.com/noslash#ok")
+  |> should.equal("ws://example.com/noslash#ok")
 
-  uri.Uri(None, None, Some(""), None, "", None, Some("ok"))
+  uri.Uri("ws", None, Some(""), None, "", None, Some("ok"))
   |> uri.to_string
-  |> should.equal("//#ok")
+  |> should.equal("ws://#ok")
 }
 
 pub fn port_to_string_test() {
-  uri.Uri(Some("ftp"), None, Some("example.com"), Some(80), "", None, None)
+  uri.Uri("ftp", None, Some("example.com"), Some(80), "", None, None)
   |> uri.to_string
   |> should.equal("ftp://example.com:80/")
 
-  uri.Uri(None, None, Some("example.com"), Some(40), "", None, None)
+  uri.Uri("ws", None, Some("example.com"), Some(40), "", None, None)
   |> uri.to_string
-  |> should.equal("//example.com:40/")
+  |> should.equal("ws://example.com:40/")
 
-  uri.Uri(None, None, Some("example.com"), Some(80), "/slash", None, None)
+  uri.Uri("ws", None, Some("example.com"), Some(80), "/slash", None, None)
   |> uri.to_string
-  |> should.equal("//example.com:80/slash")
+  |> should.equal("ws://example.com:80/slash")
 
-  uri.Uri(None, None, Some("example.com"), Some(81), "noslash", None, None)
+  uri.Uri("ws", None, Some("example.com"), Some(81), "noslash", None, None)
   |> uri.to_string
-  |> should.equal("//example.com:81/noslash")
+  |> should.equal("ws://example.com:81/noslash")
 
-  uri.Uri(None, None, None, Some(81), "noslash", None, None)
+  uri.Uri("ws", None, None, Some(81), "noslash", None, None)
   |> uri.to_string
-  |> should.equal("noslash")
+  |> should.equal("ws:noslash")
 }
 
 pub fn parse_query_string_test() {
@@ -455,7 +464,7 @@ pub fn origin5_test() {
 }
 
 pub fn origin6_test() {
-  let assert Ok(parsed) = uri.parse("/path")
+  let assert Ok(parsed) = uri.parse("ws:/path")
   uri.origin(parsed)
   |> should.equal(Error(Nil))
 }
@@ -467,13 +476,20 @@ pub fn origin7_test() {
 }
 
 pub fn merge1_test() {
-  let assert Ok(a) = uri.parse("/relative")
-  let assert Ok(b) = uri.parse("")
+  let assert Ok(a) = uri.parse("ws:/relative")
+  let assert Ok(b) = uri.parse("ws:")
   uri.merge(a, b)
   |> should.equal(Error(Nil))
 }
 
-pub fn merge2_test() {
+pub fn merge_override_scheme_test() {
+  let assert Ok(a) = uri.parse("http://example.com/")
+  let assert Ok(b) = uri.parse("https:")
+  uri.merge(a, b)
+  |> should.equal(uri.parse("https://example.com/"))
+}
+
+pub fn merge_host_and_path_test() {
   let assert Ok(a) = uri.parse("http://google.com/weebl")
   let assert Ok(b) = uri.parse("http://example.com/baz")
   uri.merge(a, b)
@@ -488,85 +504,85 @@ pub fn merge3_test() {
 }
 
 pub fn merge4_test() {
-  let assert Ok(a) = uri.parse("http://google.com/weebl")
-  let assert Ok(b) = uri.parse("//example.com/baz")
+  let assert Ok(a) = uri.parse("ws://google.com/weebl")
+  let assert Ok(b) = uri.parse("http://example.com/baz")
   uri.merge(a, b)
   |> should.equal(uri.parse("http://example.com/baz"))
 }
 
 pub fn merge5_test() {
   let assert Ok(a) = uri.parse("http://google.com/weebl")
-  let assert Ok(b) = uri.parse("//example.com/.././bob/../../../baz")
+  let assert Ok(b) = uri.parse("http://example.com/.././bob/../../../baz")
   uri.merge(a, b)
   |> should.equal(uri.parse("http://example.com/baz"))
 }
 
-pub fn merge6_test() {
+pub fn merge_absolute_path_test() {
   let assert Ok(a) = uri.parse("http://example.com/weebl/bob")
-  let assert Ok(b) = uri.parse("/baz")
+  let assert Ok(b) = uri.parse("http:/baz")
   uri.merge(a, b)
   |> should.equal(uri.parse("http://example.com/baz"))
 }
 
-pub fn merge7_test() {
+pub fn merge_relative_path_test() {
   let assert Ok(a) = uri.parse("http://example.com/weebl/bob")
-  let assert Ok(b) = uri.parse("baz")
+  let assert Ok(b) = uri.parse("http:baz")
   uri.merge(a, b)
   |> should.equal(uri.parse("http://example.com/weebl/baz"))
 }
 
-pub fn merge8_test() {
+pub fn merge_relative_path_on_dir_test() {
   let assert Ok(a) = uri.parse("http://example.com/weebl/")
-  let assert Ok(b) = uri.parse("baz")
+  let assert Ok(b) = uri.parse("http:baz")
   uri.merge(a, b)
   |> should.equal(uri.parse("http://example.com/weebl/baz"))
 }
 
-pub fn merge9_test() {
+pub fn merge_relative_path_on_root_test() {
   let assert Ok(a) = uri.parse("http://example.com")
-  let assert Ok(b) = uri.parse("baz")
+  let assert Ok(b) = uri.parse("http:baz")
   uri.merge(a, b)
   |> should.equal(uri.parse("http://example.com/baz"))
 }
 
-pub fn merge10_test() {
+pub fn merge_removes_dot_segments_test() {
   let assert Ok(a) = uri.parse("http://example.com")
-  let assert Ok(b) = uri.parse("/.././bob/../../../baz")
+  let assert Ok(b) = uri.parse("http:/.././bob/../../../baz")
   uri.merge(a, b)
   |> should.equal(uri.parse("http://example.com/baz"))
 }
 
 pub fn merge11_test() {
   let assert Ok(a) = uri.parse("http://example.com/weebl/bob")
-  let assert Ok(b) = uri.parse("")
+  let assert Ok(b) = uri.parse("http:")
   uri.merge(a, b)
   |> should.equal(uri.parse("http://example.com/weebl/bob"))
 }
 
-pub fn merge12_test() {
+pub fn merge_fragment_test() {
   let assert Ok(a) = uri.parse("http://example.com/weebl/bob")
-  let assert Ok(b) = uri.parse("#fragment")
+  let assert Ok(b) = uri.parse("http:#fragment")
   uri.merge(a, b)
   |> should.equal(uri.parse("http://example.com/weebl/bob#fragment"))
 }
 
-pub fn merge13_test() {
+pub fn merge_query_test() {
   let assert Ok(a) = uri.parse("http://example.com/weebl/bob")
-  let assert Ok(b) = uri.parse("?query")
+  let assert Ok(b) = uri.parse("http:?query")
   uri.merge(a, b)
   |> should.equal(uri.parse("http://example.com/weebl/bob?query"))
 }
 
-pub fn merge14_test() {
+pub fn merge_query_over_query_test() {
   let assert Ok(a) = uri.parse("http://example.com/weebl/bob?query1")
-  let assert Ok(b) = uri.parse("?query2")
+  let assert Ok(b) = uri.parse("http:?query2")
   uri.merge(a, b)
   |> should.equal(uri.parse("http://example.com/weebl/bob?query2"))
 }
 
-pub fn merge15_test() {
+pub fn merge_keep_query_test() {
   let assert Ok(a) = uri.parse("http://example.com/weebl/bob?query")
-  let assert Ok(b) = uri.parse("")
+  let assert Ok(b) = uri.parse("http:")
   uri.merge(a, b)
   |> should.equal(uri.parse("http://example.com/weebl/bob?query"))
 }

@@ -329,16 +329,17 @@ check_utf8(Cs) ->
 uri_parse(String) ->
     case uri_string:parse(String) of
         {error, _, _} -> {error, nil};
-        Uri ->
+        #{ scheme := Scheme } = Uri ->
             {ok, {uri,
-                maps_get_optional(Uri, scheme),
+                Scheme,
                 maps_get_optional(Uri, userinfo),
                 maps_get_optional(Uri, host),
                 maps_get_optional(Uri, port),
                 maps_get_or(Uri, path, <<>>),
                 maps_get_optional(Uri, query),
                 maps_get_optional(Uri, fragment)
-            }}
+            }};
+	 _Uri_Without_Scheme -> {error, nil}
     end.
 
 maps_get_optional(Map, Key) ->

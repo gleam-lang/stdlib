@@ -24,7 +24,7 @@ import gleam/result
 ///
 pub type Uri {
   Uri(
-    scheme: Option(String),
+    scheme: String,
     userinfo: Option(String),
     host: Option(String),
     port: Option(Int),
@@ -68,14 +68,14 @@ fn do_parse(a: String) -> Result(Uri, Nil)
 fn do_parse(uri_string: String) -> Result(Uri, Nil) {
   // From https://tools.ietf.org/html/rfc3986#appendix-B
   let pattern =
-    //    12                        3  4          5       6  7        8
-    "^(([a-z][a-z0-9\\+\\-\\.]*):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#.*)?"
+    //12                          3  4          5       6   7        8
+    "^(([a-z][a-z0-9\\+\\-\\.]*):)(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#.*)?"
   let matches =
     pattern
     |> regex_submatches(uri_string)
     |> pad_list(8)
 
-  let #(scheme, authority, path, query, fragment) = case matches {
+  let #(option_scheme, authority, path, query, fragment) = case matches {
     [
       _scheme_with_colon,
       scheme,
@@ -95,29 +95,30 @@ fn do_parse(uri_string: String) -> Result(Uri, Nil) {
     _ -> #(None, None, None, None, None)
   }
 
-  let scheme = noneify_empty_string(scheme)
-  let path = option.unwrap(path, "")
-  let query = noneify_query(query)
-  let #(userinfo, host, port) = split_authority(authority)
-  let fragment =
-    fragment
-    |> option.to_result(Nil)
-    |> result.try(string.pop_grapheme)
-    |> result.map(pair.second)
-    |> option.from_result
-  let scheme =
-    scheme
-    |> noneify_empty_string
-    |> option.map(string.lowercase)
-  Ok(Uri(
-    scheme: scheme,
-    userinfo: userinfo,
-    host: host,
-    port: port,
-    path: path,
-    query: query,
-    fragment: fragment,
-  ))
+  case option_scheme {
+    Some(scheme) -> {
+      let scheme = string.lowercase(scheme)
+      let path = option.unwrap(path, "")
+      let query = noneify_query(query)
+      let #(userinfo, host, port) = split_authority(authority)
+      let fragment =
+        fragment
+        |> option.to_result(Nil)
+        |> result.try(string.pop_grapheme)
+        |> result.map(pair.second)
+        |> option.from_result
+      Ok(Uri(
+        scheme: scheme,
+        userinfo: userinfo,
+        host: host,
+        port: port,
+        path: path,
+        query: query,
+        fragment: fragment,
+      ))
+    }
+    None -> Error(Nil)
+  }
 }
 
 @target(javascript)
@@ -347,11 +348,9 @@ pub fn to_string(uri: Uri) -> String {
     _, _ -> parts
   }
   let parts = case uri.scheme, uri.userinfo, uri.host {
-    Some(s), Some(u), Some(h) -> [s, "://", u, "@", h, ..parts]
-    Some(s), None, Some(h) -> [s, "://", h, ..parts]
-    Some(s), Some(_), None | Some(s), None, None -> [s, ":", ..parts]
-    None, None, Some(h) -> ["//", h, ..parts]
-    _, _, _ -> parts
+    s, Some(u), Some(h) -> [s, "://", u, "@", h, ..parts]
+    s, None, Some(h) -> [s, "://", h, ..parts]
+    s, Some(_), None | s, None, None -> [s, ":", ..parts]
   }
   string.concat(parts)
 }
@@ -375,15 +374,15 @@ pub fn to_string(uri: Uri) -> String {
 pub fn origin(uri: Uri) -> Result(String, Nil) {
   let Uri(scheme: scheme, host: host, port: port, ..) = uri
   case scheme {
-    Some("https") if port == Some(443) -> {
+    "https" if port == Some(443) -> {
       let origin = Uri(scheme, None, host, None, "", None, None)
       Ok(to_string(origin))
     }
-    Some("http") if port == Some(80) -> {
+    "http" if port == Some(80) -> {
       let origin = Uri(scheme, None, host, None, "", None, None)
       Ok(to_string(origin))
     }
-    Some(s) if s == "http" || s == "https" -> {
+    s if s == "http" || s == "https" -> {
       let origin = Uri(scheme, None, host, port, "", None, None)
       Ok(to_string(origin))
     }
@@ -407,7 +406,7 @@ fn join_segments(segments: List(String)) -> String {
 ///
 pub fn merge(base: Uri, relative: Uri) -> Result(Uri, Nil) {
   case base {
-    Uri(scheme: Some(_), host: Some(_), ..) ->
+    Uri(host: Some(_), ..) ->
       case relative {
         Uri(host: Some(_), ..) -> {
           let path =
@@ -416,7 +415,7 @@ pub fn merge(base: Uri, relative: Uri) -> Result(Uri, Nil) {
             |> join_segments()
           let resolved =
             Uri(
-              option.or(relative.scheme, base.scheme),
+              relative.scheme,
               None,
               relative.host,
               option.or(relative.port, base.port),
@@ -446,7 +445,7 @@ pub fn merge(base: Uri, relative: Uri) -> Result(Uri, Nil) {
           }
           let resolved =
             Uri(
-              base.scheme,
+              relative.scheme,
               None,
               base.host,
               base.port,
