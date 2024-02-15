@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.35.0 - 2024-02-15
 
 - The `bit_array` module gains the `inspect` function.
 - The base 64 encoding and decoding functions in the `bit_array` module no
