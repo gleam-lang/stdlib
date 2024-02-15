@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.35.1 - 2024-02-15
+
+- Fixed a warning on the JavaScript target.
+
 ## v0.35.0 - 2024-02-15
 
 - The `bit_array` module gains the `inspect` function.
