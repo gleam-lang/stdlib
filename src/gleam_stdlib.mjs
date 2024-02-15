@@ -286,7 +286,7 @@ export function bit_array_to_string(bit_array) {
   try {
     const decoder = new TextDecoder("utf-8", { fatal: true });
     return new Ok(decoder.decode(bit_array.buffer));
-  } catch (_error) {
+  } catch {
     return new Error(Nil);
   }
 }
@@ -459,7 +459,7 @@ function unsafe_percent_decode(string) {
 export function percent_decode(string) {
   try {
     return new Ok(unsafe_percent_decode(string));
-  } catch (_error) {
+  } catch {
     return new Error(Nil);
   }
 }
@@ -477,94 +477,26 @@ export function parse_query(query) {
       pairs.push([unsafe_percent_decode(key), unsafe_percent_decode(value)]);
     }
     return new Ok(List.fromArray(pairs));
-  } catch (_error) {
+  } catch {
     return new Error(Nil);
   }
 }
 
-// From https://developer.mozilla.org/en-US/docs/Glossary/Base64#Solution_2_%E2%80%93_rewrite_the_DOMs_atob()_and_btoa()_using_JavaScript's_TypedArrays_and_UTF-8
+// From https://developer.mozilla.org/en-US/docs/Glossary/Base64
 export function encode64(bit_array) {
-  const aBytes = bit_array.buffer;
-  let nMod3 = 2;
-  let sB64Enc = "";
-
-  for (let nLen = aBytes.length, nUint24 = 0, nIdx = 0; nIdx < nLen; nIdx++) {
-    nMod3 = nIdx % 3;
-    if (nIdx > 0 && ((nIdx * 4) / 3) % 76 === 0) {
-      sB64Enc += "\r\n";
-    }
-    nUint24 |= aBytes[nIdx] << ((16 >>> nMod3) & 24);
-    if (nMod3 === 2 || aBytes.length - nIdx === 1) {
-      sB64Enc += String.fromCharCode(
-        uint6ToB64((nUint24 >>> 18) & 63),
-        uint6ToB64((nUint24 >>> 12) & 63),
-        uint6ToB64((nUint24 >>> 6) & 63),
-        uint6ToB64(nUint24 & 63),
-      );
-      nUint24 = 0;
-    }
-  }
-
-  return (
-    sB64Enc.substr(0, sB64Enc.length - 2 + nMod3) +
-    (nMod3 === 2 ? "" : nMod3 === 1 ? "=" : "==")
-  );
+  const binString = String.fromCodePoint(...bit_array.buffer);
+  return btoa(binString);
 }
 
-// From https://developer.mozilla.org/en-US/docs/Glossary/Base64#Solution_2_%E2%80%93_rewrite_the_DOMs_atob()_and_btoa()_using_JavaScript's_TypedArrays_and_UTF-8
-function uint6ToB64(nUint6) {
-  return nUint6 < 26
-    ? nUint6 + 65
-    : nUint6 < 52
-      ? nUint6 + 71
-      : nUint6 < 62
-        ? nUint6 - 4
-        : nUint6 === 62
-          ? 43
-          : nUint6 === 63
-            ? 47
-            : 65;
-}
-
-// From https://developer.mozilla.org/en-US/docs/Glossary/Base64#Solution_2_%E2%80%93_rewrite_the_DOMs_atob()_and_btoa()_using_JavaScript's_TypedArrays_and_UTF-8
-function b64ToUint6(nChr) {
-  return nChr > 64 && nChr < 91
-    ? nChr - 65
-    : nChr > 96 && nChr < 123
-      ? nChr - 71
-      : nChr > 47 && nChr < 58
-        ? nChr + 4
-        : nChr === 43
-          ? 62
-          : nChr === 47
-            ? 63
-            : 0;
-}
-
-// From https://developer.mozilla.org/en-US/docs/Glossary/Base64#Solution_2_%E2%80%93_rewrite_the_DOMs_atob()_and_btoa()_using_JavaScript's_TypedArrays_and_UTF-8
+// From https://developer.mozilla.org/en-US/docs/Glossary/Base64
 export function decode64(sBase64) {
-  if (sBase64.match(/[^A-Za-z0-9\+\/=]/g)) return new Error(Nil);
-  const sB64Enc = sBase64.replace(/=/g, "");
-  const nInLen = sB64Enc.length;
-  const nOutLen = (nInLen * 3 + 1) >> 2;
-  const taBytes = new Uint8Array(nOutLen);
-
-  for (
-    let nMod3, nMod4, nUint24 = 0, nOutIdx = 0, nInIdx = 0;
-    nInIdx < nInLen;
-    nInIdx++
-  ) {
-    nMod4 = nInIdx & 3;
-    nUint24 |= b64ToUint6(sB64Enc.charCodeAt(nInIdx)) << (6 * (3 - nMod4));
-    if (nMod4 === 3 || nInLen - nInIdx === 1) {
-      for (nMod3 = 0; nMod3 < 3 && nOutIdx < nOutLen; nMod3++, nOutIdx++) {
-        taBytes[nOutIdx] = (nUint24 >>> ((16 >>> nMod3) & 24)) & 255;
-      }
-      nUint24 = 0;
-    }
+  try {
+    const binString = atob(sBase64);
+    const array = Uint8Array.from(binString, (c) => c.charCodeAt(0));
+    return new Ok(new BitArray(array));
+  } catch {
+    return new Error(Nil);
   }
-
-  return new Ok(new BitArray(taBytes));
 }
 
 export function classify_dynamic(data) {

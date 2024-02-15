@@ -3,6 +3,9 @@
 ## Unreleased
 
 - The `bit_array` module gains the `inspect` function.
+- The base 64 encoding and decoding functions in the `bit_array` module no
+  longer insert newlines in the output on JavaScript, making them consistent
+  with the Erlang target.
 - The `set` module gains the `difference` function.
 - The deprecated `bit_string`, `bit_builder`, `base`, and `map` modules have
   been removed.
