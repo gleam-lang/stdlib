@@ -1,36 +1,8 @@
 import gleam/function
 import gleam/int
-import gleam/list
 import gleam/pair
-import gleam/result
 import gleam/should
 import gleam/string
-
-pub fn compose_test() {
-  let add_two = fn(int: Int) { int + 2 }
-  let add_three = fn(int: Int) { int + 3 }
-
-  let add_five = function.compose(add_two, add_three)
-
-  1
-  |> add_five
-  |> should.equal(6)
-
-  // Takes a list of ints and returns the first as a string (if there is one, or
-  // else "0" if there is not)
-  let first_to_string =
-    list.first
-    |> function.compose(result.unwrap(_, 0))
-    |> function.compose(int.to_string)
-
-  [1]
-  |> first_to_string
-  |> should.equal("1")
-
-  []
-  |> first_to_string
-  |> should.equal("0")
-}
 
 pub fn curry2_test() {
   let fun = fn(a, b) { a + b }
@@ -106,12 +78,6 @@ pub fn identity_test() {
   #(1, 2.0)
   |> function.identity
   |> should.equal(#(1, 2.0))
-}
-
-pub fn constant_test() {
-  #(1, 2)
-  |> pair.map_first(function.constant(42))
-  |> should.equal(#(42, 2))
 }
 
 pub fn tap_test() {

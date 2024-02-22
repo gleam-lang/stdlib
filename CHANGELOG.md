@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- The `compose` and `constant` functions in the `function` module have been
+  deprecated in favour of the `fn` literal syntax.
+
 ## v0.35.1 - 2024-02-15
 
 - Fixed a warning on the JavaScript target.

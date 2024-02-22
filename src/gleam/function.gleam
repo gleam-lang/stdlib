@@ -1,6 +1,4 @@
-/// Takes two functions and chains them together to form one function that
-/// takes the input from the first and returns the output of the second.
-///
+@deprecated("Use a fn literal instead, it is easier to understand")
 pub fn compose(fun1: fn(a) -> b, fun2: fn(b) -> c) -> fn(a) -> c {
   fn(a) { fun2(fun1(a)) }
 }
@@ -103,9 +101,7 @@ pub fn identity(x: a) -> a {
   x
 }
 
-/// Takes a single argument and returns a new function that
-/// ignores its argument and always returns the input value.
-///
+@deprecated("Use a fn literal instead, it is easier to understand")
 pub fn constant(value: a) -> fn(b) -> a {
   fn(_) { value }
 }
