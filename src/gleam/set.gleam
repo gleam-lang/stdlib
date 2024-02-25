@@ -20,7 +20,7 @@ const token = Nil
 
 /// A set is a collection of unique members of the same type.
 ///
-/// It is implemented using the `gleam/map` module, so inserts and lookups have
+/// It is implemented using the `gleam/dict` module, so inserts and lookups have
 /// logarithmic time complexity.
 ///
 pub opaque type Set(member) {
