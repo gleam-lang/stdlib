@@ -79,6 +79,16 @@ pub fn dict_from_null_test() {
   )
 }
 
+@target(javascript)
+pub fn null_for_field_test() {
+  get_null()
+  |> dynamic.from
+  |> dynamic.field("x", dynamic.string)
+  |> should.equal(
+    Error([DecodeError(expected: "Dict", found: "Null", path: [])]),
+  )
+}
+
 pub fn string_test() {
   ""
   |> dynamic.from
