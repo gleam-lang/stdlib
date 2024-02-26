@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Fixed a bug where on JavaScript the `dynamic.field` function could crash when
+  given `null`.
 - The `compose` and `constant` functions in the `function` module have been
   deprecated in favour of the `fn` literal syntax.
 
