@@ -1,6 +1,5 @@
 import gleam/function
 import gleam/int
-import gleam/pair
 import gleam/should
 import gleam/string
 
