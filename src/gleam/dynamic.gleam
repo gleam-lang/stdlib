@@ -971,17 +971,17 @@ pub fn tuple6(
 ///
 /// ```gleam
 /// import gleam/dict
-/// dict.new() |> from |> map(string, int)
+/// dict.new() |> from |> dict(string, int)
 /// // -> Ok(dict.new())
 /// ```
 ///
 /// ```gleam
-/// from(1) |> map(string, int)
+/// from(1) |> dict(string, int)
 /// // -> Error(DecodeError(expected: "Map", found: "Int", path: []))
 /// ```
 ///
 /// ```gleam
-/// from("") |> map(string, int)
+/// from("") |> dict(string, int)
 /// // -> Error(DecodeError(expected: "Map", found: "String", path: []))
 /// ```
 ///
