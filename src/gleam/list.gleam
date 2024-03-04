@@ -28,12 +28,6 @@ import gleam/order.{type Order}
 import gleam/pair
 import gleam/dict.{type Dict}
 
-/// An error value returned by the `strict_zip` function.
-///
-pub type LengthMismatch {
-  LengthMismatch
-}
-
 /// Counts the number of elements in a given list.
 ///
 /// This function has to traverse the list to determine the number of elements,
@@ -1052,12 +1046,12 @@ pub fn zip(list: List(a), with other: List(b)) -> List(#(a, b)) {
 ///
 /// ```gleam
 /// strict_zip([1, 2], [3])
-/// // -> Error(LengthMismatch)
+/// // -> Error(Nil)
 /// ```
 ///
 /// ```gleam
 /// strict_zip([1], [3, 4])
-/// // -> Error(LengthMismatch)
+/// // -> Error(Nil)
 /// ```
 ///
 /// ```gleam
@@ -1068,10 +1062,10 @@ pub fn zip(list: List(a), with other: List(b)) -> List(#(a, b)) {
 pub fn strict_zip(
   list: List(a),
   with other: List(b),
-) -> Result(List(#(a, b)), LengthMismatch) {
+) -> Result(List(#(a, b)), Nil) {
   case length(of: list) == length(of: other) {
     True -> Ok(zip(list, other))
-    False -> Error(LengthMismatch)
+    False -> Error(Nil)
   }
 }
 
