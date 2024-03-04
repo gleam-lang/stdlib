@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- `list.LengthMismatch` has been removed.
+
 ## v0.36.0 - 2024-02-26
 
 - Fixed a bug where on JavaScript the `dynamic.field` function could crash when
