@@ -4,6 +4,18 @@
 /// This is Gleam's alternative to having a value that could be Null, as is
 /// possible in some other languages.
 ///
+/// # `Option` and `Result`
+///
+/// In other languages failible functions may return either `Result` or
+/// `Option` depending on whether there is more information to be given about the
+/// failure. In Gleam all failible functions return `Result`, and `Nil` is used
+/// as the error if there is no extra detail to give. This consistency removes
+/// the boilerplate that would otherwise be needed to convert between `Option`
+/// and `Result` types, and makes APIs more predictable.
+///
+/// The `Option` type should only be used for taking optional values as
+/// function arguments, or for storing them in other data structures.
+///
 pub type Option(a) {
   Some(a)
   None
