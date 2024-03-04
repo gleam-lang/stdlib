@@ -528,19 +528,19 @@ pub fn zip_test() {
 
 pub fn strict_zip_test() {
   list.strict_zip([], [1, 2, 3])
-  |> should.equal(Error(list.LengthMismatch))
+  |> should.equal(Error(Nil))
 
   list.strict_zip([1, 2], [])
-  |> should.equal(Error(list.LengthMismatch))
+  |> should.equal(Error(Nil))
 
   list.strict_zip([1, 2, 3], [4, 5, 6])
   |> should.equal(Ok([#(1, 4), #(2, 5), #(3, 6)]))
 
   list.strict_zip([5, 6], [1, 2, 3])
-  |> should.equal(Error(list.LengthMismatch))
+  |> should.equal(Error(Nil))
 
   list.strict_zip([5, 6, 7], [1, 2])
-  |> should.equal(Error(list.LengthMismatch))
+  |> should.equal(Error(Nil))
 }
 
 pub fn unzip_test() {
