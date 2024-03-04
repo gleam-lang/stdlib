@@ -398,11 +398,7 @@ pub fn map(list: List(a), with fun: fn(a) -> b) -> List(b) {
 /// // -> [#(1, "a"), #(2, "b")]
 /// ```
 ///
-pub fn map2(
-  list1: List(a),
-  list2: List(b),
-  with fun: fn(a, b) -> c,
-) -> List(c) {
+pub fn map2(list1: List(a), list2: List(b), with fun: fn(a, b) -> c) -> List(c) {
   do_map2(list1, list2, fun, [])
 }
 

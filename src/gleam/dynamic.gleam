@@ -234,9 +234,7 @@ fn decode_bool(a: Dynamic) -> Result(Bool, DecodeErrors)
 /// // -> Error([DecodeError(expected: "List", found: "Int", path: [])])
 /// ```
 ///
-pub fn shallow_list(
-  from value: Dynamic,
-) -> Result(List(Dynamic), DecodeErrors) {
+pub fn shallow_list(from value: Dynamic) -> Result(List(Dynamic), DecodeErrors) {
   decode_list(value)
 }
 
