@@ -209,35 +209,13 @@ fn do_split(
 
 /// Replaces all instances of a pattern with a given string substitute.
 ///
+@external(erlang, "gleam_stdlib", "string_replace")
+@external(javascript, "../gleam_stdlib.mjs", "string_replace")
 pub fn replace(
   in builder: StringBuilder,
   each pattern: String,
   with substitute: String,
-) -> StringBuilder {
-  do_replace(builder, pattern, substitute)
-}
-
-@target(erlang)
-fn do_replace(
-  iodata: StringBuilder,
-  pattern: String,
-  substitute: String,
-) -> StringBuilder {
-  erl_replace(iodata, pattern, substitute, All)
-}
-
-@target(erlang)
-@external(erlang, "string", "replace")
-fn erl_replace(
-  a: StringBuilder,
-  b: String,
-  c: String,
-  d: Direction,
 ) -> StringBuilder
-
-@target(javascript)
-@external(javascript, "../gleam_stdlib.mjs", "string_replace")
-fn do_replace(a: StringBuilder, b: String, c: String) -> StringBuilder
 
 /// Compares two builders to determine if they have the same textual content.
 ///
@@ -257,13 +235,10 @@ fn do_replace(a: StringBuilder, b: String, c: String) -> StringBuilder
 /// // -> True
 /// ```
 ///
-pub fn is_equal(a: StringBuilder, b: StringBuilder) -> Bool {
-  do_is_equal(a, b)
-}
-
 @external(erlang, "string", "equal")
-@external(javascript, "../gleam_stdlib.mjs", "equal")
-fn do_is_equal(a: StringBuilder, b: StringBuilder) -> Bool
+pub fn is_equal(a: StringBuilder, b: StringBuilder) -> Bool {
+  a == b
+}
 
 /// Inspects a builder to determine if it is equivalent to an empty string.
 ///
@@ -284,15 +259,7 @@ fn do_is_equal(a: StringBuilder, b: StringBuilder) -> Bool
 /// // -> True
 /// ```
 ///
-pub fn is_empty(builder: StringBuilder) -> Bool {
-  do_is_empty(builder)
-}
-
-@target(erlang)
 @external(erlang, "string", "is_empty")
-fn do_is_empty(a: StringBuilder) -> Bool
-
-@target(javascript)
-fn do_is_empty(builder: StringBuilder) -> Bool {
+pub fn is_empty(builder: StringBuilder) -> Bool {
   from_string("") == builder
 }

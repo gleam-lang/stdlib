@@ -192,10 +192,6 @@ export function add(a, b) {
   return a + b;
 }
 
-export function equal(a, b) {
-  return a === b;
-}
-
 export function split(xs, pattern) {
   return List.fromArray(xs.split(pattern));
 }
@@ -674,7 +670,7 @@ export function decode_field(value, name) {
     const entry = map_get(value, name);
     return new Ok(entry.isOk() ? new Some(entry[0]) : new None());
   } else if (value === null) {
-    return not_a_map_error()
+    return not_a_map_error();
   } else if (Object.getPrototypeOf(value) == Object.prototype) {
     return try_get_field(value, name, () => new Ok(new None()));
   } else {

@@ -53,23 +53,14 @@ import gleam/dict.{type Dict}
 /// // -> 2
 /// ```
 ///
-pub fn length(of list: List(a)) -> Int {
-  do_length(list)
-}
-
-@target(erlang)
 @external(erlang, "erlang", "length")
-fn do_length(a: List(a)) -> Int
-
-@target(javascript)
-fn do_length(list: List(a)) -> Int {
-  do_length_acc(list, 0)
+pub fn length(of list: List(a)) -> Int {
+  count_length(list, 0)
 }
 
-@target(javascript)
-fn do_length_acc(list: List(a), count: Int) -> Int {
+fn count_length(list: List(a), count: Int) -> Int {
   case list {
-    [_, ..list] -> do_length_acc(list, count + 1)
+    [_, ..list] -> count_length(list, count + 1)
     _ -> count
   }
 }
@@ -100,24 +91,15 @@ fn do_length_acc(list: List(a), count: Int) -> Int {
 /// // -> [2, 1]
 /// ```
 ///
-pub fn reverse(xs: List(a)) -> List(a) {
-  do_reverse(xs)
-}
-
-@target(erlang)
 @external(erlang, "lists", "reverse")
-fn do_reverse(a: List(a)) -> List(a)
-
-@target(javascript)
-fn do_reverse(list) {
-  do_reverse_acc(list, [])
+pub fn reverse(xs: List(a)) -> List(a) {
+  do_reverse(xs, [])
 }
 
-@target(javascript)
-fn do_reverse_acc(remaining, accumulator) {
+fn do_reverse(remaining, accumulator) {
   case remaining {
     [] -> accumulator
-    [item, ..rest] -> do_reverse_acc(rest, [item, ..accumulator])
+    [item, ..rest] -> do_reverse(rest, [item, ..accumulator])
   }
 }
 
@@ -611,24 +593,15 @@ pub fn new() -> List(a) {
 /// // -> [1, 2, 3]
 /// ```
 ///
-pub fn append(first: List(a), second: List(a)) -> List(a) {
-  do_append(first, second)
-}
-
-@target(erlang)
 @external(erlang, "lists", "append")
-fn do_append(a: List(a), b: List(a)) -> List(a)
-
-@target(javascript)
-fn do_append(first: List(a), second: List(a)) -> List(a) {
-  do_append_acc(reverse(first), second)
+pub fn append(first: List(a), second: List(a)) -> List(a) {
+  do_append(reverse(first), second)
 }
 
-@target(javascript)
-fn do_append_acc(first: List(a), second: List(a)) -> List(a) {
+fn do_append(first: List(a), second: List(a)) -> List(a) {
   case first {
     [] -> second
-    [item, ..rest] -> do_append_acc(rest, [item, ..second])
+    [item, ..rest] -> do_append(rest, [item, ..second])
   }
 }
 
