@@ -180,7 +180,7 @@ pub fn inspect(input: BitArray) -> String {
 }
 
 @target(erlang)
-pub fn do_inspect(input: BitArray, accumulator: String) -> String {
+fn do_inspect(input: BitArray, accumulator: String) -> String {
   case input {
     <<>> -> accumulator
 
