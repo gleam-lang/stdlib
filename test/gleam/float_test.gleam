@@ -413,3 +413,17 @@ pub fn subtract_test() {
   |> float.subtract(2.0, _)
   |> should.equal(-1.0)
 }
+
+pub fn modulo_test() {
+  float.modulo(5.0, 0.0)
+  |> should.equal(Error(Nil))
+
+  float.modulo(5.0, 3.0)
+  |> should.equal(Ok(2.0))
+
+  float.modulo(5.0, 5.0)
+  |> should.equal(Ok(0.0))
+
+  float.modulo(5.5, -1.0)
+  |> should.equal(Ok(0.5))
+}
