@@ -542,7 +542,7 @@ pub fn subtract(a: Float, b: Float) -> Float {
 
 /// Computes the modulo of an float division of inputs as a `Result`.
 /// 
-/// Returns division of the inputs as a `Result`.
+/// Returns remainder of the inputs as a `Result`.
 /// If the given divisor equals `0`, this function returns an `Error`.
 ///
 /// ## Examples
@@ -551,15 +551,16 @@ pub fn subtract(a: Float, b: Float) -> Float {
 /// modulo(0.0, 1.0)
 /// // -> Ok(1.0)
 /// ```
+/// 
 /// ```gleam
-/// divide(5.5, -1.0)
+/// modulo(5.5, -1.0)
 /// // -> Ok(0.5)
 /// ```
 /// 
 /// ```gleam
-/// divide(1.0, 0.0)
+/// modulo(1.0, 0.0)
 /// // -> Error(Nil)
-/// 
+/// ```
 ///
 pub fn modulo(dividend: Float, divisor: Float) -> Result(Float, Nil) {
   case divisor {
