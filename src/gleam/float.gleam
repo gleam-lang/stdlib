@@ -568,13 +568,12 @@ pub fn modulo(dividend: Float, divisor: Float) -> Result(Float, Nil) {
     _ -> {
       case divide(dividend, divisor) {
         Error(_) -> Error(Nil)
-        Ok(result) ->
-          result
-          |> floor
-          |> multiply(divisor, _)
-          |> subtract(dividend, _)
-          |> absolute_value
-          |> Ok
+        Ok(result) -> {
+          let floored = floor(result)
+          let product = divisor *. floored
+          let difference = dividend -. product
+          Ok(absolute_value(difference))
+        }
       }
     }
   }
