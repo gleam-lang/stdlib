@@ -133,3 +133,49 @@ pub fn min(a: Order, b: Order) -> Order {
 pub fn reverse(orderer: fn(a, a) -> Order) -> fn(a, a) -> Order {
   fn(a, b) { orderer(b, a) }
 }
+
+/// Return a fallback `Order` in case the first argument is `Eq`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// import gleam/int
+///
+/// break_tie(in: int.compare(1, 1), with: Lt)
+/// // -> Lt
+///
+/// break_tie(in: int.compare(1, 0), with: Eq)
+/// // -> Gt
+/// ```
+///
+pub fn break_tie(in order: Order, with other: Order) -> Order {
+  case order {
+    Lt | Gt -> order
+    Eq -> other
+  }
+}
+
+/// Invokes a fallback function returning an `Order` in case the first argument
+/// is `Eq`.
+///
+/// This can be useful when the fallback comparison might be expensive and it
+/// needs to be delayed until strictly necessary.
+///
+/// ## Examples
+///
+/// ```gleam
+/// import gleam/int
+///
+/// lazy_break_tie(in: int.compare(1, 1), with: fn() { Lt })
+/// // -> Lt
+///
+/// lazy_break_tie(in: int.compare(1, 0), with: fn() { Eq })
+/// // -> Gt
+/// ```
+///
+pub fn lazy_break_tie(in order: Order, with comparison: fn() -> Order) -> Order {
+  case order {
+    Lt | Gt -> order
+    Eq -> comparison()
+  }
+}

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- The `order` module gains the `break_tie` and `lazy_break_tie` functions.
 - `list.LengthMismatch` has been removed.
 - The mistakenly public `bit_array.do_inspect` function has been removed.
 
