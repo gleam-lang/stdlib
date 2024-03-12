@@ -117,3 +117,37 @@ pub fn reverse_test() {
   |> list.sort(by: order.reverse(int.compare))
   |> should.equal([5, 4, 1])
 }
+
+pub fn break_tie_test() {
+  order.break_tie(in: Eq, with: Lt)
+  |> should.equal(Lt)
+
+  order.break_tie(in: Eq, with: Gt)
+  |> should.equal(Gt)
+
+  order.break_tie(in: Eq, with: Eq)
+  |> should.equal(Eq)
+
+  order.break_tie(in: Gt, with: Lt)
+  |> should.equal(Gt)
+
+  order.break_tie(in: Lt, with: Gt)
+  |> should.equal(Lt)
+}
+
+pub fn lazy_break_tie_test() {
+  order.lazy_break_tie(in: Eq, with: fn() { Lt })
+  |> should.equal(Lt)
+
+  order.lazy_break_tie(in: Eq, with: fn() { Gt })
+  |> should.equal(Gt)
+
+  order.lazy_break_tie(in: Eq, with: fn() { Eq })
+  |> should.equal(Eq)
+
+  order.lazy_break_tie(in: Gt, with: fn() { panic })
+  |> should.equal(Gt)
+
+  order.lazy_break_tie(in: Lt, with: fn() { panic })
+  |> should.equal(Lt)
+}
