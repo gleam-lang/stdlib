@@ -7,7 +7,7 @@ root = true
 
 # Matches multiple files with brace expansion notation
 # Set default charset
-[*.{gleam, erl, hrl, ex, exs, mjs, js, ts, toml, yaml, yml, json, jsonc, md}]
+[*.{gleam, erl, mjs, js, ts, toml, yaml, yml, json, jsonc, md}]
 end_of_line = lf
 charset = utf-8
 trim_trailing_whitespace = true
