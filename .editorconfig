@@ -23,7 +23,3 @@ max_line_length = 80
 # denotes a line break in Markdown
 trim_trailing_whitespace = false
 max_line_length = off
-
-[Makefile]
-indent_style = tab
-indent_size = 4
