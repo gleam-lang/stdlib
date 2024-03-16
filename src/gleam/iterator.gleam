@@ -695,7 +695,7 @@ pub fn index(over iterator: Iterator(element)) -> Iterator(#(element, Int)) {
   |> Iterator
 }
 
-/// Creates an iterator that inifinitely applies a function to a value.
+/// Creates an iterator that infinitely applies a function to a value.
 ///
 /// ## Examples
 ///
