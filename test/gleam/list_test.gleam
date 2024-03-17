@@ -579,6 +579,9 @@ pub fn at_test() {
   |> should.equal(Error(Nil))
 
   list.at([1, 2, 3, 4, 5, 6], -1)
+  |> should.equal(Ok(6))
+
+  list.at([1, 2, 3, 4, 5, 6], -10)
   |> should.equal(Error(Nil))
 }
 
