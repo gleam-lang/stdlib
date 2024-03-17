@@ -3,6 +3,8 @@
 ## Unreleased
 
 - The `order` module gains the `break_tie` and `lazy_break_tie` functions.
+- `list.at` has been deprecated as it was misleading and would be commonly
+  misused, resulting in poor code.
 - `list.LengthMismatch` has been removed.
 - The mistakenly public `bit_array.do_inspect` function has been removed.
 
