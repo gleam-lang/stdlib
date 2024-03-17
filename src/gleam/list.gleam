@@ -1101,7 +1101,7 @@ pub fn intersperse(list: List(a), with elem: a) -> List(a) {
 /// position.
 ///
 /// `Error(Nil)` is returned if the list is not long enough for the given index
-/// or if the index is less than 0.
+/// You can also use negative indexes with -1 being the last element
 ///
 /// ## Examples
 ///
@@ -1113,6 +1113,11 @@ pub fn intersperse(list: List(a), with elem: a) -> List(a) {
 /// ```gleam
 /// at([1, 2, 3], 5)
 /// // -> Error(Nil)
+/// ```
+///
+/// ```gleam
+/// at([1, 2, 3], -1)
+/// // -> Ok(3)
 /// ```
 ///
 pub fn at(in list: List(a), get index: Int) -> Result(a, Nil) {
