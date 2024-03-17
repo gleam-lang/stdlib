@@ -13,7 +13,7 @@
 //// ```
 ////
 //// And a matching syntax for getting the first elements of a list:
-////
+////1
 //// ```gleam
 //// case list {
 ////   [first_element, ..rest] -> first_element
@@ -1121,7 +1121,10 @@ pub fn at(in list: List(a), get index: Int) -> Result(a, Nil) {
       list
       |> drop(index)
       |> first
-    False -> Error(Nil)
+    False -> 
+      list
+      |> reverse
+      |> at(-index - 1) 
   }
 }
 
