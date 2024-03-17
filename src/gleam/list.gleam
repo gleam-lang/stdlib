@@ -13,7 +13,7 @@
 //// ```
 ////
 //// And a matching syntax for getting the first elements of a list:
-////1
+////
 //// ```gleam
 //// case list {
 ////   [first_element, ..rest] -> first_element
