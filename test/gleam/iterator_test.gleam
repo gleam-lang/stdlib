@@ -2,6 +2,7 @@ import gleam/iterator.{Done, Next}
 import gleam/list
 import gleam/dict
 import gleam/should
+import gleam/int
 
 // a |> from_list |> to_list == a
 pub fn to_from_list_test() {
@@ -270,6 +271,24 @@ pub fn filter_test() {
   testcase([1, 2, 3, 4], even)
   testcase([1, 2, 3, 4, 5], even)
   testcase([1, 2, 3, 4, 5, 6], even)
+}
+
+pub fn filter_map_test() {
+  let testcase = fn(subject, f) {
+    subject
+    |> iterator.from_list
+    |> iterator.filter_map(f)
+    |> iterator.to_list
+    |> should.equal(list.filter_map(subject, f))
+  }
+
+  testcase([], int.parse)
+  testcase(["1"], int.parse)
+  testcase(["1", "2", "3"], int.parse)
+  testcase(["1", "a", "b"], int.parse)
+  testcase(["l", "2", "3", "a"], int.parse)
+  testcase(["1", "c", "3", "a", "b"], int.parse)
+  testcase(["1", "20", "ten", "4", "5", "69"], int.parse)
 }
 
 pub fn repeat_test() {

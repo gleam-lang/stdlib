@@ -567,6 +567,49 @@ pub fn filter(
   |> Iterator
 }
 
+fn do_filter_map(
+  continuation: fn() -> Action(a),
+  f: fn(a) -> Result(b, c),
+) -> Action(b) {
+  case continuation() {
+    Stop -> Stop
+    Continue(e, next) ->
+      case f(e) {
+        Ok(e) -> Continue(e, fn() { do_filter_map(next, f) })
+        Error(_) -> do_filter_map(next, f)
+      }
+  }
+}
+
+/// Creates an iterator from an existing iterator and a transforming predicate function.
+/// 
+/// The new iterator will contain elements from the first iterator for which
+/// the given function returns `Ok`, transformed to the value inside the `Ok`.
+/// 
+/// This function does not evaluate the elements of the iterator, the
+/// computation is performed when the iterator is later run.
+/// 
+/// ## Examples
+/// 
+/// ```gleam
+/// import gleam/string
+/// import gleam/int
+/// "a1b2c3d4e5f"
+/// |> string.to_graphemes
+/// |> from_list
+/// |> filter_map(int.parse)
+/// |> to_list
+/// // -> [1, 2, 3, 4, 5]
+/// ```
+/// 
+pub fn filter_map(
+  iterator: Iterator(a),
+  keeping_with f: fn(a) -> Result(b, c),
+) -> Iterator(b) {
+  fn() { do_filter_map(iterator.continuation, f) }
+  |> Iterator
+}
+
 /// Creates an iterator that repeats a given iterator infinitely.
 ///
 /// ## Examples
