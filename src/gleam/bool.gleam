@@ -361,7 +361,7 @@ pub fn to_string(bool: Bool) -> String {
 ///
 /// Note that unlike in procedural languages the `return` value is evaluated
 /// even when the predicate is `False`, so it is advisable not to perform
-/// expensive computation there.
+/// expensive computation nor side-effects there.
 ///
 ///
 /// ## Examples
