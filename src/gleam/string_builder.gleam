@@ -1,18 +1,20 @@
 import gleam/list
 
-/// `StringBuilder` is a type used for efficiently building strings.
-///
-/// When we append one string to another the strings must be copied to a
-/// new location in memory so that they can sit together. This behaviour
-/// enables efficient reading of the string but copying can be expensive,
-/// especially if we want to join many strings together.
-///
-/// `StringBuilder` is different in that it can be joined together in constant time
-/// using minimal memory, and then can be efficiently converted to a string
-/// using the `to_string` function.
+/// `StringBuilder` is a type used for efficiently building text content to be
+/// written to a file or a socket. Internally it is represented as tree so to
+/// append or prepend to a string builder is a constant time operation that
+/// allocates a new node in the tree without copying any of the content. When
+/// writing to an output stream the tree is traversed and the content is sent
+/// directly rather than copying it into a single buffer beforehand.
 ///
 /// On Erlang this type is compatible with Erlang's iodata. On JavaScript this
 /// type is compatible with normal strings.
+///
+/// The BEAM virtual machine has an optimisation for appending strings, where it
+/// will mutate the string buffer when safe to do so, so if you are looking to
+/// build a string through appending many small strings then you may get better
+/// performance by not using a string builder. Always benchmark your performance
+/// sensitive code.
 ///
 pub type StringBuilder
 

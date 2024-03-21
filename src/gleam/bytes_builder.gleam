@@ -1,9 +1,13 @@
-//// BytesBuilder is a type used for efficiently concatenating bytes together
-//// without copying.
+//// `BytesBuilder` is a type used for efficiently building text content to be
+//// written to a file or a socket. Internally it is represented as tree so to
+//// append or prepend to a bytes builder is a constant time operation that
+//// allocates a new node in the tree without copying any of the content. When
+//// writing to an output stream the tree is traversed and the content is sent
+//// directly rather than copying it into a single buffer beforehand.
 ////
 //// If we append one bit array to another the bit arrays must be copied to a
 //// new location in memory so that they can sit together. This behaviour
-//// enables efficient reading of the string but copying can be expensive,
+//// enables efficient reading of the data but copying can be expensive,
 //// especially if we want to join many bit arrays together.
 ////
 //// BytesBuilder is different in that it can be joined together in constant
@@ -17,8 +21,9 @@
 
 // TODO: pad bit arrays to byte boundaries when adding to a builder.
 import gleam/string_builder.{type StringBuilder}
-import gleam/list
+
 import gleam/bit_array
+import gleam/list
 
 pub opaque type BytesBuilder {
   Bytes(BitArray)
