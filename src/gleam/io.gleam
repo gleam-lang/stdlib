@@ -65,7 +65,7 @@ fn do_println(string string: String) -> Nil
 /// ```gleam
 /// io.println_error("Hi pop")
 /// // -> Nil
-/// // Hi mum
+/// // Hi pop
 /// ```
 ///
 pub fn println_error(string: String) -> Nil {
