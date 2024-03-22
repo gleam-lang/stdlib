@@ -562,7 +562,7 @@ pub fn random(max: Int) -> Int {
 ///
 /// ```gleam
 /// divide(0, 1)
-/// // -> Ok(1)
+/// // -> Ok(0)
 /// ```
 ///
 /// ```gleam
