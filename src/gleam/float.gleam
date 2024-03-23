@@ -539,3 +539,133 @@ pub fn multiply(a: Float, b: Float) -> Float {
 pub fn subtract(a: Float, b: Float) -> Float {
   a -. b
 }
+
+/// Converts a float to a string with a fixed number of decimal places.
+/// This function is equivalent to number.toFixed in JavaScript.
+/// 
+/// ## Examples
+/// 
+/// ```gleam
+/// to_string_fixed(2.3, 0)
+/// // -> Ok("2")
+/// ```
+/// 
+/// ```gleam
+/// to_string_fixed(1.5921, 3)
+/// // -> Ok("1.592")
+pub fn to_string_fixed(x: Float, precision: Int) -> Result(String, Nil) {
+  let string_representation = to_string(x)
+
+  let values = get_float_sides(string_representation)
+  let left_side = values.0
+  let right_side = values.1
+
+  case precision {
+    0 -> {
+      let result_string = slice_string(left_side, 0, -1)
+      let number_rounding =
+        convert_string_to_int(slice_string(right_side, 0, 1))
+        |> get_int_result_value()
+      let last_char = case number_rounding {
+        number_rounding if number_rounding >= 5 -> {
+          convert_string_to_int(slice_string(left_side, -1, 1))
+          |> get_int_result_value()
+          |> fn(last_char) { last_char + 1 }()
+        }
+        _ -> {
+          convert_string_to_int(slice_string(left_side, -1, 1))
+          |> get_int_result_value()
+        }
+      }
+
+      Ok(append_string(result_string, convert_int_to_string(last_char)))
+    }
+    precision if precision > 0 -> {
+      let result_string =
+        slice_string(left_side, 0, get_string_length(left_side))
+      let right_side = slice_string(right_side, 0, precision)
+      let char_count = get_string_length(right_side)
+      let updated_right_side = case char_count {
+        char_count if char_count < precision -> {
+          pad_string_right(right_side, precision, "0")
+        }
+        _ -> {
+          let prev_last_char =
+            convert_string_to_int(slice_string(right_side, -1, 1))
+            |> get_int_result_value()
+          let last_char = case prev_last_char {
+            prev_last_char if prev_last_char >= 5 -> {
+              prev_last_char + 1
+            }
+            _ -> prev_last_char
+          }
+          append_string(
+            slice_string(right_side, 0, -1),
+            convert_int_to_string(last_char),
+          )
+        }
+      }
+      Ok(append_string(result_string, append_string(".", updated_right_side)))
+    }
+    _ -> Error(Nil)
+  }
+}
+
+@external(erlang, "gleam_stdlib", "parse_int")
+@external(javascript, "../gleam_stdlib.mjs", "parse_int")
+fn convert_string_to_int(a: String) -> Result(Int, Nil)
+
+@external(erlang, "erlang", "integer_to_binary")
+@external(javascript, "../gleam_stdlib.mjs", "to_string")
+fn convert_int_to_string(a: Int) -> String
+
+@external(erlang, "string", "length")
+@external(javascript, "../gleam_stdlib.mjs", "string_length")
+fn get_string_length(a: String) -> Int
+
+@external(erlang, "string", "split")
+@external(javascript, "../gleam_stdlib.mjs", "split")
+fn split_string(value: String, separator: String) -> List(String)
+
+@external(javascript, "../gleam_stdlib.mjs", "string_slice")
+fn slice_string(value: String, start: Int, end: Int) -> String
+
+fn append_string(a: String, b: String) -> String {
+  a <> b
+}
+
+fn pad_string_right(value: String, length: Int, character: String) -> String {
+  case get_string_length(value) < length {
+    True -> {
+      let diff = length - get_string_length(value)
+      let padding = ""
+      case diff {
+        diff if diff > 0 -> {
+          append_string(padding, character)
+        }
+        _ -> append_string(value, padding)
+      }
+    }
+    False -> value
+  }
+}
+
+fn get_float_sides(value: String) -> #(String, String) {
+  case split_string(value, ".") {
+    [left_side, right_side] -> #(left_side, right_side)
+    _ -> #("", "")
+  }
+}
+
+fn get_int_result_value(result: Result(Int, Nil)) -> Int {
+  case result {
+    Ok(v) -> v
+    Error(_) -> 0
+  }
+}
+// fn get_string_result_value(result: Result(String, Nil)) -> String {
+//   case result {
+//     Ok(v) -> v
+//     Error(_) -> ""
+//   }
+// }
