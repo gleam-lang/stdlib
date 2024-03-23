@@ -126,6 +126,11 @@ export function string_replace(string, target, substitute) {
   );
 }
 
+export function string_slice(string, start, end) {
+  return string.slice(start, end);
+}
+
+
 export function string_reverse(string) {
   return [...string].reverse().join("");
 }
