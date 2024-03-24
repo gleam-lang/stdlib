@@ -551,9 +551,13 @@ pub fn subtract(a: Float, b: Float) -> Float {
 /// ```
 /// 
 /// ```gleam
+/// to_string_fixed(0.3, 3)
+/// // -> Ok("0.300")
+/// 
+/// ```gleam
 /// to_string_fixed(1.5921, 3)
 /// // -> Ok("1.592")
-pub fn to_string_fixed(x: Float, precision: Int) -> Result(String, Nil) {
+pub fn to_fixed_string(x: Float, precision: Int) -> Result(String, Nil) {
   let string_representation = to_string(x)
 
   let values = get_float_sides(string_representation)
@@ -563,19 +567,20 @@ pub fn to_string_fixed(x: Float, precision: Int) -> Result(String, Nil) {
   case precision {
     0 -> {
       let result_string = slice_string(left_side, 0, -1)
-      let number_rounding =
+      let right_side_number_rounding =
         convert_string_to_int(slice_string(right_side, 0, 1))
         |> get_int_result_value()
-      let last_char = case number_rounding {
-        number_rounding if number_rounding >= 5 -> {
-          convert_string_to_int(slice_string(left_side, -1, 1))
-          |> get_int_result_value()
-          |> fn(last_char) { last_char + 1 }()
-        }
-        _ -> {
-          convert_string_to_int(slice_string(left_side, -1, 1))
-          |> get_int_result_value()
-        }
+
+      let left_side_last_number =
+        reverse_string(left_side)
+        |> slice_string(0, 1)
+        |> convert_string_to_int()
+        |> get_int_result_value()
+
+      let last_char = case right_side_number_rounding {
+        number_rounding if number_rounding >= 5 ->
+          fn(last_char) { last_char + 1 }(left_side_last_number)
+        _ -> left_side_last_number
       }
 
       Ok(append_string(result_string, convert_int_to_string(last_char)))
@@ -583,29 +588,56 @@ pub fn to_string_fixed(x: Float, precision: Int) -> Result(String, Nil) {
     precision if precision > 0 -> {
       let result_string =
         slice_string(left_side, 0, get_string_length(left_side))
-      let right_side = slice_string(right_side, 0, precision)
       let char_count = get_string_length(right_side)
       let updated_right_side = case char_count {
         char_count if char_count < precision -> {
-          pad_string_right(right_side, precision, "0")
+          pad_string_right(
+            right_side,
+            "0",
+            precision - get_string_length(right_side),
+          )
         }
+        char_count if char_count == precision -> {
+          right_side
+        }
+
         _ -> {
-          let prev_last_char =
-            convert_string_to_int(slice_string(right_side, -1, 1))
+          let right_string = slice_string(right_side, 0, precision + 1)
+          let right_string_length = get_string_length(right_string)
+
+          let last_char_before_update =
+            slice_string(right_string, precision - 1, precision)
+            |> convert_string_to_int()
             |> get_int_result_value()
-          let last_char = case prev_last_char {
-            prev_last_char if prev_last_char >= 5 -> {
-              prev_last_char + 1
+
+          let char_after_last_char = case right_string_length {
+            right_string_length if right_string_length > precision -> {
+              slice_string(right_string, precision, 1)
+              slice_string(right_string, precision, precision + 1)
+              |> convert_string_to_int()
+              |> get_int_result_value()
             }
-            _ -> prev_last_char
+            _ -> {
+              0
+            }
           }
+
+          let last_char = case char_after_last_char {
+            char_after_last_char if char_after_last_char >= 5 -> {
+              last_char_before_update + 1
+            }
+            _ -> {
+              last_char_before_update
+            }
+          }
+
           append_string(
-            slice_string(right_side, 0, -1),
+            slice_string(right_string, 0, precision - 1),
             convert_int_to_string(last_char),
           )
         }
       }
-      Ok(append_string(result_string, append_string(".", updated_right_side)))
+      Ok(result_string <> "." <> updated_right_side)
     }
     _ -> Error(Nil)
   }
@@ -627,30 +659,33 @@ fn get_string_length(a: String) -> Int
 @external(javascript, "../gleam_stdlib.mjs", "split")
 fn split_string(value: String, separator: String) -> List(String)
 
+@external(erlang, "string", "slice")
 @external(javascript, "../gleam_stdlib.mjs", "string_slice")
 fn slice_string(value: String, start: Int, end: Int) -> String
+
+@external(javascript, "../gleam_stdlib.mjs", "string_reverse")
+fn reverse_string(value: String) -> String
 
 fn append_string(a: String, b: String) -> String {
   a <> b
 }
 
-fn pad_string_right(value: String, length: Int, character: String) -> String {
-  case get_string_length(value) < length {
+fn pad_string_right(value: String, character: String, difference: Int) -> String {
+  case difference > 0 {
     True -> {
-      let diff = length - get_string_length(value)
-      let padding = ""
-      case diff {
-        diff if diff > 0 -> {
-          append_string(padding, character)
+      case difference {
+        difference if difference > 0 -> {
+          append_string(value, character)
+          |> pad_string_right(character, difference - 1)
         }
-        _ -> append_string(value, padding)
+        _ -> value
       }
     }
     False -> value
   }
 }
 
-fn get_float_sides(value: String) -> #(String, String) {
+pub fn get_float_sides(value: String) -> #(String, String) {
   case split_string(value, ".") {
     [left_side, right_side] -> #(left_side, right_side)
     _ -> #("", "")
@@ -663,9 +698,3 @@ fn get_int_result_value(result: Result(Int, Nil)) -> Int {
     Error(_) -> 0
   }
 }
-// fn get_string_result_value(result: Result(String, Nil)) -> String {
-//   case result {
-//     Ok(v) -> v
-//     Error(_) -> ""
-//   }
-// }

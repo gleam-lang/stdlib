@@ -4,6 +4,7 @@ import gleam/iterator
 import gleam/list
 import gleam/order
 import gleam/should
+import gleam/result
 
 pub fn parse_test() {
   "1.23"
@@ -412,4 +413,22 @@ pub fn subtract_test() {
   3.0
   |> float.subtract(2.0, _)
   |> should.equal(-1.0)
+}
+
+pub fn to_fixed_string_test() {
+  float.to_fixed_string(1.2345, 3)
+  |> result.unwrap("")
+  |> should.equal("1.235")
+
+  float.to_fixed_string(1.9283472389479283478, 8)
+  |> result.unwrap("")
+  |> should.equal("1.92834724")
+
+  float.to_fixed_string(0.98, 0)
+  |> result.unwrap("")
+  |> should.equal("1")
+
+  float.to_fixed_string(55.01, 5)
+  |> result.unwrap("")
+  |> should.equal("55.01000")
 }
