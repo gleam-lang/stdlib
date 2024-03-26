@@ -43,13 +43,13 @@ pub fn size(dict: Dict(k, v)) -> Int
 /// ## Examples
 ///
 /// ```gleam
-/// new()
-/// // -> from_list([])
+/// new() |> to_list
+/// // -> []
 /// ```
 ///
 /// ```gleam
-/// new() |> insert("key", 0)
-/// // -> from_list([#("key", 0)])
+/// new() |> insert("key", 0) |> to_list
+/// // -> [#("key", 0)]
 /// ```
 ///
 @external(erlang, "maps", "to_list")
