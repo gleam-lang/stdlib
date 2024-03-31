@@ -156,7 +156,7 @@ pub fn try_filter_test() {
   |> should.equal(Error(7))
 
   // TCO test
-  list.repeat(0, recursion_test_cycles)
+  list.repeat(6, recursion_test_cycles)
   |> list.try_filter(fun)
 }
 
