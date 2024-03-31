@@ -139,6 +139,27 @@ pub fn filter_test() {
   |> list.filter(fn(x) { x == -1 })
 }
 
+pub fn try_filter_test() {
+  let fun = fn(x) {
+    case x == 6 || x == 5 || x == 4 {
+      True -> Ok(True)
+      False -> Error(x)
+    }
+  }
+
+  [5, 6, 5, 6]
+  |> list.try_filter(fun)
+  |> should.equal(Ok([5, 6, 5, 6]))
+
+  [4, 6, 5, 7, 3]
+  |> list.try_filter(fun)
+  |> should.equal(Error(7))
+
+  // TCO test
+  list.repeat(0, recursion_test_cycles)
+  |> list.try_filter(fun)
+}
+
 pub fn filter_map_test() {
   [2, 4, 6, 1]
   |> list.filter_map(fn(x) { Ok(x + 1) })

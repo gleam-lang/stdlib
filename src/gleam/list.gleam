@@ -318,6 +318,61 @@ fn do_filter_map(
   }
 }
 
+/// Takes a function that returns a `Result` and applies it to each element in a
+/// given list in turn.
+///
+/// If the function returns `Ok(new_value)` for all elements in the list then a
+/// list of the elements for which new_value is `True` is returned.
+///
+/// If the function returns `Error(reason)` for any of the elements then it is
+/// returned immediately. None of the elements in the list are processed after
+/// one returns an `Error`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// try_filter([1, 2, 3], fn(x) { Ok(True) })
+/// // -> Ok([1,2,3])
+/// ```
+///
+/// ```gleam
+/// try_filter([1, 2, 3], fn(_) { Error(0) })
+/// // -> Error(0)
+/// ```
+///
+pub fn try_filter(
+  list: List(a),
+  fun: fn(a) -> Result(Bool, e),
+) -> Result(List(a), e) {
+  do_try_filter(list, fun, [])
+}
+
+fn do_try_filter(
+  list: List(a),
+  fun: fn(a) -> Result(Bool, e),
+  acc: List(a),
+) -> Result(List(a), e) {
+  case list {
+    [] -> Ok(reverse(acc))
+    [x, ..xs] -> {
+      let new_acc = case fun(x) {
+        Ok(b) -> {
+          case b {
+            True -> Ok([x, ..acc])
+            False -> Ok(acc)
+          }
+        }
+        Error(er) -> Error(er)
+      }
+
+      case new_acc {
+        Ok(new_acc) -> do_try_filter(xs, fun, new_acc)
+        Error(er) -> Error(er)
+      }
+    }
+  }
+}
+
 /// Returns a new list containing only the elements from the first list for
 /// which the given functions returns `Ok(_)`.
 ///
