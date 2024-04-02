@@ -51,13 +51,13 @@ decode_error(Expected, Got) when is_binary(Expected) andalso is_binary(Got) ->
     {error, [{decode_error, Expected, Got, []}]}.
 
 classify_dynamic(nil) -> <<"Nil">>;
+classify_dynamic(X) when is_boolean(X) -> <<"Bool">>;
 classify_dynamic(X) when is_atom(X) -> <<"Atom">>;
 classify_dynamic(X) when is_binary(X) -> <<"String">>;
 classify_dynamic(X) when is_bitstring(X) -> <<"BitArray">>;
 classify_dynamic(X) when is_integer(X) -> <<"Int">>;
 classify_dynamic(X) when is_float(X) -> <<"Float">>;
 classify_dynamic(X) when is_list(X) -> <<"List">>;
-classify_dynamic(X) when is_boolean(X) -> <<"Bool">>;
 classify_dynamic(X) when is_map(X) -> <<"Dict">>;
 classify_dynamic(X) when is_tuple(X) ->
     iolist_to_binary(["Tuple of ", integer_to_list(tuple_size(X)), " elements"]);
