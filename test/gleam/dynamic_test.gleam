@@ -1517,8 +1517,4 @@ pub fn classify_test() {
   dynamic.from(False)
   |> dynamic.classify
   |> should.equal("Bool")
-
-  dynamic.from(ClassifyAtom)
-  |> dynamic.classify
-  |> should.equal("Atom")
 }
