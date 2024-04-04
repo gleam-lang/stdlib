@@ -1,5 +1,5 @@
-import gleam/option.{None, Some}
 import gleam/dict
+import gleam/option.{None, Some}
 import gleam/order
 import gleam/should
 import gleam/string
@@ -846,31 +846,16 @@ pub fn inspect_test() {
   string.inspect(fn() { Nil })
   |> should.equal("//fn() { ... }")
 
-  string.inspect(fn(a) {
-    a
-    Nil
-  })
+  string.inspect(fn(_) { Nil })
   |> should.equal("//fn(a) { ... }")
 
-  string.inspect(fn(a, b) {
-    a
-    b
-    Nil
-  })
+  string.inspect(fn(_, _) { Nil })
   |> should.equal("//fn(a, b) { ... }")
 
-  string.inspect(fn(x, y) {
-    x
-    y
-    Nil
-  })
+  string.inspect(fn(_, _) { Nil })
   |> should.equal("//fn(a, b) { ... }")
 
-  string.inspect(fn(foo: Int, bar: String) -> Bool {
-    foo
-    bar
-    False
-  })
+  string.inspect(fn(_: Int, _: String) -> Bool { False })
   |> should.equal("//fn(a, b) { ... }")
 
   string.inspect(#(InspectTypeOne, InspectTypeTwo))
@@ -916,9 +901,9 @@ pub fn target_inspect_test() {
 }
 
 @target(erlang)
-import gleam/regex
-@target(erlang)
 import gleam/dynamic.{type Dynamic}
+@target(erlang)
+import gleam/regex
 
 // Test inspect on Erlang atoms valid and invalid in Gleam
 

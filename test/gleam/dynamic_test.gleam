@@ -1,5 +1,5 @@
-import gleam/dynamic.{DecodeError}
 import gleam/dict
+import gleam/dynamic.{DecodeError}
 import gleam/option.{None, Some}
 import gleam/result
 import gleam/should
@@ -1503,10 +1503,6 @@ pub fn decode9_test() {
       DecodeError(expected: "String", found: "Float", path: ["1"]),
     ]),
   )
-}
-
-type ClassifyAtom {
-  ClassifyAtom
 }
 
 pub fn classify_test() {

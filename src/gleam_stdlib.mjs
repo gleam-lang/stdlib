@@ -498,6 +498,8 @@ export function decode64(sBase64) {
 export function classify_dynamic(data) {
   if (typeof data === "string") {
     return "String";
+  } else if (typeof data === "boolean") {
+    return "Bool";
   } else if (data instanceof Result) {
     return "Result";
   } else if (data instanceof List) {
