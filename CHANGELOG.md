@@ -8,6 +8,10 @@
 - `list.LengthMismatch` has been removed.
 - The mistakenly public `bit_array.do_inspect` function has been removed.
 - Fixed the `dynamic.classification` function for bools.
+- The `min` function in the `bool` module has been deprecated in favour of
+  `bool.and`.
+- The `max` function in the `bool` module has been deprecated in favour of
+  `bool.or`.
 
 ## v0.36.0 - 2024-02-26
 
