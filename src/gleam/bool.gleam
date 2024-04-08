@@ -253,6 +253,7 @@ pub fn compare(a: Bool, with b: Bool) -> Order {
 /// // -> False
 /// ```
 ///
+@deprecated("Use the `bool.or` function instead")
 pub fn max(a: Bool, b: Bool) -> Bool {
   case a {
     True -> True
@@ -279,6 +280,7 @@ pub fn max(a: Bool, b: Bool) -> Bool {
 /// // -> False
 /// ```
 ///
+@deprecated("Use the `bool.and` function instead")
 pub fn min(a: Bool, b: Bool) -> Bool {
   case a {
     False -> False
