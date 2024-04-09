@@ -395,7 +395,7 @@ fn do_map2(
   }
 }
 
-/// Combines two interators into a single one using the given function.
+/// Combines two iterators into a single one using the given function.
 ///
 /// If an iterator is longer than the other the extra elements are dropped.
 ///
