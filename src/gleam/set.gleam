@@ -139,9 +139,10 @@ pub fn to_list(set: Set(member)) -> List(member) {
 /// ## Examples
 ///
 /// ```gleam
+/// import gleam/int
 /// import gleam/list
-/// [1, 1, 2, 4, 3, 2] |> from_list |> to_list |> list.sort
-/// // -> [1, 3, 3, 4]
+/// [1, 1, 2, 4, 3, 2] |> from_list |> to_list |> list.sort(by: int.compare)
+/// // -> [1, 2, 3, 4]
 /// ```
 ///
 pub fn from_list(members: List(member)) -> Set(member) {
