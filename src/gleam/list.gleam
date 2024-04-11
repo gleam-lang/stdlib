@@ -269,19 +269,6 @@ pub fn group(list: List(v), by key: fn(v) -> k) -> Dict(k, List(v)) {
   fold(list, dict.new(), update_group(key))
 }
 
-fn do_filter(list: List(a), fun: fn(a) -> Bool, acc: List(a)) -> List(a) {
-  case list {
-    [] -> reverse(acc)
-    [x, ..xs] -> {
-      let new_acc = case fun(x) {
-        True -> [x, ..acc]
-        False -> acc
-      }
-      do_filter(xs, fun, new_acc)
-    }
-  }
-}
-
 /// Returns a new list containing only the elements from the first list for
 /// which the given functions returns `True`.
 ///
@@ -297,24 +284,14 @@ fn do_filter(list: List(a), fun: fn(a) -> Bool, acc: List(a)) -> List(a) {
 /// // -> []
 /// ```
 ///
-pub fn filter(list: List(a), keeping predicate: fn(a) -> Bool) -> List(a) {
-  do_filter(list, predicate, [])
-}
-
-fn do_filter_map(
-  list: List(a),
-  fun: fn(a) -> Result(b, e),
-  acc: List(b),
-) -> List(b) {
+pub fn filter(list: List(a), condition: fn(a) -> Bool) -> List(a) {
   case list {
-    [] -> reverse(acc)
-    [x, ..xs] -> {
-      let new_acc = case fun(x) {
-        Ok(x) -> [x, ..acc]
-        Error(_) -> acc
+    [] -> []
+    [x, ..xs] ->
+      case condition(x) {
+        True -> [x, ..filter(xs, condition)]
+        False -> filter(xs, condition)
       }
-      do_filter_map(xs, fun, new_acc)
-    }
   }
 }
 
@@ -334,13 +311,13 @@ fn do_filter_map(
 /// ```
 ///
 pub fn filter_map(list: List(a), with fun: fn(a) -> Result(b, e)) -> List(b) {
-  do_filter_map(list, fun, [])
-}
-
-fn do_map(list: List(a), fun: fn(a) -> b, acc: List(b)) -> List(b) {
   case list {
-    [] -> reverse(acc)
-    [x, ..xs] -> do_map(xs, fun, [fun(x), ..acc])
+    [] -> []
+    [x, ..xs] ->
+      case fun(x) {
+        Ok(v) -> [v, ..filter_map(xs, fun)]
+        Error(_) -> filter_map(xs, fun)
+      }
   }
 }
 
@@ -355,7 +332,10 @@ fn do_map(list: List(a), fun: fn(a) -> b, acc: List(b)) -> List(b) {
 /// ```
 ///
 pub fn map(list: List(a), with fun: fn(a) -> b) -> List(b) {
-  do_map(list, fun, [])
+  case list {
+    [] -> []
+    [x, ..xs] -> [fun(x), ..map(xs, fun)]
+  }
 }
 
 /// Combines two lists into a single list using the given function.
