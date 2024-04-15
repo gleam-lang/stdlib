@@ -402,6 +402,10 @@ export function compile_regex(pattern, options) {
   }
 }
 
+export function regex_split(regex, string) {
+  return List.fromArray(string.split(regex).map(item => item === undefined ? "" : item));
+}
+
 export function regex_scan(regex, string) {
   const matches = Array.from(string.matchAll(regex)).map((match) => {
     const content = match[0];

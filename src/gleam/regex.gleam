@@ -127,18 +127,9 @@ pub fn split(with regex: Regex, content string: String) -> List(String) {
   do_split(regex, string)
 }
 
-@target(erlang)
 @external(erlang, "gleam_stdlib", "regex_split")
+@external(javascript, "../gleam_stdlib.mjs", "regex_split")
 fn do_split(a: Regex, b: String) -> List(String)
-
-@target(javascript)
-fn do_split(regex, string) -> List(String) {
-  js_split(string, regex)
-}
-
-@target(javascript)
-@external(javascript, "../gleam_stdlib.mjs", "split")
-fn js_split(a: String, b: Regex) -> List(String)
 
 /// Collects all matches of the regular expression.
 ///
