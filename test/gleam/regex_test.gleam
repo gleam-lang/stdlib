@@ -73,6 +73,15 @@ pub fn split_test() {
   |> should.equal(["foo", "32", "4", "9", "0"])
 }
 
+pub fn matching_split_test() {
+  let assert Ok(re) = regex.from_string("([+-])( *)(d)*")
+
+  regex.split(re, "abc+ def+ghi+  abc")
+  |> should.equal([
+    "abc", "+", " ", "d", "ef", "+", "", "", "ghi", "+", "  ", "", "abc",
+  ])
+}
+
 pub fn scan_test() {
   let assert Ok(re) = regex.from_string("Gl\\w+")
 
