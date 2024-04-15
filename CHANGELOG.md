@@ -12,6 +12,9 @@
   `bool.and`.
 - The `max` function in the `bool` module has been deprecated in favour of
   `bool.or`.
+- Fixed a bug with `regex.split` where it could include `Nil` elements in the
+  returned list of strings on the JavaScript target when the expression to
+  split with included an optional match group which wasn't matched.
 
 ## v0.36.0 - 2024-02-26
 
