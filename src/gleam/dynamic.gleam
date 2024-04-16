@@ -1053,7 +1053,7 @@ pub fn any(of decoders: List(Decoder(t))) -> Decoder(t) {
   }
 }
 
-/// Decode 1 values from a `Dynamic` value.
+/// Decode 1 value from a `Dynamic` value.
 ///
 /// ## Examples
 ///
