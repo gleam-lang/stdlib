@@ -1,8 +1,8 @@
-import gleam/list
 import gleam/dict.{type Dict}
+import gleam/list
 import gleam/result
 
-// A list is used as the map value as an empty list has the smallest
+// A list is used as the dict value as an empty list has the smallest
 // representation in Erlang's binary format
 @target(erlang)
 type Token =
@@ -24,7 +24,7 @@ const token = Nil
 /// logarithmic time complexity.
 ///
 pub opaque type Set(member) {
-  Set(map: Dict(member, Token))
+  Set(dict: Dict(member, Token))
 }
 
 /// Creates a new empty set.
@@ -48,7 +48,7 @@ pub fn new() -> Set(member) {
 /// ```
 ///
 pub fn size(set: Set(member)) -> Int {
-  dict.size(set.map)
+  dict.size(set.dict)
 }
 
 /// Inserts an member into the set.
@@ -66,7 +66,7 @@ pub fn size(set: Set(member)) -> Int {
 /// ```
 ///
 pub fn insert(into set: Set(member), this member: member) -> Set(member) {
-  Set(map: dict.insert(set.map, member, token))
+  Set(dict: dict.insert(set.dict, member, token))
 }
 
 /// Checks whether a set contains a given member.
@@ -90,7 +90,7 @@ pub fn insert(into set: Set(member), this member: member) -> Set(member) {
 /// ```
 ///
 pub fn contains(in set: Set(member), this member: member) -> Bool {
-  set.map
+  set.dict
   |> dict.get(member)
   |> result.is_ok
 }
@@ -111,7 +111,7 @@ pub fn contains(in set: Set(member), this member: member) -> Bool {
 /// ```
 ///
 pub fn delete(from set: Set(member), this member: member) -> Set(member) {
-  Set(map: dict.delete(set.map, member))
+  Set(dict: dict.delete(set.dict, member))
 }
 
 /// Converts the set into a list of the contained members.
@@ -129,7 +129,7 @@ pub fn delete(from set: Set(member), this member: member) -> Set(member) {
 /// ```
 ///
 pub fn to_list(set: Set(member)) -> List(member) {
-  dict.keys(set.map)
+  dict.keys(set.dict)
 }
 
 /// Creates a new set of the members in a given list.
@@ -146,11 +146,11 @@ pub fn to_list(set: Set(member)) -> List(member) {
 /// ```
 ///
 pub fn from_list(members: List(member)) -> Set(member) {
-  let map =
+  let dict =
     list.fold(over: members, from: dict.new(), with: fn(m, k) {
       dict.insert(m, k, token)
     })
-  Set(map)
+  Set(dict)
 }
 
 /// Combines all entries into a single value by calling a given function on each
@@ -173,7 +173,7 @@ pub fn fold(
   from initial: acc,
   with reducer: fn(acc, member) -> acc,
 ) -> acc {
-  dict.fold(over: set.map, from: initial, with: fn(a, k, _) { reducer(a, k) })
+  dict.fold(over: set.dict, from: initial, with: fn(a, k, _) { reducer(a, k) })
 }
 
 /// Creates a new set from an existing set, minus any members that a given
@@ -195,14 +195,14 @@ pub fn filter(
   in set: Set(member),
   keeping predicate: fn(member) -> Bool,
 ) -> Set(member) {
-  Set(dict.filter(in: set.map, keeping: fn(m, _) { predicate(m) }))
+  Set(dict.filter(in: set.dict, keeping: fn(m, _) { predicate(m) }))
 }
 
 pub fn drop(from set: Set(member), drop disallowed: List(member)) -> Set(member) {
   list.fold(over: disallowed, from: set, with: delete)
 }
 
-/// Creates a new map from a given map, only including any members which are in
+/// Creates a new set from a given set, only including any members which are in
 /// a given list.
 ///
 /// This function runs in loglinear time.
@@ -217,11 +217,11 @@ pub fn drop(from set: Set(member), drop disallowed: List(member)) -> Set(member)
 /// ```
 ///
 pub fn take(from set: Set(member), keeping desired: List(member)) -> Set(member) {
-  Set(dict.take(from: set.map, keeping: desired))
+  Set(dict.take(from: set.dict, keeping: desired))
 }
 
 fn order(first: Set(member), second: Set(member)) -> #(Set(member), Set(member)) {
-  case dict.size(first.map) > dict.size(second.map) {
+  case dict.size(first.dict) > dict.size(second.dict) {
     True -> #(first, second)
     False -> #(second, first)
   }
