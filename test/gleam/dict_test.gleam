@@ -1,9 +1,9 @@
 import gleam/dict
+import gleam/int
+import gleam/list
 import gleam/option.{None, Some}
 import gleam/should
 import gleam/string
-import gleam/list
-import gleam/int
 
 pub fn from_list_test() {
   [#(4, 0), #(1, 0)]

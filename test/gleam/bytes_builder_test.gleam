@@ -1,6 +1,6 @@
 import gleam/bytes_builder
-import gleam/string_builder
 import gleam/should
+import gleam/string_builder
 
 pub fn builder_test() {
   let data =

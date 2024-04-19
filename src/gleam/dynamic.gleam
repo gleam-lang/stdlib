@@ -1,11 +1,11 @@
+@target(erlang)
+import gleam/bit_array
+import gleam/dict.{type Dict}
 import gleam/int
 import gleam/list
-import gleam/dict.{type Dict}
 import gleam/option.{type Option}
 import gleam/result
 import gleam/string_builder
-@target(erlang)
-import gleam/bit_array
 
 /// `Dynamic` data is data that we don't know the type of yet.
 /// We likely get data like this from interop with Erlang, or from

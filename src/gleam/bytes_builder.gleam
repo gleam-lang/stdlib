@@ -20,9 +20,9 @@
 //// On Erlang this type is compatible with Erlang's iolists.
 
 // TODO: pad bit arrays to byte boundaries when adding to a builder.
-import gleam/string_builder.{type StringBuilder}
 import gleam/bit_array
 import gleam/list
+import gleam/string_builder.{type StringBuilder}
 
 pub opaque type BytesBuilder {
   Bytes(BitArray)

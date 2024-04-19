@@ -1,8 +1,8 @@
+import gleam/dict
 import gleam/float
-import gleam/pair
 import gleam/int
 import gleam/list
-import gleam/dict
+import gleam/pair
 import gleam/should
 
 @target(erlang)

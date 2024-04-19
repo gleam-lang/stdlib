@@ -1,8 +1,8 @@
+import gleam/dict
+import gleam/int
 import gleam/iterator.{Done, Next}
 import gleam/list
-import gleam/dict
 import gleam/should
-import gleam/int
 
 // a |> from_list |> to_list == a
 pub fn to_from_list_test() {
