@@ -96,6 +96,7 @@ fn do_println_error(string string: String) -> Nil
 ///
 /// ```gleam
 /// import gleam/list
+///
 /// [1, 2]
 /// |> list.map(fn(x) { x + 1 })
 /// |> debug

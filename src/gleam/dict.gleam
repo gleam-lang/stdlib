@@ -432,7 +432,7 @@ pub fn drop(from dict: Dict(k, v), drop disallowed_keys: List(k)) -> Dict(k, v) 
 ///   }
 /// }
 ///
-///  update(dict, "a", increment)
+/// update(dict, "a", increment)
 /// // -> from_list([#("a", 1)])
 ///
 /// update(dict, "b", increment)

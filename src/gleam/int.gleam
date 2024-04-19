@@ -19,12 +19,12 @@ import gleam/order.{type Order}
 ///
 /// ```gleam
 /// absolute_value(-12)
-/// 12
+/// // -> 2
 /// ```
 ///
 /// ```gleam
 /// absolute_value(10)
-/// 10
+/// // -> 10
 /// ```
 ///
 pub fn absolute_value(x: Int) -> Int {
@@ -41,27 +41,27 @@ pub fn absolute_value(x: Int) -> Int {
 ///
 /// ```gleam
 /// power(2, -1.0)
-/// Ok(0.5)
+/// // -> Ok(0.5)
 /// ```
 ///
 /// ```gleam
 /// power(2, 2.0)
-/// Ok(4.0)
+/// // -> Ok(4.0)
 /// ```
 ///
 /// ```gleam
 /// power(8, 1.5)
-/// Ok(22.627416997969522)
+/// // -> Ok(22.627416997969522)
 /// ```
 ///
 /// ```gleam
 /// 4 |> power(of: 2.0)
-/// Ok(16.0)
+/// // -> Ok(16.0)
 /// ```
 ///
 /// ```gleam
 /// power(-1, 0.5)
-/// Error(Nil)
+/// // -> Error(Nil)
 /// ```
 ///
 pub fn power(base: Int, of exponent: Float) -> Result(Float, Nil) {
@@ -76,12 +76,12 @@ pub fn power(base: Int, of exponent: Float) -> Result(Float, Nil) {
 ///
 /// ```gleam
 /// square_root(4)
-/// Ok(2.0)
+/// // -> Ok(2.0)
 /// ```
 ///
 /// ```gleam
 /// square_root(-16)
-/// Error(Nil)
+/// // -> Error(Nil)
 /// ```
 ///
 pub fn square_root(x: Int) -> Result(Float, Nil) {
@@ -96,12 +96,12 @@ pub fn square_root(x: Int) -> Result(Float, Nil) {
 ///
 /// ```gleam
 /// parse("2")
-/// Ok(2)
+/// // -> Ok(2)
 /// ```
 ///
 /// ```gleam
 /// parse("ABC")
-/// Error(Nil)
+/// // -> Error(Nil)
 /// ```
 ///
 pub fn parse(string: String) -> Result(Int, Nil) {
@@ -119,19 +119,27 @@ fn do_parse(a: String) -> Result(Int, Nil)
 ///
 /// ```gleam
 /// base_parse("10", 2)
-/// Ok(2)
+/// // -> Ok(2)
+/// ```
 ///
+/// ```gleam
 /// base_parse("30", 16)
-/// Ok(48)
+/// // -> Ok(48)
+/// ```
 ///
+/// ```gleam
 /// base_parse("1C", 36)
-/// Ok(48)
+/// // -> Ok(48)
+/// ```
 ///
+/// ```gleam
 /// base_parse("48", 1)
-/// Error(Nil)
+/// // -> Error(Nil)
+/// ```
 ///
+/// ```gleam
 /// base_parse("48", 37)
-/// Error(Nil)
+/// // -> Error(Nil)
 /// ```
 ///
 pub fn base_parse(string: String, base: Int) -> Result(Int, Nil) {
@@ -151,7 +159,7 @@ fn do_base_parse(a: String, b: Int) -> Result(Int, Nil)
 ///
 /// ```gleam
 /// to_string(2)
-/// "2"
+/// // -> "2"
 /// ```
 ///
 pub fn to_string(x: Int) {
@@ -176,27 +184,27 @@ pub type InvalidBase {
 ///
 /// ```gleam
 /// to_base_string(2, 2)
-/// Ok("10")
+/// // -> Ok("10")
 /// ```
 ///
 /// ```gleam
 /// to_base_string(48, 16)
-/// Ok("30")
+/// // -> Ok("30")
 /// ```
 ///
 /// ```gleam
 /// to_base_string(48, 36)
-/// Ok("1C")
+/// // -> Ok("1C")
 /// ```
 ///
 /// ```gleam
 /// to_base_string(48, 1)
-/// Error(InvalidBase)
+/// // -> Error(InvalidBase)
 /// ```
 ///
 /// ```gleam
 /// to_base_string(48, 37)
-/// Error(InvalidBase)
+/// // -> Error(InvalidBase)
 /// ```
 ///
 pub fn to_base_string(x: Int, base: Int) -> Result(String, InvalidBase) {
@@ -216,7 +224,7 @@ fn do_to_base_string(a: Int, b: Int) -> String
 ///
 /// ```gleam
 /// to_base2(2)
-/// "10"
+/// // -> "10"
 /// ```
 ///
 pub fn to_base2(x: Int) -> String {
@@ -229,7 +237,7 @@ pub fn to_base2(x: Int) -> String {
 ///
 /// ```gleam
 /// to_base8(15)
-/// "17"
+/// // -> "17"
 /// ```
 ///
 pub fn to_base8(x: Int) -> String {
@@ -242,7 +250,7 @@ pub fn to_base8(x: Int) -> String {
 ///
 /// ```gleam
 /// to_base16(48)
-/// "30"
+/// // -> "30"
 /// ```
 ///
 pub fn to_base16(x: Int) -> String {
@@ -255,7 +263,7 @@ pub fn to_base16(x: Int) -> String {
 ///
 /// ```gleam
 /// to_base36(48)
-/// "1C"
+/// // -> "1C"
 /// ```
 ///
 pub fn to_base36(x: Int) -> String {
@@ -268,17 +276,17 @@ pub fn to_base36(x: Int) -> String {
 ///
 /// ```gleam
 /// to_float(5)
-/// 5.0
+/// // -> 5.0
 /// ```
 ///
 /// ```gleam
 /// to_float(0)
-/// 0.0
+/// // -> 0.0
 /// ```
 ///
 /// ```gleam
 /// to_float(-3)
-/// -3.0
+/// // -> -3.0
 /// ```
 ///
 pub fn to_float(x: Int) -> Float {
@@ -295,7 +303,7 @@ fn do_to_float(a: Int) -> Float
 ///
 /// ```gleam
 /// clamp(40, min: 50, max: 60)
-/// 50
+/// // -> 50
 /// ```
 ///
 pub fn clamp(x: Int, min min_bound: Int, max max_bound: Int) -> Int {
@@ -310,17 +318,17 @@ pub fn clamp(x: Int, min min_bound: Int, max max_bound: Int) -> Int {
 ///
 /// ```gleam
 /// compare(2, 3)
-/// Lt
+/// // -> Lt
 /// ```
 ///
 /// ```gleam
 /// compare(4, 3)
-/// Gt
+/// // -> Gt
 /// ```
 ///
 /// ```gleam
 /// compare(3, 3)
-/// Eq
+/// // -> Eq
 /// ```
 ///
 pub fn compare(a: Int, with b: Int) -> Order {
@@ -340,7 +348,7 @@ pub fn compare(a: Int, with b: Int) -> Order {
 ///
 /// ```gleam
 /// min(2, 3)
-/// 2
+/// // -> 2
 /// ```
 ///
 pub fn min(a: Int, b: Int) -> Int {
@@ -356,7 +364,7 @@ pub fn min(a: Int, b: Int) -> Int {
 ///
 /// ```gleam
 /// max(2, 3)
-/// 3
+/// // -> 3
 /// ```
 ///
 pub fn max(a: Int, b: Int) -> Int {
@@ -372,12 +380,12 @@ pub fn max(a: Int, b: Int) -> Int {
 ///
 /// ```gleam
 /// is_even(2)
-/// True
+/// // -> True
 /// ```
 ///
 /// ```gleam
 /// is_even(3)
-/// False
+/// // -> False
 /// ```
 ///
 pub fn is_even(x: Int) -> Bool {
@@ -390,12 +398,12 @@ pub fn is_even(x: Int) -> Bool {
 ///
 /// ```gleam
 /// is_odd(3)
-/// True
+/// // -> True
 /// ```
 ///
 /// ```gleam
 /// is_odd(2)
-/// False
+/// // -> False
 /// ```
 ///
 pub fn is_odd(x: Int) -> Bool {
@@ -408,7 +416,7 @@ pub fn is_odd(x: Int) -> Bool {
 ///
 /// ```gleam
 /// negate(1)
-/// -1
+/// // -> -1
 /// ```
 ///
 pub fn negate(x: Int) -> Int {
@@ -421,7 +429,7 @@ pub fn negate(x: Int) -> Int {
 ///
 /// ```gleam
 /// sum([1, 2, 3])
-/// 6
+/// // -> 6
 /// ```
 ///
 pub fn sum(numbers: List(Int)) -> Int {
@@ -442,7 +450,7 @@ fn do_sum(numbers: List(Int), initial: Int) -> Int {
 ///
 /// ```gleam
 /// product([2, 3, 4])
-/// 24
+/// // -> 24
 /// ```
 ///
 pub fn product(numbers: List(Int)) -> Int {
@@ -465,12 +473,12 @@ fn do_product(numbers: List(Int), initial: Int) -> Int {
 ///
 /// ```gleam
 /// digits(234, 10)
-/// Ok([2,3,4])
+/// // -> Ok([2,3,4])
 /// ```
 ///
 /// ```gleam
 /// digits(234, 1)
-/// Error(InvalidBase)
+/// // -> Error(InvalidBase)
 /// ```
 ///
 pub fn digits(x: Int, base: Int) -> Result(List(Int), InvalidBase) {
@@ -494,17 +502,17 @@ fn do_digits(x: Int, base: Int, acc: List(Int)) -> List(Int) {
 ///
 /// ```gleam
 /// undigits([2,3,4], 10)
-/// Ok(234)
+/// // -> Ok(234)
 /// ```
 ///
 /// ```gleam
 /// undigits([2,3,4], 1)
-/// Error(InvalidBase)
+/// // -> Error(InvalidBase)
 /// ```
 ///
 /// ```gleam
 /// undigits([2,3,4], 2)
-/// Error(InvalidBase)
+/// // -> Error(InvalidBase)
 /// ```
 ///
 pub fn undigits(numbers: List(Int), base: Int) -> Result(Int, InvalidBase) {
@@ -780,6 +788,7 @@ pub fn add(a: Int, b: Int) -> Int {
 ///
 /// ```gleam
 /// import gleam/list
+///
 /// list.fold([2, 3, 4], 1, multiply)
 /// // -> 24
 /// ```
@@ -807,6 +816,7 @@ pub fn multiply(a: Int, b: Int) -> Int {
 ///
 /// ```gleam
 /// import gleam/list
+///
 /// list.fold([1, 2, 3], 10, subtract)
 /// // -> 4
 /// ```

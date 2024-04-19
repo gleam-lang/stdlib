@@ -221,6 +221,7 @@ pub fn exclusive_nor(a: Bool, b: Bool) -> Bool {
 ///
 /// ```gleam
 /// import gleam/order
+///
 /// compare(True, False)
 /// // -> order.Gt
 /// ```
@@ -413,6 +414,7 @@ pub fn guard(
 ///
 /// ```gleam
 /// import gleam/int
+///
 /// let name = ""
 /// let greeting = fn() { "Hello, " <> name }
 /// use <- lazy_guard(when: name == "", otherwise: greeting)

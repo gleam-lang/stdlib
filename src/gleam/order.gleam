@@ -126,6 +126,7 @@ pub fn min(a: Order, b: Order) -> Order {
 /// ```gleam
 /// import gleam/int
 /// import gleam/list
+///
 /// list.sort([1, 5, 4], by: reverse(int.compare))
 /// // -> [5, 4, 1]
 /// ```
@@ -143,6 +144,10 @@ pub fn reverse(orderer: fn(a, a) -> Order) -> fn(a, a) -> Order {
 ///
 /// break_tie(in: int.compare(1, 1), with: Lt)
 /// // -> Lt
+/// ```
+///
+/// ```gleam
+/// import gleam/int
 ///
 /// break_tie(in: int.compare(1, 0), with: Eq)
 /// // -> Gt
@@ -168,6 +173,10 @@ pub fn break_tie(in order: Order, with other: Order) -> Order {
 ///
 /// lazy_break_tie(in: int.compare(1, 1), with: fn() { Lt })
 /// // -> Lt
+/// ```
+///
+/// ```gleam
+/// import gleam/int
 ///
 /// lazy_break_tie(in: int.compare(1, 0), with: fn() { Eq })
 /// // -> Gt

@@ -31,6 +31,7 @@ pub fn compose(fun1: fn(a) -> b, fun2: fn(b) -> c) -> fn(a) -> c {
 ///
 /// ```gleam
 /// import gleam/list
+///
 /// let multiply = curry2(fn(x, y) { x * y })
 /// list.map([1, 2, 3], multiply(2))
 /// // -> [2, 4, 6]

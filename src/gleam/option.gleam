@@ -4,7 +4,7 @@
 /// This is Gleam's alternative to having a value that could be Null, as is
 /// possible in some other languages.
 ///
-/// # `Option` and `Result`
+/// ## `Option` and `Result`
 ///
 /// In other languages failible functions may return either `Result` or
 /// `Option` depending on whether there is more information to be given about the
