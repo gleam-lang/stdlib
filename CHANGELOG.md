@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.37.0 - 2024-04-19
 
 - The `order` module gains the `break_tie` and `lazy_break_tie` functions.
 - `list.at` has been deprecated as it was misleading and would be commonly
