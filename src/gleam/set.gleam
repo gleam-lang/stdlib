@@ -141,6 +141,7 @@ pub fn to_list(set: Set(member)) -> List(member) {
 /// ```gleam
 /// import gleam/int
 /// import gleam/list
+///
 /// [1, 1, 2, 4, 3, 2] |> from_list |> to_list |> list.sort(by: int.compare)
 /// // -> [1, 2, 3, 4]
 /// ```
@@ -185,6 +186,7 @@ pub fn fold(
 ///
 /// ```gleam
 /// import gleam/int
+///
 /// from_list([1, 4, 6, 3, 675, 44, 67])
 /// |> filter(for: int.is_even)
 /// |> to_list

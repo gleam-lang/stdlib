@@ -468,6 +468,7 @@ pub fn divide(a: Float, by b: Float) -> Result(Float, Nil) {
 ///
 /// ```gleam
 /// import gleam/list
+///
 /// list.fold([1.0, 2.0, 3.0], 0.0, add)
 /// // -> 6.0
 /// ```
@@ -495,6 +496,7 @@ pub fn add(a: Float, b: Float) -> Float {
 ///
 /// ```gleam
 /// import gleam/list
+///
 /// list.fold([2.0, 3.0, 4.0], 1.0, multiply)
 /// // -> 24.0
 /// ```
@@ -522,6 +524,7 @@ pub fn multiply(a: Float, b: Float) -> Float {
 ///
 /// ```gleam
 /// import gleam/list
+///
 /// list.fold([1.0, 2.0, 3.0], 10.0, subtract)
 /// // -> 4.0
 /// ```
