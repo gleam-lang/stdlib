@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Add `list.to_dict`, convert List to Dict in straightforward way
+
 ## v0.37.0 - 2024-04-19
 
 - The `order` module gains the `break_tie` and `lazy_break_tie` functions.

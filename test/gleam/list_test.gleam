@@ -1250,3 +1250,13 @@ pub fn shuffle_test() {
   list.range(0, recursion_test_cycles)
   |> list.shuffle()
 }
+
+pub fn to_dict_test() {
+  [10, 20, 30]
+  |> list.to_dict()
+  |> should.equal(dict.from_list([#(0, 10), #(1, 20), #(2, 30)]))
+
+  []
+  |> list.to_dict()
+  |> should.equal(dict.new())
+}

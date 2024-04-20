@@ -2123,3 +2123,21 @@ pub fn shuffle(list: List(a)) -> List(a) {
   |> do_shuffle_by_pair_indexes()
   |> do_shuffle_pair_unwrap([])
 }
+
+/// Converts the list to a dict.
+/// 
+/// List indexes will be used as Dict indexes.
+/// List values will be used as Dict values.
+///
+/// ## Examples
+///
+/// ```gleam
+/// [10, 20, 30] |> to_dict()
+/// // -> from_list([#(0, 10), #(1, 20), #(2, 30)])
+/// ```
+///
+pub fn to_dict(list: List(a)) -> Dict(Int, a) {
+  index_fold(list, dict.new(), fn(acc, elem, index) {
+    dict.insert(acc, index, elem)
+  })
+}
