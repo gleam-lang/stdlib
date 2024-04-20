@@ -1116,7 +1116,9 @@ pub fn intersperse(list: List(a), with elem: a) -> List(a) {
 /// // -> Error(Nil)
 /// ```
 ///
-@deprecated("Gleam lists are immutable linked lists, so indexing into them is a slow operation that must traverse the list.
+@deprecated("
+
+Gleam lists are immutable linked lists, so indexing into them is a slow operation that must traverse the list.
 
 In functional programming it is very rare to use indexing, so if you are using indexing then a different algorithm or a different data structure is likely more appropriate.
 ")
