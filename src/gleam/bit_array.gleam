@@ -206,3 +206,48 @@ fn do_inspect(input: BitArray, accumulator: String) -> String {
     _ -> accumulator
   }
 }
+
+
+/// Splits a bit array once at a given delimiter.
+///
+/// ## Examples:
+/// ```gleam
+/// split_once(<<1, 2, 3, 4, 5, 2, 3>>, <<2, 3>>)
+/// -> #(<<1>>, <<4, 5, 2, 3>>)
+///
+/// split_once(<<1, 2, 3, 4, 5>>, <<1, 2, 3, 4>>)
+/// -> #(<<>>, <<5>>)
+///
+/// split_once(<<1, 2, 3>>, <<4, 5>>)
+/// -> #(<<1, 2, 3>>, <<>>)
+/// ```
+pub fn split_once(ba: BitArray, delimiter: BitArray) -> #(BitArray, BitArray) {
+  do_split_once(ba, delimiter, byte_size(delimiter))
+}
+
+fn do_split_once(ba: BitArray, delimiter: BitArray, delimiter_size: Int) -> #(BitArray, BitArray) {
+  let slice_result = slice(ba, 0, delimiter_size)
+
+  case ba, delimiter, slice_result {
+    <<first, rest:bits>>, delimiter, Ok(slice_unwrapped) -> {
+
+      case slice_unwrapped == delimiter {
+        True -> {
+          let aftercut_length = byte_size(ba) - delimiter_size
+          let assert Ok(aftercut) = slice(ba, delimiter_size, aftercut_length)
+
+          #(<<>>, aftercut)
+        }
+        False -> {
+          let #(beforecut, aftercut) = do_split_once(rest, delimiter, delimiter_size)
+          #(<<first, beforecut:bits>>, aftercut)
+        }
+      }
+
+    }
+    _, _, _ -> {
+      #(ba, <<>>)
+    }
+  }
+}
+

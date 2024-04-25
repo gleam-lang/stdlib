@@ -302,3 +302,23 @@ pub fn inspect_partial_bytes_test() {
   bit_array.inspect(<<5:3, 11:4, 1:2>>)
   |> should.equal("<<182, 1:size(1)>>")
 }
+
+pub fn split_once_test() {
+  bit_array.split_once(<<1, 2, 3, 4, 5>>, <<2, 3>>)
+  |> should.equal(#(<<1>>, <<4, 5>>))
+
+  bit_array.split_once(<<1, 2, 3, 4, 5, 2, 3>>, <<2, 3>>)
+  |> should.equal(#(<<1>>, <<4, 5, 2, 3>>))
+
+  bit_array.split_once(<<1, 2, 3, 4, 5>>, <<1, 2, 3>>)
+  |> should.equal(#(<<>>, <<4, 5>>))
+
+  bit_array.split_once(<<1, 2, 3, 4, 5>>, <<1, 2, 3, 4, 5>>)
+  |> should.equal(#(<<>>, <<>>))
+
+  bit_array.split_once(<<1, 2, 3, 4, 5>>, <<4, 5>>)
+  |> should.equal(#(<<1, 2, 3>>, <<>>))
+
+  bit_array.split_once(<<1, 2, 3, 4, 5>>, <<1, 2, 3, 4, 5, 6>>)
+  |> should.equal(#(<<1, 2, 3, 4, 5>>, <<>>))
+}
