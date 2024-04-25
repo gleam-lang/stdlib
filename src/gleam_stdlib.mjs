@@ -366,6 +366,43 @@ export function bit_array_slice(bits, position, length) {
   return new Ok(new BitArray(buffer));
 }
 
+export function bit_array_split(bits, subpattern) {
+  const slices = [];
+  if (bits.length == 0 && subpattern.length == 0) {
+    return new Ok(List.fromArray([new BitArray(new Uint8Array(0))]));
+  }
+  if (subpattern.length == 0) {
+    return new Error(Nil);
+  }
+
+  let subpatternIndex = 0;
+  let startIndex = 0;
+  for (let i = 0; i < bits.length; i++) {
+    if (bits.buffer[i] == subpattern.buffer[subpatternIndex]) {
+      subpatternIndex++;
+    }
+    if (subpatternIndex == subpattern.length) {
+      const new_slice = new Uint8Array(
+        bits.buffer.buffer,
+        startIndex,
+        i - startIndex - subpattern.length + 1,
+      );
+      slices.push(new BitArray(new_slice));
+      startIndex = i + 1;
+      subpatternIndex = 0;
+
+      if (i == bits.length - 1) {
+        slices.push(new BitArray(new Uint8Array(0)));
+      }
+    }
+  }
+  if (startIndex < bits.length || bits.length == 0) {
+    slices.push(new BitArray(new Uint8Array(bits.buffer.buffer, startIndex)));
+  }
+
+  return new Ok(List.fromArray(slices));
+}
+
 export function codepoint(int) {
   return new UtfCodepoint(int);
 }

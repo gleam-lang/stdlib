@@ -45,6 +45,13 @@ pub fn slice(
   take length: Int,
 ) -> Result(BitArray, Nil)
 
+@external(erlang, "gleam_stdlib", "bit_array_split")
+@external(javascript, "../gleam_stdlib.mjs", "bit_array_split")
+pub fn split(
+  bits: BitArray,
+  on subpattern: BitArray,
+) -> Result(List(BitArray), Nil)
+
 /// Tests to see whether a bit array is valid UTF-8.
 ///
 pub fn is_utf8(bits: BitArray) -> Bool {

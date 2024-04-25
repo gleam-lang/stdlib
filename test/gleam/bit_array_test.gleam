@@ -302,3 +302,39 @@ pub fn inspect_partial_bytes_test() {
   bit_array.inspect(<<5:3, 11:4, 1:2>>)
   |> should.equal("<<182, 1:size(1)>>")
 }
+
+pub fn split_test() {
+  bit_array.split(<<"ABaABabABc":utf8>>, <<"AB":utf8>>)
+  |> should.be_ok
+  |> should.equal([<<"":utf8>>, <<"a":utf8>>, <<"ab":utf8>>, <<"c":utf8>>])
+}
+
+pub fn split_ends_in_pattern_test() {
+  bit_array.split(<<"ABaABabAB":utf8>>, <<"AB":utf8>>)
+  |> should.be_ok
+  |> should.equal([<<"":utf8>>, <<"a":utf8>>, <<"ab":utf8>>, <<"":utf8>>])
+}
+
+pub fn split_empty_subpattern_test() {
+  bit_array.split(<<"ABC":utf8>>, <<>>)
+  |> should.be_error
+  |> should.equal(Nil)
+}
+
+pub fn split_same_pattern_test() {
+  bit_array.split(<<"ABC":utf8>>, <<"ABC":utf8>>)
+  |> should.be_ok
+  |> should.equal([<<"":utf8>>, <<"":utf8>>])
+}
+
+pub fn split_empty_bit_array_with_empty_subpattern_test() {
+  bit_array.split(<<>>, <<>>)
+  |> should.be_ok
+  |> should.equal([<<>>])
+}
+
+pub fn split_empty_bit_array_with_pattern_test() {
+  bit_array.split(<<>>, <<"ABC":utf8>>)
+  |> should.be_ok
+  |> should.equal([<<"":utf8>>])
+}
