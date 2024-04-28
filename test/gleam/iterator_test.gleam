@@ -376,6 +376,41 @@ pub fn find_test() {
   |> should.equal(Ok(Cat(id: 10)))
 }
 
+pub fn find_map_test() {
+  iterator.range(0, 10)
+  |> iterator.find_map(fn(e) {
+    case e == 5 {
+      True -> Ok(e)
+      False -> Error(Nil)
+    }
+  })
+  |> should.equal(Ok(5))
+
+  iterator.range(0, 10)
+  |> iterator.find_map(fn(e) {
+    case e > 10 {
+      True -> Ok(e)
+      False -> Error(Nil)
+    }
+  })
+  |> should.equal(Error(Nil))
+
+  iterator.empty()
+  |> iterator.find_map(fn(_x) { Ok(True) })
+  |> should.equal(Error(Nil))
+
+  iterator.unfold(Cat(id: 1), fn(cat: Cat) {
+    iterator.Next(cat, Cat(id: cat.id + 1))
+  })
+  |> iterator.find_map(fn(cat: Cat) {
+    case cat.id == 10 {
+      True -> Ok(cat)
+      False -> Error(Nil)
+    }
+  })
+  |> should.equal(Ok(Cat(id: 10)))
+}
+
 pub fn index_test() {
   iterator.from_list(["a", "b", "c"])
   |> iterator.index
