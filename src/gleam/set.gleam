@@ -200,6 +200,15 @@ pub fn filter(
   Set(dict.filter(in: set.dict, keeping: fn(m, _) { predicate(m) }))
 }
 
+/// Creates a new set from a given set with all the same entries except any
+/// entry found on the given list.
+/// 
+/// ## Examples
+/// 
+/// ```gleam
+/// drop(from_list([1, 2, 3, 4]), [1, 3])
+/// // -> [2, 4]
+/// ```
 pub fn drop(from set: Set(member), drop disallowed: List(member)) -> Set(member) {
   list.fold(over: disallowed, from: set, with: delete)
 }
