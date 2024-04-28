@@ -255,6 +255,26 @@ pub fn new_test() {
   |> should.equal([])
 }
 
+pub fn wrap_test() {
+  list.wrap([])
+  |> should.equal([[]])
+
+  list.wrap([[]])
+  |> should.equal([[[]]])
+
+  list.wrap(Nil)
+  |> should.equal([Nil])
+
+  list.wrap(1)
+  |> should.equal([1])
+
+  list.wrap([1, 2])
+  |> should.equal([[1, 2]])
+
+  list.wrap([[1, 2, 3]])
+  |> should.equal([[[1, 2, 3]]])
+}
+
 pub fn append_test() {
   list.append([1], [2, 3])
   |> should.equal([1, 2, 3])
