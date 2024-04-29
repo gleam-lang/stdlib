@@ -726,10 +726,11 @@ fn do_find_map(
   }
 }
 
-/// Finds the first element in a given iterator for which the given function returns Ok(new_value),
-/// then returns the wrapped new_value.
+/// Finds the first element in a given iterator
+/// for which the given function returns `Ok(new_value)`,
+/// then returns the wrapped `new_value`.
 ///
-/// Returns Error(Nil) if no such element is found.
+/// Returns `Error(Nil)` if no such element is found.
 ///
 /// ## Examples
 ///
