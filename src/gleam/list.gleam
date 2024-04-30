@@ -582,6 +582,26 @@ pub fn new() -> List(a) {
   []
 }
 
+/// Returns the given item wrapped in a list.
+/// 
+/// ## Examples
+/// 
+/// ```gleam
+/// wrap(1)
+/// // -> [1]
+/// 
+/// wrap(["a", "b", "c"])
+/// // -> [["a", "b", "c"]]
+/// 
+/// wrap([[]])
+/// // -> [[[]]]
+/// ```
+/// 
+/// 
+pub fn wrap(item: a) -> List(a) {
+  [item]
+}
+
 /// Joins one list onto the end of another.
 ///
 /// This function runs in linear time, and it traverses and copies the first

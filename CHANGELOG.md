@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- The `list` module gains the `wrap` function.
 - The `iterator.find_map` has been added.
 
 ## v0.37.0 - 2024-04-19
