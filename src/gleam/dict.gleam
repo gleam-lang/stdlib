@@ -42,14 +42,19 @@ pub fn size(dict: Dict(k, v)) -> Int
 ///
 /// ## Examples
 ///
+/// Calling `to_list` on an empty `dict` returns an empty list.
+/// 
 /// ```gleam
-/// new()
-/// // -> from_list([])
+/// new() |> to_list
+/// // -> []
 /// ```
+/// 
+/// The ordering of elements in the resulting list is an implementation detail 
+/// that should not be relied upon.
 ///
 /// ```gleam
-/// new() |> insert("key", 0)
-/// // -> from_list([#("key", 0)])
+/// new() |> insert("b", 1) |> insert("a", 0) |> insert("c", 2) |> to_list
+/// // -> [#("a", 0), #("b", 1), #("c", 2)]
 /// ```
 ///
 @external(erlang, "maps", "to_list")
