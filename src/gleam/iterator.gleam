@@ -712,6 +712,51 @@ pub fn find(
   |> do_find(is_desired)
 }
 
+fn do_find_map(
+  continuation: fn() -> Action(a),
+  f: fn(a) -> Result(b, c),
+) -> Result(b, Nil) {
+  case continuation() {
+    Stop -> Error(Nil)
+    Continue(e, next) ->
+      case f(e) {
+        Ok(e) -> Ok(e)
+        Error(_) -> do_find_map(next, f)
+      }
+  }
+}
+
+/// Finds the first element in a given iterator
+/// for which the given function returns `Ok(new_value)`,
+/// then returns the wrapped `new_value`.
+///
+/// Returns `Error(Nil)` if no such element is found.
+///
+/// ## Examples
+///
+/// ```gleam
+/// find_map(from_list([1, 2, 3]), first)
+/// // -> Ok(1)
+/// ```
+///
+/// ```gleam
+/// find_map(from_list([]), first)
+/// // -> Error(Nil)
+/// ```
+///
+/// ```gleam
+/// find(empty(), first)
+/// // -> Error(Nil)
+/// ```
+///
+pub fn find_map(
+  in haystack: Iterator(a),
+  one_that is_desired: fn(a) -> Result(b, c),
+) -> Result(b, Nil) {
+  haystack.continuation
+  |> do_find_map(is_desired)
+}
+
 fn do_index(
   continuation: fn() -> Action(element),
   next: Int,
