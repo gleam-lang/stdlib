@@ -2,6 +2,7 @@ import gleam/dict
 import gleam/float
 import gleam/int
 import gleam/list
+import gleam/option.{None, Some}
 import gleam/pair
 import gleam/should
 
@@ -77,21 +78,21 @@ pub fn contains_test() {
 
 pub fn first_test() {
   list.first([0, 4, 5, 7])
-  |> should.equal(Ok(0))
+  |> should.equal(Some(0))
 
   list.first([])
-  |> should.equal(Error(Nil))
+  |> should.equal(None)
 }
 
 pub fn rest_test() {
   list.rest([0, 4, 5, 7])
-  |> should.equal(Ok([4, 5, 7]))
+  |> should.equal(Some([4, 5, 7]))
 
   list.rest([0])
-  |> should.equal(Ok([]))
+  |> should.equal(Some([]))
 
   list.rest([])
-  |> should.equal(Error(Nil))
+  |> should.equal(None)
 }
 
 pub fn group_test() {
@@ -141,16 +142,16 @@ pub fn filter_test() {
 
 pub fn filter_map_test() {
   [2, 4, 6, 1]
-  |> list.filter_map(fn(x) { Ok(x + 1) })
+  |> list.filter_map(fn(x) { Some(x + 1) })
   |> should.equal([3, 5, 7, 2])
 
   [2, 4, 6, 1]
-  |> list.filter_map(Error)
+  |> list.filter_map(fn(_) { None })
   |> should.equal([])
 
   // TCO test
   list.repeat(0, recursion_test_cycles)
-  |> list.filter_map(fn(x) { Ok(x + 1) })
+  |> list.filter_map(fn(x) { Some(x + 1) })
 }
 
 pub fn map_test() {
@@ -423,29 +424,29 @@ pub fn try_fold_test() {
 pub fn find_map_test() {
   let f = fn(x) {
     case x {
-      2 -> Ok(4)
-      _ -> Error(Nil)
+      2 -> Some(4)
+      _ -> None
     }
   }
 
   [1, 2, 3]
   |> list.find_map(with: f)
-  |> should.equal(Ok(4))
+  |> should.equal(Some(4))
 
   [1, 3, 2]
   |> list.find_map(with: f)
-  |> should.equal(Ok(4))
+  |> should.equal(Some(4))
 
   [1, 3]
   |> list.find_map(with: f)
-  |> should.equal(Error(Nil))
+  |> should.equal(None)
 
   // TCO test
   list.range(0, recursion_test_cycles)
   |> list.find_map(with: fn(x) {
     case x == recursion_test_cycles {
-      True -> Ok(recursion_test_cycles)
-      _ -> Error(Nil)
+      True -> Some(recursion_test_cycles)
+      _ -> None
     }
   })
 }
@@ -455,15 +456,15 @@ pub fn find_test() {
 
   [1, 2, 3]
   |> list.find(one_that: is_two)
-  |> should.equal(Ok(2))
+  |> should.equal(Some(2))
 
   [1, 3, 2]
   |> list.find(one_that: is_two)
-  |> should.equal(Ok(2))
+  |> should.equal(Some(2))
 
   [1, 3]
   |> list.find(one_that: is_two)
-  |> should.equal(Error(Nil))
+  |> should.equal(None)
 
   // TCO test
   list.range(0, recursion_test_cycles)
@@ -548,19 +549,19 @@ pub fn zip_test() {
 
 pub fn strict_zip_test() {
   list.strict_zip([], [1, 2, 3])
-  |> should.equal(Error(Nil))
+  |> should.equal(None)
 
   list.strict_zip([1, 2], [])
-  |> should.equal(Error(Nil))
+  |> should.equal(None)
 
   list.strict_zip([1, 2, 3], [4, 5, 6])
-  |> should.equal(Ok([#(1, 4), #(2, 5), #(3, 6)]))
+  |> should.equal(Some([#(1, 4), #(2, 5), #(3, 6)]))
 
   list.strict_zip([5, 6], [1, 2, 3])
-  |> should.equal(Error(Nil))
+  |> should.equal(None)
 
   list.strict_zip([5, 6, 7], [1, 2])
-  |> should.equal(Error(Nil))
+  |> should.equal(None)
 }
 
 pub fn unzip_test() {
@@ -590,16 +591,16 @@ pub fn intersperse_test() {
 
 pub fn at_test() {
   list.at([1, 2, 3], 2)
-  |> should.equal(Ok(3))
+  |> should.equal(Some(3))
 
   list.at([1, 2, 3], 5)
-  |> should.equal(Error(Nil))
+  |> should.equal(None)
 
   list.at([], 0)
-  |> should.equal(Error(Nil))
+  |> should.equal(None)
 
   list.at([1, 2, 3, 4, 5, 6], -1)
-  |> should.equal(Error(Nil))
+  |> should.equal(None)
 }
 
 pub fn unique_test() {
@@ -815,15 +816,15 @@ pub fn key_find_test() {
 
   proplist
   |> list.key_find(0)
-  |> should.equal(Ok("1"))
+  |> should.equal(Some("1"))
 
   proplist
   |> list.key_find(1)
-  |> should.equal(Ok("2"))
+  |> should.equal(Some("2"))
 
   proplist
   |> list.key_find(2)
-  |> should.equal(Error(Nil))
+  |> should.equal(None)
 }
 
 pub fn key_filter_test() {
@@ -849,15 +850,15 @@ pub fn key_filter_test() {
 pub fn pop_test() {
   [1, 2, 3]
   |> list.pop(fn(x) { x > 2 })
-  |> should.equal(Ok(#(3, [1, 2])))
+  |> should.equal(Some(#(3, [1, 2])))
 
   [1, 2, 3]
   |> list.pop(fn(x) { x > 4 })
-  |> should.equal(Error(Nil))
+  |> should.equal(None)
 
   []
   |> list.pop(fn(_x) { True })
-  |> should.equal(Error(Nil))
+  |> should.equal(None)
 
   // TCO test
   list.repeat(0, recursion_test_cycles + 10)
@@ -867,29 +868,29 @@ pub fn pop_test() {
 pub fn pop_map_test() {
   let get = fn(x) {
     case x > 0 {
-      True -> Ok(x * 2)
-      False -> Error(Nil)
+      True -> Some(x * 2)
+      False -> None
     }
   }
   list.pop_map([0, 2, 3], get)
-  |> should.equal(Ok(#(4, [0, 3])))
+  |> should.equal(Some(#(4, [0, 3])))
 
   list.pop_map([0, -1], get)
-  |> should.equal(Error(Nil))
+  |> should.equal(None)
 
   list.pop_map([], get)
-  |> should.equal(Error(Nil))
+  |> should.equal(None)
 }
 
 pub fn key_pop_test() {
   list.key_pop([#("a", 0), #("b", 1)], "a")
-  |> should.equal(Ok(#(0, [#("b", 1)])))
+  |> should.equal(Some(#(0, [#("b", 1)])))
 
   list.key_pop([#("a", 0), #("b", 1)], "b")
-  |> should.equal(Ok(#(1, [#("a", 0)])))
+  |> should.equal(Some(#(1, [#("a", 0)])))
 
   list.key_pop([#("a", 0), #("b", 1)], "c")
-  |> should.equal(Error(Nil))
+  |> should.equal(None)
 }
 
 pub fn key_set_test() {
@@ -1137,11 +1138,11 @@ pub fn sized_chunk_test() {
 pub fn reduce_test() {
   []
   |> list.reduce(with: fn(x, y) { x + y })
-  |> should.equal(Error(Nil))
+  |> should.equal(None)
 
   [1, 2, 3, 4, 5]
   |> list.reduce(with: fn(x, y) { x + y })
-  |> should.equal(Ok(15))
+  |> should.equal(Some(15))
 }
 
 pub fn scan_test() {
@@ -1174,10 +1175,10 @@ pub fn scan_test() {
 
 pub fn last_test() {
   list.last([])
-  |> should.equal(Error(Nil))
+  |> should.equal(None)
 
   list.last([1, 2, 3, 4, 5])
-  |> should.equal(Ok(5))
+  |> should.equal(Some(5))
 }
 
 pub fn combinations_test() {

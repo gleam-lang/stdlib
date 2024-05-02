@@ -1,6 +1,6 @@
 import gleam/dict.{type Dict}
 import gleam/list
-import gleam/result
+import gleam/option
 
 // A list is used as the dict value as an empty list has the smallest
 // representation in Erlang's binary format
@@ -92,7 +92,7 @@ pub fn insert(into set: Set(member), this member: member) -> Set(member) {
 pub fn contains(in set: Set(member), this member: member) -> Bool {
   set.dict
   |> dict.get(member)
-  |> result.is_ok
+  |> option.is_some
 }
 
 /// Removes a member from a set. If the set does not contain the member then

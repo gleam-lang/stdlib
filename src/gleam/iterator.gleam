@@ -570,14 +570,14 @@ pub fn filter(
 
 fn do_filter_map(
   continuation: fn() -> Action(a),
-  f: fn(a) -> Result(b, c),
+  f: fn(a) -> Option(b),
 ) -> Action(b) {
   case continuation() {
     Stop -> Stop
     Continue(e, next) ->
       case f(e) {
-        Ok(e) -> Continue(e, fn() { do_filter_map(next, f) })
-        Error(_) -> do_filter_map(next, f)
+        Some(e) -> Continue(e, fn() { do_filter_map(next, f) })
+        None -> do_filter_map(next, f)
       }
   }
 }
@@ -606,7 +606,7 @@ fn do_filter_map(
 ///
 pub fn filter_map(
   iterator: Iterator(a),
-  keeping_with f: fn(a) -> Result(b, c),
+  keeping_with f: fn(a) -> Option(b),
 ) -> Iterator(b) {
   fn() { do_filter_map(iterator.continuation, f) }
   |> Iterator
@@ -670,12 +670,12 @@ pub fn range(from start: Int, to stop: Int) -> Iterator(Int) {
   }
 }
 
-fn do_find(continuation: fn() -> Action(a), f: fn(a) -> Bool) -> Result(a, Nil) {
+fn do_find(continuation: fn() -> Action(a), f: fn(a) -> Bool) -> Option(a) {
   case continuation() {
-    Stop -> Error(Nil)
+    Stop -> None
     Continue(e, next) ->
       case f(e) {
-        True -> Ok(e)
+        True -> Some(e)
         False -> do_find(next, f)
       }
   }
@@ -684,7 +684,7 @@ fn do_find(continuation: fn() -> Action(a), f: fn(a) -> Bool) -> Result(a, Nil) 
 /// Finds the first element in a given iterator for which the given function returns
 /// `True`.
 ///
-/// Returns `Error(Nil)` if the function does not return `True` for any of the
+/// Returns `None` if the function does not return `True` for any of the
 /// elements.
 ///
 /// ## Examples
@@ -707,52 +707,52 @@ fn do_find(continuation: fn() -> Action(a), f: fn(a) -> Bool) -> Result(a, Nil) 
 pub fn find(
   in haystack: Iterator(a),
   one_that is_desired: fn(a) -> Bool,
-) -> Result(a, Nil) {
+) -> Option(a) {
   haystack.continuation
   |> do_find(is_desired)
 }
 
 fn do_find_map(
   continuation: fn() -> Action(a),
-  f: fn(a) -> Result(b, c),
-) -> Result(b, Nil) {
+  f: fn(a) -> Option(b),
+) -> Option(b) {
   case continuation() {
-    Stop -> Error(Nil)
+    Stop -> None
     Continue(e, next) ->
       case f(e) {
-        Ok(e) -> Ok(e)
-        Error(_) -> do_find_map(next, f)
+        Some(e) -> Some(e)
+        None -> do_find_map(next, f)
       }
   }
 }
 
 /// Finds the first element in a given iterator
-/// for which the given function returns `Ok(new_value)`,
+/// for which the given function returns `Some(new_value)`,
 /// then returns the wrapped `new_value`.
 ///
-/// Returns `Error(Nil)` if no such element is found.
+/// Returns `None` if no such element is found.
 ///
 /// ## Examples
 ///
 /// ```gleam
 /// find_map(from_list([1, 2, 3]), first)
-/// // -> Ok(1)
+/// // -> Some(1)
 /// ```
 ///
 /// ```gleam
 /// find_map(from_list([]), first)
-/// // -> Error(Nil)
+/// // -> None
 /// ```
 ///
 /// ```gleam
 /// find(empty(), first)
-/// // -> Error(Nil)
+/// // -> None
 /// ```
 ///
 pub fn find_map(
   in haystack: Iterator(a),
-  one_that is_desired: fn(a) -> Result(b, c),
-) -> Result(b, Nil) {
+  one_that is_desired: fn(a) -> Option(b),
+) -> Option(b) {
   haystack.continuation
   |> do_find_map(is_desired)
 }
@@ -1283,7 +1283,7 @@ pub fn group(
 /// ```gleam
 /// from_list([])
 /// |> reduce(fn(acc, x) { acc + x })
-/// // -> Error(Nil)
+/// // -> None
 /// ```
 ///
 /// ```gleam
@@ -1292,21 +1292,19 @@ pub fn group(
 /// // -> Ok(15)
 /// ```
 ///
-pub fn reduce(
-  over iterator: Iterator(e),
-  with f: fn(e, e) -> e,
-) -> Result(e, Nil) {
+pub fn reduce(over iterator: Iterator(e), with f: fn(e, e) -> e) -> Option(e) {
   case iterator.continuation() {
-    Stop -> Error(Nil)
+    Stop -> None
     Continue(e, next) ->
-      do_fold(next, f, e)
-      |> Ok
+      next
+      |> do_fold(f, e)
+      |> Some
   }
 }
 
 /// Returns the last element in the given iterator.
 ///
-/// Returns `Error(Nil)` if the iterator is empty.
+/// Returns `None` if the iterator is empty.
 ///
 /// This function runs in linear time.
 ///
@@ -1314,15 +1312,15 @@ pub fn reduce(
 ///
 /// ```gleam
 /// empty() |> last
-/// // -> Error(Nil)
+/// // -> None
 /// ```
 ///
 /// ```gleam
 /// range(1, 10) |> last
-/// // -> Ok(9)
+/// // -> Some(9)
 /// ```
 ///
-pub fn last(iterator: Iterator(element)) -> Result(element, Nil) {
+pub fn last(iterator: Iterator(element)) -> Option(element) {
   iterator
   |> reduce(fn(_, elem) { elem })
 }
@@ -1496,23 +1494,23 @@ pub fn try_fold(
 }
 
 /// Returns the first element yielded by the given iterator, if it exists,
-/// or `Error(Nil)` otherwise.
+/// or `None` otherwise.
 ///
 /// ## Examples
 ///
 /// ```gleam
 /// from_list([1, 2, 3]) |> first
-/// // -> Ok(1)
+/// // -> Some(1)
 /// ```
 ///
 /// ```gleam
 /// empty() |> first
-/// // -> Error(Nil)
+/// // -> None
 /// ```
-pub fn first(from iterator: Iterator(e)) -> Result(e, Nil) {
+pub fn first(from iterator: Iterator(e)) -> Option(e) {
   case iterator.continuation() {
-    Stop -> Error(Nil)
-    Continue(e, _) -> Ok(e)
+    Stop -> None
+    Continue(e, _) -> Some(e)
   }
 }
 
@@ -1526,20 +1524,20 @@ pub fn first(from iterator: Iterator(e)) -> Result(e, Nil) {
 ///
 /// ```gleam
 /// from_list([1, 2, 3, 4]) |> at(2)
-/// // -> Ok(3)
+/// // -> Some(3)
 /// ```
 ///
 /// ```gleam
 /// from_list([1, 2, 3, 4]) |> at(4)
-/// // -> Error(Nil)
+/// // -> None
 /// ```
 ///
 /// ```gleam
 /// empty() |> at(0)
-/// // -> Error(Nil)
+/// // -> None
 /// ```
 ///
-pub fn at(in iterator: Iterator(e), get index: Int) -> Result(e, Nil) {
+pub fn at(in iterator: Iterator(e), get index: Int) -> Option(e) {
   iterator
   |> drop(index)
   |> first

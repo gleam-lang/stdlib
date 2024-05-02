@@ -1,4 +1,4 @@
-import gleam/option.{type Option}
+import gleam/option.{type Option, None, Some}
 
 /// A dictionary of keys and values.
 ///
@@ -101,7 +101,7 @@ pub fn has_key(dict: Dict(k, v), key: k) -> Bool {
 
 @external(erlang, "maps", "is_key")
 fn do_has_key(key: k, dict: Dict(k, v)) -> Bool {
-  get(dict, key) != Error(Nil)
+  get(dict, key) != None
 }
 
 /// Creates a fresh dict that contains no values.
@@ -117,22 +117,25 @@ fn do_new() -> Dict(key, value)
 /// Fetches a value from a dict for a given key.
 ///
 /// The dict may not have a value for the key, so the value is wrapped in a
-/// `Result`.
+/// `Option`.
 ///
 /// ## Examples
 ///
 /// ```gleam
 /// new() |> insert("a", 0) |> get("a")
-/// // -> Ok(0)
+/// // -> Some(0)
 /// ```
 ///
 /// ```gleam
 /// new() |> insert("a", 0) |> get("b")
-/// // -> Error(Nil)
+/// // -> None
 /// ```
 ///
-pub fn get(from: Dict(key, value), get: key) -> Result(value, Nil) {
-  do_get(from, get)
+pub fn get(from: Dict(key, value), get: key) -> Option(value) {
+  case do_get(from, get) {
+    Ok(value) -> Some(value)
+    Error(_) -> None
+  }
 }
 
 @external(erlang, "gleam_stdlib", "map_get")
@@ -325,7 +328,7 @@ fn insert_taken(
 ) -> Dict(k, v) {
   let insert = fn(taken, key) {
     case get(dict, key) {
-      Ok(value) -> insert(taken, key, value)
+      Some(value) -> insert(taken, key, value)
       _ -> taken
     }
   }
@@ -451,7 +454,6 @@ pub fn update(
 ) -> Dict(k, v) {
   dict
   |> get(key)
-  |> option.from_result
   |> fun
   |> insert(dict, key, _)
 }

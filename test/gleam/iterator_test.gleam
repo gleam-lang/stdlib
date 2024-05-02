@@ -2,6 +2,7 @@ import gleam/dict
 import gleam/int
 import gleam/iterator.{Done, Next}
 import gleam/list
+import gleam/option.{None, Some}
 import gleam/should
 
 // a |> from_list |> to_list == a
@@ -282,13 +283,20 @@ pub fn filter_map_test() {
     |> should.equal(list.filter_map(subject, f))
   }
 
-  testcase([], int.parse)
-  testcase(["1"], int.parse)
-  testcase(["1", "2", "3"], int.parse)
-  testcase(["1", "a", "b"], int.parse)
-  testcase(["l", "2", "3", "a"], int.parse)
-  testcase(["1", "c", "3", "a", "b"], int.parse)
-  testcase(["1", "20", "ten", "4", "5", "69"], int.parse)
+  let string_to_int = fn(value) {
+    case int.parse(value) {
+      Ok(value) -> Some(value)
+      Error(_) -> None
+    }
+  }
+
+  testcase([], string_to_int)
+  testcase(["1"], string_to_int)
+  testcase(["1", "2", "3"], string_to_int)
+  testcase(["1", "a", "b"], string_to_int)
+  testcase(["l", "2", "3", "a"], string_to_int)
+  testcase(["1", "c", "3", "a", "b"], string_to_int)
+  testcase(["1", "20", "ten", "4", "5", "69"], string_to_int)
 }
 
 pub fn repeat_test() {
@@ -359,56 +367,56 @@ type Cat {
 pub fn find_test() {
   iterator.range(0, 10)
   |> iterator.find(fn(e) { e == 5 })
-  |> should.equal(Ok(5))
+  |> should.equal(Some(5))
 
   iterator.range(0, 10)
   |> iterator.find(fn(e) { e > 10 })
-  |> should.equal(Error(Nil))
+  |> should.equal(None)
 
   iterator.empty()
   |> iterator.find(fn(_x) { True })
-  |> should.equal(Error(Nil))
+  |> should.equal(None)
 
   iterator.unfold(Cat(id: 1), fn(cat: Cat) {
     iterator.Next(cat, Cat(id: cat.id + 1))
   })
   |> iterator.find(fn(cat: Cat) { cat.id == 10 })
-  |> should.equal(Ok(Cat(id: 10)))
+  |> should.equal(Some(Cat(id: 10)))
 }
 
 pub fn find_map_test() {
   iterator.range(0, 10)
   |> iterator.find_map(fn(e) {
     case e == 5 {
-      True -> Ok(e)
-      False -> Error(Nil)
+      True -> Some(e)
+      False -> None
     }
   })
-  |> should.equal(Ok(5))
+  |> should.equal(Some(5))
 
   iterator.range(0, 10)
   |> iterator.find_map(fn(e) {
     case e > 10 {
-      True -> Ok(e)
-      False -> Error(Nil)
+      True -> Some(e)
+      False -> None
     }
   })
-  |> should.equal(Error(Nil))
+  |> should.equal(None)
 
   iterator.empty()
-  |> iterator.find_map(fn(_x) { Ok(True) })
-  |> should.equal(Error(Nil))
+  |> iterator.find_map(fn(_x) { Some(True) })
+  |> should.equal(None)
 
   iterator.unfold(Cat(id: 1), fn(cat: Cat) {
     iterator.Next(cat, Cat(id: cat.id + 1))
   })
   |> iterator.find_map(fn(cat: Cat) {
     case cat.id == 10 {
-      True -> Ok(cat)
-      False -> Error(Nil)
+      True -> Some(cat)
+      False -> None
     }
   })
-  |> should.equal(Ok(Cat(id: 10)))
+  |> should.equal(Some(Cat(id: 10)))
 }
 
 pub fn index_test() {
@@ -539,21 +547,21 @@ pub fn group_test() {
 pub fn reduce_test() {
   iterator.empty()
   |> iterator.reduce(with: fn(acc, x) { acc + x })
-  |> should.equal(Error(Nil))
+  |> should.equal(None)
 
   iterator.from_list([1, 2, 3, 4, 5])
   |> iterator.reduce(with: fn(acc, x) { acc + x })
-  |> should.equal(Ok(15))
+  |> should.equal(Some(15))
 }
 
 pub fn last_test() {
   iterator.empty()
   |> iterator.last
-  |> should.equal(Error(Nil))
+  |> should.equal(None)
 
   iterator.range(1, 10)
   |> iterator.last
-  |> should.equal(Ok(10))
+  |> should.equal(Some(10))
 }
 
 pub fn empty_test() {
@@ -646,25 +654,25 @@ pub fn try_fold_test() {
 pub fn first_test() {
   iterator.from_list([1, 2, 3])
   |> iterator.first
-  |> should.equal(Ok(1))
+  |> should.equal(Some(1))
 
   iterator.empty()
   |> iterator.first
-  |> should.equal(Error(Nil))
+  |> should.equal(None)
 }
 
 pub fn at_test() {
   iterator.from_list([1, 2, 3, 4])
   |> iterator.at(2)
-  |> should.equal(Ok(3))
+  |> should.equal(Some(3))
 
   iterator.from_list([1, 2, 3, 4])
   |> iterator.at(4)
-  |> should.equal(Error(Nil))
+  |> should.equal(None)
 
   iterator.empty()
   |> iterator.at(0)
-  |> should.equal(Error(Nil))
+  |> should.equal(None)
 }
 
 pub fn length_test() {

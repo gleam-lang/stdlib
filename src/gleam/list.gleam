@@ -25,6 +25,7 @@
 import gleam/dict.{type Dict}
 import gleam/float
 import gleam/int
+import gleam/option.{type Option, None, Some}
 import gleam/order.{type Order}
 import gleam/pair
 
@@ -174,27 +175,27 @@ pub fn contains(list: List(a), any elem: a) -> Bool {
 ///
 /// ```gleam
 /// first([])
-/// // -> Error(Nil)
+/// // -> None
 /// ```
 ///
 /// ```gleam
 /// first([0])
-/// // -> Ok(0)
+/// // -> Some(0)
 /// ```
 ///
 /// ```gleam
 /// first([1, 2])
-/// // -> Ok(1)
+/// // -> Some(1)
 /// ```
 ///
-pub fn first(list: List(a)) -> Result(a, Nil) {
+pub fn first(list: List(a)) -> Option(a) {
   case list {
-    [] -> Error(Nil)
-    [x, ..] -> Ok(x)
+    [] -> None
+    [x, ..] -> Some(x)
   }
 }
 
-/// Returns the list minus the first element. If the list is empty, `Error(Nil)` is
+/// Returns the list minus the first element. If the list is empty, `None` is
 /// returned.
 ///
 /// This function runs in constant time and does not make a copy of the list.
@@ -203,23 +204,23 @@ pub fn first(list: List(a)) -> Result(a, Nil) {
 ///
 /// ```gleam
 /// rest([])
-/// // -> Error(Nil)
+/// // -> None
 /// ```
 ///
 /// ```gleam
 /// rest([0])
-/// // -> Ok([])
+/// // -> Some([])
 /// ```
 ///
 /// ```gleam
 /// rest([1, 2])
-/// // -> Ok([2])
+/// // -> Some([2])
 /// ```
 ///
-pub fn rest(list: List(a)) -> Result(List(a), Nil) {
+pub fn rest(list: List(a)) -> Option(List(a)) {
   case list {
-    [] -> Error(Nil)
-    [_, ..xs] -> Ok(xs)
+    [] -> None
+    [_, ..xs] -> Some(xs)
   }
 }
 
@@ -228,8 +229,8 @@ fn update_group(
 ) -> fn(Dict(key, List(element)), element) -> Dict(key, List(element)) {
   fn(groups, elem) {
     case dict.get(groups, f(elem)) {
-      Ok(existing) -> dict.insert(groups, f(elem), [elem, ..existing])
-      Error(_) -> dict.insert(groups, f(elem), [elem])
+      Some(existing) -> dict.insert(groups, f(elem), [elem, ..existing])
+      None -> dict.insert(groups, f(elem), [elem])
     }
   }
 }
@@ -304,37 +305,33 @@ pub fn filter(list: List(a), keeping predicate: fn(a) -> Bool) -> List(a) {
 
 fn do_filter_map(
   list: List(a),
-  fun: fn(a) -> Result(b, e),
+  fun: fn(a) -> Option(b),
   acc: List(b),
 ) -> List(b) {
   case list {
     [] -> reverse(acc)
     [x, ..xs] -> {
       let new_acc = case fun(x) {
-        Ok(x) -> [x, ..acc]
-        Error(_) -> acc
+        Some(x) -> [x, ..acc]
+        None -> acc
       }
+
       do_filter_map(xs, fun, new_acc)
     }
   }
 }
 
 /// Returns a new list containing only the elements from the first list for
-/// which the given functions returns `Ok(_)`.
+/// which the given functions returns `Some(_)`.
 ///
 /// ## Examples
 ///
 /// ```gleam
-/// filter_map([2, 4, 6, 1], Error)
-/// // -> []
-/// ```
-///
-/// ```gleam
-/// filter_map([2, 4, 6, 1], fn(x) { Ok(x + 1) })
+/// filter_map([2, 4, 6, 1], fn(x) { Some(x + 1) })
 /// // -> [3, 5, 7, 2]
 /// ```
 ///
-pub fn filter_map(list: List(a), with fun: fn(a) -> Result(b, e)) -> List(b) {
+pub fn filter_map(list: List(a), with fun: fn(a) -> Option(b)) -> List(b) {
   do_filter_map(list, fun, [])
 }
 
@@ -484,16 +481,6 @@ fn do_try_map(
 /// ```gleam
 /// try_map([1, 2, 3], fn(_) { Error(0) })
 /// // -> Error(0)
-/// ```
-///
-/// ```gleam
-/// try_map([[1], [2, 3]], first)
-/// // -> Ok([1, 2])
-/// ```
-///
-/// ```gleam
-/// try_map([[1], [], [2]], first)
-/// // -> Error(Nil)
 /// ```
 ///
 pub fn try_map(
@@ -851,70 +838,67 @@ pub fn fold_until(
 /// Finds the first element in a given list for which the given function returns
 /// `True`.
 ///
-/// Returns `Error(Nil)` if no such element is found.
+/// Returns `None` if no such element is found.
 ///
 /// ## Examples
 ///
 /// ```gleam
 /// find([1, 2, 3], fn(x) { x > 2 })
-/// // -> Ok(3)
+/// // -> Some(3)
 /// ```
 ///
 /// ```gleam
 /// find([1, 2, 3], fn(x) { x > 4 })
-/// // -> Error(Nil)
+/// // -> None
 /// ```
 ///
 /// ```gleam
 /// find([], fn(_) { True })
-/// // -> Error(Nil)
+/// // -> None
 /// ```
 ///
 pub fn find(
   in haystack: List(a),
   one_that is_desired: fn(a) -> Bool,
-) -> Result(a, Nil) {
+) -> Option(a) {
   case haystack {
-    [] -> Error(Nil)
+    [] -> None
     [x, ..rest] ->
       case is_desired(x) {
-        True -> Ok(x)
+        True -> Some(x)
         _ -> find(in: rest, one_that: is_desired)
       }
   }
 }
 
 /// Finds the first element in a given list for which the given function returns
-/// `Ok(new_value)`, then returns the wrapped `new_value`.
+/// `Some(new_value)`, then returns the wrapped `new_value`.
 ///
-/// Returns `Error(Nil)` if no such element is found.
+/// Returns `None` if no such element is found.
 ///
 /// ## Examples
 ///
 /// ```gleam
 /// find_map([[], [2], [3]], first)
-/// // -> Ok(2)
+/// // -> Some(2)
 /// ```
 ///
 /// ```gleam
 /// find_map([[], []], first)
-/// // -> Error(Nil)
+/// // -> None
 /// ```
 ///
 /// ```gleam
 /// find_map([], first)
-/// // -> Error(Nil)
+/// // -> None
 /// ```
 ///
-pub fn find_map(
-  in haystack: List(a),
-  with fun: fn(a) -> Result(b, c),
-) -> Result(b, Nil) {
+pub fn find_map(in haystack: List(a), with fun: fn(a) -> Option(b)) -> Option(b) {
   case haystack {
-    [] -> Error(Nil)
+    [] -> None
     [x, ..rest] ->
       case fun(x) {
-        Ok(x) -> Ok(x)
+        Some(x) -> Some(x)
         _ -> find_map(in: rest, with: fun)
       }
   }
@@ -1035,31 +1019,28 @@ pub fn zip(list: List(a), with other: List(b)) -> List(#(a, b)) {
 ///
 /// ```gleam
 /// strict_zip([], [])
-/// // -> Ok([])
+/// // -> Some([])
 /// ```
 ///
 /// ```gleam
 /// strict_zip([1, 2], [3])
-/// // -> Error(Nil)
+/// // -> None
 /// ```
 ///
 /// ```gleam
 /// strict_zip([1], [3, 4])
-/// // -> Error(Nil)
+/// // -> None
 /// ```
 ///
 /// ```gleam
 /// strict_zip([1, 2], [3, 4])
-/// // -> Ok([#(1, 3), #(2, 4)])
+/// // -> Some([#(1, 3), #(2, 4)])
 /// ```
 ///
-pub fn strict_zip(
-  list: List(a),
-  with other: List(b),
-) -> Result(List(#(a, b)), Nil) {
+pub fn strict_zip(list: List(a), with other: List(b)) -> Option(List(#(a, b))) {
   case length(of: list) == length(of: other) {
-    True -> Ok(zip(list, other))
-    False -> Error(Nil)
+    True -> Some(zip(list, other))
+    False -> None
   }
 }
 
@@ -1121,34 +1102,34 @@ pub fn intersperse(list: List(a), with elem: a) -> List(a) {
 /// Returns the element in the Nth position in the list, with 0 being the first
 /// position.
 ///
-/// `Error(Nil)` is returned if the list is not long enough for the given index
+/// `None` is returned if the list is not long enough for the given index
 /// or if the index is less than 0.
 ///
 /// ## Examples
 ///
 /// ```gleam
 /// at([1, 2, 3], 1)
-/// // -> Ok(2)
+/// // -> Some(2)
 /// ```
 ///
 /// ```gleam
 /// at([1, 2, 3], 5)
-/// // -> Error(Nil)
+/// // -> None
 /// ```
 ///
 @deprecated("
 
-Gleam lists are immutable linked lists, so indexing into them is a slow operation that must traverse the list.
+  Gleam lists are immutable linked lists, so indexing into them is a slow operation that must traverse the list.
 
-In functional programming it is very rare to use indexing, so if you are using indexing then a different algorithm or a different data structure is likely more appropriate.
+  In functional programming it is very rare to use indexing, so if you are using indexing then a different algorithm or a different data structure is likely more appropriate.
 ")
-pub fn at(in list: List(a), get index: Int) -> Result(a, Nil) {
+pub fn at(in list: List(a), get index: Int) -> Option(a) {
   case index >= 0 {
     True ->
       list
       |> drop(index)
       |> first
-    False -> Error(Nil)
+    False -> None
   }
 }
 
@@ -1415,7 +1396,7 @@ pub fn split_while(
 /// Given a list of 2-element tuples, finds the first tuple that has a given
 /// key as the first element and returns the second element.
 ///
-/// If no tuple is found with the given key then `Error(Nil)` is returned.
+/// If no tuple is found with the given key then `None` is returned.
 ///
 /// This function may be useful for interacting with Erlang code where lists of
 /// tuples are common.
@@ -1424,28 +1405,28 @@ pub fn split_while(
 ///
 /// ```gleam
 /// key_find([#("a", 0), #("b", 1)], "a")
-/// // -> Ok(0)
+/// // -> Some(0)
 /// ```
 ///
 /// ```gleam
 /// key_find([#("a", 0), #("b", 1)], "b")
-/// // -> Ok(1)
+/// // -> Some(1)
 /// ```
 ///
 /// ```gleam
 /// key_find([#("a", 0), #("b", 1)], "c")
-/// // -> Error(Nil)
+/// // -> None
 /// ```
 ///
 pub fn key_find(
   in keyword_list: List(#(k, v)),
   find desired_key: k,
-) -> Result(v, Nil) {
+) -> Option(v) {
   find_map(keyword_list, fn(keyword) {
     let #(key, value) = keyword
     case key == desired_key {
-      True -> Ok(value)
-      False -> Error(Nil)
+      True -> Some(value)
+      False -> None
     }
   })
 }
@@ -1475,18 +1456,18 @@ pub fn key_filter(
   filter_map(keyword_list, fn(keyword) {
     let #(key, value) = keyword
     case key == desired_key {
-      True -> Ok(value)
-      False -> Error(Nil)
+      True -> Some(value)
+      False -> None
     }
   })
 }
 
 fn do_pop(haystack, predicate, checked) {
   case haystack {
-    [] -> Error(Nil)
+    [] -> None
     [x, ..rest] ->
       case predicate(x) {
-        True -> Ok(#(x, append(reverse(checked), rest)))
+        True -> Some(#(x, append(reverse(checked), rest)))
         False -> do_pop(rest, predicate, [x, ..checked])
       }
   }
@@ -1494,69 +1475,69 @@ fn do_pop(haystack, predicate, checked) {
 
 /// Removes the first element in a given list for which the predicate function returns `True`.
 ///
-/// Returns `Error(Nil)` if no such element is found.
+/// Returns `None` if no such element is found.
 ///
 /// ## Examples
 ///
 /// ```gleam
 /// pop([1, 2, 3], fn(x) { x > 2 })
-/// // -> Ok(#(3, [1, 2]))
+/// // -> Some(#(3, [1, 2]))
 /// ```
 ///
 /// ```gleam
 /// pop([1, 2, 3], fn(x) { x > 4 })
-/// // -> Error(Nil)
+/// // -> None
 /// ```
 ///
 /// ```gleam
 /// pop([], fn(_) { True })
-/// // -> Error(Nil)
+/// // -> None
 /// ```
 ///
 pub fn pop(
   in haystack: List(a),
   one_that is_desired: fn(a) -> Bool,
-) -> Result(#(a, List(a)), Nil) {
+) -> Option(#(a, List(a))) {
   do_pop(haystack, is_desired, [])
 }
 
 fn do_pop_map(haystack, mapper, checked) {
   case haystack {
-    [] -> Error(Nil)
+    [] -> None
     [x, ..rest] ->
       case mapper(x) {
-        Ok(y) -> Ok(#(y, append(reverse(checked), rest)))
-        Error(_) -> do_pop_map(rest, mapper, [x, ..checked])
+        Some(y) -> Some(#(y, append(reverse(checked), rest)))
+        None -> do_pop_map(rest, mapper, [x, ..checked])
       }
   }
 }
 
 /// Removes the first element in a given list for which the given function returns
-/// `Ok(new_value)`, then returns the wrapped `new_value` as well as list with the value removed.
+/// `Some(new_value)`, then returns the wrapped `new_value` as well as list with the value removed.
 ///
-/// Returns `Error(Nil)` if no such element is found.
+/// Returns `None` if no such element is found.
 ///
 /// ## Examples
 ///
 /// ```gleam
 /// pop_map([[], [2], [3]], first)
-/// // -> Ok(#(2, [[], [3]]))
+/// // -> Some(#(2, [[], [3]]))
 /// ```
 ///
 /// ```gleam
 /// pop_map([[], []], first)
-/// // -> Error(Nil)
+/// // -> None
 /// ```
 ///
 /// ```gleam
 /// pop_map([], first)
-/// // -> Error(Nil)
+/// // -> None
 /// ```
 ///
 pub fn pop_map(
   in haystack: List(a),
-  one_that is_desired: fn(a) -> Result(b, c),
-) -> Result(#(b, List(a)), Nil) {
+  one_that is_desired: fn(a) -> Option(b),
+) -> Option(#(b, List(a))) {
   do_pop_map(haystack, is_desired, [])
 }
 
@@ -1564,34 +1545,31 @@ pub fn pop_map(
 /// key as the first element. This function will return the second element
 /// of the found tuple and list with tuple removed.
 ///
-/// If no tuple is found with the given key then `Error(Nil)` is returned.
+/// If no tuple is found with the given key then `None` is returned.
 ///
 /// ## Examples
 ///
 /// ```gleam
 /// key_pop([#("a", 0), #("b", 1)], "a")
-/// // -> Ok(#(0, [#("b", 1)]))
+/// // -> Some#(0, [#("b", 1)]))
 /// ```
 ///
 /// ```gleam
 /// key_pop([#("a", 0), #("b", 1)], "b")
-/// // -> Ok(#(1, [#("a", 0)]))
+/// // -> Some(#(1, [#("a", 0)]))
 /// ```
 ///
 /// ```gleam
 /// key_pop([#("a", 0), #("b", 1)], "c")
-/// // -> Error(Nil)
+/// // -> None
 /// ```
 ///
-pub fn key_pop(
-  haystack: List(#(k, v)),
-  key: k,
-) -> Result(#(v, List(#(k, v))), Nil) {
+pub fn key_pop(haystack: List(#(k, v)), key: k) -> Option(#(v, List(#(k, v)))) {
   pop_map(haystack, fn(entry) {
     let #(k, v) = entry
     case k {
-      k if k == key -> Ok(v)
-      _ -> Error(Nil)
+      k if k == key -> Some(v)
+      _ -> None
     }
   })
 }
@@ -1932,18 +1910,18 @@ pub fn sized_chunk(in list: List(a), into count: Int) -> List(List(a)) {
 ///
 /// ```gleam
 /// [] |> reduce(fn(acc, x) { acc + x })
-/// // -> Error(Nil)
+/// // -> None
 /// ```
 ///
 /// ```gleam
 /// [1, 2, 3, 4, 5] |> reduce(fn(acc, x) { acc + x })
-/// // -> Ok(15)
+/// // -> Some(15)
 /// ```
 ///
-pub fn reduce(over list: List(a), with fun: fn(a, a) -> a) -> Result(a, Nil) {
+pub fn reduce(over list: List(a), with fun: fn(a, a) -> a) -> Option(a) {
   case list {
-    [] -> Error(Nil)
-    [first, ..rest] -> Ok(fold(rest, first, fun))
+    [] -> None
+    [first, ..rest] -> Some(fold(rest, first, fun))
   }
 }
 
@@ -1981,7 +1959,7 @@ pub fn scan(
 
 /// Returns the last element in the given list.
 ///
-/// Returns `Error(Nil)` if the list is empty.
+/// Returns `None` if the list is empty.
 ///
 /// This function runs in linear time.
 /// For a collection oriented around performant access at either end,
@@ -1991,17 +1969,16 @@ pub fn scan(
 ///
 /// ```gleam
 /// last([])
-/// // -> Error(Nil)
+/// // -> None
 /// ```
 ///
 /// ```gleam
 /// last([1, 2, 3, 4, 5])
-/// // -> Ok(5)
+/// // -> Some(5)
 /// ```
 ///
-pub fn last(list: List(a)) -> Result(a, Nil) {
-  list
-  |> reduce(fn(_, elem) { elem })
+pub fn last(list: List(a)) -> Option(a) {
+  reduce(list, fn(_, elem) { elem })
 }
 
 /// Return unique combinations of elements in the list.

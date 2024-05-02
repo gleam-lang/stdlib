@@ -60,45 +60,45 @@ pub fn get_test() {
 
   m
   |> dict.get(4)
-  |> should.equal(Ok(0))
+  |> should.equal(Some(0))
 
   m
   |> dict.get(1)
-  |> should.equal(Ok(1))
+  |> should.equal(Some(1))
 
   m
   |> dict.get(2)
-  |> should.equal(Error(Nil))
+  |> should.equal(None)
 
   let proplist = [#(A, 0), #(B, 1)]
   let m = dict.from_list(proplist)
 
   m
   |> dict.get(A)
-  |> should.equal(Ok(0))
+  |> should.equal(Some(0))
 
   m
   |> dict.get(B)
-  |> should.equal(Ok(1))
+  |> should.equal(Some(1))
 
   m
   |> dict.get(C)
-  |> should.equal(Error(Nil))
+  |> should.equal(None)
 
   let proplist = [#(<<1, 2, 3>>, 0), #(<<3, 2, 1>>, 1)]
   let m = dict.from_list(proplist)
 
   m
   |> dict.get(<<1, 2, 3>>)
-  |> should.equal(Ok(0))
+  |> should.equal(Some(0))
 
   m
   |> dict.get(<<3, 2, 1>>)
-  |> should.equal(Ok(1))
+  |> should.equal(Some(1))
 
   m
   |> dict.get(<<1, 3, 2>>)
-  |> should.equal(Error(Nil))
+  |> should.equal(None)
 }
 
 pub fn insert_test() {
@@ -260,7 +260,7 @@ pub fn persistence_test() {
   dict.insert(a, 1, 6)
   dict.delete(a, 0)
   dict.get(a, 0)
-  |> should.equal(Ok(0))
+  |> should.equal(Some(0))
 }
 
 // using maps as keys should work (tests hash function)
@@ -281,23 +281,23 @@ pub fn map_as_key_test() {
     |> dict.insert(d, "d")
 
   dict.get(map1, a)
-  |> should.equal(Ok("a"))
+  |> should.equal(Some("a"))
   dict.get(map1, a2)
-  |> should.equal(Ok("a"))
+  |> should.equal(Some("a"))
   dict.get(map1, a3)
-  |> should.equal(Ok("a"))
+  |> should.equal(Some("a"))
   dict.get(map1, b)
-  |> should.equal(Ok("b"))
+  |> should.equal(Some("b"))
   dict.get(map1, c)
-  |> should.equal(Ok("c"))
+  |> should.equal(Some("c"))
   dict.get(map1, d)
-  |> should.equal(Ok("d"))
+  |> should.equal(Some("d"))
   dict.insert(map1, a2, "a2")
   |> dict.get(a)
-  |> should.equal(Ok("a2"))
+  |> should.equal(Some("a2"))
   dict.insert(map1, a3, "a3")
   |> dict.get(a)
-  |> should.equal(Ok("a3"))
+  |> should.equal(Some("a3"))
 }
 
 pub fn large_n_test() {
@@ -305,10 +305,10 @@ pub fn large_n_test() {
   let l = range(0, n, [])
 
   let m = list_to_map(l)
-  list.map(l, fn(i) { should.equal(dict.get(m, i), Ok(i)) })
+  list.map(l, fn(i) { should.equal(dict.get(m, i), Some(i)) })
 
   let m = grow_and_shrink_map(n, 0)
-  list.map(l, fn(i) { should.equal(dict.get(m, i), Error(Nil)) })
+  list.map(l, fn(i) { should.equal(dict.get(m, i), None) })
 }
 
 pub fn size_test() {
@@ -359,7 +359,7 @@ pub fn peters_bug_test() {
   |> dict.insert(1, Nil)
   |> dict.insert(3, Nil)
   |> dict.get(0)
-  |> should.equal(Error(Nil))
+  |> should.equal(None)
 }
 
 pub fn zero_must_be_contained_test() {
@@ -369,7 +369,7 @@ pub fn zero_must_be_contained_test() {
 
   map
   |> dict.get(0)
-  |> should.equal(Ok(Nil))
+  |> should.equal(Some(Nil))
 
   map
   |> dict.has_key(0)

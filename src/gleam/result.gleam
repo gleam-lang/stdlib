@@ -2,6 +2,7 @@
 //// `Ok` means it was successful, `Error` means it was not successful.
 
 import gleam/list
+import gleam/option.{None, Some}
 
 /// Checks whether the result is an `Ok` value.
 ///
@@ -441,7 +442,12 @@ pub fn replace_error(result: Result(a, e1), error: e2) -> Result(a, e2) {
 /// ```
 ///
 pub fn values(results: List(Result(a, e))) -> List(a) {
-  list.filter_map(results, fn(r) { r })
+  list.filter_map(results, fn(result) {
+    case result {
+      Ok(value) -> Some(value)
+      Error(_) -> None
+    }
+  })
 }
 
 /// Updates a value held within the `Error` of a result by calling a given function
