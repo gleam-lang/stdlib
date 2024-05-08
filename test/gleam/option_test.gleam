@@ -1,3 +1,4 @@
+import gleam/dynamic
 import gleam/option.{None, Some}
 import gleam/should
 
@@ -18,6 +19,12 @@ pub fn is_some_test() {
 
   option.is_some(None)
   |> should.be_false
+
+  123
+  |> dynamic.from
+  |> dynamic.unsafe_coerce
+  |> option.is_some
+  |> should.be_false
 }
 
 pub fn is_none_test() {
@@ -26,6 +33,12 @@ pub fn is_none_test() {
 
   option.is_none(None)
   |> should.be_true
+
+  123
+  |> dynamic.from
+  |> dynamic.unsafe_coerce
+  |> option.is_none
+  |> should.be_false
 }
 
 pub fn to_result_test() {

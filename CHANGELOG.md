@@ -4,6 +4,7 @@
 
 - The `list` module gains the `wrap` function.
 - The `iterator` module gains the `find_map` function.
+- Fixed a bug where `option.is_some` returns `True` for any non `None` value
 
 ## v0.37.0 - 2024-04-19
 

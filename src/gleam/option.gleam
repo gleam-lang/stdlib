@@ -71,7 +71,10 @@ pub fn all(list: List(Option(a))) -> Option(List(a)) {
 /// ```
 ///
 pub fn is_some(option: Option(a)) -> Bool {
-  option != None
+  case option {
+    Some(_) -> True
+    _ -> False
+  }
 }
 
 /// Checks whether the `Option` is a `None` value.
