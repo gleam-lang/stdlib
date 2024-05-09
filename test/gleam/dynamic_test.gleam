@@ -296,6 +296,11 @@ pub fn optional_test() {
   |> dynamic.from
   |> dynamic.optional(dynamic.string)
   |> should.be_error
+
+  1
+  |> dynamic.from
+  |> dynamic.optional(dynamic.dynamic)
+  |> should.be_error
 }
 
 @target(javascript)
@@ -1208,6 +1213,11 @@ pub fn result_test() {
   |> should.equal(
     Error([DecodeError(expected: "Result", found: "Int", path: [])]),
   )
+
+  1
+  |> dynamic.from
+  |> dynamic.result(dynamic.dynamic, dynamic.dynamic)
+  |> should.be_error
 }
 
 pub fn any_test() {
