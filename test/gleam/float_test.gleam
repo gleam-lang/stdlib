@@ -371,6 +371,29 @@ pub fn random_test() {
   |> should.be_true
 }
 
+pub fn modulo_test() {
+  float.modulo(3.0, 2.0)
+  |> should.equal(Ok(1.0))
+
+  float.modulo(1.0, 0.0)
+  |> should.equal(Error(Nil))
+
+  float.modulo(10.0, -1.0)
+  |> should.equal(Ok(0.0))
+
+  float.modulo(13.0, by: 3.0)
+  |> should.equal(Ok(1.0))
+
+  float.modulo(-13.0, by: 3.0)
+  |> should.equal(Ok(2.0))
+
+  float.modulo(13.0, by: -3.0)
+  |> should.equal(Ok(-2.0))
+
+  float.modulo(-13.0, by: -3.0)
+  |> should.equal(Ok(-1.0))
+}
+
 pub fn divide_test() {
   float.divide(1.0, 1.0)
   |> should.equal(Ok(1.0))
