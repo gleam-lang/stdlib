@@ -37,10 +37,14 @@ fn do_from(a: anything) -> Dynamic
 
 /// Unsafely casts a Dynamic value into any other type.
 ///
-/// This is an escape hatch for the type system that may be useful when wrapping
-/// native Erlang APIs. It is to be used as a last measure only!
+/// **If you are using this function then you are almost certainly doing
+/// the wrong thing**.
 ///
-/// If you can avoid using this function, do!
+/// This is an escape hatch for the type system that may be useful when wrapping
+/// native Erlang APIs. You should always avoid using this function as it
+/// undermines the type system and removes all the guarentees that Gleam offers
+/// you. You are on your own to avoid cryptic runtime bugs and crashes if you
+/// use this.
 ///
 pub fn unsafe_coerce(a: Dynamic) -> anything {
   do_unsafe_coerce(a)
