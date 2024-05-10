@@ -682,16 +682,6 @@ pub fn remainder(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
 /// // -> Ok(2)
 /// ```
 ///
-/// ```gleam
-/// modulo(13, by: -3)
-/// // -> Ok(-2)
-/// ```
-///
-/// ```gleam
-/// modulo(-13, by: -3)
-/// // -> Ok(-1)
-/// ```
-///
 pub fn modulo(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
   case divisor {
     0 -> Error(Nil)
