@@ -685,6 +685,9 @@ pub fn inspect_test() {
   string.inspect("\t")
   |> should.equal("\"\\t\"")
 
+  string.inspect("\f")
+  |> should.equal("\"\\f\"")
+
   string.inspect("\r\r")
   |> should.equal("\"\\r\\r\"")
 

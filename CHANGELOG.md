@@ -4,6 +4,8 @@
 
 - The `list` module gains the `wrap` function.
 - The `iterator` module gains the `find_map` function.
+- Fixed `string.inspect` not formatting the `\f` form feed control character
+  correctly on Erlang.
 
 ## v0.37.0 - 2024-04-19
 
