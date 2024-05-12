@@ -372,13 +372,13 @@ pub fn random_test() {
 }
 
 pub fn modulo_test() {
-  float.modulo(3.0, 2.0)
+  float.modulo(3.0, by: 2.0)
   |> should.equal(Ok(1.0))
 
-  float.modulo(1.0, 0.0)
+  float.modulo(1.0, by: 0.0)
   |> should.equal(Error(Nil))
 
-  float.modulo(10.0, -1.0)
+  float.modulo(10.0, by: -1.0)
   |> should.equal(Ok(0.0))
 
   float.modulo(13.0, by: 3.0)
@@ -392,6 +392,33 @@ pub fn modulo_test() {
 
   float.modulo(-13.0, by: -3.0)
   |> should.equal(Ok(-1.0))
+
+  float.modulo(3.3, 2.3)
+  |> should.equal(Ok(1.0))
+
+  float.modulo(13.3, by: 3.0)
+  |> should.equal(Ok(1.3))
+
+  float.modulo(13.0, by: 3.3)
+  |> should.equal(Ok(3.1))
+
+  float.modulo(-13.3, by: 3.0)
+  |> should.equal(Ok(1.3))
+
+  float.modulo(-13.0, by: 3.3)
+  |> should.equal(Ok(3.1))
+
+  float.modulo(13.3, by: -3.0)
+  |> should.equal(Ok(-1.3))
+
+  float.modulo(13.0, by: -3.3)
+  |> should.equal(Ok(-3.1))
+
+  float.modulo(-13.3, by: -3.0)
+  |> should.equal(Ok(1.3))
+
+  float.modulo(-13.0, by: -3.3)
+  |> should.equal(Ok(3.1))
 }
 
 pub fn divide_test() {
