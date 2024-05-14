@@ -583,21 +583,21 @@ pub fn new() -> List(a) {
 }
 
 /// Returns the given item wrapped in a list.
-/// 
+///
 /// ## Examples
-/// 
+///
 /// ```gleam
 /// wrap(1)
 /// // -> [1]
-/// 
+///
 /// wrap(["a", "b", "c"])
 /// // -> [["a", "b", "c"]]
-/// 
+///
 /// wrap([[]])
 /// // -> [[[]]]
 /// ```
-/// 
-/// 
+///
+///
 pub fn wrap(item: a) -> List(a) {
   [item]
 }
@@ -1170,99 +1170,6 @@ pub fn unique(list: List(a)) -> List(a) {
   }
 }
 
-/// Merge lists `a` and `b` in ascending order
-/// but only up to `na` and `nb` number of items respectively.
-///
-fn merge_up(
-  na: Int,
-  nb: Int,
-  a: List(a),
-  b: List(a),
-  acc: List(a),
-  compare: fn(a, a) -> Order,
-) {
-  case na, nb, a, b {
-    0, 0, _, _ -> acc
-    _, 0, [ax, ..ar], _ -> merge_up(na - 1, nb, ar, b, [ax, ..acc], compare)
-    0, _, _, [bx, ..br] -> merge_up(na, nb - 1, a, br, [bx, ..acc], compare)
-    _, _, [ax, ..ar], [bx, ..br] ->
-      case compare(ax, bx) {
-        order.Gt -> merge_up(na, nb - 1, a, br, [bx, ..acc], compare)
-        _ -> merge_up(na - 1, nb, ar, b, [ax, ..acc], compare)
-      }
-    _, _, _, _ -> acc
-  }
-}
-
-/// Merge lists `a` and `b` in descending order
-/// but only up to `na` and `nb` number of items respectively.
-///
-fn merge_down(
-  na: Int,
-  nb: Int,
-  a: List(a),
-  b: List(a),
-  acc: List(a),
-  compare: fn(a, a) -> Order,
-) {
-  case na, nb, a, b {
-    0, 0, _, _ -> acc
-    _, 0, [ax, ..ar], _ -> merge_down(na - 1, nb, ar, b, [ax, ..acc], compare)
-    0, _, _, [bx, ..br] -> merge_down(na, nb - 1, a, br, [bx, ..acc], compare)
-    _, _, [ax, ..ar], [bx, ..br] ->
-      case compare(bx, ax) {
-        order.Lt -> merge_down(na - 1, nb, ar, b, [ax, ..acc], compare)
-        _ -> merge_down(na, nb - 1, a, br, [bx, ..acc], compare)
-      }
-    _, _, _, _ -> acc
-  }
-}
-
-/// Merge sort that alternates merging in ascending and descending order
-/// because the merge process also reverses the list.
-///
-/// Some copying is avoided by merging only a subset of the lists
-/// instead of creating and merging new smaller lists.
-///
-fn merge_sort(
-  l: List(a),
-  ln: Int,
-  compare: fn(a, a) -> Order,
-  down: Bool,
-) -> List(a) {
-  let n = ln / 2
-  let a = l
-  let b = drop(l, n)
-  case ln < 3 {
-    True ->
-      case down {
-        True -> merge_down(n, ln - n, a, b, [], compare)
-        False -> merge_up(n, ln - n, a, b, [], compare)
-      }
-    False ->
-      case down {
-        True ->
-          merge_down(
-            n,
-            ln - n,
-            merge_sort(a, n, compare, False),
-            merge_sort(b, ln - n, compare, False),
-            [],
-            compare,
-          )
-        False ->
-          merge_up(
-            n,
-            ln - n,
-            merge_sort(a, n, compare, True),
-            merge_sort(b, ln - n, compare, True),
-            [],
-            compare,
-          )
-      }
-  }
-}
-
 /// Sorts from smallest to largest based upon the ordering specified by a given
 /// function.
 ///
@@ -1276,7 +1183,257 @@ fn merge_sort(
 /// ```
 ///
 pub fn sort(list: List(a), by compare: fn(a, a) -> Order) -> List(a) {
-  merge_sort(list, length(list), compare, True)
+  // This is a natural, tail recursive, stable merge sort:
+  // - natural: it is very efficient if you call it on a list that is already
+  //   (pre)sorted because it works on slices of the original list.
+  // - tail recursive: the stack won't grow linearly with the size of the list.
+  // - stable: if two items are considered to be equal then their original
+  //   relative order is preserved.
+  case list {
+    // If the list has zero/one item then it's already sorted.
+    [] -> []
+    [x] -> [x]
+
+    // Otherwise the algorithm works as follow: we split the list in sequences
+    // of already sorted values as they appear in the list and then we merge
+    // those together two by two using `merge_all`.
+    [x, y, ..rest] -> {
+      // We need to compare the first two items to properly call `sequences`
+      // with the correct initial values. If the second item is <= than the
+      // first, then we know we'll start by growing a descending sequence
+      // (and an ascending one in the opposite case).
+      let direction = case compare(x, y) {
+        order.Lt | order.Eq -> Ascending
+        order.Gt -> Descending
+      }
+
+      // `sequences` produces sequences in ascending order so we call the
+      // `merge_all` function saying it to expect all sequences to be sorted
+      // that way.
+      let sequences = sequences(rest, compare, [x], direction, y, [])
+      merge_all(sequences, Ascending, compare)
+    }
+  }
+}
+
+type Sorting {
+  Ascending
+  Descending
+}
+
+/// Given a list it returns slices of it that are locally sorted in ascending
+/// order.
+///
+/// Imagine you have this list:
+///
+/// ```
+///   [1, 2, 3, 2, 1, 0]
+///    ^^^^^^^  ^^^^^^^ This is a slice in descending order
+///    |
+///    | This is a slice that is sorted in ascending order
+/// ```
+///
+/// So the produced result will contain these two slices, each one sorted in
+/// ascending order: `[[1, 2, 3], [0, 1, 2]]`.
+///
+/// - `growing` is an accumulator with the current slice being grown
+/// - `direction` is the growing direction of the slice being grown, it could
+///   either be ascending or strictly descending
+/// - `prev` is the previous element that needs to be added to the growing slice
+///   it is carried around to check wether we have to keep growing the current
+///   slice or not
+/// - `acc` is the accumulator containing the slices sorted in ascending order
+///
+fn sequences(
+  list: List(a),
+  compare: fn(a, a) -> Order,
+  growing: List(a),
+  direction: Sorting,
+  prev: a,
+  acc: List(List(a)),
+) -> List(List(a)) {
+  // First of all we must not forget to add the previous element to the
+  // currently growing slice.
+  let growing = [prev, ..growing]
+
+  case list {
+    [] ->
+      case direction {
+        // Notice how we have to reverse the accumulator we're growing: since
+        // we always add items to the head, `growing` is built in the opposite
+        // sorting order of what it actually is in the original list.
+        Ascending -> [do_reverse(growing, []), ..acc]
+        Descending -> [growing, ..acc]
+      }
+
+    [new, ..rest] ->
+      case compare(prev, new), direction {
+        // In case the new element respects the ordering of the growing
+        // sequence, then we just keep growing it.
+        // Notice how a growing sequence is weakly growing (that is it can have
+        // consecutive equal items) while a descreasing sequence is strictly
+        // decreasing (no consecutive equal items), this is needed to make the
+        // algorithm stable!
+        order.Gt, Descending | order.Lt, Ascending | order.Eq, Ascending ->
+          sequences(rest, compare, growing, direction, new, acc)
+
+        // We were growing an ascending (descending) sequence and the new item
+        // is smaller (bigger) than the previous one, this means we have to stop
+        // growing this sequence and start with a new one whose first item will
+        // be the one we just found.
+        order.Gt, Ascending | order.Lt, Descending | order.Eq, Descending -> {
+          let acc = case direction {
+            Ascending -> [do_reverse(growing, []), ..acc]
+            Descending -> [growing, ..acc]
+          }
+          case rest {
+            // The list is over so we just create a sequence containing the last
+            // item we saw and add it to the accumulator before returning it.
+            [] -> [[new], ..acc]
+
+            // If the list is not over we have a peek at the next item to decide
+            // in which direction is growing the new sequence and make the
+            // recursive call with the appropriate arguments.
+            [next, ..rest] -> {
+              let direction = case compare(new, next) {
+                order.Lt | order.Eq -> Ascending
+                order.Gt -> Descending
+              }
+              sequences(rest, compare, [new], direction, next, acc)
+            }
+          }
+        }
+      }
+  }
+}
+
+/// Given some some sorted sequences (assumed to be sorted in `direction`) it
+/// merges them all together until we're left with just a list sorted in
+/// ascending order.
+///
+fn merge_all(
+  sequences: List(List(a)),
+  direction: Sorting,
+  compare: fn(a, a) -> Order,
+) -> List(a) {
+  case sequences, direction {
+    [], _ -> []
+
+    // If we have a single list in ascending order then we're done.
+    [sequence], Ascending -> sequence
+
+    // If we have a single list in descending order, we reverse it to make sure
+    // it's in ascending order and we're done.
+    [sequence], Descending -> do_reverse(sequence, [])
+
+    // Merging together sequences that are in ascending (descending) order
+    // reverses their order, so the recursive call will assume to be merging
+    // lists sorted in the opposite order!
+    _, Ascending -> {
+      let sequences = merge_ascending_pairs(sequences, compare, [])
+      merge_all(sequences, Descending, compare)
+    }
+
+    _, Descending -> {
+      let sequences = merge_descending_pairs(sequences, compare, [])
+      merge_all(sequences, Ascending, compare)
+    }
+  }
+}
+
+/// Given a list of ascending lists, it merges adjacent pairs into a single
+/// descending list, halving their number.
+/// It returns a list of the remaining descending lists.
+///
+fn merge_ascending_pairs(
+  sequences: List(List(a)),
+  compare: fn(a, a) -> Order,
+  acc: List(List(a)),
+) {
+  case sequences {
+    [] -> do_reverse(acc, [])
+
+    // Beware, if we have just one item left we must reverse it: we take
+    // ascending lists as input and have to return descending ones.
+    // If we returned it like it is it would be sorted in ascending order.
+    [sequence] -> do_reverse([do_reverse(sequence, []), ..acc], [])
+
+    [ascending1, ascending2, ..rest] -> {
+      let descending = merge_ascendings(ascending1, ascending2, compare, [])
+      merge_ascending_pairs(rest, compare, [descending, ..acc])
+    }
+  }
+}
+
+/// This is the same as merge_ascending_pairs but flipped for descending lists.
+///
+fn merge_descending_pairs(
+  sequences: List(List(a)),
+  compare: fn(a, a) -> Order,
+  acc: List(List(a)),
+) {
+  case sequences {
+    [] -> do_reverse(acc, [])
+
+    [sequence] -> do_reverse([do_reverse(sequence, []), ..acc], [])
+
+    [descending1, descending2, ..rest] -> {
+      let ascending = merge_descendings(descending1, descending2, compare, [])
+      merge_descending_pairs(rest, compare, [ascending, ..acc])
+    }
+  }
+}
+
+/// Merges two lists sorted in ascending order into a single list sorted in
+/// descending order according to the given comparator function.
+///
+/// This reversing of the sort order is not avoidable if we want to implement
+/// merge as a tail recursive function. We could reverse the accumulator before
+/// returning it but that would end up being less efficient; so the merging
+/// algorithm has to play around this.
+///
+fn merge_ascendings(
+  list1: List(a),
+  list2: List(a),
+  compare: fn(a, a) -> Order,
+  acc: List(a),
+) -> List(a) {
+  case list1, list2 {
+    [], list | list, [] -> do_reverse(list, acc)
+
+    [first1, ..rest1], [first2, ..rest2] ->
+      case compare(first1, first2) {
+        order.Lt -> merge_ascendings(rest1, list2, compare, [first1, ..acc])
+        order.Gt | order.Eq ->
+          merge_ascendings(list1, rest2, compare, [first2, ..acc])
+      }
+  }
+}
+
+/// This is exactly the same as merge_ascendings but mirrored: it merges two
+/// lists sorted in descending order into a single list sorted in ascending
+/// order according to the given comparator function.
+///
+/// This reversing of the sort order is not avoidable if we want to implement
+/// merge as a tail recursive function. We could reverse the accumulator before
+/// returning it but that would end up being less efficient; so the merging
+/// algorithm has to play around this.
+///
+fn merge_descendings(
+  list1: List(a),
+  list2: List(a),
+  compare: fn(a, a) -> Order,
+  acc: List(a),
+) -> List(a) {
+  case list1, list2 {
+    [], list | list, [] -> do_reverse(list, acc)
+    [first1, ..rest1], [first2, ..rest2] ->
+      case compare(first1, first2) {
+        order.Lt -> merge_descendings(list1, rest2, compare, [first2, ..acc])
+        order.Gt | order.Eq ->
+          merge_descendings(rest1, list2, compare, [first1, ..acc])
+      }
+  }
 }
 
 /// Creates a list of ints ranging from a given start and finish.
