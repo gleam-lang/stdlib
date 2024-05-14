@@ -220,6 +220,18 @@ pub fn fold_test() {
   |> should.equal(0)
 }
 
+pub fn each_test() {
+  let dict = dict.from_list([#("a", 1), #("b", 2), #("c", 3), #("d", 4)])
+
+  dict.each(dict, fn(k, v) {
+    let assert True = case k, v {
+      "a", 1 | "b", 2 | "c", 3 | "d", 4 -> True
+      _, _ -> False
+    }
+  })
+  |> should.equal(Nil)
+}
+
 fn range(start, end, a) {
   case end - start {
     n if n < 1 -> a
