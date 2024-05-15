@@ -121,3 +121,11 @@ pub fn is_subset_test() {
   set.is_subset(set.from_list([1, 2]), set.from_list([2, 3, 4]))
   |> should.be_false()
 }
+
+pub fn is_disjoint_test() {
+  set.is_disjoint(set.from_list([1, 2, 3]), set.from_list([4, 5, 6]))
+  |> should.be_true()
+
+  set.is_disjoint(set.from_list([1, 2]), set.from_list([2, 3, 4]))
+  |> should.be_false()
+}
