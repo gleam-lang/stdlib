@@ -497,3 +497,32 @@ pub fn fold(
   |> to_list
   |> do_fold(initial, fun)
 }
+
+/// Calls a function for each key and value in a dict, discarding the return 
+/// value.
+/// 
+/// Useful for producing a side effect for every item of a dict.
+/// 
+/// ```gleam
+/// import gleam/io
+/// 
+/// let dict = from_list([#("a", "apple"), #("b", "banana"), #("c", "cherry")])
+/// 
+/// each(dict, fn(key, value) { 
+///   io.println(key <> " => " <> value)
+/// })
+/// // -> Nil
+/// // a => apple
+/// // b => banana
+/// // c => cherry
+/// ```
+/// 
+/// The order of elements in the iteration is an implementation detail that
+/// should not be relied upon.
+/// 
+pub fn each(dict: Dict(k, v), fun: fn(k, v) -> b) -> Nil {
+  fold(dict, Nil, fn(nil, k, v) {
+    fun(k, v)
+    nil
+  })
+}
