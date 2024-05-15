@@ -289,3 +289,21 @@ pub fn difference(
 ) -> Set(member) {
   drop(from: first, drop: to_list(second))
 }
+
+/// Determines if a set is fully contained by another.
+///
+/// ## Examples
+///
+/// ```gleam
+/// is_subset(from_list([1]), from_list([1, 2]))
+/// // -> True
+/// ```
+///
+/// ```gleam
+/// is_subset(from_list([1, 2, 3]), from_list([3, 4, 5]))
+/// // -> False
+/// ```
+///
+pub fn is_subset(first: Set(member), of second: Set(member)) -> Bool {
+  intersection(of: first, and: second) == first
+}

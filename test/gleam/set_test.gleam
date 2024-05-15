@@ -107,3 +107,17 @@ pub fn difference_test() {
   |> set.to_list
   |> should.equal([1])
 }
+
+pub fn is_subset_test() {
+  set.is_subset(set.from_list([1, 2, 3, 4]), set.from_list([2, 4]))
+  |> should.be_false()
+
+  set.is_subset(set.from_list([2, 4]), set.from_list([1, 2, 3, 4]))
+  |> should.be_true()
+
+  set.is_subset(set.from_list([1, 2, 3]), set.from_list([4, 5, 6]))
+  |> should.be_false()
+
+  set.is_subset(set.from_list([1, 2]), set.from_list([2, 3, 4]))
+  |> should.be_false()
+}
