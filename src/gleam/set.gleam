@@ -307,3 +307,21 @@ pub fn difference(
 pub fn is_subset(first: Set(member), of second: Set(member)) -> Bool {
   intersection(of: first, and: second) == first
 }
+
+/// Determines if two sets contain no common members
+///
+/// ## Examples
+///
+/// ```gleam
+/// is_disjoint(from_list([1, 2, 3], from_list([4, 5, 6])))
+/// // -> True
+/// ```
+///
+/// ```gleam
+/// is_disjoint(from_list([1, 2, 3]), from_list([3, 4, 5]))
+/// // -> False
+/// ```
+///
+pub fn is_disjoint(first: Set(member), from second: Set(member)) -> Bool {
+  intersection(of: first, and: second) == new()
+}
