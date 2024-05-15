@@ -202,9 +202,9 @@ pub fn filter(
 
 /// Creates a new set from a given set with all the same entries except any
 /// entry found on the given list.
-/// 
+///
 /// ## Examples
-/// 
+///
 /// ```gleam
 /// drop(from_list([1, 2, 3, 4]), [1, 3])
 /// // -> [2, 4]
