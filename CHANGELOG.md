@@ -9,6 +9,7 @@
 - The `iterator` module gains the `find_map` function.
 - Fixed `string.inspect` not formatting the `\f` form feed control character
   correctly on Erlang.
+- `dynamic.unsafe_coerce` function has been deprecated.
 
 ## v0.37.0 - 2024-04-19
 
