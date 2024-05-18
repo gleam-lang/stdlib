@@ -129,3 +129,8 @@ pub fn is_disjoint_test() {
   set.is_disjoint(set.from_list([1, 2]), set.from_list([2, 3, 4]))
   |> should.be_false()
 }
+
+pub fn symmetric_difference_test() {
+  set.symmetric_difference(set.from_list([1, 2, 3]), set.from_list([3, 4]))
+  |> should.equal(set.from_list([1, 2, 4]))
+}
