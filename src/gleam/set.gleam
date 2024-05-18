@@ -325,3 +325,21 @@ pub fn is_subset(first: Set(member), of second: Set(member)) -> Bool {
 pub fn is_disjoint(first: Set(member), from second: Set(member)) -> Bool {
   intersection(of: first, and: second) == new()
 }
+
+/// Creates a new set that contains members that are present in either set, but
+/// not both.
+///
+/// ```gleam
+/// symmetric_difference(from_list([1, 2, 4]), from_list([3, 4])) |> to_list
+/// // -> [1, 2, 4]
+/// ```
+///
+pub fn symmetric_difference(
+  of first: Set(member),
+  and second: Set(member),
+) -> Set(member) {
+  difference(
+    from: union(of: first, and: second),
+    minus: intersection(of: first, and: second),
+  )
+}
