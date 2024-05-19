@@ -362,7 +362,8 @@ export function bit_array_slice(bits, position, length) {
   const start = Math.min(position, position + length);
   const end = Math.max(position, position + length);
   if (start < 0 || end > bits.length) return new Error(Nil);
-  const buffer = new Uint8Array(bits.buffer.buffer, start, Math.abs(length));
+  const byteOffset = bits.buffer.byteOffset + start;
+  const buffer = new Uint8Array(bits.buffer.buffer, byteOffset, Math.abs(length));
   return new Ok(new BitArray(buffer));
 }
 
