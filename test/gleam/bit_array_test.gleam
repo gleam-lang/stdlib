@@ -1,4 +1,5 @@
 import gleam/bit_array
+import gleam/result
 import gleam/should
 
 pub fn byte_size_test() {
@@ -88,6 +89,11 @@ pub fn slice_test() {
   bit_array.from_string("hello")
   |> bit_array.slice(1, 6)
   |> should.equal(Error(Nil))
+
+  bit_array.from_string("ab")
+  |> bit_array.slice(1, 1)
+  |> result.try(bit_array.slice(_, 0, 1))
+  |> should.equal(Ok(<<"b":utf8>>))
 }
 
 pub fn to_string_test() {

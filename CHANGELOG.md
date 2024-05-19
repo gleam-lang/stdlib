@@ -10,6 +10,7 @@
 - Fixed `string.inspect` not formatting the `\f` form feed control character
   correctly on Erlang.
 - `dynamic.unsafe_coerce` function has been deprecated.
+- Fixed `bit_array` slices of slices sometimes being incorrect on JavaScript.
 
 ## v0.37.0 - 2024-04-19
 
