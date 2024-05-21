@@ -12,6 +12,7 @@
   correctly on Erlang.
 - `dynamic.unsafe_coerce` function has been deprecated.
 - Fixed `bit_array` slices of slices sometimes being incorrect on JavaScript.
+- The `dict` module gains the `combine` function.
 
 ## v0.37.0 - 2024-04-19
 

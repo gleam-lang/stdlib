@@ -43,13 +43,13 @@ pub fn size(dict: Dict(k, v)) -> Int
 /// ## Examples
 ///
 /// Calling `to_list` on an empty `dict` returns an empty list.
-/// 
+///
 /// ```gleam
 /// new() |> to_list
 /// // -> []
 /// ```
-/// 
-/// The ordering of elements in the resulting list is an implementation detail 
+///
+/// The ordering of elements in the resulting list is an implementation detail
 /// that should not be relied upon.
 ///
 /// ```gleam
@@ -498,17 +498,17 @@ pub fn fold(
   |> do_fold(initial, fun)
 }
 
-/// Calls a function for each key and value in a dict, discarding the return 
+/// Calls a function for each key and value in a dict, discarding the return
 /// value.
-/// 
+///
 /// Useful for producing a side effect for every item of a dict.
-/// 
+///
 /// ```gleam
 /// import gleam/io
-/// 
+///
 /// let dict = from_list([#("a", "apple"), #("b", "banana"), #("c", "cherry")])
-/// 
-/// each(dict, fn(key, value) { 
+///
+/// each(dict, fn(key, value) {
 ///   io.println(key <> " => " <> value)
 /// })
 /// // -> Nil
@@ -516,13 +516,39 @@ pub fn fold(
 /// // b => banana
 /// // c => cherry
 /// ```
-/// 
+///
 /// The order of elements in the iteration is an implementation detail that
 /// should not be relied upon.
-/// 
+///
 pub fn each(dict: Dict(k, v), fun: fn(k, v) -> b) -> Nil {
   fold(dict, Nil, fn(nil, k, v) {
     fun(k, v)
     nil
   })
+}
+
+/// Creates a new dict from a pair of given dicts by combining their entries.
+///
+/// If there are entries with the same keys in both dicts the given function is
+/// used to determine the new value to use in the resulting dict.
+///
+/// ## Examples
+///
+/// ```gleam
+/// let a = from_list([#("a", 0), #("b", 1)])
+/// let b = from_list([#("a", 2), #("c", 3)])
+/// combine(a, b, fn(one, other) { one + other })
+/// // -> from_list([#("a", 2), #("b", 1), #("c", 3)])
+/// ```
+///
+pub fn combine(
+  dict: Dict(k, v),
+  other: Dict(k, v),
+  with fun: fn(v, v) -> v,
+) -> Dict(k, v) {
+  use acc, key, value <- fold(over: dict, from: other)
+  case get(acc, key) {
+    Ok(other_value) -> insert(acc, key, fun(value, other_value))
+    Error(_) -> insert(acc, key, value)
+  }
 }

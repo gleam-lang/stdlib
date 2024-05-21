@@ -403,3 +403,29 @@ pub fn extra_keys_equality_test() {
   should.be_false(map1 == map2)
   should.be_false(map2 == map1)
 }
+
+pub fn combine_test() {
+  let map1 = dict.from_list([#("a", 3), #("b", 2)])
+  let map2 = dict.from_list([#("a", 2), #("c", 3), #("d", 4)])
+
+  dict.combine(map1, map2, fn(one, other) { one - other })
+  |> should.equal(dict.from_list([#("a", 1), #("b", 2), #("c", 3), #("d", 4)]))
+}
+
+pub fn combine_with_empty_test() {
+  let map1 = dict.from_list([#("a", 3), #("b", 2)])
+
+  dict.combine(map1, dict.new(), fn(one, _) { one })
+  |> should.equal(map1)
+
+  dict.combine(dict.new(), map1, fn(one, _) { one })
+  |> should.equal(map1)
+}
+
+pub fn combine_with_no_overlapping_keys_test() {
+  let map1 = dict.from_list([#("a", 1), #("b", 2)])
+  let map2 = dict.from_list([#("c", 3), #("d", 4)])
+
+  dict.combine(map1, map2, fn(one, _) { one })
+  |> should.equal(dict.from_list([#("a", 1), #("b", 2), #("c", 3), #("d", 4)]))
+}
