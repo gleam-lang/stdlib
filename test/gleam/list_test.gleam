@@ -4,6 +4,7 @@ import gleam/int
 import gleam/list
 import gleam/pair
 import gleam/should
+import gleam/string
 
 @target(erlang)
 const recursion_test_cycles = 1_000_000
@@ -32,6 +33,22 @@ pub fn length_test() {
   // TCO test
   list.range(0, recursion_test_cycles)
   |> list.length()
+}
+
+pub fn count_test() {
+  list.count([], int.is_odd)
+  |> should.equal(0)
+
+  list.count([2, 4, 6], int.is_odd)
+  |> should.equal(0)
+
+  list.count([1, 2, 3, 4, 5], int.is_odd)
+  |> should.equal(3)
+
+  list.count(["a", "list", "with", "some", "string", "values"], fn(a) {
+    string.length(a) > 4
+  })
+  |> should.equal(2)
 }
 
 pub fn reverse_test() {
