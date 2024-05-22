@@ -65,6 +65,37 @@ fn count_length(list: List(a), count: Int) -> Int {
   }
 }
 
+/// Counts the number of elements in a given list satisfying a given predicate.
+///
+/// This function has to traverse the list to determine the number of elements,
+/// so it runs in linear time.
+///
+/// ## Examples
+///
+/// ```gleam
+/// count([], fn(a) { a > 0 })
+/// // -> 0
+/// ```
+///
+/// ```gleam
+/// count([1], fn(a) { a > 0 })
+/// // -> 1
+/// ```
+///
+/// ```gleam
+/// count([1, 2, 3], int.is_odd)
+/// // -> 2
+/// ```
+///
+pub fn count(list: List(a), where predicate: fn(a) -> Bool) -> Int {
+  fold(list, 0, fn(acc, value) {
+    case predicate(value) {
+      True -> acc + 1
+      False -> acc
+    }
+  })
+}
+
 /// Creates a new list from a given list containing the same elements but in the
 /// opposite order.
 ///
