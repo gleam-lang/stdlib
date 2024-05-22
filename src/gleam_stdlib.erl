@@ -498,6 +498,8 @@ inspect_maybe_utf8_string(Binary, Acc) ->
                 $\n -> <<$\\, $n>>;
                 $\t -> <<$\\, $t>>;
                 $\f -> <<$\\, $f>>;
+                $\b -> <<$\\, $b>>;
+                $\v -> <<$\\, $v>>;
                 Other -> <<Other/utf8>>
             end,
             inspect_maybe_utf8_string(Rest, <<Acc/binary, Escaped/binary>>);
