@@ -330,7 +330,7 @@ pub fn is_disjoint(first: Set(member), from second: Set(member)) -> Bool {
 /// not both.
 ///
 /// ```gleam
-/// symmetric_difference(from_list([1, 2, 4]), from_list([3, 4])) |> to_list
+/// symmetric_difference(from_list([1, 2, 3]), from_list([3, 4])) |> to_list
 /// // -> [1, 2, 4]
 /// ```
 ///
