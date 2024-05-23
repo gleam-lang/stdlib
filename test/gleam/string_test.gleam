@@ -688,6 +688,15 @@ pub fn inspect_test() {
   string.inspect("\f")
   |> should.equal("\"\\f\"")
 
+  string.inspect("\u{08}")
+  |> should.equal("\"\\b\"")
+
+  string.inspect("\u{0B}")
+  |> should.equal("\"\\v\"")
+
+  string.inspect("\u{1B}")
+  |> should.equal("\"\\e\"")
+
   string.inspect("\r\r")
   |> should.equal("\"\\r\\r\"")
 
@@ -714,6 +723,30 @@ pub fn inspect_test() {
 
   string.inspect("\r\t")
   |> should.equal("\"\\r\\t\"")
+
+  string.inspect("\t\f")
+  |> should.equal("\"\\t\\f\"")
+
+  string.inspect("\f\t")
+  |> should.equal("\"\\f\\t\"")
+
+  string.inspect("\t\u{08}")
+  |> should.equal("\"\\t\\b\"")
+
+  string.inspect("\u{08}\t")
+  |> should.equal("\"\\b\\t\"")
+
+  string.inspect("\t\u{0B}")
+  |> should.equal("\"\\t\\v\"")
+
+  string.inspect("\u{0B}\t")
+  |> should.equal("\"\\v\\t\"")
+
+  string.inspect("\t\u{1B}")
+  |> should.equal("\"\\t\\e\"")
+
+  string.inspect("\u{1B}\t")
+  |> should.equal("\"\\e\\t\"")
 
   string.inspect("\\\n\\")
   |> should.equal("\"\\\\\\n\\\\\"")
