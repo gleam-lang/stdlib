@@ -13,8 +13,8 @@
 - The `dict` module gains the `each` function.
 - The `list` module gains the `wrap` function.
 - The `iterator` module gains the `find_map` function.
-- Fixed `string.inspect` not formatting `\f` (form feed), `\b` (backspace),
-  and `\v` (vertical tab) control characters correctly on Erlang.
+- Fixed `string.inspect` not formatting the `\f` (form feed), `\b` (backspace),
+  `\e` (escape), and `\v` (vertical tab) control characters correctly on Erlang.
 - `dynamic.unsafe_coerce` function has been deprecated.
 - Fixed `bit_array` slices of slices sometimes being incorrect on JavaScript.
 - The `dict` module gains the `combine` function.
