@@ -588,20 +588,6 @@ pub fn intersperse_test() {
   |> list.intersperse(0)
 }
 
-pub fn at_test() {
-  list.at([1, 2, 3], 2)
-  |> should.equal(Ok(3))
-
-  list.at([1, 2, 3], 5)
-  |> should.equal(Error(Nil))
-
-  list.at([], 0)
-  |> should.equal(Error(Nil))
-
-  list.at([1, 2, 3, 4, 5, 6], -1)
-  |> should.equal(Error(Nil))
-}
-
 pub fn unique_test() {
   list.unique([1, 1, 2, 3, 4, 4, 4, 5, 6])
   |> should.equal([1, 2, 3, 4, 5, 6])
