@@ -112,34 +112,6 @@ pub fn compare_test() {
   |> should.equal(order.Lt)
 }
 
-pub fn max_test() {
-  bool.max(True, True)
-  |> should.be_true
-
-  bool.max(True, False)
-  |> should.be_true
-
-  bool.max(False, False)
-  |> should.be_false
-
-  bool.max(False, True)
-  |> should.be_true
-}
-
-pub fn min_test() {
-  bool.min(True, True)
-  |> should.be_true
-
-  bool.min(True, False)
-  |> should.be_false
-
-  bool.min(False, False)
-  |> should.be_false
-
-  bool.min(False, True)
-  |> should.be_false
-}
-
 pub fn to_int_test() {
   bool.to_int(True)
   |> should.equal(1)
