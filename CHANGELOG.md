@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.38.0 - 2024-05-24
 
 - The `set` module gains the `is_subset`, `is_disjoint`, and `symmetric_difference` functions
 - The `sort` function of the `list` module has been optimised in case it's
