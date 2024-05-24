@@ -84,15 +84,8 @@ pub fn compare(a: Order, with b: Order) -> Order {
   }
 }
 
-/// Returns the largest of two orders given that `Gt > Eq > Lt`.
-///
-/// ## Examples
-///
-/// ```gleam
-/// max(Eq, Lt)
-/// // -> Eq
-/// ```
-///
+@deprecated("This function is being removed as it is not useful.
+The name may be used for a more helpful function in future.")
 pub fn max(a: Order, b: Order) -> Order {
   case a, b {
     Gt, _ -> Gt
@@ -101,15 +94,8 @@ pub fn max(a: Order, b: Order) -> Order {
   }
 }
 
-/// Returns the smallest of two orders given that `Gt > Eq > Lt`.
-///
-/// ## Examples
-///
-/// ```gleam
-/// min(Eq, Lt)
-/// // -> Lt
-/// ```
-///
+@deprecated("This function is being removed as it is not useful.
+The name may be used for a more helpful function in future.")
 pub fn min(a: Order, b: Order) -> Order {
   case a, b {
     Lt, _ -> Lt

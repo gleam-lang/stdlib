@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.39.0 - Unreleased
+
+- The `min` and `max` functions of the `order` module have been deprecated.
+
 ## v0.38.0 - 2024-05-24
 
 - The `set` module gains the `is_subset`, `is_disjoint`, and `symmetric_difference` functions
