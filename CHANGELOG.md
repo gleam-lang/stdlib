@@ -13,7 +13,8 @@
 - `dynamic.unsafe_coerce` function has been deprecated.
 - Fixed `bit_array` slices of slices sometimes being incorrect on JavaScript.
 - The `dict` module gains the `combine` function.
-- The deprecated `list.at` function has been removed.
+- The deprecated `list.at`, `bool.max`, and `bool.min` functions has been
+  removed.
 
 ## v0.37.0 - 2024-04-19
 
