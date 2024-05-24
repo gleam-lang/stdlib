@@ -498,9 +498,13 @@ inspect_maybe_utf8_string(Binary, Acc) ->
                 $\n -> <<$\\, $n>>;
                 $\t -> <<$\\, $t>>;
                 $\f -> <<$\\, $f>>;
-                $\b -> <<$\\, $b>>;
-                $\v -> <<$\\, $v>>;
-                $\e -> <<$\\, $e>>;
+                127 -> <<$\\, $u, ${, $0, $0, $7, $F, $}>>;
+                X when X < 32 ->
+                    Hex = integer_to_list(X, 16),
+                    Leading = lists:duplicate(4 - length(Hex), "0"),
+                    Formatted = lists:append(Leading, Hex),
+                    Bin = list_to_binary(Formatted),
+                    <<$\\, $u, ${, Bin/binary, $}>>;
                 Other -> <<Other/utf8>>
             end,
             inspect_maybe_utf8_string(Rest, <<Acc/binary, Escaped/binary>>);
