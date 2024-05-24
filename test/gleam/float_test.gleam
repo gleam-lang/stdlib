@@ -325,6 +325,7 @@ pub fn negate_test() {
   |> should.equal(-2.0)
 
   float.negate(0.0)
+  |> float.negate
   |> should.equal(0.0)
 }
 
