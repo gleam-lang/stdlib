@@ -688,14 +688,26 @@ pub fn inspect_test() {
   string.inspect("\f")
   |> should.equal("\"\\f\"")
 
-  string.inspect("\u{08}")
-  |> should.equal("\"\\b\"")
+  string.inspect("\u{0008}")
+  |> should.equal("\"\\u{0008}\"")
 
-  string.inspect("\u{0B}")
-  |> should.equal("\"\\v\"")
+  string.inspect("\u{000B}")
+  |> should.equal("\"\\u{000B}\"")
 
-  string.inspect("\u{1B}")
-  |> should.equal("\"\\e\"")
+  string.inspect("\u{001B}")
+  |> should.equal("\"\\u{001B}\"")
+
+  string.inspect("\u{0015}")
+  |> should.equal("\"\\u{0015}\"")
+
+  string.inspect("\u{001F}")
+  |> should.equal("\"\\u{001F}\"")
+
+  string.inspect("\u{0020}")
+  |> should.equal("\" \"")
+
+  string.inspect("\u{007F}")
+  |> should.equal("\"\\u{007F}\"")
 
   string.inspect("\r\r")
   |> should.equal("\"\\r\\r\"")
@@ -730,23 +742,23 @@ pub fn inspect_test() {
   string.inspect("\f\t")
   |> should.equal("\"\\f\\t\"")
 
-  string.inspect("\t\u{08}")
-  |> should.equal("\"\\t\\b\"")
+  string.inspect("\t\u{0008}")
+  |> should.equal("\"\\t\\u{0008}\"")
 
-  string.inspect("\u{08}\t")
-  |> should.equal("\"\\b\\t\"")
+  string.inspect("\u{0008}\t")
+  |> should.equal("\"\\u{0008}\\t\"")
 
-  string.inspect("\t\u{0B}")
-  |> should.equal("\"\\t\\v\"")
+  string.inspect("\t\u{000B}")
+  |> should.equal("\"\\t\\u{000B}\"")
 
-  string.inspect("\u{0B}\t")
-  |> should.equal("\"\\v\\t\"")
+  string.inspect("\u{000B}\t")
+  |> should.equal("\"\\u{000B}\\t\"")
 
-  string.inspect("\t\u{1B}")
-  |> should.equal("\"\\t\\e\"")
+  string.inspect("\t\u{001B}")
+  |> should.equal("\"\\t\\u{001B}\"")
 
-  string.inspect("\u{1B}\t")
-  |> should.equal("\"\\e\\t\"")
+  string.inspect("\u{001B}\t")
+  |> should.equal("\"\\u{001B}\\t\"")
 
   string.inspect("\\\n\\")
   |> should.equal("\"\\\\\\n\\\\\"")
