@@ -498,18 +498,20 @@ inspect_maybe_utf8_string(Binary, Acc) ->
                 $\n -> <<$\\, $n>>;
                 $\t -> <<$\\, $t>>;
                 $\f -> <<$\\, $f>>;
-                127 -> <<$\\, $u, ${, $0, $0, $7, $F, $}>>;
-                X when X < 32 ->
-                    Hex = integer_to_list(X, 16),
-                    Leading = lists:duplicate(4 - length(Hex), "0"),
-                    Formatted = lists:append(Leading, Hex),
-                    Bin = list_to_binary(Formatted),
-                    <<$\\, $u, ${, Bin/binary, $}>>;
+                X when X > 126, X < 160 -> convert_to_u(X);
+                X when X < 32 -> convert_to_u(X);
                 Other -> <<Other/utf8>>
             end,
             inspect_maybe_utf8_string(Rest, <<Acc/binary, Escaped/binary>>);
         _ -> {error, not_a_utf8_string}
     end.
+
+convert_to_u(Code) ->
+    Hex = integer_to_list(Code, 16),
+    Leading = lists:duplicate(4 - length(Hex), "0"),
+    Formatted = lists:append(Leading, Hex),
+    Bin = list_to_binary(Formatted),
+    <<$\\, $u, ${, Bin/binary, $}>>.
 
 float_to_string(Float) when is_float(Float) ->
     erlang:iolist_to_binary(io_lib_format:fwrite_g(Float)).
