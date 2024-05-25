@@ -4,6 +4,9 @@
 
 - The `min` and `max` functions of the `order` module have been deprecated.
 - The `dict` and `set` modules gain the `is_empty` function.
+- Fixed `string.inspect` not formatting ASCII escape codes on Erlang that could
+  lead to unexpected behavior. Now, all ASCII escape codes less than 32, as well
+  as escape code 127, are converted into \u{xxxx} syntax.
 
 ## v0.38.0 - 2024-05-24
 
@@ -13,8 +16,8 @@
 - The `dict` module gains the `each` function.
 - The `list` module gains the `wrap` function.
 - The `iterator` module gains the `find_map` function.
-- Fixed `string.inspect` not formatting the `\f` (form feed), `\b` (backspace),
-  `\e` (escape), and `\v` (vertical tab) control characters correctly on Erlang.
+- Fixed `string.inspect` not formatting the `\f` form feed control character
+  correctly on Erlang.
 - `dynamic.unsafe_coerce` function has been deprecated.
 - Fixed `bit_array` slices of slices sometimes being incorrect on JavaScript.
 - The `dict` module gains the `combine` function.
