@@ -709,6 +709,12 @@ pub fn inspect_test() {
   string.inspect("\u{007F}")
   |> should.equal("\"\\u{007F}\"")
 
+  string.inspect("\u{009F}")
+  |> should.equal("\"\\u{009F}\"")
+
+  string.inspect("\u{00A0}")
+  |> should.equal("\"\u{00A0}\"")
+
   string.inspect("\r\r")
   |> should.equal("\"\\r\\r\"")
 
