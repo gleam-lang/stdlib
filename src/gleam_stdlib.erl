@@ -507,11 +507,7 @@ inspect_maybe_utf8_string(Binary, Acc) ->
     end.
 
 convert_to_u(Code) ->
-    Hex = integer_to_list(Code, 16),
-    Leading = lists:duplicate(4 - length(Hex), "0"),
-    Formatted = lists:append(Leading, Hex),
-    Bin = list_to_binary(Formatted),
-    <<$\\, $u, ${, Bin/binary, $}>>.
+    list_to_binary(io_lib:format("\\u{~4.16.0B}", [Code])).
 
 float_to_string(Float) when is_float(Float) ->
     erlang:iolist_to_binary(io_lib_format:fwrite_g(Float)).
