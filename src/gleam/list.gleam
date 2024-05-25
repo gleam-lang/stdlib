@@ -1240,18 +1240,14 @@ fn sequences(
         // consecutive equal items) while a descreasing sequence is strictly
         // decreasing (no consecutive equal items), this is needed to make the
         // algorithm stable!
-        order.Gt, Descending
-        | order.Lt, Ascending
-        | order.Eq, Ascending ->
+        order.Gt, Descending | order.Lt, Ascending | order.Eq, Ascending ->
           sequences(rest, compare, growing, direction, new, acc)
 
         // We were growing an ascending (descending) sequence and the new item
         // is smaller (bigger) than the previous one, this means we have to stop
         // growing this sequence and start with a new one whose first item will
         // be the one we just found.
-        order.Gt, Ascending
-        | order.Lt, Descending
-        | order.Eq, Descending -> {
+        order.Gt, Ascending | order.Lt, Descending | order.Eq, Descending -> {
           let acc = case direction {
             Ascending -> [do_reverse(growing, []), ..acc]
             Descending -> [growing, ..acc]
@@ -1374,8 +1370,8 @@ fn merge_ascendings(
     [first1, ..rest1], [first2, ..rest2] ->
       case compare(first1, first2) {
         order.Lt -> merge_ascendings(rest1, list2, compare, [first1, ..acc])
-        order.Gt
-        | order.Eq -> merge_ascendings(list1, rest2, compare, [first2, ..acc])
+        order.Gt | order.Eq ->
+          merge_ascendings(list1, rest2, compare, [first2, ..acc])
       }
   }
 }
@@ -1400,8 +1396,8 @@ fn merge_descendings(
     [first1, ..rest1], [first2, ..rest2] ->
       case compare(first1, first2) {
         order.Lt -> merge_descendings(list1, rest2, compare, [first2, ..acc])
-        order.Gt
-        | order.Eq -> merge_descendings(rest1, list2, compare, [first1, ..acc])
+        order.Gt | order.Eq ->
+          merge_descendings(rest1, list2, compare, [first1, ..acc])
       }
   }
 }
