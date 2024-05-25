@@ -10,6 +10,7 @@
   escape codes such as `\n` or `\r`.
 - Fixed a bug where `string.inspect` would use the incorrect syntax for unicode
   escape codes on JavaScript.
+- The `list` module gains the `count` function.
 
 ## v0.38.0 - 2024-05-24
 
