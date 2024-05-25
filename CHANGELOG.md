@@ -6,7 +6,8 @@
 - The `dict` and `set` modules gain the `is_empty` function.
 - Fixed `string.inspect` not formatting ASCII escape codes on Erlang that could
   lead to unexpected behavior. Now, all ASCII escape codes less than 32, as well
-  as escape code 127, are converted into \u{xxxx} syntax.
+  as escape code 127, are converted into `\u{xxxx}` syntax, except for common
+  escape codes such as `\n` or `\r`.
 
 ## v0.38.0 - 2024-05-24
 
