@@ -176,7 +176,7 @@ pub fn delete_test() {
   |> should.equal(dict.from_list([#("b", 1), #("c", 2)]))
 }
 
-pub fn update_test() {
+pub fn upsert_test() {
   let dict = dict.from_list([#("a", 0), #("b", 1), #("c", 2)])
 
   let inc_or_zero = fn(x) {
@@ -187,15 +187,15 @@ pub fn update_test() {
   }
 
   dict
-  |> dict.update("a", inc_or_zero)
+  |> dict.upsert("a", inc_or_zero)
   |> should.equal(dict.from_list([#("a", 1), #("b", 1), #("c", 2)]))
 
   dict
-  |> dict.update("b", inc_or_zero)
+  |> dict.upsert("b", inc_or_zero)
   |> should.equal(dict.from_list([#("a", 0), #("b", 2), #("c", 2)]))
 
   dict
-  |> dict.update("z", inc_or_zero)
+  |> dict.upsert("z", inc_or_zero)
   |> should.equal(dict.from_list([#("a", 0), #("b", 1), #("c", 2), #("z", 0)]))
 }
 
