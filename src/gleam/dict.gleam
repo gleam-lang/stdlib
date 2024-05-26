@@ -457,8 +457,8 @@ pub fn upsert(
 }
 
 /// Returns a result with either
-/// - A new Dict with with one entry updated using a given function.
-/// - An error with `Nil` if the key was not found in the dict.
+/// - An `Ok` with a `Dict` with with one entry updated using a given function.
+/// - An `Error(Nil)` if the key was not found in the `Dict`.
 ///
 /// ## Example
 ///
