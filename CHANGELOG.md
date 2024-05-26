@@ -12,6 +12,8 @@
 - Fixed a bug where `string.inspect` would use the incorrect syntax for unicode
   escape codes on JavaScript.
 - The `list` module gains the `count` function.
+- The `dict` module function `update` has been deprecated in favour of `upsert`
+  and `update` will be used with a different signature in future.
 
 ## v0.38.0 - 2024-05-24
 
