@@ -3,8 +3,8 @@
 ## v0.39.0 - Unreleased
 
 - The `min` and `max` functions of the `order` module have been deprecated.
-- The `dict` module function `update` has been deprecated in favour of `upsert`
-  and `update` will be used with a different signature in future.
+- The `update` function of the `dict` module has been deprecated in favour
+  of `upsert` and `update` will be used with a different signature in future.
 
 ## v0.38.0 - 2024-05-24
 
