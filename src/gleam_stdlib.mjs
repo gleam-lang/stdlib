@@ -732,7 +732,7 @@ export function inspect(v) {
   if (v === false) return "False";
   if (v === null) return "//js(null)";
   if (v === undefined) return "Nil";
-  if (t === "string") return JSON.stringify(v);
+  if (t === "string") return inspectString(v);
   if (t === "bigint" || t === "number") return v.toString();
   if (Array.isArray(v)) return `#(${v.map(inspect).join(", ")})`;
   if (v instanceof List) return inspectList(v);
@@ -750,6 +750,29 @@ export function inspect(v) {
     return `//fn(${args.join(", ")}) { ... }`;
   }
   return inspectObject(v);
+}
+
+function inspectString(str) {
+  let new_str = "\"";
+  for (let i = 0; i < str.length; i++) {
+    let char = str[i];
+    switch (char) {
+      case '\n': new_str += "\\n"; break;
+      case '\r': new_str += "\\r"; break;
+      case '\t': new_str += "\\t"; break;
+      case '\f': new_str += "\\f"; break;
+      case '\\': new_str += "\\\\"; break;
+      case '\"': new_str += "\\\""; break;
+      default:
+        if (char < ' ' || (char > '~' && char < '\u{00A0}')) {
+          new_str += "\\u{" + char.charCodeAt(0).toString(16).toUpperCase().padStart(4, "0") + "}";
+        } else {
+          new_str += char;
+        }
+    }
+  }
+  new_str += "\"";
+  return new_str;
 }
 
 function inspectDict(map) {
