@@ -439,7 +439,7 @@ pub fn drop(from dict: Dict(k, v), drop disallowed_keys: List(k)) -> Dict(k, v) 
   }
 }
 
-/// Creates a new dict with one entry updated using a given function.
+/// Creates a new dict with one entry inserted or updated using a given function.
 ///
 /// If there was not an entry in the dict for the given key then the function
 /// gets `None` as its argument, otherwise it gets `Some(value)`.
@@ -455,14 +455,14 @@ pub fn drop(from dict: Dict(k, v), drop disallowed_keys: List(k)) -> Dict(k, v) 
 ///   }
 /// }
 ///
-/// update(dict, "a", increment)
+/// upsert(dict, "a", increment)
 /// // -> from_list([#("a", 1)])
 ///
-/// update(dict, "b", increment)
+/// upsert(dict, "b", increment)
 /// // -> from_list([#("a", 0), #("b", 0)])
 /// ```
 ///
-pub fn update(
+pub fn upsert(
   in dict: Dict(k, v),
   update key: k,
   with fun: fn(Option(v)) -> v,
@@ -472,6 +472,20 @@ pub fn update(
   |> option.from_result
   |> fun
   |> insert(dict, key, _)
+}
+
+/// This function with this signature is deprecated.
+///
+/// In future this fuction will return an `Ok(Dict)` if the given key existed and
+/// thus could be updated in the `Dict` or an an `Error(Nil)` if the key was not found.
+///
+@deprecated("Use `upsert` instead")
+pub fn update(
+  in dict: Dict(k, v),
+  update key: k,
+  with fun: fn(Option(v)) -> v,
+) -> Dict(k, v) {
+  upsert(dict, key, fun)
 }
 
 fn do_fold(list: List(#(k, v)), initial: acc, fun: fn(acc, k, v) -> acc) -> acc {
