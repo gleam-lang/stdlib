@@ -179,7 +179,7 @@ pub fn delete_test() {
 pub fn upsert_test() {
   let dict = dict.from_list([#("a", 0), #("b", 1), #("c", 2)])
 
-  let inc_or_zero = fn(x) {
+  let increment_or_zero = fn(x) {
     case x {
       Some(i) -> i + 1
       None -> 0
@@ -187,16 +187,34 @@ pub fn upsert_test() {
   }
 
   dict
-  |> dict.upsert("a", inc_or_zero)
+  |> dict.upsert("a", increment_or_zero)
   |> should.equal(dict.from_list([#("a", 1), #("b", 1), #("c", 2)]))
 
   dict
-  |> dict.upsert("b", inc_or_zero)
+  |> dict.upsert("b", increment_or_zero)
   |> should.equal(dict.from_list([#("a", 0), #("b", 2), #("c", 2)]))
 
   dict
-  |> dict.upsert("z", inc_or_zero)
+  |> dict.upsert("z", increment_or_zero)
   |> should.equal(dict.from_list([#("a", 0), #("b", 1), #("c", 2), #("z", 0)]))
+}
+
+pub fn update_test() {
+  let dict = dict.from_list([#("a", 0), #("b", 1), #("c", 2)])
+
+  let increment = fn(x) { x + 1 }
+
+  dict
+  |> dict.update("a", increment)
+  |> should.equal(Ok(dict.from_list([#("a", 1), #("b", 1), #("c", 2)])))
+
+  dict
+  |> dict.update("b", increment)
+  |> should.equal(Ok(dict.from_list([#("a", 0), #("b", 2), #("c", 2)])))
+
+  dict
+  |> dict.update("z", increment)
+  |> should.equal(Error(Nil))
 }
 
 pub fn fold_test() {

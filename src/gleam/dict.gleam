@@ -430,17 +430,17 @@ pub fn drop(from dict: Dict(k, v), drop disallowed_keys: List(k)) -> Dict(k, v) 
 ///
 /// ```gleam
 /// let dict = from_list([#("a", 0)])
-/// let increment = fn(x) {
+/// let increment_or_zero = fn(x) {
 ///   case x {
 ///     Some(i) -> i + 1
 ///     None -> 0
 ///   }
 /// }
 ///
-/// upsert(dict, "a", increment)
+/// upsert(dict, "a", increment_or_zero)
 /// // -> from_list([#("a", 1)])
 ///
-/// upsert(dict, "b", increment)
+/// upsert(dict, "b", increment_or_zero)
 /// // -> from_list([#("a", 0), #("b", 0)])
 /// ```
 ///
@@ -456,18 +456,32 @@ pub fn upsert(
   |> insert(dict, key, _)
 }
 
-/// This function with this signature is deprecated.
+/// Returns a result with either
+/// - A new Dict with with one entry updated using a given function.
+/// - An error with `Nil` if the key was not found in the dict.
 ///
-/// In future this fuction will return an `Ok(Dict)` if the given key existed and
-/// thus could be updated in the `Dict` or an an `Error(Nil)` if the key was not found.
+/// ## Example
 ///
-@deprecated("Use `upsert` instead")
+/// ```gleam
+/// let dict = from_list([#("a", 0)])
+/// let increment = fn(x) { i + 1 }
+///
+/// update(dict, "a", increment)
+/// // -> Ok(from_list([#("a", 1)]))
+///
+/// update(dict, "b", increment)
+/// // -> Error(Nil)
+/// ```
+///
 pub fn update(
   in dict: Dict(k, v),
   update key: k,
-  with fun: fn(Option(v)) -> v,
-) -> Dict(k, v) {
-  upsert(dict, key, fun)
+  with fun: fn(v) -> v,
+) -> Result(Dict(k, v), Nil) {
+  case dict |> get(key) {
+    Ok(value) -> Ok(dict |> insert(key, fun(value)))
+    Error(Nil) -> Error(Nil)
+  }
 }
 
 fn do_fold(list: List(#(k, v)), initial: acc, fun: fn(acc, k, v) -> acc) -> acc {

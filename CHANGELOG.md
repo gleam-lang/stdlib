@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.40.0 - Unreleased
+
+- The previously deprecated `update` function of the `dict` has been replaced
+  with a new implementation having a new `Result` return signature, where
+  it returns `Ok(updated_dict)` if the given key existed, and otherwise
+  `Error(Nil)`.
+
 ## v0.39.0 - Unreleased
 
 - The `min` and `max` functions of the `order` module have been deprecated.
