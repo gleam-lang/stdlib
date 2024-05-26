@@ -8,6 +8,8 @@
   lead to unexpected behavior. Now, all ASCII escape codes less than 32, as well
   as escape code 127, are converted into `\u{xxxx}` syntax, except for common
   escape codes such as `\n` or `\r`.
+- Standardized `string.inspect` output between Erlang and JavaScript. JavaScript
+  now uses Gleam syntax for escape sequences.
 
 ## v0.38.0 - 2024-05-24
 
