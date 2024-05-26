@@ -1245,7 +1245,7 @@ fn group_updater(
 ) -> fn(Dict(key, List(element)), element) -> Dict(key, List(element)) {
   fn(groups, elem) {
     groups
-    |> dict.update(f(elem), update_group_with(elem))
+    |> dict.upsert(f(elem), update_group_with(elem))
   }
 }
 
