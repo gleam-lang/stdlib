@@ -246,13 +246,18 @@ pub fn unwrap_error(result: Result(a, e), or default: e) -> e {
 /// ## Examples
 ///
 /// ```gleam
-/// unwrap_both(Error(1))
+/// let ok_result: Result(int, int) = Ok(1)
+/// unwrap_both(ok_result)
 /// // -> 1
-/// ```
 ///
-/// ```gleam
-/// unwrap_both(Ok(2))
+/// let err_result: Result(int, int) = Err(2)
+/// unwrap_both(err_result)
 /// // -> 2
+///
+/// // This fails!
+/// let err_result: Result(String, int) = Ok("Hello!")
+/// unwrap_both(err_result)
+/// // Type mismatch, expected Result(String, String) but got Result(String, Int)
 /// ```
 ///
 pub fn unwrap_both(result: Result(a, a)) -> a {
