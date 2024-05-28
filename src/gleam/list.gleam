@@ -1913,8 +1913,10 @@ fn do_window(acc: List(List(a)), l: List(a), n: Int) -> List(List(a)) {
 /// ```
 ///
 pub fn window(l: List(a), by n: Int) -> List(List(a)) {
-  do_window([], l, n)
-  |> reverse
+  case n <= 0 {
+    True -> []
+    False -> do_window([], l, n) |> reverse
+  }
 }
 
 /// Returns a list of tuples containing two contiguous elements.
