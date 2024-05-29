@@ -35,6 +35,24 @@ pub type Dict(key, value)
 @external(javascript, "../gleam_stdlib.mjs", "map_size")
 pub fn size(dict: Dict(k, v)) -> Int
 
+/// Determines whether or not the dict is empty.
+///
+/// ## Examples
+///
+/// ```gleam
+/// new() |> is_empty
+/// // -> True
+/// ```
+///
+/// ```gleam
+/// new() |> insert("b", 1) |> is_empty
+/// // -> False
+/// ```
+///
+pub fn is_empty(dict: Dict(a, b)) -> Bool {
+  dict == new()
+}
+
 /// Converts the dict to a list of 2-element tuples `#(key, value)`, one for
 /// each key-value pair in the dict.
 ///
