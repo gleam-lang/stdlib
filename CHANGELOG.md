@@ -3,6 +3,7 @@
 ## v0.39.0 - Unreleased
 
 - The `min` and `max` functions of the `order` module have been deprecated.
+- The `dict` module gains the `is_empty` function.
 
 ## v0.38.0 - 2024-05-24
 
