@@ -2,6 +2,7 @@
 
 ## v0.39.0 - Unreleased
 
+- Fixed `list.window` entering an endless recursive loop for `n` = 0.
 - The `min` and `max` functions of the `order` module have been deprecated.
 
 ## v0.38.0 - 2024-05-24
