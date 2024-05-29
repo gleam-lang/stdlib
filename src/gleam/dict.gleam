@@ -49,7 +49,7 @@ pub fn size(dict: Dict(k, v)) -> Int
 /// // -> False
 /// ```
 ///
-pub fn is_empty(dict: Dict(a, b)) -> Bool {
+pub fn is_empty(dict: Dict(k, v)) -> Bool {
   dict == new()
 }
 
