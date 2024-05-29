@@ -116,6 +116,19 @@ pub fn map_values_test() {
   |> should.equal(dict.from_list([#(1, 1), #(2, 3), #(3, 5)]))
 }
 
+pub fn map_keys_test() {
+  [#(0, 1), #(2, 1), #(3, 2)]
+  |> dict.from_list
+  |> dict.map_keys(fn(k, v) { k + v })
+  |> should.equal(dict.from_list([#(1, 1), #(3, 1), #(5, 2)]))
+
+  [#(1, 1), #(2, 0), #(0, 2), #(-1, 3)]
+  |> dict.from_list
+  |> dict.map_keys(fn(k, v) { k + v })
+  |> dict.size()
+  |> should.equal(1)
+}
+
 pub fn keys_test() {
   [#("a", 0), #("b", 1), #("c", 2)]
   |> dict.from_list
