@@ -1078,6 +1078,10 @@ pub fn window_test() {
   |> list.window(0)
   |> should.equal([])
 
+  [1, 2, 3]
+  |> list.window(-1)
+  |> should.equal([])
+
   // TCO test
   list.range(0, recursion_test_cycles)
   |> list.window(2)
