@@ -349,6 +349,22 @@ pub fn size_test() {
   |> should.equal(18)
 }
 
+pub fn count_test() {
+  let predicate = fn(k, v) { k + v > 1 }
+
+  dict.new()
+  |> dict.count(predicate)
+  |> should.equal(0)
+
+  dict.from_list([#(1, 0), #(2, 0), #(1, 1)])
+  |> dict.count(predicate)
+  |> should.equal(2)
+
+  dict.from_list([#(0, 0), #(1, 0), #(1, 0)])
+  |> dict.count(predicate)
+  |> should.equal(0)
+}
+
 pub fn is_empty_test() {
   dict.new()
   |> dict.is_empty()

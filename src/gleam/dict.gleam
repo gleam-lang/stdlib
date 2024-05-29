@@ -35,6 +35,34 @@ pub type Dict(key, value)
 @external(javascript, "../gleam_stdlib.mjs", "map_size")
 pub fn size(dict: Dict(k, v)) -> Int
 
+/// Counts the number of elements in a dict that satisfy a given predicate.
+///
+/// This function traverses the dict to determine the number of elements,
+/// so it runs in linear time.
+///
+/// ## Examples
+///
+/// ```gleam
+/// new()
+/// |> count(fn(key, value) { key + value > 1 })
+/// // -> 0
+/// ```
+/// 
+/// ```gleam
+/// from_list([#(1, 0), #(2, 0), #(1, 1)])
+/// |> count(fn(key, value) { key + value > 1 })
+/// // -> 2
+/// ```
+///
+pub fn count(dict: Dict(k, v), where predicate: fn(k, v) -> Bool) -> Int {
+  fold(dict, 0, fn(acc, key, value) {
+    case predicate(key, value) {
+      True -> acc + 1
+      False -> acc
+    }
+  })
+}
+
 /// Determines whether or not the dict is empty.
 ///
 /// ## Examples

@@ -22,6 +22,20 @@ pub fn size_test() {
   |> should.equal(2)
 }
 
+pub fn count_test() {
+  set.new()
+  |> set.count(int.is_odd)
+  |> should.equal(0)
+
+  set.from_list([2, 4, 6])
+  |> set.count(int.is_odd)
+  |> should.equal(0)
+
+  set.from_list([1, 2, 3, 4, 5])
+  |> set.count(int.is_odd)
+  |> should.equal(3)
+}
+
 pub fn is_empty_test() {
   set.new()
   |> set.is_empty()

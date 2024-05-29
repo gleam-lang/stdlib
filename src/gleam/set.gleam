@@ -51,6 +51,40 @@ pub fn size(set: Set(member)) -> Int {
   dict.size(set.dict)
 }
 
+/// Counts the number of elements in a set that satisfy a given predicate.
+///
+/// This function traverses the set to determine the number of elements,
+/// so it runs in linear time.
+///
+/// ## Examples
+///
+/// ```gleam
+/// new()
+/// |> count(fn(member) { member > 0 })
+/// // -> 0
+/// ```
+/// 
+/// ```gleam
+/// from_list([1])
+/// |> count(fn(member) { member > 0 })
+/// // -> 1
+/// ```
+/// 
+/// ```gleam
+/// from_list([1, 2, 3])
+/// |> count(int.is_odd)
+/// // -> 2
+/// ```
+///
+pub fn count(set: Set(member), where predicate: fn(member) -> Bool) -> Int {
+  fold(set, 0, fn(acc, m) {
+    case predicate(m) {
+      True -> acc + 1
+      False -> acc
+    }
+  })
+}
+
 /// Determines whether or not the set is empty.
 ///
 /// ## Examples
