@@ -349,6 +349,23 @@ pub fn size_test() {
   |> should.equal(18)
 }
 
+pub fn is_empty_test() {
+  dict.new()
+  |> dict.is_empty()
+  |> should.be_true()
+
+  dict.new()
+  |> dict.insert(1, 10)
+  |> dict.is_empty()
+  |> should.be_false()
+
+  dict.new()
+  |> dict.insert(1, 10)
+  |> dict.delete(1)
+  |> dict.is_empty()
+  |> should.be_true()
+}
+
 // https://github.com/gleam-lang/stdlib/issues/435
 pub fn peters_bug_test() {
   dict.new()
