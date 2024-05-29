@@ -51,6 +51,24 @@ pub fn size(set: Set(member)) -> Int {
   dict.size(set.dict)
 }
 
+/// Determines whether or not the set is empty.
+///
+/// ## Examples
+///
+/// ```gleam
+/// new() |> is_empty
+/// // -> True
+/// ```
+///
+/// ```gleam
+/// new() |> insert(1) |> is_empty
+/// // -> False
+/// ```
+///
+pub fn is_empty(set: Set(member)) -> Bool {
+  set == new()
+}
+
 /// Inserts an member into the set.
 ///
 /// This function runs in logarithmic time.
