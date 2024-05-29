@@ -498,11 +498,16 @@ inspect_maybe_utf8_string(Binary, Acc) ->
                 $\n -> <<$\\, $n>>;
                 $\t -> <<$\\, $t>>;
                 $\f -> <<$\\, $f>>;
+                X when X > 126, X < 160 -> convert_to_u(X);
+                X when X < 32 -> convert_to_u(X);
                 Other -> <<Other/utf8>>
             end,
             inspect_maybe_utf8_string(Rest, <<Acc/binary, Escaped/binary>>);
         _ -> {error, not_a_utf8_string}
     end.
+
+convert_to_u(Code) ->
+    list_to_binary(io_lib:format("\\u{~4.16.0B}", [Code])).
 
 float_to_string(Float) when is_float(Float) ->
     erlang:iolist_to_binary(io_lib_format:fwrite_g(Float)).

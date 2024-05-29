@@ -9,7 +9,16 @@
 
 ## v0.39.0 - Unreleased
 
+- Fixed `list.window` entering an endless recursive loop for `n` = 0.
 - The `min` and `max` functions of the `order` module have been deprecated.
+- The `dict` and `set` modules gain the `is_empty` function.
+- Fixed `string.inspect` not formatting ASCII escape codes on Erlang that could
+  lead to unexpected behavior. Now, all ASCII escape codes less than 32, as well
+  as escape code 127, are converted into `\u{xxxx}` syntax, except for common
+  escape codes such as `\n` or `\r`.
+- Fixed a bug where `string.inspect` would use the incorrect syntax for unicode
+  escape codes on JavaScript.
+- The `list` module gains the `count` function.
 - The `update` function of the `dict` module has been deprecated in favour
   of `upsert` and `update` will be used with a different signature in future.
 

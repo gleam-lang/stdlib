@@ -65,6 +65,37 @@ fn count_length(list: List(a), count: Int) -> Int {
   }
 }
 
+/// Counts the number of elements in a given list satisfying a given predicate.
+///
+/// This function has to traverse the list to determine the number of elements,
+/// so it runs in linear time.
+///
+/// ## Examples
+///
+/// ```gleam
+/// count([], fn(a) { a > 0 })
+/// // -> 0
+/// ```
+///
+/// ```gleam
+/// count([1], fn(a) { a > 0 })
+/// // -> 1
+/// ```
+///
+/// ```gleam
+/// count([1, 2, 3], int.is_odd)
+/// // -> 2
+/// ```
+///
+pub fn count(list: List(a), where predicate: fn(a) -> Bool) -> Int {
+  fold(list, 0, fn(acc, value) {
+    case predicate(value) {
+      True -> acc + 1
+      False -> acc
+    }
+  })
+}
+
 /// Creates a new list from a given list containing the same elements but in the
 /// opposite order.
 ///
@@ -1240,18 +1271,14 @@ fn sequences(
         // consecutive equal items) while a descreasing sequence is strictly
         // decreasing (no consecutive equal items), this is needed to make the
         // algorithm stable!
-        order.Gt, Descending
-        | order.Lt, Ascending
-        | order.Eq, Ascending ->
+        order.Gt, Descending | order.Lt, Ascending | order.Eq, Ascending ->
           sequences(rest, compare, growing, direction, new, acc)
 
         // We were growing an ascending (descending) sequence and the new item
         // is smaller (bigger) than the previous one, this means we have to stop
         // growing this sequence and start with a new one whose first item will
         // be the one we just found.
-        order.Gt, Ascending
-        | order.Lt, Descending
-        | order.Eq, Descending -> {
+        order.Gt, Ascending | order.Lt, Descending | order.Eq, Descending -> {
           let acc = case direction {
             Ascending -> [do_reverse(growing, []), ..acc]
             Descending -> [growing, ..acc]
@@ -1374,8 +1401,8 @@ fn merge_ascendings(
     [first1, ..rest1], [first2, ..rest2] ->
       case compare(first1, first2) {
         order.Lt -> merge_ascendings(rest1, list2, compare, [first1, ..acc])
-        order.Gt
-        | order.Eq -> merge_ascendings(list1, rest2, compare, [first2, ..acc])
+        order.Gt | order.Eq ->
+          merge_ascendings(list1, rest2, compare, [first2, ..acc])
       }
   }
 }
@@ -1400,8 +1427,8 @@ fn merge_descendings(
     [first1, ..rest1], [first2, ..rest2] ->
       case compare(first1, first2) {
         order.Lt -> merge_descendings(list1, rest2, compare, [first2, ..acc])
-        order.Gt
-        | order.Eq -> merge_descendings(rest1, list2, compare, [first1, ..acc])
+        order.Gt | order.Eq ->
+          merge_descendings(rest1, list2, compare, [first1, ..acc])
       }
   }
 }
@@ -1886,8 +1913,10 @@ fn do_window(acc: List(List(a)), l: List(a), n: Int) -> List(List(a)) {
 /// ```
 ///
 pub fn window(l: List(a), by n: Int) -> List(List(a)) {
-  do_window([], l, n)
-  |> reverse
+  case n <= 0 {
+    True -> []
+    False -> do_window([], l, n) |> reverse
+  }
 }
 
 /// Returns a list of tuples containing two contiguous elements.

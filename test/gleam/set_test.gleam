@@ -22,6 +22,23 @@ pub fn size_test() {
   |> should.equal(2)
 }
 
+pub fn is_empty_test() {
+  set.new()
+  |> set.is_empty()
+  |> should.be_true()
+
+  set.new()
+  |> set.insert(1)
+  |> set.is_empty()
+  |> should.be_false()
+
+  set.new()
+  |> set.insert(1)
+  |> set.delete(1)
+  |> set.is_empty()
+  |> should.be_true()
+}
+
 pub fn contains_test() {
   set.new()
   |> set.insert(1)
