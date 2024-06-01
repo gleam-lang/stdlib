@@ -1319,7 +1319,7 @@ pub fn reduce(
 ///
 /// ```gleam
 /// range(1, 10) |> last
-/// // -> Ok(9)
+/// // -> Ok(10)
 /// ```
 ///
 pub fn last(iterator: Iterator(element)) -> Result(element, Nil) {
