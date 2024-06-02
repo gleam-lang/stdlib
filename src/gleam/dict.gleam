@@ -474,12 +474,7 @@ pub fn upsert(
   |> insert(dict, key, _)
 }
 
-/// This function with this signature is deprecated.
-///
-/// In future this fuction will return an `Ok(Dict)` if the given key existed and
-/// thus could be updated in the `Dict` or an an `Error(Nil)` if the key was not found.
-///
-@deprecated("Use `upsert` instead")
+@deprecated("This function has been renamed to `upsert`")
 pub fn update(
   in dict: Dict(k, v),
   update key: k,
