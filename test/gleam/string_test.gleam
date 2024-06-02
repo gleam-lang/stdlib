@@ -176,11 +176,187 @@ pub fn trim_right_test() {
   |> should.equal("  hats")
 }
 
-pub fn trim_unicode_test() {
-  // unicode spaces
-  "hats a "
+// unicode whitespaces
+pub fn trim_horizontal_tab_test() {
+  "hats\u{0009}"
   |> string.trim
-  |> should.equal("hats a ")
+  |> should.equal("hats")
+}
+
+pub fn trim_newline_test() {
+  "hats\u{000A}"
+  |> string.trim
+  |> should.equal("hats")
+}
+
+pub fn trim_vertical_tab_test() {
+  "hats\u{000B}"
+  |> string.trim
+  |> should.equal("hats")
+}
+
+pub fn trim_form_feed_test() {
+  "hats\u{000C}"
+  |> string.trim
+  |> should.equal("hats")
+}
+
+
+pub fn trim_carriage_return_test() {
+  "hats\u{000D}"
+  |> string.trim
+  |> should.equal("hats")
+}
+
+pub fn trim_space_test() {
+  "hats\u{0020}"
+  |> string.trim
+  |> should.equal("hats")
+}
+
+pub fn trim_no_break_space_test() {
+  "hats\u{00A0}"
+  |> string.trim
+  |> should.equal("hats\u{00A0}")
+}
+
+pub fn trim_ogham_space_mark_test() {
+  "hats\u{1680}"
+  |> string.trim
+  |> should.equal("hats\u{1680}")
+}
+
+pub fn trim_en_quad_test() {
+  "hats\u{2000}"
+  |> string.trim
+  |> should.equal("hats\u{2000}")
+}
+
+pub fn trim_em_quad_test() {
+  "hats\u{2001}"
+  |> string.trim
+  |> should.equal("hats\u{2001}")
+}
+
+pub fn trim_en_space_test() {
+  "hats\u{2002}"
+  |> string.trim
+  |> should.equal("hats\u{2002}")
+}
+
+pub fn trim_em_space_test() {
+  "hats\u{2003}"
+  |> string.trim
+  |> should.equal("hats\u{2003}")
+}
+
+pub fn trim_three_per_em_space_test() {
+  "hats\u{2004}"
+  |> string.trim
+  |> should.equal("hats\u{2004}")
+}
+
+pub fn trim_four_per_em_space_test() {
+  "hats\u{2005}"
+  |> string.trim
+  |> should.equal("hats\u{2005}")
+}
+
+pub fn trim_six_per_em_space_test() {
+  "hats\u{2006}"
+  |> string.trim
+  |> should.equal("hats\u{2006}")
+}
+
+pub fn trim_figure_space_test() {
+  "hats\u{2007}"
+  |> string.trim
+  |> should.equal("hats\u{2007}")
+}
+
+pub fn trim_punctuation_space_test() {
+  "hats\u{2008}"
+  |> string.trim
+  |> should.equal("hats\u{2008}")
+}
+
+pub fn trim_thin_space_test() {
+  "hats\u{2009}"
+  |> string.trim
+  |> should.equal("hats\u{2009}")
+}
+
+pub fn trim_hair_space_test() {
+  "hats\u{200A}"
+  |> string.trim
+  |> should.equal("hats\u{200A}")
+}
+
+pub fn trim_line_separator_test() {
+  "hats\u{2028}"
+  |> string.trim
+  |> should.equal("hats")
+}
+
+pub fn trim_paragraph_separator_test() {
+  "hats\u{2029}"
+  |> string.trim
+  |> should.equal("hats")
+}
+
+pub fn trim_narrow_no_break_space_test() {
+  "hats\u{202F}"
+  |> string.trim
+  |> should.equal("hats\u{202F}")
+}
+
+pub fn trim_medium_mathematical_space_test() {
+  "hats\u{205F}"
+  |> string.trim
+  |> should.equal("hats\u{205F}")
+}
+
+pub fn trim_ideographic_space_test() {
+  "hats\u{3000}"
+  |> string.trim
+  |> should.equal("hats\u{3000}")
+}
+
+// related unicode non-whitespaces
+pub fn trim_mongolian_vowel_separator_test() {
+  "hats\u{180E}"
+  |> string.trim
+  |> should.equal("hats\u{180E}")
+}
+
+pub fn trim_zero_width_space_test() {
+  "hats\u{200B}"
+  |> string.trim
+  |> should.equal("hats\u{200B}")
+}
+
+pub fn trim_zero_width_non_joiner_test() {
+  "hats\u{200C}"
+  |> string.trim
+  |> should.equal("hats\u{200C}")
+}
+
+pub fn trim_zero_width_joiner_test() {
+  "hats\u{200D}"
+  |> string.trim
+  |> should.equal("hats\u{200D}")
+}
+
+pub fn trim_word_joiner_test() {
+  "hats\u{2060}"
+  |> string.trim
+  |> should.equal("hats\u{2060}")
+}
+
+pub fn trim_zero_width_non_breaking_space_test() {
+  "hats\u{FEFF}"
+  |> string.trim
+  |> should.equal("hats\u{FEFF}")
 }
 
 pub fn starts_with_test() {
