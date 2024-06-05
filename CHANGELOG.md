@@ -14,6 +14,7 @@
 - The `list` module gains the `count` function.
 - The `update` function of the `dict` module has been deprecated in favour
   of `upsert` and `update` will be used with a different signature in future.
+- The behaviour of the string trim functions is now consistent across targets.
 
 ## v0.38.0 - 2024-05-24
 
