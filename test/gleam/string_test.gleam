@@ -201,7 +201,6 @@ pub fn trim_form_feed_test() {
   |> should.equal("hats")
 }
 
-
 pub fn trim_carriage_return_test() {
   "hats\u{000D}"
   |> string.trim
