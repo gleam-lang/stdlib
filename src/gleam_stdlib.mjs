@@ -425,7 +425,7 @@ export function compile_regex(pattern, options) {
 export function regex_split(regex, string) {
   return List.fromArray(
     string.split(regex).map((item) => (item === undefined ? "" : item)),
-  ); 
+  );
 }
 
 export function regex_scan(regex, string) {
@@ -864,3 +864,38 @@ export function base16_decode(string) {
 export function bit_array_inspect(bits) {
   return `<<${[...bits.buffer].join(", ")}>>`;
 }
+
+export function bit_array_index_of(haystack, needle) {
+  if (needle.buffer.length > haystack.buffer.length) {
+    return -1;
+  }
+
+  for (let i = 0; i <= haystack.buffer.length - needle.buffer.length; i++) {
+    let found = true;
+    for (let j = 0; j < needle.buffer.length; j++) {
+      if (haystack.buffer[i + j] !== needle.buffer[j]) {
+        found = false;
+        break;
+      }
+    }
+    if (found) {
+      return i;
+    }
+  }
+
+  return -1;
+}
+
+export function bit_array_split_once(haystack, needle) {
+  const index = bit_array_index_of(haystack, needle);
+
+  if (index === -1) {
+    return Error(Nil);
+  }
+
+  const before = new BitArray(haystack.buffer.slice(0, index));
+  const after = new BitArray(haystack.buffer.slice(index + needle.buffer.length));
+
+  return new Ok([before, after]);
+}
+

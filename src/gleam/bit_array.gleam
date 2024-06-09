@@ -206,3 +206,36 @@ fn do_inspect(input: BitArray, accumulator: String) -> String {
     _ -> accumulator
   }
 }
+
+/// Finds the position of a bit pattern within a bit array.
+///
+/// ## Examples
+///
+/// ```gleam
+/// index_of(<<0, 1, 2, 3, 4, 5, 6, 7>>, <<3, 4, 5>>)
+/// // -> "3"
+/// ```
+///
+@external(erlang, "gleam_stdlib", "bit_array_index_of")
+@external(javascript, "../gleam_stdlib.mjs", "bit_array_index_of")
+pub fn index_of(haystack: BitArray, needle: BitArray) -> Int
+
+//  error is returned if not found.
+/// Splits a bit array into left and right parts at the bit pattern provided, an
+///
+/// ## Examples
+///
+/// ```gleam
+/// split_once(<<0, 1, 2, 3, 4, 5, 6, 7>>, <<3, 4, 5>>)
+/// // -> Ok(<<0, 1, 2>>, <<6, 7>>)
+///
+/// split_once(<<0, 1, 2, 3, 4, 5, 6, 7>>, <<5, 4, 3>>)
+/// // -> Error(Nil)
+/// ```
+///
+@external(erlang, "gleam_stdlib", "bit_array_split_once")
+@external(javascript, "../gleam_stdlib.mjs", "bit_array_split_once")
+pub fn split_once(
+  haystack: BitArray,
+  needle: BitArray,
+) -> Result(#(BitArray, BitArray), Nil)

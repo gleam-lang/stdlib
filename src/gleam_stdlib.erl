@@ -13,7 +13,8 @@
     decode_tuple5/1, decode_tuple6/1, tuple_get/2, classify_dynamic/1, print/1,
     println/1, print_error/1, println_error/1, inspect/1, float_to_string/1,
     int_from_base_string/2, utf_codepoint_list_to_string/1, contains_string/2,
-    crop_string/2, base16_decode/1, string_replace/3
+    crop_string/2, base16_decode/1, string_replace/3, bit_array_index_of/2,
+    bit_array_split_once/2
 ]).
 
 %% Taken from OTP's uri_string module
@@ -536,3 +537,32 @@ base16_decode(String) ->
 
 string_replace(String, Pattern, Replacement) ->
     string:replace(String, Pattern, Replacement, all).
+
+bit_array_index_of(Haystack, Needle) ->
+    HaystackSize = byte_size(Haystack),
+    NeedleSize = byte_size(Needle),
+    bit_array_find_needle(Haystack, Needle, 0, HaystackSize, NeedleSize).
+
+bit_array_find_needle(_, _, Pos, HaystackSize, NeedleSize) when HaystackSize < NeedleSize + Pos ->
+    -1;
+
+bit_array_find_needle(Haystack, Needle, Pos, HaystackSize, NeedleSize) ->
+    case binary_part(Haystack, Pos, NeedleSize) of
+        Needle -> Pos;
+        _ -> bit_array_find_needle(Haystack, Needle, Pos + 1, HaystackSize, NeedleSize)
+    end.
+
+bit_array_split_once(Haystack, Needle) ->
+    Index = bit_array_index_of(Haystack, Needle),
+    if
+        Index =:= -1 -> {error, nil};
+        true ->
+            NeedleSize = byte_size(Needle),
+            {Left, Right} = bit_array_split_at(Haystack, Index, NeedleSize),
+            {ok, {Left, Right}}
+    end.
+
+bit_array_split_at(Binary, Index, NeedleSize) ->
+    <<Left:Index/binary, _:NeedleSize/binary, Right/binary>> = Binary,
+    {Left, Right}.
+
