@@ -309,7 +309,7 @@ pub fn result(
 ///
 /// ```gleam
 /// from([1, 2, 3]) |> list(of: string)
-/// // -> Error([DecodeError(expected: "String", found: "Int", path: ["*"])])
+/// // -> Error([DecodeError(expected: "String", found: "Int", path: ["0"])])
 /// ```
 ///
 /// ```gleam
@@ -322,9 +322,12 @@ pub fn list(
 ) -> Decoder(List(inner)) {
   fn(dynamic) {
     use list <- result.try(shallow_list(dynamic))
-    list
-    |> list.try_map(decoder_type)
-    |> map_errors(push_path(_, "*"))
+    let result = list.try_map_with_index(list, decoder_type)
+    case result {
+      Ok(values) -> Ok(values)
+      Error(#(index, errors)) ->
+        Error(list.map(errors, push_path(_, int.to_string(index))))
+    }
   }
 }
 

@@ -265,14 +265,14 @@ pub fn list_test() {
   |> dynamic.from
   |> dynamic.list(dynamic.int)
   |> should.equal(
-    Error([DecodeError(expected: "Int", found: "String", path: ["*"])]),
+    Error([DecodeError(expected: "Int", found: "String", path: ["0"])]),
   )
 
   [dynamic.from(1), dynamic.from("not an int")]
   |> dynamic.from
   |> dynamic.list(dynamic.int)
   |> should.equal(
-    Error([DecodeError(expected: "Int", found: "String", path: ["*"])]),
+    Error([DecodeError(expected: "Int", found: "String", path: ["1"])]),
   )
 }
 

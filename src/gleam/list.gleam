@@ -534,6 +534,36 @@ pub fn try_map(
   do_try_map(list, fun, [])
 }
 
+fn do_try_map_with_index(
+  list: List(a),
+  fun: fn(a) -> Result(b, e),
+  acc: List(b),
+  i: Int,
+) -> Result(List(b), #(Int, e)) {
+  case list {
+    [] -> Ok(reverse(acc))
+    [x, ..xs] ->
+      case fun(x) {
+        Ok(y) -> do_try_map_with_index(xs, fun, [y, ..acc], i + 1)
+        Error(error) -> Error(#(i, error))
+      }
+  }
+}
+
+/// This is the same as try_map but rather than just returning an error it
+/// returns a tuple of the index of the element that failed and the error.
+///
+/// ```gleam
+/// try_map([[1], [], [2]], first)
+/// // -> Error(#(1, Nil))
+/// ```
+pub fn try_map_with_index(
+  over list: List(a),
+  with fun: fn(a) -> Result(b, e),
+) -> Result(List(b), #(Int, e)) {
+  do_try_map_with_index(list, fun, [], 0)
+}
+
 /// Returns a list that is the given list with up to the given number of
 /// elements removed from the front of the list.
 ///
