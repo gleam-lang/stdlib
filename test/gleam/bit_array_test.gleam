@@ -312,7 +312,7 @@ pub fn inspect_partial_bytes_test() {
 pub fn index_of_found_test() {
   <<"Hello, World":utf8>>
   |> bit_array.index_of(<<", ":utf8>>)
-  |> should.equal(5)
+  |> should.equal(40)
 }
 
 pub fn index_of_not_found_test() {
@@ -340,17 +340,22 @@ pub fn split_once_not_found_test() {
   |> bit_array.split_once(<<"Joe":utf8>>)
   |> should.be_error
 }
-// @target(erlang)
-// pub fn split_once_not_byte_aligned_found_test() {
-//   <<"Hello":utf8, 0:4, "World":utf8>>
-//   |> bit_array.split_once(<<0:4>>)
-//   |> should.be_ok
-//   |> should.equal(#(<<"Hello":utf8>>, <<"World":utf8>>))
-// }
-//
-// @target(erlang)
-// pub fn split_once_not_byte_aligned_not_found_test() {
-//   <<"Hello":utf8, 0:4, "World":utf8>>
-//   |> bit_array.split_once(<<"Joe":utf8>>)
-//   |> should.be_error
-// }
+
+@target(erlang)
+pub fn split_once_non_byte_aligned_found_test() {
+  // haystack: 00000001 00000010 00000011 00000100 00000101
+  // needle:                           11
+  // before:   00000001 00000010 000000
+  // after:                               00000100 00000101
+  <<1, 2, 3, 4, 5>>
+  |> bit_array.split_once(<<3:2>>)
+  |> should.be_ok
+  |> should.equal(#(<<1, 2, 0:6>>, <<4, 5>>))
+}
+
+@target(erlang)
+pub fn split_once_non_byte_aligned_not_found_test() {
+  <<1, 2, 3, 4, 5>>
+  |> bit_array.split_once(<<7:3>>)
+  |> should.be_error
+}

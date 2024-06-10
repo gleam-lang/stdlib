@@ -879,7 +879,7 @@ export function bit_array_index_of(haystack, needle) {
       }
     }
     if (found) {
-      return i;
+      return i * 8;
     }
   }
 
@@ -887,11 +887,12 @@ export function bit_array_index_of(haystack, needle) {
 }
 
 export function bit_array_split_once(haystack, needle) {
-  const index = bit_array_index_of(haystack, needle);
+  let index = bit_array_index_of(haystack, needle);
 
   if (index === -1) {
-    return Error(Nil);
+    return new Error(Nil);
   }
+  index = index / 8;
 
   const before = new BitArray(haystack.buffer.slice(0, index));
   const after = new BitArray(haystack.buffer.slice(index + needle.buffer.length));
