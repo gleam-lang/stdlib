@@ -15,6 +15,8 @@
 - The `update` function of the `dict` module has been deprecated in favour
   of `upsert` and `update` will be used with a different signature in future.
 - The behaviour of the string trim functions is now consistent across targets.
+- `iterator.yield` now yields values without waiting for the next one to become
+  available.
 
 ## v0.38.0 - 2024-05-24
 
