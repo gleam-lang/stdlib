@@ -246,16 +246,31 @@ export function split_once(haystack, needle) {
   }
 }
 
+const unicode_whitespaces = [
+  "\u0020", // Space
+  "\u0009", // Horizontal tab
+  "\u000A", // Line feed
+  "\u000B", // Vertical tab
+  "\u000C", // Form feed
+  "\u000D", // Carriage return
+  "\u0085", // Next line
+  "\u2028", // Line separator
+  "\u2029", // Paragraph separator
+].join();
+
+const left_trim_regex = new RegExp(`^([${unicode_whitespaces}]*)`, "g");
+const right_trim_regex = new RegExp(`([${unicode_whitespaces}]*)$`, "g");
+
 export function trim(string) {
-  return string.trim();
+  return trim_left(trim_right(string));
 }
 
 export function trim_left(string) {
-  return string.trimLeft();
+  return string.replace(left_trim_regex, "");
 }
 
 export function trim_right(string) {
-  return string.trimRight();
+  return string.replace(right_trim_regex, "");
 }
 
 export function bit_array_from_string(string) {
@@ -363,7 +378,11 @@ export function bit_array_slice(bits, position, length) {
   const end = Math.max(position, position + length);
   if (start < 0 || end > bits.length) return new Error(Nil);
   const byteOffset = bits.buffer.byteOffset + start;
-  const buffer = new Uint8Array(bits.buffer.buffer, byteOffset, Math.abs(length));
+  const buffer = new Uint8Array(
+    bits.buffer.buffer,
+    byteOffset,
+    Math.abs(length),
+  );
   return new Ok(new BitArray(buffer));
 }
 
@@ -404,7 +423,9 @@ export function compile_regex(pattern, options) {
 }
 
 export function regex_split(regex, string) {
-  return List.fromArray(string.split(regex).map(item => item === undefined ? "" : item));
+  return List.fromArray(
+    string.split(regex).map((item) => (item === undefined ? "" : item)),
+  ); 
 }
 
 export function regex_scan(regex, string) {
