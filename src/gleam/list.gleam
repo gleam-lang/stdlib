@@ -538,14 +538,13 @@ fn do_try_map_with_index(
   list: List(a),
   fun: fn(a) -> Result(b, e),
   acc: List(b),
-  i: Int,
 ) -> Result(List(b), #(Int, e)) {
   case list {
     [] -> Ok(reverse(acc))
     [x, ..xs] ->
       case fun(x) {
-        Ok(y) -> do_try_map_with_index(xs, fun, [y, ..acc], i + 1)
-        Error(error) -> Error(#(i, error))
+        Ok(y) -> do_try_map_with_index(xs, fun, [y, ..acc])
+        Error(error) -> Error(#(length(acc), error))
       }
   }
 }
@@ -561,7 +560,7 @@ pub fn try_map_with_index(
   over list: List(a),
   with fun: fn(a) -> Result(b, e),
 ) -> Result(List(b), #(Int, e)) {
-  do_try_map_with_index(list, fun, [], 0)
+  do_try_map_with_index(list, fun, [])
 }
 
 /// Returns a list that is the given list with up to the given number of
