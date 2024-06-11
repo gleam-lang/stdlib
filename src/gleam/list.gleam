@@ -3,7 +3,7 @@
 ////
 //// New elements can be added and removed from the front of a list in
 //// constant time, while adding and removing from the end requires traversing
-//// the copying the whole list, so keep this in mind when designing your
+//// and copying the whole list, so keep this in mind when designing your
 //// programs.
 ////
 //// There is a dedicated syntax for prefixing to a list:
