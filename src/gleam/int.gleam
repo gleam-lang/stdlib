@@ -389,7 +389,7 @@ pub fn max(a: Int, b: Int) -> Int {
 /// ```
 ///
 pub fn is_even(x: Int) -> Bool {
-  x % 2 == 0
+  bitwise_and(x, 1) == 0
 }
 
 /// Returns whether the value provided is odd.
@@ -407,7 +407,7 @@ pub fn is_even(x: Int) -> Bool {
 /// ```
 ///
 pub fn is_odd(x: Int) -> Bool {
-  x % 2 != 0
+  bitwise_and(x, 1) != 0
 }
 
 /// Returns the negative of the value provided.
