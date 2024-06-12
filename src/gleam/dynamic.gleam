@@ -290,6 +290,35 @@ pub fn result(
   }
 }
 
+fn do_try_map_with_index(
+  list: List(a),
+  fun: fn(a) -> Result(b, e),
+  acc: List(b),
+) -> Result(List(b), #(Int, e)) {
+  case list {
+    [] -> Ok(list.reverse(acc))
+    [x, ..xs] ->
+      case fun(x) {
+        Ok(y) -> do_try_map_with_index(xs, fun, [y, ..acc])
+        Error(error) -> Error(#(list.length(acc), error))
+      }
+  }
+}
+
+/// This is the same as list.try_map but rather than just returning an error it
+/// returns a tuple of the index of the element that failed and the error.
+///
+/// ```gleam
+/// try_map_with_index([[1], [], [2]], first)
+/// // -> Error(#(1, Nil))
+/// ```
+fn try_map_with_index(
+  over list: List(a),
+  with fun: fn(a) -> Result(b, e),
+) -> Result(List(b), #(Int, e)) {
+  do_try_map_with_index(list, fun, [])
+}
+
 /// Checks to see whether a `Dynamic` value is a list of a particular type, and
 /// returns that list if it is.
 ///
@@ -322,7 +351,7 @@ pub fn list(
 ) -> Decoder(List(inner)) {
   fn(dynamic) {
     use list <- result.try(shallow_list(dynamic))
-    let result = list.try_map_with_index(list, decoder_type)
+    let result = try_map_with_index(list, decoder_type)
     case result {
       Ok(values) -> Ok(values)
       Error(#(index, errors)) ->

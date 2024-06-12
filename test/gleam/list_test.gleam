@@ -239,31 +239,6 @@ pub fn try_map_test() {
   |> list.try_map(fun)
 }
 
-pub fn try_map_with_index_test() {
-  let fun = fn(x) {
-    case x == 6 || x == 5 || x == 4 {
-      True -> Ok(x * 2)
-      False -> Error(x)
-    }
-  }
-
-  [5, 6, 5, 6]
-  |> list.try_map_with_index(fun)
-  |> should.equal(Ok([10, 12, 10, 12]))
-
-  [4, 6, 5, 7, 3]
-  |> list.try_map_with_index(fun)
-  |> should.equal(Error(#(3, 7)))
-
-  [7, 6, 5]
-  |> list.try_map_with_index(fun)
-  |> should.equal(Error(#(0, 7)))
-
-  // TCO test
-  list.repeat(6, recursion_test_cycles)
-  |> list.try_map_with_index(fun)
-}
-
 pub fn drop_test() {
   []
   |> list.drop(5)
