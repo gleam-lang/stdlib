@@ -699,3 +699,18 @@ pub fn yield_test() {
   |> iterator.to_list
   |> should.equal([1, 2, 3])
 }
+
+pub fn yield_computes_only_necessary_values_test() {
+  let items = {
+    use <- iterator.yield(1)
+    use <- iterator.yield(2)
+    use <- iterator.yield(3)
+    iterator.empty()
+    panic as "yield computed more values than necessary"
+  }
+
+  items
+  |> iterator.take(3)
+  |> iterator.to_list
+  |> should.equal([1, 2, 3])
+}
