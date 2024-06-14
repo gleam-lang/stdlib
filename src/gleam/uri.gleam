@@ -374,20 +374,18 @@ pub fn to_string(uri: Uri) -> String {
 ///
 pub fn origin(uri: Uri) -> Result(String, Nil) {
   let Uri(scheme: scheme, host: host, port: port, ..) = uri
-  case scheme {
-    Some("https") if port == Some(443) -> {
-      let origin = Uri(scheme, None, host, None, "", None, None)
-      Ok(to_string(origin))
+  case host, scheme {
+    Some(h), Some("https") if port == Some(443) ->
+      Ok(string.concat(["https://", h]))
+    Some(h), Some("http") if port == Some(80) ->
+      Ok(string.concat(["http://", h]))
+    Some(h), Some(s) if s == "http" || s == "https" -> {
+      case port {
+        Some(p) -> Ok(string.concat([s, "://", h, ":", int.to_string(p)]))
+        None -> Ok(string.concat([s, "://", h]))
+      }
     }
-    Some("http") if port == Some(80) -> {
-      let origin = Uri(scheme, None, host, None, "", None, None)
-      Ok(to_string(origin))
-    }
-    Some(s) if s == "http" || s == "https" -> {
-      let origin = Uri(scheme, None, host, port, "", None, None)
-      Ok(to_string(origin))
-    }
-    _ -> Error(Nil)
+    _, _ -> Error(Nil)
   }
 }
 
