@@ -538,35 +538,22 @@ base16_decode(String) ->
 string_replace(String, Pattern, Replacement) ->
     string:replace(String, Pattern, Replacement, all).
 
-extract_bits(Haystack, Pos, Len) ->
-    <<_:Pos, Needle:Len/bits, _/bits>> = Haystack,
-    Needle.
-
 bit_array_index_of(Haystack, Needle) ->
-    HaystackSize = bit_size(Haystack),
-    NeedleSize = bit_size(Needle),
-    bit_array_find_needle(Haystack, Needle, 0, HaystackSize, NeedleSize).
-
-bit_array_find_needle(_, _, Pos, HaystackSize, NeedleSize) when HaystackSize < NeedleSize + Pos ->
-    -1;
-
-bit_array_find_needle(Haystack, Needle, Pos, HaystackSize, NeedleSize) ->
-    case extract_bits(Haystack, Pos, NeedleSize) of
-        Needle -> Pos;
-        _ -> bit_array_find_needle(Haystack, Needle, Pos + 1, HaystackSize, NeedleSize)
+    case binary:match(Haystack, Needle) of
+        {Pos, _Len} -> Pos;
+        _ -> -1
     end.
 
 bit_array_split_once(Haystack, Needle) ->
-    Index = bit_array_index_of(Haystack, Needle),
-    if
-        Index =:= -1 -> {error, nil};
-        true ->
-            NeedleSize = bit_size(Needle),
-            {Left, Right} = bit_array_split_at(Haystack, Index, NeedleSize),
-            {ok, {Left, Right}}
+    try
+        case Needle of
+            <<>> -> {ok, {<<>>, Haystack}};
+            _ -> case binary:split(Haystack, Needle) of
+                [Part1, Part2] -> {ok, {Part1, Part2}};
+                _ -> {error, nil}
+            end
+        end
+    catch
+        error:badarg -> {error, nil}
     end.
-
-bit_array_split_at(Binary, Index, NeedleSize) ->
-    <<Left:Index/bits, _:NeedleSize/bits, Right/bits>> = Binary,
-    {Left, Right}.
 
