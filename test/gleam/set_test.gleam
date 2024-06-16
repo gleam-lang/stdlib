@@ -83,6 +83,13 @@ pub fn fold_test() {
   |> should.equal(13)
 }
 
+pub fn map_test() {
+  [1, 2, 3, 4]
+  |> set.from_list
+  |> set.map(with: fn(x) { x * 2 })
+  |> should.equal(set.from_list([2, 4, 6, 8]))
+}
+
 pub fn filter_test() {
   [1, 4, 6, 3, 675, 44, 67]
   |> set.from_list()

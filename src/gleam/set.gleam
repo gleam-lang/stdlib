@@ -218,6 +218,21 @@ pub fn filter(
   Set(dict.filter(in: set.dict, keeping: fn(m, _) { predicate(m) }))
 }
 
+/// Creates a new set from a given set with the result of applying the given
+/// function to each member.
+///
+/// ## Examples
+///
+/// ```gleam
+/// map(from_list([1, 2, 3, 4], fn(x) { x * 2 }))
+/// // -> [2, 4, 6, 8]
+/// ```
+pub fn map(set: Set(member), with fun: fn(member) -> mapped) -> Set(mapped) {
+  fold(over: set, from: new(), with: fn(acc, member) {
+    insert(acc, fun(member))
+  })
+}
+
 /// Creates a new set from a given set with all the same entries except any
 /// entry found on the given list.
 ///
