@@ -204,6 +204,28 @@ fn do_map_values(f: fn(key, value) -> b, dict: Dict(key, value)) -> Dict(key, b)
   |> fold(from: new(), with: f)
 }
 
+/// Updates all keys in a dict by applying a function to each entry.
+/// 
+/// If two entries are mapped to the same key, the value of the latter entry
+/// will overwrite the value of the former one.
+/// 
+/// Do not rely on the order in which entries are processed by this function,
+/// as it may change in future versions of Gleam or Erlang.
+///
+/// ## Examples
+///
+/// ```gleam
+/// from_list([#(3, 3), #(2, 4)])
+/// |> map_keys(fn(key, value) { key * value })
+/// // -> from_list([#(9, 3), #(8, 4)])
+/// ```
+///
+pub fn map_keys(in dict: Dict(k, v), with fun: fn(k, v) -> w) -> Dict(w, v) {
+  let key_update = fn(d, k, v) { insert(d, fun(k, v), v) }
+  dict
+  |> fold(from: new(), with: key_update)
+}
+
 /// Gets a list of all keys in a given dict.
 ///
 /// Dicts are not ordered so the keys are not returned in any specific order. Do
