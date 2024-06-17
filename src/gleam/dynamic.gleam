@@ -355,8 +355,7 @@ pub fn list(
     let result = try_map_with_index(list, decoder_type)
     case result {
       Ok(values) -> Ok(values)
-      Error(#(index, errors)) ->
-        Error(list.map(errors, push_path(_, int.to_string(index))))
+      Error(#(index, errors)) -> Error(list.map(errors, push_path(_, index)))
     }
   }
 }
