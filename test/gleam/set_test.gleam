@@ -86,8 +86,8 @@ pub fn fold_test() {
 pub fn map_test() {
   [1, 2, 3, 4]
   |> set.from_list
-  |> set.map(with: fn(x) { x * 2 })
-  |> should.equal(set.from_list([2, 4, 6, 8]))
+  |> set.map(with: int.to_string)
+  |> should.equal(set.from_list(["1", "2", "3", "4"]))
 }
 
 pub fn filter_test() {
