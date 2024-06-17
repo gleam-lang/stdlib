@@ -294,13 +294,14 @@ fn do_try_map_with_index(
   list: List(a),
   fun: fn(a) -> Result(b, e),
   acc: List(b),
+  index: Int,
 ) -> Result(List(b), #(Int, e)) {
   case list {
     [] -> Ok(list.reverse(acc))
     [x, ..xs] ->
       case fun(x) {
-        Ok(y) -> do_try_map_with_index(xs, fun, [y, ..acc])
-        Error(error) -> Error(#(list.length(acc), error))
+        Ok(y) -> do_try_map_with_index(xs, fun, [y, ..acc], index + 1)
+        Error(error) -> Error(#(index, error))
       }
   }
 }
@@ -316,7 +317,7 @@ fn try_map_with_index(
   over list: List(a),
   with fun: fn(a) -> Result(b, e),
 ) -> Result(List(b), #(Int, e)) {
-  do_try_map_with_index(list, fun, [])
+  do_try_map_with_index(list, fun, [], 0)
 }
 
 /// Checks to see whether a `Dynamic` value is a list of a particular type, and
