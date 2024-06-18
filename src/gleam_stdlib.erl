@@ -14,7 +14,7 @@
     decode_tuple5/1, decode_tuple6/1, tuple_get/2, classify_dynamic/1, print/1,
     println/1, print_error/1, println_error/1, inspect/1, float_to_string/1,
     int_from_base_string/2, utf_codepoint_list_to_string/1, contains_string/2,
-    crop_string/2, base16_decode/1, string_replace/3
+    crop_string/2, base16_decode/1, string_replace/3, regex_replace/3
 ]).
 
 %% Taken from OTP's uri_string module
@@ -258,6 +258,9 @@ regex_scan(Regex, String) ->
         {match, Captured} -> lists:map(fun(X) -> regex_matches(String, X) end, Captured);
         nomatch -> []
     end.
+
+regex_replace(Regex, Subject, Replacement) ->
+    re:replace(Subject, Regex, Replacement, [global, {return, binary}]).
 
 base_decode64(S) ->
     try {ok, base64:decode(S)}

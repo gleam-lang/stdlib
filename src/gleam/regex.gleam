@@ -190,3 +190,30 @@ pub fn scan(with regex: Regex, content string: String) -> List(Match) {
 @external(erlang, "gleam_stdlib", "regex_scan")
 @external(javascript, "../gleam_stdlib.mjs", "regex_scan")
 fn do_scan(a: Regex, b: String) -> List(Match)
+
+/// Creates a new `String` by replacing all substrings that match the regular expression.
+///
+/// ## Examples
+///
+/// ```gleam
+/// let assert OK(re) = regex.from_string("^https://")
+/// replace("https://example.com", each: re, with: "www.")
+/// // -> "www.example.com"
+/// ```
+///
+/// ```gleam
+/// let assert OK(re) = regex.from_string("[, +-]")
+/// replace("a,b-c d+e", each: re, with: "/")
+/// // -> "a/b/c/d/e"
+/// `
+pub fn replace(
+  in string: String,
+  each pattern: Regex,
+  with substitute: String,
+) -> String {
+  do_replace(pattern, string, substitute)
+}
+
+@external(erlang, "gleam_stdlib", "regex_replace")
+@external(javascript, "../gleam_stdlib.mjs", "regex_replace")
+fn do_replace(a: Regex, b: String, c: String) -> String

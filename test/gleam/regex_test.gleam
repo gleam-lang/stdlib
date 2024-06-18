@@ -161,3 +161,17 @@ pub fn scan_test() {
   regex.scan(re, "const age = 32")
   |> should.equal([])
 }
+
+pub fn replace_test() {
+  let assert Ok(re) = regex.from_string(",")
+  regex.replace(in: "a,b,c,d", each: re, with: " ")
+  |> should.equal("a b c d")
+
+  let assert Ok(re) = regex.from_string("\\d")
+  regex.replace(in: "Hell1o, World!1", each: re, with: "")
+  |> should.equal("Hello, World!")
+
+  let assert Ok(re) = regex.from_string("🐈")
+  regex.replace(in: "🐈🐈 are great!", each: re, with: "🐕")
+  |> should.equal("🐕🐕 are great!")
+}
