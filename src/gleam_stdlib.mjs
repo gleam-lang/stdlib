@@ -446,6 +446,10 @@ export function regex_scan(regex, string) {
   return List.fromArray(matches);
 }
 
+export function regex_replace(regex, original_string, replacement) {
+  return original_string.replaceAll(regex, replacement)
+}
+
 export function new_map() {
   return Dict.new();
 }
