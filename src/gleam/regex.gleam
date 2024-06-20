@@ -207,8 +207,8 @@ fn do_scan(a: Regex, b: String) -> List(Match)
 /// // -> "a/b/c/d/e"
 /// `
 pub fn replace(
-  in string: String,
   each pattern: Regex,
+  in string: String,
   with substitute: String,
 ) -> String {
   do_replace(pattern, string, substitute)
