@@ -197,13 +197,13 @@ fn do_scan(a: Regex, b: String) -> List(Match)
 ///
 /// ```gleam
 /// let assert OK(re) = regex.from_string("^https://")
-/// replace("https://example.com", each: re, with: "www.")
+/// replace(each: re, in: "https://example.com", with: "www.")
 /// // -> "www.example.com"
 /// ```
 ///
 /// ```gleam
 /// let assert OK(re) = regex.from_string("[, +-]")
-/// replace("a,b-c d+e", each: re, with: "/")
+/// replace(each: re, in: "a,b-c d+e", with: "/")
 /// // -> "a/b/c/d/e"
 /// `
 pub fn replace(
