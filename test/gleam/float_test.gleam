@@ -26,6 +26,18 @@ pub fn parse_test() {
   |> float.parse
   |> should.equal(Ok(0.123456789))
 
+  "1.234e10"
+  |> float.parse
+  |> should.equal(Ok(1.234e10))
+
+  "-1.234e+10"
+  |> float.parse
+  |> should.equal(Ok(-1.234e10))
+
+  "1.234e-10"
+  |> float.parse
+  |> should.equal(Ok(1.234e-10))
+
   ""
   |> float.parse
   |> should.equal(Error(Nil))
