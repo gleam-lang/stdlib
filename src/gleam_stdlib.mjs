@@ -34,7 +34,7 @@ export function parse_int(value) {
 }
 
 export function parse_float(value) {
-  if (/^[-+]?(\d+)\.(\d+)$/.test(value)) {
+  if (/^[-+]?(\d+)\.(\d+)([eE][-+]?\d+)?$/.test(value)) {
     return new Ok(parseFloat(value));
   } else {
     return new Error(Nil);

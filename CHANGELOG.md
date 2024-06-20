@@ -21,6 +21,7 @@
 - Improved bit array Base64 encoding and decoding speed on JavaScript.
 - Fixed a bug where Base64 encoding a bit array larger than ~100KiB would throw
   an exception on JavaScript.
+- Fixed `float.parse` failing to parse exponential notation on JavaScript.
 
 ## v0.38.0 - 2024-05-24
 
