@@ -1155,6 +1155,16 @@ pub fn reduce_test() {
   |> should.equal(Ok(15))
 }
 
+pub fn map_reduce_test() {
+  []
+  |> list.map_reduce(from: 0, with: fn(x, y) { x + y })
+  |> should.equal(0)
+
+  [#("EN", 1), #("BR", 3), #("JP", 2)]
+  |> list.map_reduce(from: 0, with: fn(acc, tuple) { acc + tuple.1 })
+  |> should.equal(6)
+}
+
 pub fn scan_test() {
   []
   |> list.scan(from: 0, with: fn(acc, i) { i + acc })
