@@ -2103,6 +2103,35 @@ pub fn reduce(over list: List(a), with fun: fn(a, a) -> a) -> Result(a, Nil) {
   }
 }
 
+/// This function acts similar to a map |> reduce, but with less overhead.
+///
+/// Returns an accumulated value based on the given `fun` and `initial` values.
+/// In case the list is empty, the `initial` value is returned.
+///
+/// ## Examples
+///
+/// ```gleam
+/// [] |> map_reduce(0, fn(acc, x) { acc + x })
+/// // -> 0
+/// ```
+///
+/// ```gleam
+/// [#("Red", 1), #("Orange", 2), #("Yellow", 3), #("Green", 4)]
+/// |> reduce(fn(acc, tuple) { acc + tuple.1 })
+/// // -> 10
+/// ```
+///
+pub fn map_reduce(
+  over list: List(a),
+  from initial: acc,
+  with fun: fn(acc, a) -> acc,
+) -> acc {
+  case list {
+    [] -> initial
+    [x, ..rest] -> map_reduce(rest, fun(initial, x), fun)
+  }
+}
+
 fn do_scan(
   list: List(a),
   accumulator: acc,
