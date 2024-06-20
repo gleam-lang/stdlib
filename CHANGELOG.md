@@ -6,6 +6,7 @@
 - The `min` and `max` functions of the `order` module have been deprecated.
 - The `dict` and `set` modules gain the `is_empty` function.
 - The `set` module gains the `map` function.
+- The `list` module gains the `map_reduce` function.
 - Fixed `string.inspect` not formatting ASCII escape codes on Erlang that could
   lead to unexpected behavior. Now, all ASCII escape codes less than 32, as well
   as escape code 127, are converted into `\u{xxxx}` syntax, except for common
