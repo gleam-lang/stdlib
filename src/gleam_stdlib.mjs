@@ -504,10 +504,47 @@ export function parse_query(query) {
   }
 }
 
-// From https://developer.mozilla.org/en-US/docs/Glossary/Base64
-export function encode64(bit_array) {
-  const binString = String.fromCodePoint(...bit_array.buffer);
-  return btoa(binString);
+const b64EncodeLookup = [
+  65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83,
+  84, 85, 86, 87, 88, 89, 90, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106,
+  107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121,
+  122, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 43, 47,
+];
+
+let b64TextDecoder;
+
+// Implementation based on https://github.com/mitschabaude/fast-base64/blob/main/js.js
+export function encode64(bit_array, padding) {
+  b64TextDecoder ??= new TextDecoder();
+
+  const bytes = bit_array.buffer;
+
+  const m = bytes.length;
+  const k = m % 3;
+  const n = Math.floor(m / 3) * 4 + (k && k + 1);
+  const N = Math.ceil(m / 3) * 4;
+  const encoded = new Uint8Array(N);
+
+  for (let i = 0, j = 0; j < m; i += 4, j += 3) {
+    const y = (bytes[j] << 16) + (bytes[j + 1] << 8) + (bytes[j + 2] | 0);
+    encoded[i] = b64EncodeLookup[y >> 18];
+    encoded[i + 1] = b64EncodeLookup[(y >> 12) & 0x3f];
+    encoded[i + 2] = b64EncodeLookup[(y >> 6) & 0x3f];
+    encoded[i + 3] = b64EncodeLookup[y & 0x3f];
+  }
+
+  let base64 = b64TextDecoder.decode(new Uint8Array(encoded.buffer, 0, n));
+
+  if (padding) {
+    if (k === 1) {
+      base64 += "==";
+    }
+    else if (k === 2) {
+      base64 += "=";
+    }
+  }
+
+  return base64;
 }
 
 // From https://developer.mozilla.org/en-US/docs/Glossary/Base64

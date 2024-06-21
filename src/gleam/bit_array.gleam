@@ -107,17 +107,9 @@ pub fn concat(bit_arrays: List(BitArray)) -> BitArray
 
 /// Encodes a BitArray into a base 64 encoded string.
 ///
-pub fn base64_encode(input: BitArray, padding: Bool) -> String {
-  let encoded = encode64(input)
-  case padding {
-    True -> encoded
-    False -> string.replace(encoded, "=", "")
-  }
-}
-
-@external(erlang, "base64", "encode")
+@external(erlang, "gleam_stdlib", "bit_array_base64_encode")
 @external(javascript, "../gleam_stdlib.mjs", "encode64")
-fn encode64(a: BitArray) -> String
+pub fn base64_encode(input: BitArray, padding: Bool) -> String
 
 /// Decodes a base 64 encoded string into a `BitArray`.
 ///

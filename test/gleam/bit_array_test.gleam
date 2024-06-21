@@ -1,6 +1,7 @@
 import gleam/bit_array
 import gleam/result
 import gleam/should
+import gleam/string
 
 pub fn byte_size_test() {
   bit_array.byte_size(bit_array.from_string("hello"))
@@ -145,6 +146,10 @@ pub fn base64_encode_test() {
   |> bit_array.base64_encode(True)
   |> should.equal("/3/+/A==")
 
+  <<255, 127, 254, 252, 100>>
+  |> bit_array.base64_encode(True)
+  |> should.equal("/3/+/GQ=")
+
   <<255, 127, 254, 252>>
   |> bit_array.base64_encode(False)
   |> should.equal("/3/+/A")
@@ -156,6 +161,12 @@ pub fn base64_encode_test() {
   <<>>
   |> bit_array.base64_encode(True)
   |> should.equal("")
+
+  string.repeat("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", 1024 * 32)
+  |> bit_array.from_string
+  |> bit_array.base64_encode(True)
+  |> string.length
+  |> should.equal(1_398_104)
 }
 
 pub fn base64_decode_test() {

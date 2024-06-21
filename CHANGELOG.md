@@ -18,6 +18,8 @@
 - The behaviour of the string trim functions is now consistent across targets.
 - `iterator.yield` now yields values without waiting for the next one to become
   available.
+- Base64 encoding speed improvements. Encoding of bit arrays over ~100KiB to
+  Base64 on JavaScript no longer throws an exception.
 
 ## v0.38.0 - 2024-05-24
 
