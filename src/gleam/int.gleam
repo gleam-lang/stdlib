@@ -19,7 +19,7 @@ import gleam/order.{type Order}
 ///
 /// ```gleam
 /// absolute_value(-12)
-/// // -> 2
+/// // -> 12
 /// ```
 ///
 /// ```gleam
