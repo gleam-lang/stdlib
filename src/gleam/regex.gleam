@@ -191,7 +191,8 @@ pub fn scan(with regex: Regex, content string: String) -> List(Match) {
 @external(javascript, "../gleam_stdlib.mjs", "regex_scan")
 fn do_scan(a: Regex, b: String) -> List(Match)
 
-/// Creates a new `String` by replacing all substrings that match the regular expression.
+/// Creates a new `String` by replacing all substrings that match the regular
+/// expression.
 ///
 /// ## Examples
 ///
@@ -206,14 +207,10 @@ fn do_scan(a: Regex, b: String) -> List(Match)
 /// replace(each: re, in: "a,b-c d+e", with: "/")
 /// // -> "a/b/c/d/e"
 /// `
+@external(erlang, "gleam_stdlib", "regex_replace")
+@external(javascript, "../gleam_stdlib.mjs", "regex_replace")
 pub fn replace(
   each pattern: Regex,
   in string: String,
   with substitute: String,
-) -> String {
-  do_replace(pattern, string, substitute)
-}
-
-@external(erlang, "gleam_stdlib", "regex_replace")
-@external(javascript, "../gleam_stdlib.mjs", "regex_replace")
-fn do_replace(a: Regex, b: String, c: String) -> String
+) -> String

@@ -162,16 +162,26 @@ pub fn scan_test() {
   |> should.equal([])
 }
 
-pub fn replace_test() {
+pub fn replace_0_test() {
   let assert Ok(re) = regex.from_string(",")
   regex.replace(in: "a,b,c,d", each: re, with: " ")
   |> should.equal("a b c d")
+}
 
+pub fn replace_1_test() {
   let assert Ok(re) = regex.from_string("\\d")
   regex.replace(in: "Hell1o, World!1", each: re, with: "")
   |> should.equal("Hello, World!")
+}
 
+pub fn replace_2_test() {
   let assert Ok(re) = regex.from_string("🐈")
   regex.replace(in: "🐈🐈 are great!", each: re, with: "🐕")
+  |> should.equal("🐕🐕 are great!")
+}
+
+pub fn replace_3_test() {
+  let assert Ok(re) = regex.from_string("🐈")
+  regex.replace(re, "🐈🐈 are great!", "🐕")
   |> should.equal("🐕🐕 are great!")
 }
