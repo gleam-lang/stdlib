@@ -22,6 +22,7 @@
 - Fixed a bug where Base64 encoding a bit array larger than ~100KiB would throw
   an exception on JavaScript.
 - Fixed `float.parse` failing to parse exponential notation on JavaScript.
+- The `regex` module gains the `replace` function.
 
 ## v0.38.0 - 2024-05-24
 
