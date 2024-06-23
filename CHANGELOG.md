@@ -2,6 +2,7 @@
 
 ## v0.39.0 - Unreleased
 
+- Added `bit_array.split_once` to split a bit_array. 
 - Fixed `list.window` entering an endless recursive loop for `n` = 0.
 - The `min` and `max` functions of the `order` module have been deprecated.
 - The `dict` and `set` modules gain the `is_empty` function.
