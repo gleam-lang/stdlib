@@ -551,7 +551,11 @@ export function encode64(bit_array, padding) {
 export function decode64(sBase64) {
   try {
     const binString = atob(sBase64);
-    const array = Uint8Array.from(binString, (c) => c.charCodeAt(0));
+    const length = binString.length;
+    const array = new Uint8Array(length);
+    for (let i = 0; i < length; i++) {
+        array[i] = binString.charCodeAt(i);
+    }
     return new Ok(new BitArray(array));
   } catch {
     return new Error(Nil);
