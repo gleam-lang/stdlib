@@ -45,6 +45,24 @@ pub fn slice(
   take length: Int,
 ) -> Result(BitArray, Nil)
 
+/// Creates a list of `bit array`s by splitting a given bit array on a given bit
+/// array.
+///
+/// Returns Error(Nil) if the subpattern is an empty bit array.
+///
+/// ## Examples
+///
+/// ```gleam
+/// split("<<home/gleam/desktop/":utf8>>, on: <<"/":utf8>>)
+/// // -> [<<"home":utf8>>, <<"gleam":utf8>>, <<"desktop":utf8>>, <<>>]
+/// ```
+@external(erlang, "gleam_stdlib", "bit_array_split")
+@external(javascript, "../gleam_stdlib.mjs", "bit_array_split")
+pub fn split(
+  bits: BitArray,
+  on subpattern: BitArray,
+) -> Result(List(BitArray), Nil)
+
 /// Tests to see whether a bit array is valid UTF-8.
 ///
 pub fn is_utf8(bits: BitArray) -> Bool {
