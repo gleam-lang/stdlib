@@ -14,7 +14,8 @@
     decode_tuple5/1, decode_tuple6/1, tuple_get/2, classify_dynamic/1, print/1,
     println/1, print_error/1, println_error/1, inspect/1, float_to_string/1,
     int_from_base_string/2, utf_codepoint_list_to_string/1, contains_string/2,
-    crop_string/2, base16_decode/1, string_replace/3
+    crop_string/2, base16_decode/1, string_replace/3, bit_array_index_of/2,
+    bit_array_split_once/2
 ]).
 
 %% Taken from OTP's uri_string module
@@ -540,3 +541,23 @@ base16_decode(String) ->
 
 string_replace(String, Pattern, Replacement) ->
     string:replace(String, Pattern, Replacement, all).
+
+bit_array_index_of(Haystack, Needle) ->
+    case binary:match(Haystack, Needle) of
+        {Pos, _Len} -> Pos;
+        _ -> -1
+    end.
+
+bit_array_split_once(Haystack, Needle) ->
+    try
+        case Needle of
+            <<>> -> {ok, {<<>>, Haystack}};
+            _ -> case binary:split(Haystack, Needle) of
+                [Part1, Part2] -> {ok, {Part1, Part2}};
+                _ -> {error, nil}
+            end
+        end
+    catch
+        error:badarg -> {error, nil}
+    end.
+

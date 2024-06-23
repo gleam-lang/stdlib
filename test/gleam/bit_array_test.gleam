@@ -321,3 +321,35 @@ pub fn inspect_partial_bytes_test() {
   bit_array.inspect(<<5:3, 11:4, 1:2>>)
   |> should.equal("<<182, 1:size(1)>>")
 }
+
+pub fn index_of_found_test() {
+  <<"Hello, World":utf8>>
+  |> bit_array.index_of(<<", ":utf8>>)
+  |> should.equal(5)
+}
+
+pub fn index_of_not_found_test() {
+  <<"Hello, World":utf8>>
+  |> bit_array.index_of(<<"Joe":utf8>>)
+  |> should.equal(-1)
+}
+
+pub fn split_once_found_test() {
+  <<"Hello, World":utf8>>
+  |> bit_array.split_once(<<", ":utf8>>)
+  |> should.be_ok
+  |> should.equal(#(<<"Hello":utf8>>, <<"World":utf8>>))
+}
+
+pub fn split_once_empty_needle_test() {
+  <<"Hello, World":utf8>>
+  |> bit_array.split_once(<<>>)
+  |> should.be_ok
+  |> should.equal(#(<<>>, <<"Hello, World":utf8>>))
+}
+
+pub fn split_once_not_found_test() {
+  <<"Hello, World":utf8>>
+  |> bit_array.split_once(<<"Joe":utf8>>)
+  |> should.be_error
+}
