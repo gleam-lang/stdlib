@@ -191,6 +191,10 @@ pub fn base64_decode_test() {
   ")!"
   |> bit_array.base64_decode()
   |> should.equal(Error(Nil))
+
+  "=AAA"
+  |> bit_array.base64_decode()
+  |> should.equal(Error(Nil))
 }
 
 pub fn base64_url_encode_test() {

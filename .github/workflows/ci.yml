@@ -8,17 +8,64 @@ on:
   pull_request:
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
+  test_erlang:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        erlang_version: ["26.2", "27.0"]
     steps:
       - uses: actions/checkout@v3
       - uses: erlef/setup-beam@v1
         with:
-          otp-version: "26.0.2"
-          gleam-version: "1.2.0"
+          otp-version: ${{ matrix.erlang_version }}
+          gleam-version: "1.2.1"
+      - run: gleam test --target erlang
+      - run: gleam format --check src test
+
+  test_javascript_node:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        node_version: ["18.20", "20.15", "22.3"]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: "27.0"
+          gleam-version: "1.2.1"
       - uses: actions/setup-node@v3
         with:
-          node-version: "16.18.1"
-      - run: gleam test --target erlang
-      - run: gleam test --target javascript
-      - run: gleam format --check src test
+          node-version: ${{ matrix.node_version }}
+      - run: gleam test --target javascript --runtime node
+
+  test_javascript_bun:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        bun_version: ["1.1"]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: "27.0"
+          gleam-version: "1.2.1"
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ matrix.bun_version }}
+      - run: gleam test --target javascript --runtime bun
+
+  test_javascript_deno:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        deno_version: ["1.44"]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: "27.0"
+          gleam-version: "1.2.1"
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: ${{ matrix.deno_version }}
+      - run: gleam test --target javascript --runtime deno
