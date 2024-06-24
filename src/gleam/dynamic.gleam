@@ -2,7 +2,7 @@ import gleam/bit_array
 import gleam/dict.{type Dict}
 import gleam/int
 import gleam/list
-import gleam/option.{type Option}
+import gleam/option.{type Option, Some}
 import gleam/result
 import gleam/string_builder
 
@@ -433,8 +433,8 @@ pub fn optional_field(
     case maybe_inner {
       option.None -> Ok(option.None)
       option.Some(dynamic_inner) ->
-        dynamic_inner
-        |> decode_optional(inner_type)
+        inner_type(dynamic_inner)
+        |> result.map(Some)
         |> map_errors(push_path(_, name))
     }
   }
