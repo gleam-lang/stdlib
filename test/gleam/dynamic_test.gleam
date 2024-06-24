@@ -405,14 +405,6 @@ pub fn optional_field_test() {
   )
 
   dict.new()
-  |> dict.insert("ok", None)
-  |> dynamic.from
-  |> dynamic.optional_field("ok", dynamic.int)
-  |> should.equal(
-    Error([DecodeError(expected: "Int", found: "Atom", path: ["ok"])]),
-  )
-
-  dict.new()
   |> dict.insert("ok", Nil)
   |> dynamic.from
   |> dynamic.optional_field("ok", dynamic.int)
@@ -450,6 +442,30 @@ pub fn optional_field_test() {
   |> dynamic.optional_field("ok", dynamic.int)
   |> should.equal(
     Error([DecodeError(expected: "Dict", found: "List", path: [])]),
+  )
+}
+
+// Error is different for erlang & javascript
+@target(javascript)
+pub fn optional_field_error_test() {
+  dict.new()
+  |> dict.insert("ok", None)
+  |> dynamic.from
+  |> dynamic.optional_field("ok", dynamic.int)
+  |> should.equal(
+    Error([DecodeError(expected: "Int", found: "Object", path: ["ok"])]),
+  )
+}
+
+// Error is different for erlang & javascript
+@target(erlang)
+pub fn optional_field_error_test() {
+  dict.new()
+  |> dict.insert("ok", None)
+  |> dynamic.from
+  |> dynamic.optional_field("ok", dynamic.int)
+  |> should.equal(
+    Error([DecodeError(expected: "Int", found: "Atom", path: ["ok"])]),
   )
 }
 
