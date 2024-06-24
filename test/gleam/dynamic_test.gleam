@@ -408,13 +408,30 @@ pub fn optional_field_test() {
   |> dict.insert("ok", None)
   |> dynamic.from
   |> dynamic.optional_field("ok", dynamic.int)
-  |> should.equal(Ok(None))
+  |> should.equal(
+    Error([DecodeError(expected: "Int", found: "Atom", path: ["ok"])]),
+  )
 
   dict.new()
   |> dict.insert("ok", Nil)
   |> dynamic.from
   |> dynamic.optional_field("ok", dynamic.int)
-  |> should.equal(Ok(None))
+  |> should.equal(
+    Error([DecodeError(expected: "Int", found: "Nil", path: ["ok"])]),
+  )
+
+  // optional_field and optional should combine together to give nested Options
+  dict.new()
+  |> dict.insert("ok", Nil)
+  |> dynamic.from
+  |> dynamic.optional_field("ok", dynamic.optional(dynamic.int))
+  |> should.equal(Ok(Some(None)))
+
+  dict.new()
+  |> dict.insert("ok", 4)
+  |> dynamic.from
+  |> dynamic.optional_field("ok", dynamic.optional(dynamic.int))
+  |> should.equal(Ok(Some(Some(4))))
 
   dict.new()
   |> dynamic.from
