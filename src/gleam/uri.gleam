@@ -10,11 +10,8 @@
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
-@target(javascript)
 import gleam/pair
-@target(javascript)
 import gleam/regex
-@target(javascript)
 import gleam/result
 import gleam/string
 import gleam/string_builder.{type StringBuilder}
@@ -60,11 +57,7 @@ pub fn parse(uri_string: String) -> Result(Uri, Nil) {
   do_parse(uri_string)
 }
 
-@target(erlang)
 @external(erlang, "gleam_stdlib", "uri_parse")
-fn do_parse(a: String) -> Result(Uri, Nil)
-
-@target(javascript)
 fn do_parse(uri_string: String) -> Result(Uri, Nil) {
   // From https://tools.ietf.org/html/rfc3986#appendix-B
   let pattern =
@@ -120,7 +113,6 @@ fn do_parse(uri_string: String) -> Result(Uri, Nil) {
   ))
 }
 
-@target(javascript)
 fn regex_submatches(pattern: String, string: String) -> List(Option(String)) {
   pattern
   |> regex.compile(regex.Options(case_insensitive: True, multi_line: False))
@@ -131,7 +123,6 @@ fn regex_submatches(pattern: String, string: String) -> List(Option(String)) {
   |> result.unwrap([])
 }
 
-@target(javascript)
 fn noneify_query(x: Option(String)) -> Option(String) {
   case x {
     None -> None
@@ -143,7 +134,6 @@ fn noneify_query(x: Option(String)) -> Option(String) {
   }
 }
 
-@target(javascript)
 fn noneify_empty_string(x: Option(String)) -> Option(String) {
   case x {
     Some("") | None -> None
@@ -152,7 +142,6 @@ fn noneify_empty_string(x: Option(String)) -> Option(String) {
 }
 
 // Split an authority into its userinfo, host and port parts.
-@target(javascript)
 fn split_authority(
   authority: Option(String),
 ) -> #(Option(String), Option(String), Option(Int)) {
@@ -181,13 +170,11 @@ fn split_authority(
   }
 }
 
-@target(javascript)
 fn pad_list(list: List(Option(a)), size: Int) -> List(Option(a)) {
   list
   |> list.append(list.repeat(None, extra_required(list, size)))
 }
 
-@target(javascript)
 fn extra_required(list: List(a), remaining: Int) -> Int {
   case list {
     _ if remaining == 0 -> 0

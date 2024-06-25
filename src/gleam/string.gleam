@@ -385,11 +385,7 @@ pub fn split_once(
   do_split_once(x, substring)
 }
 
-@target(erlang)
-@external(erlang, "string", "split")
-fn erl_split(a: String, b: String) -> List(String)
-
-@target(erlang)
+@external(javascript, "../gleam_stdlib.mjs", "split_once")
 fn do_split_once(x: String, substring: String) -> Result(#(String, String), Nil) {
   case erl_split(x, substring) {
     [first, rest] -> Ok(#(first, rest))
@@ -397,12 +393,8 @@ fn do_split_once(x: String, substring: String) -> Result(#(String, String), Nil)
   }
 }
 
-@target(javascript)
-@external(javascript, "../gleam_stdlib.mjs", "split_once")
-fn do_split_once(
-  x x: String,
-  substring substring: String,
-) -> Result(#(String, String), Nil)
+@external(erlang, "string", "split")
+fn erl_split(a: String, b: String) -> List(String)
 
 /// Creates a new `String` by joining two `String`s together.
 ///
@@ -565,25 +557,19 @@ pub fn trim(string: String) -> String {
   do_trim(string)
 }
 
-@target(erlang)
+@external(javascript, "../gleam_stdlib.mjs", "trim")
 fn do_trim(string: String) -> String {
   erl_trim(string, Both)
 }
 
-@target(erlang)
+@external(erlang, "string", "trim")
+fn erl_trim(a: String, b: Direction) -> String
+
 type Direction {
   Leading
   Trailing
   Both
 }
-
-@target(erlang)
-@external(erlang, "string", "trim")
-fn erl_trim(a: String, b: Direction) -> String
-
-@target(javascript)
-@external(javascript, "../gleam_stdlib.mjs", "trim")
-fn do_trim(string string: String) -> String
 
 /// Removes whitespace on the left of a `String`.
 ///
@@ -598,14 +584,10 @@ pub fn trim_left(string: String) -> String {
   do_trim_left(string)
 }
 
-@target(erlang)
+@external(javascript, "../gleam_stdlib.mjs", "trim_left")
 fn do_trim_left(string: String) -> String {
   erl_trim(string, Leading)
 }
-
-@target(javascript)
-@external(javascript, "../gleam_stdlib.mjs", "trim_left")
-fn do_trim_left(string string: String) -> String
 
 /// Removes whitespace on the right of a `String`.
 ///
@@ -620,14 +602,10 @@ pub fn trim_right(string: String) -> String {
   do_trim_right(string)
 }
 
-@target(erlang)
+@external(javascript, "../gleam_stdlib.mjs", "trim_right")
 fn do_trim_right(string: String) -> String {
   erl_trim(string, Trailing)
 }
-
-@target(javascript)
-@external(javascript, "../gleam_stdlib.mjs", "trim_right")
-fn do_trim_right(string string: String) -> String
 
 /// Splits a non-empty `String` into its first element (head) and rest (tail).
 /// This lets you pattern match on `String`s exactly as you would with lists.

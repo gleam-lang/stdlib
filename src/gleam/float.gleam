@@ -239,11 +239,7 @@ pub fn round(x: Float) -> Int {
   do_round(x)
 }
 
-@target(erlang)
 @external(erlang, "erlang", "round")
-fn do_round(a: Float) -> Int
-
-@target(javascript)
 fn do_round(x: Float) -> Int {
   case x >=. 0.0 {
     True -> js_round(x)
@@ -251,7 +247,6 @@ fn do_round(x: Float) -> Int {
   }
 }
 
-@target(javascript)
 @external(javascript, "../gleam_stdlib.mjs", "round")
 fn js_round(a: Float) -> Int
 

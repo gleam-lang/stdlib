@@ -76,21 +76,16 @@ pub fn to_string(bits: BitArray) -> Result(String, Nil) {
   do_to_string(bits)
 }
 
-@target(erlang)
 @external(erlang, "gleam_stdlib", "identity")
 fn unsafe_to_string(a: BitArray) -> String
 
-@target(erlang)
+@external(javascript, "../gleam_stdlib.mjs", "bit_array_to_string")
 fn do_to_string(bits: BitArray) -> Result(String, Nil) {
   case is_utf8(bits) {
     True -> Ok(unsafe_to_string(bits))
     False -> Error(Nil)
   }
 }
-
-@target(javascript)
-@external(javascript, "../gleam_stdlib.mjs", "bit_array_to_string")
-fn do_to_string(a: BitArray) -> Result(String, Nil)
 
 /// Creates a new bit array by joining multiple binaries.
 ///

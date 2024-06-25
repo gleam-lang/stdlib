@@ -30,6 +30,8 @@ pub fn append_test() {
   |> should.equal(<<1, 2, 3, 4>>)
 }
 
+// This test is target specific since it's using non byte-aligned BitArrays
+// and those are not supported on the JavaScript target.
 @target(erlang)
 pub fn append_erlang_only_test() {
   <<1, 2:4>>
@@ -47,6 +49,8 @@ pub fn concat_test() {
   |> should.equal(<<1, 2, 3, 4>>)
 }
 
+// This test is target specific since it's using non byte-aligned BitArrays
+// and those are not supported on the JavaScript target.
 @target(erlang)
 pub fn concat_erlang_only_test() {
   [<<1, 2:4>>, <<3>>]
@@ -314,6 +318,8 @@ pub fn inspect_test() {
   |> should.equal("<<0, 20, 32, 255>>")
 }
 
+// This test is target specific since it's using non byte-aligned BitArrays
+// and those are not supported on the JavaScript target.
 @target(erlang)
 pub fn inspect_partial_bytes_test() {
   bit_array.inspect(<<4:5>>)
