@@ -165,11 +165,7 @@ pub fn reverse(builder: StringBuilder) -> StringBuilder {
   do_reverse(builder)
 }
 
-@target(erlang)
 @external(erlang, "string", "reverse")
-fn do_reverse(a: StringBuilder) -> StringBuilder
-
-@target(javascript)
 fn do_reverse(builder: StringBuilder) -> StringBuilder {
   builder
   |> to_string
@@ -178,7 +174,6 @@ fn do_reverse(builder: StringBuilder) -> StringBuilder {
   |> from_strings
 }
 
-@target(javascript)
 @external(javascript, "../gleam_stdlib.mjs", "graphemes")
 fn do_to_graphemes(string string: String) -> List(String)
 
@@ -188,26 +183,17 @@ pub fn split(iodata: StringBuilder, on pattern: String) -> List(StringBuilder) {
   do_split(iodata, pattern)
 }
 
-@target(erlang)
 type Direction {
   All
 }
 
-@target(erlang)
-@external(erlang, "string", "split")
-fn erl_split(a: StringBuilder, b: String, c: Direction) -> List(StringBuilder)
-
-@target(erlang)
+@external(javascript, "../gleam_stdlib.mjs", "split")
 fn do_split(iodata: StringBuilder, pattern: String) -> List(StringBuilder) {
   erl_split(iodata, pattern, All)
 }
 
-@target(javascript)
-@external(javascript, "../gleam_stdlib.mjs", "split")
-fn do_split(
-  builder builder: StringBuilder,
-  pattern pattern: String,
-) -> List(StringBuilder)
+@external(erlang, "string", "split")
+fn erl_split(a: StringBuilder, b: String, c: Direction) -> List(StringBuilder)
 
 /// Replaces all instances of a pattern with a given string substitute.
 ///

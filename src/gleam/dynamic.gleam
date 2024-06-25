@@ -1,4 +1,3 @@
-@target(erlang)
 import gleam/bit_array
 import gleam/dict.{type Dict}
 import gleam/int
@@ -105,7 +104,7 @@ fn map_errors(
   result.map_error(result, list.map(_, f))
 }
 
-@target(erlang)
+@external(javascript, "../gleam_stdlib.mjs", "decode_string")
 fn decode_string(data: Dynamic) -> Result(String, DecodeErrors) {
   bit_array(data)
   |> map_errors(put_expected(_, "String"))
@@ -118,14 +117,9 @@ fn decode_string(data: Dynamic) -> Result(String, DecodeErrors) {
   })
 }
 
-@target(erlang)
 fn put_expected(error: DecodeError, expected: String) -> DecodeError {
   DecodeError(..error, expected: expected)
 }
-
-@target(javascript)
-@external(javascript, "../gleam_stdlib.mjs", "decode_string")
-fn decode_string(a: Dynamic) -> Result(String, DecodeErrors)
 
 /// Return a string indicating the type of the dynamic value.
 ///
