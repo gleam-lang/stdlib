@@ -23,6 +23,9 @@
   an exception on JavaScript.
 - Fixed `float.parse` failing to parse exponential notation on JavaScript.
 - The `regex` module gains the `replace` function.
+- The `dynamic.optional_field` decoder no longer treats the value as implicitly
+  optional. It only deals with the presence or absence of the key itself which
+  brings it inline with its documentation.
 
 ## v0.38.0 - 2024-05-24
 
