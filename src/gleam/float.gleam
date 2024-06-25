@@ -428,6 +428,55 @@ fn do_product(numbers: List(Float), initial: Float) -> Float {
 @external(javascript, "../gleam_stdlib.mjs", "random_uniform")
 pub fn random() -> Float
 
+/// Computes the modulo of an float division of inputs as a `Result`.
+///
+/// Returns division of the inputs as a `Result`: If the given divisor equals
+/// `0`, this function returns an `Error`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// modulo(3.0, 2.0)
+/// // -> Ok(1.0)
+/// ```
+///
+/// ```gleam
+/// modulo(1.0, 0.0)
+/// // -> Error(Nil)
+/// ```
+///
+/// ```gleam
+/// modulo(10.0, -1.0)
+/// // -> Ok(0.0)
+/// ```
+///
+/// ```gleam
+/// modulo(13.0, by: 3.0)
+/// // -> Ok(1.0)
+/// ```
+///
+/// ```gleam
+/// modulo(-13.0, by: 3.0)
+/// // -> Ok(2.0)
+/// ```
+///
+/// ```gleam
+/// modulo(13.0, by: -3.0)
+/// // -> Ok(-2.0)
+/// ```
+///
+/// ```gleam
+/// modulo(-13.0, by: -3.0)
+/// // -> Ok(-1.0)
+/// ```
+///
+pub fn modulo(dividend: Float, by divisor: Float) -> Result(Float, Nil) {
+  case divisor {
+    0.0 -> Error(Nil)
+    _ -> Ok(dividend -. floor(dividend /. divisor) *. divisor)
+  }
+}
+
 /// Returns division of the inputs as a `Result`.
 ///
 /// ## Examples
