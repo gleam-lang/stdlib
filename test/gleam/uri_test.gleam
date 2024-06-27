@@ -409,19 +409,19 @@ pub fn parse_segments_test() {
 pub fn origin1_test() {
   let assert Ok(parsed) = uri.parse("http://example.test/path?weebl#bob")
   uri.origin(parsed)
-  |> should.equal(Ok("http://example.test/"))
+  |> should.equal(Ok("http://example.test"))
 }
 
 pub fn origin2_test() {
   let assert Ok(parsed) = uri.parse("http://example.test:8080")
   uri.origin(parsed)
-  |> should.equal(Ok("http://example.test:8080/"))
+  |> should.equal(Ok("http://example.test:8080"))
 }
 
 pub fn origin3_test() {
   let assert Ok(parsed) = uri.parse("https://example.test")
   uri.origin(parsed)
-  |> should.equal(Ok("https://example.test/"))
+  |> should.equal(Ok("https://example.test"))
 }
 
 pub fn origin4_test() {
@@ -446,6 +446,18 @@ pub fn origin7_test() {
   let assert Ok(parsed) = uri.parse("file:///dev/null")
   uri.origin(parsed)
   |> should.equal(Error(Nil))
+}
+
+pub fn origin8_test() {
+  let assert Ok(parsed) = uri.parse("https://mozilla.org:443/")
+  uri.origin(parsed)
+  |> should.equal(Ok("https://mozilla.org"))
+}
+
+pub fn origin9_test() {
+  let assert Ok(parsed) = uri.parse("http://localhost:80/")
+  uri.origin(parsed)
+  |> should.equal(Ok("http://localhost"))
 }
 
 pub fn merge1_test() {
