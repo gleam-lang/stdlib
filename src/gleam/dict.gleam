@@ -419,7 +419,7 @@ fn do_delete(a: k, b: Dict(k, v)) -> Dict(k, v)
 ///
 /// ```gleam
 /// from_list([#("a", 0), #("b", 1)]) |> drop(["a"])
-/// // -> from_list([#("b", 2)])
+/// // -> from_list([#("b", 1)])
 /// ```
 ///
 /// ```gleam
