@@ -28,8 +28,8 @@ pub type Order {
 /// ```
 ///
 /// ```gleam
-/// negate(Lt)
-/// // -> Gt
+/// negate(Gt)
+/// // -> Lt
 /// ```
 ///
 pub fn negate(order: Order) -> Order {
