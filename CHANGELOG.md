@@ -23,6 +23,7 @@
   an exception on JavaScript.
 - Fixed `float.parse` failing to parse exponential notation on JavaScript.
 - The `regex` module gains the `replace` function.
+- The `regex` module will now cache compiled regexes on Erlang.
 
 ## v0.38.0 - 2024-05-24
 

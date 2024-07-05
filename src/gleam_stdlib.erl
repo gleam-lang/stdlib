@@ -220,6 +220,12 @@ bit_array_int_from_u32(<<I:32>>) ->
 bit_array_int_from_u32(_) ->
     {error, nil}.
 
+ensure_regex_cache() ->
+    case ets:whereis(gleam@stdlib@regex_cache) of
+        undefined -> ets:new(gleam@stdlib@regex_cache, [set, public, named_table]);
+        _ -> gleam@stdlib@regex_cache
+    end.
+
 compile_regex(String, Options) ->
     {options, Caseless, Multiline} = Options,
     OptionsList = [
@@ -229,10 +235,16 @@ compile_regex(String, Options) ->
         Multiline andalso multiline
     ],
     FilteredOptions = [Option || Option <- OptionsList, Option /= false],
-    case re:compile(String, FilteredOptions) of
-        {ok, MP} -> {ok, MP};
-        {error, {Str, Pos}} ->
-            {error, {compile_error, unicode:characters_to_binary(Str), Pos}}
+    Table = ensure_regex_cache(),
+    case ets:lookup(Table, String) of
+        [] -> case re:compile(String, FilteredOptions) of
+            {ok, MP} ->
+                ets:insert(Table, {String, {ok, MP}}),
+                {ok, MP};
+            {error, {Str, Pos}} ->
+                {error, {compile_error, unicode:characters_to_binary(Str), Pos}}
+        end;
+        [{_, Regex}] -> Regex
     end.
 
 regex_check(Regex, String) ->
