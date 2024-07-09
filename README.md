@@ -33,7 +33,7 @@ Gleam's standard library supports both targets: Erlang and JavaScript.
 
 ### Compatibility
 
-This library is compatible with all versions of Erlang/OTP, NodeJS, and
-major browsers that are currently supported by their maintainers. If you
-have a compatibility issue with any platform open an issue and we'll see
-what we can do to help.
+This library is compatible with all versions of Erlang/OTP 26 and higher, 
+as well as all NodeJS, Deno, Bun, and major browsers that are currently
+supported by their maintainers. If you have a compatibility issue with
+any platform open an issue and we'll see what we can do to help.
