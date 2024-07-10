@@ -4,7 +4,7 @@
 
 - The previously deprecated `update` function of the `dict` has been replaced
   with a new implementation that yields control to the caller for updating,
-  setting, removing or ignoring existing or missing key-value pairs.
+  setting, removing or ignoring an existing or missing key-value pair.
 
 ## v0.39.0 - 2024-07-09
 

@@ -474,18 +474,22 @@ pub fn upsert(
   |> insert(dict, key, _)
 }
 
-/// Returns a dict where in case:
+/// Returns a dict where the caller attempts to change a key-value pair in the
+/// dict bei either setting or updating or removing or ignoring a key-value
+/// pair.
+///
+/// In case:
 ///
 /// 1. the `update` key is present in the dict, then the value passed to
 ///    function `with` is `Some(value)`; then:
-///    - if `fun` returns `Some(value)`, then the `update` key is newly
-///      associated with to the value of `value` of `Some(value)`.
+///    - if `fun` returns `Ok(value)`, then the `update` key is newly
+///      associated with to the value of `value` of `Ok(value)`.
 ///    - else the `update` key and its associated value are removed from the
 ///      dict.
 /// 2. the `update` key is not present in the dict, then the `value` passed to
 ///    function `with` is `None`; then:
-///    - if `fun` returns `Some(value)`, then the `update key` is added to the
-///      dict associated with the `value` of `Some(value)`.
+///    - if `fun` returns `Ok(value)`, then the `update key` is added to the
+///      dict associated with the `value` of `Ok(value)`.
 ///    - else the `update key` is not added to the map.
 ///
 /// ## Example
