@@ -491,19 +491,22 @@ pub fn upsert(
 /// ## Example
 ///
 /// ```gleam
-/// let dict = from_list([#("a", 0)])
-/// let increment = fn(x) {
+/// let dict = dict.from_list([#("a", 0), #("b", 1), #("c", 2)])
+///
+/// let inc_if_exists_or_set = fn(x) {
 ///   case x {
 ///     Some(i) -> Ok(i + 1)
-///     None -> 0
+///     None -> Ok(1)
 ///   }
 /// }
 ///
-/// update(dict, "a", increment)
-/// // -> from_list([#("a", 1)])
+/// dict
+/// |> dict.update("a", inc_if_exists_or_set)
+/// // -> from_list([#("a", 1), #("b", 1), #("c", 2)])
 ///
-/// update(dict, "b", increment)
-/// // -> from_list([#("a", 0), #("b", 0)])
+/// dict
+/// |> dict.update("e", inc_if_exists_or_set)
+/// // -> from_list([#("a", 0), #("b", 1), #("c", 2), #("e", 1)])
 /// ```
 ///
 pub fn update(
