@@ -493,20 +493,20 @@ pub fn upsert(
 /// ```gleam
 /// let dict = dict.from_list([#("a", 0), #("b", 1), #("c", 2)])
 ///
-/// let inc_if_exists_or_set = fn(x) {
+/// let inc_if_exists_or_discard = fn(x) {
 ///   case x {
 ///     Some(i) -> Ok(i + 1)
-///     None -> Ok(1)
+///     None -> Error(Nil)
 ///   }
 /// }
 ///
 /// dict
-/// |> dict.update("a", inc_if_exists_or_set)
+/// |> dict.update("a", inc_if_exists_or_discard)
 /// // -> from_list([#("a", 1), #("b", 1), #("c", 2)])
 ///
 /// dict
-/// |> dict.update("e", inc_if_exists_or_set)
-/// // -> from_list([#("a", 0), #("b", 1), #("c", 2), #("e", 1)])
+/// |> dict.update("e", inc_if_exists_or_discard)
+/// // -> from_list([#("a", 0), #("b", 1), #("c", 2)])
 /// ```
 ///
 pub fn update(
