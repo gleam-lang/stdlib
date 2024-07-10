@@ -199,6 +199,41 @@ pub fn upsert_test() {
   |> should.equal(dict.from_list([#("a", 0), #("b", 1), #("c", 2), #("z", 0)]))
 }
 
+pub fn update_test() {
+  let dict = dict.from_list([#("a", 0), #("b", 1), #("c", 2)])
+
+  let inc_if_exists_or_set = fn(x) {
+    case x {
+      Some(i) -> Ok(i + 1)
+      None -> Ok(1)
+    }
+  }
+
+  dict
+  |> dict.update("a", inc_if_exists_or_set)
+  |> should.equal(dict.from_list([#("a", 1), #("b", 1), #("c", 2)]))
+
+  dict
+  |> dict.update("e", inc_if_exists_or_set)
+  |> should.equal(dict.from_list([#("a", 0), #("b", 1), #("c", 2), #("e", 1)]))
+
+  let remove_if_exists_or_ignore = fn(x) {
+    case x {
+      Some(_i) -> Error(Nil)
+      None -> Error(Nil)
+    }
+  }
+
+  dict
+  |> dict.update("a", remove_if_exists_or_ignore)
+  |> should.equal(dict.from_list([#("b", 1), #("c", 2)]))
+
+  dict
+  |> dict.update("e", remove_if_exists_or_ignore)
+  |> should.equal(dict.from_list([#("a", 0), #("b", 1), #("c", 2)]))
+
+}
+
 pub fn fold_test() {
   let dict = dict.from_list([#("a", 0), #("b", 1), #("c", 2), #("d", 3)])
 

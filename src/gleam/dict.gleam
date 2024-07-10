@@ -474,10 +474,19 @@ pub fn upsert(
   |> insert(dict, key, _)
 }
 
-/// Creates a new dict with one entry inserted or updated using a given function.
+/// Returns a dict where in case:
 ///
-/// If there was not an entry in the dict for the given key then the function
-/// gets `None` as its argument, otherwise it gets `Some(value)`.
+/// 1. the `update` key is present in the dict, then the value passed to
+///    function `with` is `Some(value)`; then:
+///    - if `fun` returns `Some(value)`, then the `update` key is newly
+///      associated with to the value of `value` of `Some(value)`.
+///    - else the `update` key and its associated value are removed from the
+///      dict.
+/// 2. the `update` key is not present in the dict, then the `value` passed to
+///    function `with` is `None`; then:
+///    - if `fun` returns `Some(value)`, then the `update key` is added to the
+///      dict associated with the `value` of `Some(value)`.
+///    - else the `update key` is not added to the map.
 ///
 /// ## Example
 ///
@@ -485,7 +494,7 @@ pub fn upsert(
 /// let dict = from_list([#("a", 0)])
 /// let increment = fn(x) {
 ///   case x {
-///     Some(i) -> i + 1
+///     Some(i) -> Ok(i + 1)
 ///     None -> 0
 ///   }
 /// }
@@ -503,14 +512,14 @@ pub fn update(
   with fun: fn(Option(v)) -> Result(v, Nil),
 ) -> Dict(k, v) {
   case do_get(dict, key) {
-    Ok(value) -> case fun(Some(value)) {
-      Error(_) -> delete(dict, key)
-      Ok(v) -> insert(dict, key, v)
+    Ok(existing_value) -> case fun(Some(existing_value)) {
+      Ok(value) -> do_insert(key, value, dict)
+      Error(_) -> do_delete(key, dict)
     }
     Error(_) -> {
       case fun(None) {
+        Ok(value) -> do_insert(key, value, dict)
         Error(_) -> dict
-        Ok(v) -> insert(dict, key, v)
       }
     }
   }
