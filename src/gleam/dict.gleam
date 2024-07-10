@@ -1,6 +1,6 @@
-import gleam/option.{type Option}
+import gleam/option.{type Option, None, Some}
 
-/// A dictionary of keys and values.
+/// A dictionary (dict) of keys and values.
 ///
 /// Any type can be used for the keys and values of a dict, but all the keys
 /// must be of the same type and all the values must be of the same type.
@@ -60,7 +60,7 @@ pub fn is_empty(dict: Dict(k, v)) -> Bool {
 ///
 /// ## Examples
 ///
-/// Calling `to_list` on an empty `dict` returns an empty list.
+/// Calling `to_list` on an empty dict returns an empty list.
 ///
 /// ```gleam
 /// new() |> to_list
@@ -474,13 +474,46 @@ pub fn upsert(
   |> insert(dict, key, _)
 }
 
-@deprecated("This function has been renamed to `upsert`")
+/// Creates a new dict with one entry inserted or updated using a given function.
+///
+/// If there was not an entry in the dict for the given key then the function
+/// gets `None` as its argument, otherwise it gets `Some(value)`.
+///
+/// ## Example
+///
+/// ```gleam
+/// let dict = from_list([#("a", 0)])
+/// let increment = fn(x) {
+///   case x {
+///     Some(i) -> i + 1
+///     None -> 0
+///   }
+/// }
+///
+/// update(dict, "a", increment)
+/// // -> from_list([#("a", 1)])
+///
+/// update(dict, "b", increment)
+/// // -> from_list([#("a", 0), #("b", 0)])
+/// ```
+///
 pub fn update(
   in dict: Dict(k, v),
   update key: k,
-  with fun: fn(Option(v)) -> v,
+  with fun: fn(Option(v)) -> Result(v, Nil),
 ) -> Dict(k, v) {
-  upsert(dict, key, fun)
+  case do_get(dict, key) {
+    Ok(value) -> case fun(Some(value)) {
+      Error(_) -> delete(dict, key)
+      Ok(v) -> insert(dict, key, v)
+    }
+    Error(_) -> {
+      case fun(None) {
+        Error(_) -> dict
+        Ok(v) -> insert(dict, key, v)
+      }
+    }
+  }
 }
 
 fn do_fold(list: List(#(k, v)), initial: acc, fun: fn(acc, k, v) -> acc) -> acc {
