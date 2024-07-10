@@ -512,10 +512,11 @@ pub fn update(
   with fun: fn(Option(v)) -> Result(v, Nil),
 ) -> Dict(k, v) {
   case do_get(dict, key) {
-    Ok(existing_value) -> case fun(Some(existing_value)) {
-      Ok(value) -> do_insert(key, value, dict)
-      Error(_) -> do_delete(key, dict)
-    }
+    Ok(existing_value) ->
+      case fun(Some(existing_value)) {
+        Ok(value) -> do_insert(key, value, dict)
+        Error(_) -> do_delete(key, dict)
+      }
     Error(_) -> {
       case fun(None) {
         Ok(value) -> do_insert(key, value, dict)

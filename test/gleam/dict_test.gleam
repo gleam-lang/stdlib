@@ -231,7 +231,6 @@ pub fn update_test() {
   dict
   |> dict.update("e", remove_if_exists_or_ignore)
   |> should.equal(dict.from_list([#("a", 0), #("b", 1), #("c", 2)]))
-
 }
 
 pub fn fold_test() {
