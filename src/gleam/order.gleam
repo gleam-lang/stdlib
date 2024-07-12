@@ -84,26 +84,6 @@ pub fn compare(a: Order, with b: Order) -> Order {
   }
 }
 
-@deprecated("This function is being removed as it is not useful.
-The name may be used for a more helpful function in future.")
-pub fn max(a: Order, b: Order) -> Order {
-  case a, b {
-    Gt, _ -> Gt
-    Eq, Lt -> Eq
-    _, _ -> b
-  }
-}
-
-@deprecated("This function is being removed as it is not useful.
-The name may be used for a more helpful function in future.")
-pub fn min(a: Order, b: Order) -> Order {
-  case a, b {
-    Lt, _ -> Lt
-    Eq, Gt -> Eq
-    _, _ -> b
-  }
-}
-
 /// Inverts an ordering function, so less-than becomes greater-than and greater-than
 /// becomes less-than.
 ///
