@@ -441,38 +441,23 @@ pub fn random() -> Float
 /// ## Examples
 ///
 /// ```gleam
-/// modulo(3.0, 2.0)
-/// // -> Ok(1.0)
+/// modulo(13.3, by: 3.3)
+/// // -> Ok(0.1)
 /// ```
 ///
 /// ```gleam
-/// modulo(1.0, 0.0)
-/// // -> Error(Nil)
+/// modulo(-13.3, by: 3.3)
+/// // -> Ok(3.2)
 /// ```
 ///
 /// ```gleam
-/// modulo(10.0, -1.0)
-/// // -> Ok(0.0)
+/// modulo(13.3, by: -3.3)
+/// // -> Ok(-3.2)
 /// ```
 ///
 /// ```gleam
-/// modulo(13.0, by: 3.0)
-/// // -> Ok(1.0)
-/// ```
-///
-/// ```gleam
-/// modulo(-13.0, by: 3.0)
-/// // -> Ok(2.0)
-/// ```
-///
-/// ```gleam
-/// modulo(13.0, by: -3.0)
-/// // -> Ok(-2.0)
-/// ```
-///
-/// ```gleam
-/// modulo(-13.0, by: -3.0)
-/// // -> Ok(-1.0)
+/// modulo(-13.3, by: -3.3)
+/// // -> Ok(-0.1)
 /// ```
 ///
 pub fn modulo(dividend: Float, by divisor: Float) -> Result(Float, Nil) {
