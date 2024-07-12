@@ -474,15 +474,6 @@ pub fn upsert(
   |> insert(dict, key, _)
 }
 
-@deprecated("This function has been renamed to `upsert`")
-pub fn update(
-  in dict: Dict(k, v),
-  update key: k,
-  with fun: fn(Option(v)) -> v,
-) -> Dict(k, v) {
-  upsert(dict, key, fun)
-}
-
 fn do_fold(list: List(#(k, v)), initial: acc, fun: fn(acc, k, v) -> acc) -> acc {
   case list {
     [] -> initial
