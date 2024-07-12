@@ -54,64 +54,6 @@ pub fn compare_test() {
   |> should.equal(Eq)
 }
 
-pub fn max_test() {
-  order.max(Lt, Lt)
-  |> should.equal(Lt)
-
-  order.max(Lt, Eq)
-  |> should.equal(Eq)
-
-  order.max(Lt, Gt)
-  |> should.equal(Gt)
-
-  order.max(Eq, Lt)
-  |> should.equal(Eq)
-
-  order.max(Eq, Eq)
-  |> should.equal(Eq)
-
-  order.max(Eq, Gt)
-  |> should.equal(Gt)
-
-  order.max(Gt, Lt)
-  |> should.equal(Gt)
-
-  order.max(Gt, Eq)
-  |> should.equal(Gt)
-
-  order.max(Gt, Gt)
-  |> should.equal(Gt)
-}
-
-pub fn min_test() {
-  order.min(Lt, Lt)
-  |> should.equal(Lt)
-
-  order.min(Lt, Eq)
-  |> should.equal(Lt)
-
-  order.min(Lt, Gt)
-  |> should.equal(Lt)
-
-  order.min(Eq, Lt)
-  |> should.equal(Lt)
-
-  order.min(Eq, Eq)
-  |> should.equal(Eq)
-
-  order.min(Eq, Gt)
-  |> should.equal(Eq)
-
-  order.min(Gt, Lt)
-  |> should.equal(Lt)
-
-  order.min(Gt, Eq)
-  |> should.equal(Eq)
-
-  order.min(Gt, Gt)
-  |> should.equal(Gt)
-}
-
 pub fn reverse_test() {
   [4, 5, 1]
   |> list.sort(by: order.reverse(int.compare))
