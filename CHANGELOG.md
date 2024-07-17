@@ -6,6 +6,7 @@
 - The deprecated `dynamic.unsafe_coerce` function has been removed.
 - The deprecated `dict.update` function has been removed.
 - The deprecated `order.max` and `order.min` functions have been removed.
+- The `float` module gains the `modulo` function.
 
 ## v0.39.0 - 2024-07-09
 
