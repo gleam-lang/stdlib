@@ -8,6 +8,9 @@
 - The deprecated `order.max` and `order.min` functions have been removed.
 - The `float` module gains the `modulo` function.
 - The `uri.origin` function no longer incorrectly has a trailing slash.
+- The `dynamic.optional_field` decoder no longer treats the value as implicitly
+  optional. It only deals with the presence or absence of the key itself which
+  brings it inline with its documentation.
 
 ## v0.39.0 - 2024-07-09
 
@@ -32,9 +35,6 @@
   an exception on JavaScript.
 - Fixed `float.parse` failing to parse exponential notation on JavaScript.
 - The `regex` module gains the `replace` function.
-- The `dynamic.optional_field` decoder no longer treats the value as implicitly
-  optional. It only deals with the presence or absence of the key itself which
-  brings it inline with its documentation.
 
 ## v0.38.0 - 2024-05-24
 
