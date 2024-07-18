@@ -2,7 +2,7 @@ import gleam/bit_array
 import gleam/dict.{type Dict}
 import gleam/int
 import gleam/list
-import gleam/option.{type Option}
+import gleam/option.{type Option, Some}
 import gleam/result
 import gleam/string_builder
 
@@ -26,22 +26,9 @@ pub type Decoder(t) =
 
 /// Converts any Gleam data into `Dynamic` data.
 ///
-pub fn from(a) -> Dynamic {
-  do_from(a)
-}
-
 @external(erlang, "gleam_stdlib", "identity")
 @external(javascript, "../gleam_stdlib.mjs", "identity")
-fn do_from(a: anything) -> Dynamic
-
-@deprecated("This function undermines the type system and opens the door to cryptic runtime errors and incorrect behaviour")
-pub fn unsafe_coerce(a: Dynamic) -> anything {
-  do_unsafe_coerce(a)
-}
-
-@external(erlang, "gleam_stdlib", "identity")
-@external(javascript, "../gleam_stdlib.mjs", "identity")
-fn do_unsafe_coerce(a: Dynamic) -> a
+pub fn from(a: anything) -> Dynamic
 
 /// Decodes a `Dynamic` value from a `Dynamic` value.
 ///
@@ -446,8 +433,8 @@ pub fn optional_field(
     case maybe_inner {
       option.None -> Ok(option.None)
       option.Some(dynamic_inner) ->
-        dynamic_inner
-        |> decode_optional(inner_type)
+        inner_type(dynamic_inner)
+        |> result.map(Some)
         |> map_errors(push_path(_, name))
     }
   }

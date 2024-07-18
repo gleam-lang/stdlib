@@ -3,6 +3,7 @@ import gleam/int
 import gleam/iterator
 import gleam/list
 import gleam/order
+import gleam/result
 import gleam/should
 
 pub fn parse_test() {
@@ -381,6 +382,31 @@ pub fn random_test() {
   { average <. expected_average +. 0.1 }
   |> should.be_true
   { average >. expected_average -. 0.1 }
+  |> should.be_true
+}
+
+pub fn modulo_test() {
+  float.modulo(13.3, by: 0.0)
+  |> should.equal(Error(Nil))
+
+  float.modulo(13.3, by: 3.3)
+  |> result.unwrap(or: 0.0)
+  |> float.loosely_equals(with: 0.1, tolerating: 0.001)
+  |> should.be_true
+
+  float.modulo(-13.3, by: 3.3)
+  |> result.unwrap(or: 0.0)
+  |> float.loosely_equals(with: 3.2, tolerating: 0.001)
+  |> should.be_true
+
+  float.modulo(13.3, by: -3.3)
+  |> result.unwrap(or: 0.0)
+  |> float.loosely_equals(with: -3.2, tolerating: 0.001)
+  |> should.be_true
+
+  float.modulo(-13.3, by: -3.3)
+  |> result.unwrap(or: 0.0)
+  |> float.loosely_equals(with: -0.1, tolerating: 0.001)
   |> should.be_true
 }
 

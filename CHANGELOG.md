@@ -2,6 +2,15 @@
 
 ## v0.40.0 - Unreleased
 
+- The `function.curry*` functions have been deprecated.
+- The deprecated `dynamic.unsafe_coerce` function has been removed.
+- The deprecated `dict.update` function has been removed.
+- The deprecated `order.max` and `order.min` functions have been removed.
+- The `float` module gains the `modulo` function.
+- The `uri.origin` function no longer incorrectly has a trailing slash.
+- The `dynamic.optional_field` decoder no longer treats the value as implicitly
+  optional. It only deals with the presence or absence of the key itself which
+  brings it inline with its documentation.
 - The previously deprecated `update` function of the `dict` has been replaced
   with a new implementation that yields control to the caller for updating,
   setting, removing or ignoring an existing or missing key-value pair.
