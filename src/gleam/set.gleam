@@ -206,7 +206,7 @@ pub fn fold(
 /// import gleam/int
 ///
 /// from_list([1, 4, 6, 3, 675, 44, 67])
-/// |> filter(for: int.is_even)
+/// |> filter(keeping: int.is_even)
 /// |> to_list
 /// // -> [4, 6, 44]
 /// ```
