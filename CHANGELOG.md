@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- The `function.curry*` functions have been deprecated.
+- The `function.curry*` and `function.apply*` functions have been deprecated.
 - The deprecated `dynamic.unsafe_coerce` function has been removed.
 - The deprecated `dict.update` function has been removed.
 - The deprecated `order.max` and `order.min` functions have been removed.

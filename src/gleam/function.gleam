@@ -58,42 +58,17 @@ pub fn tap(arg: a, effect: fn(a) -> b) -> a {
   arg
 }
 
-/// Takes a function with arity one and an argument,
-/// calls that function with the argument and returns the function return value.
-///
-/// Useful for concisely calling functions returned as a part of a pipeline.
-///
-/// ## Example
-///
-/// ```gleam
-/// let doubler = fn() {
-///   fn(x: Int) { x * 2 }
-/// }
-///
-/// doubler() |> apply1(2)
-/// // -> 4
-/// ```
-///
+@deprecated("Use a fn literal instead, it is easier to understand")
 pub fn apply1(fun: fn(a) -> value, arg1: a) -> value {
   fun(arg1)
 }
 
-/// Takes a function with arity two and two arguments,
-/// calls that function with the arguments
-/// and returns the function return value.
-///
-/// See [`apply1`](#apply1) for more details.
-///
+@deprecated("Use a fn literal instead, it is easier to understand")
 pub fn apply2(fun: fn(a, b) -> value, arg1: a, arg2: b) -> value {
   fun(arg1, arg2)
 }
 
-/// Takes a function with arity three and three arguments,
-/// calls that function with the arguments
-/// and returns the function return value.
-///
-/// See [`apply1`](#apply1) for more details.
-///
+@deprecated("Use a fn literal instead, it is easier to understand")
 pub fn apply3(fun: fn(a, b, c) -> value, arg1: a, arg2: b, arg3: c) -> value {
   fun(arg1, arg2, arg3)
 }
