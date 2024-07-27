@@ -358,6 +358,12 @@ pub fn trim_zero_width_non_breaking_space_test() {
   |> should.equal("hats\u{FEFF}")
 }
 
+pub fn trim_comma_test() {
+  "hats,"
+  |> string.trim
+  |> should.equal(",hats,")
+}
+
 pub fn starts_with_test() {
   "theory"
   |> string.starts_with("")
