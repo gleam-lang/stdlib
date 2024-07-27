@@ -361,7 +361,7 @@ pub fn trim_zero_width_non_breaking_space_test() {
 pub fn trim_comma_test() {
   "hats,"
   |> string.trim
-  |> should.equal(",hats,")
+  |> should.equal("hats,")
 }
 
 pub fn starts_with_test() {
