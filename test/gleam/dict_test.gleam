@@ -217,7 +217,7 @@ pub fn update_test() {
   |> dict.update("e", inc_if_exists_or_set)
   |> should.equal(dict.from_list([#("a", 0), #("b", 1), #("c", 2), #("e", 1)]))
 
-  let remove_if_exists_or_ignore = fn(x) {
+  let discard_if_exists_else_noop = fn(x) {
     case x {
       Some(_i) -> Error(Nil)
       None -> Error(Nil)
@@ -225,14 +225,14 @@ pub fn update_test() {
   }
 
   dict
-  |> dict.update("a", remove_if_exists_or_ignore)
+  |> dict.update("a", discard_if_exists_else_noop)
   |> should.equal(dict.from_list([#("b", 1), #("c", 2)]))
 
   dict
-  |> dict.update("e", remove_if_exists_or_ignore)
+  |> dict.update("e", discard_if_exists_else_noop)
   |> should.equal(dict.from_list([#("a", 0), #("b", 1), #("c", 2)]))
 
-  let inc_if_exists_or_discard = fn(x) {
+  let inc_if_exists_else_noop = fn(x) {
     case x {
       Some(i) -> Ok(i + 1)
       None -> Error(Nil)
@@ -240,14 +240,14 @@ pub fn update_test() {
   }
 
   dict
-  |> dict.update("a", inc_if_exists_or_discard)
+  |> dict.update("a", inc_if_exists_else_noop)
   |> should.equal(dict.from_list([#("a", 1), #("b", 1), #("c", 2)]))
 
   dict
-  |> dict.update("e", inc_if_exists_or_discard)
+  |> dict.update("e", inc_if_exists_else_noop)
   |> should.equal(dict.from_list([#("a", 0), #("b", 1), #("c", 2)]))
 
-  let set_to_zero_if_missing_else_remove = fn(x) {
+  let discard_if_exists_else_set_to_zero = fn(x) {
     case x {
       Some(_i) -> Error(Nil)
       None -> Ok(0)
@@ -255,11 +255,11 @@ pub fn update_test() {
   }
 
   dict
-  |> dict.update("a", set_to_zero_if_missing_else_remove)
+  |> dict.update("a", discard_if_exists_else_set_to_zero)
   |> should.equal(dict.from_list([#("b", 1), #("c", 2)]))
 
   dict
-  |> dict.update("e", set_to_zero_if_missing_else_remove)
+  |> dict.update("e", discard_if_exists_else_set_to_zero)
   |> should.equal(dict.from_list([#("a", 0), #("b", 1), #("c", 2), #("e", 0)]))
 }
 
