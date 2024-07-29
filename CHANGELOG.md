@@ -11,6 +11,7 @@
 - The `dynamic.optional_field` decoder no longer treats the value as implicitly
   optional. It only deals with the presence or absence of the key itself which
   brings it inline with its documentation.
+- Fixed a bug where `string.trim` could remove commas on JavaScript.
 
 ## v0.39.0 - 2024-07-09
 
