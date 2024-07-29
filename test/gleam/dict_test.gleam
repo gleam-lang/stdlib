@@ -204,8 +204,8 @@ pub fn update_test() {
 
   let inc_if_exists_or_set = fn(x) {
     case x {
-      Some(i) -> Ok(i + 1)
-      None -> Ok(1)
+      Some(i) -> Some(i + 1)
+      None -> Some(1)
     }
   }
 
@@ -219,8 +219,8 @@ pub fn update_test() {
 
   let discard_if_exists_else_noop = fn(x) {
     case x {
-      Some(_i) -> Error(Nil)
-      None -> Error(Nil)
+      Some(_i) -> None
+      None -> None
     }
   }
 
@@ -234,8 +234,8 @@ pub fn update_test() {
 
   let inc_if_exists_else_noop = fn(x) {
     case x {
-      Some(i) -> Ok(i + 1)
-      None -> Error(Nil)
+      Some(i) -> Some(i + 1)
+      None -> None
     }
   }
 
@@ -249,8 +249,8 @@ pub fn update_test() {
 
   let discard_if_exists_else_set_to_zero = fn(x) {
     case x {
-      Some(_i) -> Error(Nil)
-      None -> Ok(0)
+      Some(_i) -> None
+      None -> Some(0)
     }
   }
 
@@ -261,41 +261,6 @@ pub fn update_test() {
   dict
   |> dict.update("e", discard_if_exists_else_set_to_zero)
   |> should.equal(dict.from_list([#("a", 0), #("b", 1), #("c", 2), #("e", 0)]))
-
-  let discard_if_exists_else_set_to_zero = fn(x) {
-    case x {
-      Some(_i) -> Error(Nil)
-      None -> Ok(0)
-    }
-  }
-
-  dict
-  |> dict.update("a", discard_if_exists_else_set_to_zero)
-  |> should.equal(dict.from_list([#("b", 1), #("c", 2)]))
-
-  dict
-  |> dict.update("e", discard_if_exists_else_set_to_zero)
-  |> should.equal(dict.from_list([#("a", 0), #("b", 1), #("c", 2), #("e", 0)]))
-
-  // Utilize a function returning a `Result` in the change function.
-  let half_or_zero_else_noop = fn(x) {
-    case x {
-      Some(i) -> int.divide(i, 2)
-      None -> Error(Nil)
-    }
-  }
-
-  dict
-  |> dict.update("c", half_or_zero_else_noop)
-  |> should.equal(dict.from_list([#("a", 0), #("b", 1), #("c", 1)]))
-
-  dict
-  |> dict.update("b", half_or_zero_else_noop)
-  |> should.equal(dict.from_list([#("a", 0), #("b", 0), #("c", 2)]))
-
-  dict
-  |> dict.update("e", half_or_zero_else_noop)
-  |> should.equal(dict.from_list([#("a", 0), #("b", 1), #("c", 2)]))
 }
 
 pub fn fold_test() {
