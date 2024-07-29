@@ -256,7 +256,7 @@ const unicode_whitespaces = [
   "\u0085", // Next line
   "\u2028", // Line separator
   "\u2029", // Paragraph separator
-].join();
+].join("");
 
 const left_trim_regex = new RegExp(`^([${unicode_whitespaces}]*)`, "g");
 const right_trim_regex = new RegExp(`([${unicode_whitespaces}]*)$`, "g");

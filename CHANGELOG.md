@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- The `function.curry*` functions have been deprecated.
+- The `function.curry*` and `function.apply*` functions have been deprecated.
 - The deprecated `dynamic.unsafe_coerce` function has been removed.
 - The deprecated `dict.update` function has been removed.
 - The deprecated `order.max` and `order.min` functions have been removed.
@@ -14,6 +14,7 @@
 - The previously deprecated `update` function of the `dict` has been replaced
   with a new implementation that yields control to the caller for updating,
   setting, removing or ignoring an existing or missing key-value pair.
+- Fixed a bug where `string.trim` could remove commas on JavaScript.
 
 ## v0.39.0 - 2024-07-09
 
