@@ -1,6 +1,6 @@
 import gleam/option.{type Option, None, Some}
 
-/// A dictionary (dict) of keys and values.
+/// A dictionary of keys and values.
 ///
 /// Any type can be used for the keys and values of a dict, but all the keys
 /// must be of the same type and all the values must be of the same type.
@@ -474,23 +474,23 @@ pub fn upsert(
   |> insert(dict, key, _)
 }
 
+/// Changes the value in a dict for a given key using a given function.
+///
 /// Returns a dict where the caller attempts to change a key-value pair in the
 /// dict bei either setting or updating or removing or ignoring a key-value
-/// pair.
-///
-/// In case:
+/// pair; in case:
 ///
 /// 1. the `update` key is present in the dict, then the value passed to
 ///    function `with` is `Some(value)`; then:
-///    - if `fun` returns `Ok(value)`, then the `update` key is newly
+///    1. if `fun` returns `Ok(value)`, then the `update` key is newly
 ///      associated with to the value of `value` of `Ok(value)`.
-///    - else the `update` key and its associated value are removed from the
+///    2. else the `update` key and its associated value are removed from the
 ///      dict.
 /// 2. the `update` key is not present in the dict, then the `value` passed to
 ///    function `with` is `None`; then:
-///    - if `fun` returns `Ok(value)`, then the `update key` is added to the
+///    1. if `fun` returns `Ok(value)`, then the `update key` is added to the
 ///      dict associated with the `value` of `Ok(value)`.
-///    - else the `update key` is not added to the map.
+///    2. else the `update key` is not added to the map.
 ///
 /// ## Example
 ///

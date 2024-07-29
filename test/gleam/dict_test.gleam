@@ -246,6 +246,21 @@ pub fn update_test() {
   dict
   |> dict.update("e", inc_if_exists_or_discard)
   |> should.equal(dict.from_list([#("a", 0), #("b", 1), #("c", 2)]))
+
+  let set_to_zero_if_missing_else_remove = fn(x) {
+    case x {
+      Some(_i) -> Error(Nil)
+      None -> Ok(0)
+    }
+  }
+
+  dict
+  |> dict.update("a", set_to_zero_if_missing_else_remove)
+  |> should.equal(dict.from_list([#("b", 1), #("c", 2)]))
+
+  dict
+  |> dict.update("e", set_to_zero_if_missing_else_remove)
+  |> should.equal(dict.from_list([#("a", 0), #("b", 1), #("c", 2), #("e", 0)]))
 }
 
 pub fn fold_test() {
