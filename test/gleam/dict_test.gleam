@@ -202,22 +202,22 @@ pub fn upsert_test() {
 pub fn update_test() {
   let dict = dict.from_list([#("a", 0), #("b", 1), #("c", 2)])
 
-  let inc_if_exists_or_set = fn(x) {
+  let inc_or_zero = fn(x) {
     case x {
       Some(i) -> Some(i + 1)
-      None -> Some(1)
+      None -> Some(0)
     }
   }
 
   dict
-  |> dict.update("a", inc_if_exists_or_set)
+  |> dict.update("a", inc_or_zero)
   |> should.equal(dict.from_list([#("a", 1), #("b", 1), #("c", 2)]))
 
   dict
-  |> dict.update("e", inc_if_exists_or_set)
-  |> should.equal(dict.from_list([#("a", 0), #("b", 1), #("c", 2), #("e", 1)]))
+  |> dict.update("e", inc_or_zero)
+  |> should.equal(dict.from_list([#("a", 0), #("b", 1), #("c", 2), #("e", 0)]))
 
-  let discard_if_exists_else_noop = fn(x) {
+  let discard_existing_or_noop = fn(x) {
     case x {
       Some(_i) -> None
       None -> None
@@ -225,14 +225,14 @@ pub fn update_test() {
   }
 
   dict
-  |> dict.update("a", discard_if_exists_else_noop)
+  |> dict.update("a", discard_existing_or_noop)
   |> should.equal(dict.from_list([#("b", 1), #("c", 2)]))
 
   dict
-  |> dict.update("e", discard_if_exists_else_noop)
+  |> dict.update("e", discard_existing_or_noop)
   |> should.equal(dict.from_list([#("a", 0), #("b", 1), #("c", 2)]))
 
-  let inc_if_exists_else_noop = fn(x) {
+  let inc_existing_or_noop = fn(x) {
     case x {
       Some(i) -> Some(i + 1)
       None -> None
@@ -240,14 +240,14 @@ pub fn update_test() {
   }
 
   dict
-  |> dict.update("a", inc_if_exists_else_noop)
+  |> dict.update("a", inc_existing_or_noop)
   |> should.equal(dict.from_list([#("a", 1), #("b", 1), #("c", 2)]))
 
   dict
-  |> dict.update("e", inc_if_exists_else_noop)
+  |> dict.update("e", inc_existing_or_noop)
   |> should.equal(dict.from_list([#("a", 0), #("b", 1), #("c", 2)]))
 
-  let discard_if_exists_else_set_to_zero = fn(x) {
+  let discard_existing_or_zero = fn(x) {
     case x {
       Some(_i) -> None
       None -> Some(0)
@@ -255,11 +255,11 @@ pub fn update_test() {
   }
 
   dict
-  |> dict.update("a", discard_if_exists_else_set_to_zero)
+  |> dict.update("a", discard_existing_or_zero)
   |> should.equal(dict.from_list([#("b", 1), #("c", 2)]))
 
   dict
-  |> dict.update("e", discard_if_exists_else_set_to_zero)
+  |> dict.update("e", discard_existing_or_zero)
   |> should.equal(dict.from_list([#("a", 0), #("b", 1), #("c", 2), #("e", 0)]))
 }
 
