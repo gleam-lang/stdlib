@@ -28,6 +28,33 @@ pub type Uri {
   )
 }
 
+/// Constant representing an empty URI, equivalent to "".
+///
+/// ## Examples
+///
+/// ```gleam
+/// let uri = Uri(..Uri.empty, scheme: Some("https"), host: Some("example.com"))
+/// // -> Uri(
+/// //   scheme: Some("https"),
+/// //   userinfo: None,
+/// //   host: Some("example.com"),
+/// //   port: None,
+/// //   path: "",
+/// //   query: None,
+/// //   fragment: None,
+/// // )
+/// ```
+///
+pub const empty = Uri(
+  scheme: None,
+  userinfo: None,
+  host: None,
+  port: None,
+  path: "",
+  query: None,
+  fragment: None,
+)
+
 /// Parses a compliant URI string into the `Uri` Type.
 /// If the string is not a valid URI string then an error is returned.
 ///
