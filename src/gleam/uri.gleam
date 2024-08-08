@@ -647,7 +647,7 @@ fn remove_dot_segments_loop(
 /// ## Examples
 ///
 /// ```gleam
-/// let uri = Uri(Some("http"), None, Some("example.com"), ...)
+/// let uri = Uri(..Uri.empty, scheme: Some("http"), host: Some("example.com"))
 /// to_string(uri)
 /// // -> "http://example.com"
 /// ```
