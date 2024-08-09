@@ -301,6 +301,39 @@ pub fn group(list: List(v), by key: fn(v) -> k) -> Dict(k, List(v)) {
   fold(list, dict.new(), update_group(key))
 }
 
+/// Takes a list and creates a lookup table by a key
+/// which is built from a key function.
+/// 
+/// If the same key maps to multiple elements,
+/// only the last element in each group will be kept.
+/// 
+/// ## Examples
+/// 
+/// ```gleam
+/// import gleam/dict
+/// impor gleam/string
+/// 
+/// ["Apple", "Cherry", "Orange", "Apricots"]
+/// |> group_last(by: fn(fruit) { string.slice(fruit, 0, 1) })
+/// // -> dict.from_list([#("A", "Apricots"), #("C", "Cherry"), #("O", Orange)])
+/// ```
+/// 
+/// ```gleam
+/// import gleam/dict
+/// 
+/// [#("Alice", 42), #("Bob", 24), #("Cosmo", 27)]
+/// |> group_last(by: fn(user) { user.1 })
+/// // -> dict.from_list([
+/// //    #(42, #("Alice", 42)),
+/// //    #(24, #("Bob", 24)),
+/// //    #(27, #("Cosmo", 27)),
+/// // ])
+/// ```
+pub fn group_last(list: List(v), by key: fn(v) -> k) -> Dict(k, v) {
+  use table, elem <- fold(list, dict.new())
+  dict.insert(table, key(elem), elem)
+}
+
 fn do_filter(list: List(a), fun: fn(a) -> Bool, acc: List(a)) -> List(a) {
   case list {
     [] -> reverse(acc)

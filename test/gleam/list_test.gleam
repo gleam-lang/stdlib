@@ -134,6 +134,20 @@ pub fn group_test() {
   )
 }
 
+pub fn group_last_test() {
+  ["Apple", "Cherry", "Orange", "Apricots"]
+  |> list.group_last(by: fn(fruit) { string.slice(fruit, 0, 1) })
+  |> should.equal(dict.from_list([#("A", "Apricots"), #("C", "Cherry"), #("O", "Orange")]))
+
+  [#("Alice", 42), #("Bob", 24), #("Cosmo", 27)]
+  |> list.group_last(by: fn(user) { user.1 })
+  |> should.equal(dict.from_list([
+    #(42, #("Alice", 42)),
+    #(24, #("Bob", 24)),
+    #(27, #("Cosmo", 27)),
+  ]))
+}
+
 pub fn filter_test() {
   []
   |> list.filter(fn(_) { True })
