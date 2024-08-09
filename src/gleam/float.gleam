@@ -267,6 +267,31 @@ pub fn truncate(x: Float) -> Int {
 @external(javascript, "../gleam_stdlib.mjs", "truncate")
 fn do_truncate(a: Float) -> Int
 
+/// Converts the value to a given precision as a `Float`.
+/// The precision is the number of allowed decimal places.
+/// Negative precisions are allowed and force rounding
+/// to the nearest tenth, hundredth, thousandth etc.
+///
+/// ## Examples
+///
+/// ```gleam
+/// to_precision(2.43434348473, precision: 2)
+/// // -> 2.43
+/// ```
+///
+/// ```gleam
+/// to_precision(547890.453444, precision: -3)
+/// // -> 548000.0
+/// ```
+///
+pub fn to_precision(x: Float, precision: Int) -> Float {
+  do_to_precision(x, precision)
+}
+
+@external(erlang, "gleam_stdlib", "to_precision")
+@external(javascript, "../gleam_stdlib.mjs", "to_precision")
+fn do_to_precision(a: Float, b: Int) -> Float
+
 /// Returns the absolute value of the input as a `Float`.
 ///
 /// ## Examples

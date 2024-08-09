@@ -348,6 +348,12 @@ export function truncate(float) {
   return Math.trunc(float);
 }
 
+// Note the maximum precision is 100 due to JS toFixed limitations
+export function to_precision(float, precision) {
+  const factor = Math.pow(10, -precision);
+  return Math.round(float / factor) * factor;
+}
+
 export function power(base, exponent) {
   // It is checked in Gleam that:
   // - The base is non-negative and that the exponent is not fractional.

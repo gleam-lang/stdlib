@@ -213,6 +213,26 @@ pub fn truncate_test() {
   |> should.equal(-7)
 }
 
+pub fn to_precision_test() {
+  float.to_precision(2.43434348473, 2)
+  |> should.equal(2.43)
+
+  float.to_precision(2.43534348473, 2)
+  |> should.equal(2.44)
+
+  float.to_precision(547_890.453444, -3)
+  |> should.equal(548_000.0)
+
+  float.to_precision(547_490.453444, -3)
+  |> should.equal(547_000.0)
+
+  float.to_precision(435.3224, 0)
+  |> should.equal(435.0)
+
+  float.to_precision(435.3224, -0)
+  |> should.equal(435.0)
+}
+
 pub fn min_test() {
   float.min(0.0, 0.0)
   |> should.equal(0.0)
