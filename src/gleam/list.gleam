@@ -315,7 +315,7 @@ pub fn group(list: List(v), by key: fn(v) -> k) -> Dict(k, List(v)) {
 /// 
 /// ["Apple", "Cherry", "Orange", "Apricots"]
 /// |> group_last(by: fn(fruit) { string.slice(fruit, 0, 1) })
-/// // -> dict.from_list([#("A", "Apricots"), #("C", "Cherry"), #("O", Orange)])
+/// // -> dict.from_list([#("A", "Apricots"), #("C", "Cherry"), #("O", "Orange")])
 /// ```
 /// 
 /// ```gleam
