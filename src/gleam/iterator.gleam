@@ -1440,7 +1440,7 @@ fn do_fold_until(
 /// }
 ///
 /// from_list([1, 2, 3, 4])
-/// |> fold_until(from: acc, with: f)
+/// |> fold_until(from: 0, with: f)
 /// // -> 6
 /// ```
 ///
