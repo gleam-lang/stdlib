@@ -762,18 +762,12 @@ pub fn fold(
 ///
 /// This function runs in linear time.
 ///
-/// Unlike `fold` this function is not tail recursive. Where possible use
-/// `fold` instead as it will use less memory.
-///
 pub fn fold_right(
   over list: List(a),
   from initial: acc,
   with fun: fn(acc, a) -> acc,
 ) -> acc {
-  case list {
-    [] -> initial
-    [x, ..rest] -> fun(fold_right(rest, initial, fun), x)
-  }
+  list |> reverse |> fold(initial, fun)
 }
 
 fn do_index_fold(
