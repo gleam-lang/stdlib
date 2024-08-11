@@ -102,11 +102,11 @@ pub fn to_base_string_test() {
 
   100
   |> int.to_base_string(1)
-  |> should.equal(Error(int.InvalidBase))
+  |> should.equal(Error(Nil))
 
   100
   |> int.to_base_string(37)
-  |> should.equal(Error(int.InvalidBase))
+  |> should.equal(Error(Nil))
 }
 
 pub fn to_base2_test() {
@@ -369,7 +369,7 @@ pub fn digits_test() {
   |> should.equal(Ok([1, 1, 1, 1, 0, 1, 1]))
 
   int.digits(123, 1)
-  |> should.equal(Error(int.InvalidBase))
+  |> should.equal(Error(Nil))
 }
 
 pub fn undigits_test() {
@@ -386,10 +386,10 @@ pub fn undigits_test() {
   |> should.equal(Ok(123))
 
   int.undigits([1, 2, 3], 1)
-  |> should.equal(Error(int.InvalidBase))
+  |> should.equal(Error(Nil))
 
   int.undigits([1, 1, 2], 2)
-  |> should.equal(Error(int.InvalidBase))
+  |> should.equal(Error(Nil))
 }
 
 pub fn random_test() {
