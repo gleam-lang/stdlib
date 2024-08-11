@@ -14,6 +14,7 @@
 - Fixed a bug where `string.trim` could remove commas on JavaScript.
 - The `string.pop_grapheme` function has been optimised on Erlang, greatly
   improving its performance.
+- The `InvalidBase` error in the `int` module has been replaced by `Nil`.
 
 ## v0.39.0 - 2024-07-09
 
