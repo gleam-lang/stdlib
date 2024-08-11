@@ -801,7 +801,7 @@ pub fn multiply(a: Int, b: Int) -> Int {
 ///
 /// ```gleam
 /// subtract(3, 1)
-/// // -> 2.0
+/// // -> 2
 /// ```
 ///
 /// ```gleam

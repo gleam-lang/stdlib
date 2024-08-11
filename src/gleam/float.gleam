@@ -468,7 +468,7 @@ pub fn modulo(dividend: Float, by divisor: Float) -> Result(Float, Nil) {
 ///
 /// ```gleam
 /// divide(0.0, 1.0)
-/// // -> Ok(1.0)
+/// // -> Ok(0.0)
 /// ```
 ///
 /// ```gleam

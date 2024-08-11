@@ -861,7 +861,7 @@ pub type ContinueOrStop(a) {
 ///     False -> Stop(acc)
 ///   }
 /// })
-/// // -> 6
+/// // -> 3
 /// ```
 ///
 pub fn fold_until(
@@ -1807,7 +1807,7 @@ pub fn each(list: List(a), f: fn(a) -> b) -> Nil {
 ///
 /// ## Examples
 ///
-/// ```gleam
+/// ```
 /// try_each(
 ///   over: [1, 2, 3],
 ///   with: function_that_might_fail,

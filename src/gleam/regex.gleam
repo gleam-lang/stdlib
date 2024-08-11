@@ -206,7 +206,7 @@ fn do_scan(a: Regex, b: String) -> List(Match)
 /// let assert Ok(re) = regex.from_string("[, +-]")
 /// replace(each: re, in: "a,b-c d+e", with: "/")
 /// // -> "a/b/c/d/e"
-/// `
+/// ```
 @external(erlang, "gleam_stdlib", "regex_replace")
 @external(javascript, "../gleam_stdlib.mjs", "regex_replace")
 pub fn replace(
