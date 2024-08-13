@@ -12,6 +12,8 @@
   optional. It only deals with the presence or absence of the key itself which
   brings it inline with its documentation.
 - Fixed a bug where `string.trim` could remove commas on JavaScript.
+- The `string.pop_grapheme` function has been optimised on Erlang, greatly
+  improving its performance.
 
 ## v0.39.0 - 2024-07-09
 
