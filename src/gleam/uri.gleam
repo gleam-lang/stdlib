@@ -252,8 +252,8 @@ fn do_percent_encode(a: String) -> String
 /// ## Examples
 ///
 /// ```gleam
-/// percent_decode("100%25+great")
-/// // -> Ok("100% great")
+/// percent_decode("100%25%20great+fun")
+/// // -> Ok("100% great+fun")
 /// ```
 ///
 pub fn percent_decode(value: String) -> Result(String, Nil) {
