@@ -479,6 +479,10 @@ export function map_insert(key, value, map) {
 }
 
 function unsafe_percent_decode(string) {
+  return decodeURIComponent(string || "");
+}
+
+function unsafe_percent_decode_query(string) {
   return decodeURIComponent((string || "").replace("+", " "));
 }
 
@@ -491,7 +495,7 @@ export function percent_decode(string) {
 }
 
 export function percent_encode(string) {
-  return encodeURIComponent(string);
+  return encodeURIComponent(string).replace("%2B", "+");
 }
 
 export function parse_query(query) {
@@ -500,7 +504,10 @@ export function parse_query(query) {
     for (const section of query.split("&")) {
       const [key, value] = section.split("=");
       if (!key) continue;
-      pairs.push([unsafe_percent_decode(key), unsafe_percent_decode(value)]);
+
+      const decodedKey = unsafe_percent_decode_query(key)
+      const decodedValue = unsafe_percent_decode_query(value)
+      pairs.push([decodedKey, decodedValue])
     }
     return new Ok(List.fromArray(pairs));
   } catch {
