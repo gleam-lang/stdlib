@@ -15,6 +15,8 @@
 - The `string.pop_grapheme` function has been optimised on Erlang, greatly
   improving its performance.
 - The `InvalidBase` error in the `int` module has been replaced by `Nil`.
+- Fixed a bug where iterating graphemes could crash on older JavaScript runtimes
+  where the `Intl` API is not supported.
 
 ## v0.39.0 - 2024-07-09
 
