@@ -364,7 +364,7 @@ pub fn guard(
 /// let name = ""
 /// let greeting = fn() { "Hello, " <> name }
 /// use <- lazy_guard(when: name == "", otherwise: greeting)
-/// let number = int.random(1, 99)
+/// let number = int.random(99)
 /// let name = "User " <> int.to_string(number)
 /// "Welcome, " <> name
 /// // -> "Welcome, User 54"

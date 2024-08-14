@@ -861,7 +861,7 @@ pub type ContinueOrStop(a) {
 ///     False -> Stop(acc)
 ///   }
 /// })
-/// // -> 6
+/// // -> 3
 /// ```
 ///
 pub fn fold_until(

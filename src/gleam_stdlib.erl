@@ -194,8 +194,12 @@ string_pad(String, Length, Dir, PadString) ->
 
 string_pop_grapheme(String) ->
     case string:next_grapheme(String) of
-        [ Next | Rest ] ->
+        [ Next | Rest ] when is_binary(Rest) ->
+            {ok, {unicode:characters_to_binary([Next]), Rest}};
+
+        [ Next | Rest ]  ->
             {ok, {unicode:characters_to_binary([Next]), unicode:characters_to_binary(Rest)}};
+
         _ -> {error, nil}
     end.
 
