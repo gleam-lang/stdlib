@@ -156,7 +156,7 @@ export function graphemes(string) {
 }
 
 function graphemes_iterator(string) {
-  if (typeof Intl !== 'undefined' && Intl.Segmenter) {
+  if (globalThis.Intl && Intl.Segmenter) {
     return new Intl.Segmenter().segment(string)[Symbol.iterator]();
   }
 }
