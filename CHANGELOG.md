@@ -17,6 +17,8 @@
 - The `InvalidBase` error in the `int` module has been replaced by `Nil`.
 - Fixed a bug where iterating graphemes could crash on older JavaScript runtimes
   where the `Intl` API is not supported.
+- Fixed a bug where the behaviour of `uri.percent_decode` would decode `+` as a
+  space on JavaScript.
 
 ## v0.39.0 - 2024-07-09
 
