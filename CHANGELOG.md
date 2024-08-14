@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Fixed a bug where `list.unique` had quadratic complexity instead of loglinear.
 - The `bit_array` module gains the `bit_size` and `starts_with` functions.
 - Ths `string` module gains the `drop_start`, `drop_end`, `pad_start`,
   `pad_end`, `trim_start`, and `trim_end` functions. These replace the

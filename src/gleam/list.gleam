@@ -1166,10 +1166,18 @@ fn intersperse_loop(list: List(a), separator: a, acc: List(a)) -> List(a) {
 /// ```
 ///
 pub fn unique(list: List(a)) -> List(a) {
-  case list {
-    [] -> []
-    [x, ..rest] -> [x, ..unique(filter(rest, fn(y) { y != x }))]
-  }
+  let #(result_rev, _) =
+    // We can't use `gleam/set` here, as it would create an import cycle
+    // (`gleam/set` depends on `gleam/list`), so we're using `gleam/dict` instead.   
+    list
+    |> fold(#([], dict.new()), fn(acc, x) {
+      let #(result_rev, seen) = acc
+      case dict.has_key(seen, x) {
+        False -> #([x, ..result_rev], dict.insert(seen, x, Nil))
+        True -> #(result_rev, seen)
+      }
+    })
+  result_rev |> reverse
 }
 
 /// Sorts from smallest to largest based upon the ordering specified by a given
