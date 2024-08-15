@@ -285,12 +285,13 @@ fn do_truncate(a: Float) -> Int
 /// ```
 ///
 pub fn to_precision(x: Float, precision: Int) -> Float {
-  do_to_precision(x, precision)
+  let factor = do_power(10.0, do_to_float(-precision))
+  do_to_float(round(x /. factor)) *. factor
 }
 
-@external(erlang, "gleam_stdlib", "to_precision")
-@external(javascript, "../gleam_stdlib.mjs", "to_precision")
-fn do_to_precision(a: Float, b: Int) -> Float
+@external(erlang, "erlang", "float")
+@external(javascript, "../gleam_stdlib.mjs", "identity")
+fn do_to_float(a: Int) -> Float
 
 /// Returns the absolute value of the input as a `Float`.
 ///
