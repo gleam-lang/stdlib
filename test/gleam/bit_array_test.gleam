@@ -377,6 +377,7 @@ pub fn compare_utf8_test() {
   |> should.equal(order.Eq)
 }
 
+@target(erlang)
 pub fn compare_utf16_test() {
   bit_array.compare(<<"ABC":utf16>>, <<"ABC":utf16>>)
   |> should.equal(order.Eq)
@@ -388,6 +389,7 @@ pub fn compare_utf16_test() {
   |> should.equal(order.Lt)
 }
 
+@target(erlang)
 pub fn compare_mixed_utfs_test() {
   bit_array.compare(<<"A":utf16>>, <<"A":utf8>>)
   |> should.equal(order.Lt)
