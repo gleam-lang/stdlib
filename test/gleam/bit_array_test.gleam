@@ -333,7 +333,7 @@ pub fn inspect_partial_bytes_test() {
   |> should.equal("<<182, 1:size(1)>>")
 }
 
-pub fn bit_array_compare_test() {
+pub fn compare_test() {
   bit_array.compare(<<1, 2, 3>>, <<1, 2, 3>>)
   |> should.equal(order.Eq)
 
@@ -350,7 +350,7 @@ pub fn bit_array_compare_test() {
   |> should.equal(order.Gt)
 }
 
-pub fn bit_array_compare_utf8_test() {
+pub fn compare_utf8_test() {
   // utf8
   bit_array.compare(<<"ABC":utf8>>, <<"ABC":utf8>>)
   |> should.equal(order.Eq)
@@ -359,7 +359,7 @@ pub fn bit_array_compare_utf8_test() {
   |> should.equal(order.Lt)
 
   bit_array.compare(<<"ABC":utf8>>, <<"AB":utf8>>)
-  |> should.equal(order.Lt)
+  |> should.equal(order.Gt)
 
   bit_array.compare(<<"AB":utf8>>, <<"AC":utf8>>)
   |> should.equal(order.Lt)
@@ -377,7 +377,7 @@ pub fn bit_array_compare_utf8_test() {
   |> should.equal(order.Eq)
 }
 
-pub fn bit_array_compare_utf16_test() {
+pub fn compare_utf16_test() {
   bit_array.compare(<<"ABC":utf16>>, <<"ABC":utf16>>)
   |> should.equal(order.Eq)
 
@@ -388,7 +388,7 @@ pub fn bit_array_compare_utf16_test() {
   |> should.equal(order.Lt)
 }
 
-pub fn bit_array_compare_mixed_utfs_test() {
+pub fn compare_mixed_utfs_test() {
   bit_array.compare(<<"A":utf16>>, <<"A":utf8>>)
   |> should.equal(order.Lt)
 
@@ -408,15 +408,15 @@ pub fn bit_array_compare_mixed_utfs_test() {
   |> should.equal(order.Eq)
 }
 
-pub fn bit_array_compare_different_sizes_test() {
+pub fn compare_different_sizes_test() {
   bit_array.compare(<<4:5>>, <<4:5>>)
   |> should.equal(order.Eq)
 
   bit_array.compare(<<3:5>>, <<4:5>>)
-  |> should.equal(order.Lt)
+  |> should.equal(order.Eq)
 
   bit_array.compare(<<5:5>>, <<4:5>>)
-  |> should.equal(order.Gt)
+  |> should.equal(order.Eq)
 
   bit_array.compare(<<4:8>>, <<4:5>>)
   |> should.equal(order.Gt)
@@ -428,5 +428,5 @@ pub fn bit_array_compare_different_sizes_test() {
   |> should.equal(order.Lt)
 
   bit_array.compare(<<0:2>>, <<0:1>>)
-  |> should.equal(order.Gt)
+  |> should.equal(order.Eq)
 }
