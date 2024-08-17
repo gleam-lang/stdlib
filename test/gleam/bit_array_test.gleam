@@ -410,6 +410,7 @@ pub fn compare_mixed_utfs_test() {
   |> should.equal(order.Eq)
 }
 
+@target(erlang)
 pub fn compare_different_sizes_test() {
   bit_array.compare(<<4:5>>, <<4:5>>)
   |> should.equal(order.Eq)
