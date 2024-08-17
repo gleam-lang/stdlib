@@ -1,4 +1,5 @@
 import gleam/bit_array
+import gleam/order
 import gleam/result
 import gleam/should
 import gleam/string
@@ -330,4 +331,102 @@ pub fn inspect_partial_bytes_test() {
 
   bit_array.inspect(<<5:3, 11:4, 1:2>>)
   |> should.equal("<<182, 1:size(1)>>")
+}
+
+pub fn bit_array_compare_test() {
+  bit_array.compare(<<1, 2, 3>>, <<1, 2, 3>>)
+  |> should.equal(order.Eq)
+
+  bit_array.compare(<<1, 2>>, <<1, 3>>)
+  |> should.equal(order.Lt)
+
+  bit_array.compare(<<1, 3>>, <<1, 2>>)
+  |> should.equal(order.Gt)
+
+  bit_array.compare(<<1, 2>>, <<1, 2, 3>>)
+  |> should.equal(order.Lt)
+
+  bit_array.compare(<<1, 2, 3>>, <<1, 2>>)
+  |> should.equal(order.Gt)
+}
+
+pub fn bit_array_compare_utf8_test() {
+  // utf8
+  bit_array.compare(<<"ABC":utf8>>, <<"ABC":utf8>>)
+  |> should.equal(order.Eq)
+
+  bit_array.compare(<<"AB":utf8>>, <<"ABC":utf8>>)
+  |> should.equal(order.Lt)
+
+  bit_array.compare(<<"ABC":utf8>>, <<"AB":utf8>>)
+  |> should.equal(order.Lt)
+
+  bit_array.compare(<<"AB":utf8>>, <<"AC":utf8>>)
+  |> should.equal(order.Lt)
+
+  bit_array.compare(<<"AC":utf8>>, <<"AB":utf8>>)
+  |> should.equal(order.Gt)
+
+  bit_array.compare(<<"":utf8>>, <<"ABC":utf8>>)
+  |> should.equal(order.Lt)
+
+  bit_array.compare(<<"A":utf8>>, <<"":utf8>>)
+  |> should.equal(order.Gt)
+
+  bit_array.compare(<<"":utf8>>, <<"":utf8>>)
+  |> should.equal(order.Eq)
+}
+
+pub fn bit_array_compare_utf16_test() {
+  bit_array.compare(<<"ABC":utf16>>, <<"ABC":utf16>>)
+  |> should.equal(order.Eq)
+
+  bit_array.compare(<<"ABC":utf16>>, <<"AB":utf16>>)
+  |> should.equal(order.Gt)
+
+  bit_array.compare(<<"A":utf16>>, <<"Z":utf16>>)
+  |> should.equal(order.Lt)
+}
+
+pub fn bit_array_compare_mixed_utfs_test() {
+  bit_array.compare(<<"A":utf16>>, <<"A":utf8>>)
+  |> should.equal(order.Lt)
+
+  bit_array.compare(<<"A":utf8>>, <<"A":utf16>>)
+  |> should.equal(order.Gt)
+
+  bit_array.compare(<<"":utf8>>, <<"A":utf16>>)
+  |> should.equal(order.Lt)
+
+  bit_array.compare(<<"":utf16>>, <<"A":utf8>>)
+  |> should.equal(order.Lt)
+
+  bit_array.compare(<<"":utf16>>, <<"":utf8>>)
+  |> should.equal(order.Eq)
+
+  bit_array.compare(<<"":utf8>>, <<"":utf16>>)
+  |> should.equal(order.Eq)
+}
+
+pub fn bit_array_compare_different_sizes_test() {
+  bit_array.compare(<<4:5>>, <<4:5>>)
+  |> should.equal(order.Eq)
+
+  bit_array.compare(<<3:5>>, <<4:5>>)
+  |> should.equal(order.Lt)
+
+  bit_array.compare(<<5:5>>, <<4:5>>)
+  |> should.equal(order.Gt)
+
+  bit_array.compare(<<4:8>>, <<4:5>>)
+  |> should.equal(order.Gt)
+
+  bit_array.compare(<<4:5>>, <<4:8>>)
+  |> should.equal(order.Lt)
+
+  bit_array.compare(<<0:5>>, <<0:8>>)
+  |> should.equal(order.Lt)
+
+  bit_array.compare(<<0:2>>, <<0:1>>)
+  |> should.equal(order.Gt)
 }

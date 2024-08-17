@@ -1,6 +1,7 @@
 //// BitArrays are a sequence of binary data of any length.
 
 import gleam/int
+import gleam/order
 import gleam/string
 
 /// Converts a UTF-8 `String` type into a `BitArray`.
@@ -185,5 +186,41 @@ fn do_inspect(input: BitArray, accumulator: String) -> String {
     }
 
     _ -> accumulator
+  }
+}
+
+/// Compare two bit arrays as sequences of bytes.
+///
+/// ## Examples
+///
+/// ```gleam
+/// compare(<<1>>, <<2>>)
+/// // -> Lt
+///
+/// compare(<<"AB":utf8>>, <<"AA":utf8>>)
+/// // -> Gt
+///
+/// compare(<<1, 2:size(2)>>, <<1, 2:size(2)>>)
+/// // -> Eq
+/// ```
+///
+pub fn compare(first: BitArray, second: BitArray) -> order.Order {
+  do_compare(first, second, 0)
+}
+
+fn do_compare(first: BitArray, second: BitArray, index: Int) -> order.Order {
+  case slice(first, index, 1), slice(second, index, 1) {
+    Ok(<<first_byte>>), Ok(<<second_byte>>) ->
+      int.compare(first_byte, second_byte)
+      |> order.lazy_break_tie(fn() {
+        do_compare(first, second, index + 1)
+      })
+
+    // First has more items, example: "AB" > "A":
+    Ok(_), Error(_) -> order.Gt
+    // Second has more items, example: "A" < "AB":
+    Error(_), Ok(_) -> order.Lt
+    // Both have the same length, fallback:
+    _, _ -> order.Eq
   }
 }
