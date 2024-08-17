@@ -212,9 +212,7 @@ fn do_compare(first: BitArray, second: BitArray, index: Int) -> order.Order {
   case slice(first, index, 1), slice(second, index, 1) {
     Ok(<<first_byte>>), Ok(<<second_byte>>) ->
       int.compare(first_byte, second_byte)
-      |> order.lazy_break_tie(fn() {
-        do_compare(first, second, index + 1)
-      })
+      |> order.lazy_break_tie(fn() { do_compare(first, second, index + 1) })
 
     // First has more items, example: "AB" > "A":
     Ok(_), Error(_) -> order.Gt
