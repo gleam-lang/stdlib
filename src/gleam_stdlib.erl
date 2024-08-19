@@ -14,7 +14,7 @@
     decode_tuple5/1, decode_tuple6/1, tuple_get/2, classify_dynamic/1, print/1,
     println/1, print_error/1, println_error/1, inspect/1, float_to_string/1,
     int_from_base_string/2, utf_codepoint_list_to_string/1, contains_string/2,
-    crop_string/2, base16_decode/1, string_replace/3, regex_replace/3, slice/3
+    crop_string/2, base16_decode/1, string_replace/3, regex_replace/3, slice/3, bit_array_to_int/1
 ]).
 
 %% Taken from OTP's uri_string module
@@ -491,6 +491,11 @@ inspect_bit_array(Rest, Acc) ->
     Size1 = erlang:integer_to_binary(Size),
     Segment = <<X1/binary, ":size(", Size1/binary, ")">>,
     inspect_bit_array(<<>>, append_segment(Acc, Segment)).
+
+bit_array_to_int(A) ->
+    Size = bit_size(A),
+    <<A1:Size>> = A,
+    A1.
 
 append_segment(<<"<<">>, Segment) ->
     <<"<<", Segment/binary>>;
