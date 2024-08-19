@@ -204,7 +204,18 @@ fn do_inspect(input: BitArray, accumulator: String) -> String {
 /// // -> Eq
 /// ```
 ///
+/// Only supported on Erlang target for now.
+///
 pub fn compare(first: BitArray, second: BitArray) -> order.Order {
+  do_compare(first, second)
+}
+
+@target(javascript)
+@external(javascript, "../gleam_stdlib.mjs", "bit_array_compare")
+fn do_compare(first: BitArray, second: BitArray) -> order.Order
+
+@target(erlang)
+fn do_compare(first: BitArray, second: BitArray) -> order.Order {
   case first, second {
     <<first_byte, first_rest:bits>>, <<second_byte, second_rest:bits>> ->
       int.compare(first_byte, second_byte)
@@ -217,11 +228,11 @@ pub fn compare(first: BitArray, second: BitArray) -> order.Order {
     <<>>, _ -> order.Lt
     // This happens when there's unusually sized elements.
     // Handle these special cases via custom erlang function.
-    // This cannot be reached in JS right now.
     first, second ->
       int.compare(bit_array_to_int(first), bit_array_to_int(second))
   }
 }
 
+@target(erlang)
 @external(erlang, "gleam_stdlib", "bit_array_to_int")
 fn bit_array_to_int(first: BitArray) -> Int
