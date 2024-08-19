@@ -16,6 +16,7 @@ import {
 } from "./gleam/regex.mjs";
 import { DecodeError } from "./gleam/dynamic.mjs";
 import { Some, None } from "./gleam/option.mjs";
+import { Eq, Gt, Lt } from "./gleam/order.mjs";
 import Dict from "./dict.mjs";
 
 const Nil = undefined;
@@ -915,4 +916,26 @@ export function base16_decode(string) {
 
 export function bit_array_inspect(bits, acc) {
   return `${acc}${[...bits.buffer].join(", ")}`;
+}
+
+export function bit_array_compare(first, second) {
+  for (let i = 0; i < first.length; i++) {
+    if (i >= second.length) {
+      return new Gt();  // first has more items
+    }
+    const f = first.buffer[i];
+    const s = second.buffer[i];
+    if (f > s) {
+      return new Gt();
+    }
+    if (f < s) {
+      return new Lt()
+    }
+  }
+  // This means that either first did not have any items
+  // or all items in first were equal to second.
+  if (first.length === second.length) {
+    return new Eq();
+  }
+  return new Lt();  // second has more items
 }

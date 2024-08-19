@@ -333,6 +333,7 @@ pub fn inspect_partial_bytes_test() {
   |> should.equal("<<182, 1:size(1)>>")
 }
 
+@target(erlang)
 pub fn compare_test() {
   bit_array.compare(<<1, 2, 3>>, <<1, 2, 3>>)
   |> should.equal(order.Eq)
