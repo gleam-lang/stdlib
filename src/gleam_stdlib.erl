@@ -14,7 +14,7 @@
     decode_tuple5/1, decode_tuple6/1, tuple_get/2, classify_dynamic/1, print/1,
     println/1, print_error/1, println_error/1, inspect/1, float_to_string/1,
     int_from_base_string/2, utf_codepoint_list_to_string/1, contains_string/2,
-    crop_string/2, base16_decode/1, string_replace/3, regex_replace/3
+    crop_string/2, base16_decode/1, string_replace/3, regex_replace/3, slice/3
 ]).
 
 %% Taken from OTP's uri_string module
@@ -547,3 +547,9 @@ base16_decode(String) ->
 
 string_replace(String, Pattern, Replacement) ->
     string:replace(String, Pattern, Replacement, all).
+
+slice(String, Index, Length) ->
+    case string:slice(String, Index, Length) of
+        X when is_binary(X) -> X;
+        X when is_list(X) -> unicode:characters_to_binary(X)
+    end.

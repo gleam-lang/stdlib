@@ -230,7 +230,7 @@ pub fn slice(from string: String, at_index idx: Int, length len: Int) -> String 
   }
 }
 
-@external(erlang, "string", "slice")
+@external(erlang, "gleam_stdlib", "slice")
 fn do_slice(string: String, idx: Int, len: Int) -> String {
   string
   |> to_graphemes

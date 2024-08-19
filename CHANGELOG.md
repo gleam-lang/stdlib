@@ -19,6 +19,7 @@
   where the `Intl` API is not supported.
 - Fixed a bug where the behaviour of `uri.percent_decode` would decode `+` as a
   space on JavaScript.
+- Fixed a bug where `string.slice` could return invalid values on Erlang.
 
 ## v0.39.0 - 2024-07-09
 
