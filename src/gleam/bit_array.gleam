@@ -205,20 +205,23 @@ fn do_inspect(input: BitArray, accumulator: String) -> String {
 /// ```
 ///
 pub fn compare(first: BitArray, second: BitArray) -> order.Order {
-  do_compare(first, second, 0)
-}
-
-fn do_compare(first: BitArray, second: BitArray, index: Int) -> order.Order {
-  case slice(first, index, 1), slice(second, index, 1) {
-    Ok(<<first_byte>>), Ok(<<second_byte>>) ->
+  case first, second {
+    <<first_byte, first_rest:bits>>, <<second_byte, second_rest:bits>> ->
       int.compare(first_byte, second_byte)
-      |> order.lazy_break_tie(fn() { do_compare(first, second, index + 1) })
+      |> order.lazy_break_tie(fn() { compare(first_rest, second_rest) })
 
+    <<>>, <<>> -> order.Eq
     // First has more items, example: "AB" > "A":
-    Ok(_), Error(_) -> order.Gt
+    _, <<>> -> order.Gt
     // Second has more items, example: "A" < "AB":
-    Error(_), Ok(_) -> order.Lt
-    // Both have the same length, fallback:
-    _, _ -> order.Eq
+    <<>>, _ -> order.Lt
+    // This happens when there's unusually sized elements.
+    // Handle these special cases via custom erlang function.
+    // This cannot be reached in JS right now.
+    first, second ->
+      int.compare(bit_array_to_int(first), bit_array_to_int(second))
   }
 }
+
+@external(erlang, "gleam_stdlib", "bit_array_to_int")
+fn bit_array_to_int(first: BitArray) -> Int
