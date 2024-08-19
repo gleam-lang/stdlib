@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.40.0 - 2024-08-19
 
 - The `function.curry*` and `function.apply*` functions have been deprecated.
 - The deprecated `dynamic.unsafe_coerce` function has been removed.
