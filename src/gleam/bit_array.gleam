@@ -1,6 +1,5 @@
 //// BitArrays are a sequence of binary data of any length.
 
-@target(erlang)
 import gleam/int
 import gleam/string
 
@@ -145,7 +144,6 @@ pub fn base16_encode(input: BitArray) -> String
 @external(javascript, "../gleam_stdlib.mjs", "base16_decode")
 pub fn base16_decode(input: String) -> Result(BitArray, Nil)
 
-@target(javascript)
 /// Converts a bit array to a string containing the decimal value of each byte.
 ///
 /// ## Examples
@@ -158,15 +156,11 @@ pub fn base16_decode(input: String) -> Result(BitArray, Nil)
 /// // -> "<<100, 5:size(3)>>"
 /// ```
 ///
-@external(javascript, "../gleam_stdlib.mjs", "bit_array_inspect")
-pub fn inspect(input: BitArray) -> String
-
-@target(erlang)
 pub fn inspect(input: BitArray) -> String {
   do_inspect(input, "<<") <> ">>"
 }
 
-@target(erlang)
+@external(javascript, "../gleam_stdlib.mjs", "bit_array_inspect")
 fn do_inspect(input: BitArray, accumulator: String) -> String {
   case input {
     <<>> -> accumulator
