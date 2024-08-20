@@ -1,5 +1,6 @@
 //// BitArrays are a sequence of binary data of any length.
 
+@target(erlang)
 import gleam/int
 import gleam/order
 import gleam/string
@@ -206,17 +207,14 @@ fn do_inspect(input: BitArray, accumulator: String) -> String {
 ///
 /// Only supported on Erlang target for now.
 ///
-pub fn compare(a: BitArray, with b: BitArray) -> order.Order {
-  do_compare(a, b)
-}
-
 @external(javascript, "../gleam_stdlib.mjs", "bit_array_compare")
-fn do_compare(a: BitArray, with b: BitArray) -> order.Order {
+pub fn compare(a: BitArray, with b: BitArray) -> order.Order {
   case a, b {
     <<first_byte, first_rest:bits>>, <<second_byte, second_rest:bits>> ->
-      case int.compare(first_byte, second_byte) {
-        order.Eq -> compare(first_rest, second_rest)
-        result -> result
+      case first_byte, second_byte {
+        f, s if f > s -> order.Gt
+        f, s if f < s -> order.Lt
+        _, _ -> compare(first_rest, second_rest)
       }
 
     <<>>, <<>> -> order.Eq
@@ -227,9 +225,15 @@ fn do_compare(a: BitArray, with b: BitArray) -> order.Order {
     // This happens when there's unusually sized elements.
     // Handle these special cases via custom erlang function.
     first, second ->
-      int.compare(bit_array_to_int(first), bit_array_to_int(second))
+      case bit_array_to_int_and_size(first), bit_array_to_int_and_size(second) {
+        #(a, _), #(b, _) if a > b -> order.Gt
+        #(a, _), #(b, _) if a < b -> order.Lt
+        #(_, size_a), #(_, size_b) if size_a > size_b -> order.Gt
+        #(_, size_a), #(_, size_b) if size_a < size_b -> order.Lt
+        _, _ -> order.Eq
+      }
   }
 }
 
-@external(erlang, "gleam_stdlib", "bit_array_to_int")
-fn bit_array_to_int(a: BitArray) -> Int
+@external(erlang, "gleam_stdlib", "bit_array_to_int_and_size")
+fn bit_array_to_int_and_size(a: BitArray) -> #(Int, Int)

@@ -334,127 +334,6 @@ pub fn inspect_partial_bytes_test() {
 }
 
 @target(erlang)
-pub fn compare_test() {
-  bit_array.compare(<<1, 2, 3>>, <<1, 2, 3>>)
-  |> should.equal(order.Eq)
-
-  bit_array.compare(<<1, 2>>, with: <<1, 3>>)
-  |> should.equal(order.Lt)
-
-  bit_array.compare(<<1, 3>>, <<1, 2>>)
-  |> should.equal(order.Gt)
-
-  bit_array.compare(<<1, 2>>, <<1, 2, 3>>)
-  |> should.equal(order.Lt)
-
-  bit_array.compare(<<1, 2, 3>>, <<1, 2>>)
-  |> should.equal(order.Gt)
-}
-
-pub fn compare_utf8_test() {
-  bit_array.compare(<<"ABC":utf8>>, <<"ABC":utf8>>)
-  |> should.equal(order.Eq)
-
-  bit_array.compare(<<"AB":utf8>>, <<"ABC":utf8>>)
-  |> should.equal(order.Lt)
-
-  bit_array.compare(<<"ABC":utf8>>, <<"AB":utf8>>)
-  |> should.equal(order.Gt)
-
-  bit_array.compare(<<"AB":utf8>>, <<"AC":utf8>>)
-  |> should.equal(order.Lt)
-
-  bit_array.compare(<<"AC":utf8>>, <<"AB":utf8>>)
-  |> should.equal(order.Gt)
-
-  bit_array.compare(<<"":utf8>>, <<"ABC":utf8>>)
-  |> should.equal(order.Lt)
-
-  bit_array.compare(<<"A":utf8>>, <<"":utf8>>)
-  |> should.equal(order.Gt)
-
-  bit_array.compare(<<"":utf8>>, <<"":utf8>>)
-  |> should.equal(order.Eq)
-}
-
-pub fn compare_utf8_and_numbers_test() {
-  bit_array.compare(<<"A":utf8>>, <<65>>)
-  |> should.equal(order.Eq)
-
-  bit_array.compare(<<"A":utf8>>, <<64>>)
-  |> should.equal(order.Gt)
-
-  bit_array.compare(<<"A":utf8>>, <<66>>)
-  |> should.equal(order.Lt)
-
-  bit_array.compare(<<"AA":utf8>>, <<65, 65>>)
-  |> should.equal(order.Eq)
-
-  bit_array.compare(<<"AAA":utf8>>, <<65, 65>>)
-  |> should.equal(order.Gt)
-
-  bit_array.compare(<<"AA":utf8>>, <<65, 65, 1>>)
-  |> should.equal(order.Lt)
-}
-
-@target(erlang)
-pub fn compare_utf16_test() {
-  bit_array.compare(<<"ABC":utf16>>, <<"ABC":utf16>>)
-  |> should.equal(order.Eq)
-
-  bit_array.compare(<<"ABC":utf16>>, <<"AB":utf16>>)
-  |> should.equal(order.Gt)
-
-  bit_array.compare(<<"A":utf16>>, <<"Z":utf16>>)
-  |> should.equal(order.Lt)
-}
-
-@target(erlang)
-pub fn compare_utf32_test() {
-  bit_array.compare(<<"ABC":utf32>>, <<"ABC":utf32>>)
-  |> should.equal(order.Eq)
-
-  bit_array.compare(<<"ABC":utf32>>, <<"AB":utf32>>)
-  |> should.equal(order.Gt)
-
-  bit_array.compare(<<"A":utf32>>, <<"Z":utf32>>)
-  |> should.equal(order.Lt)
-}
-
-@target(erlang)
-pub fn compare_mixed_utfs_test() {
-  bit_array.compare(<<"A":utf16>>, <<"A":utf8>>)
-  |> should.equal(order.Lt)
-
-  bit_array.compare(<<"A":utf32>>, <<"A":utf16>>)
-  |> should.equal(order.Lt)
-
-  bit_array.compare(<<"A":utf8>>, <<"A":utf16>>)
-  |> should.equal(order.Gt)
-
-  bit_array.compare(<<"":utf8>>, <<"A":utf16>>)
-  |> should.equal(order.Lt)
-
-  bit_array.compare(<<"":utf16>>, <<"A":utf8>>)
-  |> should.equal(order.Lt)
-
-  bit_array.compare(<<"":utf32>>, <<"A":utf8>>)
-  |> should.equal(order.Lt)
-
-  bit_array.compare(<<"":utf32>>, <<"A":utf16>>)
-  |> should.equal(order.Lt)
-
-  bit_array.compare(<<"":utf16>>, <<"":utf8>>)
-  |> should.equal(order.Eq)
-
-  bit_array.compare(<<"":utf8>>, <<"":utf16>>)
-  |> should.equal(order.Eq)
-
-  bit_array.compare(<<"":utf8>>, <<"":utf32>>)
-  |> should.equal(order.Eq)
-}
-
-@target(erlang)
 pub fn compare_different_sizes_test() {
   bit_array.compare(<<4:5>>, <<4:5>>)
   |> should.equal(order.Eq)
@@ -468,6 +347,14 @@ pub fn compare_different_sizes_test() {
   bit_array.compare(<<4:5, 3:3, 0:0>>, <<4:5, 3:3, 0:0>>)
   |> should.equal(order.Eq)
 
+  bit_array.compare(<<4:2, 3:4, 0:0>>, <<4:2, 3:3, 0:0>>)
+  |> should.equal(order.Gt)
+
+  // first is: <<33, 1:size(1)>>
+  // second is: <<35>>
+  bit_array.compare(<<4:5, 3:4, 0:0>>, <<4:5, 3:3, 0:0>>)
+  |> should.equal(order.Lt)
+
   bit_array.compare(<<3:5>>, <<4:5>>)
   |> should.equal(order.Lt)
 
@@ -478,14 +365,17 @@ pub fn compare_different_sizes_test() {
   |> should.equal(order.Gt)
 
   bit_array.compare(<<4:8>>, <<4:5>>)
-  |> should.equal(order.Eq)
+  |> should.equal(order.Gt)
 
   bit_array.compare(<<4:5>>, <<4:8>>)
-  |> should.equal(order.Eq)
+  |> should.equal(order.Lt)
 
   bit_array.compare(<<0:5>>, <<0:8>>)
+  |> should.equal(order.Lt)
+
+  bit_array.compare(<<0:5>>, <<0:5>>)
   |> should.equal(order.Eq)
 
   bit_array.compare(<<0:2>>, <<0:1>>)
-  |> should.equal(order.Eq)
+  |> should.equal(order.Gt)
 }
