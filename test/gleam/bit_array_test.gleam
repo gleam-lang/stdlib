@@ -352,7 +352,6 @@ pub fn compare_test() {
 }
 
 pub fn compare_utf8_test() {
-  // utf8
   bit_array.compare(<<"ABC":utf8>>, <<"ABC":utf8>>)
   |> should.equal(order.Eq)
 
@@ -376,6 +375,26 @@ pub fn compare_utf8_test() {
 
   bit_array.compare(<<"":utf8>>, <<"":utf8>>)
   |> should.equal(order.Eq)
+}
+
+pub fn compare_utf8_and_numbers_test() {
+  bit_array.compare(<<"A":utf8>>, <<65>>)
+  |> should.equal(order.Eq)
+
+  bit_array.compare(<<"A":utf8>>, <<64>>)
+  |> should.equal(order.Gt)
+
+  bit_array.compare(<<"A":utf8>>, <<66>>)
+  |> should.equal(order.Lt)
+
+  bit_array.compare(<<"AA":utf8>>, <<65, 65>>)
+  |> should.equal(order.Eq)
+
+  bit_array.compare(<<"AAA":utf8>>, <<65, 65>>)
+  |> should.equal(order.Gt)
+
+  bit_array.compare(<<"AA":utf8>>, <<65, 65, 1>>)
+  |> should.equal(order.Lt)
 }
 
 @target(erlang)
@@ -438,6 +457,15 @@ pub fn compare_mixed_utfs_test() {
 @target(erlang)
 pub fn compare_different_sizes_test() {
   bit_array.compare(<<4:5>>, <<4:5>>)
+  |> should.equal(order.Eq)
+
+  bit_array.compare(<<4:5, 3:3>>, <<4:5, 2:3>>)
+  |> should.equal(order.Gt)
+
+  bit_array.compare(<<4:5, 3:3>>, <<4:5, 4:3>>)
+  |> should.equal(order.Lt)
+
+  bit_array.compare(<<4:5, 3:3, 0:0>>, <<4:5, 3:3, 0:0>>)
   |> should.equal(order.Eq)
 
   bit_array.compare(<<3:5>>, <<4:5>>)
