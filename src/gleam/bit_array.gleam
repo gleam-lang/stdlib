@@ -200,26 +200,24 @@ fn do_inspect(input: BitArray, accumulator: String) -> String {
 /// compare(<<"AB":utf8>>, <<"AA":utf8>>)
 /// // -> Gt
 ///
-/// compare(<<1, 2:size(2)>>, <<1, 2:size(2)>>)
+/// compare(<<1, 2:size(2)>>, with: <<1, 2:size(2)>>)
 /// // -> Eq
 /// ```
 ///
 /// Only supported on Erlang target for now.
 ///
-pub fn compare(first: BitArray, second: BitArray) -> order.Order {
-  do_compare(first, second)
+pub fn compare(a: BitArray, with b: BitArray) -> order.Order {
+  do_compare(a, b)
 }
 
-@target(javascript)
 @external(javascript, "../gleam_stdlib.mjs", "bit_array_compare")
-fn do_compare(first: BitArray, second: BitArray) -> order.Order
-
-@target(erlang)
-fn do_compare(first: BitArray, second: BitArray) -> order.Order {
-  case first, second {
+fn do_compare(a: BitArray, with b: BitArray) -> order.Order {
+  case a, b {
     <<first_byte, first_rest:bits>>, <<second_byte, second_rest:bits>> ->
-      int.compare(first_byte, second_byte)
-      |> order.lazy_break_tie(fn() { compare(first_rest, second_rest) })
+      case int.compare(first_byte, second_byte) {
+        order.Eq -> compare(first_rest, second_rest)
+        result -> result
+      }
 
     <<>>, <<>> -> order.Eq
     // First has more items, example: "AB" > "A":
@@ -233,6 +231,5 @@ fn do_compare(first: BitArray, second: BitArray) -> order.Order {
   }
 }
 
-@target(erlang)
 @external(erlang, "gleam_stdlib", "bit_array_to_int")
-fn bit_array_to_int(first: BitArray) -> Int
+fn bit_array_to_int(a: BitArray) -> Int
