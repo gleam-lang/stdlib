@@ -338,7 +338,7 @@ pub fn compare_test() {
   bit_array.compare(<<1, 2, 3>>, <<1, 2, 3>>)
   |> should.equal(order.Eq)
 
-  bit_array.compare(<<1, 2>>, <<1, 3>>)
+  bit_array.compare(<<1, 2>>, with: <<1, 3>>)
   |> should.equal(order.Lt)
 
   bit_array.compare(<<1, 3>>, <<1, 2>>)
