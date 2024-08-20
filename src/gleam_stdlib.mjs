@@ -913,6 +913,6 @@ export function base16_decode(string) {
   return new Ok(new BitArray(bytes));
 }
 
-export function bit_array_inspect(bits) {
-  return `<<${[...bits.buffer].join(", ")}>>`;
+export function bit_array_inspect(bits, acc) {
+  return `${acc}${[...bits.buffer].join(", ")}`;
 }
