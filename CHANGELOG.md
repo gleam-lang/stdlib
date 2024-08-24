@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.41.0 - Unreleased
+
+- The `bit_array` module gains the `compare` function.
+
 ## v0.40.0 - 2024-08-19
 
 - The `function.curry*` and `function.apply*` functions have been deprecated.
@@ -11,7 +15,6 @@
 - The `dynamic.optional_field` decoder no longer treats the value as implicitly
   optional. It only deals with the presence or absence of the key itself which
   brings it inline with its documentation.
-- The `bit_array` module gains the `compare` function.
 - Fixed a bug where `string.trim` could remove commas on JavaScript.
 - The `string.pop_grapheme` function has been optimised on Erlang, greatly
   improving its performance.
