@@ -1,6 +1,5 @@
 //// BitArrays are a sequence of binary data of any length.
 
-@target(erlang)
 import gleam/int
 import gleam/order
 import gleam/string
