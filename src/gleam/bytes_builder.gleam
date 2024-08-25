@@ -1,4 +1,4 @@
-//// `BytesBuilder` is a type used for efficiently building text content to be
+//// `BytesBuilder` is a type used for efficiently building binary content to be
 //// written to a file or a socket. Internally it is represented as tree so to
 //// append or prepend to a bytes builder is a constant time operation that
 //// allocates a new node in the tree without copying any of the content. When
