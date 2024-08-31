@@ -259,6 +259,52 @@ pub fn max_test() {
   |> should.equal(-1.0)
 }
 
+pub fn max_in_list_test() {
+  float.max_in_list([])
+  |> should.be_error
+
+  float.max_in_list([4.6])
+  |> should.equal(Ok(4.6))
+
+  float.max_in_list([66.6, 6.9, 4.2])
+  |> should.equal(Ok(66.6))
+
+  float.max_in_list([6.9, 66.6, 4.2])
+  |> should.equal(Ok(66.6))
+
+  float.max_in_list([4.2, 6.9, 66.6])
+  |> should.equal(Ok(66.6))
+
+  float.max_in_list([-4.2, -6.9, -66.6])
+  |> should.equal(Ok(-4.2))
+
+  float.max_in_list([-1.1, 0.2, 1.1])
+  |> should.equal(Ok(1.1))
+}
+
+pub fn min_in_list_test() {
+  float.min_in_list([])
+  |> should.be_error
+
+  float.min_in_list([4.2])
+  |> should.equal(Ok(4.2))
+
+  float.min_in_list([66.6, 6.9, 4.2])
+  |> should.equal(Ok(4.2))
+
+  float.min_in_list([6.9, 66.6, 4.2])
+  |> should.equal(Ok(4.2))
+
+  float.min_in_list([4.2, 6.9, 66.6])
+  |> should.equal(Ok(4.2))
+
+  float.min_in_list([-4.2, -6.9, -66.6])
+  |> should.equal(Ok(-66.6))
+
+  float.min_in_list([-1.1, 0.2, 1.1])
+  |> should.equal(Ok(-1.1))
+}
+
 pub fn absolute_value_test() {
   float.absolute_value(-1.0)
   |> should.equal(1.0)

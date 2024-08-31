@@ -187,6 +187,70 @@ pub fn max(a: Float, b: Float) -> Float {
   }
 }
 
+/// Compares all floats in a list, returning the Result(Float) with greatest value. If the list is empty will return an Error(Nil)
+///
+/// ## Examples
+///
+/// ```gleam
+/// max_in_list([])
+/// // -> Error(Nil)
+/// ```
+///
+/// ```gleam
+/// max_in_list([4.2])
+/// // -> Ok(4.2)
+/// ```
+///
+/// ```gleam
+/// max_in_list([4.2, 77.7, -1.0])
+/// // -> Ok(77.7)
+/// ```
+pub fn max_in_list(numbers: List(Float)) -> Result(Float, Nil) {
+  case numbers {
+    [] -> Error(Nil)
+    [f, ..rest] -> get_max_in_list(rest, f) |> Ok
+  }
+}
+
+fn get_max_in_list(numbers: List(Float), initial: Float) -> Float {
+  case numbers {
+    [] -> initial
+    [f, ..rest] -> get_max_in_list(rest, max(initial, f))
+  }
+}
+
+/// Compares all floats in a list, returning the Result(Float) with least value. If the list is empty will return an Error(Nil)
+///
+/// ## Examples
+///
+/// ```gleam
+/// min_in_list([])
+/// // -> Error(Nil)
+/// ```
+///
+/// ```gleam
+/// min_in_list([4])
+/// // -> Ok(4.2)
+/// ```
+///
+/// ```gleam
+/// min_in_list([4.2, 77.7, -1.0])
+/// // -> Ok(-1.0)
+/// ```
+pub fn min_in_list(numbers: List(Float)) -> Result(Float, Nil) {
+  case numbers {
+    [] -> Error(Nil)
+    [f, ..rest] -> get_min_in_list(rest, f) |> Ok
+  }
+}
+
+fn get_min_in_list(numbers: List(Float), initial: Float) -> Float {
+  case numbers {
+    [] -> initial
+    [f, ..rest] -> get_min_in_list(rest, min(initial, f))
+  }
+}
+
 /// Rounds the value to the next highest whole number as a `Float`.
 ///
 /// ## Examples
