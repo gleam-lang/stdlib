@@ -231,6 +231,52 @@ pub fn max_test() {
   |> should.equal(-1)
 }
 
+pub fn max_in_list_test() {
+  int.max_in_list([])
+  |> should.be_error
+
+  int.max_in_list([4])
+  |> should.equal(Ok(4))
+
+  int.max_in_list([666, 69, 420])
+  |> should.equal(Ok(666))
+
+  int.max_in_list([69, 666, 420])
+  |> should.equal(Ok(666))
+
+  int.max_in_list([420, 69, 666])
+  |> should.equal(Ok(666))
+
+  int.max_in_list([-420, -69, -666])
+  |> should.equal(Ok(-69))
+
+  int.max_in_list([-1, 0, 1])
+  |> should.equal(Ok(1))
+}
+
+pub fn min_in_list_test() {
+  int.min_in_list([])
+  |> should.be_error
+
+  int.min_in_list([4])
+  |> should.equal(Ok(4))
+
+  int.min_in_list([666, 69, 420])
+  |> should.equal(Ok(69))
+
+  int.min_in_list([69, 666, 420])
+  |> should.equal(Ok(69))
+
+  int.min_in_list([420, 69, 666])
+  |> should.equal(Ok(69))
+
+  int.min_in_list([-420, -69, -666])
+  |> should.equal(Ok(-666))
+
+  int.min_in_list([-1, 0, 1])
+  |> should.equal(Ok(-1))
+}
+
 pub fn is_even_test() {
   int.is_even(0)
   |> should.be_true
