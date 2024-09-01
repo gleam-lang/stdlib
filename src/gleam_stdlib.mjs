@@ -16,6 +16,7 @@ import {
 } from "./gleam/regex.mjs";
 import { DecodeError } from "./gleam/dynamic.mjs";
 import { Some, None } from "./gleam/option.mjs";
+import { Eq, Gt, Lt } from "./gleam/order.mjs";
 import Dict from "./dict.mjs";
 
 const Nil = undefined;
@@ -156,7 +157,7 @@ export function graphemes(string) {
 }
 
 function graphemes_iterator(string) {
-  if (Intl && Intl.Segmenter) {
+  if (globalThis.Intl && Intl.Segmenter) {
     return new Intl.Segmenter().segment(string)[Symbol.iterator]();
   }
 }
@@ -479,6 +480,10 @@ export function map_insert(key, value, map) {
 }
 
 function unsafe_percent_decode(string) {
+  return decodeURIComponent(string || "");
+}
+
+function unsafe_percent_decode_query(string) {
   return decodeURIComponent((string || "").replace("+", " "));
 }
 
@@ -491,7 +496,7 @@ export function percent_decode(string) {
 }
 
 export function percent_encode(string) {
-  return encodeURIComponent(string);
+  return encodeURIComponent(string).replace("%2B", "+");
 }
 
 export function parse_query(query) {
@@ -500,7 +505,10 @@ export function parse_query(query) {
     for (const section of query.split("&")) {
       const [key, value] = section.split("=");
       if (!key) continue;
-      pairs.push([unsafe_percent_decode(key), unsafe_percent_decode(value)]);
+
+      const decodedKey = unsafe_percent_decode_query(key)
+      const decodedValue = unsafe_percent_decode_query(value)
+      pairs.push([decodedKey, decodedValue])
     }
     return new Ok(List.fromArray(pairs));
   } catch {
@@ -920,6 +928,28 @@ export function base16_decode(string) {
   return new Ok(new BitArray(bytes));
 }
 
-export function bit_array_inspect(bits) {
-  return `<<${[...bits.buffer].join(", ")}>>`;
+export function bit_array_inspect(bits, acc) {
+  return `${acc}${[...bits.buffer].join(", ")}`;
+}
+
+export function bit_array_compare(first, second) {
+  for (let i = 0; i < first.length; i++) {
+    if (i >= second.length) {
+      return new Gt();  // first has more items
+    }
+    const f = first.buffer[i];
+    const s = second.buffer[i];
+    if (f > s) {
+      return new Gt();
+    }
+    if (f < s) {
+      return new Lt()
+    }
+  }
+  // This means that either first did not have any items
+  // or all items in first were equal to second.
+  if (first.length === second.length) {
+    return new Eq();
+  }
+  return new Lt();  // second has more items
 }

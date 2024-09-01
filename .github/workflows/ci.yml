@@ -6,65 +6,81 @@ on:
       - "main"
       - "v*.*.*"
   pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   test_erlang:
     runs-on: ubuntu-24.04
+    timeout-minutes: 15
     strategy:
+      fail-fast: false
       matrix:
         erlang_version: ["26.2", "27.0"]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: erlef/setup-beam@v1
         with:
           otp-version: ${{ matrix.erlang_version }}
-          gleam-version: "1.2.1"
+          gleam-version: "1.4.0"
       - run: gleam test --target erlang
       - run: gleam format --check src test
 
   test_javascript_node:
     runs-on: ubuntu-24.04
+    timeout-minutes: 15
     strategy:
+      fail-fast: false
       matrix:
-        node_version: ["18.20", "20.15", "22.3"]
+        node_version: ["18.20", "20.16", "22.5"]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: erlef/setup-beam@v1
         with:
           otp-version: "27.0"
-          gleam-version: "1.2.1"
-      - uses: actions/setup-node@v3
+          gleam-version: "1.4.0"
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node_version }}
       - run: gleam test --target javascript --runtime node
 
   test_javascript_bun:
     runs-on: ubuntu-24.04
+    timeout-minutes: 15
     strategy:
+      fail-fast: false
       matrix:
         bun_version: ["1.1"]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: erlef/setup-beam@v1
         with:
           otp-version: "27.0"
-          gleam-version: "1.2.1"
-      - uses: oven-sh/setup-bun@v1
+          gleam-version: "1.4.0"
+      - uses: oven-sh/setup-bun@v2
         with:
           bun-version: ${{ matrix.bun_version }}
       - run: gleam test --target javascript --runtime bun
 
   test_javascript_deno:
     runs-on: ubuntu-24.04
+    timeout-minutes: 15
     strategy:
+      fail-fast: false
       matrix:
-        deno_version: ["1.44"]
+        deno_version: ["1.45"]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: erlef/setup-beam@v1
         with:
           otp-version: "27.0"
-          gleam-version: "1.2.1"
+          gleam-version: "1.4.0"
       - uses: denoland/setup-deno@v1
         with:
           deno-version: ${{ matrix.deno_version }}

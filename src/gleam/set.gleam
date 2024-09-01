@@ -224,7 +224,9 @@ pub fn filter(
 /// ## Examples
 ///
 /// ```gleam
-/// map(from_list([1, 2, 3, 4], fn(x) { x * 2 }))
+/// from_list([1, 2, 3, 4])
+/// |> map(with: fn(x) { x * 2 })
+/// |> to_list
 /// // -> [2, 4, 6, 8]
 /// ```
 pub fn map(set: Set(member), with fun: fn(member) -> mapped) -> Set(mapped) {
@@ -239,7 +241,9 @@ pub fn map(set: Set(member), with fun: fn(member) -> mapped) -> Set(mapped) {
 /// ## Examples
 ///
 /// ```gleam
-/// drop(from_list([1, 2, 3, 4]), [1, 3])
+/// from_list([1, 2, 3, 4])
+/// |> drop([1, 3])
+/// |> to_list
 /// // -> [2, 4]
 /// ```
 pub fn drop(from set: Set(member), drop disallowed: List(member)) -> Set(member) {
@@ -346,7 +350,7 @@ pub fn is_subset(first: Set(member), of second: Set(member)) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// is_disjoint(from_list([1, 2, 3], from_list([4, 5, 6])))
+/// is_disjoint(from_list([1, 2, 3]), from_list([4, 5, 6]))
 /// // -> True
 /// ```
 ///

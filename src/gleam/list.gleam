@@ -582,7 +582,7 @@ fn do_take(list: List(a), n: Int, acc: List(a)) -> List(a) {
 /// If the element has less than the number of elements then the full list is
 /// returned.
 ///
-/// This function runs in linear time but does not copy the list.
+/// This function runs in linear time.
 ///
 /// ## Examples
 ///
@@ -861,7 +861,7 @@ pub type ContinueOrStop(a) {
 ///     False -> Stop(acc)
 ///   }
 /// })
-/// // -> 6
+/// // -> 3
 /// ```
 ///
 pub fn fold_until(

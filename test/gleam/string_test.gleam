@@ -465,6 +465,13 @@ pub fn drop_left_test() {
   |> should.equal("gleam")
 }
 
+pub fn drop_left_3499_test() {
+  // https://github.com/gleam-lang/gleam/issues/3499
+  "\r]"
+  |> string.drop_left(1)
+  |> should.equal("]")
+}
+
 pub fn drop_right_test() {
   "gleam"
   |> string.drop_right(up_to: 2)

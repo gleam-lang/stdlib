@@ -1,7 +1,7 @@
 //// BitArrays are a sequence of binary data of any length.
 
-@target(erlang)
 import gleam/int
+import gleam/order
 import gleam/string
 
 /// Converts a UTF-8 `String` type into a `BitArray`.
@@ -145,7 +145,6 @@ pub fn base16_encode(input: BitArray) -> String
 @external(javascript, "../gleam_stdlib.mjs", "base16_decode")
 pub fn base16_decode(input: String) -> Result(BitArray, Nil)
 
-@target(javascript)
 /// Converts a bit array to a string containing the decimal value of each byte.
 ///
 /// ## Examples
@@ -158,15 +157,11 @@ pub fn base16_decode(input: String) -> Result(BitArray, Nil)
 /// // -> "<<100, 5:size(3)>>"
 /// ```
 ///
-@external(javascript, "../gleam_stdlib.mjs", "bit_array_inspect")
-pub fn inspect(input: BitArray) -> String
-
-@target(erlang)
 pub fn inspect(input: BitArray) -> String {
   do_inspect(input, "<<") <> ">>"
 }
 
-@target(erlang)
+@external(javascript, "../gleam_stdlib.mjs", "bit_array_inspect")
 fn do_inspect(input: BitArray, accumulator: String) -> String {
   case input {
     <<>> -> accumulator
@@ -193,3 +188,51 @@ fn do_inspect(input: BitArray, accumulator: String) -> String {
     _ -> accumulator
   }
 }
+
+/// Compare two bit arrays as sequences of bytes.
+///
+/// ## Examples
+///
+/// ```gleam
+/// compare(<<1>>, <<2>>)
+/// // -> Lt
+///
+/// compare(<<"AB":utf8>>, <<"AA":utf8>>)
+/// // -> Gt
+///
+/// compare(<<1, 2:size(2)>>, with: <<1, 2:size(2)>>)
+/// // -> Eq
+/// ```
+///
+/// Only supported on Erlang target for now.
+///
+@external(javascript, "../gleam_stdlib.mjs", "bit_array_compare")
+pub fn compare(a: BitArray, with b: BitArray) -> order.Order {
+  case a, b {
+    <<first_byte, first_rest:bits>>, <<second_byte, second_rest:bits>> ->
+      case first_byte, second_byte {
+        f, s if f > s -> order.Gt
+        f, s if f < s -> order.Lt
+        _, _ -> compare(first_rest, second_rest)
+      }
+
+    <<>>, <<>> -> order.Eq
+    // First has more items, example: "AB" > "A":
+    _, <<>> -> order.Gt
+    // Second has more items, example: "A" < "AB":
+    <<>>, _ -> order.Lt
+    // This happens when there's unusually sized elements.
+    // Handle these special cases via custom erlang function.
+    first, second ->
+      case bit_array_to_int_and_size(first), bit_array_to_int_and_size(second) {
+        #(a, _), #(b, _) if a > b -> order.Gt
+        #(a, _), #(b, _) if a < b -> order.Lt
+        #(_, size_a), #(_, size_b) if size_a > size_b -> order.Gt
+        #(_, size_a), #(_, size_b) if size_a < size_b -> order.Lt
+        _, _ -> order.Eq
+      }
+  }
+}
+
+@external(erlang, "gleam_stdlib", "bit_array_to_int_and_size")
+fn bit_array_to_int_and_size(a: BitArray) -> #(Int, Int)

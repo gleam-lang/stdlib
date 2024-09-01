@@ -82,9 +82,15 @@ pub fn unfold(
   |> Iterator
 }
 
-// TODO: test
 /// Creates an iterator that yields values created by calling a given function
 /// repeatedly.
+///
+/// ```gleam
+/// repeatedly(fn() { 7 })
+/// |> take(3)
+/// |> to_list
+/// // -> [7, 7, 7]
+/// ```
 ///
 pub fn repeatedly(f: fn() -> element) -> Iterator(element) {
   unfold(Nil, fn(_) { Next(f(), Nil) })
@@ -1440,7 +1446,7 @@ fn do_fold_until(
 /// }
 ///
 /// from_list([1, 2, 3, 4])
-/// |> fold_until(from: acc, with: f)
+/// |> fold_until(from: 0, with: f)
 /// // -> 6
 /// ```
 ///

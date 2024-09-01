@@ -1,6 +1,10 @@
 # Changelog
 
-## Unreleased
+## v0.41.0 - Unreleased
+
+- The `bit_array` module gains the `compare` function.
+
+## v0.40.0 - 2024-08-19
 
 - The `function.curry*` and `function.apply*` functions have been deprecated.
 - The deprecated `dynamic.unsafe_coerce` function has been removed.
@@ -12,6 +16,14 @@
   optional. It only deals with the presence or absence of the key itself which
   brings it inline with its documentation.
 - Fixed a bug where `string.trim` could remove commas on JavaScript.
+- The `string.pop_grapheme` function has been optimised on Erlang, greatly
+  improving its performance.
+- The `InvalidBase` error in the `int` module has been replaced by `Nil`.
+- Fixed a bug where iterating graphemes could crash on older JavaScript runtimes
+  where the `Intl` API is not supported.
+- Fixed a bug where the behaviour of `uri.percent_decode` would decode `+` as a
+  space on JavaScript.
+- Fixed a bug where `string.slice` could return invalid values on Erlang.
 
 ## v0.39.0 - 2024-07-09
 

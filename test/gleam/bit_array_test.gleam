@@ -1,4 +1,5 @@
 import gleam/bit_array
+import gleam/order
 import gleam/result
 import gleam/should
 import gleam/string
@@ -330,4 +331,51 @@ pub fn inspect_partial_bytes_test() {
 
   bit_array.inspect(<<5:3, 11:4, 1:2>>)
   |> should.equal("<<182, 1:size(1)>>")
+}
+
+@target(erlang)
+pub fn compare_different_sizes_test() {
+  bit_array.compare(<<4:5>>, <<4:5>>)
+  |> should.equal(order.Eq)
+
+  bit_array.compare(<<4:5, 3:3>>, <<4:5, 2:3>>)
+  |> should.equal(order.Gt)
+
+  bit_array.compare(<<4:5, 3:3>>, <<4:5, 4:3>>)
+  |> should.equal(order.Lt)
+
+  bit_array.compare(<<4:5, 3:3, 0:0>>, <<4:5, 3:3, 0:0>>)
+  |> should.equal(order.Eq)
+
+  bit_array.compare(<<4:2, 3:4, 0:0>>, <<4:2, 3:3, 0:0>>)
+  |> should.equal(order.Gt)
+
+  // first is: <<33, 1:size(1)>>
+  // second is: <<35>>
+  bit_array.compare(<<4:5, 3:4, 0:0>>, <<4:5, 3:3, 0:0>>)
+  |> should.equal(order.Lt)
+
+  bit_array.compare(<<3:5>>, <<4:5>>)
+  |> should.equal(order.Lt)
+
+  bit_array.compare(<<3:7>>, <<4:7>>)
+  |> should.equal(order.Lt)
+
+  bit_array.compare(<<5:5>>, <<4:5>>)
+  |> should.equal(order.Gt)
+
+  bit_array.compare(<<4:8>>, <<4:5>>)
+  |> should.equal(order.Gt)
+
+  bit_array.compare(<<4:5>>, <<4:8>>)
+  |> should.equal(order.Lt)
+
+  bit_array.compare(<<0:5>>, <<0:8>>)
+  |> should.equal(order.Lt)
+
+  bit_array.compare(<<0:5>>, <<0:5>>)
+  |> should.equal(order.Eq)
+
+  bit_array.compare(<<0:2>>, <<0:1>>)
+  |> should.equal(order.Gt)
 }

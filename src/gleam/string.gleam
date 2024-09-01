@@ -71,20 +71,11 @@ pub fn reverse(string: String) -> String {
   do_reverse(string)
 }
 
-@target(erlang)
 fn do_reverse(string: String) -> String {
   string
   |> string_builder.from_string
   |> string_builder.reverse
   |> string_builder.to_string
-}
-
-@target(javascript)
-fn do_reverse(string: String) -> String {
-  string
-  |> to_graphemes
-  |> list.reverse
-  |> concat
 }
 
 /// Creates a new `String` by replacing all occurrences of a given substring.
@@ -230,7 +221,7 @@ pub fn slice(from string: String, at_index idx: Int, length len: Int) -> String 
   }
 }
 
-@external(erlang, "string", "slice")
+@external(erlang, "gleam_stdlib", "slice")
 fn do_slice(string: String, idx: Int, len: Int) -> String {
   string
   |> to_graphemes
