@@ -426,7 +426,7 @@ export function compile_regex(pattern, options) {
 export function regex_split(regex, string) {
   return List.fromArray(
     string.split(regex).map((item) => (item === undefined ? "" : item)),
-  ); 
+  );
 }
 
 export function regex_scan(regex, string) {
@@ -448,7 +448,7 @@ export function regex_scan(regex, string) {
 }
 
 export function regex_replace(regex, original_string, replacement) {
-  return original_string.replaceAll(regex, replacement)
+  return original_string.replaceAll(regex, replacement);
 }
 
 export function new_map() {
@@ -550,8 +550,7 @@ export function encode64(bit_array, padding) {
   if (padding) {
     if (k === 1) {
       base64 += "==";
-    }
-    else if (k === 2) {
+    } else if (k === 2) {
       base64 += "=";
     }
   }
@@ -566,7 +565,7 @@ export function decode64(sBase64) {
     const length = binString.length;
     const array = new Uint8Array(length);
     for (let i = 0; i < length; i++) {
-        array[i] = binString.charCodeAt(i);
+      array[i] = binString.charCodeAt(i);
     }
     return new Ok(new BitArray(array));
   } catch {
@@ -827,25 +826,40 @@ export function inspect(v) {
 }
 
 function inspectString(str) {
-  let new_str = "\"";
+  let new_str = '"';
   for (let i = 0; i < str.length; i++) {
     let char = str[i];
     switch (char) {
-      case '\n': new_str += "\\n"; break;
-      case '\r': new_str += "\\r"; break;
-      case '\t': new_str += "\\t"; break;
-      case '\f': new_str += "\\f"; break;
-      case '\\': new_str += "\\\\"; break;
-      case '\"': new_str += "\\\""; break;
+      case "\n":
+        new_str += "\\n";
+        break;
+      case "\r":
+        new_str += "\\r";
+        break;
+      case "\t":
+        new_str += "\\t";
+        break;
+      case "\f":
+        new_str += "\\f";
+        break;
+      case "\\":
+        new_str += "\\\\";
+        break;
+      case '"':
+        new_str += '\\"';
+        break;
       default:
-        if (char < ' ' || (char > '~' && char < '\u{00A0}')) {
-          new_str += "\\u{" + char.charCodeAt(0).toString(16).toUpperCase().padStart(4, "0") + "}";
+        if (char < " " || (char > "~" && char < "\u{00A0}")) {
+          new_str +=
+            "\\u{" +
+            char.charCodeAt(0).toString(16).toUpperCase().padStart(4, "0") +
+            "}";
         } else {
           new_str += char;
         }
     }
   }
-  new_str += "\"";
+  new_str += '"';
   return new_str;
 }
 
