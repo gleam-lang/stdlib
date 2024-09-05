@@ -1467,8 +1467,10 @@ fn do_try_fold(
   case continuation() {
     Stop -> Ok(accumulator)
     Continue(elem, next) -> {
-      use accumulator <- result.try(f(accumulator, elem))
-      do_try_fold(next, f, accumulator)
+      case f(accumulator, elem) {
+        Ok(result) -> do_try_fold(next, f, result)
+        Error(_) as error -> error
+      }
     }
   }
 }

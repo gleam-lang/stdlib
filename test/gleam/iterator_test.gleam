@@ -4,6 +4,17 @@ import gleam/iterator.{Done, Next}
 import gleam/list
 import gleam/should
 
+@target(erlang)
+const recursion_test_cycles = 1_000_000
+
+// JavaScript engines crash when exceeding a certain stack size:
+//
+// - Chrome 106 and NodeJS V16, V18, and V19 crash around 10_000+
+// - Firefox 106 crashes around 35_000+.
+// - Safari 16 crashes around 40_000+.
+@target(javascript)
+const recursion_test_cycles = 40_000
+
 // a |> from_list |> to_list == a
 pub fn to_from_list_test() {
   let testcase = fn(subject) {
@@ -505,7 +516,7 @@ pub fn any_test() {
 
   // TCO test
   iterator.repeat(1)
-  |> iterator.take(1_000_000)
+  |> iterator.take(recursion_test_cycles)
   |> iterator.any(satisfying: fn(n) { n % 2 == 0 })
   |> should.be_false
 }
@@ -525,7 +536,7 @@ pub fn all_test() {
 
   // TCO test
   iterator.repeat(0)
-  |> iterator.take(1_000_000)
+  |> iterator.take(recursion_test_cycles)
   |> iterator.all(satisfying: fn(n) { n % 2 == 0 })
   |> should.be_true
 }
@@ -641,6 +652,11 @@ pub fn try_fold_test() {
   |> iterator.from_list()
   |> iterator.try_fold(0, f)
   |> should.equal(Error("tried to add an odd number"))
+
+  // TCO test
+  iterator.repeat(1)
+  |> iterator.take(recursion_test_cycles)
+  |> iterator.try_fold(0, fn(e, acc) { Ok(e + acc) })
 }
 
 pub fn first_test() {
