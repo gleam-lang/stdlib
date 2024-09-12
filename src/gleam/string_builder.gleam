@@ -205,6 +205,16 @@ pub fn replace(
   with substitute: String,
 ) -> StringBuilder
 
+/// Replaces the first instance of a pattern with a given string substitute.
+///
+@external(erlang, "gleam_stdlib", "string_replace_one")
+@external(javascript, "../gleam_stdlib.mjs", "string_replace_one")
+pub fn replace_one(
+  in builder: StringBuilder,
+  one_of pattern: String,
+  with substitute: String,
+) -> StringBuilder
+
 /// Compares two builders to determine if they have the same textual content.
 ///
 /// Comparing two iodata using the `==` operator may return `False` even if they

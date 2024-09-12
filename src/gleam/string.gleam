@@ -103,6 +103,31 @@ pub fn replace(
   |> string_builder.to_string
 }
 
+/// Creates a new `String` by replacing the first occurrence of a given substring.
+///
+/// ## Examples
+///
+/// ```gleam
+/// replace("www.example.com", each: ".", with: "-")
+/// // -> "www-example.com"
+/// ```
+///
+/// ```gleam
+/// replace("a,b,c,d,e", each: ",", with: "/")
+/// // -> "a/b,c,d,e"
+/// ```
+///
+pub fn replace_one(
+  in string: String,
+  one_of pattern: String,
+  with substitute: String,
+) -> String {
+  string
+  |> string_builder.from_string
+  |> string_builder.replace_one(one_of: pattern, with: substitute)
+  |> string_builder.to_string
+}
+
 /// Creates a new `String` with all the graphemes in the input `String` converted to
 /// lowercase.
 ///
