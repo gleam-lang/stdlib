@@ -127,7 +127,7 @@ export function string_replace(string, target, substitute) {
   );
 }
 
-export function string_replace_one(string, target, substitute) {
+export function string_replace_first(string, target, substitute) {
   return string.replace(target, substitute);
 }
 
@@ -455,7 +455,7 @@ export function regex_replace(regex, original_string, replacement) {
   return original_string.replaceAll(regex, replacement);
 }
 
-export function regex_replace_one(regex, original_string, replacement) {
+export function regex_replace_first(regex, original_string, replacement) {
   // Forcibly strip the g flag from the regex, if it's present
   let flags = regex.toString().split("/").pop().replace("g", "");
   let match = new RegExp(regex, flags);

@@ -231,9 +231,9 @@ pub fn replace(
 /// replace(one_of: re, in: "a,b-c d+e", with: "/")
 /// // -> "a/b-c d+e"
 /// ```
-@external(erlang, "gleam_stdlib", "regex_replace_one")
-@external(javascript, "../gleam_stdlib.mjs", "regex_replace_one")
-pub fn replace_one(
+@external(erlang, "gleam_stdlib", "regex_replace_first")
+@external(javascript, "../gleam_stdlib.mjs", "regex_replace_first")
+pub fn replace_first(
   one_of pattern: Regex,
   in string: String,
   with substitute: String,

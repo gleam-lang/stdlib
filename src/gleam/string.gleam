@@ -117,14 +117,14 @@ pub fn replace(
 /// // -> "a/b,c,d,e"
 /// ```
 ///
-pub fn replace_one(
+pub fn replace_first(
   in string: String,
   one_of pattern: String,
   with substitute: String,
 ) -> String {
   string
   |> string_builder.from_string
-  |> string_builder.replace_one(one_of: pattern, with: substitute)
+  |> string_builder.replace_first(one_of: pattern, with: substitute)
   |> string_builder.to_string
 }
 

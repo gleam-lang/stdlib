@@ -207,9 +207,9 @@ pub fn replace(
 
 /// Replaces the first instance of a pattern with a given string substitute.
 ///
-@external(erlang, "gleam_stdlib", "string_replace_one")
-@external(javascript, "../gleam_stdlib.mjs", "string_replace_one")
-pub fn replace_one(
+@external(erlang, "gleam_stdlib", "string_replace_first")
+@external(javascript, "../gleam_stdlib.mjs", "string_replace_first")
+pub fn replace_first(
   in builder: StringBuilder,
   one_of pattern: String,
   with substitute: String,
