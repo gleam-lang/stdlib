@@ -15,7 +15,7 @@
     println/1, print_error/1, println_error/1, inspect/1, float_to_string/1,
     int_from_base_string/2, utf_codepoint_list_to_string/1, contains_string/2,
     crop_string/2, base16_decode/1, string_replace/3, regex_replace/3, slice/3,
-    bit_array_to_int_and_size/1, string_replace_one/3
+    bit_array_to_int_and_size/1, string_replace_one/3, regex_replace_one/3
 ]).
 
 %% Taken from OTP's uri_string module
@@ -266,6 +266,9 @@ regex_scan(Regex, String) ->
 
 regex_replace(Regex, Subject, Replacement) ->
     re:replace(Subject, Regex, Replacement, [global, {return, binary}]).
+
+regex_replace_one(Regex, Subject, Replacement) ->
+    re:replace(Subject, Regex, Replacement, [{return, binary}]).
 
 base_decode64(S) ->
     try {ok, base64:decode(S)}

@@ -185,3 +185,15 @@ pub fn replace_3_test() {
   regex.replace(re, "🐈🐈 are great!", "🐕")
   |> should.equal("🐕🐕 are great!")
 }
+
+pub fn replace_one_test() {
+  let assert Ok(re) = regex.from_string("🐈")
+  regex.replace_one(in: "🐈🐈 are great!", one_of: re, with: "🐕")
+  |> should.equal("🐕🐈 are great!")
+}
+
+pub fn replace_one_of_many_test() {
+  let assert Ok(re) = regex.from_string("[, +-]")
+  regex.replace_one(one_of: re, in: "a,b-c d+e", with: "/")
+  |> should.equal("a/b-c d+e")
+}

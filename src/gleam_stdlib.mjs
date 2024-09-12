@@ -455,6 +455,13 @@ export function regex_replace(regex, original_string, replacement) {
   return original_string.replaceAll(regex, replacement);
 }
 
+export function regex_replace_one(regex, original_string, replacement) {
+  // Forcibly strip the g flag from the regex, if it's present
+  let flags = regex.toString().split("/").pop().replace("g", "");
+  let match = new RegExp(regex, flags);
+  return original_string.replace(match, replacement);
+}
+
 export function new_map() {
   return Dict.new();
 }

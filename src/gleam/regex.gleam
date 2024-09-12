@@ -214,3 +214,27 @@ pub fn replace(
   in string: String,
   with substitute: String,
 ) -> String
+
+/// Creates a new `String` by replacing the first substring that matches the regular
+/// expression.
+///
+/// ## Examples
+///
+/// ```gleam
+/// let assert Ok(re) = regex.from_string("^https://")
+/// replace(one_of: re, in: "https://example.com", with: "www.")
+/// // -> "www.example.com"
+/// ```
+///
+/// ```gleam
+/// let assert Ok(re) = regex.from_string("[, +-]")
+/// replace(one_of: re, in: "a,b-c d+e", with: "/")
+/// // -> "a/b-c d+e"
+/// ```
+@external(erlang, "gleam_stdlib", "regex_replace_one")
+@external(javascript, "../gleam_stdlib.mjs", "regex_replace_one")
+pub fn replace_one(
+  one_of pattern: Regex,
+  in string: String,
+  with substitute: String,
+) -> String
