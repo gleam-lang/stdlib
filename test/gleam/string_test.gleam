@@ -92,6 +92,12 @@ pub fn replace_test() {
   |> should.equal("Gleam++Erlang++Elixir")
 }
 
+pub fn replace_first_test() {
+  "Gleam,Erlang,Elixir"
+  |> string.replace_first(",", "++")
+  |> should.equal("Gleam++Erlang,Elixir")
+}
+
 pub fn append_test() {
   "Test"
   |> string.append(" Me")
