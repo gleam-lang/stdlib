@@ -222,13 +222,13 @@ pub fn replace(
 ///
 /// ```gleam
 /// let assert Ok(re) = regex.from_string("^https://")
-/// replace(one_of: re, in: "https://example.com", with: "www.")
+/// replace_first(one_of: re, in: "https://example.com", with: "www.")
 /// // -> "www.example.com"
 /// ```
 ///
 /// ```gleam
 /// let assert Ok(re) = regex.from_string("[, +-]")
-/// replace(one_of: re, in: "a,b-c d+e", with: "/")
+/// replace_first(one_of: re, in: "a,b-c d+e", with: "/")
 /// // -> "a/b-c d+e"
 /// ```
 @external(erlang, "gleam_stdlib", "regex_replace_first")

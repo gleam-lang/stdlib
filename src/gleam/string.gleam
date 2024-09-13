@@ -108,12 +108,12 @@ pub fn replace(
 /// ## Examples
 ///
 /// ```gleam
-/// replace("www.example.com", each: ".", with: "-")
+/// replace_first("www.example.com", each: ".", with: "-")
 /// // -> "www-example.com"
 /// ```
 ///
 /// ```gleam
-/// replace("a,b,c,d,e", each: ",", with: "/")
+/// replace_first("a,b,c,d,e", each: ",", with: "/")
 /// // -> "a/b,c,d,e"
 /// ```
 ///
