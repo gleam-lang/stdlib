@@ -217,6 +217,19 @@ pub fn replace(
   with substitute: String,
 ) -> String
 
+/// Exapes all Regex characters in a given `String`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// regex.escape("hello$world^test")
+/// // -> "hello\\$world\\^test"
+/// ```
+///
+/// ```gleam
+/// regex.escape("$^.*+?()[]{}|\\")
+/// // -> "\\$\\^\\.\\*\\+\\?\\(\\)\\[\\]\\{\\}\\|\\\\"
+/// ```
 pub fn escape(input: String) -> String {
   ["\\", "$", "^", ".", "*", "+", "?", "(", ")", "[", "]", "{", "}", "|"]
   |> list.fold(input, fn(acc, char) {
