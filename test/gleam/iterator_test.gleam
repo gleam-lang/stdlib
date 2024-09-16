@@ -730,3 +730,34 @@ pub fn yield_computes_only_necessary_values_test() {
   |> iterator.to_list
   |> should.equal([1, 2, 3])
 }
+
+pub fn window_test() {
+  let testcase = fn(subject, n, expected) {
+    subject
+    |> iterator.from_list
+    |> iterator.window(n)
+    |> iterator.map(iterator.to_list)
+    |> iterator.to_list
+    |> should.equal(expected)
+  }
+
+  testcase([1, 2, 3], 2, [[1, 2], [2, 3]])
+  testcase([1, 2, 3], 3, [[1, 2, 3]])
+  testcase([1, 2, 3], 4, [])
+  testcase([1, 2, 3, 4, 5], 3, [[1, 2, 3], [2, 3, 4], [3, 4, 5]])
+  testcase([1, 2, 3], 0, [])
+  testcase([1, 2, 3], -1, [])
+}
+
+pub fn window_by_2_test() {
+  let testcase = fn(subject, expected) {
+    subject
+    |> iterator.from_list
+    |> iterator.window_by_2
+    |> iterator.to_list
+    |> should.equal(expected)
+  }
+
+  testcase([1, 2, 3, 4], [#(1, 2), #(2, 3), #(3, 4)])
+  testcase([1], [])
+}
