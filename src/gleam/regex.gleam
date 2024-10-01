@@ -217,7 +217,7 @@ pub fn replace(
   with substitute: String,
 ) -> String
 
-/// Exapes all Regex characters in a given `String`.
+/// Escapes all `Regex` characters in a given `String`.
 ///
 /// ## Examples
 ///
