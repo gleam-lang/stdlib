@@ -553,8 +553,34 @@ fn do_trim(string: String) -> String {
   erl_trim(string, Both)
 }
 
+/// Like `trim`, but removes the specified chars on both sides of a `String`
+///
+/// ## Examples
+///
+/// ```gleam
+/// trim_chars_left("..,hats,..", ".,")
+/// // -> "hats"
+/// ```
+pub fn trim_chars(string: String, charset: String) -> String {
+  do_trim_chars(string, charset)
+}
+
+@external(javascript, "../gleam_stdlib.mjs", "trim_chars")
+fn do_trim_chars(string: String, charset: String) -> String {
+  erl_trim_chars(string, Both, erl_to_graphemes(charset))
+}
+
 @external(erlang, "string", "trim")
 fn erl_trim(a: String, b: Direction) -> String
+
+@external(erlang, "string", "trim")
+fn erl_trim_chars(a: String, b: Direction, c: ErlGraphemes) -> String
+
+@external(erlang, "string", "to_graphemes")
+fn erl_to_graphemes(a: String) -> ErlGraphemes
+
+// erlang's string:to_graphemes returns char() | [char()], which cannot be directly represented
+type ErlGraphemes
 
 type Direction {
   Leading
@@ -596,6 +622,40 @@ pub fn trim_right(string: String) -> String {
 @external(javascript, "../gleam_stdlib.mjs", "trim_right")
 fn do_trim_right(string: String) -> String {
   erl_trim(string, Trailing)
+}
+
+/// Like `trim_left`, but removes the specified chars on the left of a `String`
+///
+/// ## Examples
+///
+/// ```gleam
+/// trim_chars_left("..,hats,..", ".,")
+/// // -> "hats,.."
+/// ```
+pub fn trim_chars_left(string: String, charset: String) -> String {
+  do_trim_chars_left(string, charset)
+}
+
+@external(javascript, "../gleam_stdlib.mjs", "trim_chars_left")
+fn do_trim_chars_left(string: String, charset: String) -> String {
+  erl_trim_chars(string, Leading, erl_to_graphemes(charset))
+}
+
+/// Like `trim_right`, but removes the specified chars on the right of a `String`
+///
+/// ## Examples
+///
+/// ```gleam
+/// trim_chars_right("..,hats,..", ".,")
+/// // -> "..,hats"
+/// ```
+pub fn trim_chars_right(string: String, charset: String) -> String {
+  do_trim_chars_right(string, charset)
+}
+
+@external(javascript, "../gleam_stdlib.mjs", "trim_chars_right")
+fn do_trim_chars_right(string: String, charset: String) -> String {
+  erl_trim_chars(string, Trailing, erl_to_graphemes(charset))
 }
 
 /// Splits a non-empty `String` into its first element (head) and rest (tail).

@@ -176,6 +176,18 @@ pub fn trim_right_test() {
   |> should.equal("  hats")
 }
 
+pub fn trim_chars_left_test() {
+  ",..hats..,"
+  |> string.trim_chars_left(",.")
+  |> should.equal("hats..,")
+}
+
+pub fn trim_chars_right_test() {
+  ",..hats..,"
+  |> string.trim_chars_right(",.")
+  |> should.equal(",..hats")
+}
+
 // unicode whitespaces
 pub fn trim_horizontal_tab_test() {
   "hats\u{0009}"
@@ -362,6 +374,36 @@ pub fn trim_comma_test() {
   "hats,"
   |> string.trim
   |> should.equal("hats,")
+}
+
+pub fn trim_chars_test() {
+  ",,hats,"
+  |> string.trim_chars(",")
+  |> should.equal("hats")
+}
+
+pub fn trim_chars_commas_and_periods_test() {
+  ",,hats,..."
+  |> string.trim_chars(",.")
+  |> should.equal("hats")
+}
+
+pub fn trim_chars_keeps_whitespace_not_in_charset_test() {
+  ",,hats ,..."
+  |> string.trim_chars(",.")
+  |> should.equal("hats ")
+}
+
+pub fn trim_chars_does_not_trim_from_middle_of_string_test() {
+  ",,hats,hats,hats,..."
+  |> string.trim_chars(",.")
+  |> should.equal("hats,hats,hats")
+}
+
+pub fn trim_chars_trims_complex_graphemes_test() {
+  "hats👍👍👍👍"
+  |> string.trim_chars("👍")
+  |> should.equal("hats")
 }
 
 pub fn starts_with_test() {
