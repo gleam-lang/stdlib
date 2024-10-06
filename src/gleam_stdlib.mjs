@@ -262,33 +262,33 @@ const unicode_whitespaces = [
   "\u2029", // Paragraph separator
 ].join("");
 
-const left_trim_regex = new_left_trim_regexp(unicode_whitespaces);
+const start_trim_regex = new_start_trim_regexp(unicode_whitespaces);
 const right_trim_regex = new_right_trim_regexp(unicode_whitespaces);
 
 export function trim(string) {
-  return trim_left(trim_right(string));
+  return trim_start(trim_end(string));
 }
 
-export function trim_left(string) {
-  return string.replace(left_trim_regex, "");
+export function trim_start(string) {
+  return string.replace(start_trim_regex, "");
 }
 
-export function trim_right(string) {
+export function trim_end(string) {
   return string.replace(right_trim_regex, "");
 }
 
 export function trim_chars(string, charset) {
-    const trimmed_right = trim_chars_right(string, charset);
-    return trim_chars_left(trimmed_right, charset);
+    const trimmed_right = trim_chars_end(string, charset);
+    return trim_chars_start(trimmed_right, charset);
 }
 
-export function trim_chars_left(string, charset) {
-  const trim_regexp = new_left_trim_regexp(charset);
+export function trim_chars_start(string, charset) {
+  const trim_regexp = new_start_trim_regexp(charset);
 
   return string.replace(trim_regexp, "")
 }
 
-export function trim_chars_right(string, charset) {
+export function trim_chars_end(string, charset) {
   const trim_regexp = new_right_trim_regexp(charset);
 
   return string.replace(trim_regexp, "")
@@ -974,7 +974,7 @@ export function bit_array_compare(first, second) {
   return new Lt();  // second has more items
 }
 
-function new_left_trim_regexp(charset) {
+function new_start_trim_regexp(charset) {
   return new RegExp(`^([${charset}]*)`, "g");
 }
 

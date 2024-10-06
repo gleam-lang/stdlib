@@ -164,51 +164,51 @@ pub fn trim_test() {
   |> should.equal("hats")
 }
 
-pub fn trim_left_test() {
+pub fn trim_start_test() {
   "  hats  \n"
-  |> string.trim_left
+  |> string.trim_start
   |> should.equal("hats  \n")
 }
 
-pub fn trim_left_rtl_test() {
+pub fn trim_start_rtl_test() {
   "  עברית  "
-  |> string.trim_left
+  |> string.trim_start
   |> should.equal("עברית  ")
 }
 
-pub fn trim_right_rtl_test() {
+pub fn trim_end_rtl_test() {
   "  עברית  "
-  |> string.trim_right
+  |> string.trim_end
   |> should.equal("  עברית")
 }
 
-pub fn trim_right_test() {
+pub fn trim_end_test() {
   "  hats  \n"
-  |> string.trim_right
+  |> string.trim_end
   |> should.equal("  hats")
 }
 
-pub fn trim_chars_left_test() {
+pub fn trim_chars_start_test() {
   ",..hats..,"
-  |> string.trim_chars_left(",.")
+  |> string.trim_chars_start(",.")
   |> should.equal("hats..,")
 }
 
-pub fn trim_chars_left_rtl_test() {
+pub fn trim_chars_start_rtl_test() {
   "שמש"
-  |> string.trim_chars_left("ש")
+  |> string.trim_chars_start("ש")
   |> should.equal("מש")
 }
 
-pub fn trim_chars_right_test() {
+pub fn trim_chars_end_test() {
   ",..hats..,"
-  |> string.trim_chars_right(",.")
+  |> string.trim_chars_end(",.")
   |> should.equal(",..hats")
 }
 
-pub fn trim_chars_right_rtl_test() {
+pub fn trim_chars_end_rtl_test() {
   "שמש"
-  |> string.trim_chars_right("ש")
+  |> string.trim_chars_end("ש")
   |> should.equal("שמ")
 }
 
