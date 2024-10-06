@@ -1,7 +1,7 @@
 //// Strings in Gleam are UTF-8 binaries. They can be written in your code as
 //// text surrounded by `"double quotes"`.
 
-import gleam/iterator.{type Iterator}
+import gleam/iterator
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/order
@@ -222,13 +222,8 @@ pub fn slice(from string: String, at_index idx: Int, length len: Int) -> String 
 }
 
 @external(erlang, "gleam_stdlib", "slice")
-fn do_slice(string: String, idx: Int, len: Int) -> String {
-  string
-  |> to_graphemes
-  |> list.drop(idx)
-  |> list.take(len)
-  |> concat
-}
+@external(javascript, "../gleam_stdlib.mjs", "string_slice")
+fn do_slice(string: String, idx: Int, len: Int) -> String
 
 /// Drops contents of the first `String` that occur before the second `String`.
 /// If the `from` string does not contain the `before` string, `from` is returned unchanged.
@@ -489,13 +484,18 @@ fn do_join(strings: List(String), separator: String) -> String {
 /// // -> "121"
 /// ```
 ///
-pub fn pad_left(string: String, to desired_length: Int, with pad_string: String) {
+pub fn pad_left(
+  string: String,
+  to desired_length: Int,
+  with pad_string: String,
+) -> String {
   let current_length = length(string)
   let to_pad_length = desired_length - current_length
-  padding(to_pad_length, pad_string)
-  |> iterator.append(iterator.single(string))
-  |> iterator.to_list
-  |> concat
+
+  case to_pad_length <= 0 {
+    True -> string
+    False -> padding(to_pad_length, pad_string) <> string
+  }
 }
 
 /// Pads a `String` on the right until it has a given length.
@@ -521,22 +521,22 @@ pub fn pad_right(
   string: String,
   to desired_length: Int,
   with pad_string: String,
-) {
+) -> String {
   let current_length = length(string)
   let to_pad_length = desired_length - current_length
-  iterator.single(string)
-  |> iterator.append(padding(to_pad_length, pad_string))
-  |> iterator.to_list
-  |> concat
+
+  case to_pad_length <= 0 {
+    True -> string
+    False -> string <> padding(to_pad_length, pad_string)
+  }
 }
 
-fn padding(size: Int, pad_string: String) -> Iterator(String) {
-  let pad_length = length(pad_string)
-  let num_pads = size / pad_length
-  let extra = size % pad_length
-  iterator.repeat(pad_string)
-  |> iterator.take(num_pads)
-  |> iterator.append(iterator.single(slice(pad_string, 0, extra)))
+fn padding(size: Int, pad_string: String) -> String {
+  let pad_string_length = length(pad_string)
+  let num_pads = size / pad_string_length
+  let extra = size % pad_string_length
+
+  repeat(pad_string, num_pads) <> slice(pad_string, 0, extra)
 }
 
 /// Removes whitespace on both sides of a `String`.

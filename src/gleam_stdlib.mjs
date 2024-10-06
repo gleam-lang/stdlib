@@ -223,6 +223,34 @@ export function length(data) {
   return data.length;
 }
 
+export function string_slice(string, idx, len) {
+  if (len <= 0 || idx >= string.length) {
+    return "";
+  }
+
+  const iterator = graphemes_iterator(string);
+  if (iterator) {
+    while (idx-- > 0) {
+      iterator.next();
+    }
+
+    let result = "";
+
+    while (len-- > 0) {
+      const v = iterator.next().value;
+      if (v === undefined) {
+        break;
+      }
+
+      result += v.segment;
+    }
+
+    return result;
+  } else {
+    return string.match(/./gsu).slice(idx, idx + len).join("");
+  }
+}
+
 export function crop_string(string, substring) {
   return string.substring(string.indexOf(substring));
 }
