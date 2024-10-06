@@ -316,7 +316,7 @@ export function crash(message) {
 
 export function bit_array_to_string(bit_array) {
   try {
-    const decoder = new TextDecoder("utf-8", { fatarl: true });
+    const decoder = new TextDecoder("utf-8", { fatal: true });
     return new Ok(decoder.decode(bit_array.buffer));
   } catch {
     return new Error(Nil);
