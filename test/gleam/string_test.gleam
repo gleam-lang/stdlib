@@ -170,6 +170,18 @@ pub fn trim_left_test() {
   |> should.equal("hats  \n")
 }
 
+pub fn trim_left_rtl_test() {
+  "  עברית  "
+  |> string.trim_left
+  |> should.equal("עברית  ")
+}
+
+pub fn trim_right_rtl_test() {
+  "  עברית  "
+  |> string.trim_right
+  |> should.equal("  עברית")
+}
+
 pub fn trim_right_test() {
   "  hats  \n"
   |> string.trim_right
@@ -182,10 +194,22 @@ pub fn trim_chars_left_test() {
   |> should.equal("hats..,")
 }
 
+pub fn trim_chars_left_rtl_test() {
+  "שמש"
+  |> string.trim_chars_left("ש")
+  |> should.equal("מש")
+}
+
 pub fn trim_chars_right_test() {
   ",..hats..,"
   |> string.trim_chars_right(",.")
   |> should.equal(",..hats")
+}
+
+pub fn trim_chars_right_rtl_test() {
+  "שמש"
+  |> string.trim_chars_right("ש")
+  |> should.equal("שמ")
 }
 
 // unicode whitespaces
