@@ -558,23 +558,23 @@ fn do_trim(string: String) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// trim_chars("..,hats,..", ".,")
+/// trim_with("..,hats,..", ".,")
 /// // -> "hats"
 /// ```
-pub fn trim_chars(string: String, charset: String) -> String {
-  do_trim_chars(string, charset)
+pub fn trim_with(string: String, charset: String) -> String {
+  do_trim_with(string, charset)
 }
 
-@external(javascript, "../gleam_stdlib.mjs", "trim_chars")
-fn do_trim_chars(string: String, charset: String) -> String {
-  erl_trim_chars(string, Both, erl_to_graphemes(charset))
+@external(javascript, "../gleam_stdlib.mjs", "trim_with")
+fn do_trim_with(string: String, charset: String) -> String {
+  erl_trim_with(string, Both, erl_to_graphemes(charset))
 }
 
 @external(erlang, "string", "trim")
 fn erl_trim(a: String, b: Direction) -> String
 
 @external(erlang, "string", "trim")
-fn erl_trim_chars(a: String, b: Direction, c: ErlGraphemes) -> String
+fn erl_trim_with(a: String, b: Direction, c: ErlGraphemes) -> String
 
 @external(erlang, "string", "to_graphemes")
 fn erl_to_graphemes(a: String) -> ErlGraphemes
@@ -641,16 +641,16 @@ fn do_trim_end(string: String) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// trim_chars_start("..,hats,..", ".,")
+/// trim_start_with("..,hats,..", ".,")
 /// // -> "hats,.."
 /// ```
-pub fn trim_chars_start(string: String, charset: String) -> String {
-  do_trim_chars_start(string, charset)
+pub fn trim_start_with(string: String, charset: String) -> String {
+  do_trim_start_with(string, charset)
 }
 
-@external(javascript, "../gleam_stdlib.mjs", "trim_chars_start")
-fn do_trim_chars_start(string: String, charset: String) -> String {
-  erl_trim_chars(string, Leading, erl_to_graphemes(charset))
+@external(javascript, "../gleam_stdlib.mjs", "trim_start_with")
+fn do_trim_start_with(string: String, charset: String) -> String {
+  erl_trim_with(string, Leading, erl_to_graphemes(charset))
 }
 
 /// Like `trim_end`, but removes the specified chars at the end of a `String`
@@ -658,16 +658,16 @@ fn do_trim_chars_start(string: String, charset: String) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// trim_chars_end("..,hats,..", ".,")
+/// trim_end_with("..,hats,..", ".,")
 /// // -> "..,hats"
 /// ```
-pub fn trim_chars_end(string: String, charset: String) -> String {
-  do_trim_chars_end(string, charset)
+pub fn trim_end_with(string: String, charset: String) -> String {
+  do_trim_end_with(string, charset)
 }
 
-@external(javascript, "../gleam_stdlib.mjs", "trim_chars_end")
-fn do_trim_chars_end(string: String, charset: String) -> String {
-  erl_trim_chars(string, Trailing, erl_to_graphemes(charset))
+@external(javascript, "../gleam_stdlib.mjs", "trim_end_with")
+fn do_trim_end_with(string: String, charset: String) -> String {
+  erl_trim_with(string, Trailing, erl_to_graphemes(charset))
 }
 
 /// Splits a non-empty `String` into its first element (head) and rest (tail).

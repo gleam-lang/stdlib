@@ -188,27 +188,27 @@ pub fn trim_end_test() {
   |> should.equal("  hats")
 }
 
-pub fn trim_chars_start_test() {
+pub fn trim_start_with_test() {
   ",..hats..,"
-  |> string.trim_chars_start(",.")
+  |> string.trim_start_with(",.")
   |> should.equal("hats..,")
 }
 
-pub fn trim_chars_start_rtl_test() {
+pub fn trim_start_with_rtl_test() {
   "שמש"
-  |> string.trim_chars_start("ש")
+  |> string.trim_start_with("ש")
   |> should.equal("מש")
 }
 
-pub fn trim_chars_end_test() {
+pub fn trim_end_with_test() {
   ",..hats..,"
-  |> string.trim_chars_end(",.")
+  |> string.trim_end_with(",.")
   |> should.equal(",..hats")
 }
 
-pub fn trim_chars_end_rtl_test() {
+pub fn trim_end_with_rtl_test() {
   "שמש"
-  |> string.trim_chars_end("ש")
+  |> string.trim_end_with("ש")
   |> should.equal("שמ")
 }
 
@@ -400,33 +400,33 @@ pub fn trim_comma_test() {
   |> should.equal("hats,")
 }
 
-pub fn trim_chars_test() {
+pub fn trim_with_test() {
   ",,hats,"
-  |> string.trim_chars(",")
+  |> string.trim_with(",")
   |> should.equal("hats")
 }
 
-pub fn trim_chars_commas_and_periods_test() {
+pub fn trim_with_commas_and_periods_test() {
   ",,hats,..."
-  |> string.trim_chars(",.")
+  |> string.trim_with(",.")
   |> should.equal("hats")
 }
 
-pub fn trim_chars_keeps_whitespace_not_in_charset_test() {
+pub fn trim_with_keeps_whitespace_not_in_charset_test() {
   ",,hats ,..."
-  |> string.trim_chars(",.")
+  |> string.trim_with(",.")
   |> should.equal("hats ")
 }
 
-pub fn trim_chars_does_not_trim_from_middle_of_string_test() {
+pub fn trim_with_does_not_trim_from_middle_of_string_test() {
   ",,hats,hats,hats,..."
-  |> string.trim_chars(",.")
+  |> string.trim_with(",.")
   |> should.equal("hats,hats,hats")
 }
 
-pub fn trim_chars_trims_complex_graphemes_test() {
+pub fn trim_with_trims_complex_graphemes_test() {
   "hats👍👍👍👍"
-  |> string.trim_chars("👍")
+  |> string.trim_with("👍")
   |> should.equal("hats")
 }
 

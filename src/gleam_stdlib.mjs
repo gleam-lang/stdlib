@@ -277,18 +277,18 @@ export function trim_end(string) {
   return string.replace(right_trim_regex, "");
 }
 
-export function trim_chars(string, charset) {
-    const trimmed_right = trim_chars_end(string, charset);
-    return trim_chars_start(trimmed_right, charset);
+export function trim_with(string, charset) {
+    const trimmed_right = trim_end_with(string, charset);
+    return trim_start_with(trimmed_right, charset);
 }
 
-export function trim_chars_start(string, charset) {
+export function trim_start_with(string, charset) {
   const trim_regexp = new_start_trim_regexp(charset);
 
   return string.replace(trim_regexp, "")
 }
 
-export function trim_chars_end(string, charset) {
+export function trim_end_with(string, charset) {
   const trim_regexp = new_right_trim_regexp(charset);
 
   return string.replace(trim_regexp, "")
