@@ -160,7 +160,7 @@ let segmenter = undefined;
 
 function graphemes_iterator(string) {
   if (globalThis.Intl && Intl.Segmenter) {
-    segmenter ??= new Intl.Segmenter();
+    segmenter ||= new Intl.Segmenter();
     return segmenter.segment(string)[Symbol.iterator]();
   }
 }
@@ -509,9 +509,9 @@ export function parse_query(query) {
       const [key, value] = section.split("=");
       if (!key) continue;
 
-      const decodedKey = unsafe_percent_decode_query(key)
-      const decodedValue = unsafe_percent_decode_query(value)
-      pairs.push([decodedKey, decodedValue])
+      const decodedKey = unsafe_percent_decode_query(key);
+      const decodedValue = unsafe_percent_decode_query(value);
+      pairs.push([decodedKey, decodedValue]);
     }
     return new Ok(List.fromArray(pairs));
   } catch {
@@ -938,7 +938,7 @@ export function bit_array_inspect(bits, acc) {
 export function bit_array_compare(first, second) {
   for (let i = 0; i < first.length; i++) {
     if (i >= second.length) {
-      return new Gt();  // first has more items
+      return new Gt(); // first has more items
     }
     const f = first.buffer[i];
     const s = second.buffer[i];
@@ -946,7 +946,7 @@ export function bit_array_compare(first, second) {
       return new Gt();
     }
     if (f < s) {
-      return new Lt()
+      return new Lt();
     }
   }
   // This means that either first did not have any items
@@ -954,5 +954,5 @@ export function bit_array_compare(first, second) {
   if (first.length === second.length) {
     return new Eq();
   }
-  return new Lt();  // second has more items
+  return new Lt(); // second has more items
 }
