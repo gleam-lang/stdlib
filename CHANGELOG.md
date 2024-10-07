@@ -5,6 +5,8 @@
 - The `bit_array` module gains the `compare` function.
 - The `float` modeule gains the `to_precision` function.
 - The `try_fold` function in the `iterator` module is now tail recursive.
+- The performance of many functions in the `string` module on the JavaScript
+  target has been improved.
 
 ## v0.40.0 - 2024-08-19
 
