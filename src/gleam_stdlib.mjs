@@ -156,9 +156,12 @@ export function graphemes(string) {
   }
 }
 
+let segmenter = undefined;
+
 function graphemes_iterator(string) {
   if (globalThis.Intl && Intl.Segmenter) {
-    return new Intl.Segmenter().segment(string)[Symbol.iterator]();
+    segmenter ??= new Intl.Segmenter();
+    return segmenter.segment(string)[Symbol.iterator]();
   }
 }
 
