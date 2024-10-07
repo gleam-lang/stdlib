@@ -438,10 +438,14 @@ pub fn concat(strings: List(String)) -> String {
 /// ```
 ///
 pub fn repeat(string: String, times times: Int) -> String {
-  iterator.repeat(string)
-  |> iterator.take(times)
-  |> iterator.to_list
-  |> concat
+  do_repeat(string, times, "")
+}
+
+fn do_repeat(string: String, times: Int, acc: String) -> String {
+  case times <= 0 {
+    True -> acc
+    False -> do_repeat(string, times - 1, acc <> string)
+  }
 }
 
 /// Joins many `String`s together with a given separator.
