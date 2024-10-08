@@ -1627,3 +1627,59 @@ pub fn each(over iterator: Iterator(a), with f: fn(a) -> b) -> Nil {
 pub fn yield(element: a, next: fn() -> Iterator(a)) -> Iterator(a) {
   Iterator(fn() { Continue(element, fn() { next().continuation() }) })
 }
+
+/// Returns an iterator of sliding windows.
+///
+/// ## Examples
+///
+/// ```gleam
+/// from_list([1,2,3,4,5])
+///   |> window(3)
+///   |> map(to_list)
+///   |> to_list
+/// // -> [[1, 2, 3], [2, 3, 4], [3, 4, 5]]
+/// ```
+///
+/// ```gleam
+/// from_list([1,2])
+///   |> window(4)
+///   |> map(to_list)
+///   |> to_list
+/// // -> []
+/// ```
+///
+pub fn window(i: Iterator(a), by n: Int) -> Iterator(Iterator(a)) {
+  let yield = fn(iterator) {
+    let window = take(iterator, n)
+
+    case length(window) == n {
+      True -> Next(window, drop(iterator, 1))
+      False -> Done
+    }
+  }
+
+  case n > 0 {
+    True -> unfold(from: i, with: yield)
+    False -> empty()
+  }
+}
+
+/// Returns an iterator of tuples containing two contiguous elements.
+///
+/// ## Examples
+///
+/// ```gleam
+/// window_by_2([1,2,3,4])
+///   |> to_list
+/// // -> [#(1, 2), #(2, 3), #(3, 4)]
+/// ```
+///
+/// ```gleam
+/// window_by_2([1])
+///   |> to_list
+/// // -> []
+/// ```
+///
+pub fn window_by_2(i: Iterator(a)) -> Iterator(#(a, a)) {
+  zip(i, drop(i, 1))
+}
