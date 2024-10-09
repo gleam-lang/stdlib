@@ -3,7 +3,9 @@
 //// all of the PCRE library is interfaced and some parts of the library go beyond
 //// what PCRE offers. Currently PCRE version 8.40 (release date 2017-01-11) is used.
 
+import gleam/list
 import gleam/option.{type Option}
+import gleam/string
 
 pub type Regex
 
@@ -214,3 +216,23 @@ pub fn replace(
   in string: String,
   with substitute: String,
 ) -> String
+
+/// Escapes all `Regex` characters in a given `String`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// regex.escape("hello$world^test")
+/// // -> "hello\\$world\\^test"
+/// ```
+///
+/// ```gleam
+/// regex.escape("$^.*+?()[]{}|\\")
+/// // -> "\\$\\^\\.\\*\\+\\?\\(\\)\\[\\]\\{\\}\\|\\\\"
+/// ```
+pub fn escape(input: String) -> String {
+  ["\\", "$", "^", ".", "*", "+", "?", "(", ")", "[", "]", "{", "}", "|"]
+  |> list.fold(input, fn(acc, char) {
+    string.replace(in: acc, each: char, with: "\\" <> char)
+  })
+}

@@ -185,3 +185,28 @@ pub fn replace_3_test() {
   regex.replace(re, "🐈🐈 are great!", "🐕")
   |> should.equal("🐕🐕 are great!")
 }
+
+pub fn escape_test() {
+  // Test escaping common regex symbols
+  let input = "$^.*+?()[]{}|\\"
+  let expected = "\\$\\^\\.\\*\\+\\?\\(\\)\\[\\]\\{\\}\\|\\\\"
+  input
+  |> regex.escape
+  |> should.equal(expected)
+}
+
+pub fn escape_no_special_chars_test() {
+  let input = "hello"
+  let expected = "hello"
+  input
+  |> regex.escape
+  |> should.equal(expected)
+}
+
+pub fn escape_mixed_string_test() {
+  let input = "hello$world^test"
+  let expected = "hello\\$world\\^test"
+  input
+  |> regex.escape
+  |> should.equal(expected)
+}
