@@ -1,5 +1,4 @@
 import gleam/int
-import gleam/iterator
 import gleam/list
 import gleam/order
 import gleam/should
@@ -393,27 +392,24 @@ pub fn undigits_test() {
 }
 
 pub fn random_test() {
-  let test_boundaries = fn(_accumulator, _element) {
-    int.random(0)
-    |> should.equal(0)
+  use _ <- list.each(list.range(0, 100))
 
-    int.random(1)
-    |> should.equal(0)
+  int.random(0)
+  |> should.equal(0)
 
-    int.random(-1)
-    |> should.equal(-1)
+  int.random(1)
+  |> should.equal(0)
 
-    int.random(2)
-    |> list.contains([0, 1], _)
-    |> should.be_true
+  int.random(-1)
+  |> should.equal(-1)
 
-    int.random(3)
-    |> list.contains([0, 1, 2], _)
-    |> should.be_true
-  }
-  list.range(0, 100)
-  |> iterator.from_list
-  |> iterator.fold(Nil, test_boundaries)
+  int.random(2)
+  |> list.contains([0, 1], _)
+  |> should.be_true
+
+  int.random(3)
+  |> list.contains([0, 1, 2], _)
+  |> should.be_true
 }
 
 pub fn divide_test() {

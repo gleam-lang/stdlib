@@ -1,7 +1,6 @@
 //// Strings in Gleam are UTF-8 binaries. They can be written in your code as
 //// text surrounded by `"double quotes"`.
 
-import gleam/iterator
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/order
