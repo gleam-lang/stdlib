@@ -424,7 +424,7 @@ pub fn replace(result: Result(a, e), value: b) -> Result(b, e) {
 /// // -> Ok(1)
 /// ```
 ///
-pub fn replace_error(result: Result(a, e1), error: e2) -> Result(a, e2) {
+pub fn replace_error(result: Result(a, e), error: f) -> Result(a, f) {
   case result {
     Ok(x) -> Ok(x)
     Error(_) -> Error(error)
