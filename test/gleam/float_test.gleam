@@ -1,6 +1,5 @@
 import gleam/float
 import gleam/int
-import gleam/iterator
 import gleam/list
 import gleam/order
 import gleam/result
@@ -392,8 +391,7 @@ pub fn random_test() {
   let iterations = 10_000
   let sum =
     list.range(0, iterations)
-    |> iterator.from_list()
-    |> iterator.fold(from: 0.0, with: fn(accumulator, _element) {
+    |> list.fold(from: 0.0, with: fn(accumulator, _element) {
       let i = float.random()
 
       { i <. 1.0 }
