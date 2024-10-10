@@ -331,14 +331,14 @@ pub fn lazy_or(first: Option(a), second: fn() -> Option(a)) -> Option(a) {
 fn do_values(list: List(Option(a)), acc: List(a)) -> List(a) {
   case list {
     [] -> acc
-    [x, ..xs] -> {
+    [first, ..rest] -> {
       let accumulate = fn(acc, item) {
         case item {
           Some(value) -> [value, ..acc]
           None -> acc
         }
       }
-      accumulate(do_values(xs, acc), x)
+      accumulate(do_values(rest, acc), first)
     }
   }
 }
