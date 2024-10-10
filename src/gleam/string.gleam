@@ -1,7 +1,6 @@
 //// Strings in Gleam are UTF-8 binaries. They can be written in your code as
 //// text surrounded by `"double quotes"`.
 
-import gleam/iterator
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/order
@@ -365,15 +364,18 @@ pub fn split(x: String, on substring: String) -> List(String) {
 /// ```
 ///
 pub fn split_once(
-  x: String,
+  string: String,
   on substring: String,
 ) -> Result(#(String, String), Nil) {
-  do_split_once(x, substring)
+  do_split_once(string, substring)
 }
 
 @external(javascript, "../gleam_stdlib.mjs", "split_once")
-fn do_split_once(x: String, substring: String) -> Result(#(String, String), Nil) {
-  case erl_split(x, substring) {
+fn do_split_once(
+  string: String,
+  substring: String,
+) -> Result(#(String, String), Nil) {
+  case erl_split(string, substring) {
     [first, rest] -> Ok(#(first, rest))
     _ -> Error(Nil)
   }
@@ -711,7 +713,7 @@ fn do_to_utf_codepoints(string: String) -> List(UtfCodepoint) {
 
 @target(javascript)
 @external(javascript, "../gleam_stdlib.mjs", "string_to_codepoint_integer_list")
-fn string_to_codepoint_integer_list(a: String) -> List(Int)
+fn string_to_codepoint_integer_list(string: String) -> List(Int)
 
 /// Converts a `List` of `UtfCodepoint`s to a `String`.
 ///
@@ -779,10 +781,10 @@ fn do_utf_codepoint_to_int(cp cp: UtfCodepoint) -> Int
 /// // -> Some("hats")
 /// ```
 ///
-pub fn to_option(s: String) -> Option(String) {
-  case s {
+pub fn to_option(string: String) -> Option(String) {
+  case string {
     "" -> None
-    _ -> Some(s)
+    _ -> Some(string)
   }
 }
 
@@ -802,8 +804,8 @@ pub fn to_option(s: String) -> Option(String) {
 /// // -> Ok("i")
 /// ```
 ///
-pub fn first(s: String) -> Result(String, Nil) {
-  case pop_grapheme(s) {
+pub fn first(string: String) -> Result(String, Nil) {
+  case pop_grapheme(string) {
     Ok(#(first, _)) -> Ok(first)
     Error(e) -> Error(e)
   }
@@ -825,8 +827,8 @@ pub fn first(s: String) -> Result(String, Nil) {
 /// // -> Ok("m")
 /// ```
 ///
-pub fn last(s: String) -> Result(String, Nil) {
-  case pop_grapheme(s) {
+pub fn last(string: String) -> Result(String, Nil) {
+  case pop_grapheme(string) {
     Ok(#(first, "")) -> Ok(first)
     Ok(#(_, rest)) -> Ok(slice(rest, -1, 1))
     Error(e) -> Error(e)
@@ -843,8 +845,8 @@ pub fn last(s: String) -> Result(String, Nil) {
 /// // -> "Mamouna"
 /// ```
 ///
-pub fn capitalise(s: String) -> String {
-  case pop_grapheme(s) {
+pub fn capitalise(string: String) -> String {
+  case pop_grapheme(string) {
     Ok(#(first, rest)) -> append(to: uppercase(first), suffix: lowercase(rest))
     _ -> ""
   }
@@ -859,7 +861,7 @@ pub fn inspect(term: anything) -> String {
 
 @external(erlang, "gleam_stdlib", "inspect")
 @external(javascript, "../gleam_stdlib.mjs", "inspect")
-fn do_inspect(term term: anything) -> StringBuilder
+fn do_inspect(term: anything) -> StringBuilder
 
 /// Returns the number of bytes in a `String`.
 ///
