@@ -85,9 +85,9 @@ pub fn string(from data: Dynamic) -> Result(String, DecodeErrors) {
 }
 
 fn map_errors(
-  result: Result(t, DecodeErrors),
+  result: Result(a, DecodeErrors),
   f: fn(DecodeError) -> DecodeError,
-) -> Result(t, DecodeErrors) {
+) -> Result(a, DecodeErrors) {
   result.map_error(result, list.map(_, f))
 }
 
@@ -467,7 +467,7 @@ fn decode_field(a: Dynamic, b: name) -> Result(Option(Dynamic), DecodeErrors)
 /// // ])
 /// ```
 ///
-pub fn element(at index: Int, of inner_type: Decoder(t)) -> Decoder(t) {
+pub fn element(at index: Int, of inner_type: Decoder(inner)) -> Decoder(inner) {
   fn(data: Dynamic) {
     use tuple <- result.try(decode_tuple(data))
     let size = tuple_size(tuple)
@@ -1018,7 +1018,7 @@ fn decode_map(a: Dynamic) -> Result(Dict(Dynamic, Dynamic), DecodeErrors)
 /// // -> Error(DecodeError(expected: "another type", found: "Int", path: []))
 /// ```
 ///
-pub fn any(of decoders: List(Decoder(t))) -> Decoder(t) {
+pub fn any(of decoders: List(Decoder(a))) -> Decoder(a) {
   fn(data) {
     case decoders {
       [] ->
