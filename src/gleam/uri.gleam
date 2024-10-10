@@ -179,7 +179,7 @@ fn extra_required(list: List(a), remaining: Int) -> Int {
   case list {
     _ if remaining == 0 -> 0
     [] -> remaining
-    [_, ..xs] -> extra_required(xs, remaining - 1)
+    [_, ..rest] -> extra_required(rest, remaining - 1)
   }
 }
 
