@@ -77,7 +77,7 @@ pub fn is_empty(dict: Dict(k, v)) -> Bool {
 ///
 @external(erlang, "maps", "to_list")
 @external(javascript, "../gleam_stdlib.mjs", "map_to_list")
-pub fn to_list(dict: Dict(key, value)) -> List(#(key, value))
+pub fn to_list(dict: Dict(k, v)) -> List(#(k, v))
 
 /// Converts a list of 2-element tuples `#(key, value)` to a dict.
 ///
@@ -124,13 +124,13 @@ fn do_has_key(key: k, dict: Dict(k, v)) -> Bool {
 
 /// Creates a fresh dict that contains no values.
 ///
-pub fn new() -> Dict(key, value) {
+pub fn new() -> Dict(k, v) {
   do_new()
 }
 
 @external(erlang, "maps", "new")
 @external(javascript, "../gleam_stdlib.mjs", "new_map")
-fn do_new() -> Dict(key, value)
+fn do_new() -> Dict(k, v)
 
 /// Fetches a value from a dict for a given key.
 ///
@@ -149,13 +149,13 @@ fn do_new() -> Dict(key, value)
 /// // -> Error(Nil)
 /// ```
 ///
-pub fn get(from: Dict(key, value), get: key) -> Result(value, Nil) {
+pub fn get(from: Dict(k, v), get: k) -> Result(v, Nil) {
   do_get(from, get)
 }
 
 @external(erlang, "gleam_stdlib", "map_get")
 @external(javascript, "../gleam_stdlib.mjs", "map_get")
-fn do_get(a: Dict(key, value), b: key) -> Result(value, Nil)
+fn do_get(dict: Dict(k, v), key: k) -> Result(v, Nil)
 
 /// Inserts a value into the dict with the given key.
 ///
@@ -180,7 +180,7 @@ pub fn insert(into dict: Dict(k, v), for key: k, insert value: v) -> Dict(k, v) 
 
 @external(erlang, "maps", "put")
 @external(javascript, "../gleam_stdlib.mjs", "map_insert")
-fn do_insert(a: key, b: value, c: Dict(key, value)) -> Dict(key, value)
+fn do_insert(key: k, value: v, dict: Dict(k, v)) -> Dict(k, v)
 
 /// Updates all values in a given dict by calling a given function on each key
 /// and value.
@@ -193,15 +193,14 @@ fn do_insert(a: key, b: value, c: Dict(key, value)) -> Dict(key, value)
 /// // -> from_list([#(3, 9), #(2, 8)])
 /// ```
 ///
-pub fn map_values(in dict: Dict(k, v), with fun: fn(k, v) -> w) -> Dict(k, w) {
+pub fn map_values(in dict: Dict(k, v), with fun: fn(k, v) -> a) -> Dict(k, a) {
   do_map_values(fun, dict)
 }
 
 @external(erlang, "maps", "map")
-fn do_map_values(f: fn(key, value) -> b, dict: Dict(key, value)) -> Dict(key, b) {
+fn do_map_values(f: fn(k, v) -> a, dict: Dict(k, v)) -> Dict(k, a) {
   let f = fn(dict, k, v) { insert(dict, k, f(k, v)) }
-  dict
-  |> fold(from: new(), with: f)
+  fold(dict, from: new(), with: f)
 }
 
 /// Gets a list of all keys in a given dict.
@@ -217,7 +216,7 @@ fn do_map_values(f: fn(key, value) -> b, dict: Dict(key, value)) -> Dict(key, b)
 /// // -> ["a", "b"]
 /// ```
 ///
-pub fn keys(dict: Dict(keys, v)) -> List(keys) {
+pub fn keys(dict: Dict(k, v)) -> List(k) {
   do_keys(dict)
 }
 
@@ -227,7 +226,7 @@ fn do_keys(dict: Dict(k, v)) -> List(k) {
   do_keys_acc(list_of_pairs, [])
 }
 
-fn reverse_and_concat(remaining, accumulator) {
+fn reverse_and_concat(remaining: List(a), accumulator: List(a)) -> List(a) {
   case remaining {
     [] -> accumulator
     [item, ..rest] -> reverse_and_concat(rest, [item, ..accumulator])
@@ -237,7 +236,7 @@ fn reverse_and_concat(remaining, accumulator) {
 fn do_keys_acc(list: List(#(k, v)), acc: List(k)) -> List(k) {
   case list {
     [] -> reverse_and_concat(acc, [])
-    [x, ..xs] -> do_keys_acc(xs, [x.0, ..acc])
+    [first, ..rest] -> do_keys_acc(rest, [first.0, ..acc])
   }
 }
 
@@ -254,7 +253,7 @@ fn do_keys_acc(list: List(#(k, v)), acc: List(k)) -> List(k) {
 /// // -> [0, 1]
 /// ```
 ///
-pub fn values(dict: Dict(k, values)) -> List(values) {
+pub fn values(dict: Dict(k, v)) -> List(v) {
   do_values(dict)
 }
 
@@ -267,7 +266,7 @@ fn do_values(dict: Dict(k, v)) -> List(v) {
 fn do_values_acc(list: List(#(k, v)), acc: List(v)) -> List(v) {
   case list {
     [] -> reverse_and_concat(acc, [])
-    [x, ..xs] -> do_values_acc(xs, [x.1, ..acc])
+    [first, ..rest] -> do_values_acc(rest, [first.1, ..acc])
   }
 }
 
@@ -296,10 +295,7 @@ pub fn filter(
 }
 
 @external(erlang, "maps", "filter")
-fn do_filter(
-  f: fn(key, value) -> Bool,
-  dict: Dict(key, value),
-) -> Dict(key, value) {
+fn do_filter(f: fn(k, v) -> Bool, dict: Dict(k, v)) -> Dict(k, v) {
   let insert = fn(dict, k, v) {
     case f(k, v) {
       True -> insert(dict, k, v)
@@ -349,7 +345,7 @@ fn insert_taken(
   }
   case desired_keys {
     [] -> acc
-    [x, ..xs] -> insert_taken(dict, xs, insert(acc, x))
+    [first, ..rest] -> insert_taken(dict, rest, insert(acc, first))
   }
 }
 
@@ -385,7 +381,7 @@ fn insert_pair(dict: Dict(k, v), pair: #(k, v)) -> Dict(k, v) {
 fn fold_inserts(new_entries: List(#(k, v)), dict: Dict(k, v)) -> Dict(k, v) {
   case new_entries {
     [] -> dict
-    [x, ..xs] -> fold_inserts(xs, insert_pair(dict, x))
+    [first, ..rest] -> fold_inserts(rest, insert_pair(dict, first))
   }
 }
 
@@ -435,7 +431,7 @@ fn do_delete(a: k, b: Dict(k, v)) -> Dict(k, v)
 pub fn drop(from dict: Dict(k, v), drop disallowed_keys: List(k)) -> Dict(k, v) {
   case disallowed_keys {
     [] -> dict
-    [x, ..xs] -> drop(delete(dict, x), xs)
+    [first, ..rest] -> drop(delete(dict, first), rest)
   }
 }
 
@@ -526,7 +522,7 @@ pub fn fold(
 ///
 /// let dict = from_list([#("a", "apple"), #("b", "banana"), #("c", "cherry")])
 ///
-/// each(dict, fn(key, value) {
+/// each(dict, fn(k, v) {
 ///   io.println(key <> " => " <> value)
 /// })
 /// // -> Nil
@@ -538,7 +534,7 @@ pub fn fold(
 /// The order of elements in the iteration is an implementation detail that
 /// should not be relied upon.
 ///
-pub fn each(dict: Dict(k, v), fun: fn(k, v) -> b) -> Nil {
+pub fn each(dict: Dict(k, v), fun: fn(k, v) -> a) -> Nil {
   fold(dict, Nil, fn(nil, k, v) {
     fun(k, v)
     nil
