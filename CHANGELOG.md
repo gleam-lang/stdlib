@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- The `debug` function in the `io` module has been deprecated in favour of
+  the `echo` keyword.
+
 ## v0.58.0 - 2025-03-23
 
 - The deprecated `pop` and `pop_map` functions have been removed from the
