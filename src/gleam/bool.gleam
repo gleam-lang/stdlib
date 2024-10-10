@@ -331,9 +331,9 @@ pub fn to_string(bool: Bool) -> String {
 ///
 pub fn guard(
   when requirement: Bool,
-  return consequence: t,
-  otherwise alternative: fn() -> t,
-) -> t {
+  return consequence: a,
+  otherwise alternative: fn() -> a,
+) -> a {
   case requirement {
     True -> consequence
     False -> alternative()
