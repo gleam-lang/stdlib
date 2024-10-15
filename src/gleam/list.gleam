@@ -1155,7 +1155,7 @@ pub fn intersperse(list: List(a), with elem: a) -> List(a) {
 
 /// Removes any duplicate elements from a given list.
 ///
-/// This function returns in loglinear time.
+/// This function returns in logarithmic time.
 ///
 /// ## Examples
 ///
@@ -1165,10 +1165,16 @@ pub fn intersperse(list: List(a), with elem: a) -> List(a) {
 /// ```
 ///
 pub fn unique(list: List(a)) -> List(a) {
-  case list {
-    [] -> []
-    [x, ..rest] -> [x, ..unique(filter(rest, fn(y) { y != x }))]
-  }
+  let #(result_rev, _) =
+    list
+    |> fold(#([], dict.new()), fn(acc, x) {
+      let #(result_rev, seen) = acc
+      case dict.has_key(seen, x) {
+        False -> #([x, ..result_rev], dict.insert(seen, x, Nil))
+        True -> #(result_rev, seen)
+      }
+    })
+  result_rev |> reverse
 }
 
 /// Sorts from smallest to largest based upon the ordering specified by a given
