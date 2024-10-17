@@ -313,6 +313,8 @@ pub fn or(first: Result(a, e), second: Result(a, e)) -> Result(a, e) {
 
 /// Returns the first value if it is `Ok`, otherwise evaluates the given function for a fallback value.
 ///
+/// If you need access to the initial error value, use `result.try_recover`.
+///
 /// ## Examples
 ///
 /// ```gleam
@@ -453,6 +455,8 @@ pub fn values(results: List(Result(a, e))) -> List(a) {
 ///
 /// This function is useful for chaining together computations that may fail
 /// and trying to recover from possible errors.
+///
+/// If you do not need access to the initial error value, use `result.lazy_or`.
 ///
 /// ## Examples
 ///
