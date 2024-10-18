@@ -52,13 +52,65 @@ pub fn parse_test() {
 }
 
 pub fn to_string_test() {
+  0.0
+  |> float.to_string
+  |> should.equal("0.0")
+
+  0.0123
+  |> float.to_string
+  |> should.equal("0.0123")
+
+  -0.0123
+  |> float.to_string
+  |> should.equal("-0.0123")
+
+  12.67
+  |> float.to_string
+  |> should.equal("12.67")
+
+  -12.67
+  |> float.to_string
+  |> should.equal("-12.67")
+
   123.0
   |> float.to_string
   |> should.equal("123.0")
 
-  -8.1
+  -123.0
   |> float.to_string
-  |> should.equal("-8.1")
+  |> should.equal("-123.0")
+
+  3.0e26
+  |> float.to_string
+  |> should.equal("3.0e26")
+
+  -3.0e26
+  |> float.to_string
+  |> should.equal("-3.0e26")
+
+  3.0e-26
+  |> float.to_string
+  |> should.equal("3.0e-26")
+
+  -3.0e-26
+  |> float.to_string
+  |> should.equal("-3.0e-26")
+
+  456.12e78
+  |> float.to_string
+  |> should.equal("4.5612e80")
+
+  -456.12e78
+  |> float.to_string
+  |> should.equal("-4.5612e80")
+
+  456.12e-78
+  |> float.to_string
+  |> should.equal("4.5612e-76")
+
+  -456.12e-78
+  |> float.to_string
+  |> should.equal("-4.5612e-76")
 }
 
 pub fn clamp_test() {
