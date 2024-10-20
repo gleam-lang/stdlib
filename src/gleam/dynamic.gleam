@@ -1087,7 +1087,7 @@ pub fn decode2(
   fn(value) {
     case t1(value), t2(value) {
       Ok(a), Ok(b) -> Ok(constructor(a, b))
-      a, b -> Error(list.concat([all_errors(a), all_errors(b)]))
+      a, b -> Error(list.flatten([all_errors(a), all_errors(b)]))
     }
   }
 }
@@ -1121,7 +1121,7 @@ pub fn decode3(
     case t1(value), t2(value), t3(value) {
       Ok(a), Ok(b), Ok(c) -> Ok(constructor(a, b, c))
       a, b, c ->
-        Error(list.concat([all_errors(a), all_errors(b), all_errors(c)]))
+        Error(list.flatten([all_errors(a), all_errors(b), all_errors(c)]))
     }
   }
 }
@@ -1169,7 +1169,7 @@ pub fn decode4(
       Ok(a), Ok(b), Ok(c), Ok(d) -> Ok(constructor(a, b, c, d))
       a, b, c, d ->
         Error(
-          list.concat([
+          list.flatten([
             all_errors(a),
             all_errors(b),
             all_errors(c),
@@ -1226,7 +1226,7 @@ pub fn decode5(
       Ok(a), Ok(b), Ok(c), Ok(d), Ok(e) -> Ok(constructor(a, b, c, d, e))
       a, b, c, d, e ->
         Error(
-          list.concat([
+          list.flatten([
             all_errors(a),
             all_errors(b),
             all_errors(c),
@@ -1288,7 +1288,7 @@ pub fn decode6(
         Ok(constructor(a, b, c, d, e, f))
       a, b, c, d, e, f ->
         Error(
-          list.concat([
+          list.flatten([
             all_errors(a),
             all_errors(b),
             all_errors(c),
@@ -1354,7 +1354,7 @@ pub fn decode7(
         Ok(constructor(a, b, c, d, e, f, g))
       a, b, c, d, e, f, g ->
         Error(
-          list.concat([
+          list.flatten([
             all_errors(a),
             all_errors(b),
             all_errors(c),
@@ -1424,7 +1424,7 @@ pub fn decode8(
         Ok(constructor(a, b, c, d, e, f, g, h))
       a, b, c, d, e, f, g, h ->
         Error(
-          list.concat([
+          list.flatten([
             all_errors(a),
             all_errors(b),
             all_errors(c),
@@ -1498,7 +1498,7 @@ pub fn decode9(
         Ok(constructor(a, b, c, d, e, f, g, h, i))
       a, b, c, d, e, f, g, h, i ->
         Error(
-          list.concat([
+          list.flatten([
             all_errors(a),
             all_errors(b),
             all_errors(c),

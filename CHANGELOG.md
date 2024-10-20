@@ -6,6 +6,8 @@
 - The `float` modeule gains the `to_precision` function.
 - The `try_fold` function in the `iterator` module is now tail recursive.
 - The performance of many functions in the `string` module has been improved.
+- The `concat` function in the `list` module has been deprecated in favour of
+  `flatten`.
 
 ## v0.40.0 - 2024-08-19
 
