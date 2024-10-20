@@ -699,6 +699,7 @@ fn do_concat(lists: List(List(a)), acc: List(a)) -> List(a) {
 /// // -> [1, 2, 3]
 /// ```
 ///
+@deprecated("Use `list.flatten` instead.")
 pub fn concat(lists: List(List(a))) -> List(a) {
   do_concat(lists, [])
 }
@@ -730,7 +731,7 @@ pub fn flatten(lists: List(List(a))) -> List(a) {
 ///
 pub fn flat_map(over list: List(a), with fun: fn(a) -> List(b)) -> List(b) {
   map(list, fun)
-  |> concat
+  |> flatten
 }
 
 /// Reduces a list of elements into a single value by calling a given function
@@ -1888,7 +1889,7 @@ pub fn permutations(list: List(a)) -> List(List(a)) {
         |> permutations
         |> map(fn(permutation) { [i, ..permutation] })
       })
-      |> concat
+      |> flatten
   }
 }
 
@@ -2216,7 +2217,7 @@ fn do_combination_pairs(items: List(a)) -> List(List(#(a, a))) {
 ///
 pub fn combination_pairs(items: List(a)) -> List(#(a, a)) {
   do_combination_pairs(items)
-  |> concat
+  |> flatten
 }
 
 /// Make a list alternating the elements from the given lists
@@ -2230,7 +2231,7 @@ pub fn combination_pairs(items: List(a)) -> List(#(a, a)) {
 ///
 pub fn interleave(list: List(List(a))) -> List(a) {
   transpose(list)
-  |> concat
+  |> flatten
 }
 
 /// Transpose rows and columns of the list of lists.
@@ -2262,7 +2263,7 @@ pub fn transpose(list_of_list: List(List(a))) -> List(List(a)) {
       let firsts =
         rows
         |> map(take_first)
-        |> concat
+        |> flatten
       let rest = transpose(map(rows, drop(_, 1)))
       [firsts, ..rest]
     }
