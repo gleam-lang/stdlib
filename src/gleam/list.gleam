@@ -1241,7 +1241,7 @@ type Sorting {
 /// - `direction` is the growing direction of the slice being grown, it could
 ///   either be ascending or strictly descending
 /// - `prev` is the previous element that needs to be added to the growing slice
-///   it is carried around to check wether we have to keep growing the current
+///   it is carried around to check whether we have to keep growing the current
 ///   slice or not
 /// - `acc` is the accumulator containing the slices sorted in ascending order
 ///
@@ -1272,7 +1272,7 @@ fn sequences(
         // In case the new element respects the ordering of the growing
         // sequence, then we just keep growing it.
         // Notice how a growing sequence is weakly growing (that is it can have
-        // consecutive equal items) while a descreasing sequence is strictly
+        // consecutive equal items) while a decreasing sequence is strictly
         // decreasing (no consecutive equal items), this is needed to make the
         // algorithm stable!
         order.Gt, Descending | order.Lt, Ascending | order.Eq, Ascending ->
