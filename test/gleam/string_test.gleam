@@ -848,8 +848,14 @@ pub fn inspect_test() {
   string.inspect(-1.5)
   |> should.equal("-1.5")
 
+  string.inspect(5.0e-26)
+  |> should.equal("5.0e-26")
+
   string.inspect(1.5)
   |> should.equal("1.5")
+
+  string.inspect(-5.0e-26)
+  |> should.equal("-5.0e-26")
 
   string.inspect([1.5])
   |> should.equal("[1.5]")

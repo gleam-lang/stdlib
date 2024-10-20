@@ -47,11 +47,16 @@ export function to_string(term) {
 }
 
 export function float_to_string(float) {
-  const string = float.toString();
+  const string = float.toString().replace('+', '');
   if (string.indexOf(".") >= 0) {
     return string;
   } else {
-    return string + ".0";
+    const index = string.indexOf("e");
+    if (index >= 0) {
+      return string.slice(0, index) + '.0' + string.slice(index);
+    } else {
+      return string + ".0";
+    }
   }
 }
 
@@ -837,7 +842,8 @@ export function inspect(v) {
   if (v === null) return "//js(null)";
   if (v === undefined) return "Nil";
   if (t === "string") return inspectString(v);
-  if (t === "bigint" || t === "number") return v.toString();
+  if (t === "bigint" || Number.isInteger(v)) return v.toString();
+  if (t === "number") return float_to_string(v);
   if (Array.isArray(v)) return `#(${v.map(inspect).join(", ")})`;
   if (v instanceof List) return inspectList(v);
   if (v instanceof UtfCodepoint) return inspectUtfCodepoint(v);
