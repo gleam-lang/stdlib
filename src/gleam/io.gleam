@@ -105,6 +105,7 @@ fn do_println_error(string string: String) -> Nil
 /// // [2, 3]
 /// ```
 ///
+@deprecated("To debug print a value use the `echo` keyword instead")
 pub fn debug(term: anything) -> anything {
   term
   |> string.inspect
