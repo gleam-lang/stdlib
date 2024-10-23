@@ -77,10 +77,7 @@ pub fn or(a: Bool, b: Bool) -> Bool {
 /// ```
 ///
 pub fn negate(bool: Bool) -> Bool {
-  case bool {
-    True -> False
-    False -> True
-  }
+  !bool
 }
 
 /// Returns the nor of two bools.
@@ -108,12 +105,7 @@ pub fn negate(bool: Bool) -> Bool {
 /// ```
 ///
 pub fn nor(a: Bool, b: Bool) -> Bool {
-  case a, b {
-    False, False -> True
-    False, True -> False
-    True, False -> False
-    True, True -> False
-  }
+  !{a || b}
 }
 
 /// Returns the nand of two bools.
@@ -141,12 +133,7 @@ pub fn nor(a: Bool, b: Bool) -> Bool {
 /// ```
 ///
 pub fn nand(a: Bool, b: Bool) -> Bool {
-  case a, b {
-    False, False -> True
-    False, True -> True
-    True, False -> True
-    True, True -> False
-  }
+  !{a && b}
 }
 
 /// Returns the exclusive or of two bools.
@@ -174,12 +161,7 @@ pub fn nand(a: Bool, b: Bool) -> Bool {
 /// ```
 ///
 pub fn exclusive_or(a: Bool, b: Bool) -> Bool {
-  case a, b {
-    False, False -> False
-    False, True -> True
-    True, False -> True
-    True, True -> False
-  }
+  a != b
 }
 
 /// Returns the exclusive nor of two bools.
@@ -207,12 +189,7 @@ pub fn exclusive_or(a: Bool, b: Bool) -> Bool {
 /// ```
 ///
 pub fn exclusive_nor(a: Bool, b: Bool) -> Bool {
-  case a, b {
-    False, False -> True
-    False, True -> False
-    True, False -> False
-    True, True -> True
-  }
+  a == b
 }
 
 /// Compares two bools and returns the first value's `Order` to the second.
