@@ -105,7 +105,7 @@ pub fn negate(bool: Bool) -> Bool {
 /// ```
 ///
 pub fn nor(a: Bool, b: Bool) -> Bool {
-  !{a || b}
+  !{ a || b }
 }
 
 /// Returns the nand of two bools.
@@ -133,7 +133,7 @@ pub fn nor(a: Bool, b: Bool) -> Bool {
 /// ```
 ///
 pub fn nand(a: Bool, b: Bool) -> Bool {
-  !{a && b}
+  !{ a && b }
 }
 
 /// Returns the exclusive or of two bools.
