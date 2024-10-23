@@ -28,7 +28,7 @@ jobs:
       - uses: erlef/setup-beam@v1
         with:
           otp-version: ${{ matrix.erlang_version }}
-          gleam-version: "1.4.0"
+          gleam-version: "1.5.1"
       - run: gleam test --target erlang
       - run: gleam format --check src test
 
@@ -44,7 +44,7 @@ jobs:
       - uses: erlef/setup-beam@v1
         with:
           otp-version: "27.0"
-          gleam-version: "1.4.0"
+          gleam-version: "1.5.1"
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node_version }}
