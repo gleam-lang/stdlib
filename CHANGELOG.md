@@ -7,10 +7,8 @@
 - The `iterator.try_fold` function is now tail recursive.
 - The performance of many functions in the `string` module has been improved.
 - The `list.concat` function has been deprecated in favour of `list.flatten`.
-- The handling of exponentials and signs in the `float.to_string` function has
-  been improved on JavaScript.
-- The `string.inspect` function delegates the inspection of floats to
-  `float.to_string`.
+- The handling of float exponentials and signs in the `float.to_string` and
+  `string.inspect` functions have been improved on JavaScript.
 
 ## v0.40.0 - 2024-08-19
 
