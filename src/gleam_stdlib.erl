@@ -206,8 +206,13 @@ string_pop_grapheme(String) ->
 bit_array_concat(BitArrays) ->
     list_to_bitstring(BitArrays).
 
+-if(?OTP_RELEASE >= 26).
 bit_array_base64_encode(Bin, Padding) ->
     base64:encode(Bin, #{padding => Padding}).
+-else.
+bit_array_base64_encode(_Bin, _Padding) ->
+    erlang:error(<<"Erlang OTP/26 or higher is required to use base64:encode">>).
+-endif.
 
 bit_array_slice(Bin, Pos, Len) ->
     try {ok, binary:part(Bin, Pos, Len)}
