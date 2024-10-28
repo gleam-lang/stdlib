@@ -1,3 +1,8 @@
 {
+  "editor.rulers": [80],
+  "editor.formatOnSave": true,
+  "[gleam]": {
+    "editor.defaultFormatter": "gleam.gleam"
+  },
   "deno.enable": true
 }
