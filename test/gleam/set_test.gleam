@@ -163,9 +163,9 @@ pub fn each_test() {
   [1, 2, 3]
   |> set.from_list
   |> set.each(fn(member) {
-    let assert True = case member {
-      1 | 2 | 3 -> True
-      _ -> False
+    case member {
+      1 | 2 | 3 -> Nil
+      _ -> panic as "unexpected value"
     }
   })
   |> should.equal(Nil)

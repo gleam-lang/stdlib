@@ -387,8 +387,6 @@ pub fn symmetric_difference(
 /// Useful for producing a side effect for every item of a set.
 ///
 /// ```gleam
-/// import gleam/io
-///
 /// let set = from_list(["apple", "banana", "cherry"])
 ///
 /// each(set, io.println)
