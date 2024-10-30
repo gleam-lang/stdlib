@@ -380,3 +380,30 @@ pub fn symmetric_difference(
     minus: intersection(of: first, and: second),
   )
 }
+
+/// Calls a function for each member in a set, discarding the return
+/// value.
+///
+/// Useful for producing a side effect for every item of a set.
+///
+/// ```gleam
+/// import gleam/io
+///
+/// let set = from_list(["apple", "banana", "cherry"])
+///
+/// each(set, io.println)
+/// // -> Nil
+/// // apple
+/// // banana
+/// // cherry
+/// ```
+///
+/// The order of elements in the iteration is an implementation detail that
+/// should not be relied upon.
+///
+pub fn each(set: Set(member), fun: fn(member) -> a) -> Nil {
+  fold(set, Nil, fn(nil, member) {
+    fun(member)
+    nil
+  })
+}
