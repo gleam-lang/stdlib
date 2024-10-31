@@ -1,6 +1,8 @@
 # Changelog
 
-## v0.41.0 - Unreleased
+## v0.41.0 - 2024-10-31
+
+Happy Samhain! 🎃
 
 - The `bit_array` module gains the `compare` function.
 - The `float` module gains the `to_precision` function.
