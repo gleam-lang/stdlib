@@ -857,6 +857,11 @@ pub fn capitalise(string: String) -> String {
   }
 }
 
+/// Alias for [capitalise](#capitalise)
+pub fn capitalize(string: String) -> String {
+  capitalise(string)
+}
+
 /// Returns a `String` representation of a term in Gleam syntax.
 ///
 pub fn inspect(term: anything) -> String {

@@ -778,6 +778,40 @@ pub fn capitalise_test() {
   |> should.equal("る")
 }
 
+pub fn capitalize_test() {
+  ""
+  |> string.capitalize
+  |> should.equal("")
+
+  "gleam"
+  |> string.capitalize
+  |> should.equal("Gleam")
+
+  "GLEAM"
+  |> string.capitalize
+  |> should.equal("Gleam")
+
+  "g l e a m"
+  |> string.capitalize
+  |> should.equal("G l e a m")
+
+  "1GLEAM"
+  |> string.capitalize
+  |> should.equal("1gleam")
+
+  "_gLeAm1"
+  |> string.capitalize
+  |> should.equal("_gleam1")
+
+  " gLeAm1"
+  |> string.capitalize
+  |> should.equal(" gleam1")
+
+  "る"
+  |> string.capitalize
+  |> should.equal("る")
+}
+
 type InspectType(a, b) {
   InspectTypeZero
   InspectTypeOne(a)
