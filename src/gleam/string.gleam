@@ -543,6 +543,11 @@ fn padding(size: Int, pad_string: String) -> String {
 
 /// Removes whitespace on both sides of a `String`.
 ///
+/// Whitespace in this function is the set of nonbreakable whitespace
+/// codepoints, defined as Pattern_White_Space in [Unicode Standard Annex #31][1].
+///
+/// [1]: https://unicode.org/reports/tr31/
+///
 /// ## Examples
 ///
 /// ```gleam
