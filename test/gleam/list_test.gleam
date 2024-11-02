@@ -156,6 +156,28 @@ pub fn filter_test() {
   |> list.filter(fn(x) { x == -1 })
 }
 
+pub fn reject_test() {
+  []
+  |> list.reject(fn(_) { False })
+  |> should.equal([])
+
+  [0, 4, 5, 7, 3]
+  |> list.reject(fn(_) { False })
+  |> should.equal([0, 4, 5, 7, 3])
+
+  [0, 4, 5, 7, 3]
+  |> list.reject(fn(x) { x > 4 })
+  |> should.equal([0, 4, 3])
+
+  [0, 4, 5, 7, 3]
+  |> list.reject(fn(x) { x < 4 })
+  |> should.equal([4, 5, 7])
+
+  // TCO test
+  list.range(0, recursion_test_cycles)
+  |> list.reject(fn(x) { x == -1 })
+}
+
 pub fn filter_map_test() {
   [2, 4, 6, 1]
   |> list.filter_map(fn(x) { Ok(x + 1) })

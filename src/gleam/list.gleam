@@ -331,6 +331,25 @@ pub fn filter(list: List(a), keeping predicate: fn(a) -> Bool) -> List(a) {
   do_filter(list, predicate, [])
 }
 
+/// Returns a new list containing only the elements from the first list for
+/// which the given functions returns `False`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// reject([2, 4, 6, 1], fn(x) { x > 2 })
+/// // -> [2, 1]
+/// ```
+///
+/// ```gleam
+/// reject([2, 4, 6, 1], fn(x) { x > 6 })
+/// // -> [2, 4, 6, 1]
+/// ```
+///
+pub fn reject(list: List(a), keeping predicate: fn(a) -> Bool) -> List(a) {
+  filter(list, fn(x) { !predicate(x) })
+}
+
 fn do_filter_map(
   list: List(a),
   fun: fn(a) -> Result(b, e),
