@@ -223,7 +223,7 @@ pub fn keys(dict: Dict(k, v)) -> List(k) {
 @external(erlang, "maps", "keys")
 fn do_keys(dict: Dict(k, v)) -> List(k) {
   let list_of_pairs = to_list(dict)
-  do_keys_acc(list_of_pairs, [])
+  do_keys_loop(list_of_pairs, [])
 }
 
 fn reverse_and_concat(remaining: List(a), accumulator: List(a)) -> List(a) {
@@ -233,10 +233,10 @@ fn reverse_and_concat(remaining: List(a), accumulator: List(a)) -> List(a) {
   }
 }
 
-fn do_keys_acc(list: List(#(k, v)), acc: List(k)) -> List(k) {
+fn do_keys_loop(list: List(#(k, v)), acc: List(k)) -> List(k) {
   case list {
     [] -> reverse_and_concat(acc, [])
-    [first, ..rest] -> do_keys_acc(rest, [first.0, ..acc])
+    [first, ..rest] -> do_keys_loop(rest, [first.0, ..acc])
   }
 }
 
@@ -260,13 +260,13 @@ pub fn values(dict: Dict(k, v)) -> List(v) {
 @external(erlang, "maps", "values")
 fn do_values(dict: Dict(k, v)) -> List(v) {
   let list_of_pairs = to_list(dict)
-  do_values_acc(list_of_pairs, [])
+  do_values_loop(list_of_pairs, [])
 }
 
-fn do_values_acc(list: List(#(k, v)), acc: List(v)) -> List(v) {
+fn do_values_loop(list: List(#(k, v)), acc: List(v)) -> List(v) {
   case list {
     [] -> reverse_and_concat(acc, [])
-    [first, ..rest] -> do_values_acc(rest, [first.1, ..acc])
+    [first, ..rest] -> do_values_loop(rest, [first.1, ..acc])
   }
 }
 
@@ -302,8 +302,8 @@ fn do_filter(f: fn(k, v) -> Bool, dict: Dict(k, v)) -> Dict(k, v) {
       _ -> dict
     }
   }
-  dict
-  |> fold(from: new(), with: insert)
+
+  fold(dict, from: new(), with: insert)
 }
 
 /// Creates a new dict from a given dict, only including any entries for which the
@@ -329,10 +329,10 @@ pub fn take(from dict: Dict(k, v), keeping desired_keys: List(k)) -> Dict(k, v) 
 
 @external(erlang, "maps", "with")
 fn do_take(desired_keys: List(k), dict: Dict(k, v)) -> Dict(k, v) {
-  insert_taken(dict, desired_keys, new())
+  do_take_loop(dict, desired_keys, new())
 }
 
-fn insert_taken(
+fn do_take_loop(
   dict: Dict(k, v),
   desired_keys: List(k),
   acc: Dict(k, v),
@@ -345,7 +345,7 @@ fn insert_taken(
   }
   case desired_keys {
     [] -> acc
-    [first, ..rest] -> insert_taken(dict, rest, insert(acc, first))
+    [first, ..rest] -> do_take_loop(dict, rest, insert(acc, first))
   }
 }
 
@@ -470,13 +470,6 @@ pub fn upsert(
   |> insert(dict, key, _)
 }
 
-fn do_fold(list: List(#(k, v)), initial: acc, fun: fn(acc, k, v) -> acc) -> acc {
-  case list {
-    [] -> initial
-    [#(k, v), ..rest] -> do_fold(rest, fun(initial, k, v), fun)
-  }
-}
-
 /// Combines all entries into a single value by calling a given function on each
 /// one.
 ///
@@ -507,9 +500,18 @@ pub fn fold(
   from initial: acc,
   with fun: fn(acc, k, v) -> acc,
 ) -> acc {
-  dict
-  |> to_list
-  |> do_fold(initial, fun)
+  fold_loop(to_list(dict), initial, fun)
+}
+
+fn fold_loop(
+  list: List(#(k, v)),
+  initial: acc,
+  fun: fn(acc, k, v) -> acc,
+) -> acc {
+  case list {
+    [] -> initial
+    [#(k, v), ..rest] -> fold_loop(rest, fun(initial, k, v), fun)
+  }
 }
 
 /// Calls a function for each key and value in a dict, discarding the return

@@ -380,14 +380,14 @@ pub fn all(results: List(Result(a, e))) -> Result(List(a), e) {
 /// ```
 ///
 pub fn partition(results: List(Result(a, e))) -> #(List(a), List(e)) {
-  do_partition(results, [], [])
+  partition_loop(results, [], [])
 }
 
-fn do_partition(results: List(Result(a, e)), oks: List(a), errors: List(e)) {
+fn partition_loop(results: List(Result(a, e)), oks: List(a), errors: List(e)) {
   case results {
     [] -> #(oks, errors)
-    [Ok(a), ..rest] -> do_partition(rest, [a, ..oks], errors)
-    [Error(e), ..rest] -> do_partition(rest, oks, [e, ..errors])
+    [Ok(a), ..rest] -> partition_loop(rest, [a, ..oks], errors)
+    [Error(e), ..rest] -> partition_loop(rest, oks, [e, ..errors])
   }
 }
 

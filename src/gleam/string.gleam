@@ -435,13 +435,13 @@ pub fn concat(strings: List(String)) -> String {
 /// ```
 ///
 pub fn repeat(string: String, times times: Int) -> String {
-  do_repeat(string, times, "")
+  repeat_loop(string, times, "")
 }
 
-fn do_repeat(string: String, times: Int, acc: String) -> String {
+fn repeat_loop(string: String, times: Int, acc: String) -> String {
   case times <= 0 {
     True -> acc
-    False -> do_repeat(string, times - 1, acc <> string)
+    False -> repeat_loop(string, times - 1, acc <> string)
   }
 }
 
@@ -641,13 +641,13 @@ fn do_pop_grapheme(string string: String) -> Result(#(String, String), Nil)
 ///
 @external(javascript, "../gleam_stdlib.mjs", "graphemes")
 pub fn to_graphemes(string: String) -> List(String) {
-  do_to_graphemes(string, [])
+  to_graphemes_loop(string, [])
   |> list.reverse
 }
 
-fn do_to_graphemes(string: String, acc: List(String)) -> List(String) {
+fn to_graphemes_loop(string: String, acc: List(String)) -> List(String) {
   case pop_grapheme(string) {
-    Ok(#(grapheme, rest)) -> do_to_graphemes(rest, [grapheme, ..acc])
+    Ok(#(grapheme, rest)) -> to_graphemes_loop(rest, [grapheme, ..acc])
     _ -> acc
   }
 }
@@ -688,19 +688,18 @@ pub fn to_utf_codepoints(string: String) -> List(UtfCodepoint) {
 
 @target(erlang)
 fn do_to_utf_codepoints(string: String) -> List(UtfCodepoint) {
-  do_to_utf_codepoints_impl(<<string:utf8>>, [])
-  |> list.reverse
+  to_utf_codepoints_loop(<<string:utf8>>, [])
 }
 
 @target(erlang)
-fn do_to_utf_codepoints_impl(
+fn to_utf_codepoints_loop(
   bit_array: BitArray,
   acc: List(UtfCodepoint),
 ) -> List(UtfCodepoint) {
   case bit_array {
     <<first:utf8_codepoint, rest:bytes>> ->
-      do_to_utf_codepoints_impl(rest, [first, ..acc])
-    _ -> acc
+      to_utf_codepoints_loop(rest, [first, ..acc])
+    _ -> list.reverse(acc)
   }
 }
 

@@ -48,20 +48,20 @@ pub fn slice(
 /// Tests to see whether a bit array is valid UTF-8.
 ///
 pub fn is_utf8(bits: BitArray) -> Bool {
-  do_is_utf8(bits)
+  is_utf8_loop(bits)
 }
 
 @target(erlang)
-fn do_is_utf8(bits: BitArray) -> Bool {
+fn is_utf8_loop(bits: BitArray) -> Bool {
   case bits {
     <<>> -> True
-    <<_:utf8, rest:bytes>> -> do_is_utf8(rest)
+    <<_:utf8, rest:bytes>> -> is_utf8_loop(rest)
     _ -> False
   }
 }
 
 @target(javascript)
-fn do_is_utf8(bits: BitArray) -> Bool {
+fn is_utf8_loop(bits: BitArray) -> Bool {
   case to_string(bits) {
     Ok(_) -> True
     _ -> False
@@ -158,11 +158,11 @@ pub fn base16_decode(input: String) -> Result(BitArray, Nil)
 /// ```
 ///
 pub fn inspect(input: BitArray) -> String {
-  do_inspect(input, "<<") <> ">>"
+  inspect_loop(input, "<<") <> ">>"
 }
 
 @external(javascript, "../gleam_stdlib.mjs", "bit_array_inspect")
-fn do_inspect(input: BitArray, accumulator: String) -> String {
+fn inspect_loop(input: BitArray, accumulator: String) -> String {
   case input {
     <<>> -> accumulator
 
@@ -181,8 +181,7 @@ fn do_inspect(input: BitArray, accumulator: String) -> String {
       }
 
       let accumulator = accumulator <> int.to_string(x) <> suffix
-
-      do_inspect(rest, accumulator)
+      inspect_loop(rest, accumulator)
     }
 
     _ -> accumulator

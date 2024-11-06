@@ -403,14 +403,13 @@ pub fn negate(x: Float) -> Float {
 /// ```
 ///
 pub fn sum(numbers: List(Float)) -> Float {
-  numbers
-  |> do_sum(0.0)
+  sum_loop(numbers, 0.0)
 }
 
-fn do_sum(numbers: List(Float), initial: Float) -> Float {
+fn sum_loop(numbers: List(Float), initial: Float) -> Float {
   case numbers {
+    [x, ..rest] -> sum_loop(rest, x +. initial)
     [] -> initial
-    [x, ..rest] -> do_sum(rest, x +. initial)
   }
 }
 
@@ -426,14 +425,14 @@ fn do_sum(numbers: List(Float), initial: Float) -> Float {
 pub fn product(numbers: List(Float)) -> Float {
   case numbers {
     [] -> 1.0
-    _ -> do_product(numbers, 1.0)
+    _ -> product_loop(numbers, 1.0)
   }
 }
 
-fn do_product(numbers: List(Float), initial: Float) -> Float {
+fn product_loop(numbers: List(Float), initial: Float) -> Float {
   case numbers {
+    [x, ..rest] -> product_loop(rest, x *. initial)
     [] -> initial
-    [x, ..rest] -> do_product(rest, x *. initial)
   }
 }
 
