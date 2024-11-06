@@ -427,14 +427,13 @@ pub fn negate(x: Int) -> Int {
 /// ```
 ///
 pub fn sum(numbers: List(Int)) -> Int {
-  numbers
-  |> do_sum(0)
+  sum_loop(numbers, 0)
 }
 
-fn do_sum(numbers: List(Int), initial: Int) -> Int {
+fn sum_loop(numbers: List(Int), initial: Int) -> Int {
   case numbers {
+    [x, ..rest] -> sum_loop(rest, x + initial)
     [] -> initial
-    [x, ..rest] -> do_sum(rest, x + initial)
   }
 }
 
@@ -450,14 +449,14 @@ fn do_sum(numbers: List(Int), initial: Int) -> Int {
 pub fn product(numbers: List(Int)) -> Int {
   case numbers {
     [] -> 1
-    _ -> do_product(numbers, 1)
+    _ -> product_loop(numbers, 1)
   }
 }
 
-fn do_product(numbers: List(Int), initial: Int) -> Int {
+fn product_loop(numbers: List(Int), initial: Int) -> Int {
   case numbers {
+    [x, ..rest] -> product_loop(rest, x * initial)
     [] -> initial
-    [x, ..rest] -> do_product(rest, x * initial)
   }
 }
 
@@ -479,14 +478,14 @@ fn do_product(numbers: List(Int), initial: Int) -> Int {
 pub fn digits(x: Int, base: Int) -> Result(List(Int), Nil) {
   case base < 2 {
     True -> Error(Nil)
-    False -> Ok(do_digits(x, base, []))
+    False -> Ok(digits_loop(x, base, []))
   }
 }
 
-fn do_digits(x: Int, base: Int, acc: List(Int)) -> List(Int) {
+fn digits_loop(x: Int, base: Int, acc: List(Int)) -> List(Int) {
   case absolute_value(x) < base {
     True -> [x, ..acc]
-    False -> do_digits(x / base, base, [x % base, ..acc])
+    False -> digits_loop(x / base, base, [x % base, ..acc])
   }
 }
 
@@ -513,15 +512,15 @@ fn do_digits(x: Int, base: Int, acc: List(Int)) -> List(Int) {
 pub fn undigits(numbers: List(Int), base: Int) -> Result(Int, Nil) {
   case base < 2 {
     True -> Error(Nil)
-    False -> do_undigits(numbers, base, 0)
+    False -> undigits_loop(numbers, base, 0)
   }
 }
 
-fn do_undigits(numbers: List(Int), base: Int, acc: Int) -> Result(Int, Nil) {
+fn undigits_loop(numbers: List(Int), base: Int, acc: Int) -> Result(Int, Nil) {
   case numbers {
     [] -> Ok(acc)
     [digit, ..] if digit >= base -> Error(Nil)
-    [digit, ..rest] -> do_undigits(rest, base, acc * base + digit)
+    [digit, ..rest] -> undigits_loop(rest, base, acc * base + digit)
   }
 }
 

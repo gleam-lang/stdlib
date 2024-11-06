@@ -21,21 +21,6 @@ pub type Option(a) {
   None
 }
 
-fn do_all(list: List(Option(a)), acc: List(a)) -> Option(List(a)) {
-  case list {
-    [] -> Some(acc)
-    [x, ..rest] -> {
-      let accumulate = fn(acc, item) {
-        case acc, item {
-          Some(values), Some(value) -> Some([value, ..values])
-          _, _ -> None
-        }
-      }
-      accumulate(do_all(rest, acc), x)
-    }
-  }
-}
-
 /// Combines a list of `Option`s into a single `Option`.
 /// If all elements in the list are `Some` then returns a `Some` holding the list of values.
 /// If any element is `None` then returns`None`.
@@ -53,7 +38,22 @@ fn do_all(list: List(Option(a)), acc: List(a)) -> Option(List(a)) {
 /// ```
 ///
 pub fn all(list: List(Option(a))) -> Option(List(a)) {
-  do_all(list, [])
+  all_loop(list, [])
+}
+
+fn all_loop(list: List(Option(a)), acc: List(a)) -> Option(List(a)) {
+  case list {
+    [] -> Some(acc)
+    [x, ..rest] -> {
+      let accumulate = fn(acc, item) {
+        case acc, item {
+          Some(values), Some(value) -> Some([value, ..values])
+          _, _ -> None
+        }
+      }
+      accumulate(all_loop(rest, acc), x)
+    }
+  }
 }
 
 /// Checks whether the `Option` is a `Some` value.
@@ -328,21 +328,6 @@ pub fn lazy_or(first: Option(a), second: fn() -> Option(a)) -> Option(a) {
   }
 }
 
-fn do_values(list: List(Option(a)), acc: List(a)) -> List(a) {
-  case list {
-    [] -> acc
-    [first, ..rest] -> {
-      let accumulate = fn(acc, item) {
-        case item {
-          Some(value) -> [value, ..acc]
-          None -> acc
-        }
-      }
-      accumulate(do_values(rest, acc), first)
-    }
-  }
-}
-
 /// Given a list of `Option`s,
 /// returns only the values inside `Some`.
 ///
@@ -354,5 +339,20 @@ fn do_values(list: List(Option(a)), acc: List(a)) -> List(a) {
 /// ```
 ///
 pub fn values(options: List(Option(a))) -> List(a) {
-  do_values(options, [])
+  values_loop(options, [])
+}
+
+fn values_loop(list: List(Option(a)), acc: List(a)) -> List(a) {
+  case list {
+    [] -> acc
+    [first, ..rest] -> {
+      let accumulate = fn(acc, item) {
+        case item {
+          Some(value) -> [value, ..acc]
+          None -> acc
+        }
+      }
+      accumulate(values_loop(rest, acc), first)
+    }
+  }
 }

@@ -38,19 +38,6 @@ fn stop() -> Action(element) {
   Stop
 }
 
-// Creating Iterators
-fn do_unfold(
-  initial: acc,
-  f: fn(acc) -> Step(element, acc),
-) -> fn() -> Action(element) {
-  fn() {
-    case f(initial) {
-      Next(x, acc) -> Continue(x, do_unfold(acc, f))
-      Done -> Stop
-    }
-  }
-}
-
 /// Creates an iterator from a given function and accumulator.
 ///
 /// The function is called on the accumulator and returns either `Done`,
@@ -77,8 +64,21 @@ pub fn unfold(
   with f: fn(acc) -> Step(element, acc),
 ) -> Iterator(element) {
   initial
-  |> do_unfold(f)
+  |> unfold_loop(f)
   |> Iterator
+}
+
+// Creating Iterators
+fn unfold_loop(
+  initial: acc,
+  f: fn(acc) -> Step(element, acc),
+) -> fn() -> Action(element) {
+  fn() {
+    case f(initial) {
+      Next(x, acc) -> Continue(x, unfold_loop(acc, f))
+      Done -> Stop
+    }
+  }
 }
 
 /// Creates an iterator that yields values created by calling a given function
@@ -131,7 +131,7 @@ pub fn from_list(list: List(element)) -> Iterator(element) {
 }
 
 // Consuming Iterators
-fn do_transform(
+fn transform_loop(
   continuation: fn() -> Action(a),
   state: acc,
   f: fn(acc, a) -> Step(b, acc),
@@ -143,7 +143,7 @@ fn do_transform(
         case f(state, el) {
           Done -> Stop
           Next(yield, next_state) ->
-            Continue(yield, do_transform(next, next_state, f))
+            Continue(yield, transform_loop(next, next_state, f))
         }
     }
   }
@@ -171,17 +171,17 @@ pub fn transform(
   from initial: acc,
   with f: fn(acc, a) -> Step(b, acc),
 ) -> Iterator(b) {
-  do_transform(iterator.continuation, initial, f)
+  transform_loop(iterator.continuation, initial, f)
   |> Iterator
 }
 
-fn do_fold(
+fn fold_loop(
   continuation: fn() -> Action(e),
   f: fn(acc, e) -> acc,
   accumulator: acc,
 ) -> acc {
   case continuation() {
-    Continue(elem, next) -> do_fold(next, f, f(accumulator, elem))
+    Continue(elem, next) -> fold_loop(next, f, f(accumulator, elem))
     Stop -> accumulator
   }
 }
@@ -209,7 +209,7 @@ pub fn fold(
   with f: fn(acc, e) -> acc,
 ) -> acc {
   iterator.continuation
-  |> do_fold(f, initial)
+  |> fold_loop(f, initial)
 }
 
 // TODO: test
@@ -270,19 +270,6 @@ pub fn step(iterator: Iterator(e)) -> Step(e, Iterator(e)) {
   }
 }
 
-fn do_take(continuation: fn() -> Action(e), desired: Int) -> fn() -> Action(e) {
-  fn() {
-    case desired > 0 {
-      False -> Stop
-      True ->
-        case continuation() {
-          Stop -> Stop
-          Continue(e, next) -> Continue(e, do_take(next, desired - 1))
-        }
-    }
-  }
-}
-
 /// Creates an iterator that only yields the first `desired` elements.
 ///
 /// If the iterator does not have enough elements all of them are yielded.
@@ -305,18 +292,20 @@ fn do_take(continuation: fn() -> Action(e), desired: Int) -> fn() -> Action(e) {
 ///
 pub fn take(from iterator: Iterator(e), up_to desired: Int) -> Iterator(e) {
   iterator.continuation
-  |> do_take(desired)
+  |> take_loop(desired)
   |> Iterator
 }
 
-fn do_drop(continuation: fn() -> Action(e), desired: Int) -> Action(e) {
-  case continuation() {
-    Stop -> Stop
-    Continue(e, next) ->
-      case desired > 0 {
-        True -> do_drop(next, desired - 1)
-        False -> Continue(e, next)
-      }
+fn take_loop(continuation: fn() -> Action(e), desired: Int) -> fn() -> Action(e) {
+  fn() {
+    case desired > 0 {
+      False -> Stop
+      True ->
+        case continuation() {
+          Stop -> Stop
+          Continue(e, next) -> Continue(e, take_loop(next, desired - 1))
+        }
+    }
   }
 }
 
@@ -346,16 +335,18 @@ fn do_drop(continuation: fn() -> Action(e), desired: Int) -> Action(e) {
 /// ```
 ///
 pub fn drop(from iterator: Iterator(e), up_to desired: Int) -> Iterator(e) {
-  fn() { do_drop(iterator.continuation, desired) }
+  fn() { drop_loop(iterator.continuation, desired) }
   |> Iterator
 }
 
-fn do_map(continuation: fn() -> Action(a), f: fn(a) -> b) -> fn() -> Action(b) {
-  fn() {
-    case continuation() {
-      Stop -> Stop
-      Continue(e, continuation) -> Continue(f(e), do_map(continuation, f))
-    }
+fn drop_loop(continuation: fn() -> Action(e), desired: Int) -> Action(e) {
+  case continuation() {
+    Stop -> Stop
+    Continue(e, next) ->
+      case desired > 0 {
+        True -> drop_loop(next, desired - 1)
+        False -> Continue(e, next)
+      }
   }
 }
 
@@ -378,24 +369,15 @@ fn do_map(continuation: fn() -> Action(a), f: fn(a) -> b) -> fn() -> Action(b) {
 ///
 pub fn map(over iterator: Iterator(a), with f: fn(a) -> b) -> Iterator(b) {
   iterator.continuation
-  |> do_map(f)
+  |> map_loop(f)
   |> Iterator
 }
 
-fn do_map2(
-  continuation1: fn() -> Action(a),
-  continuation2: fn() -> Action(b),
-  with fun: fn(a, b) -> c,
-) -> fn() -> Action(c) {
+fn map_loop(continuation: fn() -> Action(a), f: fn(a) -> b) -> fn() -> Action(b) {
   fn() {
-    case continuation1() {
+    case continuation() {
       Stop -> Stop
-      Continue(a, next_a) ->
-        case continuation2() {
-          Stop -> Stop
-          Continue(b, next_b) ->
-            Continue(fun(a, b), do_map2(next_a, next_b, fun))
-        }
+      Continue(e, continuation) -> Continue(f(e), map_loop(continuation, f))
     }
   }
 }
@@ -428,14 +410,25 @@ pub fn map2(
   iterator2: Iterator(b),
   with fun: fn(a, b) -> c,
 ) -> Iterator(c) {
-  do_map2(iterator1.continuation, iterator2.continuation, fun)
+  map2_loop(iterator1.continuation, iterator2.continuation, fun)
   |> Iterator
 }
 
-fn do_append(first: fn() -> Action(a), second: fn() -> Action(a)) -> Action(a) {
-  case first() {
-    Continue(e, first) -> Continue(e, fn() { do_append(first, second) })
-    Stop -> second()
+fn map2_loop(
+  continuation1: fn() -> Action(a),
+  continuation2: fn() -> Action(b),
+  with fun: fn(a, b) -> c,
+) -> fn() -> Action(c) {
+  fn() {
+    case continuation1() {
+      Stop -> Stop
+      Continue(a, next_a) ->
+        case continuation2() {
+          Stop -> Stop
+          Continue(b, next_b) ->
+            Continue(fun(a, b), map2_loop(next_a, next_b, fun))
+        }
+    }
   }
 }
 
@@ -454,15 +447,14 @@ fn do_append(first: fn() -> Action(a), second: fn() -> Action(a)) -> Action(a) {
 /// ```
 ///
 pub fn append(to first: Iterator(a), suffix second: Iterator(a)) -> Iterator(a) {
-  fn() { do_append(first.continuation, second.continuation) }
+  fn() { append_loop(first.continuation, second.continuation) }
   |> Iterator
 }
 
-fn do_flatten(flattened: fn() -> Action(Iterator(a))) -> Action(a) {
-  case flattened() {
-    Stop -> Stop
-    Continue(it, next_iterator) ->
-      do_append(it.continuation, fn() { do_flatten(next_iterator) })
+fn append_loop(first: fn() -> Action(a), second: fn() -> Action(a)) -> Action(a) {
+  case first() {
+    Continue(e, first) -> Continue(e, fn() { append_loop(first, second) })
+    Stop -> second()
   }
 }
 
@@ -482,8 +474,16 @@ fn do_flatten(flattened: fn() -> Action(Iterator(a))) -> Action(a) {
 /// ```
 ///
 pub fn flatten(iterator: Iterator(Iterator(a))) -> Iterator(a) {
-  fn() { do_flatten(iterator.continuation) }
+  fn() { flatten_loop(iterator.continuation) }
   |> Iterator
+}
+
+fn flatten_loop(flattened: fn() -> Action(Iterator(a))) -> Action(a) {
+  case flattened() {
+    Stop -> Stop
+    Continue(it, next_iterator) ->
+      append_loop(it.continuation, fn() { flatten_loop(next_iterator) })
+  }
 }
 
 /// Joins a list of iterators into a single iterator.
@@ -532,20 +532,6 @@ pub fn flat_map(
   |> flatten
 }
 
-fn do_filter(
-  continuation: fn() -> Action(e),
-  predicate: fn(e) -> Bool,
-) -> Action(e) {
-  case continuation() {
-    Stop -> Stop
-    Continue(e, iterator) ->
-      case predicate(e) {
-        True -> Continue(e, fn() { do_filter(iterator, predicate) })
-        False -> do_filter(iterator, predicate)
-      }
-  }
-}
-
 /// Creates an iterator from an existing iterator and a predicate function.
 ///
 /// The new iterator will contain elements from the first iterator for which
@@ -569,20 +555,20 @@ pub fn filter(
   iterator: Iterator(a),
   keeping predicate: fn(a) -> Bool,
 ) -> Iterator(a) {
-  fn() { do_filter(iterator.continuation, predicate) }
+  fn() { filter_loop(iterator.continuation, predicate) }
   |> Iterator
 }
 
-fn do_filter_map(
-  continuation: fn() -> Action(a),
-  f: fn(a) -> Result(b, c),
-) -> Action(b) {
+fn filter_loop(
+  continuation: fn() -> Action(e),
+  predicate: fn(e) -> Bool,
+) -> Action(e) {
   case continuation() {
     Stop -> Stop
-    Continue(e, next) ->
-      case f(e) {
-        Ok(e) -> Continue(e, fn() { do_filter_map(next, f) })
-        Error(_) -> do_filter_map(next, f)
+    Continue(e, iterator) ->
+      case predicate(e) {
+        True -> Continue(e, fn() { filter_loop(iterator, predicate) })
+        False -> filter_loop(iterator, predicate)
       }
   }
 }
@@ -613,8 +599,22 @@ pub fn filter_map(
   iterator: Iterator(a),
   keeping_with f: fn(a) -> Result(b, c),
 ) -> Iterator(b) {
-  fn() { do_filter_map(iterator.continuation, f) }
+  fn() { filter_map_loop(iterator.continuation, f) }
   |> Iterator
+}
+
+fn filter_map_loop(
+  continuation: fn() -> Action(a),
+  f: fn(a) -> Result(b, c),
+) -> Action(b) {
+  case continuation() {
+    Stop -> Stop
+    Continue(e, next) ->
+      case f(e) {
+        Ok(e) -> Continue(e, fn() { filter_map_loop(next, f) })
+        Error(_) -> filter_map_loop(next, f)
+      }
+  }
 }
 
 /// Creates an iterator that repeats a given iterator infinitely.
@@ -675,17 +675,6 @@ pub fn range(from start: Int, to stop: Int) -> Iterator(Int) {
   }
 }
 
-fn do_find(continuation: fn() -> Action(a), f: fn(a) -> Bool) -> Result(a, Nil) {
-  case continuation() {
-    Stop -> Error(Nil)
-    Continue(e, next) ->
-      case f(e) {
-        True -> Ok(e)
-        False -> do_find(next, f)
-      }
-  }
-}
-
 /// Finds the first element in a given iterator for which the given function returns
 /// `True`.
 ///
@@ -714,19 +703,19 @@ pub fn find(
   one_that is_desired: fn(a) -> Bool,
 ) -> Result(a, Nil) {
   haystack.continuation
-  |> do_find(is_desired)
+  |> find_loop(is_desired)
 }
 
-fn do_find_map(
+fn find_loop(
   continuation: fn() -> Action(a),
-  f: fn(a) -> Result(b, c),
-) -> Result(b, Nil) {
+  f: fn(a) -> Bool,
+) -> Result(a, Nil) {
   case continuation() {
     Stop -> Error(Nil)
     Continue(e, next) ->
       case f(e) {
-        Ok(e) -> Ok(e)
-        Error(_) -> do_find_map(next, f)
+        True -> Ok(e)
+        False -> find_loop(next, f)
       }
   }
 }
@@ -759,19 +748,20 @@ pub fn find_map(
   one_that is_desired: fn(a) -> Result(b, c),
 ) -> Result(b, Nil) {
   haystack.continuation
-  |> do_find_map(is_desired)
+  |> find_map_loop(is_desired)
 }
 
-fn do_index(
-  continuation: fn() -> Action(element),
-  next: Int,
-) -> fn() -> Action(#(element, Int)) {
-  fn() {
-    case continuation() {
-      Stop -> Stop
-      Continue(e, continuation) ->
-        Continue(#(e, next), do_index(continuation, next + 1))
-    }
+fn find_map_loop(
+  continuation: fn() -> Action(a),
+  f: fn(a) -> Result(b, c),
+) -> Result(b, Nil) {
+  case continuation() {
+    Stop -> Error(Nil)
+    Continue(e, next) ->
+      case f(e) {
+        Ok(e) -> Ok(e)
+        Error(_) -> find_map_loop(next, f)
+      }
   }
 }
 
@@ -786,8 +776,21 @@ fn do_index(
 ///
 pub fn index(over iterator: Iterator(element)) -> Iterator(#(element, Int)) {
   iterator.continuation
-  |> do_index(0)
+  |> index_loop(0)
   |> Iterator
+}
+
+fn index_loop(
+  continuation: fn() -> Action(element),
+  next: Int,
+) -> fn() -> Action(#(element, Int)) {
+  fn() {
+    case continuation() {
+      Stop -> Stop
+      Continue(e, continuation) ->
+        Continue(#(e, next), index_loop(continuation, next + 1))
+    }
+  }
 }
 
 /// Creates an iterator that infinitely applies a function to a value.
@@ -806,22 +809,6 @@ pub fn iterate(
   unfold(initial, fn(element) { Next(element, f(element)) })
 }
 
-fn do_take_while(
-  continuation: fn() -> Action(element),
-  predicate: fn(element) -> Bool,
-) -> fn() -> Action(element) {
-  fn() {
-    case continuation() {
-      Stop -> Stop
-      Continue(e, next) ->
-        case predicate(e) {
-          False -> Stop
-          True -> Continue(e, do_take_while(next, predicate))
-        }
-    }
-  }
-}
-
 /// Creates an iterator that yields elements while the predicate returns `True`.
 ///
 /// ## Examples
@@ -838,21 +825,23 @@ pub fn take_while(
   satisfying predicate: fn(element) -> Bool,
 ) -> Iterator(element) {
   iterator.continuation
-  |> do_take_while(predicate)
+  |> take_while_loop(predicate)
   |> Iterator
 }
 
-fn do_drop_while(
+fn take_while_loop(
   continuation: fn() -> Action(element),
   predicate: fn(element) -> Bool,
-) -> Action(element) {
-  case continuation() {
-    Stop -> Stop
-    Continue(e, next) ->
-      case predicate(e) {
-        False -> Continue(e, next)
-        True -> do_drop_while(next, predicate)
-      }
+) -> fn() -> Action(element) {
+  fn() {
+    case continuation() {
+      Stop -> Stop
+      Continue(e, next) ->
+        case predicate(e) {
+          False -> Stop
+          True -> Continue(e, take_while_loop(next, predicate))
+        }
+    }
   }
 }
 
@@ -872,23 +861,21 @@ pub fn drop_while(
   in iterator: Iterator(element),
   satisfying predicate: fn(element) -> Bool,
 ) -> Iterator(element) {
-  fn() { do_drop_while(iterator.continuation, predicate) }
+  fn() { drop_while_loop(iterator.continuation, predicate) }
   |> Iterator
 }
 
-fn do_scan(
+fn drop_while_loop(
   continuation: fn() -> Action(element),
-  f: fn(acc, element) -> acc,
-  accumulator: acc,
-) -> fn() -> Action(acc) {
-  fn() {
-    case continuation() {
-      Stop -> Stop
-      Continue(el, next) -> {
-        let accumulated = f(accumulator, el)
-        Continue(accumulated, do_scan(next, f, accumulated))
+  predicate: fn(element) -> Bool,
+) -> Action(element) {
+  case continuation() {
+    Stop -> Stop
+    Continue(e, next) ->
+      case predicate(e) {
+        False -> Continue(e, next)
+        True -> drop_while_loop(next, predicate)
       }
-    }
   }
 }
 
@@ -912,23 +899,22 @@ pub fn scan(
   with f: fn(acc, element) -> acc,
 ) -> Iterator(acc) {
   iterator.continuation
-  |> do_scan(f, initial)
+  |> scan_loop(f, initial)
   |> Iterator
 }
 
-fn do_zip(
-  left: fn() -> Action(a),
-  right: fn() -> Action(b),
-) -> fn() -> Action(#(a, b)) {
+fn scan_loop(
+  continuation: fn() -> Action(element),
+  f: fn(acc, element) -> acc,
+  accumulator: acc,
+) -> fn() -> Action(acc) {
   fn() {
-    case left() {
+    case continuation() {
       Stop -> Stop
-      Continue(el_left, next_left) ->
-        case right() {
-          Stop -> Stop
-          Continue(el_right, next_right) ->
-            Continue(#(el_left, el_right), do_zip(next_left, next_right))
-        }
+      Continue(el, next) -> {
+        let accumulated = f(accumulator, el)
+        Continue(accumulated, scan_loop(next, f, accumulated))
+      }
     }
   }
 }
@@ -946,45 +932,31 @@ fn do_zip(
 /// ```
 ///
 pub fn zip(left: Iterator(a), right: Iterator(b)) -> Iterator(#(a, b)) {
-  do_zip(left.continuation, right.continuation)
+  zip_loop(left.continuation, right.continuation)
   |> Iterator
+}
+
+fn zip_loop(
+  left: fn() -> Action(a),
+  right: fn() -> Action(b),
+) -> fn() -> Action(#(a, b)) {
+  fn() {
+    case left() {
+      Stop -> Stop
+      Continue(el_left, next_left) ->
+        case right() {
+          Stop -> Stop
+          Continue(el_right, next_right) ->
+            Continue(#(el_left, el_right), zip_loop(next_left, next_right))
+        }
+    }
+  }
 }
 
 // Result of collecting a single chunk by key
 type Chunk(element, key) {
   AnotherBy(List(element), key, element, fn() -> Action(element))
   LastBy(List(element))
-}
-
-fn next_chunk(
-  continuation: fn() -> Action(element),
-  f: fn(element) -> key,
-  previous_key: key,
-  current_chunk: List(element),
-) -> Chunk(element, key) {
-  case continuation() {
-    Stop -> LastBy(list.reverse(current_chunk))
-    Continue(e, next) -> {
-      let key = f(e)
-      case key == previous_key {
-        True -> next_chunk(next, f, key, [e, ..current_chunk])
-        False -> AnotherBy(list.reverse(current_chunk), key, e, next)
-      }
-    }
-  }
-}
-
-fn do_chunk(
-  continuation: fn() -> Action(element),
-  f: fn(element) -> key,
-  previous_key: key,
-  previous_element: element,
-) -> Action(List(element)) {
-  case next_chunk(continuation, f, previous_key, [previous_element]) {
-    LastBy(chunk) -> Continue(chunk, stop)
-    AnotherBy(chunk, key, el, next) ->
-      Continue(chunk, fn() { do_chunk(next, f, key, el) })
-  }
 }
 
 /// Creates an iterator that emits chunks of elements
@@ -1006,50 +978,39 @@ pub fn chunk(
   fn() {
     case iterator.continuation() {
       Stop -> Stop
-      Continue(e, next) -> do_chunk(next, f, f(e), e)
+      Continue(e, next) -> chunk_loop(next, f, f(e), e)
     }
   }
   |> Iterator
 }
 
-// Result of collecting a single sized chunk
-type SizedChunk(element) {
-  Another(List(element), fn() -> Action(element))
-  Last(List(element))
-  NoMore
-}
-
-fn next_sized_chunk(
+fn chunk_loop(
   continuation: fn() -> Action(element),
-  left: Int,
-  current_chunk: List(element),
-) -> SizedChunk(element) {
-  case continuation() {
-    Stop ->
-      case current_chunk {
-        [] -> NoMore
-        remaining -> Last(list.reverse(remaining))
-      }
-    Continue(e, next) -> {
-      let chunk = [e, ..current_chunk]
-      case left > 1 {
-        False -> Another(list.reverse(chunk), next)
-        True -> next_sized_chunk(next, left - 1, chunk)
-      }
-    }
+  f: fn(element) -> key,
+  previous_key: key,
+  previous_element: element,
+) -> Action(List(element)) {
+  case next_chunk(continuation, f, previous_key, [previous_element]) {
+    LastBy(chunk) -> Continue(chunk, stop)
+    AnotherBy(chunk, key, el, next) ->
+      Continue(chunk, fn() { chunk_loop(next, f, key, el) })
   }
 }
 
-fn do_sized_chunk(
+fn next_chunk(
   continuation: fn() -> Action(element),
-  count: Int,
-) -> fn() -> Action(List(element)) {
-  fn() {
-    case next_sized_chunk(continuation, count, []) {
-      NoMore -> Stop
-      Last(chunk) -> Continue(chunk, stop)
-      Another(chunk, next_element) ->
-        Continue(chunk, do_sized_chunk(next_element, count))
+  f: fn(element) -> key,
+  previous_key: key,
+  current_chunk: List(element),
+) -> Chunk(element, key) {
+  case continuation() {
+    Stop -> LastBy(list.reverse(current_chunk))
+    Continue(e, next) -> {
+      let key = f(e)
+      case key == previous_key {
+        True -> next_chunk(next, f, key, [e, ..current_chunk])
+        False -> AnotherBy(list.reverse(current_chunk), key, e, next)
+      }
     }
   }
 }
@@ -1082,19 +1043,48 @@ pub fn sized_chunk(
   into count: Int,
 ) -> Iterator(List(element)) {
   iterator.continuation
-  |> do_sized_chunk(count)
+  |> sized_chunk_loop(count)
   |> Iterator
 }
 
-fn do_intersperse(
+fn sized_chunk_loop(
   continuation: fn() -> Action(element),
-  separator: element,
-) -> Action(element) {
+  count: Int,
+) -> fn() -> Action(List(element)) {
+  fn() {
+    case next_sized_chunk(continuation, count, []) {
+      NoMore -> Stop
+      Last(chunk) -> Continue(chunk, stop)
+      Another(chunk, next_element) ->
+        Continue(chunk, sized_chunk_loop(next_element, count))
+    }
+  }
+}
+
+// Result of collecting a single sized chunk
+type SizedChunk(element) {
+  Another(List(element), fn() -> Action(element))
+  Last(List(element))
+  NoMore
+}
+
+fn next_sized_chunk(
+  continuation: fn() -> Action(element),
+  left: Int,
+  current_chunk: List(element),
+) -> SizedChunk(element) {
   case continuation() {
-    Stop -> Stop
+    Stop ->
+      case current_chunk {
+        [] -> NoMore
+        remaining -> Last(list.reverse(remaining))
+      }
     Continue(e, next) -> {
-      let next_interspersed = fn() { do_intersperse(next, separator) }
-      Continue(separator, fn() { Continue(e, next_interspersed) })
+      let chunk = [e, ..current_chunk]
+      case left > 1 {
+        False -> Another(list.reverse(chunk), next)
+        True -> next_sized_chunk(next, left - 1, chunk)
+      }
     }
   }
 }
@@ -1132,23 +1122,22 @@ pub fn intersperse(
   fn() {
     case iterator.continuation() {
       Stop -> Stop
-      Continue(e, next) -> Continue(e, fn() { do_intersperse(next, elem) })
+      Continue(e, next) -> Continue(e, fn() { intersperse_loop(next, elem) })
     }
   }
   |> Iterator
 }
 
-fn do_any(
+fn intersperse_loop(
   continuation: fn() -> Action(element),
-  predicate: fn(element) -> Bool,
-) -> Bool {
+  separator: element,
+) -> Action(element) {
   case continuation() {
-    Stop -> False
-    Continue(e, next) ->
-      case predicate(e) {
-        True -> True
-        False -> do_any(next, predicate)
-      }
+    Stop -> Stop
+    Continue(e, next) -> {
+      let next_interspersed = fn() { intersperse_loop(next, separator) }
+      Continue(separator, fn() { Continue(e, next_interspersed) })
+    }
   }
 }
 
@@ -1184,19 +1173,19 @@ pub fn any(
   satisfying predicate: fn(element) -> Bool,
 ) -> Bool {
   iterator.continuation
-  |> do_any(predicate)
+  |> any_loop(predicate)
 }
 
-fn do_all(
+fn any_loop(
   continuation: fn() -> Action(element),
   predicate: fn(element) -> Bool,
 ) -> Bool {
   case continuation() {
-    Stop -> True
+    Stop -> False
     Continue(e, next) ->
       case predicate(e) {
-        True -> do_all(next, predicate)
-        False -> False
+        True -> True
+        False -> any_loop(next, predicate)
       }
   }
 }
@@ -1233,24 +1222,20 @@ pub fn all(
   satisfying predicate: fn(element) -> Bool,
 ) -> Bool {
   iterator.continuation
-  |> do_all(predicate)
+  |> all_loop(predicate)
 }
 
-fn update_group_with(el: element) -> fn(Option(List(element))) -> List(element) {
-  fn(maybe_group) {
-    case maybe_group {
-      Some(group) -> [el, ..group]
-      None -> [el]
-    }
-  }
-}
-
-fn group_updater(
-  f: fn(element) -> key,
-) -> fn(Dict(key, List(element)), element) -> Dict(key, List(element)) {
-  fn(groups, elem) {
-    groups
-    |> dict.upsert(f(elem), update_group_with(elem))
+fn all_loop(
+  continuation: fn() -> Action(element),
+  predicate: fn(element) -> Bool,
+) -> Bool {
+  case continuation() {
+    Stop -> True
+    Continue(e, next) ->
+      case predicate(e) {
+        True -> all_loop(next, predicate)
+        False -> False
+      }
   }
 }
 
@@ -1274,6 +1259,24 @@ pub fn group(
   iterator
   |> fold(dict.new(), group_updater(key))
   |> dict.map_values(fn(_, group) { list.reverse(group) })
+}
+
+fn group_updater(
+  f: fn(element) -> key,
+) -> fn(Dict(key, List(element)), element) -> Dict(key, List(element)) {
+  fn(groups, elem) {
+    groups
+    |> dict.upsert(f(elem), update_group_with(elem))
+  }
+}
+
+fn update_group_with(el: element) -> fn(Option(List(element))) -> List(element) {
+  fn(maybe_group) {
+    case maybe_group {
+      Some(group) -> [el, ..group]
+      None -> [el]
+    }
+  }
 }
 
 /// This function acts similar to fold, but does not take an initial state.
@@ -1304,7 +1307,7 @@ pub fn reduce(
   case iterator.continuation() {
     Stop -> Error(Nil)
     Continue(e, next) ->
-      do_fold(next, f, e)
+      fold_loop(next, f, e)
       |> Ok
   }
 }
@@ -1372,17 +1375,6 @@ pub fn single(elem: element) -> Iterator(element) {
   once(fn() { elem })
 }
 
-fn do_interleave(
-  current: fn() -> Action(element),
-  next: fn() -> Action(element),
-) -> Action(element) {
-  case current() {
-    Stop -> next()
-    Continue(e, next_other) ->
-      Continue(e, fn() { do_interleave(next, next_other) })
-  }
-}
-
 /// Creates an iterator that alternates between the two given iterators
 /// until both have run out.
 ///
@@ -1406,22 +1398,18 @@ pub fn interleave(
   left: Iterator(element),
   with right: Iterator(element),
 ) -> Iterator(element) {
-  fn() { do_interleave(left.continuation, right.continuation) }
+  fn() { interleave_loop(left.continuation, right.continuation) }
   |> Iterator
 }
 
-fn do_fold_until(
-  continuation: fn() -> Action(e),
-  f: fn(acc, e) -> list.ContinueOrStop(acc),
-  accumulator: acc,
-) -> acc {
-  case continuation() {
-    Stop -> accumulator
-    Continue(elem, next) ->
-      case f(accumulator, elem) {
-        list.Continue(accumulator) -> do_fold_until(next, f, accumulator)
-        list.Stop(accumulator) -> accumulator
-      }
+fn interleave_loop(
+  current: fn() -> Action(element),
+  next: fn() -> Action(element),
+) -> Action(element) {
+  case current() {
+    Stop -> next()
+    Continue(e, next_other) ->
+      Continue(e, fn() { interleave_loop(next, next_other) })
   }
 }
 
@@ -1455,22 +1443,21 @@ pub fn fold_until(
   with f: fn(acc, e) -> list.ContinueOrStop(acc),
 ) -> acc {
   iterator.continuation
-  |> do_fold_until(f, initial)
+  |> fold_until_loop(f, initial)
 }
 
-fn do_try_fold(
-  over continuation: fn() -> Action(a),
-  with f: fn(acc, a) -> Result(acc, err),
-  from accumulator: acc,
-) -> Result(acc, err) {
+fn fold_until_loop(
+  continuation: fn() -> Action(e),
+  f: fn(acc, e) -> list.ContinueOrStop(acc),
+  accumulator: acc,
+) -> acc {
   case continuation() {
-    Stop -> Ok(accumulator)
-    Continue(elem, next) -> {
+    Stop -> accumulator
+    Continue(elem, next) ->
       case f(accumulator, elem) {
-        Ok(result) -> do_try_fold(next, f, result)
-        Error(_) as error -> error
+        list.Continue(accumulator) -> fold_until_loop(next, f, accumulator)
+        list.Stop(accumulator) -> accumulator
       }
-    }
   }
 }
 
@@ -1499,7 +1486,23 @@ pub fn try_fold(
   with f: fn(acc, e) -> Result(acc, err),
 ) -> Result(acc, err) {
   iterator.continuation
-  |> do_try_fold(f, initial)
+  |> try_fold_loop(f, initial)
+}
+
+fn try_fold_loop(
+  over continuation: fn() -> Action(a),
+  with f: fn(acc, a) -> Result(acc, err),
+  from accumulator: acc,
+) -> Result(acc, err) {
+  case continuation() {
+    Stop -> Ok(accumulator)
+    Continue(elem, next) -> {
+      case f(accumulator, elem) {
+        Ok(result) -> try_fold_loop(next, f, result)
+        Error(_) as error -> error
+      }
+    }
+  }
 }
 
 /// Returns the first element yielded by the given iterator, if it exists,
@@ -1552,13 +1555,6 @@ pub fn at(in iterator: Iterator(e), get index: Int) -> Result(e, Nil) {
   |> first
 }
 
-fn do_length(over continuation: fn() -> Action(e), with length: Int) -> Int {
-  case continuation() {
-    Stop -> length
-    Continue(_, next) -> do_length(next, length + 1)
-  }
-}
-
 /// Counts the number of elements in the given iterator.
 ///
 /// This function has to traverse the entire iterator to count its elements,
@@ -1578,7 +1574,14 @@ fn do_length(over continuation: fn() -> Action(e), with length: Int) -> Int {
 ///
 pub fn length(over iterator: Iterator(e)) -> Int {
   iterator.continuation
-  |> do_length(0)
+  |> length_loop(0)
+}
+
+fn length_loop(over continuation: fn() -> Action(e), with length: Int) -> Int {
+  case continuation() {
+    Stop -> length
+    Continue(_, next) -> length_loop(next, length + 1)
+  }
 }
 
 /// Traverse an iterator, calling a function on each element.
