@@ -237,6 +237,25 @@ pub fn reverse(queue: Queue(a)) -> Queue(a) {
   Queue(in: queue.out, out: queue.in)
 }
 
+/// Checks whether two queues have equal elements in the same order, where the
+/// equality of elements is determined by a given equality checking function.
+///
+/// This function is useful as the internal representation may be different for
+/// two queues with the same elements in the same order depending on how they
+/// were constructed, so the equality operator `==` may return surprising
+/// results.
+///
+/// This function runs in linear time multiplied by the time taken by the
+/// element equality checking function.
+///
+pub fn is_logically_equal(
+  a: Queue(a),
+  to b: Queue(a),
+  checking element_is_equal: fn(a, a) -> Bool,
+) -> Bool {
+  check_equal(a.out, a.in, b.out, b.in, element_is_equal)
+}
+
 fn check_equal(
   xs: List(a),
   x_tail: List(a),
@@ -255,25 +274,6 @@ fn check_equal(
     _, _, [], [_, ..] -> check_equal(xs, x_tail, list.reverse(y_tail), [], eq)
     _, _, _, _ -> False
   }
-}
-
-/// Checks whether two queues have equal elements in the same order, where the
-/// equality of elements is determined by a given equality checking function.
-///
-/// This function is useful as the internal representation may be different for
-/// two queues with the same elements in the same order depending on how they
-/// were constructed, so the equality operator `==` may return surprising
-/// results.
-///
-/// This function runs in linear time multiplied by the time taken by the
-/// element equality checking function.
-///
-pub fn is_logically_equal(
-  a: Queue(a),
-  to b: Queue(a),
-  checking element_is_equal: fn(a, a) -> Bool,
-) -> Bool {
-  check_equal(a.out, a.in, b.out, b.in, element_is_equal)
 }
 
 /// Checks whether two queues have the same elements in the same order.

@@ -218,10 +218,6 @@ pub fn shallow_list(from value: Dynamic) -> Result(List(Dynamic), DecodeErrors) 
 @external(javascript, "../gleam_stdlib.mjs", "decode_list")
 fn decode_list(a: Dynamic) -> Result(List(Dynamic), DecodeErrors)
 
-@external(erlang, "gleam_stdlib", "decode_result")
-@external(javascript, "../gleam_stdlib.mjs", "decode_result")
-fn decode_result(a: Dynamic) -> Result(Result(a, e), DecodeErrors)
-
 /// Checks to see whether a `Dynamic` value is a result of a particular type, and
 /// returns that result if it is.
 ///
@@ -270,6 +266,10 @@ pub fn result(
     }
   }
 }
+
+@external(erlang, "gleam_stdlib", "decode_result")
+@external(javascript, "../gleam_stdlib.mjs", "decode_result")
+fn decode_result(a: Dynamic) -> Result(Result(a, e), DecodeErrors)
 
 /// Checks to see whether a `Dynamic` value is a list of a particular type, and
 /// returns that list if it is.
@@ -970,9 +970,9 @@ pub fn dict(
   to value_type: Decoder(v),
 ) -> Decoder(Dict(k, v)) {
   fn(value) {
-    use map <- result.try(decode_map(value))
+    use dict <- result.try(decode_dict(value))
     use pairs <- result.try(
-      map
+      dict
       |> dict.to_list
       |> list.try_map(fn(pair) {
         let #(k, v) = pair
@@ -993,7 +993,7 @@ pub fn dict(
 
 @external(erlang, "gleam_stdlib", "decode_map")
 @external(javascript, "../gleam_stdlib.mjs", "decode_map")
-fn decode_map(a: Dynamic) -> Result(Dict(Dynamic, Dynamic), DecodeErrors)
+fn decode_dict(a: Dynamic) -> Result(Dict(Dynamic, Dynamic), DecodeErrors)
 
 /// Joins multiple decoders into one. When run they will each be tried in turn
 /// until one succeeds, or they all fail.
