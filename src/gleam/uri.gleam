@@ -264,29 +264,6 @@ pub fn percent_decode(value: String) -> Result(String, Nil) {
 @external(javascript, "../gleam_stdlib.mjs", "percent_decode")
 fn do_percent_decode(a: String) -> Result(String, Nil)
 
-fn do_remove_dot_segments(
-  input: List(String),
-  accumulator: List(String),
-) -> List(String) {
-  case input {
-    [] -> list.reverse(accumulator)
-    [segment, ..rest] -> {
-      let accumulator = case segment, accumulator {
-        "", accumulator -> accumulator
-        ".", accumulator -> accumulator
-        "..", [] -> []
-        "..", [_, ..accumulator] -> accumulator
-        segment, accumulator -> [segment, ..accumulator]
-      }
-      do_remove_dot_segments(rest, accumulator)
-    }
-  }
-}
-
-fn remove_dot_segments(input: List(String)) -> List(String) {
-  do_remove_dot_segments(input, [])
-}
-
 /// Splits the path section of a URI into it's constituent segments.
 ///
 /// Removes empty segments and resolves dot-segments as specified in
@@ -301,6 +278,29 @@ fn remove_dot_segments(input: List(String)) -> List(String) {
 ///
 pub fn path_segments(path: String) -> List(String) {
   remove_dot_segments(string.split(path, "/"))
+}
+
+fn remove_dot_segments(input: List(String)) -> List(String) {
+  remove_dot_segments_loop(input, [])
+}
+
+fn remove_dot_segments_loop(
+  input: List(String),
+  accumulator: List(String),
+) -> List(String) {
+  case input {
+    [] -> list.reverse(accumulator)
+    [segment, ..rest] -> {
+      let accumulator = case segment, accumulator {
+        "", accumulator -> accumulator
+        ".", accumulator -> accumulator
+        "..", [] -> []
+        "..", [_, ..accumulator] -> accumulator
+        segment, accumulator -> [segment, ..accumulator]
+      }
+      remove_dot_segments_loop(rest, accumulator)
+    }
+  }
 }
 
 /// Encodes a `Uri` value as a URI string.
@@ -376,14 +376,6 @@ pub fn origin(uri: Uri) -> Result(String, Nil) {
   }
 }
 
-fn drop_last(elements: List(a)) -> List(a) {
-  list.take(from: elements, up_to: list.length(elements) - 1)
-}
-
-fn join_segments(segments: List(String)) -> String {
-  string.join(["", ..segments], "/")
-}
-
 /// Resolves a URI with respect to the given base URI.
 ///
 /// The base URI must be an absolute URI or this function will return an error.
@@ -444,4 +436,12 @@ pub fn merge(base: Uri, relative: Uri) -> Result(Uri, Nil) {
       }
     _ -> Error(Nil)
   }
+}
+
+fn drop_last(elements: List(a)) -> List(a) {
+  list.take(from: elements, up_to: list.length(elements) - 1)
+}
+
+fn join_segments(segments: List(String)) -> String {
+  string.join(["", ..segments], "/")
 }

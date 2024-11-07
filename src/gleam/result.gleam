@@ -277,7 +277,7 @@ pub fn unwrap_both(result: Result(a, a)) -> a {
 /// ```
 ///
 pub fn nil_error(result: Result(a, e)) -> Result(a, Nil) {
-  map_error(result, fn(_) { Nil })
+  replace_error(result, Nil)
 }
 
 /// Returns the first value if it is `Ok`, otherwise returns the second value.

@@ -175,17 +175,6 @@ pub fn transform(
   |> Iterator
 }
 
-fn fold_loop(
-  continuation: fn() -> Action(e),
-  f: fn(acc, e) -> acc,
-  accumulator: acc,
-) -> acc {
-  case continuation() {
-    Continue(elem, next) -> fold_loop(next, f, f(accumulator, elem))
-    Stop -> accumulator
-  }
-}
-
 /// Reduces an iterator of elements into a single value by calling a given
 /// function on each element in turn.
 ///
@@ -210,6 +199,17 @@ pub fn fold(
 ) -> acc {
   iterator.continuation
   |> fold_loop(f, initial)
+}
+
+fn fold_loop(
+  continuation: fn() -> Action(e),
+  f: fn(acc, e) -> acc,
+  accumulator: acc,
+) -> acc {
+  case continuation() {
+    Continue(elem, next) -> fold_loop(next, f, f(accumulator, elem))
+    Stop -> accumulator
+  }
 }
 
 // TODO: test

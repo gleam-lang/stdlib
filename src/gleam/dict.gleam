@@ -86,16 +86,16 @@ pub fn to_list(dict: Dict(k, v)) -> List(#(k, v))
 ///
 @external(erlang, "maps", "from_list")
 pub fn from_list(list: List(#(k, v))) -> Dict(k, v) {
-  fold_list_of_pair(list, new())
+  from_list_loop(list, new())
 }
 
-fn fold_list_of_pair(
+fn from_list_loop(
   over list: List(#(k, v)),
   from initial: Dict(k, v),
 ) -> Dict(k, v) {
   case list {
     [] -> initial
-    [x, ..rest] -> fold_list_of_pair(rest, insert(initial, x.0, x.1))
+    [x, ..rest] -> from_list_loop(rest, insert(initial, x.0, x.1))
   }
 }
 

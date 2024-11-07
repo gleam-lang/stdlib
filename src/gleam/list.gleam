@@ -55,12 +55,12 @@ import gleam/pair
 ///
 @external(erlang, "erlang", "length")
 pub fn length(of list: List(a)) -> Int {
-  count_length(list, 0)
+  length_loop(list, 0)
 }
 
-fn count_length(list: List(a), count: Int) -> Int {
+fn length_loop(list: List(a), count: Int) -> Int {
   case list {
-    [_, ..list] -> count_length(list, count + 1)
+    [_, ..list] -> length_loop(list, count + 1)
     _ -> count
   }
 }
@@ -254,15 +254,6 @@ pub fn rest(list: List(a)) -> Result(List(a), Nil) {
   }
 }
 
-fn update_group(f: fn(a) -> k) -> fn(Dict(k, List(a)), a) -> Dict(k, List(a)) {
-  fn(groups, elem) {
-    case dict.get(groups, f(elem)) {
-      Ok(existing) -> dict.insert(groups, f(elem), [elem, ..existing])
-      Error(_) -> dict.insert(groups, f(elem), [elem])
-    }
-  }
-}
-
 /// Takes a list and groups the values by a key
 /// which is built from a key function.
 ///
@@ -297,6 +288,15 @@ fn update_group(f: fn(a) -> k) -> fn(Dict(k, List(a)), a) -> Dict(k, List(a)) {
 ///
 pub fn group(list: List(v), by key: fn(v) -> k) -> Dict(k, List(v)) {
   fold(list, dict.new(), update_group(key))
+}
+
+fn update_group(f: fn(a) -> k) -> fn(Dict(k, List(a)), a) -> Dict(k, List(a)) {
+  fn(groups, elem) {
+    case dict.get(groups, f(elem)) {
+      Ok(existing) -> dict.insert(groups, f(elem), [elem, ..existing])
+      Error(_) -> dict.insert(groups, f(elem), [elem])
+    }
+  }
 }
 
 /// Returns a new list containing only the elements from the first list for
