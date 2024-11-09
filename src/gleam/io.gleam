@@ -116,3 +116,11 @@ pub fn debug(term: anything) -> anything {
 @external(erlang, "gleam_stdlib", "println_error")
 @external(javascript, "../gleam_stdlib.mjs", "print_debug")
 fn do_debug_println(string string: String) -> Nil
+
+@external(erlang, "gleam_stdlib", "read_char")
+@external(javascript, "../gleam_stdlib.mjs", "read_char")
+pub fn read_char() -> String
+
+@external(erlang, "gleam_stdlib", "read_line")
+@external(javascript, "../gleam_stdlib.mjs", "read_line")
+pub fn read_line() -> String

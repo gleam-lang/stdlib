@@ -18,6 +18,8 @@ import { DecodeError } from "./gleam/dynamic.mjs";
 import { Some, None } from "./gleam/option.mjs";
 import { Eq, Gt, Lt } from "./gleam/order.mjs";
 import Dict from "./dict.mjs";
+import fs from 'node:fs';
+import { Buffer } from 'node:buffer';
 
 const Nil = undefined;
 const NOT_FOUND = {};
@@ -989,4 +991,20 @@ export function bit_array_compare(first, second) {
     return new Eq();
   }
   return new Lt(); // second has more items
+}
+
+export function read_char() {
+  const buffer = Buffer.alloc(1);
+  const bytesRead = fs.readSync(0, buffer, 0, 1);
+  if (bytesRead === 0) {
+    return new Error(Nil);
+  }
+  return buffer.toString('utf8');
+}
+
+export function read_line(storage = '') {
+  const char = read_char();
+  if(char instanceof Error) return char;
+  if (char === '\n') return storage;
+  return read_line(storage + char);
 }
