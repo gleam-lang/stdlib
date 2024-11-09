@@ -1004,7 +1004,7 @@ export function read_char() {
 
 export function read_line(storage = '') {
   const char = read_char();
-  if(char instanceof Error) return char;
+  if (char instanceof Error) return char;
   if (char === '\n') return storage;
   return read_line(storage + char);
 }
