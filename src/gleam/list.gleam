@@ -254,8 +254,7 @@ pub fn rest(list: List(a)) -> Result(List(a), Nil) {
   }
 }
 
-/// Takes a list and groups the values by a key
-/// which is built from a key function.
+/// Groups the elements from the given list by the given key function.
 ///
 /// Does not preserve the initial value order.
 ///
