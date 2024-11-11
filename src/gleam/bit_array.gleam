@@ -10,6 +10,13 @@ import gleam/string
 @external(javascript, "../gleam_stdlib.mjs", "bit_array_from_string")
 pub fn from_string(x: String) -> BitArray
 
+/// Returns an integer which is the number of bits in the bit array.
+///
+@external(erlang, "erlang", "bit_size")
+pub fn bit_size(x: BitArray) -> Int {
+  byte_size(x) * 8
+}
+
 /// Returns an integer which is the number of bytes in the bit array.
 ///
 @external(erlang, "erlang", "byte_size")
@@ -203,8 +210,6 @@ fn inspect_loop(input: BitArray, accumulator: String) -> String {
 /// // -> Eq
 /// ```
 ///
-/// Only supported on Erlang target for now.
-///
 @external(javascript, "../gleam_stdlib.mjs", "bit_array_compare")
 pub fn compare(a: BitArray, with b: BitArray) -> order.Order {
   case a, b {
@@ -235,3 +240,22 @@ pub fn compare(a: BitArray, with b: BitArray) -> order.Order {
 
 @external(erlang, "gleam_stdlib", "bit_array_to_int_and_size")
 fn bit_array_to_int_and_size(a: BitArray) -> #(Int, Int)
+
+/// Checks whether the first `BitArray` starts with the second one.
+///
+/// ## Examples
+///
+/// ```gleam
+/// starts_with(<<1, 2, 3, 4>>, <<1, 2>>)
+/// // -> True
+/// ```
+///
+@external(javascript, "../gleam_stdlib.mjs", "bit_array_starts_with")
+pub fn starts_with(bits: BitArray, prefix: BitArray) -> Bool {
+  let prefix_size = bit_size(prefix)
+
+  case bits {
+    <<pref:bits-size(prefix_size), _:bits>> if pref == prefix -> True
+    _ -> False
+  }
+}
