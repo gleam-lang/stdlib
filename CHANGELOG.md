@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- The performance of `string.trim`, `string.trim_start`, and `string.trim_end`
+  has been improved on JavaScript.
+
 ## v0.44.0 - 2024-11-25
 
 - The `gleam/queue` module has been deprecated in favour of the `gleam_deque`

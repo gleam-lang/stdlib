@@ -179,6 +179,23 @@ pub fn trim_end_test() {
   |> should.equal("  hats")
 }
 
+pub fn trim_whole_string_test() {
+  let s =
+    "\u{0020}\u{0009}\u{000A}\u{000B}\u{000C}\u{000D}\u{0085}\u{2028}\u{2029}"
+
+  s
+  |> string.trim_start
+  |> should.equal("")
+
+  s
+  |> string.trim_end
+  |> should.equal("")
+
+  s
+  |> string.trim
+  |> should.equal("")
+}
+
 // unicode whitespaces
 pub fn trim_horizontal_tab_test() {
   "hats\u{0009}"
