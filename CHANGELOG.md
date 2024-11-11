@@ -3,6 +3,10 @@
 ## Unreleased
 
 - The `bit_array` module gains the `bit_size` and `starts_with` functions.
+- Ths `string` module gains the `drop_start`, `drop_end`, `pad_start`,
+  `pad_end`, `trim_start`, and `trim_end` functions. These replace the
+  `drop_left`, `drop_right`, `pad_left`, `pad_right`, `trim_left`, and
+  `trim_right` functions, which have been deprecated.
 
 ## v0.41.0 - 2024-10-31
 

@@ -164,15 +164,15 @@ pub fn trim_test() {
   |> should.equal("hats")
 }
 
-pub fn trim_left_test() {
+pub fn trim_start_test() {
   "  hats  \n"
-  |> string.trim_left
+  |> string.trim_start
   |> should.equal("hats  \n")
 }
 
-pub fn trim_right_test() {
+pub fn trim_end_test() {
   "  hats  \n"
-  |> string.trim_right
+  |> string.trim_end
   |> should.equal("  hats")
 }
 
@@ -451,90 +451,90 @@ pub fn crop_test() {
   |> should.equal("gleam")
 }
 
-pub fn drop_left_test() {
+pub fn drop_start_test() {
   "gleam"
-  |> string.drop_left(up_to: 2)
+  |> string.drop_start(up_to: 2)
   |> should.equal("eam")
 
   "gleam"
-  |> string.drop_left(up_to: 6)
+  |> string.drop_start(up_to: 6)
   |> should.equal("")
 
   "gleam"
-  |> string.drop_left(up_to: -2)
+  |> string.drop_start(up_to: -2)
   |> should.equal("gleam")
 }
 
-pub fn drop_left_3499_test() {
+pub fn drop_start_3499_test() {
   // https://github.com/gleam-lang/gleam/issues/3499
   "\r]"
-  |> string.drop_left(1)
+  |> string.drop_start(1)
   |> should.equal("]")
 }
 
-pub fn drop_right_test() {
+pub fn drop_end_test() {
   "gleam"
-  |> string.drop_right(up_to: 2)
+  |> string.drop_end(up_to: 2)
   |> should.equal("gle")
 
   "gleam"
-  |> string.drop_right(up_to: 5)
+  |> string.drop_end(up_to: 5)
   |> should.equal("")
 
   "gleam"
-  |> string.drop_right(up_to: -2)
+  |> string.drop_end(up_to: -2)
   |> should.equal("gleam")
 }
 
-pub fn pad_left_test() {
+pub fn pad_start_test() {
   "121"
-  |> string.pad_left(to: 5, with: ".")
+  |> string.pad_start(to: 5, with: ".")
   |> should.equal("..121")
 
   "121"
-  |> string.pad_left(to: 3, with: ".")
+  |> string.pad_start(to: 3, with: ".")
   |> should.equal("121")
 
   "121"
-  |> string.pad_left(to: 2, with: ".")
+  |> string.pad_start(to: 2, with: ".")
   |> should.equal("121")
 
   "121"
-  |> string.pad_left(to: 4, with: "XY")
+  |> string.pad_start(to: 4, with: "XY")
   |> should.equal("X121")
 
   "121"
-  |> string.pad_left(to: 5, with: "XY")
+  |> string.pad_start(to: 5, with: "XY")
   |> should.equal("XY121")
 
   "121"
-  |> string.pad_left(to: 6, with: "XY")
+  |> string.pad_start(to: 6, with: "XY")
   |> should.equal("XYX121")
 }
 
-pub fn pad_right_test() {
+pub fn pad_end_test() {
   "121"
-  |> string.pad_right(to: 5, with: ".")
+  |> string.pad_end(to: 5, with: ".")
   |> should.equal("121..")
 
   "121"
-  |> string.pad_right(to: 3, with: ".")
+  |> string.pad_end(to: 3, with: ".")
   |> should.equal("121")
 
   "121"
-  |> string.pad_right(to: 2, with: ".")
+  |> string.pad_end(to: 2, with: ".")
   |> should.equal("121")
 
   "121"
-  |> string.pad_right(to: 4, with: "XY")
+  |> string.pad_end(to: 4, with: "XY")
   |> should.equal("121X")
 
   "121"
-  |> string.pad_right(to: 5, with: "XY")
+  |> string.pad_end(to: 5, with: "XY")
   |> should.equal("121XY")
 
   "121"
-  |> string.pad_right(to: 6, with: "XY")
+  |> string.pad_end(to: 6, with: "XY")
   |> should.equal("121XYX")
 }
 

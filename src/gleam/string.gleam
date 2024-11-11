@@ -247,7 +247,21 @@ pub fn crop(from string: String, before substring: String) -> String
 /// // -> "e Lone Gunmen"
 /// ```
 ///
+@deprecated("Use `string.drop_start` instead.")
 pub fn drop_left(from string: String, up_to num_graphemes: Int) -> String {
+  drop_start(string, num_graphemes)
+}
+
+/// Drops *n* graphemes from the start of a `String`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// drop_start(from: "The Lone Gunmen", up_to: 2)
+/// // -> "e Lone Gunmen"
+/// ```
+///
+pub fn drop_start(from string: String, up_to num_graphemes: Int) -> String {
   case num_graphemes < 0 {
     True -> string
     False -> slice(string, num_graphemes, length(string) - num_graphemes)
@@ -263,7 +277,21 @@ pub fn drop_left(from string: String, up_to num_graphemes: Int) -> String {
 /// // -> "Cigarette Smoking M"
 /// ```
 ///
+@deprecated("Use `string.drop_end` instead.")
 pub fn drop_right(from string: String, up_to num_graphemes: Int) -> String {
+  drop_end(string, num_graphemes)
+}
+
+/// Drops *n* graphemes from the end of a `String`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// drop_end(from: "Cigarette Smoking Man", up_to: 2)
+/// // -> "Cigarette Smoking M"
+/// ```
+///
+pub fn drop_end(from string: String, up_to num_graphemes: Int) -> String {
   case num_graphemes < 0 {
     True -> string
     False -> slice(string, 0, length(string) - num_graphemes)
@@ -486,7 +514,35 @@ fn do_join(strings: List(String), separator: String) -> String {
 /// // -> "121"
 /// ```
 ///
+@deprecated("Use `string.pad_start` instead.")
 pub fn pad_left(
+  string: String,
+  to desired_length: Int,
+  with pad_string: String,
+) -> String {
+  pad_start(string, desired_length, pad_string)
+}
+
+/// Pads the start of a `String` until it has a given length.
+///
+/// ## Examples
+///
+/// ```gleam
+/// pad_start("121", to: 5, with: ".")
+/// // -> "..121"
+/// ```
+///
+/// ```gleam
+/// pad_start("121", to: 3, with: ".")
+/// // -> "121"
+/// ```
+///
+/// ```gleam
+/// pad_start("121", to: 2, with: ".")
+/// // -> "121"
+/// ```
+///
+pub fn pad_start(
   string: String,
   to desired_length: Int,
   with pad_string: String,
@@ -519,7 +575,35 @@ pub fn pad_left(
 /// // -> "123"
 /// ```
 ///
+@deprecated("Use `string.pad_end` instead.")
 pub fn pad_right(
+  string: String,
+  to desired_length: Int,
+  with pad_string: String,
+) -> String {
+  pad_end(string, desired_length, pad_string)
+}
+
+/// Pads the end of a `String` until it has a given length.
+///
+/// ## Examples
+///
+/// ```gleam
+/// pad_end("123", to: 5, with: ".")
+/// // -> "123.."
+/// ```
+///
+/// ```gleam
+/// pad_end("123", to: 3, with: ".")
+/// // -> "123"
+/// ```
+///
+/// ```gleam
+/// pad_end("123", to: 2, with: ".")
+/// // -> "123"
+/// ```
+///
+pub fn pad_end(
   string: String,
   to desired_length: Int,
   with pad_string: String,
@@ -582,12 +666,26 @@ type Direction {
 /// // -> "hats  \n"
 /// ```
 ///
+@deprecated("Use `string.trim_start` instead")
 pub fn trim_left(string: String) -> String {
-  do_trim_left(string)
+  trim_start(string)
 }
 
-@external(javascript, "../gleam_stdlib.mjs", "trim_left")
-fn do_trim_left(string: String) -> String {
+/// Removes whitespace at the start of a `String`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// trim_start("  hats  \n")
+/// // -> "hats  \n"
+/// ```
+///
+pub fn trim_start(string: String) -> String {
+  do_trim_start(string)
+}
+
+@external(javascript, "../gleam_stdlib.mjs", "trim_start")
+fn do_trim_start(string: String) -> String {
   erl_trim(string, Leading)
 }
 
@@ -600,12 +698,26 @@ fn do_trim_left(string: String) -> String {
 /// // -> "  hats"
 /// ```
 ///
+@deprecated("Use `string.trim_end` instead")
 pub fn trim_right(string: String) -> String {
-  do_trim_right(string)
+  trim_end(string)
 }
 
-@external(javascript, "../gleam_stdlib.mjs", "trim_right")
-fn do_trim_right(string: String) -> String {
+/// Removes whitespace at the end of a `String`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// trim_end("  hats  \n")
+/// // -> "  hats"
+/// ```
+///
+pub fn trim_end(string: String) -> String {
+  do_trim_end(string)
+}
+
+@external(javascript, "../gleam_stdlib.mjs", "trim_end")
+fn do_trim_end(string: String) -> String {
   erl_trim(string, Trailing)
 }
 

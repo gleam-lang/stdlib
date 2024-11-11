@@ -299,14 +299,14 @@ const left_trim_regex = new RegExp(`^([${unicode_whitespaces}]*)`, "g");
 const right_trim_regex = new RegExp(`([${unicode_whitespaces}]*)$`, "g");
 
 export function trim(string) {
-  return trim_left(trim_right(string));
+  return trim_start(trim_end(string));
 }
 
-export function trim_left(string) {
+export function trim_start(string) {
   return string.replace(left_trim_regex, "");
 }
 
-export function trim_right(string) {
+export function trim_end(string) {
   return string.replace(right_trim_regex, "");
 }
 
