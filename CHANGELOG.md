@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- The `bit_array` module gains the `starts_with` function.
+
 ## v0.41.0 - 2024-10-31
 
 Happy Samhain! 🎃

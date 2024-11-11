@@ -379,3 +379,52 @@ pub fn compare_different_sizes_test() {
   bit_array.compare(<<0:2>>, <<0:1>>)
   |> should.equal(order.Gt)
 }
+
+pub fn starts_with_test() {
+  bit_array.starts_with(<<>>, <<>>)
+  |> should.be_true
+
+  bit_array.starts_with(<<0>>, <<>>)
+  |> should.be_true
+
+  bit_array.starts_with(<<>>, <<0>>)
+  |> should.be_false
+
+  bit_array.starts_with(<<0, 1, 2>>, <<0>>)
+  |> should.be_true
+
+  bit_array.starts_with(<<0, 1, 2>>, <<0, 1>>)
+  |> should.be_true
+
+  bit_array.starts_with(<<0, 1, 2>>, <<0, 1, 2>>)
+  |> should.be_true
+
+  bit_array.starts_with(<<0, 1, 2>>, <<0, 1, 2, 3>>)
+  |> should.be_false
+
+  bit_array.starts_with(<<0, 1, 2>>, <<1>>)
+  |> should.be_false
+}
+
+// This test is target specific since it's using non byte-aligned BitArrays
+// and those are not supported on the JavaScript target.
+@target(erlang)
+pub fn starts_with_erlang_only_test() {
+  bit_array.starts_with(<<1:1>>, <<1:1>>)
+  |> should.be_true
+
+  bit_array.starts_with(<<1:1>>, <<>>)
+  |> should.be_true
+
+  bit_array.starts_with(<<1:1>>, <<1:2>>)
+  |> should.be_false
+
+  bit_array.starts_with(<<-1:127>>, <<-1:33>>)
+  |> should.be_true
+
+  bit_array.starts_with(<<-1:127>>, <<-1:128>>)
+  |> should.be_false
+
+  bit_array.starts_with(<<0:127>>, <<1:127>>)
+  |> should.be_false
+}

@@ -235,3 +235,16 @@ pub fn compare(a: BitArray, with b: BitArray) -> order.Order {
 
 @external(erlang, "gleam_stdlib", "bit_array_to_int_and_size")
 fn bit_array_to_int_and_size(a: BitArray) -> #(Int, Int)
+
+/// Checks whether the first `BitArray` starts with the second one.
+///
+/// ## Examples
+///
+/// ```gleam
+/// starts_with(<<1, 2, 3, 4>>, <<1, 2>>)
+/// // -> True
+/// ```
+///
+@external(erlang, "gleam_stdlib", "bit_array_starts_with")
+@external(javascript, "../gleam_stdlib.mjs", "bit_array_starts_with")
+pub fn starts_with(bits: BitArray, prefix: BitArray) -> Bool

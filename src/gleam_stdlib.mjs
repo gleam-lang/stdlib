@@ -990,3 +990,17 @@ export function bit_array_compare(first, second) {
   }
   return new Lt(); // second has more items
 }
+
+export function bit_array_starts_with(bits, prefix) {
+  if (prefix.length > bits.length) {
+    return false;
+  }
+
+  for (let i = 0; i < prefix.length; i++) {
+    if (bits.buffer[i] !== prefix.buffer[i]) {
+      return false;
+    }
+  }
+
+  return true;
+}
