@@ -116,7 +116,7 @@ fn do_parse(uri_string: String) -> Result(Uri, Nil) {
 fn regex_submatches(pattern: String, string: String) -> List(Option(String)) {
   pattern
   |> regex.compile(regex.Options(case_insensitive: True, multi_line: False))
-  |> result.nil_error
+  |> result.replace_error(Nil)
   |> result.map(regex.scan(_, string))
   |> result.try(list.first)
   |> result.map(fn(m: regex.Match) { m.submatches })
