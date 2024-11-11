@@ -310,6 +310,10 @@ export function trim_right(string) {
   return string.replace(right_trim_regex, "");
 }
 
+export function bit_array_bit_size(bit_array) {
+  return bit_array.length * 8;
+}
+
 export function bit_array_from_string(string) {
   return toBitArray([stringBits(string)]);
 }

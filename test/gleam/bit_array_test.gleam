@@ -4,6 +4,35 @@ import gleam/result
 import gleam/should
 import gleam/string
 
+pub fn bit_size_test() {
+  bit_array.bit_size(<<>>)
+  |> should.equal(0)
+
+  bit_array.bit_size(<<0>>)
+  |> should.equal(8)
+
+  bit_array.bit_size(<<-1:32>>)
+  |> should.equal(32)
+
+  bit_array.bit_size(<<0:-8>>)
+  |> should.equal(0)
+}
+
+@target(erlang)
+pub fn bit_size_unaligned_test() {
+  bit_array.bit_size(<<0:1>>)
+  |> should.equal(1)
+
+  bit_array.bit_size(<<7:3>>)
+  |> should.equal(3)
+
+  bit_array.bit_size(<<-1:190>>)
+  |> should.equal(190)
+
+  bit_array.bit_size(<<0:-1>>)
+  |> should.equal(0)
+}
+
 pub fn byte_size_test() {
   bit_array.byte_size(bit_array.from_string("hello"))
   |> should.equal(5)

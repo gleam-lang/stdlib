@@ -10,6 +10,12 @@ import gleam/string
 @external(javascript, "../gleam_stdlib.mjs", "bit_array_from_string")
 pub fn from_string(x: String) -> BitArray
 
+/// Returns an integer which is the number of bits in the bit array.
+///
+@external(erlang, "erlang", "bit_size")
+@external(javascript, "../gleam_stdlib.mjs", "bit_array_bit_size")
+pub fn bit_size(x: BitArray) -> Int
+
 /// Returns an integer which is the number of bytes in the bit array.
 ///
 @external(erlang, "erlang", "byte_size")
@@ -202,8 +208,6 @@ fn inspect_loop(input: BitArray, accumulator: String) -> String {
 /// compare(<<1, 2:size(2)>>, with: <<1, 2:size(2)>>)
 /// // -> Eq
 /// ```
-///
-/// Only supported on Erlang target for now.
 ///
 @external(javascript, "../gleam_stdlib.mjs", "bit_array_compare")
 pub fn compare(a: BitArray, with b: BitArray) -> order.Order {
