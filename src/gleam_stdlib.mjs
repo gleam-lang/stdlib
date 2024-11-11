@@ -302,19 +302,22 @@ const unicode_whitespaces = [
   "\u2029", // Paragraph separator
 ].join("");
 
-const left_trim_regex = new RegExp(`^([${unicode_whitespaces}]*)`, "g");
-const right_trim_regex = new RegExp(`([${unicode_whitespaces}]*)$`, "g");
+const trim_start_regex = new RegExp(`^[${unicode_whitespaces}]*`);
+const trim_end_regex = new RegExp(`[${unicode_whitespaces}]*$`);
+const trim_regex = new RegExp(
+  `^[${unicode_whitespaces}]*(.*?)[${unicode_whitespaces}]*$`
+);
 
 export function trim(string) {
-  return trim_start(trim_end(string));
+  return string.match(trim_regex)[1];
 }
 
 export function trim_start(string) {
-  return string.replace(left_trim_regex, "");
+  return string.replace(trim_start_regex, "");
 }
 
 export function trim_end(string) {
-  return string.replace(right_trim_regex, "");
+  return string.replace(trim_end_regex, "");
 }
 
 export function bit_array_from_string(string) {
