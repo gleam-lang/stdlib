@@ -7,6 +7,8 @@
   `pad_end`, `trim_start`, and `trim_end` functions. These replace the
   `drop_left`, `drop_right`, `pad_left`, `pad_right`, `trim_left`, and
   `trim_right` functions, which have been deprecated.
+- The `result.nil_error` function has been deprecated in favour of
+  `result.replace_error`.
 
 ## v0.41.0 - 2024-10-31
 
