@@ -276,6 +276,7 @@ pub fn unwrap_both(result: Result(a, a)) -> a {
 /// // -> Ok(1)
 /// ```
 ///
+@deprecated("Use `result.replace_error` with the `Nil` value instead")
 pub fn nil_error(result: Result(a, e)) -> Result(a, Nil) {
   replace_error(result, Nil)
 }
