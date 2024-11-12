@@ -16,6 +16,7 @@ import gleam/list
 /// performance by not using a string builder. Always benchmark your performance
 /// sensitive code.
 ///
+@deprecated("The `string_builder` module has been deprecated, use the `string_tree.StringTree` type instead.")
 pub type StringBuilder
 
 /// Create an empty `StringBuilder`. Useful as the start of a pipe chaining many
