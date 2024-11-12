@@ -4,7 +4,7 @@
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/order
-import gleam/string_builder.{type StringBuilder}
+import gleam/string_tree.{type StringTree}
 
 /// Determines if a `String` is empty.
 ///
@@ -72,9 +72,9 @@ pub fn reverse(string: String) -> String {
 
 fn do_reverse(string: String) -> String {
   string
-  |> string_builder.from_string
-  |> string_builder.reverse
-  |> string_builder.to_string
+  |> string_tree.from_string
+  |> string_tree.reverse
+  |> string_tree.to_string
 }
 
 /// Creates a new `String` by replacing all occurrences of a given substring.
@@ -97,9 +97,9 @@ pub fn replace(
   with substitute: String,
 ) -> String {
   string
-  |> string_builder.from_string
-  |> string_builder.replace(each: pattern, with: substitute)
-  |> string_builder.to_string
+  |> string_tree.from_string
+  |> string_tree.replace(each: pattern, with: substitute)
+  |> string_tree.to_string
 }
 
 /// Creates a new `String` with all the graphemes in the input `String` converted to
@@ -369,9 +369,9 @@ pub fn split(x: String, on substring: String) -> List(String) {
     "" -> to_graphemes(x)
     _ ->
       x
-      |> string_builder.from_string
-      |> string_builder.split(on: substring)
-      |> list.map(with: string_builder.to_string)
+      |> string_tree.from_string
+      |> string_tree.split(on: substring)
+      |> list.map(with: string_tree.to_string)
   }
 }
 
@@ -415,7 +415,7 @@ fn erl_split(a: String, b: String) -> List(String)
 /// Creates a new `String` by joining two `String`s together.
 ///
 /// This function copies both `String`s and runs in linear time. If you find
-/// yourself joining `String`s frequently consider using the [`string_builder`](../gleam/string_builder.html)
+/// yourself joining `String`s frequently consider using the [`string_tree`](../gleam/string_tree.html)
 /// module as it can append `String`s much faster!
 ///
 /// ## Examples
@@ -427,15 +427,15 @@ fn erl_split(a: String, b: String) -> List(String)
 ///
 pub fn append(to first: String, suffix second: String) -> String {
   first
-  |> string_builder.from_string
-  |> string_builder.append(second)
-  |> string_builder.to_string
+  |> string_tree.from_string
+  |> string_tree.append(second)
+  |> string_tree.to_string
 }
 
 /// Creates a new `String` by joining many `String`s together.
 ///
 /// This function copies both `String`s and runs in linear time. If you find
-/// yourself joining `String`s frequently consider using the [`string_builder`](../gleam/string_builder.html)
+/// yourself joining `String`s frequently consider using the [`string_tree`](../gleam/string_tree.html)
 /// module as it can append `String`s much faster!
 ///
 /// ## Examples
@@ -447,8 +447,8 @@ pub fn append(to first: String, suffix second: String) -> String {
 ///
 pub fn concat(strings: List(String)) -> String {
   strings
-  |> string_builder.from_strings
-  |> string_builder.to_string
+  |> string_tree.from_strings
+  |> string_tree.to_string
 }
 
 /// Creates a new `String` by repeating a `String` a given number of times.
@@ -972,12 +972,12 @@ pub fn capitalise(string: String) -> String {
 ///
 pub fn inspect(term: anything) -> String {
   do_inspect(term)
-  |> string_builder.to_string
+  |> string_tree.to_string
 }
 
 @external(erlang, "gleam_stdlib", "inspect")
 @external(javascript, "../gleam_stdlib.mjs", "inspect")
-fn do_inspect(term: anything) -> StringBuilder
+fn do_inspect(term: anything) -> StringTree
 
 /// Returns the number of bytes in a `String`.
 ///

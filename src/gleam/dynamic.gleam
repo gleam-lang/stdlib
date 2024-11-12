@@ -4,7 +4,7 @@ import gleam/int
 import gleam/list
 import gleam/option.{type Option, Some}
 import gleam/result
-import gleam/string_builder
+import gleam/string_tree
 
 /// `Dynamic` data is data that we don't know the type of yet.
 /// We likely get data like this from interop with Erlang, or from
@@ -498,8 +498,8 @@ fn at_least_decode_tuple_error(
   }
   let error =
     ["Tuple of at least ", int.to_string(size), " element", s]
-    |> string_builder.from_strings
-    |> string_builder.to_string
+    |> string_tree.from_strings
+    |> string_tree.to_string
     |> DecodeError(found: classify(data), path: [])
   Error([error])
 }
@@ -567,8 +567,8 @@ fn push_path(error: DecodeError, name: t) -> DecodeError {
     Ok(name) -> name
     Error(_) ->
       ["<", classify(name), ">"]
-      |> string_builder.from_strings
-      |> string_builder.to_string
+      |> string_tree.from_strings
+      |> string_tree.to_string
   }
   DecodeError(..error, path: [name, ..error.path])
 }
