@@ -9,6 +9,10 @@
   `trim_right` functions, which have been deprecated.
 - The `result.nil_error` function has been deprecated in favour of
   `result.replace_error`.
+- The `gleam/bytes_builder` module has been deprecated in favour of the
+  `gleam/bytes_tree` module.
+- The `gleam/string_builder` module has been deprecated in favour of the
+  `gleam/string_tree` module.
 
 ## v0.41.0 - 2024-10-31
 
