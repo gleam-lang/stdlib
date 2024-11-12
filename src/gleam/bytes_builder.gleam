@@ -24,6 +24,7 @@ import gleam/bit_array
 import gleam/list
 import gleam/string_builder.{type StringBuilder}
 
+@deprecated("The `bytes_builder` module has been deprecated, use the `bytes_tree.BytesTree` type instead.")
 pub opaque type BytesBuilder {
   Bytes(BitArray)
   Text(StringBuilder)
