@@ -14,7 +14,7 @@ import gleam/pair
 import gleam/regex
 import gleam/result
 import gleam/string
-import gleam/string_builder.{type StringBuilder}
+import gleam/string_tree.{type StringTree}
 
 /// Type representing holding the parsed components of an URI.
 /// All components of a URI are optional, except the path.
@@ -217,17 +217,13 @@ fn do_parse_query(a: String) -> Result(List(#(String, String)), Nil)
 pub fn query_to_string(query: List(#(String, String))) -> String {
   query
   |> list.map(query_pair)
-  |> list.intersperse(string_builder.from_string("&"))
-  |> string_builder.concat
-  |> string_builder.to_string
+  |> list.intersperse(string_tree.from_string("&"))
+  |> string_tree.concat
+  |> string_tree.to_string
 }
 
-fn query_pair(pair: #(String, String)) -> StringBuilder {
-  string_builder.from_strings([
-    percent_encode(pair.0),
-    "=",
-    percent_encode(pair.1),
-  ])
+fn query_pair(pair: #(String, String)) -> StringTree {
+  string_tree.from_strings([percent_encode(pair.0), "=", percent_encode(pair.1)])
 }
 
 /// Encodes a string into a percent encoded representation.
