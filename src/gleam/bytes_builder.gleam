@@ -33,7 +33,7 @@ pub opaque type BytesBuilder {
 /// Create an empty `BytesBuilder`. Useful as the start of a pipe chaining many
 /// builders together.
 ///
-@deprecated("This module has been deprecated, use `bytes_tree.new` instead.")
+@deprecated("The `bytes_builder` module has been deprecated, use `bytes_tree.new` instead.")
 pub fn new() -> BytesBuilder {
   concat([])
 }
@@ -42,7 +42,7 @@ pub fn new() -> BytesBuilder {
 ///
 /// Runs in constant time.
 ///
-@deprecated("This module has been deprecated, use `bytes_tree.prepend` instead.")
+@deprecated("The `bytes_builder` module has been deprecated, use `bytes_tree.prepend` instead.")
 pub fn prepend(to second: BytesBuilder, prefix first: BitArray) -> BytesBuilder {
   append_builder(from_bit_array(first), second)
 }
@@ -51,7 +51,7 @@ pub fn prepend(to second: BytesBuilder, prefix first: BitArray) -> BytesBuilder 
 ///
 /// Runs in constant time.
 ///
-@deprecated("This module has been deprecated, use `bytes_tree.append` instead.")
+@deprecated("The `bytes_builder` module has been deprecated, use `bytes_tree.append` instead.")
 pub fn append(to first: BytesBuilder, suffix second: BitArray) -> BytesBuilder {
   append_builder(first, from_bit_array(second))
 }
@@ -60,7 +60,7 @@ pub fn append(to first: BytesBuilder, suffix second: BitArray) -> BytesBuilder {
 ///
 /// Runs in constant time.
 ///
-@deprecated("This module has been deprecated, use `bytes_tree.prepend_tree` instead.")
+@deprecated("The `bytes_builder` module has been deprecated, use `bytes_tree.prepend_tree` instead.")
 pub fn prepend_builder(
   to second: BytesBuilder,
   prefix first: BytesBuilder,
@@ -72,7 +72,7 @@ pub fn prepend_builder(
 ///
 /// Runs in constant time.
 ///
-@deprecated("This module has been deprecated, use `bytes_tree.append_tree` instead.")
+@deprecated("The `bytes_builder` module has been deprecated, use `bytes_tree.append_tree` instead.")
 @external(erlang, "gleam_stdlib", "iodata_append")
 pub fn append_builder(
   to first: BytesBuilder,
@@ -89,7 +89,7 @@ pub fn append_builder(
 /// Runs in constant time when running on Erlang.
 /// Runs in linear time with the length of the string otherwise.
 ///
-@deprecated("This module has been deprecated, use `bytes_tree.prepend_string` instead.")
+@deprecated("The `bytes_builder` module has been deprecated, use `bytes_tree.prepend_string` instead.")
 pub fn prepend_string(
   to second: BytesBuilder,
   prefix first: String,
@@ -102,7 +102,7 @@ pub fn prepend_string(
 /// Runs in constant time when running on Erlang.
 /// Runs in linear time with the length of the string otherwise.
 ///
-@deprecated("This module has been deprecated, use `bytes_tree.append_string` instead.")
+@deprecated("The `bytes_builder` module has been deprecated, use `bytes_tree.append_string` instead.")
 pub fn append_string(
   to first: BytesBuilder,
   suffix second: String,
@@ -114,7 +114,7 @@ pub fn append_string(
 ///
 /// Runs in constant time.
 ///
-@deprecated("This module has been deprecated, use `bytes_tree.concat` instead.")
+@deprecated("The `bytes_builder` module has been deprecated, use `bytes_tree.concat` instead.")
 @external(erlang, "gleam_stdlib", "identity")
 pub fn concat(builders: List(BytesBuilder)) -> BytesBuilder {
   Many(builders)
@@ -124,7 +124,7 @@ pub fn concat(builders: List(BytesBuilder)) -> BytesBuilder {
 ///
 /// Runs in constant time.
 ///
-@deprecated("This module has been deprecated, use `bytes_tree.concat_bit_arrays` instead.")
+@deprecated("The `bytes_builder` module has been deprecated, use `bytes_tree.concat_bit_arrays` instead.")
 @external(erlang, "gleam_stdlib", "identity")
 pub fn concat_bit_arrays(bits: List(BitArray)) -> BytesBuilder {
   bits
@@ -137,7 +137,7 @@ pub fn concat_bit_arrays(bits: List(BitArray)) -> BytesBuilder {
 /// Runs in constant time when running on Erlang.
 /// Runs in linear time otherwise.
 ///
-@deprecated("This module has been deprecated, use `bytes_tree.from_string` instead.")
+@deprecated("The `bytes_builder` module has been deprecated, use `bytes_tree.from_string` instead.")
 @external(erlang, "gleam_stdlib", "wrap_list")
 pub fn from_string(string: String) -> BytesBuilder {
   Text(string_builder.from_string(string))
@@ -148,7 +148,7 @@ pub fn from_string(string: String) -> BytesBuilder {
 /// Runs in constant time when running on Erlang.
 /// Runs in linear time otherwise.
 ///
-@deprecated("This module has been deprecated, use `bytes_tree.from_string_tree` instead.")
+@deprecated("The `bytes_builder` module has been deprecated, use `bytes_tree.from_string_tree` instead.")
 @external(erlang, "gleam_stdlib", "wrap_list")
 pub fn from_string_builder(builder: StringBuilder) -> BytesBuilder {
   Text(builder)
@@ -158,7 +158,7 @@ pub fn from_string_builder(builder: StringBuilder) -> BytesBuilder {
 ///
 /// Runs in constant time.
 ///
-@deprecated("This module has been deprecated, use `bytes_tree.from_bit_array` instead.")
+@deprecated("The `bytes_builder` module has been deprecated, use `bytes_tree.from_bit_array` instead.")
 @external(erlang, "gleam_stdlib", "wrap_list")
 pub fn from_bit_array(bits: BitArray) -> BytesBuilder {
   Bytes(bits)
@@ -171,7 +171,7 @@ pub fn from_bit_array(bits: BitArray) -> BytesBuilder {
 /// When running on Erlang this function is implemented natively by the
 /// virtual machine and is highly optimised.
 ///
-@deprecated("This module has been deprecated, use `bytes_tree.to_bit_array` instead.")
+@deprecated("The `bytes_builder` module has been deprecated, use `bytes_tree.to_bit_array` instead.")
 @external(erlang, "erlang", "list_to_bitstring")
 pub fn to_bit_array(builder: BytesBuilder) -> BitArray {
   [[builder]]
@@ -206,7 +206,7 @@ fn to_list(
 ///
 /// Runs in linear time.
 ///
-@deprecated("This module has been deprecated, use `bytes_tree.byte_size` instead.")
+@deprecated("The `bytes_builder` module has been deprecated, use `bytes_tree.byte_size` instead.")
 @external(erlang, "erlang", "iolist_size")
 pub fn byte_size(builder: BytesBuilder) -> Int {
   [[builder]]
