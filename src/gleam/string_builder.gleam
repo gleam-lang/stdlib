@@ -21,7 +21,7 @@ pub type StringBuilder
 /// Create an empty `StringBuilder`. Useful as the start of a pipe chaining many
 /// builders together.
 ///
-@deprecated("This module has been deprecated, use `string_tree.new` instead.")
+@deprecated("The `string_builder` module has been deprecated, use `string_tree.new` instead.")
 pub fn new() -> StringBuilder {
   do_from_strings([])
 }
@@ -30,7 +30,7 @@ pub fn new() -> StringBuilder {
 ///
 /// Runs in constant time.
 ///
-@deprecated("This module has been deprecated, use `string_tree.prepend` instead.")
+@deprecated("The `string_builder` module has been deprecated, use `string_tree.prepend` instead.")
 pub fn prepend(
   to builder: StringBuilder,
   prefix prefix: String,
@@ -42,7 +42,7 @@ pub fn prepend(
 ///
 /// Runs in constant time.
 ///
-@deprecated("This module has been deprecated, use `string_tree.append` instead.")
+@deprecated("The `string_builder` module has been deprecated, use `string_tree.append` instead.")
 pub fn append(to builder: StringBuilder, suffix second: String) -> StringBuilder {
   append_builder(builder, from_string(second))
 }
@@ -51,7 +51,7 @@ pub fn append(to builder: StringBuilder, suffix second: String) -> StringBuilder
 ///
 /// Runs in constant time.
 ///
-@deprecated("This module has been deprecated, use `string_tree.prepend_tree` instead.")
+@deprecated("The `string_builder` module has been deprecated, use `string_tree.prepend_tree` instead.")
 pub fn prepend_builder(
   to builder: StringBuilder,
   prefix prefix: StringBuilder,
@@ -63,7 +63,7 @@ pub fn prepend_builder(
 ///
 /// Runs in constant time.
 ///
-@deprecated("This module has been deprecated, use `string_tree.append_tree` instead.")
+@deprecated("The `string_builder` module has been deprecated, use `string_tree.append_tree` instead.")
 pub fn append_builder(
   to builder: StringBuilder,
   suffix suffix: StringBuilder,
@@ -79,7 +79,7 @@ fn do_append(a: StringBuilder, b: StringBuilder) -> StringBuilder
 ///
 /// Runs in constant time.
 ///
-@deprecated("This module has been deprecated, use `string_tree.from_strings` instead.")
+@deprecated("The `string_builder` module has been deprecated, use `string_tree.from_strings` instead.")
 pub fn from_strings(strings: List(String)) -> StringBuilder {
   do_from_strings(strings)
 }
@@ -92,7 +92,7 @@ fn do_from_strings(a: List(String)) -> StringBuilder
 ///
 /// Runs in constant time.
 ///
-@deprecated("This module has been deprecated, use `string_tree.concat` instead.")
+@deprecated("The `string_builder` module has been deprecated, use `string_tree.concat` instead.")
 pub fn concat(builders: List(StringBuilder)) -> StringBuilder {
   do_concat(builders)
 }
@@ -105,7 +105,7 @@ fn do_concat(builders: List(StringBuilder)) -> StringBuilder
 ///
 /// Runs in constant time.
 ///
-@deprecated("This module has been deprecated, use `string_tree.from_string` instead.")
+@deprecated("The `string_builder` module has been deprecated, use `string_tree.from_string` instead.")
 pub fn from_string(string: String) -> StringBuilder {
   do_from_string(string)
 }
@@ -119,7 +119,7 @@ fn do_from_string(string: String) -> StringBuilder
 /// This function is implemented natively by the virtual machine and is highly
 /// optimised.
 ///
-@deprecated("This module has been deprecated, use `string_tree.to_string` instead.")
+@deprecated("The `string_builder` module has been deprecated, use `string_tree.to_string` instead.")
 pub fn to_string(builder: StringBuilder) -> String {
   do_to_string(builder)
 }
@@ -130,7 +130,7 @@ fn do_to_string(builder: StringBuilder) -> String
 
 /// Returns the size of the `StringBuilder` in bytes.
 ///
-@deprecated("This module has been deprecated, use `string_tree.byte_size` instead.")
+@deprecated("The `string_builder` module has been deprecated, use `string_tree.byte_size` instead.")
 pub fn byte_size(builder: StringBuilder) -> Int {
   do_byte_size(builder)
 }
@@ -141,7 +141,7 @@ fn do_byte_size(builder: StringBuilder) -> Int
 
 /// Joins the given builders into a new builder separated with the given string
 ///
-@deprecated("This module has been deprecated, use `string_tree.join` instead.")
+@deprecated("The `string_builder` module has been deprecated, use `string_tree.join` instead.")
 pub fn join(builders: List(StringBuilder), with sep: String) -> StringBuilder {
   builders
   |> list.intersperse(from_string(sep))
@@ -151,7 +151,7 @@ pub fn join(builders: List(StringBuilder), with sep: String) -> StringBuilder {
 /// Converts a builder to a new builder where the contents have been
 /// lowercased.
 ///
-@deprecated("This module has been deprecated, use `string_tree.lowercase` instead.")
+@deprecated("The `string_builder` module has been deprecated, use `string_tree.lowercase` instead.")
 pub fn lowercase(builder: StringBuilder) -> StringBuilder {
   do_lowercase(builder)
 }
@@ -163,7 +163,7 @@ fn do_lowercase(builder: StringBuilder) -> StringBuilder
 /// Converts a builder to a new builder where the contents have been
 /// uppercased.
 ///
-@deprecated("This module has been deprecated, use `string_tree.uppercase` instead.")
+@deprecated("The `string_builder` module has been deprecated, use `string_tree.uppercase` instead.")
 pub fn uppercase(builder: StringBuilder) -> StringBuilder {
   do_uppercase(builder)
 }
@@ -174,7 +174,7 @@ fn do_uppercase(builder: StringBuilder) -> StringBuilder
 
 /// Converts a builder to a new builder with the contents reversed.
 ///
-@deprecated("This module has been deprecated, use `string_tree.reverse` instead.")
+@deprecated("The `string_builder` module has been deprecated, use `string_tree.reverse` instead.")
 pub fn reverse(builder: StringBuilder) -> StringBuilder {
   do_reverse(builder)
 }
@@ -193,7 +193,7 @@ fn do_to_graphemes(string: String) -> List(String)
 
 /// Splits a builder on a given pattern into a list of builders.
 ///
-@deprecated("This module has been deprecated, use `string_tree.split` instead.")
+@deprecated("The `string_builder` module has been deprecated, use `string_tree.split` instead.")
 pub fn split(iodata: StringBuilder, on pattern: String) -> List(StringBuilder) {
   do_split(iodata, pattern)
 }
@@ -212,7 +212,7 @@ fn erl_split(a: StringBuilder, b: String, c: Direction) -> List(StringBuilder)
 
 /// Replaces all instances of a pattern with a given string substitute.
 ///
-@deprecated("This module has been deprecated, use `string_tree.replace` instead.")
+@deprecated("The `string_builder` module has been deprecated, use `string_tree.replace` instead.")
 @external(erlang, "gleam_stdlib", "string_replace")
 @external(javascript, "../gleam_stdlib.mjs", "string_replace")
 pub fn replace(
@@ -239,7 +239,7 @@ pub fn replace(
 /// // -> True
 /// ```
 ///
-@deprecated("This module has been deprecated, use `string_tree.is_equal` instead.")
+@deprecated("The `string_builder` module has been deprecated, use `string_tree.is_equal` instead.")
 @external(erlang, "string", "equal")
 pub fn is_equal(a: StringBuilder, b: StringBuilder) -> Bool {
   a == b
@@ -264,7 +264,7 @@ pub fn is_equal(a: StringBuilder, b: StringBuilder) -> Bool {
 /// // -> True
 /// ```
 ///
-@deprecated("This module has been deprecated, use `string_tree.is_empty` instead.")
+@deprecated("The `string_builder` module has been deprecated, use `string_tree.is_empty` instead.")
 @external(erlang, "string", "is_empty")
 pub fn is_empty(builder: StringBuilder) -> Bool {
   from_string("") == builder
