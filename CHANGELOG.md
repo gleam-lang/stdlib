@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.42.0 - 2024-11-15
 
 - The `bit_array` module gains the `bit_size` and `starts_with` functions.
 - Ths `string` module gains the `drop_start`, `drop_end`, `pad_start`,
