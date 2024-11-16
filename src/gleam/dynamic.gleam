@@ -974,15 +974,19 @@ pub fn dict(
     use pairs <- result.try(
       dict
       |> dict.to_list
-      |> list.try_map(fn(pair) {
+      |> list.index_map(fn(pair, index) {
         let #(k, v) = pair
+        #(index, k, v)
+      })
+      |> list.try_map(fn(triplet) {
+        let #(i, k, v) = triplet
         use k <- result.try(
           key_type(k)
-          |> map_errors(push_path(_, "keys")),
+          |> map_errors(push_path(_, "keys[" <> int.to_string(i) <> "]")),
         )
         use v <- result.try(
           value_type(v)
-          |> map_errors(push_path(_, "values")),
+          |> map_errors(push_path(_, "values[" <> int.to_string(i) <> "]")),
         )
         Ok(#(k, v))
       }),
