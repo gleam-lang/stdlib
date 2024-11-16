@@ -177,6 +177,7 @@ fn assert_parse(s) {
 //   assert ":https" = uri.parse(":https").path
 //   assert "https" = uri.parse("https").path
 // }
+
 pub fn parse_downcases_scheme() {
   let assert Ok(uri) = uri.parse("HTTPS://EXAMPLE.COM")
   let assert Some("https") = uri.scheme
