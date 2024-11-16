@@ -10,7 +10,6 @@
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
-import gleam/pair
 import gleam/regex
 import gleam/result
 import gleam/string
@@ -58,59 +57,245 @@ pub fn parse(uri_string: String) -> Result(Uri, Nil) {
 }
 
 @external(erlang, "gleam_stdlib", "uri_parse")
-fn do_parse(uri_string: String) -> Result(Uri, Nil) {
-  // From https://tools.ietf.org/html/rfc3986#appendix-B
-  let pattern =
-    //    12                        3  4          5       6  7        8
-    "^(([a-z][a-z0-9\\+\\-\\.]*):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#.*)?"
-  let matches =
-    pattern
-    |> regex_submatches(uri_string)
-    |> pad_list(8)
-
-  let #(scheme, authority, path, query, fragment) = case matches {
-    [
-      _scheme_with_colon,
-      scheme,
-      authority_with_slashes,
-      _authority,
-      path,
-      query_with_question_mark,
-      _query,
-      fragment,
-    ] -> #(
-      scheme,
-      authority_with_slashes,
-      path,
-      query_with_question_mark,
-      fragment,
-    )
-    _ -> #(None, None, None, None, None)
+pub fn do_parse(uri_string: String) -> Result(Uri, Nil) {
+  case parse_uri_pieces(uri_string) {
+    Error(Nil) -> Error(Nil)
+    Ok(UriPieces(
+      scheme: scheme,
+      authority_with_slashes: authority_with_slashes,
+      path: path,
+      query_with_question_mark: query_with_question_mark,
+      fragment: fragment,
+    )) -> {
+      let scheme = noneify_empty_string(scheme)
+      let query = noneify_query(query_with_question_mark)
+      let #(userinfo, host, port) = split_authority(authority_with_slashes)
+      let scheme =
+        scheme
+        |> noneify_empty_string
+        |> option.map(string.lowercase)
+      Ok(Uri(
+        scheme: scheme,
+        userinfo: userinfo,
+        host: host,
+        port: port,
+        path: path,
+        query: query,
+        fragment: fragment,
+      ))
+    }
   }
+}
 
-  let scheme = noneify_empty_string(scheme)
-  let path = option.unwrap(path, "")
-  let query = noneify_query(query)
-  let #(userinfo, host, port) = split_authority(authority)
-  let fragment =
-    fragment
-    |> option.to_result(Nil)
-    |> result.try(string.pop_grapheme)
-    |> result.map(pair.second)
-    |> option.from_result
-  let scheme =
-    scheme
-    |> noneify_empty_string
-    |> option.map(string.lowercase)
-  Ok(Uri(
-    scheme: scheme,
-    userinfo: userinfo,
-    host: host,
-    port: port,
-    path: path,
-    query: query,
-    fragment: fragment,
-  ))
+type UriPieces {
+  UriPieces(
+    scheme: Option(String),
+    authority_with_slashes: Option(String),
+    path: String,
+    query_with_question_mark: Option(String),
+    fragment: Option(String),
+  )
+}
+
+fn parse_uri_pieces(uri_string: String) -> Result(UriPieces, Nil) {
+  // This parses a uri_string following the regex defined in
+  // https://tools.ietf.org/html/rfc3986#appendix-B
+  //
+  // TODO: This is not perfect and will be more permissive than its Erlang
+  // counterpart, ideally we want to replicate Erlang's implementation on the js
+  // target as well.
+  let default_pieces =
+    UriPieces(
+      scheme: None,
+      authority_with_slashes: None,
+      path: "",
+      query_with_question_mark: None,
+      fragment: None,
+    )
+
+  parse_scheme_loop(uri_string, uri_string, default_pieces, 0)
+}
+
+fn parse_scheme_loop(
+  original: String,
+  uri_string: String,
+  pieces: UriPieces,
+  size: Int,
+) -> Result(UriPieces, Nil) {
+  case string.pop_grapheme(uri_string) {
+    // `/` is not allowed to appear in a scheme so we know it's over and we can
+    // start parsing the authority with slashes.
+    Ok(#("/", _)) if size == 0 ->
+      parse_authority_with_slashes(uri_string, pieces)
+    Ok(#("/", _)) -> {
+      let scheme = string.slice(original, at_index: 0, length: size)
+      let pieces = UriPieces(..pieces, scheme: Some(scheme))
+      parse_authority_with_slashes(uri_string, pieces)
+    }
+
+    // `?` is not allowed to appear in a schemem, in an authority, or in a path;
+    // so if we see it we know it marks the beginning of the query part.
+    Ok(#("?", _)) if size == 0 ->
+      parse_query_with_question_mark(uri_string, pieces)
+    Ok(#("?", _)) -> {
+      let scheme = string.slice(original, at_index: 0, length: size)
+      let pieces = UriPieces(..pieces, scheme: Some(scheme))
+      parse_query_with_question_mark(uri_string, pieces)
+    }
+
+    // `#` is not allowed to appear in a scheme, in an authority, in a path or
+    // in a query; so if we see it we know it marks the beginning of the final
+    // fragment.
+    Ok(#("#", rest)) if size == 0 -> parse_fragment(rest, pieces)
+    Ok(#("#", rest)) -> {
+      let scheme = string.slice(original, at_index: 0, length: size)
+      let pieces = UriPieces(..pieces, scheme: Some(scheme))
+      parse_fragment(rest, pieces)
+    }
+
+    // A colon marks the end of a uri scheme, but if it is not preceded by any
+    // character then it's not a valid URI.
+    Ok(#(":", _)) if size == 0 -> Error(Nil)
+    Ok(#(":", rest)) -> {
+      let scheme = string.slice(original, at_index: 0, length: size)
+      let pieces = UriPieces(..pieces, scheme: Some(scheme))
+      parse_authority_with_slashes(rest, pieces)
+    }
+
+    // In all other cases the first character is just a valid URI scheme
+    // character and we just keep munching characters until we reach the end of
+    // the uri scheme (or the end of the string and that would mean this is not
+    // a valid uri scheme since we found no `:`).
+    Ok(#(_, rest)) -> parse_scheme_loop(original, rest, pieces, size + 1)
+
+    // If we could get to the end of the string and we've met no special
+    // chars whatsoever, that means the entire string is just a long path.
+    Error(_) -> Ok(UriPieces(..pieces, path: original))
+  }
+}
+
+fn parse_authority_with_slashes(
+  uri_string: String,
+  pieces: UriPieces,
+) -> Result(UriPieces, Nil) {
+  case uri_string {
+    // To be a valid authority the string must start with a `//`, otherwise
+    // there's no authority and we just skip ahead to parsing the path.
+    "//" <> rest ->
+      parse_authority_with_slashes_loop(uri_string, rest, pieces, 2)
+    _ -> parse_path(uri_string, pieces)
+  }
+}
+
+fn parse_authority_with_slashes_loop(
+  original: String,
+  uri_string: String,
+  pieces: UriPieces,
+  size: Int,
+) -> Result(UriPieces, Nil) {
+  case string.pop_grapheme(uri_string) {
+    // `/` marks the beginning of a path.
+    Ok(#("/", _)) -> {
+      let authority = string.slice(original, at_index: 0, length: size)
+      let pieces = UriPieces(..pieces, authority_with_slashes: Some(authority))
+      parse_path(uri_string, pieces)
+    }
+
+    // `?` marks the beginning of the query with question mark.
+    Ok(#("?", _)) -> {
+      let authority = string.slice(original, at_index: 0, length: size)
+      let pieces = UriPieces(..pieces, authority_with_slashes: Some(authority))
+      parse_query_with_question_mark(uri_string, pieces)
+    }
+
+    // `#` marks the beginning of the fragment part.
+    Ok(#("#", rest)) -> {
+      let authority = string.slice(original, at_index: 0, length: size)
+      let pieces = UriPieces(..pieces, authority_with_slashes: Some(authority))
+      parse_fragment(rest, pieces)
+    }
+
+    // In all other cases the character is allowed to be part of the authority
+    // so we just keep munching until we reach to its end.
+    Ok(#(_, rest)) ->
+      parse_authority_with_slashes_loop(original, rest, pieces, size + 1)
+
+    // If the string is over that means the entirety of the string was the
+    // authority and it has an empty path, query and fragment.
+    Error(_) -> Ok(UriPieces(..pieces, authority_with_slashes: Some(original)))
+  }
+}
+
+fn parse_path(uri_string: String, pieces: UriPieces) -> Result(UriPieces, Nil) {
+  parse_path_loop(uri_string, uri_string, pieces, 0)
+}
+
+fn parse_path_loop(
+  original: String,
+  uri_string: String,
+  pieces: UriPieces,
+  size: Int,
+) -> Result(UriPieces, Nil) {
+  case string.pop_grapheme(uri_string) {
+    // `?` marks the beginning of the query with question mark.
+    Ok(#("?", _)) -> {
+      let path = string.slice(original, at_index: 0, length: size)
+      let pieces = UriPieces(..pieces, path: path)
+      parse_query_with_question_mark(uri_string, pieces)
+    }
+
+    // `#` marks the beginning of the fragment part.
+    Ok(#("#", rest)) -> {
+      let path = string.slice(original, at_index: 0, length: size)
+      let pieces = UriPieces(..pieces, path: path)
+      parse_fragment(rest, pieces)
+    }
+
+    // In all other cases the character is allowed to be part of the path so we
+    // just keep munching until we reach to its end.
+    Ok(#(_, rest)) -> parse_path_loop(original, rest, pieces, size + 1)
+
+    // If the string is over that means the entirety of the string was the path
+    // and it has an empty query and fragment.
+    Error(_) -> Ok(UriPieces(..pieces, path: original))
+  }
+}
+
+fn parse_query_with_question_mark(
+  uri_string: String,
+  pieces: UriPieces,
+) -> Result(UriPieces, Nil) {
+  parse_query_with_question_mark_loop(uri_string, uri_string, pieces, 0)
+}
+
+fn parse_query_with_question_mark_loop(
+  original: String,
+  uri_string: String,
+  pieces: UriPieces,
+  size: Int,
+) -> Result(UriPieces, Nil) {
+  case string.pop_grapheme(uri_string) {
+    // `#` marks the beginning of the fragment part.
+    Ok(#("#", rest)) -> {
+      let query = string.slice(original, at_index: 0, length: size)
+      let pieces = UriPieces(..pieces, query_with_question_mark: Some(query))
+      parse_fragment(rest, pieces)
+    }
+
+    // In all other cases the character is allowed to be part of the query so we
+    // just keep munching until we reach to its end.
+    Ok(#(_, rest)) ->
+      parse_query_with_question_mark_loop(original, rest, pieces, size + 1)
+
+    // If the string is over that means the entirety of the string was the query
+    // and it has an empty fragment.
+    Error(_) ->
+      Ok(UriPieces(..pieces, query_with_question_mark: Some(original)))
+  }
+}
+
+fn parse_fragment(rest: String, pieces: UriPieces) -> Result(UriPieces, Nil) {
+  Ok(UriPieces(..pieces, fragment: Some(rest)))
 }
 
 fn regex_submatches(pattern: String, string: String) -> List(Option(String)) {
