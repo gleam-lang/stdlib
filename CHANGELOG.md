@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.43.0 - 2024-11-17
+
+- `BytesBuilder` is now an alias of `BytesTree`.
+- `StringBuilder` is now an alias of `StringTree`.
+
 ## v0.42.0 - 2024-11-15
 
 - The `bit_array` module gains the `bit_size` and `starts_with` functions.
