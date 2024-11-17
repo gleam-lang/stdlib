@@ -1128,18 +1128,18 @@ pub fn dict_test() {
   |> dynamic.dict(dynamic.string, dynamic.int)
   |> should.equal(Ok(dict.from_list([#("a", 1), #("b", 2)])))
 
-  dict.from_list([#("a", 1), #("b", 2)])
+  dict.from_list([#(dynamic.from(3), 1), #(dynamic.from("b"), 2)])
   |> dynamic.from
   |> dynamic.dict(dynamic.int, dynamic.int)
   |> should.equal(
-    Error([DecodeError(expected: "Int", found: "String", path: ["keys[0]"])]),
+    Error([DecodeError(expected: "Int", found: "String", path: ["keys[1]"])]),
   )
 
-  dict.from_list([#("a", 1), #("b", 2)])
+  dict.from_list([#("a", dynamic.from("b")), #("b", dynamic.from(1))])
   |> dynamic.from
   |> dynamic.dict(dynamic.string, dynamic.string)
   |> should.equal(
-    Error([DecodeError(expected: "String", found: "Int", path: ["values[0]"])]),
+    Error([DecodeError(expected: "String", found: "Int", path: ["values[1]"])]),
   )
 
   1
