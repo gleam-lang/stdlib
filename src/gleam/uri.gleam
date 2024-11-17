@@ -10,8 +10,6 @@
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
-import gleam/regex
-import gleam/result
 import gleam/string
 import gleam/string_builder.{type StringBuilder}
 
@@ -298,16 +296,6 @@ fn parse_fragment(rest: String, pieces: UriPieces) -> Result(UriPieces, Nil) {
   Ok(UriPieces(..pieces, fragment: Some(rest)))
 }
 
-fn regex_submatches(pattern: String, string: String) -> List(Option(String)) {
-  pattern
-  |> regex.compile(regex.Options(case_insensitive: True, multi_line: False))
-  |> result.replace_error(Nil)
-  |> result.map(regex.scan(_, string))
-  |> result.try(list.first)
-  |> result.map(fn(m: regex.Match) { m.submatches })
-  |> result.unwrap([])
-}
-
 fn noneify_query(x: Option(String)) -> Option(String) {
   case x {
     None -> None
@@ -333,31 +321,113 @@ fn split_authority(
   case option.unwrap(authority, "") {
     "" -> #(None, None, None)
     "//" -> #(None, Some(""), None)
-    authority -> {
-      let matches =
-        "^(//)?((.*)@)?(\\[[a-zA-Z0-9:.]*\\]|[^:]*)(:(\\d*))?"
-        |> regex_submatches(authority)
-        |> pad_list(6)
-      case matches {
-        [_, _, userinfo, host, _, port] -> {
-          let userinfo = noneify_empty_string(userinfo)
-          let host = noneify_empty_string(host)
-          let port =
-            port
-            |> option.unwrap("")
-            |> int.parse
-            |> option.from_result
-          #(userinfo, host, port)
-        }
-        _ -> #(None, None, None)
-      }
+    "//" <> authority | authority -> {
+      let AuthorityPieces(userinfo: userinfo, host: host, port: port) =
+        parse_authority_pieces(authority)
+
+      let userinfo = noneify_empty_string(userinfo)
+      let host = noneify_empty_string(host)
+      #(userinfo, host, port)
     }
   }
 }
 
-fn pad_list(list: List(Option(a)), size: Int) -> List(Option(a)) {
-  list
-  |> list.append(list.repeat(None, extra_required(list, size)))
+type AuthorityPieces {
+  AuthorityPieces(
+    userinfo: Option(String),
+    host: Option(String),
+    port: Option(Int),
+  )
+}
+
+fn parse_authority_pieces(string: String) -> AuthorityPieces {
+  let pieces = AuthorityPieces(userinfo: None, host: None, port: None)
+  parse_userinfo_loop(string, string, pieces, 0)
+}
+
+fn parse_userinfo_loop(original, string, pieces, size) {
+  case string.pop_grapheme(string) {
+    Error(_) -> parse_host(original, pieces)
+
+    Ok(#("@", rest)) -> {
+      let userinfo = string.slice(original, at_index: 0, length: size)
+      let pieces = AuthorityPieces(..pieces, userinfo: Some(userinfo))
+      parse_host(rest, pieces)
+    }
+    Ok(#(_, rest)) -> parse_userinfo_loop(original, rest, pieces, size + 1)
+  }
+}
+
+fn parse_host(string, pieces) {
+  case string.pop_grapheme(string) {
+    Ok(#("[", _)) -> parse_host_within_brackets(string, pieces)
+    Ok(#(":", rest)) -> {
+      let pieces = AuthorityPieces(..pieces, host: Some(""))
+      parse_port(rest, pieces)
+    }
+    Ok(#(_, _)) -> parse_host_outside_of_brackets(string, pieces)
+    Error(_) -> AuthorityPieces(..pieces, host: Some(""))
+  }
+}
+
+fn parse_host_within_brackets(string, pieces) {
+  parse_host_within_brackets_loop(string, string, pieces, 0)
+}
+
+fn parse_host_within_brackets_loop(original, string, pieces, size) {
+  case string.pop_grapheme(string) {
+    Error(_) -> AuthorityPieces(..pieces, host: Some(string))
+    Ok(#("]", rest)) -> {
+      let host = string.slice(original, at_index: 0, length: size + 1)
+      let pieces = AuthorityPieces(..pieces, host: Some(host))
+      parse_port(rest, pieces)
+    }
+    Ok(#(char, rest)) ->
+      case is_valid_host_withing_brackets_char(char) {
+        True ->
+          parse_host_within_brackets_loop(original, rest, pieces, size + 1)
+        False ->
+          parse_host_outside_of_brackets_loop(original, rest, pieces, size + 1)
+      }
+  }
+}
+
+fn is_valid_host_withing_brackets_char(char: String) -> Bool {
+  case char {
+    "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" -> True
+    "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" -> True
+    "w" | "x" | "y" | "z" -> True
+    "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" -> True
+    "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" -> True
+    "W" | "X" | "Y" | "Z" -> True
+    "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" -> True
+    "." | ":" -> True
+    _ -> False
+  }
+}
+
+fn parse_host_outside_of_brackets(string, pieces) {
+  parse_host_outside_of_brackets_loop(string, string, pieces, 0)
+}
+
+fn parse_host_outside_of_brackets_loop(original, string, pieces, size) {
+  case string.pop_grapheme(string) {
+    Error(_) -> AuthorityPieces(..pieces, host: Some(original))
+    Ok(#(":", rest)) -> {
+      let host = string.slice(original, at_index: 0, length: size)
+      let pieces = AuthorityPieces(..pieces, host: Some(host))
+      parse_port(rest, pieces)
+    }
+    Ok(#(_, rest)) ->
+      parse_host_outside_of_brackets_loop(original, rest, pieces, size + 1)
+  }
+}
+
+fn parse_port(string, pieces) {
+  case int.parse(string) {
+    Ok(port) -> AuthorityPieces(..pieces, port: Some(port))
+    Error(_) -> pieces
+  }
 }
 
 fn extra_required(list: List(a), remaining: Int) -> Int {
