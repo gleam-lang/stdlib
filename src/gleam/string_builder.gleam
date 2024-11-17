@@ -1,4 +1,4 @@
-import gleam/list
+import gleam/string_tree.{type StringTree}
 
 /// `StringBuilder` is a type used for efficiently building text content to be
 /// written to a file or a socket. Internally it is represented as tree so to
@@ -17,14 +17,15 @@ import gleam/list
 /// sensitive code.
 ///
 @deprecated("The `string_builder` module has been deprecated, use the `string_tree.StringTree` type instead.")
-pub type StringBuilder
+pub type StringBuilder =
+  StringTree
 
 /// Create an empty `StringBuilder`. Useful as the start of a pipe chaining many
 /// builders together.
 ///
 @deprecated("The `string_builder` module has been deprecated, use `string_tree.new` instead.")
-pub fn new() -> StringBuilder {
-  do_from_strings([])
+pub fn new() -> StringTree {
+  string_tree.from_strings([])
 }
 
 /// Prepends a `String` onto the start of some `StringBuilder`.
@@ -32,11 +33,8 @@ pub fn new() -> StringBuilder {
 /// Runs in constant time.
 ///
 @deprecated("The `string_builder` module has been deprecated, use `string_tree.prepend` instead.")
-pub fn prepend(
-  to builder: StringBuilder,
-  prefix prefix: String,
-) -> StringBuilder {
-  append_builder(from_string(prefix), builder)
+pub fn prepend(to builder: StringTree, prefix prefix: String) -> StringTree {
+  string_tree.append_tree(string_tree.from_string(prefix), builder)
 }
 
 /// Appends a `String` onto the end of some `StringBuilder`.
@@ -44,8 +42,8 @@ pub fn prepend(
 /// Runs in constant time.
 ///
 @deprecated("The `string_builder` module has been deprecated, use `string_tree.append` instead.")
-pub fn append(to builder: StringBuilder, suffix second: String) -> StringBuilder {
-  append_builder(builder, from_string(second))
+pub fn append(to builder: StringTree, suffix second: String) -> StringTree {
+  string_tree.append_tree(builder, string_tree.from_string(second))
 }
 
 /// Prepends some `StringBuilder` onto the start of another.
@@ -54,10 +52,10 @@ pub fn append(to builder: StringBuilder, suffix second: String) -> StringBuilder
 ///
 @deprecated("The `string_builder` module has been deprecated, use `string_tree.prepend_tree` instead.")
 pub fn prepend_builder(
-  to builder: StringBuilder,
-  prefix prefix: StringBuilder,
-) -> StringBuilder {
-  do_append(prefix, builder)
+  to builder: StringTree,
+  prefix prefix: StringTree,
+) -> StringTree {
+  string_tree.prepend_tree(builder, prefix)
 }
 
 /// Appends some `StringBuilder` onto the end of another.
@@ -66,54 +64,38 @@ pub fn prepend_builder(
 ///
 @deprecated("The `string_builder` module has been deprecated, use `string_tree.append_tree` instead.")
 pub fn append_builder(
-  to builder: StringBuilder,
-  suffix suffix: StringBuilder,
-) -> StringBuilder {
-  do_append(builder, suffix)
+  to builder: StringTree,
+  suffix suffix: StringTree,
+) -> StringTree {
+  string_tree.append_tree(builder, suffix)
 }
-
-@external(erlang, "gleam_stdlib", "iodata_append")
-@external(javascript, "../gleam_stdlib.mjs", "add")
-fn do_append(a: StringBuilder, b: StringBuilder) -> StringBuilder
 
 /// Converts a list of strings into a builder.
 ///
 /// Runs in constant time.
 ///
 @deprecated("The `string_builder` module has been deprecated, use `string_tree.from_strings` instead.")
-pub fn from_strings(strings: List(String)) -> StringBuilder {
-  do_from_strings(strings)
+pub fn from_strings(strings: List(String)) -> StringTree {
+  string_tree.from_strings(strings)
 }
-
-@external(erlang, "gleam_stdlib", "identity")
-@external(javascript, "../gleam_stdlib.mjs", "concat")
-fn do_from_strings(a: List(String)) -> StringBuilder
 
 /// Joins a list of builders into a single builder.
 ///
 /// Runs in constant time.
 ///
 @deprecated("The `string_builder` module has been deprecated, use `string_tree.concat` instead.")
-pub fn concat(builders: List(StringBuilder)) -> StringBuilder {
-  do_concat(builders)
+pub fn concat(builders: List(StringTree)) -> StringTree {
+  string_tree.concat(builders)
 }
-
-@external(erlang, "gleam_stdlib", "identity")
-@external(javascript, "../gleam_stdlib.mjs", "concat")
-fn do_concat(builders: List(StringBuilder)) -> StringBuilder
 
 /// Converts a string into a builder.
 ///
 /// Runs in constant time.
 ///
 @deprecated("The `string_builder` module has been deprecated, use `string_tree.from_string` instead.")
-pub fn from_string(string: String) -> StringBuilder {
-  do_from_string(string)
+pub fn from_string(string: String) -> StringTree {
+  string_tree.from_string(string)
 }
-
-@external(erlang, "gleam_stdlib", "identity")
-@external(javascript, "../gleam_stdlib.mjs", "identity")
-fn do_from_string(string: String) -> StringBuilder
 
 /// Turns an `StringBuilder` into a `String`
 ///
@@ -121,95 +103,53 @@ fn do_from_string(string: String) -> StringBuilder
 /// optimised.
 ///
 @deprecated("The `string_builder` module has been deprecated, use `string_tree.to_string` instead.")
-pub fn to_string(builder: StringBuilder) -> String {
-  do_to_string(builder)
+pub fn to_string(builder: StringTree) -> String {
+  string_tree.to_string(builder)
 }
-
-@external(erlang, "unicode", "characters_to_binary")
-@external(javascript, "../gleam_stdlib.mjs", "identity")
-fn do_to_string(builder: StringBuilder) -> String
 
 /// Returns the size of the `StringBuilder` in bytes.
 ///
 @deprecated("The `string_builder` module has been deprecated, use `string_tree.byte_size` instead.")
-pub fn byte_size(builder: StringBuilder) -> Int {
-  do_byte_size(builder)
+pub fn byte_size(builder: StringTree) -> Int {
+  string_tree.byte_size(builder)
 }
-
-@external(erlang, "erlang", "iolist_size")
-@external(javascript, "../gleam_stdlib.mjs", "length")
-fn do_byte_size(builder: StringBuilder) -> Int
 
 /// Joins the given builders into a new builder separated with the given string
 ///
 @deprecated("The `string_builder` module has been deprecated, use `string_tree.join` instead.")
-pub fn join(builders: List(StringBuilder), with sep: String) -> StringBuilder {
-  builders
-  |> list.intersperse(from_string(sep))
-  |> concat
+pub fn join(builders: List(StringTree), with sep: String) -> StringTree {
+  string_tree.join(builders, sep)
 }
 
 /// Converts a builder to a new builder where the contents have been
 /// lowercased.
 ///
 @deprecated("The `string_builder` module has been deprecated, use `string_tree.lowercase` instead.")
-pub fn lowercase(builder: StringBuilder) -> StringBuilder {
-  do_lowercase(builder)
+pub fn lowercase(builder: StringTree) -> StringTree {
+  string_tree.lowercase(builder)
 }
-
-@external(erlang, "string", "lowercase")
-@external(javascript, "../gleam_stdlib.mjs", "lowercase")
-fn do_lowercase(builder: StringBuilder) -> StringBuilder
 
 /// Converts a builder to a new builder where the contents have been
 /// uppercased.
 ///
 @deprecated("The `string_builder` module has been deprecated, use `string_tree.uppercase` instead.")
-pub fn uppercase(builder: StringBuilder) -> StringBuilder {
-  do_uppercase(builder)
+pub fn uppercase(builder: StringTree) -> StringTree {
+  string_tree.uppercase(builder)
 }
-
-@external(erlang, "string", "uppercase")
-@external(javascript, "../gleam_stdlib.mjs", "uppercase")
-fn do_uppercase(builder: StringBuilder) -> StringBuilder
 
 /// Converts a builder to a new builder with the contents reversed.
 ///
 @deprecated("The `string_builder` module has been deprecated, use `string_tree.reverse` instead.")
-pub fn reverse(builder: StringBuilder) -> StringBuilder {
-  do_reverse(builder)
+pub fn reverse(builder: StringTree) -> StringTree {
+  string_tree.reverse(builder)
 }
-
-@external(erlang, "string", "reverse")
-fn do_reverse(builder: StringBuilder) -> StringBuilder {
-  builder
-  |> to_string
-  |> do_to_graphemes
-  |> list.reverse
-  |> from_strings
-}
-
-@external(javascript, "../gleam_stdlib.mjs", "graphemes")
-fn do_to_graphemes(string: String) -> List(String)
 
 /// Splits a builder on a given pattern into a list of builders.
 ///
 @deprecated("The `string_builder` module has been deprecated, use `string_tree.split` instead.")
-pub fn split(iodata: StringBuilder, on pattern: String) -> List(StringBuilder) {
-  do_split(iodata, pattern)
+pub fn split(iodata: StringTree, on pattern: String) -> List(StringTree) {
+  string_tree.split(iodata, pattern)
 }
-
-type Direction {
-  All
-}
-
-@external(javascript, "../gleam_stdlib.mjs", "split")
-fn do_split(iodata: StringBuilder, pattern: String) -> List(StringBuilder) {
-  erl_split(iodata, pattern, All)
-}
-
-@external(erlang, "string", "split")
-fn erl_split(a: StringBuilder, b: String, c: Direction) -> List(StringBuilder)
 
 /// Replaces all instances of a pattern with a given string substitute.
 ///
@@ -217,10 +157,10 @@ fn erl_split(a: StringBuilder, b: String, c: Direction) -> List(StringBuilder)
 @external(erlang, "gleam_stdlib", "string_replace")
 @external(javascript, "../gleam_stdlib.mjs", "string_replace")
 pub fn replace(
-  in builder: StringBuilder,
+  in builder: StringTree,
   each pattern: String,
   with substitute: String,
-) -> StringBuilder
+) -> StringTree
 
 /// Compares two builders to determine if they have the same textual content.
 ///
@@ -242,7 +182,7 @@ pub fn replace(
 ///
 @deprecated("The `string_builder` module has been deprecated, use `string_tree.is_equal` instead.")
 @external(erlang, "string", "equal")
-pub fn is_equal(a: StringBuilder, b: StringBuilder) -> Bool {
+pub fn is_equal(a: StringTree, b: StringTree) -> Bool {
   a == b
 }
 
@@ -267,6 +207,6 @@ pub fn is_equal(a: StringBuilder, b: StringBuilder) -> Bool {
 ///
 @deprecated("The `string_builder` module has been deprecated, use `string_tree.is_empty` instead.")
 @external(erlang, "string", "is_empty")
-pub fn is_empty(builder: StringBuilder) -> Bool {
-  from_string("") == builder
+pub fn is_empty(builder: StringTree) -> Bool {
+  string_tree.from_string("") == builder
 }
