@@ -1,6 +1,9 @@
 import gleam/dict
+import gleam/int
+import gleam/list
 import gleam/option.{None, Some}
 import gleam/order
+import gleam/result
 import gleam/should
 import gleam/string
 
@@ -595,11 +598,7 @@ pub fn to_graphemes_test() {
 
   "Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍A̴̵̜̰͔ͫ͗͢L̠ͨͧͩ͘G̴̻͈͍͔̹̑͗̎̅͛́Ǫ̵̹̻̝̳͂̌̌͘!͖̬̰̙̗̿̋ͥͥ̂ͣ̐́́͜͞"
   |> string.to_graphemes
-  |> should.equal([
-    "Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍", "A̴̵̜̰͔ͫ͗͢", "L̠ͨͧͩ͘",
-    "G̴̻͈͍͔̹̑͗̎̅͛́", "Ǫ̵̹̻̝̳͂̌̌͘",
-    "!͖̬̰̙̗̿̋ͥͥ̂ͣ̐́́͜͞",
-  ])
+  |> should.equal(["Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍", "A̴̵̜̰͔ͫ͗͢", "L̠ͨͧͩ͘", "G̴̻͈͍͔̹̑͗̎̅͛́", "Ǫ̵̹̻̝̳͂̌̌͘", "!͖̬̰̙̗̿̋ͥͥ̂ͣ̐́́͜͞"])
 }
 
 pub fn to_utf_codepoints_test() {
@@ -1040,9 +1039,7 @@ pub fn inspect_test() {
   |> should.equal("[#(1, 2, 3), #(1, 2, 3)]")
 
   string.inspect(#([1, 2, 3], "🌈", "🏳️‍🌈", #(1, "1", True)))
-  |> should.equal(
-    "#([1, 2, 3], \"🌈\", \"🏳️‍🌈\", #(1, \"1\", True))",
-  )
+  |> should.equal("#([1, 2, 3], \"🌈\", \"🏳️‍🌈\", #(1, \"1\", True))")
 
   string.inspect(Nil)
   |> should.equal("Nil")
@@ -1157,8 +1154,6 @@ pub fn target_inspect_test() {
 
 @target(erlang)
 import gleam/dynamic.{type Dynamic}
-@target(erlang)
-import gleam/regex
 
 // Test inspect on Erlang atoms valid and invalid in Gleam
 
@@ -1197,19 +1192,13 @@ pub fn target_inspect_test() {
   |> should.equal("#(1.0)")
 
   // Looks like `//erl(<0.83.0>)`.
-  let assert Ok(regular_expression) =
-    regex.from_string("^\\/\\/erl\\(<[0-9]+\\.[0-9]+\\.[0-9]+>\\)$")
   string.inspect(create_erlang_pid())
-  |> regex.check(regular_expression, _)
+  |> looks_like_pid
   |> should.be_true
 
   // Looks like: `//erl(#Ref<0.1809744150.4035444737.100468>)`.
-  let assert Ok(regular_expression) =
-    regex.from_string(
-      "^\\/\\/erl\\(#Ref<[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+>\\)$",
-    )
   string.inspect(create_erlang_reference())
-  |> regex.check(regular_expression, _)
+  |> looks_like_ref
   |> should.be_true
 
   // On Erlang the representation between `String` and `BitArray` is
@@ -1217,6 +1206,44 @@ pub fn target_inspect_test() {
   <<"abc":utf8>>
   |> string.inspect()
   |> should.equal("\"abc\"")
+}
+
+@target(erlang)
+fn looks_like_pid(string: String) -> Bool {
+  case string {
+    "//erl(<" <> string ->
+      case string.ends_with(string, ">)") {
+        False -> False
+        True ->
+          case string.drop_end(string, 2) |> string.split(on: ".") {
+            [_, _, _] as numbers ->
+              list.try_map(numbers, int.parse)
+              |> result.is_ok
+
+            _ -> False
+          }
+      }
+    _ -> False
+  }
+}
+
+@target(erlang)
+fn looks_like_ref(string: String) -> Bool {
+  case string {
+    "//erl(#Ref<" <> string ->
+      case string.ends_with(string, ">)") {
+        False -> False
+        True ->
+          case string.drop_end(string, 2) |> string.split(on: ".") {
+            [_, _, _, _] as numbers ->
+              list.try_map(numbers, int.parse)
+              |> result.is_ok
+
+            _ -> False
+          }
+      }
+    _ -> False
+  }
 }
 
 @target(erlang)
