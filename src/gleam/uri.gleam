@@ -226,8 +226,6 @@ fn parse_host_within_brackets_loop(
     "" -> Ok(Uri(..pieces, host: Some(uri_string)))
 
     // A `]` marks the end of the host and the start of the port part.
-    // A port must always be preceded by a `:`, otherwise this is an invalid
-    // uri.
     "]" <> rest if size == 0 -> parse_port(rest, pieces)
     "]" <> rest -> {
       let host = codeunit_slice(original, at_index: 0, length: size + 1)
@@ -268,8 +266,9 @@ fn parse_host_within_brackets_loop(
       case is_valid_host_withing_brackets_char(char) {
         True ->
           parse_host_within_brackets_loop(original, rest, pieces, size + 1)
+
         False ->
-          parse_host_outside_of_brackets_loop(original, rest, pieces, size + 1)
+          parse_host_outside_of_brackets_loop(original, original, pieces, 0)
       }
     }
   }
