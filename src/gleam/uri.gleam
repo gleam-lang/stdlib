@@ -55,45 +55,7 @@ pub fn parse(uri_string: String) -> Result(Uri, Nil) {
 }
 
 @external(erlang, "gleam_stdlib", "uri_parse")
-pub fn do_parse(uri_string: String) -> Result(Uri, Nil) {
-  case parse_uri_pieces(uri_string) {
-    Error(Nil) -> Error(Nil)
-    Ok(UriPieces(
-      scheme: scheme,
-      userinfo: userinfo,
-      host: host,
-      port: port,
-      path: path,
-      query: query,
-      fragment: fragment,
-    )) -> {
-      Ok(Uri(
-        scheme: scheme,
-        userinfo: userinfo,
-        host: host,
-        port: port,
-        path: path,
-        query: query,
-        fragment: fragment,
-      ))
-    }
-  }
-}
-
-type UriPieces {
-  UriPieces(
-    scheme: Option(String),
-    // Authority pieces
-    userinfo: Option(String),
-    host: Option(String),
-    port: Option(Int),
-    path: String,
-    query: Option(String),
-    fragment: Option(String),
-  )
-}
-
-fn parse_uri_pieces(uri_string: String) -> Result(UriPieces, Nil) {
+fn do_parse(uri_string: String) -> Result(Uri, Nil) {
   // This parses a uri_string following the regex defined in
   // https://tools.ietf.org/html/rfc3986#appendix-B
   //
@@ -101,7 +63,7 @@ fn parse_uri_pieces(uri_string: String) -> Result(UriPieces, Nil) {
   // counterpart, ideally we want to replicate Erlang's implementation on the js
   // target as well.
   let default_pieces =
-    UriPieces(
+    Uri(
       scheme: None,
       userinfo: None,
       host: None,
@@ -117,16 +79,16 @@ fn parse_uri_pieces(uri_string: String) -> Result(UriPieces, Nil) {
 fn parse_scheme_loop(
   original: String,
   uri_string: String,
-  pieces: UriPieces,
+  pieces: Uri,
   size: Int,
-) -> Result(UriPieces, Nil) {
+) -> Result(Uri, Nil) {
   case uri_string {
     // `/` is not allowed to appear in a scheme so we know it's over and we can
     // start parsing the authority with slashes.
     "/" <> _ if size == 0 -> parse_authority_with_slashes(uri_string, pieces)
     "/" <> _ -> {
       let scheme = codeunit_slice(original, at_index: 0, length: size)
-      let pieces = UriPieces(..pieces, scheme: Some(string.lowercase(scheme)))
+      let pieces = Uri(..pieces, scheme: Some(string.lowercase(scheme)))
       parse_authority_with_slashes(uri_string, pieces)
     }
 
@@ -135,7 +97,7 @@ fn parse_scheme_loop(
     "?" <> rest if size == 0 -> parse_query_with_question_mark(rest, pieces)
     "?" <> rest -> {
       let scheme = codeunit_slice(original, at_index: 0, length: size)
-      let pieces = UriPieces(..pieces, scheme: Some(string.lowercase(scheme)))
+      let pieces = Uri(..pieces, scheme: Some(string.lowercase(scheme)))
       parse_query_with_question_mark(rest, pieces)
     }
 
@@ -145,7 +107,7 @@ fn parse_scheme_loop(
     "#" <> rest if size == 0 -> parse_fragment(rest, pieces)
     "#" <> rest -> {
       let scheme = codeunit_slice(original, at_index: 0, length: size)
-      let pieces = UriPieces(..pieces, scheme: Some(string.lowercase(scheme)))
+      let pieces = Uri(..pieces, scheme: Some(string.lowercase(scheme)))
       parse_fragment(rest, pieces)
     }
 
@@ -154,13 +116,13 @@ fn parse_scheme_loop(
     ":" <> _ if size == 0 -> Error(Nil)
     ":" <> rest -> {
       let scheme = codeunit_slice(original, at_index: 0, length: size)
-      let pieces = UriPieces(..pieces, scheme: Some(string.lowercase(scheme)))
+      let pieces = Uri(..pieces, scheme: Some(string.lowercase(scheme)))
       parse_authority_with_slashes(rest, pieces)
     }
 
     // If we could get to the end of the string and we've met no special
     // chars whatsoever, that means the entire string is just a long path.
-    "" -> Ok(UriPieces(..pieces, path: original))
+    "" -> Ok(Uri(..pieces, path: original))
 
     // In all other cases the first character is just a valid URI scheme
     // character and we just keep munching characters until we reach the end of
@@ -175,37 +137,34 @@ fn parse_scheme_loop(
 
 fn parse_authority_with_slashes(
   uri_string: String,
-  pieces: UriPieces,
-) -> Result(UriPieces, Nil) {
+  pieces: Uri,
+) -> Result(Uri, Nil) {
   case uri_string {
     // To be a valid authority the string must start with a `//`, otherwise
     // there's no authority and we just skip ahead to parsing the path.
-    "//" -> Ok(UriPieces(..pieces, host: Some("")))
+    "//" -> Ok(Uri(..pieces, host: Some("")))
     "//" <> rest -> parse_authority_pieces(rest, pieces)
     _ -> parse_path(uri_string, pieces)
   }
 }
 
-fn parse_authority_pieces(
-  string: String,
-  pieces: UriPieces,
-) -> Result(UriPieces, Nil) {
+fn parse_authority_pieces(string: String, pieces: Uri) -> Result(Uri, Nil) {
   parse_userinfo_loop(string, string, pieces, 0)
 }
 
 fn parse_userinfo_loop(
   original: String,
-  string: String,
-  pieces: UriPieces,
+  uri_string: String,
+  pieces: Uri,
   size: Int,
-) -> Result(UriPieces, Nil) {
-  case string {
+) -> Result(Uri, Nil) {
+  case uri_string {
     // `@` marks the end of the userinfo and the start of the host part in the
     // authority string.
     "@" <> rest if size == 0 -> parse_host(rest, pieces)
     "@" <> rest -> {
       let userinfo = codeunit_slice(original, at_index: 0, length: size)
-      let pieces = UriPieces(..pieces, userinfo: Some(userinfo))
+      let pieces = Uri(..pieces, userinfo: Some(userinfo))
       parse_host(rest, pieces)
     }
 
@@ -219,52 +178,52 @@ fn parse_userinfo_loop(
     // In all other cases we just keep munching characters increasing the size
     // of the userinfo bit.
     _ -> {
-      let #(_, rest) = pop_codeunit(string)
+      let #(_, rest) = pop_codeunit(uri_string)
       parse_userinfo_loop(original, rest, pieces, size + 1)
     }
   }
 }
 
-fn parse_host(string: String, pieces: UriPieces) -> Result(UriPieces, Nil) {
+fn parse_host(uri_string: String, pieces: Uri) -> Result(Uri, Nil) {
   // A host string can be in two formats:
   // - \[[:.a-zA-Z0-9]*\]
   // - [^:]
-  case string {
+  case uri_string {
     // If we find an opening bracket we know it's the first format.
-    "[" <> _ -> parse_host_within_brackets(string, pieces)
+    "[" <> _ -> parse_host_within_brackets(uri_string, pieces)
 
     // A `:` marks the beginning of the port part of the authority string.
     ":" <> _ -> {
-      let pieces = UriPieces(..pieces, host: Some(""))
-      parse_port(string, pieces)
+      let pieces = Uri(..pieces, host: Some(""))
+      parse_port(uri_string, pieces)
     }
 
     // If the string is empty then there's no need to keep going. The host is
     // empty.
-    "" -> Ok(UriPieces(..pieces, host: Some("")))
+    "" -> Ok(Uri(..pieces, host: Some("")))
 
     // Otherwise it's the second format
-    _ -> parse_host_outside_of_brackets(string, pieces)
+    _ -> parse_host_outside_of_brackets(uri_string, pieces)
   }
 }
 
 fn parse_host_within_brackets(
-  string: String,
-  pieces: UriPieces,
-) -> Result(UriPieces, Nil) {
-  parse_host_within_brackets_loop(string, string, pieces, 0)
+  uri_string: String,
+  pieces: Uri,
+) -> Result(Uri, Nil) {
+  parse_host_within_brackets_loop(uri_string, uri_string, pieces, 0)
 }
 
 fn parse_host_within_brackets_loop(
   original: String,
-  string: String,
-  pieces: UriPieces,
+  uri_string: String,
+  pieces: Uri,
   size: Int,
-) -> Result(UriPieces, Nil) {
-  case string {
+) -> Result(Uri, Nil) {
+  case uri_string {
     // If the string is over the entire string we were iterating through is the
     // host part.
-    "" -> Ok(UriPieces(..pieces, host: Some(string)))
+    "" -> Ok(Uri(..pieces, host: Some(uri_string)))
 
     // A `]` marks the end of the host and the start of the port part.
     // A port must always be preceded by a `:`, otherwise this is an invalid
@@ -272,23 +231,23 @@ fn parse_host_within_brackets_loop(
     "]" <> rest if size == 0 -> parse_port(rest, pieces)
     "]" <> rest -> {
       let host = codeunit_slice(original, at_index: 0, length: size + 1)
-      let pieces = UriPieces(..pieces, host: Some(host))
+      let pieces = Uri(..pieces, host: Some(host))
       parse_port(rest, pieces)
     }
 
     // `/` marks the beginning of a path.
-    "/" <> _ if size == 0 -> parse_path(string, pieces)
+    "/" <> _ if size == 0 -> parse_path(uri_string, pieces)
     "/" <> _ -> {
       let host = codeunit_slice(original, at_index: 0, length: size)
-      let pieces = UriPieces(..pieces, host: Some(host))
-      parse_path(string, pieces)
+      let pieces = Uri(..pieces, host: Some(host))
+      parse_path(uri_string, pieces)
     }
 
     // `?` marks the beginning of the query with question mark.
     "?" <> rest if size == 0 -> parse_query_with_question_mark(rest, pieces)
     "?" <> rest -> {
       let host = codeunit_slice(original, at_index: 0, length: size)
-      let pieces = UriPieces(..pieces, host: Some(host))
+      let pieces = Uri(..pieces, host: Some(host))
       parse_query_with_question_mark(rest, pieces)
     }
 
@@ -296,13 +255,13 @@ fn parse_host_within_brackets_loop(
     "#" <> rest if size == 0 -> parse_fragment(rest, pieces)
     "#" <> rest -> {
       let host = codeunit_slice(original, at_index: 0, length: size)
-      let pieces = UriPieces(..pieces, host: Some(host))
+      let pieces = Uri(..pieces, host: Some(host))
       parse_fragment(rest, pieces)
     }
 
     // In all other cases we just keep iterating.
     _ -> {
-      let #(char, rest) = pop_codeunit(string)
+      let #(char, rest) = pop_codeunit(uri_string)
       // Inside `[...]` there can only be some characters, if we find a special
       // one then we know that we're actually parsing the other format for the
       // host and we switch to that!
@@ -330,58 +289,58 @@ fn is_valid_host_withing_brackets_char(char: Int) -> Bool {
 }
 
 fn parse_host_outside_of_brackets(
-  string: String,
-  pieces: UriPieces,
-) -> Result(UriPieces, Nil) {
-  parse_host_outside_of_brackets_loop(string, string, pieces, 0)
+  uri_string: String,
+  pieces: Uri,
+) -> Result(Uri, Nil) {
+  parse_host_outside_of_brackets_loop(uri_string, uri_string, pieces, 0)
 }
 
 fn parse_host_outside_of_brackets_loop(
   original: String,
-  str: String,
-  pieces: UriPieces,
+  uri_string: String,
+  pieces: Uri,
   size: Int,
-) -> Result(UriPieces, Nil) {
-  case str {
-    "" -> Ok(UriPieces(..pieces, host: Some(original)))
+) -> Result(Uri, Nil) {
+  case uri_string {
+    "" -> Ok(Uri(..pieces, host: Some(original)))
 
     // `:` marks the beginning of the port.
     ":" <> _ -> {
       let host = codeunit_slice(original, at_index: 0, length: size)
-      let pieces = UriPieces(..pieces, host: Some(host))
-      parse_port(str, pieces)
+      let pieces = Uri(..pieces, host: Some(host))
+      parse_port(uri_string, pieces)
     }
 
     // `/` marks the beginning of a path.
     "/" <> _ -> {
       let host = codeunit_slice(original, at_index: 0, length: size)
-      let pieces = UriPieces(..pieces, host: Some(host))
-      parse_path(str, pieces)
+      let pieces = Uri(..pieces, host: Some(host))
+      parse_path(uri_string, pieces)
     }
 
     // `?` marks the beginning of the query with question mark.
     "?" <> rest -> {
       let host = codeunit_slice(original, at_index: 0, length: size)
-      let pieces = UriPieces(..pieces, host: Some(host))
+      let pieces = Uri(..pieces, host: Some(host))
       parse_query_with_question_mark(rest, pieces)
     }
 
     // `#` marks the beginning of the fragment part.
     "#" <> rest -> {
       let host = codeunit_slice(original, at_index: 0, length: size)
-      let pieces = UriPieces(..pieces, host: Some(host))
+      let pieces = Uri(..pieces, host: Some(host))
       parse_fragment(rest, pieces)
     }
 
     _ -> {
-      let #(_, rest) = pop_codeunit(str)
+      let #(_, rest) = pop_codeunit(uri_string)
       parse_host_outside_of_brackets_loop(original, rest, pieces, size + 1)
     }
   }
 }
 
-fn parse_port(string: String, pieces: UriPieces) -> Result(UriPieces, Nil) {
-  case string {
+fn parse_port(uri_string: String, pieces: Uri) -> Result(Uri, Nil) {
+  case uri_string {
     ":0" <> rest -> parse_port_loop(rest, pieces, 0)
     ":1" <> rest -> parse_port_loop(rest, pieces, 1)
     ":2" <> rest -> parse_port_loop(rest, pieces, 2)
@@ -404,7 +363,7 @@ fn parse_port(string: String, pieces: UriPieces) -> Result(UriPieces, Nil) {
     "#" <> rest -> parse_fragment(rest, pieces)
 
     // `/` marks the beginning of a path.
-    "/" <> _ -> parse_path(string, pieces)
+    "/" <> _ -> parse_path(uri_string, pieces)
 
     "" -> Ok(pieces)
 
@@ -413,11 +372,11 @@ fn parse_port(string: String, pieces: UriPieces) -> Result(UriPieces, Nil) {
 }
 
 fn parse_port_loop(
-  string: String,
-  pieces: UriPieces,
+  uri_string: String,
+  pieces: Uri,
   port: Int,
-) -> Result(UriPieces, Nil) {
-  case string {
+) -> Result(Uri, Nil) {
+  case uri_string {
     // As long as we find port numbers we keep accumulating those.
     "0" <> rest -> parse_port_loop(rest, pieces, port * 10)
     "1" <> rest -> parse_port_loop(rest, pieces, port * 10 + 1)
@@ -432,24 +391,24 @@ fn parse_port_loop(
 
     // `?` marks the beginning of the query with question mark.
     "?" <> rest -> {
-      let pieces = UriPieces(..pieces, port: Some(port))
+      let pieces = Uri(..pieces, port: Some(port))
       parse_query_with_question_mark(rest, pieces)
     }
 
     // `#` marks the beginning of the fragment part.
     "#" <> rest -> {
-      let pieces = UriPieces(..pieces, port: Some(port))
+      let pieces = Uri(..pieces, port: Some(port))
       parse_fragment(rest, pieces)
     }
 
     // `/` marks the beginning of a path.
     "/" <> _ -> {
-      let pieces = UriPieces(..pieces, port: Some(port))
-      parse_path(string, pieces)
+      let pieces = Uri(..pieces, port: Some(port))
+      parse_path(uri_string, pieces)
     }
 
     // The string (and so the port) is over, we return what we parsed so far.
-    "" -> Ok(UriPieces(..pieces, port: Some(port)))
+    "" -> Ok(Uri(..pieces, port: Some(port)))
 
     // In all other cases we've ran into some invalid character inside the port
     // so the uri is invalid!
@@ -457,34 +416,34 @@ fn parse_port_loop(
   }
 }
 
-fn parse_path(uri_string: String, pieces: UriPieces) -> Result(UriPieces, Nil) {
+fn parse_path(uri_string: String, pieces: Uri) -> Result(Uri, Nil) {
   parse_path_loop(uri_string, uri_string, pieces, 0)
 }
 
 fn parse_path_loop(
   original: String,
   uri_string: String,
-  pieces: UriPieces,
+  pieces: Uri,
   size: Int,
-) -> Result(UriPieces, Nil) {
+) -> Result(Uri, Nil) {
   case uri_string {
     // `?` marks the beginning of the query with question mark.
     "?" <> rest -> {
       let path = codeunit_slice(original, at_index: 0, length: size)
-      let pieces = UriPieces(..pieces, path: path)
+      let pieces = Uri(..pieces, path: path)
       parse_query_with_question_mark(rest, pieces)
     }
 
     // `#` marks the beginning of the fragment part.
     "#" <> rest -> {
       let path = codeunit_slice(original, at_index: 0, length: size)
-      let pieces = UriPieces(..pieces, path: path)
+      let pieces = Uri(..pieces, path: path)
       parse_fragment(rest, pieces)
     }
 
     // If the string is over that means the entirety of the string was the path
     // and it has an empty query and fragment.
-    "" -> Ok(UriPieces(..pieces, path: original))
+    "" -> Ok(Uri(..pieces, path: original))
 
     // In all other cases the character is allowed to be part of the path so we
     // just keep munching until we reach to its end.
@@ -497,29 +456,29 @@ fn parse_path_loop(
 
 fn parse_query_with_question_mark(
   uri_string: String,
-  pieces: UriPieces,
-) -> Result(UriPieces, Nil) {
+  pieces: Uri,
+) -> Result(Uri, Nil) {
   parse_query_with_question_mark_loop(uri_string, uri_string, pieces, 0)
 }
 
 fn parse_query_with_question_mark_loop(
   original: String,
   uri_string: String,
-  pieces: UriPieces,
+  pieces: Uri,
   size: Int,
-) -> Result(UriPieces, Nil) {
+) -> Result(Uri, Nil) {
   case uri_string {
     // `#` marks the beginning of the fragment part.
     "#" <> rest if size == 0 -> parse_fragment(rest, pieces)
     "#" <> rest -> {
       let query = codeunit_slice(original, at_index: 0, length: size)
-      let pieces = UriPieces(..pieces, query: Some(query))
+      let pieces = Uri(..pieces, query: Some(query))
       parse_fragment(rest, pieces)
     }
 
     // If the string is over that means the entirety of the string was the query
     // and it has an empty fragment.
-    "" -> Ok(UriPieces(..pieces, query: Some(original)))
+    "" -> Ok(Uri(..pieces, query: Some(original)))
 
     // In all other cases the character is allowed to be part of the query so we
     // just keep munching until we reach to its end.
@@ -530,8 +489,8 @@ fn parse_query_with_question_mark_loop(
   }
 }
 
-fn parse_fragment(rest: String, pieces: UriPieces) -> Result(UriPieces, Nil) {
-  Ok(UriPieces(..pieces, fragment: Some(rest)))
+fn parse_fragment(rest: String, pieces: Uri) -> Result(Uri, Nil) {
+  Ok(Uri(..pieces, fragment: Some(rest)))
 }
 
 // WARN: this function returns invalid strings!
