@@ -170,14 +170,8 @@ pub fn to_string(x: Int) {
 @external(javascript, "../gleam_stdlib.mjs", "to_string")
 fn do_to_string(a: Int) -> String
 
-/// Error value when trying to operate with a base out of the allowed range.
-///
-pub type InvalidBase {
-  InvalidBase
-}
-
 /// Prints a given int to a string using the base number provided.
-/// Supports only bases 2 to 36, for values outside of which this function returns an `Error(InvalidBase)`.
+/// Supports only bases 2 to 36, for values outside of which this function returns an `Error(Nil)`.
 /// For common bases (2, 8, 16, 36), use the `to_baseN` functions.
 ///
 /// ## Examples
@@ -199,18 +193,18 @@ pub type InvalidBase {
 ///
 /// ```gleam
 /// to_base_string(48, 1)
-/// // -> Error(InvalidBase)
+/// // -> Error(Nil)
 /// ```
 ///
 /// ```gleam
 /// to_base_string(48, 37)
-/// // -> Error(InvalidBase)
+/// // -> Error(Nil)
 /// ```
 ///
-pub fn to_base_string(x: Int, base: Int) -> Result(String, InvalidBase) {
+pub fn to_base_string(x: Int, base: Int) -> Result(String, Nil) {
   case base >= 2 && base <= 36 {
     True -> Ok(do_to_base_string(x, base))
-    False -> Error(InvalidBase)
+    False -> Error(Nil)
   }
 }
 
@@ -433,14 +427,13 @@ pub fn negate(x: Int) -> Int {
 /// ```
 ///
 pub fn sum(numbers: List(Int)) -> Int {
-  numbers
-  |> do_sum(0)
+  sum_loop(numbers, 0)
 }
 
-fn do_sum(numbers: List(Int), initial: Int) -> Int {
+fn sum_loop(numbers: List(Int), initial: Int) -> Int {
   case numbers {
+    [x, ..rest] -> sum_loop(rest, x + initial)
     [] -> initial
-    [x, ..rest] -> do_sum(rest, x + initial)
   }
 }
 
@@ -456,18 +449,19 @@ fn do_sum(numbers: List(Int), initial: Int) -> Int {
 pub fn product(numbers: List(Int)) -> Int {
   case numbers {
     [] -> 1
-    _ -> do_product(numbers, 1)
+    _ -> product_loop(numbers, 1)
   }
 }
 
-fn do_product(numbers: List(Int), initial: Int) -> Int {
+fn product_loop(numbers: List(Int), initial: Int) -> Int {
   case numbers {
+    [x, ..rest] -> product_loop(rest, x * initial)
     [] -> initial
-    [x, ..rest] -> do_product(rest, x * initial)
   }
 }
 
-/// Splits an integer into its digit representation in the specified base
+/// Splits an integer into its digit representation in the specified base.
+/// Returns an error if the base is less than 2.
 ///
 /// ## Examples
 ///
@@ -478,20 +472,20 @@ fn do_product(numbers: List(Int), initial: Int) -> Int {
 ///
 /// ```gleam
 /// digits(234, 1)
-/// // -> Error(InvalidBase)
+/// // -> Error(Nil)
 /// ```
 ///
-pub fn digits(x: Int, base: Int) -> Result(List(Int), InvalidBase) {
+pub fn digits(x: Int, base: Int) -> Result(List(Int), Nil) {
   case base < 2 {
-    True -> Error(InvalidBase)
-    False -> Ok(do_digits(x, base, []))
+    True -> Error(Nil)
+    False -> Ok(digits_loop(x, base, []))
   }
 }
 
-fn do_digits(x: Int, base: Int, acc: List(Int)) -> List(Int) {
+fn digits_loop(x: Int, base: Int, acc: List(Int)) -> List(Int) {
   case absolute_value(x) < base {
     True -> [x, ..acc]
-    False -> do_digits(x / base, base, [x % base, ..acc])
+    False -> digits_loop(x / base, base, [x % base, ..acc])
   }
 }
 
@@ -507,30 +501,26 @@ fn do_digits(x: Int, base: Int, acc: List(Int)) -> List(Int) {
 ///
 /// ```gleam
 /// undigits([2,3,4], 1)
-/// // -> Error(InvalidBase)
+/// // -> Error(Nil)
 /// ```
 ///
 /// ```gleam
 /// undigits([2,3,4], 2)
-/// // -> Error(InvalidBase)
+/// // -> Error(Nil)
 /// ```
 ///
-pub fn undigits(numbers: List(Int), base: Int) -> Result(Int, InvalidBase) {
+pub fn undigits(numbers: List(Int), base: Int) -> Result(Int, Nil) {
   case base < 2 {
-    True -> Error(InvalidBase)
-    False -> do_undigits(numbers, base, 0)
+    True -> Error(Nil)
+    False -> undigits_loop(numbers, base, 0)
   }
 }
 
-fn do_undigits(
-  numbers: List(Int),
-  base: Int,
-  acc: Int,
-) -> Result(Int, InvalidBase) {
+fn undigits_loop(numbers: List(Int), base: Int, acc: Int) -> Result(Int, Nil) {
   case numbers {
     [] -> Ok(acc)
-    [digit, ..] if digit >= base -> Error(InvalidBase)
-    [digit, ..rest] -> do_undigits(rest, base, acc * base + digit)
+    [digit, ..] if digit >= base -> Error(Nil)
+    [digit, ..rest] -> undigits_loop(rest, base, acc * base + digit)
   }
 }
 
@@ -801,7 +791,7 @@ pub fn multiply(a: Int, b: Int) -> Int {
 ///
 /// ```gleam
 /// subtract(3, 1)
-/// // -> 2.0
+/// // -> 2
 /// ```
 ///
 /// ```gleam

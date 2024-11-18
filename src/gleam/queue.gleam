@@ -13,8 +13,8 @@ import gleam/list
 /// may return surprising results, and the `is_equal` and `is_logically_equal`
 /// functions are the recommended way to test queues for equality.
 ///
-pub opaque type Queue(element) {
-  Queue(in: List(element), out: List(element))
+pub opaque type Queue(a) {
+  Queue(in: List(a), out: List(a))
 }
 
 /// Creates a fresh queue that contains no values.
@@ -237,12 +237,31 @@ pub fn reverse(queue: Queue(a)) -> Queue(a) {
   Queue(in: queue.out, out: queue.in)
 }
 
+/// Checks whether two queues have equal elements in the same order, where the
+/// equality of elements is determined by a given equality checking function.
+///
+/// This function is useful as the internal representation may be different for
+/// two queues with the same elements in the same order depending on how they
+/// were constructed, so the equality operator `==` may return surprising
+/// results.
+///
+/// This function runs in linear time multiplied by the time taken by the
+/// element equality checking function.
+///
+pub fn is_logically_equal(
+  a: Queue(a),
+  to b: Queue(a),
+  checking element_is_equal: fn(a, a) -> Bool,
+) -> Bool {
+  check_equal(a.out, a.in, b.out, b.in, element_is_equal)
+}
+
 fn check_equal(
-  xs: List(t),
-  x_tail: List(t),
-  ys: List(t),
-  y_tail: List(t),
-  eq: fn(t, t) -> Bool,
+  xs: List(a),
+  x_tail: List(a),
+  ys: List(a),
+  y_tail: List(a),
+  eq: fn(a, a) -> Bool,
 ) -> Bool {
   case xs, x_tail, ys, y_tail {
     [], [], [], [] -> True
@@ -257,25 +276,6 @@ fn check_equal(
   }
 }
 
-/// Checks whether two queues have equal elements in the same order, where the
-/// equality of elements is determined by a given equality checking function.
-///
-/// This function is useful as the internal representation may be different for
-/// two queues with the same elements in the same order depending on how they
-/// were constructed, so the equality operator `==` may return surprising
-/// results.
-///
-/// This function runs in linear time multiplied by the time taken by the
-/// element equality checking function.
-///
-pub fn is_logically_equal(
-  a: Queue(t),
-  to b: Queue(t),
-  checking element_is_equal: fn(t, t) -> Bool,
-) -> Bool {
-  check_equal(a.out, a.in, b.out, b.in, element_is_equal)
-}
-
 /// Checks whether two queues have the same elements in the same order.
 ///
 /// This function is useful as the internal representation may be different for
@@ -285,6 +285,6 @@ pub fn is_logically_equal(
 ///
 /// This function runs in linear time.
 ///
-pub fn is_equal(a: Queue(t), to b: Queue(t)) -> Bool {
+pub fn is_equal(a: Queue(a), to b: Queue(a)) -> Bool {
   check_equal(a.out, a.in, b.out, b.in, fn(a, b) { a == b })
 }

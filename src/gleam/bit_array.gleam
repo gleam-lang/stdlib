@@ -1,7 +1,7 @@
 //// BitArrays are a sequence of binary data of any length.
 
-@target(erlang)
 import gleam/int
+import gleam/order
 import gleam/string
 
 /// Converts a UTF-8 `String` type into a `BitArray`.
@@ -9,6 +9,13 @@ import gleam/string
 @external(erlang, "gleam_stdlib", "identity")
 @external(javascript, "../gleam_stdlib.mjs", "bit_array_from_string")
 pub fn from_string(x: String) -> BitArray
+
+/// Returns an integer which is the number of bits in the bit array.
+///
+@external(erlang, "erlang", "bit_size")
+pub fn bit_size(x: BitArray) -> Int {
+  byte_size(x) * 8
+}
 
 /// Returns an integer which is the number of bytes in the bit array.
 ///
@@ -48,20 +55,20 @@ pub fn slice(
 /// Tests to see whether a bit array is valid UTF-8.
 ///
 pub fn is_utf8(bits: BitArray) -> Bool {
-  do_is_utf8(bits)
+  is_utf8_loop(bits)
 }
 
 @target(erlang)
-fn do_is_utf8(bits: BitArray) -> Bool {
+fn is_utf8_loop(bits: BitArray) -> Bool {
   case bits {
     <<>> -> True
-    <<_:utf8, rest:bytes>> -> do_is_utf8(rest)
+    <<_:utf8, rest:bytes>> -> is_utf8_loop(rest)
     _ -> False
   }
 }
 
 @target(javascript)
-fn do_is_utf8(bits: BitArray) -> Bool {
+fn is_utf8_loop(bits: BitArray) -> Bool {
   case to_string(bits) {
     Ok(_) -> True
     _ -> False
@@ -145,7 +152,6 @@ pub fn base16_encode(input: BitArray) -> String
 @external(javascript, "../gleam_stdlib.mjs", "base16_decode")
 pub fn base16_decode(input: String) -> Result(BitArray, Nil)
 
-@target(javascript)
 /// Converts a bit array to a string containing the decimal value of each byte.
 ///
 /// ## Examples
@@ -158,16 +164,12 @@ pub fn base16_decode(input: String) -> Result(BitArray, Nil)
 /// // -> "<<100, 5:size(3)>>"
 /// ```
 ///
-@external(javascript, "../gleam_stdlib.mjs", "bit_array_inspect")
-pub fn inspect(input: BitArray) -> String
-
-@target(erlang)
 pub fn inspect(input: BitArray) -> String {
-  do_inspect(input, "<<") <> ">>"
+  inspect_loop(input, "<<") <> ">>"
 }
 
-@target(erlang)
-fn do_inspect(input: BitArray, accumulator: String) -> String {
+@external(javascript, "../gleam_stdlib.mjs", "bit_array_inspect")
+fn inspect_loop(input: BitArray, accumulator: String) -> String {
   case input {
     <<>> -> accumulator
 
@@ -186,10 +188,74 @@ fn do_inspect(input: BitArray, accumulator: String) -> String {
       }
 
       let accumulator = accumulator <> int.to_string(x) <> suffix
-
-      do_inspect(rest, accumulator)
+      inspect_loop(rest, accumulator)
     }
 
     _ -> accumulator
+  }
+}
+
+/// Compare two bit arrays as sequences of bytes.
+///
+/// ## Examples
+///
+/// ```gleam
+/// compare(<<1>>, <<2>>)
+/// // -> Lt
+///
+/// compare(<<"AB":utf8>>, <<"AA":utf8>>)
+/// // -> Gt
+///
+/// compare(<<1, 2:size(2)>>, with: <<1, 2:size(2)>>)
+/// // -> Eq
+/// ```
+///
+@external(javascript, "../gleam_stdlib.mjs", "bit_array_compare")
+pub fn compare(a: BitArray, with b: BitArray) -> order.Order {
+  case a, b {
+    <<first_byte, first_rest:bits>>, <<second_byte, second_rest:bits>> ->
+      case first_byte, second_byte {
+        f, s if f > s -> order.Gt
+        f, s if f < s -> order.Lt
+        _, _ -> compare(first_rest, second_rest)
+      }
+
+    <<>>, <<>> -> order.Eq
+    // First has more items, example: "AB" > "A":
+    _, <<>> -> order.Gt
+    // Second has more items, example: "A" < "AB":
+    <<>>, _ -> order.Lt
+    // This happens when there's unusually sized elements.
+    // Handle these special cases via custom erlang function.
+    first, second ->
+      case bit_array_to_int_and_size(first), bit_array_to_int_and_size(second) {
+        #(a, _), #(b, _) if a > b -> order.Gt
+        #(a, _), #(b, _) if a < b -> order.Lt
+        #(_, size_a), #(_, size_b) if size_a > size_b -> order.Gt
+        #(_, size_a), #(_, size_b) if size_a < size_b -> order.Lt
+        _, _ -> order.Eq
+      }
+  }
+}
+
+@external(erlang, "gleam_stdlib", "bit_array_to_int_and_size")
+fn bit_array_to_int_and_size(a: BitArray) -> #(Int, Int)
+
+/// Checks whether the first `BitArray` starts with the second one.
+///
+/// ## Examples
+///
+/// ```gleam
+/// starts_with(<<1, 2, 3, 4>>, <<1, 2>>)
+/// // -> True
+/// ```
+///
+@external(javascript, "../gleam_stdlib.mjs", "bit_array_starts_with")
+pub fn starts_with(bits: BitArray, prefix: BitArray) -> Bool {
+  let prefix_size = bit_size(prefix)
+
+  case bits {
+    <<pref:bits-size(prefix_size), _:bits>> if pref == prefix -> True
+    _ -> False
   }
 }

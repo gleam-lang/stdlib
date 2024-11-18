@@ -1,6 +1,38 @@
 # Changelog
 
-## Unreleased
+## v0.43.0 - 2024-11-17
+
+- `BytesBuilder` is now an alias of `BytesTree`.
+- `StringBuilder` is now an alias of `StringTree`.
+
+## v0.42.0 - 2024-11-15
+
+- The `bit_array` module gains the `bit_size` and `starts_with` functions.
+- Ths `string` module gains the `drop_start`, `drop_end`, `pad_start`,
+  `pad_end`, `trim_start`, and `trim_end` functions. These replace the
+  `drop_left`, `drop_right`, `pad_left`, `pad_right`, `trim_left`, and
+  `trim_right` functions, which have been deprecated.
+- The `result.nil_error` function has been deprecated in favour of
+  `result.replace_error`.
+- The `gleam/bytes_builder` module has been deprecated in favour of the
+  `gleam/bytes_tree` module.
+- The `gleam/string_builder` module has been deprecated in favour of the
+  `gleam/string_tree` module.
+
+## v0.41.0 - 2024-10-31
+
+Happy Samhain! 🎃
+
+- The `bit_array` module gains the `compare` function.
+- The `float` module gains the `to_precision` function.
+- The `iterator.try_fold` function is now tail recursive.
+- The performance of many functions in the `string` module has been improved.
+- The `list.concat` function has been deprecated in favour of `list.flatten`.
+- The handling of float exponentials and signs in the `float.to_string` and
+  `string.inspect` functions have been improved on JavaScript.
+- The `set` module gains the `each` function.
+
+## v0.40.0 - 2024-08-19
 
 - The `function.curry*` and `function.apply*` functions have been deprecated.
 - The deprecated `dynamic.unsafe_coerce` function has been removed.
@@ -13,6 +45,14 @@
   optional. It only deals with the presence or absence of the key itself which
   brings it inline with its documentation.
 - Fixed a bug where `string.trim` could remove commas on JavaScript.
+- The `string.pop_grapheme` function has been optimised on Erlang, greatly
+  improving its performance.
+- The `InvalidBase` error in the `int` module has been replaced by `Nil`.
+- Fixed a bug where iterating graphemes could crash on older JavaScript runtimes
+  where the `Intl` API is not supported.
+- Fixed a bug where the behaviour of `uri.percent_decode` would decode `+` as a
+  space on JavaScript.
+- Fixed a bug where `string.slice` could return invalid values on Erlang.
 
 ## v0.39.0 - 2024-07-09
 

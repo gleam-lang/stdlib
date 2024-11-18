@@ -158,3 +158,15 @@ pub fn symmetric_difference_test() {
   set.symmetric_difference(set.from_list([1, 2, 3]), set.from_list([3, 4]))
   |> should.equal(set.from_list([1, 2, 4]))
 }
+
+pub fn each_test() {
+  [1, 2, 3]
+  |> set.from_list
+  |> set.each(fn(member) {
+    case member {
+      1 | 2 | 3 -> Nil
+      _ -> panic as "unexpected value"
+    }
+  })
+  |> should.equal(Nil)
+}

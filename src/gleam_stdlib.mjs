@@ -16,6 +16,7 @@ import {
 } from "./gleam/regex.mjs";
 import { DecodeError } from "./gleam/dynamic.mjs";
 import { Some, None } from "./gleam/option.mjs";
+import { Eq, Gt, Lt } from "./gleam/order.mjs";
 import Dict from "./dict.mjs";
 
 const Nil = undefined;
@@ -46,11 +47,16 @@ export function to_string(term) {
 }
 
 export function float_to_string(float) {
-  const string = float.toString();
+  const string = float.toString().replace('+', '');
   if (string.indexOf(".") >= 0) {
     return string;
   } else {
-    return string + ".0";
+    const index = string.indexOf("e");
+    if (index >= 0) {
+      return string.slice(0, index) + '.0' + string.slice(index);
+    } else {
+      return string + ".0";
+    }
   }
 }
 
@@ -155,9 +161,12 @@ export function graphemes(string) {
   }
 }
 
+let segmenter = undefined;
+
 function graphemes_iterator(string) {
-  if (Intl && Intl.Segmenter) {
-    return new Intl.Segmenter().segment(string)[Symbol.iterator]();
+  if (globalThis.Intl && Intl.Segmenter) {
+    segmenter ||= new Intl.Segmenter();
+    return segmenter.segment(string)[Symbol.iterator]();
   }
 }
 
@@ -219,6 +228,34 @@ export function length(data) {
   return data.length;
 }
 
+export function string_slice(string, idx, len) {
+  if (len <= 0 || idx >= string.length) {
+    return "";
+  }
+
+  const iterator = graphemes_iterator(string);
+  if (iterator) {
+    while (idx-- > 0) {
+      iterator.next();
+    }
+
+    let result = "";
+
+    while (len-- > 0) {
+      const v = iterator.next().value;
+      if (v === undefined) {
+        break;
+      }
+
+      result += v.segment;
+    }
+
+    return result;
+  } else {
+    return string.match(/./gsu).slice(idx, idx + len).join("");
+  }
+}
+
 export function crop_string(string, substring) {
   return string.substring(string.indexOf(substring));
 }
@@ -262,14 +299,14 @@ const left_trim_regex = new RegExp(`^([${unicode_whitespaces}]*)`, "g");
 const right_trim_regex = new RegExp(`([${unicode_whitespaces}]*)$`, "g");
 
 export function trim(string) {
-  return trim_left(trim_right(string));
+  return trim_start(trim_end(string));
 }
 
-export function trim_left(string) {
+export function trim_start(string) {
   return string.replace(left_trim_regex, "");
 }
 
-export function trim_right(string) {
+export function trim_end(string) {
   return string.replace(right_trim_regex, "");
 }
 
@@ -425,7 +462,7 @@ export function compile_regex(pattern, options) {
 export function regex_split(regex, string) {
   return List.fromArray(
     string.split(regex).map((item) => (item === undefined ? "" : item)),
-  ); 
+  );
 }
 
 export function regex_scan(regex, string) {
@@ -447,7 +484,7 @@ export function regex_scan(regex, string) {
 }
 
 export function regex_replace(regex, original_string, replacement) {
-  return original_string.replaceAll(regex, replacement)
+  return original_string.replaceAll(regex, replacement);
 }
 
 export function new_map() {
@@ -479,6 +516,10 @@ export function map_insert(key, value, map) {
 }
 
 function unsafe_percent_decode(string) {
+  return decodeURIComponent(string || "");
+}
+
+function unsafe_percent_decode_query(string) {
   return decodeURIComponent((string || "").replace("+", " "));
 }
 
@@ -491,7 +532,7 @@ export function percent_decode(string) {
 }
 
 export function percent_encode(string) {
-  return encodeURIComponent(string);
+  return encodeURIComponent(string).replace("%2B", "+");
 }
 
 export function parse_query(query) {
@@ -500,7 +541,10 @@ export function parse_query(query) {
     for (const section of query.split("&")) {
       const [key, value] = section.split("=");
       if (!key) continue;
-      pairs.push([unsafe_percent_decode(key), unsafe_percent_decode(value)]);
+
+      const decodedKey = unsafe_percent_decode_query(key);
+      const decodedValue = unsafe_percent_decode_query(value);
+      pairs.push([decodedKey, decodedValue]);
     }
     return new Ok(List.fromArray(pairs));
   } catch {
@@ -542,8 +586,7 @@ export function encode64(bit_array, padding) {
   if (padding) {
     if (k === 1) {
       base64 += "==";
-    }
-    else if (k === 2) {
+    } else if (k === 2) {
       base64 += "=";
     }
   }
@@ -558,7 +601,7 @@ export function decode64(sBase64) {
     const length = binString.length;
     const array = new Uint8Array(length);
     for (let i = 0; i < length; i++) {
-        array[i] = binString.charCodeAt(i);
+      array[i] = binString.charCodeAt(i);
     }
     return new Ok(new BitArray(array));
   } catch {
@@ -799,7 +842,8 @@ export function inspect(v) {
   if (v === null) return "//js(null)";
   if (v === undefined) return "Nil";
   if (t === "string") return inspectString(v);
-  if (t === "bigint" || t === "number") return v.toString();
+  if (t === "bigint" || Number.isInteger(v)) return v.toString();
+  if (t === "number") return float_to_string(v);
   if (Array.isArray(v)) return `#(${v.map(inspect).join(", ")})`;
   if (v instanceof List) return inspectList(v);
   if (v instanceof UtfCodepoint) return inspectUtfCodepoint(v);
@@ -819,25 +863,40 @@ export function inspect(v) {
 }
 
 function inspectString(str) {
-  let new_str = "\"";
+  let new_str = '"';
   for (let i = 0; i < str.length; i++) {
     let char = str[i];
     switch (char) {
-      case '\n': new_str += "\\n"; break;
-      case '\r': new_str += "\\r"; break;
-      case '\t': new_str += "\\t"; break;
-      case '\f': new_str += "\\f"; break;
-      case '\\': new_str += "\\\\"; break;
-      case '\"': new_str += "\\\""; break;
+      case "\n":
+        new_str += "\\n";
+        break;
+      case "\r":
+        new_str += "\\r";
+        break;
+      case "\t":
+        new_str += "\\t";
+        break;
+      case "\f":
+        new_str += "\\f";
+        break;
+      case "\\":
+        new_str += "\\\\";
+        break;
+      case '"':
+        new_str += '\\"';
+        break;
       default:
-        if (char < ' ' || (char > '~' && char < '\u{00A0}')) {
-          new_str += "\\u{" + char.charCodeAt(0).toString(16).toUpperCase().padStart(4, "0") + "}";
+        if (char < " " || (char > "~" && char < "\u{00A0}")) {
+          new_str +=
+            "\\u{" +
+            char.charCodeAt(0).toString(16).toUpperCase().padStart(4, "0") +
+            "}";
         } else {
           new_str += char;
         }
     }
   }
-  new_str += "\"";
+  new_str += '"';
   return new_str;
 }
 
@@ -906,6 +965,42 @@ export function base16_decode(string) {
   return new Ok(new BitArray(bytes));
 }
 
-export function bit_array_inspect(bits) {
-  return `<<${[...bits.buffer].join(", ")}>>`;
+export function bit_array_inspect(bits, acc) {
+  return `${acc}${[...bits.buffer].join(", ")}`;
+}
+
+export function bit_array_compare(first, second) {
+  for (let i = 0; i < first.length; i++) {
+    if (i >= second.length) {
+      return new Gt(); // first has more items
+    }
+    const f = first.buffer[i];
+    const s = second.buffer[i];
+    if (f > s) {
+      return new Gt();
+    }
+    if (f < s) {
+      return new Lt();
+    }
+  }
+  // This means that either first did not have any items
+  // or all items in first were equal to second.
+  if (first.length === second.length) {
+    return new Eq();
+  }
+  return new Lt(); // second has more items
+}
+
+export function bit_array_starts_with(bits, prefix) {
+  if (prefix.length > bits.length) {
+    return false;
+  }
+
+  for (let i = 0; i < prefix.length; i++) {
+    if (bits.buffer[i] !== prefix.buffer[i]) {
+      return false;
+    }
+  }
+
+  return true;
 }

@@ -276,8 +276,9 @@ pub fn unwrap_both(result: Result(a, a)) -> a {
 /// // -> Ok(1)
 /// ```
 ///
+@deprecated("Use `result.replace_error` with the `Nil` value instead")
 pub fn nil_error(result: Result(a, e)) -> Result(a, Nil) {
-  map_error(result, fn(_) { Nil })
+  replace_error(result, Nil)
 }
 
 /// Returns the first value if it is `Ok`, otherwise returns the second value.
@@ -312,6 +313,8 @@ pub fn or(first: Result(a, e), second: Result(a, e)) -> Result(a, e) {
 }
 
 /// Returns the first value if it is `Ok`, otherwise evaluates the given function for a fallback value.
+///
+/// If you need access to the initial error value, use `result.try_recover`.
 ///
 /// ## Examples
 ///
@@ -378,14 +381,14 @@ pub fn all(results: List(Result(a, e))) -> Result(List(a), e) {
 /// ```
 ///
 pub fn partition(results: List(Result(a, e))) -> #(List(a), List(e)) {
-  do_partition(results, [], [])
+  partition_loop(results, [], [])
 }
 
-fn do_partition(results: List(Result(a, e)), oks: List(a), errors: List(e)) {
+fn partition_loop(results: List(Result(a, e)), oks: List(a), errors: List(e)) {
   case results {
     [] -> #(oks, errors)
-    [Ok(a), ..rest] -> do_partition(rest, [a, ..oks], errors)
-    [Error(e), ..rest] -> do_partition(rest, oks, [e, ..errors])
+    [Ok(a), ..rest] -> partition_loop(rest, [a, ..oks], errors)
+    [Error(e), ..rest] -> partition_loop(rest, oks, [e, ..errors])
   }
 }
 
@@ -424,7 +427,7 @@ pub fn replace(result: Result(a, e), value: b) -> Result(b, e) {
 /// // -> Ok(1)
 /// ```
 ///
-pub fn replace_error(result: Result(a, e1), error: e2) -> Result(a, e2) {
+pub fn replace_error(result: Result(a, e), error: f) -> Result(a, f) {
   case result {
     Ok(x) -> Ok(x)
     Error(_) -> Error(error)
@@ -453,6 +456,8 @@ pub fn values(results: List(Result(a, e))) -> List(a) {
 ///
 /// This function is useful for chaining together computations that may fail
 /// and trying to recover from possible errors.
+///
+/// If you do not need access to the initial error value, use `result.lazy_or`.
 ///
 /// ## Examples
 ///

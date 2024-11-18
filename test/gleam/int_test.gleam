@@ -1,5 +1,4 @@
 import gleam/int
-import gleam/iterator
 import gleam/list
 import gleam/order
 import gleam/should
@@ -102,11 +101,11 @@ pub fn to_base_string_test() {
 
   100
   |> int.to_base_string(1)
-  |> should.equal(Error(int.InvalidBase))
+  |> should.equal(Error(Nil))
 
   100
   |> int.to_base_string(37)
-  |> should.equal(Error(int.InvalidBase))
+  |> should.equal(Error(Nil))
 }
 
 pub fn to_base2_test() {
@@ -369,7 +368,7 @@ pub fn digits_test() {
   |> should.equal(Ok([1, 1, 1, 1, 0, 1, 1]))
 
   int.digits(123, 1)
-  |> should.equal(Error(int.InvalidBase))
+  |> should.equal(Error(Nil))
 }
 
 pub fn undigits_test() {
@@ -386,34 +385,31 @@ pub fn undigits_test() {
   |> should.equal(Ok(123))
 
   int.undigits([1, 2, 3], 1)
-  |> should.equal(Error(int.InvalidBase))
+  |> should.equal(Error(Nil))
 
   int.undigits([1, 1, 2], 2)
-  |> should.equal(Error(int.InvalidBase))
+  |> should.equal(Error(Nil))
 }
 
 pub fn random_test() {
-  let test_boundaries = fn(_accumulator, _element) {
-    int.random(0)
-    |> should.equal(0)
+  use _ <- list.each(list.range(0, 100))
 
-    int.random(1)
-    |> should.equal(0)
+  int.random(0)
+  |> should.equal(0)
 
-    int.random(-1)
-    |> should.equal(-1)
+  int.random(1)
+  |> should.equal(0)
 
-    int.random(2)
-    |> list.contains([0, 1], _)
-    |> should.be_true
+  int.random(-1)
+  |> should.equal(-1)
 
-    int.random(3)
-    |> list.contains([0, 1, 2], _)
-    |> should.be_true
-  }
-  list.range(0, 100)
-  |> iterator.from_list
-  |> iterator.fold(Nil, test_boundaries)
+  int.random(2)
+  |> list.contains([0, 1], _)
+  |> should.be_true
+
+  int.random(3)
+  |> list.contains([0, 1, 2], _)
+  |> should.be_true
 }
 
 pub fn divide_test() {

@@ -224,7 +224,9 @@ pub fn filter(
 /// ## Examples
 ///
 /// ```gleam
-/// map(from_list([1, 2, 3, 4], fn(x) { x * 2 }))
+/// from_list([1, 2, 3, 4])
+/// |> map(with: fn(x) { x * 2 })
+/// |> to_list
 /// // -> [2, 4, 6, 8]
 /// ```
 pub fn map(set: Set(member), with fun: fn(member) -> mapped) -> Set(mapped) {
@@ -239,7 +241,9 @@ pub fn map(set: Set(member), with fun: fn(member) -> mapped) -> Set(mapped) {
 /// ## Examples
 ///
 /// ```gleam
-/// drop(from_list([1, 2, 3, 4]), [1, 3])
+/// from_list([1, 2, 3, 4])
+/// |> drop([1, 3])
+/// |> to_list
 /// // -> [2, 4]
 /// ```
 pub fn drop(from set: Set(member), drop disallowed: List(member)) -> Set(member) {
@@ -264,13 +268,6 @@ pub fn take(from set: Set(member), keeping desired: List(member)) -> Set(member)
   Set(dict.take(from: set.dict, keeping: desired))
 }
 
-fn order(first: Set(member), second: Set(member)) -> #(Set(member), Set(member)) {
-  case dict.size(first.dict) > dict.size(second.dict) {
-    True -> #(first, second)
-    False -> #(second, first)
-  }
-}
-
 /// Creates a new set that contains all members of both given sets.
 ///
 /// This function runs in loglinear time.
@@ -285,6 +282,13 @@ fn order(first: Set(member), second: Set(member)) -> #(Set(member), Set(member))
 pub fn union(of first: Set(member), and second: Set(member)) -> Set(member) {
   let #(larger, smaller) = order(first, second)
   fold(over: smaller, from: larger, with: insert)
+}
+
+fn order(first: Set(member), second: Set(member)) -> #(Set(member), Set(member)) {
+  case dict.size(first.dict) > dict.size(second.dict) {
+    True -> #(first, second)
+    False -> #(second, first)
+  }
 }
 
 /// Creates a new set that contains members that are present in both given sets.
@@ -346,7 +350,7 @@ pub fn is_subset(first: Set(member), of second: Set(member)) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// is_disjoint(from_list([1, 2, 3], from_list([4, 5, 6])))
+/// is_disjoint(from_list([1, 2, 3]), from_list([4, 5, 6]))
 /// // -> True
 /// ```
 ///
@@ -375,4 +379,29 @@ pub fn symmetric_difference(
     from: union(of: first, and: second),
     minus: intersection(of: first, and: second),
   )
+}
+
+/// Calls a function for each member in a set, discarding the return
+/// value.
+///
+/// Useful for producing a side effect for every item of a set.
+///
+/// ```gleam
+/// let set = from_list(["apple", "banana", "cherry"])
+///
+/// each(set, io.println)
+/// // -> Nil
+/// // apple
+/// // banana
+/// // cherry
+/// ```
+///
+/// The order of elements in the iteration is an implementation detail that
+/// should not be relied upon.
+///
+pub fn each(set: Set(member), fun: fn(member) -> a) -> Nil {
+  fold(set, Nil, fn(nil, member) {
+    fun(member)
+    nil
+  })
 }

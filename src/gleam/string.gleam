@@ -1,11 +1,10 @@
 //// Strings in Gleam are UTF-8 binaries. They can be written in your code as
 //// text surrounded by `"double quotes"`.
 
-import gleam/iterator.{type Iterator}
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/order
-import gleam/string_builder.{type StringBuilder}
+import gleam/string_tree.{type StringTree}
 
 /// Determines if a `String` is empty.
 ///
@@ -71,20 +70,11 @@ pub fn reverse(string: String) -> String {
   do_reverse(string)
 }
 
-@target(erlang)
 fn do_reverse(string: String) -> String {
   string
-  |> string_builder.from_string
-  |> string_builder.reverse
-  |> string_builder.to_string
-}
-
-@target(javascript)
-fn do_reverse(string: String) -> String {
-  string
-  |> to_graphemes
-  |> list.reverse
-  |> concat
+  |> string_tree.from_string
+  |> string_tree.reverse
+  |> string_tree.to_string
 }
 
 /// Creates a new `String` by replacing all occurrences of a given substring.
@@ -107,9 +97,9 @@ pub fn replace(
   with substitute: String,
 ) -> String {
   string
-  |> string_builder.from_string
-  |> string_builder.replace(each: pattern, with: substitute)
-  |> string_builder.to_string
+  |> string_tree.from_string
+  |> string_tree.replace(each: pattern, with: substitute)
+  |> string_tree.to_string
 }
 
 /// Creates a new `String` with all the graphemes in the input `String` converted to
@@ -230,14 +220,9 @@ pub fn slice(from string: String, at_index idx: Int, length len: Int) -> String 
   }
 }
 
-@external(erlang, "string", "slice")
-fn do_slice(string: String, idx: Int, len: Int) -> String {
-  string
-  |> to_graphemes
-  |> list.drop(idx)
-  |> list.take(len)
-  |> concat
-}
+@external(erlang, "gleam_stdlib", "slice")
+@external(javascript, "../gleam_stdlib.mjs", "string_slice")
+fn do_slice(string: String, idx: Int, len: Int) -> String
 
 /// Drops contents of the first `String` that occur before the second `String`.
 /// If the `from` string does not contain the `before` string, `from` is returned unchanged.
@@ -262,7 +247,21 @@ pub fn crop(from string: String, before substring: String) -> String
 /// // -> "e Lone Gunmen"
 /// ```
 ///
+@deprecated("Use `string.drop_start` instead.")
 pub fn drop_left(from string: String, up_to num_graphemes: Int) -> String {
+  drop_start(string, num_graphemes)
+}
+
+/// Drops *n* graphemes from the start of a `String`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// drop_start(from: "The Lone Gunmen", up_to: 2)
+/// // -> "e Lone Gunmen"
+/// ```
+///
+pub fn drop_start(from string: String, up_to num_graphemes: Int) -> String {
   case num_graphemes < 0 {
     True -> string
     False -> slice(string, num_graphemes, length(string) - num_graphemes)
@@ -278,7 +277,21 @@ pub fn drop_left(from string: String, up_to num_graphemes: Int) -> String {
 /// // -> "Cigarette Smoking M"
 /// ```
 ///
+@deprecated("Use `string.drop_end` instead.")
 pub fn drop_right(from string: String, up_to num_graphemes: Int) -> String {
+  drop_end(string, num_graphemes)
+}
+
+/// Drops *n* graphemes from the end of a `String`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// drop_end(from: "Cigarette Smoking Man", up_to: 2)
+/// // -> "Cigarette Smoking M"
+/// ```
+///
+pub fn drop_end(from string: String, up_to num_graphemes: Int) -> String {
   case num_graphemes < 0 {
     True -> string
     False -> slice(string, 0, length(string) - num_graphemes)
@@ -356,9 +369,9 @@ pub fn split(x: String, on substring: String) -> List(String) {
     "" -> to_graphemes(x)
     _ ->
       x
-      |> string_builder.from_string
-      |> string_builder.split(on: substring)
-      |> list.map(with: string_builder.to_string)
+      |> string_tree.from_string
+      |> string_tree.split(on: substring)
+      |> list.map(with: string_tree.to_string)
   }
 }
 
@@ -379,15 +392,18 @@ pub fn split(x: String, on substring: String) -> List(String) {
 /// ```
 ///
 pub fn split_once(
-  x: String,
+  string: String,
   on substring: String,
 ) -> Result(#(String, String), Nil) {
-  do_split_once(x, substring)
+  do_split_once(string, substring)
 }
 
 @external(javascript, "../gleam_stdlib.mjs", "split_once")
-fn do_split_once(x: String, substring: String) -> Result(#(String, String), Nil) {
-  case erl_split(x, substring) {
+fn do_split_once(
+  string: String,
+  substring: String,
+) -> Result(#(String, String), Nil) {
+  case erl_split(string, substring) {
     [first, rest] -> Ok(#(first, rest))
     _ -> Error(Nil)
   }
@@ -399,7 +415,7 @@ fn erl_split(a: String, b: String) -> List(String)
 /// Creates a new `String` by joining two `String`s together.
 ///
 /// This function copies both `String`s and runs in linear time. If you find
-/// yourself joining `String`s frequently consider using the [`string_builder`](../gleam/string_builder.html)
+/// yourself joining `String`s frequently consider using the [`string_tree`](../gleam/string_tree.html)
 /// module as it can append `String`s much faster!
 ///
 /// ## Examples
@@ -411,15 +427,15 @@ fn erl_split(a: String, b: String) -> List(String)
 ///
 pub fn append(to first: String, suffix second: String) -> String {
   first
-  |> string_builder.from_string
-  |> string_builder.append(second)
-  |> string_builder.to_string
+  |> string_tree.from_string
+  |> string_tree.append(second)
+  |> string_tree.to_string
 }
 
 /// Creates a new `String` by joining many `String`s together.
 ///
 /// This function copies both `String`s and runs in linear time. If you find
-/// yourself joining `String`s frequently consider using the [`string_builder`](../gleam/string_builder.html)
+/// yourself joining `String`s frequently consider using the [`string_tree`](../gleam/string_tree.html)
 /// module as it can append `String`s much faster!
 ///
 /// ## Examples
@@ -431,8 +447,8 @@ pub fn append(to first: String, suffix second: String) -> String {
 ///
 pub fn concat(strings: List(String)) -> String {
   strings
-  |> string_builder.from_strings
-  |> string_builder.to_string
+  |> string_tree.from_strings
+  |> string_tree.to_string
 }
 
 /// Creates a new `String` by repeating a `String` a given number of times.
@@ -447,10 +463,14 @@ pub fn concat(strings: List(String)) -> String {
 /// ```
 ///
 pub fn repeat(string: String, times times: Int) -> String {
-  iterator.repeat(string)
-  |> iterator.take(times)
-  |> iterator.to_list
-  |> concat
+  repeat_loop(string, times, "")
+}
+
+fn repeat_loop(string: String, times: Int, acc: String) -> String {
+  case times <= 0 {
+    True -> acc
+    False -> repeat_loop(string, times - 1, acc <> string)
+  }
 }
 
 /// Joins many `String`s together with a given separator.
@@ -494,13 +514,46 @@ fn do_join(strings: List(String), separator: String) -> String {
 /// // -> "121"
 /// ```
 ///
-pub fn pad_left(string: String, to desired_length: Int, with pad_string: String) {
+@deprecated("Use `string.pad_start` instead.")
+pub fn pad_left(
+  string: String,
+  to desired_length: Int,
+  with pad_string: String,
+) -> String {
+  pad_start(string, desired_length, pad_string)
+}
+
+/// Pads the start of a `String` until it has a given length.
+///
+/// ## Examples
+///
+/// ```gleam
+/// pad_start("121", to: 5, with: ".")
+/// // -> "..121"
+/// ```
+///
+/// ```gleam
+/// pad_start("121", to: 3, with: ".")
+/// // -> "121"
+/// ```
+///
+/// ```gleam
+/// pad_start("121", to: 2, with: ".")
+/// // -> "121"
+/// ```
+///
+pub fn pad_start(
+  string: String,
+  to desired_length: Int,
+  with pad_string: String,
+) -> String {
   let current_length = length(string)
   let to_pad_length = desired_length - current_length
-  padding(to_pad_length, pad_string)
-  |> iterator.append(iterator.single(string))
-  |> iterator.to_list
-  |> concat
+
+  case to_pad_length <= 0 {
+    True -> string
+    False -> padding(to_pad_length, pad_string) <> string
+  }
 }
 
 /// Pads a `String` on the right until it has a given length.
@@ -522,29 +575,62 @@ pub fn pad_left(string: String, to desired_length: Int, with pad_string: String)
 /// // -> "123"
 /// ```
 ///
+@deprecated("Use `string.pad_end` instead.")
 pub fn pad_right(
   string: String,
   to desired_length: Int,
   with pad_string: String,
-) {
-  let current_length = length(string)
-  let to_pad_length = desired_length - current_length
-  iterator.single(string)
-  |> iterator.append(padding(to_pad_length, pad_string))
-  |> iterator.to_list
-  |> concat
+) -> String {
+  pad_end(string, desired_length, pad_string)
 }
 
-fn padding(size: Int, pad_string: String) -> Iterator(String) {
-  let pad_length = length(pad_string)
-  let num_pads = size / pad_length
-  let extra = size % pad_length
-  iterator.repeat(pad_string)
-  |> iterator.take(num_pads)
-  |> iterator.append(iterator.single(slice(pad_string, 0, extra)))
+/// Pads the end of a `String` until it has a given length.
+///
+/// ## Examples
+///
+/// ```gleam
+/// pad_end("123", to: 5, with: ".")
+/// // -> "123.."
+/// ```
+///
+/// ```gleam
+/// pad_end("123", to: 3, with: ".")
+/// // -> "123"
+/// ```
+///
+/// ```gleam
+/// pad_end("123", to: 2, with: ".")
+/// // -> "123"
+/// ```
+///
+pub fn pad_end(
+  string: String,
+  to desired_length: Int,
+  with pad_string: String,
+) -> String {
+  let current_length = length(string)
+  let to_pad_length = desired_length - current_length
+
+  case to_pad_length <= 0 {
+    True -> string
+    False -> string <> padding(to_pad_length, pad_string)
+  }
+}
+
+fn padding(size: Int, pad_string: String) -> String {
+  let pad_string_length = length(pad_string)
+  let num_pads = size / pad_string_length
+  let extra = size % pad_string_length
+
+  repeat(pad_string, num_pads) <> slice(pad_string, 0, extra)
 }
 
 /// Removes whitespace on both sides of a `String`.
+///
+/// Whitespace in this function is the set of nonbreakable whitespace
+/// codepoints, defined as Pattern_White_Space in [Unicode Standard Annex #31][1].
+///
+/// [1]: https://unicode.org/reports/tr31/
 ///
 /// ## Examples
 ///
@@ -580,12 +666,26 @@ type Direction {
 /// // -> "hats  \n"
 /// ```
 ///
+@deprecated("Use `string.trim_start` instead")
 pub fn trim_left(string: String) -> String {
-  do_trim_left(string)
+  trim_start(string)
 }
 
-@external(javascript, "../gleam_stdlib.mjs", "trim_left")
-fn do_trim_left(string: String) -> String {
+/// Removes whitespace at the start of a `String`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// trim_start("  hats  \n")
+/// // -> "hats  \n"
+/// ```
+///
+pub fn trim_start(string: String) -> String {
+  do_trim_start(string)
+}
+
+@external(javascript, "../gleam_stdlib.mjs", "trim_start")
+fn do_trim_start(string: String) -> String {
   erl_trim(string, Leading)
 }
 
@@ -598,12 +698,26 @@ fn do_trim_left(string: String) -> String {
 /// // -> "  hats"
 /// ```
 ///
+@deprecated("Use `string.trim_end` instead")
 pub fn trim_right(string: String) -> String {
-  do_trim_right(string)
+  trim_end(string)
 }
 
-@external(javascript, "../gleam_stdlib.mjs", "trim_right")
-fn do_trim_right(string: String) -> String {
+/// Removes whitespace at the end of a `String`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// trim_end("  hats  \n")
+/// // -> "  hats"
+/// ```
+///
+pub fn trim_end(string: String) -> String {
+  do_trim_end(string)
+}
+
+@external(javascript, "../gleam_stdlib.mjs", "trim_end")
+fn do_trim_end(string: String) -> String {
   erl_trim(string, Trailing)
 }
 
@@ -644,13 +758,13 @@ fn do_pop_grapheme(string string: String) -> Result(#(String, String), Nil)
 ///
 @external(javascript, "../gleam_stdlib.mjs", "graphemes")
 pub fn to_graphemes(string: String) -> List(String) {
-  do_to_graphemes(string, [])
+  to_graphemes_loop(string, [])
   |> list.reverse
 }
 
-fn do_to_graphemes(string: String, acc: List(String)) -> List(String) {
+fn to_graphemes_loop(string: String, acc: List(String)) -> List(String) {
   case pop_grapheme(string) {
-    Ok(#(grapheme, rest)) -> do_to_graphemes(rest, [grapheme, ..acc])
+    Ok(#(grapheme, rest)) -> to_graphemes_loop(rest, [grapheme, ..acc])
     _ -> acc
   }
 }
@@ -691,19 +805,18 @@ pub fn to_utf_codepoints(string: String) -> List(UtfCodepoint) {
 
 @target(erlang)
 fn do_to_utf_codepoints(string: String) -> List(UtfCodepoint) {
-  do_to_utf_codepoints_impl(<<string:utf8>>, [])
-  |> list.reverse
+  to_utf_codepoints_loop(<<string:utf8>>, [])
 }
 
 @target(erlang)
-fn do_to_utf_codepoints_impl(
+fn to_utf_codepoints_loop(
   bit_array: BitArray,
   acc: List(UtfCodepoint),
 ) -> List(UtfCodepoint) {
   case bit_array {
     <<first:utf8_codepoint, rest:bytes>> ->
-      do_to_utf_codepoints_impl(rest, [first, ..acc])
-    _ -> acc
+      to_utf_codepoints_loop(rest, [first, ..acc])
+    _ -> list.reverse(acc)
   }
 }
 
@@ -716,7 +829,7 @@ fn do_to_utf_codepoints(string: String) -> List(UtfCodepoint) {
 
 @target(javascript)
 @external(javascript, "../gleam_stdlib.mjs", "string_to_codepoint_integer_list")
-fn string_to_codepoint_integer_list(a: String) -> List(Int)
+fn string_to_codepoint_integer_list(string: String) -> List(Int)
 
 /// Converts a `List` of `UtfCodepoint`s to a `String`.
 ///
@@ -784,10 +897,10 @@ fn do_utf_codepoint_to_int(cp cp: UtfCodepoint) -> Int
 /// // -> Some("hats")
 /// ```
 ///
-pub fn to_option(s: String) -> Option(String) {
-  case s {
+pub fn to_option(string: String) -> Option(String) {
+  case string {
     "" -> None
-    _ -> Some(s)
+    _ -> Some(string)
   }
 }
 
@@ -807,8 +920,8 @@ pub fn to_option(s: String) -> Option(String) {
 /// // -> Ok("i")
 /// ```
 ///
-pub fn first(s: String) -> Result(String, Nil) {
-  case pop_grapheme(s) {
+pub fn first(string: String) -> Result(String, Nil) {
+  case pop_grapheme(string) {
     Ok(#(first, _)) -> Ok(first)
     Error(e) -> Error(e)
   }
@@ -830,8 +943,8 @@ pub fn first(s: String) -> Result(String, Nil) {
 /// // -> Ok("m")
 /// ```
 ///
-pub fn last(s: String) -> Result(String, Nil) {
-  case pop_grapheme(s) {
+pub fn last(string: String) -> Result(String, Nil) {
+  case pop_grapheme(string) {
     Ok(#(first, "")) -> Ok(first)
     Ok(#(_, rest)) -> Ok(slice(rest, -1, 1))
     Error(e) -> Error(e)
@@ -848,8 +961,8 @@ pub fn last(s: String) -> Result(String, Nil) {
 /// // -> "Mamouna"
 /// ```
 ///
-pub fn capitalise(s: String) -> String {
-  case pop_grapheme(s) {
+pub fn capitalise(string: String) -> String {
+  case pop_grapheme(string) {
     Ok(#(first, rest)) -> append(to: uppercase(first), suffix: lowercase(rest))
     _ -> ""
   }
@@ -859,12 +972,12 @@ pub fn capitalise(s: String) -> String {
 ///
 pub fn inspect(term: anything) -> String {
   do_inspect(term)
-  |> string_builder.to_string
+  |> string_tree.to_string
 }
 
 @external(erlang, "gleam_stdlib", "inspect")
 @external(javascript, "../gleam_stdlib.mjs", "inspect")
-fn do_inspect(term term: anything) -> StringBuilder
+fn do_inspect(term: anything) -> StringTree
 
 /// Returns the number of bytes in a `String`.
 ///

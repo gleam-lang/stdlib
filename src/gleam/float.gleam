@@ -267,6 +267,32 @@ pub fn truncate(x: Float) -> Int {
 @external(javascript, "../gleam_stdlib.mjs", "truncate")
 fn do_truncate(a: Float) -> Int
 
+/// Converts the value to a given precision as a `Float`.
+/// The precision is the number of allowed decimal places.
+/// Negative precisions are allowed and force rounding
+/// to the nearest tenth, hundredth, thousandth etc.
+///
+/// ## Examples
+///
+/// ```gleam
+/// to_precision(2.43434348473, precision: 2)
+/// // -> 2.43
+/// ```
+///
+/// ```gleam
+/// to_precision(547890.453444, precision: -3)
+/// // -> 548000.0
+/// ```
+///
+pub fn to_precision(x: Float, precision: Int) -> Float {
+  let factor = do_power(10.0, do_to_float(-precision))
+  do_to_float(round(x /. factor)) *. factor
+}
+
+@external(erlang, "erlang", "float")
+@external(javascript, "../gleam_stdlib.mjs", "identity")
+fn do_to_float(a: Int) -> Float
+
 /// Returns the absolute value of the input as a `Float`.
 ///
 /// ## Examples
@@ -377,14 +403,13 @@ pub fn negate(x: Float) -> Float {
 /// ```
 ///
 pub fn sum(numbers: List(Float)) -> Float {
-  numbers
-  |> do_sum(0.0)
+  sum_loop(numbers, 0.0)
 }
 
-fn do_sum(numbers: List(Float), initial: Float) -> Float {
+fn sum_loop(numbers: List(Float), initial: Float) -> Float {
   case numbers {
+    [x, ..rest] -> sum_loop(rest, x +. initial)
     [] -> initial
-    [x, ..rest] -> do_sum(rest, x +. initial)
   }
 }
 
@@ -400,14 +425,14 @@ fn do_sum(numbers: List(Float), initial: Float) -> Float {
 pub fn product(numbers: List(Float)) -> Float {
   case numbers {
     [] -> 1.0
-    _ -> do_product(numbers, 1.0)
+    _ -> product_loop(numbers, 1.0)
   }
 }
 
-fn do_product(numbers: List(Float), initial: Float) -> Float {
+fn product_loop(numbers: List(Float), initial: Float) -> Float {
   case numbers {
+    [x, ..rest] -> product_loop(rest, x *. initial)
     [] -> initial
-    [x, ..rest] -> do_product(rest, x *. initial)
   }
 }
 
@@ -468,7 +493,7 @@ pub fn modulo(dividend: Float, by divisor: Float) -> Result(Float, Nil) {
 ///
 /// ```gleam
 /// divide(0.0, 1.0)
-/// // -> Ok(1.0)
+/// // -> Ok(0.0)
 /// ```
 ///
 /// ```gleam

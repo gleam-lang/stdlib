@@ -18,6 +18,5 @@ indent_size = 2
 [*.erl]
 indent_size = 4
 
-[*.{gleam, erl, mjs, js, ts}]
+[*.{erl, mjs, js, ts}]
 max_line_length = 80
-

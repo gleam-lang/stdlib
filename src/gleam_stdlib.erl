@@ -14,7 +14,7 @@
     decode_tuple5/1, decode_tuple6/1, tuple_get/2, classify_dynamic/1, print/1,
     println/1, print_error/1, println_error/1, inspect/1, float_to_string/1,
     int_from_base_string/2, utf_codepoint_list_to_string/1, contains_string/2,
-    crop_string/2, base16_decode/1, string_replace/3, regex_replace/3
+    crop_string/2, base16_decode/1, string_replace/3, regex_replace/3, slice/3, bit_array_to_int_and_size/1
 ]).
 
 %% Taken from OTP's uri_string module
@@ -194,16 +194,25 @@ string_pad(String, Length, Dir, PadString) ->
 
 string_pop_grapheme(String) ->
     case string:next_grapheme(String) of
-        [ Next | Rest ] ->
+        [ Next | Rest ] when is_binary(Rest) ->
+            {ok, {unicode:characters_to_binary([Next]), Rest}};
+
+        [ Next | Rest ]  ->
             {ok, {unicode:characters_to_binary([Next]), unicode:characters_to_binary(Rest)}};
+
         _ -> {error, nil}
     end.
 
 bit_array_concat(BitArrays) ->
     list_to_bitstring(BitArrays).
 
+-if(?OTP_RELEASE >= 26).
 bit_array_base64_encode(Bin, Padding) ->
     base64:encode(Bin, #{padding => Padding}).
+-else.
+bit_array_base64_encode(_Bin, _Padding) ->
+    erlang:error(<<"Erlang OTP/26 or higher is required to use base64:encode">>).
+-endif.
 
 bit_array_slice(Bin, Pos, Len) ->
     try {ok, binary:part(Bin, Pos, Len)}
@@ -488,6 +497,11 @@ inspect_bit_array(Rest, Acc) ->
     Segment = <<X1/binary, ":size(", Size1/binary, ")">>,
     inspect_bit_array(<<>>, append_segment(Acc, Segment)).
 
+bit_array_to_int_and_size(A) ->
+    Size = bit_size(A),
+    <<A1:Size>> = A,
+    {A1, Size}.
+
 append_segment(<<"<<">>, Segment) ->
     <<"<<", Segment/binary>>;
 append_segment(Acc, Segment) ->
@@ -543,3 +557,9 @@ base16_decode(String) ->
 
 string_replace(String, Pattern, Replacement) ->
     string:replace(String, Pattern, Replacement, all).
+
+slice(String, Index, Length) ->
+    case string:slice(String, Index, Length) of
+        X when is_binary(X) -> X;
+        X when is_list(X) -> unicode:characters_to_binary(X)
+    end.

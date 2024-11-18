@@ -1,6 +1,6 @@
 import gleam/string
 
-/// Writes a string to standard output.
+/// Writes a string to standard output (stdout).
 ///
 /// If you want your output to be printed on its own line see `println`.
 ///
@@ -20,7 +20,7 @@ pub fn print(string: String) -> Nil {
 @external(javascript, "../gleam_stdlib.mjs", "print")
 fn do_print(string string: String) -> Nil
 
-/// Writes a string to standard error.
+/// Writes a string to standard error (stderr).
 ///
 /// If you want your output to be printed on its own line see `println_error`.
 ///
@@ -40,7 +40,7 @@ pub fn print_error(string: String) -> Nil {
 @external(javascript, "../gleam_stdlib.mjs", "print_error")
 fn do_print_error(string string: String) -> Nil
 
-/// Writes a string to standard output, appending a newline to the end.
+/// Writes a string to standard output (stdout), appending a newline to the end.
 ///
 /// ## Example
 ///
@@ -58,7 +58,7 @@ pub fn println(string: String) -> Nil {
 @external(javascript, "../gleam_stdlib.mjs", "console_log")
 fn do_println(string string: String) -> Nil
 
-/// Writes a string to standard error, appending a newline to the end.
+/// Writes a string to standard error (stderr), appending a newline to the end.
 ///
 /// ## Example
 ///
@@ -76,7 +76,7 @@ pub fn println_error(string: String) -> Nil {
 @external(javascript, "../gleam_stdlib.mjs", "console_error")
 fn do_println_error(string string: String) -> Nil
 
-/// Prints a value to standard error (stderr) yielding Gleam syntax.
+/// Writes a value to standard error (stderr) yielding Gleam syntax.
 ///
 /// The value is returned after being printed so it can be used in pipelines.
 ///

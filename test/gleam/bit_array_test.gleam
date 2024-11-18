@@ -1,7 +1,39 @@
 import gleam/bit_array
+import gleam/order
 import gleam/result
 import gleam/should
 import gleam/string
+
+pub fn bit_size_test() {
+  bit_array.bit_size(<<>>)
+  |> should.equal(0)
+
+  bit_array.bit_size(<<0>>)
+  |> should.equal(8)
+
+  bit_array.bit_size(<<-1:32>>)
+  |> should.equal(32)
+
+  bit_array.bit_size(<<0:-8>>)
+  |> should.equal(0)
+}
+
+// This test is target specific since it's using non byte-aligned BitArrays
+// and those are not supported on the JavaScript target.
+@target(erlang)
+pub fn bit_size_erlang_only_test() {
+  bit_array.bit_size(<<0:1>>)
+  |> should.equal(1)
+
+  bit_array.bit_size(<<7:3>>)
+  |> should.equal(3)
+
+  bit_array.bit_size(<<-1:190>>)
+  |> should.equal(190)
+
+  bit_array.bit_size(<<0:-1>>)
+  |> should.equal(0)
+}
 
 pub fn byte_size_test() {
   bit_array.byte_size(bit_array.from_string("hello"))
@@ -330,4 +362,100 @@ pub fn inspect_partial_bytes_test() {
 
   bit_array.inspect(<<5:3, 11:4, 1:2>>)
   |> should.equal("<<182, 1:size(1)>>")
+}
+
+@target(erlang)
+pub fn compare_different_sizes_test() {
+  bit_array.compare(<<4:5>>, <<4:5>>)
+  |> should.equal(order.Eq)
+
+  bit_array.compare(<<4:5, 3:3>>, <<4:5, 2:3>>)
+  |> should.equal(order.Gt)
+
+  bit_array.compare(<<4:5, 3:3>>, <<4:5, 4:3>>)
+  |> should.equal(order.Lt)
+
+  bit_array.compare(<<4:5, 3:3, 0:0>>, <<4:5, 3:3, 0:0>>)
+  |> should.equal(order.Eq)
+
+  bit_array.compare(<<4:2, 3:4, 0:0>>, <<4:2, 3:3, 0:0>>)
+  |> should.equal(order.Gt)
+
+  // first is: <<33, 1:size(1)>>
+  // second is: <<35>>
+  bit_array.compare(<<4:5, 3:4, 0:0>>, <<4:5, 3:3, 0:0>>)
+  |> should.equal(order.Lt)
+
+  bit_array.compare(<<3:5>>, <<4:5>>)
+  |> should.equal(order.Lt)
+
+  bit_array.compare(<<3:7>>, <<4:7>>)
+  |> should.equal(order.Lt)
+
+  bit_array.compare(<<5:5>>, <<4:5>>)
+  |> should.equal(order.Gt)
+
+  bit_array.compare(<<4:8>>, <<4:5>>)
+  |> should.equal(order.Gt)
+
+  bit_array.compare(<<4:5>>, <<4:8>>)
+  |> should.equal(order.Lt)
+
+  bit_array.compare(<<0:5>>, <<0:8>>)
+  |> should.equal(order.Lt)
+
+  bit_array.compare(<<0:5>>, <<0:5>>)
+  |> should.equal(order.Eq)
+
+  bit_array.compare(<<0:2>>, <<0:1>>)
+  |> should.equal(order.Gt)
+}
+
+pub fn starts_with_test() {
+  bit_array.starts_with(<<>>, <<>>)
+  |> should.be_true
+
+  bit_array.starts_with(<<0>>, <<>>)
+  |> should.be_true
+
+  bit_array.starts_with(<<>>, <<0>>)
+  |> should.be_false
+
+  bit_array.starts_with(<<0, 1, 2>>, <<0>>)
+  |> should.be_true
+
+  bit_array.starts_with(<<0, 1, 2>>, <<0, 1>>)
+  |> should.be_true
+
+  bit_array.starts_with(<<0, 1, 2>>, <<0, 1, 2>>)
+  |> should.be_true
+
+  bit_array.starts_with(<<0, 1, 2>>, <<0, 1, 2, 3>>)
+  |> should.be_false
+
+  bit_array.starts_with(<<0, 1, 2>>, <<1>>)
+  |> should.be_false
+}
+
+// This test is target specific since it's using non byte-aligned BitArrays
+// and those are not supported on the JavaScript target.
+@target(erlang)
+pub fn starts_with_erlang_only_test() {
+  bit_array.starts_with(<<1:1>>, <<1:1>>)
+  |> should.be_true
+
+  bit_array.starts_with(<<1:1>>, <<>>)
+  |> should.be_true
+
+  bit_array.starts_with(<<1:1>>, <<1:2>>)
+  |> should.be_false
+
+  bit_array.starts_with(<<-1:127>>, <<-1:33>>)
+  |> should.be_true
+
+  bit_array.starts_with(<<-1:127>>, <<-1:128>>)
+  |> should.be_false
+
+  bit_array.starts_with(<<0:127>>, <<1:127>>)
+  |> should.be_false
 }

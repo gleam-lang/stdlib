@@ -4,7 +4,7 @@ import gleam/int
 import gleam/list
 import gleam/option.{type Option, Some}
 import gleam/result
-import gleam/string_builder
+import gleam/string_tree
 
 /// `Dynamic` data is data that we don't know the type of yet.
 /// We likely get data like this from interop with Erlang, or from
@@ -85,9 +85,9 @@ pub fn string(from data: Dynamic) -> Result(String, DecodeErrors) {
 }
 
 fn map_errors(
-  result: Result(t, DecodeErrors),
+  result: Result(a, DecodeErrors),
   f: fn(DecodeError) -> DecodeError,
-) -> Result(t, DecodeErrors) {
+) -> Result(a, DecodeErrors) {
   result.map_error(result, list.map(_, f))
 }
 
@@ -218,10 +218,6 @@ pub fn shallow_list(from value: Dynamic) -> Result(List(Dynamic), DecodeErrors) 
 @external(javascript, "../gleam_stdlib.mjs", "decode_list")
 fn decode_list(a: Dynamic) -> Result(List(Dynamic), DecodeErrors)
 
-@external(erlang, "gleam_stdlib", "decode_result")
-@external(javascript, "../gleam_stdlib.mjs", "decode_result")
-fn decode_result(a: Dynamic) -> Result(Result(a, e), DecodeErrors)
-
 /// Checks to see whether a `Dynamic` value is a result of a particular type, and
 /// returns that result if it is.
 ///
@@ -270,6 +266,10 @@ pub fn result(
     }
   }
 }
+
+@external(erlang, "gleam_stdlib", "decode_result")
+@external(javascript, "../gleam_stdlib.mjs", "decode_result")
+fn decode_result(a: Dynamic) -> Result(Result(a, e), DecodeErrors)
 
 /// Checks to see whether a `Dynamic` value is a list of a particular type, and
 /// returns that list if it is.
@@ -467,7 +467,7 @@ fn decode_field(a: Dynamic, b: name) -> Result(Option(Dynamic), DecodeErrors)
 /// // ])
 /// ```
 ///
-pub fn element(at index: Int, of inner_type: Decoder(t)) -> Decoder(t) {
+pub fn element(at index: Int, of inner_type: Decoder(inner)) -> Decoder(inner) {
   fn(data: Dynamic) {
     use tuple <- result.try(decode_tuple(data))
     let size = tuple_size(tuple)
@@ -498,8 +498,8 @@ fn at_least_decode_tuple_error(
   }
   let error =
     ["Tuple of at least ", int.to_string(size), " element", s]
-    |> string_builder.from_strings
-    |> string_builder.to_string
+    |> string_tree.from_strings
+    |> string_tree.to_string
     |> DecodeError(found: classify(data), path: [])
   Error([error])
 }
@@ -567,8 +567,8 @@ fn push_path(error: DecodeError, name: t) -> DecodeError {
     Ok(name) -> name
     Error(_) ->
       ["<", classify(name), ">"]
-      |> string_builder.from_strings
-      |> string_builder.to_string
+      |> string_tree.from_strings
+      |> string_tree.to_string
   }
   DecodeError(..error, path: [name, ..error.path])
 }
@@ -970,9 +970,9 @@ pub fn dict(
   to value_type: Decoder(v),
 ) -> Decoder(Dict(k, v)) {
   fn(value) {
-    use map <- result.try(decode_map(value))
+    use dict <- result.try(decode_dict(value))
     use pairs <- result.try(
-      map
+      dict
       |> dict.to_list
       |> list.try_map(fn(pair) {
         let #(k, v) = pair
@@ -993,7 +993,7 @@ pub fn dict(
 
 @external(erlang, "gleam_stdlib", "decode_map")
 @external(javascript, "../gleam_stdlib.mjs", "decode_map")
-fn decode_map(a: Dynamic) -> Result(Dict(Dynamic, Dynamic), DecodeErrors)
+fn decode_dict(a: Dynamic) -> Result(Dict(Dynamic, Dynamic), DecodeErrors)
 
 /// Joins multiple decoders into one. When run they will each be tried in turn
 /// until one succeeds, or they all fail.
@@ -1018,7 +1018,7 @@ fn decode_map(a: Dynamic) -> Result(Dict(Dynamic, Dynamic), DecodeErrors)
 /// // -> Error(DecodeError(expected: "another type", found: "Int", path: []))
 /// ```
 ///
-pub fn any(of decoders: List(Decoder(t))) -> Decoder(t) {
+pub fn any(of decoders: List(Decoder(a))) -> Decoder(a) {
   fn(data) {
     case decoders {
       [] ->
@@ -1087,7 +1087,7 @@ pub fn decode2(
   fn(value) {
     case t1(value), t2(value) {
       Ok(a), Ok(b) -> Ok(constructor(a, b))
-      a, b -> Error(list.concat([all_errors(a), all_errors(b)]))
+      a, b -> Error(list.flatten([all_errors(a), all_errors(b)]))
     }
   }
 }
@@ -1121,7 +1121,7 @@ pub fn decode3(
     case t1(value), t2(value), t3(value) {
       Ok(a), Ok(b), Ok(c) -> Ok(constructor(a, b, c))
       a, b, c ->
-        Error(list.concat([all_errors(a), all_errors(b), all_errors(c)]))
+        Error(list.flatten([all_errors(a), all_errors(b), all_errors(c)]))
     }
   }
 }
@@ -1169,7 +1169,7 @@ pub fn decode4(
       Ok(a), Ok(b), Ok(c), Ok(d) -> Ok(constructor(a, b, c, d))
       a, b, c, d ->
         Error(
-          list.concat([
+          list.flatten([
             all_errors(a),
             all_errors(b),
             all_errors(c),
@@ -1226,7 +1226,7 @@ pub fn decode5(
       Ok(a), Ok(b), Ok(c), Ok(d), Ok(e) -> Ok(constructor(a, b, c, d, e))
       a, b, c, d, e ->
         Error(
-          list.concat([
+          list.flatten([
             all_errors(a),
             all_errors(b),
             all_errors(c),
@@ -1288,7 +1288,7 @@ pub fn decode6(
         Ok(constructor(a, b, c, d, e, f))
       a, b, c, d, e, f ->
         Error(
-          list.concat([
+          list.flatten([
             all_errors(a),
             all_errors(b),
             all_errors(c),
@@ -1354,7 +1354,7 @@ pub fn decode7(
         Ok(constructor(a, b, c, d, e, f, g))
       a, b, c, d, e, f, g ->
         Error(
-          list.concat([
+          list.flatten([
             all_errors(a),
             all_errors(b),
             all_errors(c),
@@ -1424,7 +1424,7 @@ pub fn decode8(
         Ok(constructor(a, b, c, d, e, f, g, h))
       a, b, c, d, e, f, g, h ->
         Error(
-          list.concat([
+          list.flatten([
             all_errors(a),
             all_errors(b),
             all_errors(c),
@@ -1498,7 +1498,7 @@ pub fn decode9(
         Ok(constructor(a, b, c, d, e, f, g, h, i))
       a, b, c, d, e, f, g, h, i ->
         Error(
-          list.concat([
+          list.flatten([
             all_errors(a),
             all_errors(b),
             all_errors(c),
