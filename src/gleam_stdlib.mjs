@@ -185,6 +185,10 @@ export function pop_grapheme(string) {
   }
 }
 
+export function pop_codeunit(str) {
+  return [str.charCodeAt(0)|0, str.slice(1)]
+}
+
 export function lowercase(string) {
   return string.toLowerCase();
 }
@@ -256,6 +260,9 @@ export function string_slice(string, idx, len) {
   }
 }
 
+export function string_codeunit_slice(str, from, length) {
+  return str.slice(from, from + length)
+}
 export function crop_string(string, substring) {
   return string.substring(string.indexOf(substring));
 }
@@ -1004,3 +1011,4 @@ export function bit_array_starts_with(bits, prefix) {
 
   return true;
 }
+

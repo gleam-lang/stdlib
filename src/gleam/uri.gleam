@@ -120,23 +120,21 @@ fn parse_scheme_loop(
   pieces: UriPieces,
   size: Int,
 ) -> Result(UriPieces, Nil) {
-  case string.pop_grapheme(uri_string) {
+  case uri_string {
     // `/` is not allowed to appear in a scheme so we know it's over and we can
     // start parsing the authority with slashes.
-    Ok(#("/", _)) if size == 0 ->
-      parse_authority_with_slashes(uri_string, pieces)
-    Ok(#("/", _)) -> {
-      let scheme = string.slice(original, at_index: 0, length: size)
+    "/" <> _ if size == 0 -> parse_authority_with_slashes(uri_string, pieces)
+    "/" <> _ -> {
+      let scheme = codeunit_slice(original, at_index: 0, length: size)
       let pieces = UriPieces(..pieces, scheme: Some(scheme))
       parse_authority_with_slashes(uri_string, pieces)
     }
 
     // `?` is not allowed to appear in a schemem, in an authority, or in a path;
     // so if we see it we know it marks the beginning of the query part.
-    Ok(#("?", _)) if size == 0 ->
-      parse_query_with_question_mark(uri_string, pieces)
-    Ok(#("?", _)) -> {
-      let scheme = string.slice(original, at_index: 0, length: size)
+    "?" <> _ if size == 0 -> parse_query_with_question_mark(uri_string, pieces)
+    "?" <> _ -> {
+      let scheme = codeunit_slice(original, at_index: 0, length: size)
       let pieces = UriPieces(..pieces, scheme: Some(scheme))
       parse_query_with_question_mark(uri_string, pieces)
     }
@@ -144,31 +142,34 @@ fn parse_scheme_loop(
     // `#` is not allowed to appear in a scheme, in an authority, in a path or
     // in a query; so if we see it we know it marks the beginning of the final
     // fragment.
-    Ok(#("#", rest)) if size == 0 -> parse_fragment(rest, pieces)
-    Ok(#("#", rest)) -> {
-      let scheme = string.slice(original, at_index: 0, length: size)
+    "#" <> rest if size == 0 -> parse_fragment(rest, pieces)
+    "#" <> rest -> {
+      let scheme = codeunit_slice(original, at_index: 0, length: size)
       let pieces = UriPieces(..pieces, scheme: Some(scheme))
       parse_fragment(rest, pieces)
     }
 
     // A colon marks the end of a uri scheme, but if it is not preceded by any
     // character then it's not a valid URI.
-    Ok(#(":", _)) if size == 0 -> Error(Nil)
-    Ok(#(":", rest)) -> {
-      let scheme = string.slice(original, at_index: 0, length: size)
+    ":" <> _ if size == 0 -> Error(Nil)
+    ":" <> rest -> {
+      let scheme = codeunit_slice(original, at_index: 0, length: size)
       let pieces = UriPieces(..pieces, scheme: Some(scheme))
       parse_authority_with_slashes(rest, pieces)
     }
+
+    // If we could get to the end of the string and we've met no special
+    // chars whatsoever, that means the entire string is just a long path.
+    "" -> Ok(UriPieces(..pieces, path: original))
 
     // In all other cases the first character is just a valid URI scheme
     // character and we just keep munching characters until we reach the end of
     // the uri scheme (or the end of the string and that would mean this is not
     // a valid uri scheme since we found no `:`).
-    Ok(#(_, rest)) -> parse_scheme_loop(original, rest, pieces, size + 1)
-
-    // If we could get to the end of the string and we've met no special
-    // chars whatsoever, that means the entire string is just a long path.
-    Error(_) -> Ok(UriPieces(..pieces, path: original))
+    _ -> {
+      let #(_, rest) = pop_codeunit(uri_string)
+      parse_scheme_loop(original, rest, pieces, size + 1)
+    }
   }
 }
 
@@ -191,36 +192,38 @@ fn parse_authority_with_slashes_loop(
   pieces: UriPieces,
   size: Int,
 ) -> Result(UriPieces, Nil) {
-  case string.pop_grapheme(uri_string) {
+  case uri_string {
     // `/` marks the beginning of a path.
-    Ok(#("/", _)) -> {
-      let authority = string.slice(original, at_index: 0, length: size)
+    "/" <> _ -> {
+      let authority = codeunit_slice(original, at_index: 0, length: size)
       let pieces = UriPieces(..pieces, authority_with_slashes: Some(authority))
       parse_path(uri_string, pieces)
     }
 
     // `?` marks the beginning of the query with question mark.
-    Ok(#("?", _)) -> {
-      let authority = string.slice(original, at_index: 0, length: size)
+    "?" <> _ -> {
+      let authority = codeunit_slice(original, at_index: 0, length: size)
       let pieces = UriPieces(..pieces, authority_with_slashes: Some(authority))
       parse_query_with_question_mark(uri_string, pieces)
     }
 
     // `#` marks the beginning of the fragment part.
-    Ok(#("#", rest)) -> {
-      let authority = string.slice(original, at_index: 0, length: size)
+    "#" <> rest -> {
+      let authority = codeunit_slice(original, at_index: 0, length: size)
       let pieces = UriPieces(..pieces, authority_with_slashes: Some(authority))
       parse_fragment(rest, pieces)
     }
 
-    // In all other cases the character is allowed to be part of the authority
-    // so we just keep munching until we reach to its end.
-    Ok(#(_, rest)) ->
-      parse_authority_with_slashes_loop(original, rest, pieces, size + 1)
-
     // If the string is over that means the entirety of the string was the
     // authority and it has an empty path, query and fragment.
-    Error(_) -> Ok(UriPieces(..pieces, authority_with_slashes: Some(original)))
+    "" -> Ok(UriPieces(..pieces, authority_with_slashes: Some(original)))
+
+    // In all other cases the character is allowed to be part of the authority
+    // so we just keep munching until we reach to its end.
+    _ -> {
+      let #(_, rest) = pop_codeunit(uri_string)
+      parse_authority_with_slashes_loop(original, rest, pieces, size + 1)
+    }
   }
 }
 
@@ -234,28 +237,31 @@ fn parse_path_loop(
   pieces: UriPieces,
   size: Int,
 ) -> Result(UriPieces, Nil) {
-  case string.pop_grapheme(uri_string) {
+  case uri_string {
     // `?` marks the beginning of the query with question mark.
-    Ok(#("?", _)) -> {
-      let path = string.slice(original, at_index: 0, length: size)
+    "?" <> _ -> {
+      let path = codeunit_slice(original, at_index: 0, length: size)
       let pieces = UriPieces(..pieces, path: path)
       parse_query_with_question_mark(uri_string, pieces)
     }
 
     // `#` marks the beginning of the fragment part.
-    Ok(#("#", rest)) -> {
-      let path = string.slice(original, at_index: 0, length: size)
+    "#" <> rest -> {
+      let path = codeunit_slice(original, at_index: 0, length: size)
       let pieces = UriPieces(..pieces, path: path)
       parse_fragment(rest, pieces)
     }
 
-    // In all other cases the character is allowed to be part of the path so we
-    // just keep munching until we reach to its end.
-    Ok(#(_, rest)) -> parse_path_loop(original, rest, pieces, size + 1)
-
     // If the string is over that means the entirety of the string was the path
     // and it has an empty query and fragment.
-    Error(_) -> Ok(UriPieces(..pieces, path: original))
+    "" -> Ok(UriPieces(..pieces, path: original))
+
+    // In all other cases the character is allowed to be part of the path so we
+    // just keep munching until we reach to its end.
+    _ -> {
+      let #(_, rest) = pop_codeunit(uri_string)
+      parse_path_loop(original, rest, pieces, size + 1)
+    }
   }
 }
 
@@ -272,23 +278,24 @@ fn parse_query_with_question_mark_loop(
   pieces: UriPieces,
   size: Int,
 ) -> Result(UriPieces, Nil) {
-  case string.pop_grapheme(uri_string) {
+  case uri_string {
     // `#` marks the beginning of the fragment part.
-    Ok(#("#", rest)) -> {
-      let query = string.slice(original, at_index: 0, length: size)
+    "#" <> rest -> {
+      let query = codeunit_slice(original, at_index: 0, length: size)
       let pieces = UriPieces(..pieces, query_with_question_mark: Some(query))
       parse_fragment(rest, pieces)
     }
 
-    // In all other cases the character is allowed to be part of the query so we
-    // just keep munching until we reach to its end.
-    Ok(#(_, rest)) ->
-      parse_query_with_question_mark_loop(original, rest, pieces, size + 1)
-
     // If the string is over that means the entirety of the string was the query
     // and it has an empty fragment.
-    Error(_) ->
-      Ok(UriPieces(..pieces, query_with_question_mark: Some(original)))
+    "" -> Ok(UriPieces(..pieces, query_with_question_mark: Some(original)))
+
+    // In all other cases the character is allowed to be part of the query so we
+    // just keep munching until we reach to its end.
+    _ -> {
+      let #(_, rest) = pop_codeunit(uri_string)
+      parse_query_with_question_mark_loop(original, rest, pieces, size + 1)
+    }
   }
 }
 
@@ -300,8 +307,8 @@ fn noneify_query(x: Option(String)) -> Option(String) {
   case x {
     None -> None
     Some(x) ->
-      case string.pop_grapheme(x) {
-        Ok(#("?", query)) -> Some(query)
+      case x {
+        "?" <> query -> Some(query)
         _ -> None
       }
   }
@@ -346,27 +353,30 @@ fn parse_authority_pieces(string: String) -> AuthorityPieces {
 }
 
 fn parse_userinfo_loop(original, string, pieces, size) {
-  case string.pop_grapheme(string) {
-    Error(_) -> parse_host(original, pieces)
+  case string {
+    "" -> parse_host(original, pieces)
 
-    Ok(#("@", rest)) -> {
-      let userinfo = string.slice(original, at_index: 0, length: size)
+    "@" <> rest -> {
+      let userinfo = codeunit_slice(original, at_index: 0, length: size)
       let pieces = AuthorityPieces(..pieces, userinfo: Some(userinfo))
       parse_host(rest, pieces)
     }
-    Ok(#(_, rest)) -> parse_userinfo_loop(original, rest, pieces, size + 1)
+    _ -> {
+      let #(_, rest) = pop_codeunit(string)
+      parse_userinfo_loop(original, rest, pieces, size + 1)
+    }
   }
 }
 
 fn parse_host(string, pieces) {
-  case string.pop_grapheme(string) {
-    Ok(#("[", _)) -> parse_host_within_brackets(string, pieces)
-    Ok(#(":", rest)) -> {
+  case string {
+    "[" <> _ -> parse_host_within_brackets(string, pieces)
+    ":" <> rest -> {
       let pieces = AuthorityPieces(..pieces, host: Some(""))
       parse_port(rest, pieces)
     }
-    Ok(#(_, _)) -> parse_host_outside_of_brackets(string, pieces)
-    Error(_) -> AuthorityPieces(..pieces, host: Some(""))
+    "" -> AuthorityPieces(..pieces, host: Some(""))
+    _ -> parse_host_outside_of_brackets(string, pieces)
   }
 }
 
@@ -375,51 +385,54 @@ fn parse_host_within_brackets(string, pieces) {
 }
 
 fn parse_host_within_brackets_loop(original, string, pieces, size) {
-  case string.pop_grapheme(string) {
-    Error(_) -> AuthorityPieces(..pieces, host: Some(string))
-    Ok(#("]", rest)) -> {
-      let host = string.slice(original, at_index: 0, length: size + 1)
+  case string {
+    "" -> AuthorityPieces(..pieces, host: Some(string))
+    "]" <> rest -> {
+      let host = codeunit_slice(original, at_index: 0, length: size + 1)
       let pieces = AuthorityPieces(..pieces, host: Some(host))
       parse_port(rest, pieces)
     }
-    Ok(#(char, rest)) ->
+    _ -> {
+      let #(char, rest) = pop_codeunit(string)
       case is_valid_host_withing_brackets_char(char) {
         True ->
           parse_host_within_brackets_loop(original, rest, pieces, size + 1)
         False ->
           parse_host_outside_of_brackets_loop(original, rest, pieces, size + 1)
       }
+    }
   }
 }
 
-fn is_valid_host_withing_brackets_char(char: String) -> Bool {
-  case char {
-    "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" -> True
-    "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" -> True
-    "w" | "x" | "y" | "z" -> True
-    "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" -> True
-    "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" -> True
-    "W" | "X" | "Y" | "Z" -> True
-    "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" -> True
-    "." | ":" -> True
-    _ -> False
-  }
+fn is_valid_host_withing_brackets_char(char: Int) -> Bool {
+  // [0-9]
+  { 48 >= char && char <= 57 }
+  // [A-Z]
+  || { 65 >= char && char <= 90 }
+  // [a-z]
+  || { 97 >= char && char <= 122 }
+  // :
+  || char == 58
+  // .
+  || char == 46
 }
 
 fn parse_host_outside_of_brackets(string, pieces) {
   parse_host_outside_of_brackets_loop(string, string, pieces, 0)
 }
 
-fn parse_host_outside_of_brackets_loop(original, string, pieces, size) {
-  case string.pop_grapheme(string) {
-    Error(_) -> AuthorityPieces(..pieces, host: Some(original))
-    Ok(#(":", rest)) -> {
-      let host = string.slice(original, at_index: 0, length: size)
+fn parse_host_outside_of_brackets_loop(original, str, pieces, size) {
+  case str {
+    "" -> AuthorityPieces(..pieces, host: Some(original))
+    ":" <> rest -> {
+      let host = codeunit_slice(original, at_index: 0, length: size)
       let pieces = AuthorityPieces(..pieces, host: Some(host))
       parse_port(rest, pieces)
     }
-    Ok(#(_, rest)) ->
+    _ -> {
+      let #(_, rest) = pop_codeunit(str)
       parse_host_outside_of_brackets_loop(original, rest, pieces, size + 1)
+    }
   }
 }
 
@@ -429,6 +442,19 @@ fn parse_port(string, pieces) {
     Error(_) -> pieces
   }
 }
+
+// WARN: this function returns invalid strings!
+// We need to return a String anyways to have this as the representation on the
+// JavaScript target.
+// Alternatively, we could rewrite the entire code to use a single
+// `fold_codeunits`-style loop and a state machine.
+@external(erlang, "gleam_stdlib", "string_pop_codeunit")
+@external(javascript, "../gleam_stdlib.mjs", "pop_codeunit")
+fn pop_codeunit(str: String) -> #(Int, String)
+
+@external(erlang, "binary", "part")
+@external(javascript, "../gleam_stdlib.mjs", "string_codeunit_slice")
+fn codeunit_slice(str: String, at_index from: Int, length length: Int) -> String
 
 fn extra_required(list: List(a), remaining: Int) -> Int {
   case list {
