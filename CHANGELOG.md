@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- The dict module gains a new `update` function.
+
 ## v0.43.0 - 2024-11-17
 
 - `BytesBuilder` is now an alias of `BytesTree`.
@@ -37,7 +41,6 @@ Happy Samhain! 🎃
 - The `function.curry*` and `function.apply*` functions have been deprecated.
 - The deprecated `dynamic.unsafe_coerce` function has been removed.
 - The deprecated `dict.update` function has been removed.
-- The dict module gains a new `update` function.
 - The deprecated `order.max` and `order.min` functions have been removed.
 - The `float` module gains the `modulo` function.
 - The `uri.origin` function no longer incorrectly has a trailing slash.
