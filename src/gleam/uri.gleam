@@ -65,6 +65,9 @@ pub fn do_parse(uri_string: String) -> Result(Uri, Nil) {
       query_with_question_mark: query,
       fragment: fragment,
     )) -> {
+      // TODO: instead of splitting the authority as a second step we can avoid
+      // going over this part of the string twice and incorporate the parsing in
+      // the main loop.
       let AuthorityPieces(userinfo: userinfo, host: host, port: port) =
         split_authority(authority_with_slashes)
       Ok(Uri(
