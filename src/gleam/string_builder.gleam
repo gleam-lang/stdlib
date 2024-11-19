@@ -162,6 +162,16 @@ pub fn replace(
   with substitute: String,
 ) -> StringTree
 
+/// Replaces the first instance of a pattern with a given string substitute.
+///
+@external(erlang, "gleam_stdlib", "string_replace_first")
+@external(javascript, "../gleam_stdlib.mjs", "string_replace_first")
+pub fn replace_first(
+  in builder: StringBuilder,
+  one_of pattern: String,
+  with substitute: String,
+) -> StringBuilder
+
 /// Compares two builders to determine if they have the same textual content.
 ///
 /// Comparing two iodata using the `==` operator may return `False` even if they

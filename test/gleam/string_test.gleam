@@ -95,6 +95,22 @@ pub fn replace_test() {
   |> should.equal("Gleam++Erlang++Elixir")
 }
 
+pub fn replace_first_0_test() {
+  "Gleam,Erlang,Elixir"
+  |> string.replace_first(",", "++")
+  |> should.equal("Gleam++Erlang,Elixir")
+}
+
+pub fn replace_first_1_test() {
+  string.replace_first(in: "🐈🐈 are great!", one_of: "🐈", with: "🐕")
+  |> should.equal("🐕🐈 are great!")
+}
+
+pub fn replace_first_2_test() {
+  string.replace_first(one_of: ",", in: "a,b,c,d,e", with: "/")
+  |> should.equal("a/b,c,d,e")
+}
+
 pub fn append_test() {
   "Test"
   |> string.append(" Me")
