@@ -1281,3 +1281,25 @@ pub fn shuffle_test() {
   list.range(0, recursion_test_cycles)
   |> list.shuffle()
 }
+
+pub fn choice_test() {
+  []
+  |> list.choice
+  |> should.equal(Error(Nil))
+
+  [1, 1]
+  |> list.choice
+  |> should.equal(Ok(1))
+
+  [1, 1, 1]
+  |> list.choice
+  |> should.equal(Ok(1))
+
+  let list = list.range(1, 100)
+  let assert Ok(num) =
+    list
+    |> list.choice
+  list
+  |> list.contains(num)
+  |> should.be_true
+}

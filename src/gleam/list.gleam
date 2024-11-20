@@ -2303,3 +2303,45 @@ fn do_shuffle_by_pair_indexes(
     float.compare(a_pair.0, b_pair.0)
   })
 }
+
+/// Returns a randomly selected element from the list with uniform probability.
+/// If the list is empty, returns `Error(Nil)`. Uses reservoir sampling
+/// to ensure each element has an equal probability of being selected.
+///
+/// ## Examples
+///
+/// ```gleam
+/// choice([])
+/// // -> Error(Nil)
+/// ```
+///
+/// ```gleam
+/// choice([1])
+/// // -> Ok(1)
+/// ```
+///
+/// ```gleam
+/// choice([1, 2, 3, 4, 5])
+/// // -> Ok(3) // A random element is returned each time
+/// ```
+///
+pub fn choice(list: List(a)) -> Result(a, Nil) {
+  case list {
+    [] -> Error(Nil)
+    [first, ..rest] -> {
+      rest |> do_choice(first, 1)
+    }
+  }
+}
+
+fn do_choice(list: List(a), current: a, count: Int) {
+  case list {
+    [] -> Ok(current)
+    [first, ..rest] ->
+      case float.random() <=. 1.0 /. int.to_float(count + 1) {
+        True -> first
+        False -> current
+      }
+      |> do_choice(rest, _, count + 1)
+  }
+}
