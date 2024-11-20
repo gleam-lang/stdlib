@@ -13,12 +13,14 @@ import gleam/list
 /// may return surprising results, and the `is_equal` and `is_logically_equal`
 /// functions are the recommended way to test queues for equality.
 ///
+@deprecated("Please use the gleam_deque package instead")
 pub opaque type Queue(a) {
   Queue(in: List(a), out: List(a))
 }
 
 /// Creates a fresh queue that contains no values.
 ///
+@deprecated("Please use the gleam_deque package instead")
 pub fn new() -> Queue(a) {
   Queue(in: [], out: [])
 }
@@ -35,6 +37,7 @@ pub fn new() -> Queue(a) {
 /// // -> 3
 /// ```
 ///
+@deprecated("Please use the gleam_deque package instead")
 pub fn from_list(list: List(a)) -> Queue(a) {
   Queue(in: [], out: list)
 }
@@ -51,6 +54,7 @@ pub fn from_list(list: List(a)) -> Queue(a) {
 /// // -> [1, 2]
 /// ```
 ///
+@deprecated("Please use the gleam_deque package instead")
 pub fn to_list(queue: Queue(a)) -> List(a) {
   queue.out
   |> list.append(list.reverse(queue.in))
@@ -77,6 +81,7 @@ pub fn to_list(queue: Queue(a)) -> List(a) {
 /// // -> False
 /// ```
 ///
+@deprecated("Please use the gleam_deque package instead")
 pub fn is_empty(queue: Queue(a)) -> Bool {
   queue.in == [] && queue.out == []
 }
@@ -103,6 +108,7 @@ pub fn is_empty(queue: Queue(a)) -> Bool {
 /// // -> 2
 /// ```
 ///
+@deprecated("Please use the gleam_deque package instead")
 pub fn length(queue: Queue(a)) -> Int {
   list.length(queue.in) + list.length(queue.out)
 }
@@ -116,6 +122,7 @@ pub fn length(queue: Queue(a)) -> Int {
 /// // -> [1, 2, 3]
 /// ```
 ///
+@deprecated("Please use the gleam_deque package instead")
 pub fn push_back(onto queue: Queue(a), this item: a) -> Queue(a) {
   Queue(in: [item, ..queue.in], out: queue.out)
 }
@@ -129,6 +136,7 @@ pub fn push_back(onto queue: Queue(a), this item: a) -> Queue(a) {
 /// // -> [1, 0, 0]
 /// ```
 ///
+@deprecated("Please use the gleam_deque package instead")
 pub fn push_front(onto queue: Queue(a), this item: a) -> Queue(a) {
   Queue(in: queue.in, out: [item, ..queue.out])
 }
@@ -161,6 +169,7 @@ pub fn push_front(onto queue: Queue(a), this item: a) -> Queue(a) {
 /// // -> Error(Nil)
 /// ```
 ///
+@deprecated("Please use the gleam_deque package instead")
 pub fn pop_back(from queue: Queue(a)) -> Result(#(a, Queue(a)), Nil) {
   case queue {
     Queue(in: [], out: []) -> Error(Nil)
@@ -200,6 +209,7 @@ pub fn pop_back(from queue: Queue(a)) -> Result(#(a, Queue(a)), Nil) {
 /// // -> Error(Nil)
 /// ```
 ///
+@deprecated("Please use the gleam_deque package instead")
 pub fn pop_front(from queue: Queue(a)) -> Result(#(a, Queue(a)), Nil) {
   case queue {
     Queue(in: [], out: []) -> Error(Nil)
@@ -233,6 +243,7 @@ pub fn pop_front(from queue: Queue(a)) -> Result(#(a, Queue(a)), Nil) {
 /// // -> [2, 1]
 /// ```
 ///
+@deprecated("Please use the gleam_deque package instead")
 pub fn reverse(queue: Queue(a)) -> Queue(a) {
   Queue(in: queue.out, out: queue.in)
 }
@@ -248,6 +259,7 @@ pub fn reverse(queue: Queue(a)) -> Queue(a) {
 /// This function runs in linear time multiplied by the time taken by the
 /// element equality checking function.
 ///
+@deprecated("Please use the gleam_deque package instead")
 pub fn is_logically_equal(
   a: Queue(a),
   to b: Queue(a),
@@ -285,6 +297,7 @@ fn check_equal(
 ///
 /// This function runs in linear time.
 ///
+@deprecated("Please use the gleam_deque package instead")
 pub fn is_equal(a: Queue(a), to b: Queue(a)) -> Bool {
   check_equal(a.out, a.in, b.out, b.in, fn(a, b) { a == b })
 }
