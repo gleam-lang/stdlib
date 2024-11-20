@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.44.0 - Unreleased
+
+- The `gleam/queue` module has been deprecated in favour of the `gleam_deque`
+  package.
+
 ## v0.43.0 - 2024-11-17
 
 - `BytesBuilder` is now an alias of `BytesTree`.
