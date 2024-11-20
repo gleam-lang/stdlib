@@ -23,11 +23,13 @@ type Action(element) {
 /// applied to the stream. Once the stream has all the required transformations
 /// applied it can be evaluated using functions such as `fold` and `to_list`.
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub opaque type Iterator(element) {
   Iterator(continuation: fn() -> Action(element))
 }
 
 // Public API for iteration
+@deprecated("Please use the gleam_yielder package instead")
 pub type Step(element, accumulator) {
   Next(element: element, accumulator: accumulator)
   Done
@@ -59,6 +61,7 @@ fn stop() -> Action(element) {
 /// // -> [5, 4, 3, 2, 1]
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn unfold(
   from initial: acc,
   with f: fn(acc) -> Step(element, acc),
@@ -91,6 +94,7 @@ fn unfold_loop(
 /// // -> [7, 7, 7]
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn repeatedly(f: fn() -> element) -> Iterator(element) {
   unfold(Nil, fn(_) { Next(f(), Nil) })
 }
@@ -106,6 +110,7 @@ pub fn repeatedly(f: fn() -> element) -> Iterator(element) {
 /// // -> [10, 10, 10, 10]
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn repeat(x: element) -> Iterator(element) {
   repeatedly(fn() { x })
 }
@@ -120,6 +125,7 @@ pub fn repeat(x: element) -> Iterator(element) {
 /// // -> [1, 2, 3, 4]
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn from_list(list: List(element)) -> Iterator(element) {
   let yield = fn(acc) {
     case acc {
@@ -166,6 +172,7 @@ fn transform_loop(
 /// // -> [#(0, "a"), #(1, "b"), #(2, "c")]
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn transform(
   over iterator: Iterator(a),
   from initial: acc,
@@ -192,6 +199,7 @@ pub fn transform(
 /// // -> 10
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn fold(
   over iterator: Iterator(e),
   from initial: acc,
@@ -217,6 +225,7 @@ fn fold_loop(
 /// you wish to trigger any side effects that would occur when evaluating
 /// the iterator.
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn run(iterator: Iterator(e)) -> Nil {
   fold(iterator, Nil, fn(_, _) { Nil })
 }
@@ -235,6 +244,7 @@ pub fn run(iterator: Iterator(e)) -> Nil {
 /// // -> [2, 4, 6]
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn to_list(iterator: Iterator(element)) -> List(element) {
   iterator
   |> fold([], fn(acc, e) { [e, ..acc] })
@@ -263,6 +273,7 @@ pub fn to_list(iterator: Iterator(element)) -> List(element) {
 /// // -> Done
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn step(iterator: Iterator(e)) -> Step(e, Iterator(e)) {
   case iterator.continuation() {
     Stop -> Done
@@ -290,6 +301,7 @@ pub fn step(iterator: Iterator(e)) -> Step(e, Iterator(e)) {
 /// // -> [1, 2]
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn take(from iterator: Iterator(e), up_to desired: Int) -> Iterator(e) {
   iterator.continuation
   |> take_loop(desired)
@@ -334,6 +346,7 @@ fn take_loop(continuation: fn() -> Action(e), desired: Int) -> fn() -> Action(e)
 /// // -> []
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn drop(from iterator: Iterator(e), up_to desired: Int) -> Iterator(e) {
   fn() { drop_loop(iterator.continuation, desired) }
   |> Iterator
@@ -367,6 +380,7 @@ fn drop_loop(continuation: fn() -> Action(e), desired: Int) -> Action(e) {
 /// // -> [2, 4, 6]
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn map(over iterator: Iterator(a), with f: fn(a) -> b) -> Iterator(b) {
   iterator.continuation
   |> map_loop(f)
@@ -405,6 +419,7 @@ fn map_loop(continuation: fn() -> Action(a), f: fn(a) -> b) -> fn() -> Action(b)
 /// // -> [#(1, "a"), #(2, "b")]
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn map2(
   iterator1: Iterator(a),
   iterator2: Iterator(b),
@@ -446,6 +461,7 @@ fn map2_loop(
 /// // -> [1, 2, 3, 4]
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn append(to first: Iterator(a), suffix second: Iterator(a)) -> Iterator(a) {
   fn() { append_loop(first.continuation, second.continuation) }
   |> Iterator
@@ -473,6 +489,7 @@ fn append_loop(first: fn() -> Action(a), second: fn() -> Action(a)) -> Action(a)
 /// // -> [1, 2, 3, 4]
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn flatten(iterator: Iterator(Iterator(a))) -> Iterator(a) {
   fn() { flatten_loop(iterator.continuation) }
   |> Iterator
@@ -501,6 +518,7 @@ fn flatten_loop(flattened: fn() -> Action(Iterator(a))) -> Action(a) {
 /// // -> [1, 2, 3, 4]
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn concat(iterators: List(Iterator(a))) -> Iterator(a) {
   flatten(from_list(iterators))
 }
@@ -523,6 +541,7 @@ pub fn concat(iterators: List(Iterator(a))) -> Iterator(a) {
 /// // -> [1, 2, 2, 3]
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn flat_map(
   over iterator: Iterator(a),
   with f: fn(a) -> Iterator(b),
@@ -551,6 +570,7 @@ pub fn flat_map(
 /// // -> [2, 4]
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn filter(
   iterator: Iterator(a),
   keeping predicate: fn(a) -> Bool,
@@ -629,6 +649,7 @@ fn filter_map_loop(
 /// // -> [1, 2, 1, 2, 1, 2]
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn cycle(iterator: Iterator(a)) -> Iterator(a) {
   repeat(iterator)
   |> flatten
@@ -654,6 +675,7 @@ pub fn cycle(iterator: Iterator(a)) -> Iterator(a) {
 /// // -> [0]
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn range(from start: Int, to stop: Int) -> Iterator(Int) {
   case int.compare(start, stop) {
     order.Eq -> once(fn() { start })
@@ -698,6 +720,7 @@ pub fn range(from start: Int, to stop: Int) -> Iterator(Int) {
 /// // -> Error(Nil)
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn find(
   in haystack: Iterator(a),
   one_that is_desired: fn(a) -> Bool,
@@ -743,6 +766,7 @@ fn find_loop(
 /// // -> Error(Nil)
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn find_map(
   in haystack: Iterator(a),
   one_that is_desired: fn(a) -> Result(b, c),
@@ -774,6 +798,7 @@ fn find_map_loop(
 /// // -> [#("a", 0), #("b", 1), #("c", 2)]
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn index(over iterator: Iterator(element)) -> Iterator(#(element, Int)) {
   iterator.continuation
   |> index_loop(0)
@@ -802,6 +827,7 @@ fn index_loop(
 /// // -> [1, 3, 9, 27, 81]
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn iterate(
   from initial: element,
   with f: fn(element) -> element,
@@ -820,6 +846,7 @@ pub fn iterate(
 /// // -> [1, 2]
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn take_while(
   in iterator: Iterator(element),
   satisfying predicate: fn(element) -> Bool,
@@ -857,6 +884,7 @@ fn take_while_loop(
 /// // -> [4, 2, 5]
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn drop_while(
   in iterator: Iterator(element),
   satisfying predicate: fn(element) -> Bool,
@@ -893,6 +921,7 @@ fn drop_while_loop(
 /// // -> [1, 3, 6, 10, 15]
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn scan(
   over iterator: Iterator(element),
   from initial: acc,
@@ -931,6 +960,7 @@ fn scan_loop(
 /// // -> [#("a", 20), #("b", 21), #("c", 22)]
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn zip(left: Iterator(a), right: Iterator(b)) -> Iterator(#(a, b)) {
   zip_loop(left.continuation, right.continuation)
   |> Iterator
@@ -971,6 +1001,7 @@ type Chunk(element, key) {
 /// // -> [[1], [2, 2], [3], [4, 4, 6], [7, 7]]
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn chunk(
   over iterator: Iterator(element),
   by f: fn(element) -> key,
@@ -1038,6 +1069,7 @@ fn next_chunk(
 /// // -> [[1, 2, 3], [4, 5, 6], [7, 8]]
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn sized_chunk(
   over iterator: Iterator(element),
   into count: Int,
@@ -1115,6 +1147,7 @@ fn next_sized_chunk(
 /// // -> [1, 0, 2, 0, 3, 0, 4, 0, 5]
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn intersperse(
   over iterator: Iterator(element),
   with elem: element,
@@ -1168,6 +1201,7 @@ fn intersperse_loop(
 /// // -> False
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn any(
   in iterator: Iterator(element),
   satisfying predicate: fn(element) -> Bool,
@@ -1217,6 +1251,7 @@ fn any_loop(
 /// // -> False
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn all(
   in iterator: Iterator(element),
   satisfying predicate: fn(element) -> Bool,
@@ -1252,6 +1287,7 @@ fn all_loop(
 /// // -> dict.from_list([#(0, [3, 6]), #(1, [1, 4]), #(2, [2, 5])])
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn group(
   in iterator: Iterator(element),
   by key: fn(element) -> key,
@@ -1300,6 +1336,7 @@ fn update_group_with(el: element) -> fn(Option(List(element))) -> List(element) 
 /// // -> Ok(15)
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn reduce(
   over iterator: Iterator(e),
   with f: fn(e, e) -> e,
@@ -1330,6 +1367,7 @@ pub fn reduce(
 /// // -> Ok(10)
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn last(iterator: Iterator(element)) -> Result(element, Nil) {
   iterator
   |> reduce(fn(_, elem) { elem })
@@ -1344,6 +1382,7 @@ pub fn last(iterator: Iterator(element)) -> Result(element, Nil) {
 /// // -> []
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn empty() -> Iterator(element) {
   Iterator(stop)
 }
@@ -1357,6 +1396,7 @@ pub fn empty() -> Iterator(element) {
 /// // -> [1]
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn once(f: fn() -> element) -> Iterator(element) {
   fn() { Continue(f(), stop) }
   |> Iterator
@@ -1371,6 +1411,7 @@ pub fn once(f: fn() -> element) -> Iterator(element) {
 /// // -> [1]
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn single(elem: element) -> Iterator(element) {
   once(fn() { elem })
 }
@@ -1394,6 +1435,7 @@ pub fn single(elem: element) -> Iterator(element) {
 /// // -> [1, 100, 2, 3, 4]
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn interleave(
   left: Iterator(element),
   with right: Iterator(element),
@@ -1437,6 +1479,7 @@ fn interleave_loop(
 /// // -> 6
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn fold_until(
   over iterator: Iterator(e),
   from initial: acc,
@@ -1480,6 +1523,7 @@ fn fold_until_loop(
 /// // -> Error(Nil)
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn try_fold(
   over iterator: Iterator(e),
   from initial: acc,
@@ -1519,6 +1563,7 @@ fn try_fold_loop(
 /// empty() |> first
 /// // -> Error(Nil)
 /// ```
+@deprecated("Please use the gleam_yielder package instead")
 pub fn first(from iterator: Iterator(e)) -> Result(e, Nil) {
   case iterator.continuation() {
     Stop -> Error(Nil)
@@ -1549,6 +1594,7 @@ pub fn first(from iterator: Iterator(e)) -> Result(e, Nil) {
 /// // -> Error(Nil)
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn at(in iterator: Iterator(e), get index: Int) -> Result(e, Nil) {
   iterator
   |> drop(index)
@@ -1572,6 +1618,7 @@ pub fn at(in iterator: Iterator(e), get index: Int) -> Result(e, Nil) {
 /// // -> 4
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn length(over iterator: Iterator(e)) -> Int {
   iterator.continuation
   |> length_loop(0)
@@ -1601,6 +1648,7 @@ fn length_loop(over continuation: fn() -> Action(e), with length: Int) -> Int {
 /// // Louis
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn each(over iterator: Iterator(a), with f: fn(a) -> b) -> Nil {
   iterator
   |> map(f)
@@ -1626,6 +1674,7 @@ pub fn each(over iterator: Iterator(a), with f: fn(a) -> b) -> Nil {
 /// // -> [1, 2, 3]
 /// ```
 ///
+@deprecated("Please use the gleam_yielder package instead")
 pub fn yield(element: a, next: fn() -> Iterator(a)) -> Iterator(a) {
   Iterator(fn() { Continue(element, fn() { next().continuation() }) })
 }
