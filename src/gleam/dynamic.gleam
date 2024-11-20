@@ -561,16 +561,21 @@ fn tuple_errors(
 }
 
 fn push_path(error: DecodeError, name: t) -> DecodeError {
+  let name = format_unknown(name)
+  DecodeError(..error, path: [name, ..error.path])
+}
+
+/// Formats an unknown value for display in an error message.
+fn format_unknown(name: t) {
   let name = from(name)
   let decoder = any([string, fn(x) { result.map(int(x), int.to_string) }])
-  let name = case decoder(name) {
+  case decoder(name) {
     Ok(name) -> name
     Error(_) ->
       ["<", classify(name), ">"]
       |> string_tree.from_strings
       |> string_tree.to_string
   }
-  DecodeError(..error, path: [name, ..error.path])
 }
 
 /// Checks to see if a `Dynamic` value is a 2-element tuple, list or array containing
@@ -982,7 +987,7 @@ pub fn dict(
         )
         use v <- result.try(
           value_type(v)
-          |> map_errors(push_path(_, "values")),
+          |> map_errors(push_path(_, "values[" <> format_unknown(k) <> "]")),
         )
         Ok(#(k, v))
       }),
