@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- The dict module gains a new `update` function.
+
 ## v0.43.0 - 2024-11-17
 
 - `BytesBuilder` is now an alias of `BytesTree`.
