@@ -5,10 +5,12 @@
 
 import gleam/option.{type Option}
 
+@deprecated("Please use the gleam_regexp package instead")
 pub type Regex
 
 /// The details about a particular match:
 ///
+@deprecated("Please use the gleam_regexp package instead")
 pub type Match {
   Match(
     /// The full string of the match.
@@ -20,6 +22,7 @@ pub type Match {
 
 /// When a regular expression fails to compile:
 ///
+@deprecated("Please use the gleam_regexp package instead")
 pub type CompileError {
   CompileError(
     /// The problem encountered that caused the compilation to fail
@@ -30,6 +33,7 @@ pub type CompileError {
   )
 }
 
+@deprecated("Please use the gleam_regexp package instead")
 pub type Options {
   Options(case_insensitive: Bool, multi_line: Bool)
 }
@@ -52,6 +56,7 @@ pub type Options {
 /// // -> True
 /// ```
 ///
+@deprecated("Please use the gleam_regexp package instead")
 pub fn compile(
   pattern: String,
   with options: Options,
@@ -89,6 +94,7 @@ fn do_compile(
 /// // ))
 /// ```
 ///
+@deprecated("Please use the gleam_regexp package instead")
 pub fn from_string(pattern: String) -> Result(Regex, CompileError) {
   compile(pattern, Options(case_insensitive: False, multi_line: False))
 }
@@ -108,6 +114,7 @@ pub fn from_string(pattern: String) -> Result(Regex, CompileError) {
 /// // -> False
 /// ```
 ///
+@deprecated("Please use the gleam_regexp package instead")
 pub fn check(with regex: Regex, content string: String) -> Bool {
   do_check(regex, string)
 }
@@ -126,6 +133,7 @@ fn do_check(regex: Regex, string: String) -> Bool
 /// // -> ["foo", "32", "4", "9", "0"]
 /// ```
 ///
+@deprecated("Please use the gleam_regexp package instead")
 pub fn split(with regex: Regex, content string: String) -> List(String) {
   do_split(regex, string)
 }
@@ -186,6 +194,7 @@ fn do_split(regex: Regex, string: String) -> List(String)
 /// // -> []
 /// ```
 ///
+@deprecated("Please use the gleam_regexp package instead")
 pub fn scan(with regex: Regex, content string: String) -> List(Match) {
   do_scan(regex, string)
 }
@@ -210,6 +219,7 @@ fn do_scan(regex: Regex, string: String) -> List(Match)
 /// replace(each: re, in: "a,b-c d+e", with: "/")
 /// // -> "a/b/c/d/e"
 /// ```
+@deprecated("Please use the gleam_regexp package instead")
 @external(erlang, "gleam_stdlib", "regex_replace")
 @external(javascript, "../gleam_stdlib.mjs", "regex_replace")
 pub fn replace(
