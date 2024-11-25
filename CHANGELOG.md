@@ -6,6 +6,8 @@
   package.
 - The `gleam/iterator` module has been deprecated in favour of the
   `gleam_yielder` package.
+- The `gleam/regex` module has been deprecated in favour of the `gleam_regexp`
+  package.
 
 ## v0.43.0 - 2024-11-17
 
