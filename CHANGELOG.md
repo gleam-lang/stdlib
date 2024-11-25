@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.44.0 - Unreleased
+## v0.44.0 - 2024-11-25
 
 - The `gleam/queue` module has been deprecated in favour of the `gleam_deque`
   package.
