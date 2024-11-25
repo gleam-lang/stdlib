@@ -47,7 +47,7 @@ pub fn be_ok(a: Result(a, e)) -> a {
 
 pub fn be_error(a) {
   case a {
-    Error(_) -> Nil
+    Error(e) -> e
     _ ->
       panic as { string.concat(["\n", string.inspect(a), "\nshould be error"]) }
   }
