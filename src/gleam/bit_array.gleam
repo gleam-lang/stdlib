@@ -23,6 +23,13 @@ pub fn bit_size(x: BitArray) -> Int {
 @external(javascript, "../gleam_stdlib.mjs", "length")
 pub fn byte_size(x: BitArray) -> Int
 
+/// Pads a bit array with zeros so that it is a whole number of bytes.
+///
+@external(erlang, "gleam_stdlib", "bit_array_pad_to_bytes")
+pub fn pad_to_bytes(x: BitArray) -> BitArray {
+  x
+}
+
 /// Creates a new bit array by joining two bit arrays.
 ///
 /// ## Examples
@@ -108,6 +115,9 @@ fn do_to_string(bits: BitArray) -> Result(String, Nil) {
 pub fn concat(bit_arrays: List(BitArray)) -> BitArray
 
 /// Encodes a BitArray into a base 64 encoded string.
+/// 
+/// If the bit array does not contain a whole number of bytes then it is padded
+/// with zero bits prior to being encoded.
 ///
 @external(erlang, "gleam_stdlib", "bit_array_base64_encode")
 @external(javascript, "../gleam_stdlib.mjs", "encode64")
@@ -127,7 +137,11 @@ pub fn base64_decode(encoded: String) -> Result(BitArray, Nil) {
 @external(javascript, "../gleam_stdlib.mjs", "decode64")
 fn decode64(a: String) -> Result(BitArray, Nil)
 
-/// Encodes a `BitArray` into a base 64 encoded string with URL and filename safe alphabet.
+/// Encodes a `BitArray` into a base 64 encoded string with URL and filename
+/// safe alphabet.
+///
+/// If the bit array does not contain a whole number of bytes then it is padded
+/// with zero bits prior to being encoded.
 ///
 pub fn base64_url_encode(input: BitArray, padding: Bool) -> String {
   base64_encode(input, padding)
@@ -135,7 +149,8 @@ pub fn base64_url_encode(input: BitArray, padding: Bool) -> String {
   |> string.replace("/", "_")
 }
 
-/// Decodes a base 64 encoded string with URL and filename safe alphabet into a `BitArray`.
+/// Decodes a base 64 encoded string with URL and filename safe alphabet into a
+/// `BitArray`.
 ///
 pub fn base64_url_decode(encoded: String) -> Result(BitArray, Nil) {
   encoded
@@ -144,10 +159,17 @@ pub fn base64_url_decode(encoded: String) -> Result(BitArray, Nil) {
   |> base64_decode()
 }
 
-@external(erlang, "binary", "encode_hex")
+/// Encodes a `BitArray` into a base 16 encoded string.
+///
+/// If the bit array does not contain a whole number of bytes then it is padded
+/// with zero bits prior to being encoded.
+///
+@external(erlang, "gleam_stdlib", "base16_encode")
 @external(javascript, "../gleam_stdlib.mjs", "base16_encode")
 pub fn base16_encode(input: BitArray) -> String
 
+/// Decodes a base 16 encoded string into a `BitArray`.
+///
 @external(erlang, "gleam_stdlib", "base16_decode")
 @external(javascript, "../gleam_stdlib.mjs", "base16_decode")
 pub fn base16_decode(input: String) -> Result(BitArray, Nil)
