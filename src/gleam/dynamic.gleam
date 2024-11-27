@@ -115,13 +115,9 @@ fn put_expected(error: DecodeError, expected: String) -> DecodeError {
 /// // -> "String"
 /// ```
 ///
-pub fn classify(data: Dynamic) -> String {
-  do_classify(data)
-}
-
 @external(erlang, "gleam_stdlib", "classify_dynamic")
 @external(javascript, "../gleam_stdlib.mjs", "classify_dynamic")
-fn do_classify(a: Dynamic) -> String
+pub fn classify(data: Dynamic) -> String
 
 /// Checks to see whether a `Dynamic` value is an int, and returns that int if it
 /// is.
