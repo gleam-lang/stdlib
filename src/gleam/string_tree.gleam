@@ -22,7 +22,7 @@ pub type StringTree
 /// trees together.
 ///
 pub fn new() -> StringTree {
-  do_from_strings([])
+  from_strings([])
 }
 
 /// Prepends a `String` onto the start of some `StringTree`.
@@ -49,79 +49,55 @@ pub fn prepend_tree(
   to tree: StringTree,
   prefix prefix: StringTree,
 ) -> StringTree {
-  do_append(prefix, tree)
+  append_tree(prefix, tree)
 }
 
 /// Appends some `StringTree` onto the end of another.
 ///
 /// Runs in constant time.
 ///
-pub fn append_tree(to tree: StringTree, suffix suffix: StringTree) -> StringTree {
-  do_append(tree, suffix)
-}
-
 @external(erlang, "gleam_stdlib", "iodata_append")
 @external(javascript, "../gleam_stdlib.mjs", "add")
-fn do_append(a: StringTree, b: StringTree) -> StringTree
+pub fn append_tree(to tree: StringTree, suffix suffix: StringTree) -> StringTree
 
 /// Converts a list of strings into a `StringTree`.
 ///
 /// Runs in constant time.
 ///
-pub fn from_strings(strings: List(String)) -> StringTree {
-  do_from_strings(strings)
-}
-
 @external(erlang, "gleam_stdlib", "identity")
 @external(javascript, "../gleam_stdlib.mjs", "concat")
-fn do_from_strings(a: List(String)) -> StringTree
+pub fn from_strings(strings: List(String)) -> StringTree
 
 /// Joins a list of trees into a single tree.
 ///
 /// Runs in constant time.
 ///
-pub fn concat(trees: List(StringTree)) -> StringTree {
-  do_concat(trees)
-}
-
 @external(erlang, "gleam_stdlib", "identity")
 @external(javascript, "../gleam_stdlib.mjs", "concat")
-fn do_concat(trees: List(StringTree)) -> StringTree
+pub fn concat(trees: List(StringTree)) -> StringTree
 
 /// Converts a string into a `StringTree`.
 ///
 /// Runs in constant time.
 ///
-pub fn from_string(string: String) -> StringTree {
-  do_from_string(string)
-}
-
 @external(erlang, "gleam_stdlib", "identity")
 @external(javascript, "../gleam_stdlib.mjs", "identity")
-fn do_from_string(string: String) -> StringTree
+pub fn from_string(string: String) -> StringTree
 
 /// Turns a `StringTree` into a `String`
 ///
 /// This function is implemented natively by the virtual machine and is highly
 /// optimised.
 ///
-pub fn to_string(tree: StringTree) -> String {
-  do_to_string(tree)
-}
-
 @external(erlang, "unicode", "characters_to_binary")
 @external(javascript, "../gleam_stdlib.mjs", "identity")
-fn do_to_string(tree: StringTree) -> String
+pub fn to_string(tree: StringTree) -> String
 
 /// Returns the size of the `StringTree` in bytes.
 ///
-pub fn byte_size(tree: StringTree) -> Int {
-  do_byte_size(tree)
-}
-
 @external(erlang, "erlang", "iolist_size")
 @external(javascript, "../gleam_stdlib.mjs", "length")
-fn do_byte_size(tree: StringTree) -> Int
+pub fn byte_size(tree: StringTree) -> Int
 
 /// Joins the given trees into a new tree separated with the given string.
 ///
@@ -134,33 +110,21 @@ pub fn join(trees: List(StringTree), with sep: String) -> StringTree {
 /// Converts a `StringTree` to a new one where the contents have been
 /// lowercased.
 ///
-pub fn lowercase(tree: StringTree) -> StringTree {
-  do_lowercase(tree)
-}
-
 @external(erlang, "string", "lowercase")
 @external(javascript, "../gleam_stdlib.mjs", "lowercase")
-fn do_lowercase(tree: StringTree) -> StringTree
+pub fn lowercase(tree: StringTree) -> StringTree
 
 /// Converts a `StringTree` to a new one where the contents have been
 /// uppercased.
 ///
-pub fn uppercase(tree: StringTree) -> StringTree {
-  do_uppercase(tree)
-}
-
 @external(erlang, "string", "uppercase")
 @external(javascript, "../gleam_stdlib.mjs", "uppercase")
-fn do_uppercase(tree: StringTree) -> StringTree
+pub fn uppercase(tree: StringTree) -> StringTree
 
 /// Converts a `StringTree` to a new one with the contents reversed.
 ///
-pub fn reverse(tree: StringTree) -> StringTree {
-  do_reverse(tree)
-}
-
 @external(erlang, "string", "reverse")
-fn do_reverse(tree: StringTree) -> StringTree {
+pub fn reverse(tree: StringTree) -> StringTree {
   tree
   |> to_string
   |> do_to_graphemes
@@ -173,16 +137,12 @@ fn do_to_graphemes(string: String) -> List(String)
 
 /// Splits a `StringTree` on a given pattern into a list of trees.
 ///
-pub fn split(tree: StringTree, on pattern: String) -> List(StringTree) {
-  do_split(tree, pattern)
-}
-
 type Direction {
   All
 }
 
 @external(javascript, "../gleam_stdlib.mjs", "split")
-fn do_split(tree: StringTree, pattern: String) -> List(StringTree) {
+pub fn split(tree: StringTree, on pattern: String) -> List(StringTree) {
   erl_split(tree, pattern, All)
 }
 

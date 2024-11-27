@@ -57,18 +57,11 @@ pub type Options {
 /// ```
 ///
 @deprecated("Please use the gleam_regexp package instead")
+@external(erlang, "gleam_stdlib", "compile_regex")
+@external(javascript, "../gleam_stdlib.mjs", "compile_regex")
 pub fn compile(
   pattern: String,
   with options: Options,
-) -> Result(Regex, CompileError) {
-  do_compile(pattern, options)
-}
-
-@external(erlang, "gleam_stdlib", "compile_regex")
-@external(javascript, "../gleam_stdlib.mjs", "compile_regex")
-fn do_compile(
-  pattern: String,
-  with with: Options,
 ) -> Result(Regex, CompileError)
 
 /// Creates a new `Regex`.
@@ -115,13 +108,9 @@ pub fn from_string(pattern: String) -> Result(Regex, CompileError) {
 /// ```
 ///
 @deprecated("Please use the gleam_regexp package instead")
-pub fn check(with regex: Regex, content string: String) -> Bool {
-  do_check(regex, string)
-}
-
 @external(erlang, "gleam_stdlib", "regex_check")
 @external(javascript, "../gleam_stdlib.mjs", "regex_check")
-fn do_check(regex: Regex, string: String) -> Bool
+pub fn check(with regex: Regex, content string: String) -> Bool
 
 /// Splits a string.
 ///
@@ -134,13 +123,9 @@ fn do_check(regex: Regex, string: String) -> Bool
 /// ```
 ///
 @deprecated("Please use the gleam_regexp package instead")
-pub fn split(with regex: Regex, content string: String) -> List(String) {
-  do_split(regex, string)
-}
-
 @external(erlang, "gleam_stdlib", "regex_split")
 @external(javascript, "../gleam_stdlib.mjs", "regex_split")
-fn do_split(regex: Regex, string: String) -> List(String)
+pub fn split(with regex: Regex, content string: String) -> List(String)
 
 /// Collects all matches of the regular expression.
 ///
@@ -195,13 +180,9 @@ fn do_split(regex: Regex, string: String) -> List(String)
 /// ```
 ///
 @deprecated("Please use the gleam_regexp package instead")
-pub fn scan(with regex: Regex, content string: String) -> List(Match) {
-  do_scan(regex, string)
-}
-
 @external(erlang, "gleam_stdlib", "regex_scan")
 @external(javascript, "../gleam_stdlib.mjs", "regex_scan")
-fn do_scan(regex: Regex, string: String) -> List(Match)
+pub fn scan(with regex: Regex, content string: String) -> List(Match)
 
 /// Creates a new `String` by replacing all substrings that match the regular
 /// expression.

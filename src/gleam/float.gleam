@@ -29,13 +29,9 @@ import gleam/order.{type Order}
 /// // -> Error(Nil)
 /// ```
 ///
-pub fn parse(string: String) -> Result(Float, Nil) {
-  do_parse(string)
-}
-
 @external(erlang, "gleam_stdlib", "parse_float")
 @external(javascript, "../gleam_stdlib.mjs", "parse_float")
-fn do_parse(a: String) -> Result(Float, Nil)
+pub fn parse(string: String) -> Result(Float, Nil)
 
 /// Returns the string representation of the provided `Float`.
 ///
@@ -46,13 +42,9 @@ fn do_parse(a: String) -> Result(Float, Nil)
 /// // -> "2.3"
 /// ```
 ///
-pub fn to_string(x: Float) -> String {
-  do_to_string(x)
-}
-
 @external(erlang, "gleam_stdlib", "float_to_string")
 @external(javascript, "../gleam_stdlib.mjs", "float_to_string")
-fn do_to_string(a: Float) -> String
+pub fn to_string(x: Float) -> String
 
 /// Restricts a `Float` between a lower and upper bound.
 ///
@@ -196,13 +188,9 @@ pub fn max(a: Float, b: Float) -> Float {
 /// // -> 3.0
 /// ```
 ///
-pub fn ceiling(x: Float) -> Float {
-  do_ceiling(x)
-}
-
 @external(erlang, "math", "ceil")
 @external(javascript, "../gleam_stdlib.mjs", "ceiling")
-fn do_ceiling(a: Float) -> Float
+pub fn ceiling(x: Float) -> Float
 
 /// Rounds the value to the next lowest whole number as a `Float`.
 ///
@@ -213,13 +201,9 @@ fn do_ceiling(a: Float) -> Float
 /// // -> 2.0
 /// ```
 ///
-pub fn floor(x: Float) -> Float {
-  do_floor(x)
-}
-
 @external(erlang, "math", "floor")
 @external(javascript, "../gleam_stdlib.mjs", "floor")
-fn do_floor(a: Float) -> Float
+pub fn floor(x: Float) -> Float
 
 /// Rounds the value to the nearest whole number as an `Int`.
 ///
@@ -235,12 +219,8 @@ fn do_floor(a: Float) -> Float
 /// // -> 3
 /// ```
 ///
-pub fn round(x: Float) -> Int {
-  do_round(x)
-}
-
 @external(erlang, "erlang", "round")
-fn do_round(x: Float) -> Int {
+pub fn round(x: Float) -> Int {
   case x >=. 0.0 {
     True -> js_round(x)
     _ -> 0 - js_round(negate(x))
@@ -259,13 +239,9 @@ fn js_round(a: Float) -> Int
 /// // -> 2
 /// ```
 ///
-pub fn truncate(x: Float) -> Int {
-  do_truncate(x)
-}
-
 @external(erlang, "erlang", "trunc")
 @external(javascript, "../gleam_stdlib.mjs", "truncate")
-fn do_truncate(a: Float) -> Int
+pub fn truncate(x: Float) -> Int
 
 /// Converts the value to a given precision as a `Float`.
 /// The precision is the number of allowed decimal places.

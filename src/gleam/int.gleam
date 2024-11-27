@@ -104,13 +104,9 @@ pub fn square_root(x: Int) -> Result(Float, Nil) {
 /// // -> Error(Nil)
 /// ```
 ///
-pub fn parse(string: String) -> Result(Int, Nil) {
-  do_parse(string)
-}
-
 @external(erlang, "gleam_stdlib", "parse_int")
 @external(javascript, "../gleam_stdlib.mjs", "parse_int")
-fn do_parse(a: String) -> Result(Int, Nil)
+pub fn parse(string: String) -> Result(Int, Nil)
 
 /// Parses a given string as an int in a given base if possible.
 /// Supports only bases 2 to 36, for values outside of which this function returns an `Error(Nil)`.
@@ -162,13 +158,9 @@ fn do_base_parse(a: String, b: Int) -> Result(Int, Nil)
 /// // -> "2"
 /// ```
 ///
-pub fn to_string(x: Int) {
-  do_to_string(x)
-}
-
 @external(erlang, "erlang", "integer_to_binary")
 @external(javascript, "../gleam_stdlib.mjs", "to_string")
-fn do_to_string(a: Int) -> String
+pub fn to_string(x: Int) -> String
 
 /// Prints a given int to a string using the base number provided.
 /// Supports only bases 2 to 36, for values outside of which this function returns an `Error(Nil)`.
@@ -283,13 +275,9 @@ pub fn to_base36(x: Int) -> String {
 /// // -> -3.0
 /// ```
 ///
-pub fn to_float(x: Int) -> Float {
-  do_to_float(x)
-}
-
 @external(erlang, "erlang", "float")
 @external(javascript, "../gleam_stdlib.mjs", "identity")
-fn do_to_float(a: Int) -> Float
+pub fn to_float(x: Int) -> Float
 
 /// Restricts an int between a lower and upper bound.
 ///

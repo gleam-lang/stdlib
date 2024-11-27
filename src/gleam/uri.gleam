@@ -50,12 +50,8 @@ pub type Uri {
 /// // )
 /// ```
 ///
-pub fn parse(uri_string: String) -> Result(Uri, Nil) {
-  do_parse(uri_string)
-}
-
 @external(erlang, "gleam_stdlib", "uri_parse")
-fn do_parse(uri_string: String) -> Result(Uri, Nil) {
+pub fn parse(uri_string: String) -> Result(Uri, Nil) {
   // This parses a uri_string following the regex defined in
   // https://tools.ietf.org/html/rfc3986#appendix-B
   //
@@ -525,13 +521,9 @@ fn extra_required(list: List(a), remaining: Int) -> Int {
 /// // -> Ok([#("a", "1"), #("b", "2")])
 /// ```
 ///
-pub fn parse_query(query: String) -> Result(List(#(String, String)), Nil) {
-  do_parse_query(query)
-}
-
 @external(erlang, "gleam_stdlib", "parse_query")
 @external(javascript, "../gleam_stdlib.mjs", "parse_query")
-fn do_parse_query(a: String) -> Result(List(#(String, String)), Nil)
+pub fn parse_query(query: String) -> Result(List(#(String, String)), Nil)
 
 /// Encodes a list of key value pairs as a URI query string.
 ///
@@ -565,13 +557,9 @@ fn query_pair(pair: #(String, String)) -> StringTree {
 /// // -> "100%25%20great"
 /// ```
 ///
-pub fn percent_encode(value: String) -> String {
-  do_percent_encode(value)
-}
-
 @external(erlang, "gleam_stdlib", "percent_encode")
 @external(javascript, "../gleam_stdlib.mjs", "percent_encode")
-fn do_percent_encode(a: String) -> String
+pub fn percent_encode(value: String) -> String
 
 /// Decodes a percent encoded string.
 ///
@@ -582,13 +570,9 @@ fn do_percent_encode(a: String) -> String
 /// // -> Ok("100% great+fun")
 /// ```
 ///
-pub fn percent_decode(value: String) -> Result(String, Nil) {
-  do_percent_decode(value)
-}
-
 @external(erlang, "gleam_stdlib", "percent_decode")
 @external(javascript, "../gleam_stdlib.mjs", "percent_decode")
-fn do_percent_decode(a: String) -> Result(String, Nil)
+pub fn percent_decode(value: String) -> Result(String, Nil)
 
 /// Splits the path section of a URI into it's constituent segments.
 ///

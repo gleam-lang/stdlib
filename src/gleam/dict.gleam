@@ -124,13 +124,9 @@ fn do_has_key(key: k, dict: Dict(k, v)) -> Bool {
 
 /// Creates a fresh dict that contains no values.
 ///
-pub fn new() -> Dict(k, v) {
-  do_new()
-}
-
 @external(erlang, "maps", "new")
 @external(javascript, "../gleam_stdlib.mjs", "new_map")
-fn do_new() -> Dict(k, v)
+pub fn new() -> Dict(k, v)
 
 /// Fetches a value from a dict for a given key.
 ///
@@ -149,13 +145,9 @@ fn do_new() -> Dict(k, v)
 /// // -> Error(Nil)
 /// ```
 ///
-pub fn get(from: Dict(k, v), get: k) -> Result(v, Nil) {
-  do_get(from, get)
-}
-
 @external(erlang, "gleam_stdlib", "map_get")
 @external(javascript, "../gleam_stdlib.mjs", "map_get")
-fn do_get(dict: Dict(k, v), key: k) -> Result(v, Nil)
+pub fn get(from: Dict(k, v), get: k) -> Result(v, Nil)
 
 /// Inserts a value into the dict with the given key.
 ///
@@ -216,12 +208,8 @@ fn do_map_values(f: fn(k, v) -> a, dict: Dict(k, v)) -> Dict(k, a) {
 /// // -> ["a", "b"]
 /// ```
 ///
-pub fn keys(dict: Dict(k, v)) -> List(k) {
-  do_keys(dict)
-}
-
 @external(erlang, "maps", "keys")
-fn do_keys(dict: Dict(k, v)) -> List(k) {
+pub fn keys(dict: Dict(k, v)) -> List(k) {
   let list_of_pairs = to_list(dict)
   do_keys_loop(list_of_pairs, [])
 }
@@ -253,12 +241,8 @@ fn do_keys_loop(list: List(#(k, v)), acc: List(k)) -> List(k) {
 /// // -> [0, 1]
 /// ```
 ///
-pub fn values(dict: Dict(k, v)) -> List(v) {
-  do_values(dict)
-}
-
 @external(erlang, "maps", "values")
-fn do_values(dict: Dict(k, v)) -> List(v) {
+pub fn values(dict: Dict(k, v)) -> List(v) {
   let list_of_pairs = to_list(dict)
   do_values_loop(list_of_pairs, [])
 }
@@ -363,12 +347,8 @@ fn do_take_loop(
 /// // -> from_list([#("a", 0), #("b", 2), #("c", 3)])
 /// ```
 ///
-pub fn merge(into dict: Dict(k, v), from new_entries: Dict(k, v)) -> Dict(k, v) {
-  do_merge(dict, new_entries)
-}
-
 @external(erlang, "maps", "merge")
-fn do_merge(dict: Dict(k, v), new_entries: Dict(k, v)) -> Dict(k, v) {
+pub fn merge(into dict: Dict(k, v), from new_entries: Dict(k, v)) -> Dict(k, v) {
   new_entries
   |> to_list
   |> fold_inserts(dict)
