@@ -6,7 +6,9 @@
 import { isEqual } from "./gleam.mjs";
 
 const referenceMap = new WeakMap();
-const tempDataView = new DataView(new ArrayBuffer(8));
+const tempDataView = /* @__PURE__ */ new DataView(
+  /* @__PURE__ */ new ArrayBuffer(8),
+);
 let referenceUID = 0;
 /**
  * hash the object by reference using a weak map and incrementing uid
@@ -308,7 +310,7 @@ function createNode(shift, key1, val1, key2hash, key2, val2) {
     key2hash,
     key2,
     val2,
-    addedLeaf
+    addedLeaf,
   );
 }
 /**
@@ -377,7 +379,7 @@ function assocArray(root, shift, hash, key, val, addedLeaf) {
       array: cloneAndSet(
         root.array,
         idx,
-        createNode(shift + SHIFT, node.k, node.v, hash, key, val)
+        createNode(shift + SHIFT, node.k, node.v, hash, key, val),
       ),
     };
   }
@@ -441,7 +443,7 @@ function assocIndex(root, shift, hash, key, val, addedLeaf) {
       array: cloneAndSet(
         root.array,
         idx,
-        createNode(shift + SHIFT, nodeKey, node.v, hash, key, val)
+        createNode(shift + SHIFT, nodeKey, node.v, hash, key, val),
       ),
     };
   } else {
@@ -528,7 +530,7 @@ function assocCollision(root, shift, hash, key, val, addedLeaf) {
     hash,
     key,
     val,
-    addedLeaf
+    addedLeaf,
   );
 }
 /**
