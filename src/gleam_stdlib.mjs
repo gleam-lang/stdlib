@@ -47,13 +47,13 @@ export function to_string(term) {
 }
 
 export function float_to_string(float) {
-  const string = float.toString().replace('+', '');
+  const string = float.toString().replace("+", "");
   if (string.indexOf(".") >= 0) {
     return string;
   } else {
     const index = string.indexOf("e");
     if (index >= 0) {
-      return string.slice(0, index) + '.0' + string.slice(index);
+      return string.slice(0, index) + ".0" + string.slice(index);
     } else {
       return string + ".0";
     }
@@ -186,7 +186,7 @@ export function pop_grapheme(string) {
 }
 
 export function pop_codeunit(str) {
-  return [str.charCodeAt(0)|0, str.slice(1)]
+  return [str.charCodeAt(0) | 0, str.slice(1)];
 }
 
 export function lowercase(string) {
@@ -256,12 +256,15 @@ export function string_slice(string, idx, len) {
 
     return result;
   } else {
-    return string.match(/./gsu).slice(idx, idx + len).join("");
+    return string
+      .match(/./gsu)
+      .slice(idx, idx + len)
+      .join("");
   }
 }
 
 export function string_codeunit_slice(str, from, length) {
-  return str.slice(from, from + length)
+  return str.slice(from, from + length);
 }
 export function crop_string(string, substring) {
   return string.substring(string.indexOf(substring));
@@ -305,7 +308,7 @@ const unicode_whitespaces = [
 const trim_start_regex = new RegExp(`^[${unicode_whitespaces}]*`);
 const trim_end_regex = new RegExp(`[${unicode_whitespaces}]*$`);
 const trim_regex = new RegExp(
-  `^[${unicode_whitespaces}]*(.*?)[${unicode_whitespaces}]*$`
+  `^[${unicode_whitespaces}]*(.*?)[${unicode_whitespaces}]*$`,
 );
 
 export function trim(string) {
@@ -1014,4 +1017,3 @@ export function bit_array_starts_with(bits, prefix) {
 
   return true;
 }
-
