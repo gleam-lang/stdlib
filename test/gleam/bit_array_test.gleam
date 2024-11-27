@@ -207,6 +207,23 @@ pub fn base64_encode_test() {
   ))
 }
 
+// This test is target specific since it's using non byte-aligned BitArrays
+// and those are not supported on the JavaScript target.
+@target(erlang)
+pub fn base64_erlang_only_encode_test() {
+  <<-1:7>>
+  |> bit_array.base64_encode(True)
+  |> should.equal("/g==")
+
+  <<0xFA, 5:3>>
+  |> bit_array.base64_encode(True)
+  |> should.equal("+qA=")
+
+  <<0xFA, 0xBC, 0x6D, 1:1>>
+  |> bit_array.base64_encode(True)
+  |> should.equal("+rxtgA==")
+}
+
 pub fn base64_decode_test() {
   "/3/+/A=="
   |> bit_array.base64_decode()
@@ -303,6 +320,27 @@ pub fn base16_test() {
 
   bit_array.base16_encode(<<161, 178, 195, 212, 229, 246, 120, 145>>)
   |> should.equal("A1B2C3D4E5F67891")
+}
+
+// This test is target specific since it's using non byte-aligned BitArrays
+// and those are not supported on the JavaScript target.
+@target(erlang)
+pub fn base16_encode_erlang_only_test() {
+  <<-1:7>>
+  |> bit_array.base16_encode()
+  |> should.equal("FE")
+
+  <<0xFA, 5:3>>
+  |> bit_array.base16_encode()
+  |> should.equal("FAA0")
+
+  <<0xFA, 5:4>>
+  |> bit_array.base16_encode()
+  |> should.equal("FA50")
+
+  <<0xFA, 0xBC, 0x6D, 1:1>>
+  |> bit_array.base16_encode()
+  |> should.equal("FABC6D80")
 }
 
 pub fn base16_decode_test() {

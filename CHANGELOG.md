@@ -4,6 +4,10 @@
 
 - The performance of `string.trim`, `string.trim_start`, and `string.trim_end`
   has been improved on JavaScript.
+- The `base64_encode`, `base64_url_encode`, and `base16_encode` functions in the
+  `bit_array` module no longer throw an exception when called with a bit array
+  which is not a whole number of bytes. Instead, the bit array is now padded
+  with zero bits prior to being encoded.
 
 ## v0.44.0 - 2024-11-25
 
