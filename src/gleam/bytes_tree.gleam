@@ -19,7 +19,6 @@
 ////
 //// On Erlang this type is compatible with Erlang's iolists.
 
-// TODO: pad bit arrays to byte boundaries when adding to a tree.
 import gleam/bit_array
 import gleam/list
 import gleam/string_tree.{type StringTree}
@@ -104,7 +103,6 @@ pub fn concat(trees: List(BytesTree)) -> BytesTree {
 ///
 /// Runs in constant time.
 ///
-@external(erlang, "gleam_stdlib", "identity")
 pub fn concat_bit_arrays(bits: List(BitArray)) -> BytesTree {
   bits
   |> list.map(fn(b) { from_bit_array(b) })
@@ -135,8 +133,14 @@ pub fn from_string_tree(tree: string_tree.StringTree) -> BytesTree {
 ///
 /// Runs in constant time.
 ///
-@external(erlang, "gleam_stdlib", "wrap_list")
 pub fn from_bit_array(bits: BitArray) -> BytesTree {
+  bits
+  |> bit_array.pad_to_bytes
+  |> wrap_list
+}
+
+@external(erlang, "gleam_stdlib", "wrap_list")
+fn wrap_list(bits: BitArray) -> BytesTree {
   Bytes(bits)
 }
 
