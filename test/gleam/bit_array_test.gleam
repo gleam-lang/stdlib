@@ -16,12 +16,7 @@ pub fn bit_size_test() {
 
   bit_array.bit_size(<<0:-8>>)
   |> should.equal(0)
-}
 
-// This test is target specific since it's using non byte-aligned BitArrays
-// and those are not supported on the JavaScript target.
-@target(erlang)
-pub fn bit_size_erlang_only_test() {
   bit_array.bit_size(<<0:1>>)
   |> should.equal(1)
 
@@ -41,12 +36,7 @@ pub fn byte_size_test() {
 
   bit_array.byte_size(<<0, 1, 2, 3, 4>>)
   |> should.equal(5)
-}
 
-// This test is target specific since it's using non byte-aligned BitArrays
-// and those are not supported on the JavaScript target.
-@target(erlang)
-pub fn byte_size_erlang_only_test() {
   bit_array.byte_size(<<1, 2, 3:6>>)
   |> should.equal(3)
 }
@@ -63,12 +53,7 @@ pub fn pad_to_bytes_test() {
   <<0xAB, 0x12>>
   |> bit_array.pad_to_bytes
   |> should.equal(<<0xAB, 0x12>>)
-}
 
-// This test is target specific since it's using non byte-aligned BitArrays
-// and those are not supported on the JavaScript target.
-@target(erlang)
-pub fn pad_to_bytes_erlang_only_test() {
   <<1:1>>
   |> bit_array.pad_to_bytes
   |> should.equal(<<0x80>>)
@@ -80,6 +65,11 @@ pub fn pad_to_bytes_erlang_only_test() {
   <<0xAB, 0x12, 3:3>>
   |> bit_array.pad_to_bytes
   |> should.equal(<<0xAB, 0x12, 0x60>>)
+
+  let assert <<a:bits-12, _:4>> = <<0xAB, 0xFF>>
+  a
+  |> bit_array.pad_to_bytes
+  |> should.equal(<<0xAB, 0xF0>>)
 }
 
 pub fn not_equal_test() {
@@ -99,12 +89,7 @@ pub fn append_test() {
   <<1, 2>>
   |> bit_array.append(<<3, 4>>)
   |> should.equal(<<1, 2, 3, 4>>)
-}
 
-// This test is target specific since it's using non byte-aligned BitArrays
-// and those are not supported on the JavaScript target.
-@target(erlang)
-pub fn append_erlang_only_test() {
   <<1, 2:4>>
   |> bit_array.append(<<3>>)
   |> should.equal(<<1, 2:4, 3>>)
@@ -118,12 +103,7 @@ pub fn concat_test() {
   [<<1, 2>>, <<3>>, <<4>>]
   |> bit_array.concat
   |> should.equal(<<1, 2, 3, 4>>)
-}
 
-// This test is target specific since it's using non byte-aligned BitArrays
-// and those are not supported on the JavaScript target.
-@target(erlang)
-pub fn concat_erlang_only_test() {
   [<<-1:32>>, <<0:1>>, <<0:0>>]
   |> bit_array.concat
   |> should.equal(<<255, 255, 255, 255, 0:1>>)
@@ -186,12 +166,7 @@ pub fn slice_test() {
   |> bit_array.slice(1, 1)
   |> result.try(bit_array.slice(_, 0, 1))
   |> should.equal(Ok(<<"b":utf8>>))
-}
 
-// This test is target specific since it's using non byte-aligned BitArrays
-// and those are not supported on the JavaScript target.
-@target(erlang)
-pub fn slice_erlang_only_test() {
   <<0, 1, 2:7>>
   |> bit_array.slice(0, 3)
   |> should.equal(Error(Nil))
@@ -221,12 +196,7 @@ pub fn to_string_test() {
   <<65_535>>
   |> bit_array.to_string
   |> should.equal(Error(Nil))
-}
 
-// This test is target specific since it's using non byte-aligned BitArrays
-// and those are not supported on the JavaScript target.
-@target(erlang)
-pub fn to_string_erlang_only_test() {
   <<"ø":utf8, 50:4>>
   |> bit_array.to_string
   |> should.equal(Error(Nil))
@@ -282,12 +252,7 @@ pub fn base64_encode_test() {
     "QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB",
     1024 * 32,
   ))
-}
 
-// This test is target specific since it's using non byte-aligned BitArrays
-// and those are not supported on the JavaScript target.
-@target(erlang)
-pub fn base64_erlang_only_encode_test() {
   <<-1:7>>
   |> bit_array.base64_encode(True)
   |> should.equal("/g==")
@@ -397,12 +362,7 @@ pub fn base16_test() {
 
   bit_array.base16_encode(<<161, 178, 195, 212, 229, 246, 120, 145>>)
   |> should.equal("A1B2C3D4E5F67891")
-}
 
-// This test is target specific since it's using non byte-aligned BitArrays
-// and those are not supported on the JavaScript target.
-@target(erlang)
-pub fn base16_encode_erlang_only_test() {
   <<-1:7>>
   |> bit_array.base16_encode()
   |> should.equal("FE")
@@ -463,12 +423,7 @@ pub fn inspect_test() {
 
   bit_array.inspect(<<0, 20, 0x20, 255>>)
   |> should.equal("<<0, 20, 32, 255>>")
-}
 
-// This test is target specific since it's using non byte-aligned BitArrays
-// and those are not supported on the JavaScript target.
-@target(erlang)
-pub fn inspect_erlang_only_test() {
   bit_array.inspect(<<4:5>>)
   |> should.equal("<<4:size(5)>>")
 
@@ -479,7 +434,6 @@ pub fn inspect_erlang_only_test() {
   |> should.equal("<<182, 1:size(1)>>")
 }
 
-@target(erlang)
 pub fn compare_test() {
   bit_array.compare(<<4:5>>, <<4:5>>)
   |> should.equal(order.Eq)
@@ -550,12 +504,7 @@ pub fn starts_with_test() {
 
   bit_array.starts_with(<<0, 1, 2>>, <<1>>)
   |> should.be_false
-}
 
-// This test is target specific since it's using non byte-aligned BitArrays
-// and those are not supported on the JavaScript target.
-@target(erlang)
-pub fn starts_with_erlang_only_test() {
   bit_array.starts_with(<<1:1>>, <<1:1>>)
   |> should.be_true
 

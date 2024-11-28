@@ -1,8 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- Unaligned bit arrays on the JavaScript target are now supported by the
+  following functions in the `bit_array` module: `append`, `bit_size`,
+  `compare`, `concat`, `inspect`, `starts_with`. Note: unaligned bit arrays on
+  JavaScript are supported starting with Gleam v1.7.
+
 ## v0.47.0 - 2024-12-10
 
-- The `compare` and `to_string` functions from the `gleam/bool` module have been
+- The `compare` and `to_int` functions from the `gleam/bool` module have been
   deprecated.
 
 ## v0.46.0 - 2024-12-08
