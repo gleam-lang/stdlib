@@ -968,10 +968,24 @@ export default class Dict {
     if (!(o instanceof Dict) || this.size !== o.size) {
       return false;
     }
-    let equal = true;
-    this.forEach((v, k) => {
-      equal = equal && isEqual(o.get(k, !v), v);
-    });
-    return equal;
+
+    try {
+      this.forEach((v, k) => {
+        if (!isEqual(o.get(k, !v), v)) {
+          throw unequalDictSymbol;
+        }
+      });
+      return true;
+    } catch (e) {
+      if (e === unequalDictSymbol) {
+        return false;
+      }
+
+      throw e;
+    }
   }
 }
+
+// This is thrown internally in Dict.equals() so that it returns false as soon
+// as a non-matching key is found
+const unequalDictSymbol = Symbol();

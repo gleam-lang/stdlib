@@ -14,6 +14,14 @@ pub fn from_list_test() {
   [#(1, 0), #(1, 1)]
   |> dict.from_list
   |> should.equal(dict.from_list([#(1, 1)]))
+
+  [#(1, 0), #(2, 1)]
+  |> dict.from_list
+  |> should.not_equal(dict.from_list([#(1, 0), #(2, 2)]))
+
+  [#(1, 0), #(2, 1)]
+  |> dict.from_list
+  |> should.not_equal(dict.from_list([#(1, 0), #(3, 1)]))
 }
 
 pub fn has_key_test() {
