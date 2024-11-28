@@ -191,7 +191,7 @@ pub fn slice_test() {
 // This test is target specific since it's using non byte-aligned BitArrays
 // and those are not supported on the JavaScript target.
 @target(erlang)
-pub fn slice_erlang_onyl_test() {
+pub fn slice_erlang_only_test() {
   <<0, 1, 2:7>>
   |> bit_array.slice(0, 3)
   |> should.equal(Error(Nil))
