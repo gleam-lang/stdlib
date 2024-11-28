@@ -327,8 +327,49 @@ export function bit_array_from_string(string) {
   return toBitArray([stringBits(string)]);
 }
 
+export function bit_array_bit_size(bit_array) {
+  if (bit_array.bitSize === undefined) {
+    return bit_array.length * 8;
+  }
+
+  return bit_array.bitSize;
+}
+
+export function bit_array_pad_to_bytes(bit_array) {
+  // If the bit array is byte aligned it can be returned unchanged
+  const trailingBitsCount = bit_array_bit_size(bit_array) % 8;
+  if (trailingBitsCount === 0) {
+    return bit_array;
+  }
+
+  const finalByte = bit_array.buffer[bit_array.length - 1];
+
+  let correctFinalByte = finalByte;
+  correctFinalByte >>= 8 - trailingBitsCount;
+  correctFinalByte <<= 8 - trailingBitsCount;
+
+  // If the unused bits in the final byte are already set to zero then the
+  // existing buffer can be re-used, avoiding a copy
+  if (finalByte === correctFinalByte) {
+    return new BitArray(bit_array.buffer);
+  }
+
+  // Copy the bit array into a new buffer and set the correct final byte
+  const newBuffer = bit_array.buffer.slice();
+  newBuffer[newBuffer.length - 1] = correctFinalByte;
+
+  return new BitArray(newBuffer);
+}
+
+const BIT_ARRAY_UNALIGNED_SUPPORTED =
+  new BitArray(new Uint8Array()).bitSize !== undefined;
+
 export function bit_array_concat(bit_arrays) {
-  return toBitArray(bit_arrays.toArray().map((b) => b.buffer));
+  if (BIT_ARRAY_UNALIGNED_SUPPORTED) {
+    return toBitArray(bit_arrays.toArray());
+  } else {
+    return toBitArray(bit_arrays.toArray().map((b) => b.buffer));
+  }
 }
 
 export function console_log(term) {
@@ -344,6 +385,10 @@ export function crash(message) {
 }
 
 export function bit_array_to_string(bit_array) {
+  if (bit_array_bit_size(bit_array) % 8 !== 0) {
+    return new Error(Nil);
+  }
+
   try {
     const decoder = new TextDecoder("utf-8", { fatal: true });
     return new Ok(decoder.decode(bit_array.buffer));
@@ -426,13 +471,19 @@ export function random_uniform() {
 export function bit_array_slice(bits, position, length) {
   const start = Math.min(position, position + length);
   const end = Math.max(position, position + length);
-  if (start < 0 || end > bits.length) return new Error(Nil);
+
+  if (start < 0 || end * 8 > bit_array_bit_size(bits)) {
+    return new Error(Nil);
+  }
+
   const byteOffset = bits.buffer.byteOffset + start;
+
   const buffer = new Uint8Array(
     bits.buffer.buffer,
     byteOffset,
     Math.abs(length),
   );
+
   return new Ok(new BitArray(buffer));
 }
 
@@ -979,38 +1030,104 @@ export function base16_decode(string) {
 }
 
 export function bit_array_inspect(bits, acc) {
-  return `${acc}${[...bits.buffer].join(", ")}`;
+  const bitSize = bit_array_bit_size(bits);
+
+  if (bitSize % 8 === 0) {
+    return `${acc}${[...bits.buffer].join(", ")}`;
+  }
+
+  for (let i = 0; i < bits.length - 1; i++) {
+    acc += bits.buffer[i].toString();
+    acc += ", ";
+  }
+
+  const trailingBitsCount = bitSize % 8;
+  acc += bits.buffer[bits.length - 1] >> (8 - trailingBitsCount);
+  acc += `:size(${trailingBitsCount})`;
+
+  return acc;
 }
 
 export function bit_array_compare(first, second) {
-  for (let i = 0; i < first.length; i++) {
-    if (i >= second.length) {
-      return new Gt(); // first has more items
-    }
+  let i = 0;
+
+  let firstSize = bit_array_bit_size(first);
+  let secondSize = bit_array_bit_size(second);
+
+  while (firstSize >= 8 && secondSize >= 8) {
     const f = first.buffer[i];
     const s = second.buffer[i];
+
     if (f > s) {
       return new Gt();
-    }
-    if (f < s) {
+    } else if (f < s) {
       return new Lt();
     }
+
+    i++;
+    firstSize -= 8;
+    secondSize -= 8;
   }
-  // This means that either first did not have any items
-  // or all items in first were equal to second.
-  if (first.length === second.length) {
+
+  if (firstSize === 0 && secondSize === 0) {
     return new Eq();
   }
-  return new Lt(); // second has more items
+
+  // First has more items, example: "AB" > "A":
+  if (secondSize === 0) {
+    return new Gt();
+  }
+
+  // Second has more items, example: "A" < "AB":
+  if (firstSize === 0) {
+    return new Lt();
+  }
+
+  // This happens when there are unaligned bit arrays
+
+  const f = first.buffer[i] >> (8 - firstSize);
+  const s = second.buffer[i] >> (8 - secondSize);
+
+  if (f > s) {
+    return new Gt();
+  }
+  if (f < s) {
+    return new Lt();
+  }
+  if (firstSize > secondSize) {
+    return new Gt();
+  }
+  if (firstSize < secondSize) {
+    return new Lt();
+  }
+
+  return new Eq();
 }
 
 export function bit_array_starts_with(bits, prefix) {
-  if (prefix.length > bits.length) {
+  const prefixSize = bit_array_bit_size(prefix);
+
+  if (prefixSize > bit_array_bit_size(bits)) {
     return false;
   }
 
-  for (let i = 0; i < prefix.length; i++) {
+  const isPrefixAligned = prefixSize % 8 === 0;
+
+  // Check any whole bytes
+  const byteCount = isPrefixAligned ? prefix.length : prefix.length - 1;
+  for (let i = 0; i < byteCount; i++) {
     if (bits.buffer[i] !== prefix.buffer[i]) {
+      return false;
+    }
+  }
+
+  // Check any trailing bits at the end of the prefix
+  if (!isPrefixAligned) {
+    const unusedBitsCount = 8 - (prefixSize % 8);
+    if (
+      bits.buffer[prefix.length - 1] >> unusedBitsCount !==
+      prefix.buffer[prefix.length - 1] >> unusedBitsCount
+    ) {
       return false;
     }
   }
