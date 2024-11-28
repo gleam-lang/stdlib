@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.45.0 - 2024-11-28
 
 - The performance of `string.trim`, `string.trim_start`, and `string.trim_end`
   has been improved on JavaScript.
