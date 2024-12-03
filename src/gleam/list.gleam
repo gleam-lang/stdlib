@@ -331,6 +331,38 @@ fn filter_loop(list: List(a), fun: fn(a) -> Bool, acc: List(a)) -> List(a) {
 }
 
 /// Returns a new list containing only the elements from the first list for
+/// which the given function returns `False`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// filter_not([2, 4, 6, 1], fn(x) { x > 2 })
+/// // -> [2, 1]
+/// ```
+///
+/// ```gleam
+/// filter_not([2, 4, 6, 1], fn(x) { x < 6 })
+/// // -> [6]
+/// ```
+///
+pub fn filter_not(list: List(a), excluding predicate: fn(a) -> Bool) -> List(a) {
+  filter_not_loop(list, predicate, [])
+}
+
+fn filter_not_loop(list: List(a), fun: fn(a) -> Bool, acc: List(a)) -> List(a) {
+  case list {
+    [] -> reverse(acc)
+    [first, ..rest] -> {
+      let new_acc = case fun(first) {
+        False -> [first, ..acc]
+        True -> acc
+      }
+      filter_not_loop(rest, fun, new_acc)
+    }
+  }
+}
+
+/// Returns a new list containing only the elements from the first list for
 /// which the given functions returns `Ok(_)`.
 ///
 /// ## Examples
