@@ -24,6 +24,24 @@ pub fn is_empty(str: String) -> Bool {
   str == ""
 }
 
+/// Determines if a `String` is not empty.
+///
+/// ## Examples
+///
+/// ```gleam
+/// non_empty("")
+/// // -> False
+/// ```
+///
+/// ```gleam
+/// non_empty("the world")
+/// // -> True
+/// ```
+///
+pub fn non_empty(str: String) -> Bool {
+  str != ""
+}
+
 /// Gets the number of grapheme clusters in a given `String`.
 ///
 /// This function has to iterate across the whole string to count the number of

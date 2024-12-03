@@ -7,6 +7,20 @@ import gleam/result
 import gleam/should
 import gleam/string
 
+pub fn non_empty_test() {
+  string.non_empty("Gleam")
+  |> should.equal(True)
+
+  string.non_empty("ß↑e̊")
+  |> should.equal(True)
+
+  string.non_empty("👶🏿")
+  |> should.equal(True)
+
+  string.non_empty("")
+  |> should.equal(False)
+}
+
 pub fn length_test() {
   string.length("ß↑e̊")
   |> should.equal(3)
