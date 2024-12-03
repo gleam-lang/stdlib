@@ -5,6 +5,8 @@
 - Comparing two `Dict`s of equal size has been optimised on the JavaScript
   target.
 
+- Improved the performance of `drop_start`.
+
 ## v0.45.0 - 2024-11-28
 
 - The performance of `string.trim`, `string.trim_start`, and `string.trim_end`
