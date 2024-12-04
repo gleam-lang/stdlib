@@ -135,12 +135,12 @@ pub fn reverse(tree: StringTree) -> StringTree {
 @external(javascript, "../gleam_stdlib.mjs", "graphemes")
 fn do_to_graphemes(string: String) -> List(String)
 
-/// Splits a `StringTree` on a given pattern into a list of trees.
-///
 type Direction {
   All
 }
 
+/// Splits a `StringTree` on a given pattern into a list of trees.
+///
 @external(javascript, "../gleam_stdlib.mjs", "split")
 pub fn split(tree: StringTree, on pattern: String) -> List(StringTree) {
   erl_split(tree, pattern, All)
