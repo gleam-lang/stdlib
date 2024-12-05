@@ -5,7 +5,7 @@
 - Comparing two `Dict`s of equal size has been optimised on the JavaScript
   target.
 
-- Improved the performance of `drop_start`.
+- Improved the performance of `string.drop_start`.
 
 - Improved the performance of `list.strict_zip`.
 
