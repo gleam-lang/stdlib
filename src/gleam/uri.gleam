@@ -259,7 +259,7 @@ fn parse_host_within_brackets_loop(
       // Inside `[...]` there can only be some characters, if we find a special
       // one then we know that we're actually parsing the other format for the
       // host and we switch to that!
-      case is_valid_host_withing_brackets_char(char) {
+      case is_valid_host_within_brackets_char(char) {
         True ->
           parse_host_within_brackets_loop(original, rest, pieces, size + 1)
 
@@ -270,7 +270,7 @@ fn parse_host_within_brackets_loop(
   }
 }
 
-fn is_valid_host_withing_brackets_char(char: Int) -> Bool {
+fn is_valid_host_within_brackets_char(char: Int) -> Bool {
   // [0-9]
   { 48 >= char && char <= 57 }
   // [A-Z]
