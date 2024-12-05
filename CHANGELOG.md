@@ -2,11 +2,9 @@
 
 ## Unreleased
 
-- Comparing two `Dict`s of equal size has been optimised on the JavaScript
-  target.
-
+- Improved the performance of comparing two `Dict`s of equal size on the
+  JavaScript target.
 - Improved the performance of `string.drop_start`.
-
 - Improved the performance of `list.strict_zip`.
 
 ## v0.45.0 - 2024-11-28

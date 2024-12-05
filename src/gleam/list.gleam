@@ -1096,7 +1096,7 @@ fn strict_zip_loop(
   acc: List(#(a, b)),
 ) -> Result(List(#(a, b)), Nil) {
   case one, other {
-    [], [] -> Ok(acc |> reverse)
+    [], [] -> Ok(reverse(acc))
     [], _ | _, [] -> Error(Nil)
     [first_one, ..rest_one], [first_other, ..rest_other] ->
       strict_zip_loop(rest_one, rest_other, [#(first_one, first_other), ..acc])
