@@ -7,6 +7,8 @@
 
 - Improved the performance of `drop_start`.
 
+- Improved the performance of `list.strict_zip`.
+
 ## v0.45.0 - 2024-11-28
 
 - The performance of `string.trim`, `string.trim_start`, and `string.trim_end`
