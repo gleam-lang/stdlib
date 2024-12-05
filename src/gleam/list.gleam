@@ -1087,9 +1087,19 @@ pub fn strict_zip(
   list: List(a),
   with other: List(b),
 ) -> Result(List(#(a, b)), Nil) {
-  case length(of: list) == length(of: other) {
-    True -> Ok(zip(list, other))
-    False -> Error(Nil)
+  strict_zip_loop(list, other, [])
+}
+
+fn strict_zip_loop(
+  one: List(a),
+  other: List(b),
+  acc: List(#(a, b)),
+) -> Result(List(#(a, b)), Nil) {
+  case one, other {
+    [], [] -> Ok(acc |> reverse)
+    [], _ | _, [] -> Error(Nil)
+    [first_one, ..rest_one], [first_other, ..rest_other] ->
+      strict_zip_loop(rest_one, rest_other, [#(first_one, first_other), ..acc])
   }
 }
 
