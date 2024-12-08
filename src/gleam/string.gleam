@@ -608,9 +608,8 @@ fn padding(size: Int, pad_string: String) -> String {
 /// // -> "hats"
 /// ```
 ///
-@external(javascript, "../gleam_stdlib.mjs", "trim")
 pub fn trim(string: String) -> String {
-  erl_trim(string, Both)
+  string |> trim_start |> trim_end
 }
 
 @external(erlang, "string", "trim")
@@ -619,7 +618,6 @@ fn erl_trim(a: String, b: Direction) -> String
 type Direction {
   Leading
   Trailing
-  Both
 }
 
 /// Removes whitespace on the left of a `String`.

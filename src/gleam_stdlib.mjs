@@ -307,13 +307,6 @@ const unicode_whitespaces = [
 
 const trim_start_regex = new RegExp(`^[${unicode_whitespaces}]*`);
 const trim_end_regex = new RegExp(`[${unicode_whitespaces}]*$`);
-const trim_regex = new RegExp(
-  `^[${unicode_whitespaces}]*(.*?)[${unicode_whitespaces}]*$`,
-);
-
-export function trim(string) {
-  return string.match(trim_regex)[1];
-}
 
 export function trim_start(string) {
   return string.replace(trim_start_regex, "");

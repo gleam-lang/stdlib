@@ -167,6 +167,18 @@ pub fn trim_test() {
   |> should.equal("hats")
 }
 
+pub fn trim2_test() {
+  "k\r1=v2"
+  |> string.trim
+  |> should.equal("k\r1=v2")
+}
+
+pub fn trim3_test() {
+  "  \nhello\nworld\n  "
+  |> string.trim
+  |> should.equal("hello\nworld")
+}
+
 pub fn trim_start_test() {
   "  hats  \n"
   |> string.trim_start

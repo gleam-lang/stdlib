@@ -6,6 +6,8 @@
   JavaScript target.
 - Improved the performance of `string.drop_start`.
 - Improved the performance of `list.strict_zip`.
+- Fixed a bug where `string.trim` could fail on JavaScript.
+- Fixed a bug where `string.trim` wouldn't trim multi-line string on JavaScript.
 
 ## v0.45.0 - 2024-11-28
 
