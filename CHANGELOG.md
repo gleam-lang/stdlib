@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.46.0 - 2024-12-08
 
 - Improved the performance of comparing two `Dict`s of equal size on the
   JavaScript target.
