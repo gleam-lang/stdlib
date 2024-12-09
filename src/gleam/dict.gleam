@@ -490,7 +490,7 @@ pub fn update(
   update key: k,
   with fun: fn(Option(v)) -> Option(v),
 ) -> Dict(k, v) {
-  case do_get(dict, key) {
+  case get(dict, key) {
     Ok(existing_value) ->
       case fun(Some(existing_value)) {
         Some(value) -> do_insert(key, value, dict)
