@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- The dict module gains a new `update` function.
+
 ## v0.46.0 - 2024-12-08
 
 - Improved the performance of comparing two `Dict`s of equal size on the

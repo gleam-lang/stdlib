@@ -1,4 +1,4 @@
-import gleam/option.{type Option}
+import gleam/option.{type Option, None, Some}
 
 /// A dictionary of keys and values.
 ///
@@ -448,6 +448,61 @@ pub fn upsert(
   |> option.from_result
   |> fun
   |> insert(dict, key, _)
+}
+
+/// Changes the key-value pair in a dict using a given function; in case:
+///
+/// 1. the `update` key is present in the dict, then the value passed to
+///    function `with` is `Some(value)`; then:
+///    1. if `fun` returns `Some(value)`, then the `update` key is newly
+///      associated with to the value of `value` of `Some(value)`.
+///    2. else the `update` key and its associated value are removed from the
+///      dict.
+/// 2. the `update` key is not present in the dict, then the `value` passed to
+///    function `with` is `None`; then:
+///    1. if `fun` returns `Some(value)`, then the `update key` is added to the
+///      dict associated with the `value` of `Some(value)`.
+///    2. else the `update key` is not added to the map.
+///
+/// ## Example
+///
+/// ```gleam
+/// let dict = dict.from_list([#("a", 0), #("b", 1), #("c", 2)])
+///
+/// let inc_if_exists_or_discard = fn(x) {
+///   case x {
+///     Some(i) -> Some(i + 1)
+///     None -> None
+///   }
+/// }
+///
+/// dict
+/// |> dict.update("a", inc_if_exists_or_discard)
+/// // -> from_list([#("a", 1), #("b", 1), #("c", 2)])
+///
+/// dict
+/// |> dict.update("e", inc_if_exists_or_discard)
+/// // -> from_list([#("a", 0), #("b", 1), #("c", 2)])
+/// ```
+///
+pub fn update(
+  in dict: Dict(k, v),
+  update key: k,
+  with fun: fn(Option(v)) -> Option(v),
+) -> Dict(k, v) {
+  case do_get(dict, key) {
+    Ok(existing_value) ->
+      case fun(Some(existing_value)) {
+        Some(value) -> do_insert(key, value, dict)
+        None -> do_delete(key, dict)
+      }
+    Error(_) -> {
+      case fun(None) {
+        Some(value) -> do_insert(key, value, dict)
+        None -> dict
+      }
+    }
+  }
 }
 
 /// Combines all entries into a single value by calling a given function on each

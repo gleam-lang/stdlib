@@ -207,6 +207,70 @@ pub fn upsert_test() {
   |> should.equal(dict.from_list([#("a", 0), #("b", 1), #("c", 2), #("z", 0)]))
 }
 
+pub fn update_test() {
+  let dict = dict.from_list([#("a", 0), #("b", 1), #("c", 2)])
+
+  let inc_or_zero = fn(x) {
+    case x {
+      Some(i) -> Some(i + 1)
+      None -> Some(0)
+    }
+  }
+
+  dict
+  |> dict.update("a", inc_or_zero)
+  |> should.equal(dict.from_list([#("a", 1), #("b", 1), #("c", 2)]))
+
+  dict
+  |> dict.update("e", inc_or_zero)
+  |> should.equal(dict.from_list([#("a", 0), #("b", 1), #("c", 2), #("e", 0)]))
+
+  let discard_existing_or_noop = fn(x) {
+    case x {
+      Some(_i) -> None
+      None -> None
+    }
+  }
+
+  dict
+  |> dict.update("a", discard_existing_or_noop)
+  |> should.equal(dict.from_list([#("b", 1), #("c", 2)]))
+
+  dict
+  |> dict.update("e", discard_existing_or_noop)
+  |> should.equal(dict.from_list([#("a", 0), #("b", 1), #("c", 2)]))
+
+  let inc_existing_or_noop = fn(x) {
+    case x {
+      Some(i) -> Some(i + 1)
+      None -> None
+    }
+  }
+
+  dict
+  |> dict.update("a", inc_existing_or_noop)
+  |> should.equal(dict.from_list([#("a", 1), #("b", 1), #("c", 2)]))
+
+  dict
+  |> dict.update("e", inc_existing_or_noop)
+  |> should.equal(dict.from_list([#("a", 0), #("b", 1), #("c", 2)]))
+
+  let discard_existing_or_zero = fn(x) {
+    case x {
+      Some(_i) -> None
+      None -> Some(0)
+    }
+  }
+
+  dict
+  |> dict.update("a", discard_existing_or_zero)
+  |> should.equal(dict.from_list([#("b", 1), #("c", 2)]))
+
+  dict
+  |> dict.update("e", discard_existing_or_zero)
+  |> should.equal(dict.from_list([#("a", 0), #("b", 1), #("c", 2), #("e", 0)]))
+}
+
 pub fn fold_test() {
   let dict = dict.from_list([#("a", 0), #("b", 1), #("c", 2), #("d", 3)])
 
