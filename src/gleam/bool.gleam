@@ -192,17 +192,7 @@ pub fn exclusive_nor(a: Bool, b: Bool) -> Bool {
   a == b
 }
 
-/// Compares two bools and returns the first value's `Order` to the second.
-///
-/// ## Examples
-///
-/// ```gleam
-/// import gleam/order
-///
-/// compare(True, False)
-/// // -> order.Gt
-/// ```
-///
+@deprecated("Please use a case expression to get the behaviour you desire")
 pub fn compare(a: Bool, with b: Bool) -> Order {
   case a, b {
     True, True -> order.Eq
@@ -212,20 +202,7 @@ pub fn compare(a: Bool, with b: Bool) -> Order {
   }
 }
 
-/// Returns a numeric representation of the given bool.
-///
-/// ## Examples
-///
-/// ```gleam
-/// to_int(True)
-/// // -> 1
-/// ```
-///
-/// ```gleam
-/// to_int(False)
-/// // -> 0
-/// ```
-///
+@deprecated("Please use a case expression to get the behaviour you desire")
 pub fn to_int(bool: Bool) -> Int {
   case bool {
     False -> 0
