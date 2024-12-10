@@ -1,5 +1,5 @@
 import gleam/dict
-import gleam/dynamic.{DecodeError}
+import gleam/dynamic.{type Dynamic, DecodeError}
 import gleam/dynamic/decode
 import gleam/float
 import gleam/int
@@ -902,4 +902,28 @@ pub fn optionally_at_no_path_error_test() {
   ))
   |> should.be_ok
   |> should.equal(100)
+}
+
+@external(erlang, "maps", "from_list")
+@external(javascript, "../../gleam_stdlib_test_ffi.mjs", "object")
+fn make_object(items: List(#(String, t))) -> Dynamic
+
+@external(erlang, "maps", "from_list")
+@external(javascript, "../../gleam_stdlib_test_ffi.mjs", "map")
+fn make_map(items: List(#(String, t))) -> Dynamic
+
+pub fn js_object_test() {
+  [#("a", 10), #("b", 20), #("c", 30)]
+  |> make_object
+  |> decode.run(decode.dict(decode.string, decode.int))
+  |> should.be_ok
+  |> should.equal(dict.from_list([#("a", 10), #("b", 20), #("c", 30)]))
+}
+
+pub fn js_map_test() {
+  [#("a", 10), #("b", 20), #("c", 30)]
+  |> make_map
+  |> decode.run(decode.dict(decode.string, decode.int))
+  |> should.be_ok
+  |> should.equal(dict.from_list([#("a", 10), #("b", 20), #("c", 30)]))
 }
