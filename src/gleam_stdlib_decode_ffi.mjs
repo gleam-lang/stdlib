@@ -64,5 +64,18 @@ export function dict(data) {
   if (data instanceof Dict) {
     return new Ok(data);
   }
-  return new Error();
+  if (data instanceof Map || data instanceof WeakMap) {
+    return new Ok(Dict.fromMap(data));
+  }
+  if (data == null) {
+    return new Error("Dict");
+  }
+  if (typeof data !== "object") {
+    return new Error("Dict");
+  }
+  const proto = Object.getPrototypeOf(data);
+  if (proto === Object.prototype || proto === null) {
+    return new Ok(Dict.fromObject(data));
+  }
+  return new Error("Dict");
 }
