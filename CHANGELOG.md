@@ -2,7 +2,7 @@
 
 ## v0.47.0 - 2024-12-10
 
-- The `compare` and `to_string` functions from the `gleam/bool` module have been
+- The `compare` and `to_int` functions from the `gleam/bool` module have been
   deprecated.
 
 ## v0.46.0 - 2024-12-08
