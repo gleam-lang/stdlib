@@ -89,6 +89,8 @@ pub fn println_error(string: String) -> Nil
 /// // [2, 3]
 /// ```
 ///
+/// Note: At runtime Gleam doesn't have type information and uses runtime reflection to print the values. This can result in some values being shown in an unexpected way.
+///
 pub fn debug(term: anything) -> anything {
   term
   |> string.inspect
