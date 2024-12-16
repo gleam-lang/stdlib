@@ -902,11 +902,11 @@ pub fn then(decoder: Decoder(a), next: fn(a) -> Decoder(b)) -> Decoder(b) {
 /// # Examples
 ///
 /// ```gleam
-/// decode.one_of(decode.string, or: [
+/// let decoder = decode.one_of(decode.string, or: [
 ///   decode.int |> decode.map(int.to_string),
 ///   decode.float |> decode.map(float.to_string),
 /// ])
-/// |> decode.run(dynamic.from(1000))
+/// decode.run(dynamic.from(1000), decoder)
 /// // -> Ok("1000")
 /// ```
 ///
