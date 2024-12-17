@@ -1,10 +1,12 @@
 # Changelog
 
+## v0.48.0 - 2024-12-17
+- Fixed a bug where `string.utf_codepoint` would erronously accept negative input.
+
 ## v0.47.0 - 2024-12-10
 
 - The `compare` and `to_int` functions from the `gleam/bool` module have been
   deprecated.
-- Fixed a bug where `string.utf_codepoint` would erronously accept negative input.
 
 ## v0.46.0 - 2024-12-08
 
