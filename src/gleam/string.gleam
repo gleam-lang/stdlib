@@ -942,3 +942,84 @@ fn do_inspect(term: anything) -> StringTree
 @external(erlang, "erlang", "byte_size")
 @external(javascript, "../gleam_stdlib.mjs", "byte_size")
 pub fn byte_size(string: String) -> Int
+
+/// Returns a `Result(String, Nil)` of the given string without the given prefix. 
+/// If the string does not start with the given prefix, the function returns `Error(Nil)`
+/// 
+/// If an empty prefix is given, the result is always `Ok` containing the whole string.
+/// If an empty string is given with a non empty prefix, then the result is always `Error(Nil)`
+/// 
+/// ## Examples
+/// 
+/// ```gleam
+/// strip_prefix("https://gleam.run", "https://")
+/// // -> Ok("gleam.run")
+/// 
+/// strip_prefix("https://gleam.run", "")
+/// // -> Ok("https://gleam.run")
+/// 
+/// strip_prefix("", "")
+/// // -> Ok("")
+/// 
+/// strip_prefix("https://gleam.run", "Lucy")
+/// // -> Error(Nil)
+/// 
+/// strip_prefix("", "Lucy")
+/// // -> Error(Nil)
+/// ```
+pub fn strip_prefix(
+  string: String,
+  prefix prefix: String,
+) -> Result(String, Nil) {
+  case prefix {
+    "" -> Ok(string)
+    prefix -> {
+      let prefix_len = length(prefix)
+      case starts_with(string, prefix) {
+        False -> Error(Nil)
+        True -> Ok(drop_start(string, prefix_len))
+      }
+    }
+  }
+}
+
+/// Returns a `Result(String, Nil)` of the given string without the given suffix. 
+/// If the string does not end with the given suffix, the function returns `Error(Nil)`
+/// 
+/// If an empty suffix is given, the result is always `Ok` containing the whole string.
+/// If an empty string is given with a non empty suffix, then the result is always `Error(Nil)`
+/// 
+/// ## Examples
+/// 
+/// ```gleam
+/// strip_suffix("lucy@gleam.run", "@gleam.run")
+/// // -> Ok("lucy")
+/// 
+/// strip_suffix("lucy@gleam.run", "")
+/// // -> Ok("lucy@gleam.run")
+/// 
+/// strip_suffix("", "")
+/// // -> Ok("")
+/// 
+/// strip_suffix("lucy@gleam.run", "Lucy")
+/// // -> Error(Nil)
+/// 
+/// strip_suffix("", "Lucy")
+/// // -> Error(Nil)
+/// ```
+pub fn strip_suffix(
+  string: String,
+  suffix suffix: String,
+) -> Result(String, Nil) {
+  case suffix {
+    "" -> Ok(string)
+    suffix -> {
+      let suffix_len = length(suffix)
+
+      case ends_with(string, suffix) {
+        False -> Error(Nil)
+        True -> Ok(drop_end(string, suffix_len))
+      }
+    }
+  }
+}

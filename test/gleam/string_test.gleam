@@ -1392,3 +1392,21 @@ pub fn inspect_map_test() {
   |> string.inspect
   |> should.equal("dict.from_list([#(\"a\", 1), #(\"b\", 2)])")
 }
+
+pub fn strip_prefix_test() {
+  let assert Ok("gleam.run") =
+    string.strip_prefix("https://gleam.run", "https://")
+  let assert Ok("https://gleam.run") =
+    string.strip_prefix("https://gleam.run", "")
+  let assert Ok("") = string.strip_prefix("", "")
+  let assert Error(Nil) = string.strip_prefix("https://gleam.run", "Lucy")
+  let assert Error(Nil) = string.strip_prefix("", "Lucy")
+}
+
+pub fn strip_suffix_test() {
+  let assert Ok("lucy") = string.strip_suffix("lucy@gleam.run", "@gleam.run")
+  let assert Ok("lucy@gleam.run") = string.strip_suffix("lucy@gleam.run", "")
+  let assert Ok("") = string.strip_suffix("", "")
+  let assert Error(Nil) = string.strip_suffix("lucy@gleam.run", "Lucy")
+  let assert Error(Nil) = string.strip_suffix("", "Lucy")
+}
