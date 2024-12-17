@@ -706,6 +706,9 @@ pub fn utf_codepoint_test() {
 
   string.utf_codepoint(55_296)
   |> should.be_error
+
+  string.utf_codepoint(-1)
+  |> should.be_error
 }
 
 pub fn bit_array_utf_codepoint_test() {
