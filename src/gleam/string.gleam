@@ -967,21 +967,27 @@ pub fn byte_size(string: String) -> Int
 /// strip_prefix("", "Lucy")
 /// // -> Error(Nil)
 /// ```
+// pub fn strip_prefix(
+//   string: String,
+//   prefix prefix: String,
+// ) -> Result(String, Nil) {
+//   case prefix {
+//     "" -> Ok(string)
+//     prefix -> {
+//       let prefix_len = length(prefix)
+//       case starts_with(string, prefix) {
+//         False -> Error(Nil)
+//         True -> Ok(drop_start(string, prefix_len))
+//       }
+//     }
+//   }
+// }
+@external(erlang, "gleam_stdlib", "string_strip_prefix")
+@external(javascript, "../gleam_stdlib.mjs", "string_strip_prefix")
 pub fn strip_prefix(
   string: String,
   prefix prefix: String,
-) -> Result(String, Nil) {
-  case prefix {
-    "" -> Ok(string)
-    prefix -> {
-      let prefix_len = length(prefix)
-      case starts_with(string, prefix) {
-        False -> Error(Nil)
-        True -> Ok(drop_start(string, prefix_len))
-      }
-    }
-  }
-}
+) -> Result(String, Nil)
 
 /// Returns a `Result(String, Nil)` of the given string without the given suffix. 
 /// If the string does not end with the given suffix, the function returns `Error(Nil)`
@@ -1007,19 +1013,9 @@ pub fn strip_prefix(
 /// strip_suffix("", "Lucy")
 /// // -> Error(Nil)
 /// ```
+@external(erlang, "gleam_stdlib", "string_strip_suffix")
+@external(javascript, "../gleam_stdlib.mjs", "string_strip_suffix")
 pub fn strip_suffix(
   string: String,
   suffix suffix: String,
-) -> Result(String, Nil) {
-  case suffix {
-    "" -> Ok(string)
-    suffix -> {
-      let suffix_len = length(suffix)
-
-      case ends_with(string, suffix) {
-        False -> Error(Nil)
-        True -> Ok(drop_end(string, suffix_len))
-      }
-    }
-  }
-}
+) -> Result(String, Nil)

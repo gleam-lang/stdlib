@@ -1,35 +1,85 @@
 -module(gleam_stdlib).
 
 -export([
-    map_get/2, iodata_append/2, identity/1, decode_int/1, decode_bool/1,
-    decode_float/1, decode_list/1, decode_option/2, decode_field/2, parse_int/1,
-    parse_float/1, less_than/2, string_pop_grapheme/1, string_pop_codeunit/1,
-    string_starts_with/2, wrap_list/1, string_ends_with/2, string_pad/4,
-    decode_map/1, uri_parse/1,
-    decode_result/1, bit_array_slice/3, decode_bit_array/1, compile_regex/2,
-    regex_scan/2, percent_encode/1, percent_decode/1, regex_check/2,
-    regex_split/2, base_decode64/1, parse_query/1, bit_array_concat/1,
-    bit_array_base64_encode/2, size_of_tuple/1, decode_tuple/1, decode_tuple2/1,
-    decode_tuple3/1, decode_tuple4/1, decode_tuple5/1, decode_tuple6/1,
-    tuple_get/2, classify_dynamic/1, print/1, println/1, print_error/1,
-    println_error/1, inspect/1, float_to_string/1, int_from_base_string/2,
-    utf_codepoint_list_to_string/1, contains_string/2, crop_string/2,
-    base16_encode/1, base16_decode/1, string_replace/3, regex_replace/3,
-    slice/3, bit_array_to_int_and_size/1, bit_array_pad_to_bytes/1
+    map_get/2,
+    iodata_append/2,
+    identity/1,
+    decode_int/1,
+    decode_bool/1,
+    decode_float/1,
+    decode_list/1,
+    decode_option/2,
+    decode_field/2,
+    parse_int/1,
+    parse_float/1,
+    less_than/2,
+    string_pop_grapheme/1,
+    string_pop_codeunit/1,
+    string_starts_with/2,
+    wrap_list/1,
+    string_ends_with/2,
+    string_pad/4,
+    decode_map/1,
+    uri_parse/1,
+    decode_result/1,
+    bit_array_slice/3,
+    decode_bit_array/1,
+    compile_regex/2,
+    regex_scan/2,
+    percent_encode/1,
+    percent_decode/1,
+    regex_check/2,
+    regex_split/2,
+    base_decode64/1,
+    parse_query/1,
+    bit_array_concat/1,
+    bit_array_base64_encode/2,
+    size_of_tuple/1,
+    decode_tuple/1,
+    decode_tuple2/1,
+    decode_tuple3/1,
+    decode_tuple4/1,
+    decode_tuple5/1,
+    decode_tuple6/1,
+    tuple_get/2,
+    classify_dynamic/1,
+    print/1,
+    println/1,
+    print_error/1,
+    println_error/1,
+    inspect/1,
+    float_to_string/1,
+    int_from_base_string/2,
+    utf_codepoint_list_to_string/1,
+    contains_string/2,
+    crop_string/2,
+    base16_encode/1,
+    base16_decode/1,
+    string_replace/3,
+    regex_replace/3,
+    slice/3,
+    bit_array_to_int_and_size/1,
+    bit_array_pad_to_bytes/1,
+    string_strip_prefix/2,
+    string_strip_suffix/2
 ]).
 
 %% Taken from OTP's uri_string module
 -define(DEC2HEX(X),
-    if ((X) >= 0) andalso ((X) =< 9) -> (X) + $0;
+    if
+        ((X) >= 0) andalso ((X) =< 9) -> (X) + $0;
         ((X) >= 10) andalso ((X) =< 15) -> (X) + $A - 10
-    end).
+    end
+).
 
 %% Taken from OTP's uri_string module
 -define(HEX2DEC(X),
-    if ((X) >= $0) andalso ((X) =< $9) -> (X) - $0;
+    if
+        ((X) >= $0) andalso ((X) =< $9) -> (X) - $0;
         ((X) >= $A) andalso ((X) =< $F) -> (X) - $A + 10;
         ((X) >= $a) andalso ((X) =< $f) -> (X) - $a + 10
-    end).
+    end
+).
 
 -define(is_lowercase_char(X), (X > 96 andalso X < 123)).
 -define(is_underscore_char(X), (X == 95)).
@@ -52,7 +102,8 @@ decode_error_msg(Expected, Data) when is_binary(Expected) ->
 decode_error(Expected, Got) when is_binary(Expected) andalso is_binary(Got) ->
     {error, [{decode_error, Expected, Got, []}]}.
 
-classify_dynamic(nil) -> <<"Nil">>;
+classify_dynamic(nil) ->
+    <<"Nil">>;
 classify_dynamic(X) when is_boolean(X) -> <<"Bool">>;
 classify_dynamic(X) when is_atom(X) -> <<"Atom">>;
 classify_dynamic(X) when is_binary(X) -> <<"String">>;
@@ -65,11 +116,14 @@ classify_dynamic(X) when is_tuple(X) ->
     iolist_to_binary(["Tuple of ", integer_to_list(tuple_size(X)), " elements"]);
 classify_dynamic(X) when
     is_function(X, 0) orelse is_function(X, 1) orelse is_function(X, 2) orelse
-    is_function(X, 3) orelse is_function(X, 4) orelse is_function(X, 5) orelse
-    is_function(X, 6) orelse is_function(X, 7) orelse is_function(X, 8) orelse
-    is_function(X, 9) orelse is_function(X, 10) orelse is_function(X, 11) orelse
-    is_function(X, 12) -> <<"Function">>;
-classify_dynamic(_) -> <<"Some other type">>.
+        is_function(X, 3) orelse is_function(X, 4) orelse is_function(X, 5) orelse
+        is_function(X, 6) orelse is_function(X, 7) orelse is_function(X, 8) orelse
+        is_function(X, 9) orelse is_function(X, 10) orelse is_function(X, 11) orelse
+        is_function(X, 12)
+->
+    <<"Function">>;
+classify_dynamic(_) ->
+    <<"Some other type">>.
 
 decode_map(Data) when is_map(Data) -> {ok, Data};
 decode_map(Data) -> decode_error_msg(<<"Dict">>, Data).
@@ -92,8 +146,7 @@ decode_list(Data) -> decode_error_msg(<<"List">>, Data).
 decode_field(Data, Key) when is_map(Data) ->
     case Data of
         #{Key := Value} -> {ok, {some, Value}};
-        _ ->
-            {ok, none}
+        _ -> {ok, none}
     end;
 decode_field(Data, _) ->
     decode_error_msg(<<"Dict">>, Data).
@@ -107,24 +160,24 @@ tuple_get(Data, Index) -> {ok, element(Index + 1, Data)}.
 decode_tuple(Data) when is_tuple(Data) -> {ok, Data};
 decode_tuple(Data) -> decode_error_msg(<<"Tuple">>, Data).
 
-decode_tuple2({_,_} = A) -> {ok, A};
-decode_tuple2([A,B]) -> {ok, {A,B}};
+decode_tuple2({_, _} = A) -> {ok, A};
+decode_tuple2([A, B]) -> {ok, {A, B}};
 decode_tuple2(Data) -> decode_error_msg(<<"Tuple of 2 elements">>, Data).
 
-decode_tuple3({_,_,_} = A) -> {ok, A};
-decode_tuple3([A,B,C]) -> {ok, {A,B,C}};
+decode_tuple3({_, _, _} = A) -> {ok, A};
+decode_tuple3([A, B, C]) -> {ok, {A, B, C}};
 decode_tuple3(Data) -> decode_error_msg(<<"Tuple of 3 elements">>, Data).
 
-decode_tuple4({_,_,_,_} = A) -> {ok, A};
-decode_tuple4([A,B,C,D]) -> {ok, {A,B,C,D}};
+decode_tuple4({_, _, _, _} = A) -> {ok, A};
+decode_tuple4([A, B, C, D]) -> {ok, {A, B, C, D}};
 decode_tuple4(Data) -> decode_error_msg(<<"Tuple of 4 elements">>, Data).
 
-decode_tuple5({_,_,_,_,_} = A) -> {ok, A};
-decode_tuple5([A,B,C,D,E]) -> {ok, {A,B,C,D,E}};
+decode_tuple5({_, _, _, _, _} = A) -> {ok, A};
+decode_tuple5([A, B, C, D, E]) -> {ok, {A, B, C, D, E}};
 decode_tuple5(Data) -> decode_error_msg(<<"Tuple of 5 elements">>, Data).
 
-decode_tuple6({_,_,_,_,_,_} = A) -> {ok, A};
-decode_tuple6([A,B,C,D,E,F]) -> {ok, {A,B,C,D,E,F}};
+decode_tuple6({_, _, _, _, _, _} = A) -> {ok, A};
+decode_tuple6([A, B, C, D, E, F]) -> {ok, {A, B, C, D, E, F}};
 decode_tuple6(Data) -> decode_error_msg(<<"Tuple of 6 elements">>, Data).
 
 decode_option(Term, F) ->
@@ -174,17 +227,47 @@ parse_float(String) ->
 less_than(Lhs, Rhs) ->
     Lhs < Rhs.
 
-string_starts_with(_, <<>>) -> true;
+string_starts_with(_, <<>>) ->
+    true;
 string_starts_with(String, Prefix) when byte_size(Prefix) > byte_size(String) -> false;
 string_starts_with(String, Prefix) ->
     PrefixSize = byte_size(Prefix),
     Prefix == binary_part(String, 0, PrefixSize).
 
-string_ends_with(_, <<>>) -> true;
+string_strip_prefix(String, <<>>) when is_binary(String) ->
+    {ok, String};
+string_strip_prefix(String, _) when is_binary(String), String == <<>> ->
+    {error, nil};
+string_strip_prefix(String, Prefix) when
+    is_binary(String), is_binary(Prefix), byte_size(Prefix) > byte_size(String)
+->
+    {error, nil};
+string_strip_prefix(String, Prefix) when is_binary(String), is_binary(Prefix) ->
+    PrefixSize = byte_size(Prefix),
+    case Prefix == binary_part(String, 0, PrefixSize) of
+        true -> {ok, binary_part(String, PrefixSize, byte_size(String) - PrefixSize)};
+        false -> {error, nil}
+    end.
+
+string_ends_with(_, <<>>) ->
+    true;
 string_ends_with(String, Suffix) when byte_size(Suffix) > byte_size(String) -> false;
 string_ends_with(String, Suffix) ->
     SuffixSize = byte_size(Suffix),
     Suffix == binary_part(String, byte_size(String) - SuffixSize, SuffixSize).
+
+string_strip_suffix(String, <<>>) when is_binary(String) -> {ok, String};
+string_strip_suffix(String, _) when is_binary(String), String == <<>> -> {error, nil};
+string_strip_suffix(String, Suffix) when
+    is_binary(String), is_binary(Suffix), byte_size(Suffix) > byte_size(String)
+->
+    {error, nil};
+string_strip_suffix(String, Suffix) when is_binary(String), is_binary(Suffix) ->
+    SuffixSize = byte_size(Suffix),
+    case Suffix == binary_part(String, byte_size(String) - SuffixSize, SuffixSize) of
+        true -> {ok, binary_part(String, 0, byte_size(String) - SuffixSize)};
+        false -> {error, nil}
+    end.
 
 string_pad(String, Length, Dir, PadString) ->
     Chars = string:pad(String, Length, Dir, binary_to_list(PadString)),
@@ -195,13 +278,12 @@ string_pad(String, Length, Dir, PadString) ->
 
 string_pop_grapheme(String) ->
     case string:next_grapheme(String) of
-        [ Next | Rest ] when is_binary(Rest) ->
+        [Next | Rest] when is_binary(Rest) ->
             {ok, {unicode:characters_to_binary([Next]), Rest}};
-
-        [ Next | Rest ]  ->
+        [Next | Rest] ->
             {ok, {unicode:characters_to_binary([Next]), unicode:characters_to_binary(Rest)}};
-
-        _ -> {error, nil}
+        _ ->
+            {error, nil}
     end.
 
 string_pop_codeunit(<<Cp/integer, Rest/binary>>) -> {Cp, Rest};
@@ -209,7 +291,8 @@ string_pop_codeunit(Binary) -> {0, Binary}.
 
 bit_array_pad_to_bytes(Bin) ->
     case erlang:bit_size(Bin) rem 8 of
-        0 -> Bin;
+        0 ->
+            Bin;
         TrailingBits ->
             PaddingBits = 8 - TrailingBits,
             <<Bin/bits, 0:PaddingBits>>
@@ -228,8 +311,10 @@ bit_array_base64_encode(_Bin, _Padding) ->
 -endif.
 
 bit_array_slice(Bin, Pos, Len) ->
-    try {ok, binary:part(Bin, Pos, Len)}
-    catch error:badarg -> {error, nil}
+    try
+        {ok, binary:part(Bin, Pos, Len)}
+    catch
+        error:badarg -> {error, nil}
     end.
 
 compile_regex(String, Options) ->
@@ -243,8 +328,7 @@ compile_regex(String, Options) ->
     FilteredOptions = [Option || Option <- OptionsList, Option /= false],
     case re:compile(String, FilteredOptions) of
         {ok, MP} -> {ok, MP};
-        {error, {Str, Pos}} ->
-            {error, {compile_error, unicode:characters_to_binary(Str), Pos}}
+        {error, {Str, Pos}} -> {error, {compile_error, unicode:characters_to_binary(Str), Pos}}
     end.
 
 regex_check(Regex, String) ->
@@ -253,7 +337,8 @@ regex_check(Regex, String) ->
 regex_split(Regex, String) ->
     re:split(String, Regex).
 
-regex_submatches(_, {-1, 0}) -> none;
+regex_submatches(_, {-1, 0}) ->
+    none;
 regex_submatches(String, {Start, Length}) ->
     BinarySlice = binary:part(String, {Start, Length}),
     case string:is_empty(binary_to_list(BinarySlice)) of
@@ -275,8 +360,10 @@ regex_replace(Regex, Subject, Replacement) ->
     re:replace(Subject, Regex, Replacement, [global, {return, binary}]).
 
 base_decode64(S) ->
-    try {ok, base64:decode(S)}
-    catch error:_ -> {error, nil}
+    try
+        {ok, base64:decode(S)}
+    catch
+        error:_ -> {error, nil}
     end.
 
 wrap_list(X) when is_list(X) -> X;
@@ -284,37 +371,41 @@ wrap_list(X) -> [X].
 
 parse_query(Query) ->
     case uri_string:dissect_query(Query) of
-        {error, _, _} -> {error, nil};
+        {error, _, _} ->
+            {error, nil};
         Pairs ->
-            Pairs1 = lists:map(fun
-                ({K, true}) -> {K, <<"">>};
-                (Pair) -> Pair
-            end, Pairs),
+            Pairs1 = lists:map(
+                fun
+                    ({K, true}) -> {K, <<"">>};
+                    (Pair) -> Pair
+                end,
+                Pairs
+            ),
             {ok, Pairs1}
     end.
 
 percent_encode(B) -> percent_encode(B, <<>>).
 percent_encode(<<>>, Acc) ->
     Acc;
-percent_encode(<<H,T/binary>>, Acc) ->
+percent_encode(<<H, T/binary>>, Acc) ->
     case percent_ok(H) of
         true ->
-            percent_encode(T, <<Acc/binary,H>>);
+            percent_encode(T, <<Acc/binary, H>>);
         false ->
-            <<A:4,B:4>> = <<H>>,
-            percent_encode(T, <<Acc/binary,$%,(?DEC2HEX(A)),(?DEC2HEX(B))>>)
+            <<A:4, B:4>> = <<H>>,
+            percent_encode(T, <<Acc/binary, $%, (?DEC2HEX(A)), (?DEC2HEX(B))>>)
     end.
 
 percent_decode(Cs) -> percent_decode(Cs, <<>>).
 percent_decode(<<$%, C0, C1, Cs/binary>>, Acc) ->
     case is_hex_digit(C0) andalso is_hex_digit(C1) of
         true ->
-            B = ?HEX2DEC(C0)*16+?HEX2DEC(C1),
+            B = ?HEX2DEC(C0) * 16 + ?HEX2DEC(C1),
             percent_decode(Cs, <<Acc/binary, B>>);
         false ->
             {error, nil}
     end;
-percent_decode(<<C,Cs/binary>>, Acc) ->
+percent_decode(<<C, Cs/binary>>, Acc) ->
     percent_decode(Cs, <<Acc/binary, C>>);
 percent_decode(<<>>, Acc) ->
     check_utf8(Acc).
@@ -336,7 +427,7 @@ percent_ok(C) when $a =< C, C =< $z -> true;
 percent_ok(_) -> false.
 
 is_hex_digit(C) ->
-  ($0 =< C andalso C =< $9) orelse ($a =< C andalso C =< $f) orelse ($A =< C andalso C =< $F).
+    ($0 =< C andalso C =< $9) orelse ($a =< C andalso C =< $f) orelse ($A =< C andalso C =< $F).
 
 check_utf8(Cs) ->
     case unicode:characters_to_list(Cs) of
@@ -347,27 +438,28 @@ check_utf8(Cs) ->
 
 uri_parse(String) ->
     case uri_string:parse(String) of
-        {error, _, _} -> {error, nil};
+        {error, _, _} ->
+            {error, nil};
         Uri ->
-            {ok, {uri,
-                maps_get_optional(Uri, scheme),
-                maps_get_optional(Uri, userinfo),
-                maps_get_optional(Uri, host),
-                maps_get_optional(Uri, port),
-                maps_get_or(Uri, path, <<>>),
-                maps_get_optional(Uri, query),
-                maps_get_optional(Uri, fragment)
-            }}
+            {ok,
+                {uri, maps_get_optional(Uri, scheme), maps_get_optional(Uri, userinfo),
+                    maps_get_optional(Uri, host), maps_get_optional(Uri, port),
+                    maps_get_or(Uri, path, <<>>), maps_get_optional(Uri, query),
+                    maps_get_optional(Uri, fragment)}}
     end.
 
 maps_get_optional(Map, Key) ->
-    try {some, maps:get(Key, Map)}
-    catch _:_ -> none
+    try
+        {some, maps:get(Key, Map)}
+    catch
+        _:_ -> none
     end.
 
 maps_get_or(Map, Key, Default) ->
-    try maps:get(Key, Map)
-    catch _:_ -> Default
+    try
+        maps:get(Key, Map)
+    catch
+        _:_ -> Default
     end.
 
 print(String) ->
@@ -395,7 +487,7 @@ inspect(nil) ->
 inspect(Data) when is_map(Data) ->
     Fields = [
         [<<"#(">>, inspect(Key), <<", ">>, inspect(Value), <<")">>]
-        || {Key, Value} <- maps:to_list(Data)
+     || {Key, Value} <- maps:to_list(Data)
     ],
     ["dict.from_list([", lists:join(", ", Fields), "])"];
 inspect(Atom) when is_atom(Atom) ->
@@ -403,14 +495,15 @@ inspect(Atom) when is_atom(Atom) ->
     case inspect_maybe_gleam_atom(Binary, none, <<>>) of
         {ok, Inspected} -> Inspected;
         {error, _} -> ["atom.create_from_string(\"", Binary, "\")"]
-	end;
+    end;
 inspect(Any) when is_integer(Any) ->
     erlang:integer_to_list(Any);
 inspect(Any) when is_float(Any) ->
     io_lib_format:fwrite_g(Any);
 inspect(Binary) when is_binary(Binary) ->
     case inspect_maybe_utf8_string(Binary, <<>>) of
-        {ok, InspectedUtf8String} -> InspectedUtf8String;
+        {ok, InspectedUtf8String} ->
+            InspectedUtf8String;
         {error, not_a_utf8_string} ->
             Segments = [erlang:integer_to_list(X) || <<X>> <= Binary],
             ["<<", lists:join(", ", Segments), ">>"]
@@ -422,14 +515,17 @@ inspect(List) when is_list(List) ->
         {proper, Elements} -> ["[", Elements, "]"];
         {improper, Elements} -> ["//erl([", Elements, "])"]
     end;
-inspect(Any) when is_tuple(Any) % Record constructors
-  andalso is_atom(element(1, Any))
-  andalso element(1, Any) =/= false
-  andalso element(1, Any) =/= true
-  andalso element(1, Any) =/= nil
+% Record constructors
+inspect(Any) when
+    is_tuple(Any) andalso
+        is_atom(element(1, Any)) andalso
+        element(1, Any) =/= false andalso
+        element(1, Any) =/= true andalso
+        element(1, Any) =/= nil
 ->
     [Atom | ArgsList] = erlang:tuple_to_list(Any),
-    Args = lists:join(<<", ">>,
+    Args = lists:join(
+        <<", ">>,
         lists:map(fun inspect/1, ArgsList)
     ),
     [inspect(Atom), "(", Args, ")"];
@@ -439,13 +535,13 @@ inspect(Tuple) when is_tuple(Tuple) ->
 inspect(Any) when is_function(Any) ->
     {arity, Arity} = erlang:fun_info(Any, arity),
     ArgsAsciiCodes = lists:seq($a, $a + Arity - 1),
-    Args = lists:join(<<", ">>,
+    Args = lists:join(
+        <<", ">>,
         lists:map(fun(Arg) -> <<Arg>> end, ArgsAsciiCodes)
     ),
     ["//fn(", Args, ") { ... }"];
 inspect(Any) ->
     ["//erl(", io_lib:format("~p", [Any]), ")"].
-
 
 inspect_maybe_gleam_atom(<<>>, none, _) ->
     {error, nil};
@@ -455,10 +551,11 @@ inspect_maybe_gleam_atom(<<"_", _Rest/binary>>, none, _) ->
     {error, nil};
 inspect_maybe_gleam_atom(<<"_">>, _PrevChar, _Acc) ->
     {error, nil};
-inspect_maybe_gleam_atom(<<"_",  _Rest/binary>>, $_, _Acc) ->
+inspect_maybe_gleam_atom(<<"_", _Rest/binary>>, $_, _Acc) ->
     {error, nil};
-inspect_maybe_gleam_atom(<<First, _Rest/binary>>, _PrevChar, _Acc)
-    when not (?is_lowercase_char(First) orelse ?is_underscore_char(First) orelse ?is_digit_char(First)) ->
+inspect_maybe_gleam_atom(<<First, _Rest/binary>>, _PrevChar, _Acc) when
+    not (?is_lowercase_char(First) orelse ?is_underscore_char(First) orelse ?is_digit_char(First))
+->
     {error, nil};
 inspect_maybe_gleam_atom(<<First, Rest/binary>>, none, Acc) ->
     inspect_maybe_gleam_atom(Rest, First, <<Acc/binary, (uppercase(First))>>);
@@ -510,24 +607,26 @@ append_segment(<<"<<">>, Segment) ->
 append_segment(Acc, Segment) ->
     <<Acc/binary, ", ", Segment/binary>>.
 
-
 inspect_maybe_utf8_string(Binary, Acc) ->
     case Binary of
-        <<>> -> {ok, <<$", Acc/binary, $">>};
+        <<>> ->
+            {ok, <<$", Acc/binary, $">>};
         <<First/utf8, Rest/binary>> ->
-            Escaped = case First of
-                $" -> <<$\\, $">>;
-                $\\ -> <<$\\, $\\>>;
-                $\r -> <<$\\, $r>>;
-                $\n -> <<$\\, $n>>;
-                $\t -> <<$\\, $t>>;
-                $\f -> <<$\\, $f>>;
-                X when X > 126, X < 160 -> convert_to_u(X);
-                X when X < 32 -> convert_to_u(X);
-                Other -> <<Other/utf8>>
-            end,
+            Escaped =
+                case First of
+                    $" -> <<$\\, $">>;
+                    $\\ -> <<$\\, $\\>>;
+                    $\r -> <<$\\, $r>>;
+                    $\n -> <<$\\, $n>>;
+                    $\t -> <<$\\, $t>>;
+                    $\f -> <<$\\, $f>>;
+                    X when X > 126, X < 160 -> convert_to_u(X);
+                    X when X < 32 -> convert_to_u(X);
+                    Other -> <<Other/utf8>>
+                end,
             inspect_maybe_utf8_string(Rest, <<Acc/binary, Escaped/binary>>);
-        _ -> {error, not_a_utf8_string}
+        _ ->
+            {error, not_a_utf8_string}
     end.
 
 convert_to_u(Code) ->
