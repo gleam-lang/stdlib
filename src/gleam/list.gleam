@@ -2337,29 +2337,3 @@ pub fn max(
     }
   })
 }
-
-/// Takes a list and a comparator, and returns the minimum element in the list
-///
-///
-/// ## Example
-///
-/// ```gleam
-/// range(1, 10) |> list.int(int.compare)
-/// // -> Ok(1)
-/// ```
-///
-/// ```gleam
-/// ["a", "c", "b"] |> list.int(string.compare)
-/// // -> Ok("a")
-/// ```
-pub fn min(
-  over list: List(a),
-  with compare: fn(a, a) -> Order,
-) -> Result(a, Nil) {
-  reduce(over: list, with: fn(acc, other) {
-    case compare(acc, other) {
-      order.Lt -> acc
-      _ -> other
-    }
-  })
-}
