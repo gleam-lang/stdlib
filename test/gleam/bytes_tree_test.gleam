@@ -18,7 +18,6 @@ pub fn tree_test() {
   |> should.equal(4)
 }
 
-@target(erlang)
 pub fn tree_unaligned_bit_arrays_test() {
   let data =
     bytes_tree.from_bit_array(<<-1:5>>)
@@ -84,7 +83,6 @@ pub fn concat_bit_arrays_test() {
   |> should.equal(<<"hey":utf8>>)
 }
 
-@target(erlang)
 pub fn concat_unaligned_bit_arrays_test() {
   bytes_tree.concat_bit_arrays([<<-1:4>>, <<-1:5>>, <<-1:3>>, <<-2:2>>])
   |> bytes_tree.to_bit_array
