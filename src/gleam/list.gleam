@@ -2340,8 +2340,7 @@ pub fn sample(list: List(a), k: Int) -> List(a) {
 
           let w = float.exp(log_random() /. int.to_float(k))
 
-          do_sample(list, reservoir, k, k, w)
-          |> dict.fold([], fn(acc, _, v) { [v, ..acc] })
+          do_sample(list, reservoir, k, k, w) |> dict.values
         }
       }
     }
