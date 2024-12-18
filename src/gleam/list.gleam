@@ -2328,14 +2328,13 @@ pub fn sample(list: List(a), k: Int) -> List(a) {
   case k <= 0 {
     True -> []
     False -> {
-      let reservoir = take(list, k)
+      let #(reservoir, list) = split(list, k)
       case length(reservoir) < k {
         True -> reservoir
         False -> {
-          let remaining = drop(list, k)
           let w = float.exp(log_random() /. int.to_float(k))
 
-          do_sample(remaining, reservoir, k, k, w)
+          do_sample(list, reservoir, k, k, w)
         }
       }
     }
