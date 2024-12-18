@@ -2329,19 +2329,32 @@ pub fn sample(list: List(a), k: Int) -> List(a) {
     True -> []
     False -> {
       let #(reservoir, list) = split(list, k)
+
       case length(reservoir) < k {
         True -> reservoir
         False -> {
+          let reservoir =
+            reservoir
+            |> map2(range(0, k - 1), _, fn(a, b) { #(a, b) })
+            |> dict.from_list
+
           let w = float.exp(log_random() /. int.to_float(k))
 
           do_sample(list, reservoir, k, k, w)
+          |> dict.fold([], fn(acc, _, v) { [v, ..acc] })
         }
       }
     }
   }
 }
 
-fn do_sample(list, reservoir: List(a), k, index: Int, w: Float) -> List(a) {
+fn do_sample(
+  list,
+  reservoir: Dict(Int, a),
+  k,
+  index: Int,
+  w: Float,
+) -> Dict(Int, a) {
   let skip = {
     let assert Ok(log_result) = float.log(1.0 -. w)
 
@@ -2353,7 +2366,7 @@ fn do_sample(list, reservoir: List(a), k, index: Int, w: Float) -> List(a) {
   case drop(list, skip) {
     [] -> reservoir
     [elem, ..rest] -> {
-      let reservoir = int.random(k) |> replace_at(reservoir, _, elem)
+      let reservoir = int.random(k) |> dict.insert(reservoir, _, elem)
       let w = w *. float.exp(log_random() /. int.to_float(k))
 
       do_sample(rest, reservoir, k, index, w)
@@ -2364,13 +2377,4 @@ fn do_sample(list, reservoir: List(a), k, index: Int, w: Float) -> List(a) {
 fn log_random() -> Float {
   let assert Ok(random) = float.log(float.random() +. 2.220446049250313e-16)
   random
-}
-
-fn replace_at(list: List(a), index: Int, elem: a) -> List(a) {
-  use current_elem, i <- index_map(list)
-
-  case i == index {
-    True -> elem
-    False -> current_elem
-  }
 }
