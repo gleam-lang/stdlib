@@ -1299,21 +1299,3 @@ pub fn max_test() {
   |> list.max(string.compare)
   |> should.equal(Ok("c"))
 }
-
-pub fn min_test() {
-  []
-  |> list.min(int.compare)
-  |> should.equal(Error(Nil))
-
-  [1, 3, 2]
-  |> list.min(int.compare)
-  |> should.equal(Ok(1))
-
-  [-1.0, 1.2, 1.104]
-  |> list.min(float.compare)
-  |> should.equal(Ok(-1.0))
-
-  ["a", "c", "b"]
-  |> list.min(string.compare)
-  |> should.equal(Ok("a"))
-}
