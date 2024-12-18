@@ -2311,3 +2311,67 @@ fn do_shuffle_by_pair_indexes(
     float.compare(a_pair.0, b_pair.0)
   })
 }
+
+/// Take a random sample of k elements from a list using reservoir sampling.
+/// Returns an empty list if the sample size is less than or equal to 0.
+///
+/// Order is not random, only selection is.
+///
+/// ## Examples
+///
+/// ```gleam
+/// reservoir_sample([1, 2, 3, 4, 5], 3)
+/// // -> [2, 4, 5]  // A random sample of 3 items
+/// ```
+///
+pub fn sample(list: List(a), k: Int) -> List(a) {
+  case k <= 0 {
+    True -> []
+    False -> {
+      let reservoir = take(list, k)
+      case length(reservoir) < k {
+        True -> reservoir
+        False -> {
+          let remaining = drop(list, k)
+          let w = float.exp(log_random() /. int.to_float(k))
+
+          do_sample(remaining, reservoir, k, k, w)
+        }
+      }
+    }
+  }
+}
+
+fn do_sample(list, reservoir: List(a), k, index: Int, w: Float) -> List(a) {
+  let skip = {
+    let assert Ok(log_result) = float.log(1.0 -. w)
+
+    log_random() /. log_result |> float.floor |> float.round
+  }
+
+  let index = index + skip + 1
+
+  case drop(list, skip) {
+    [] -> reservoir
+    [elem, ..rest] -> {
+      let reservoir = int.random(k) |> replace_at(reservoir, _, elem)
+      let w = w *. float.exp(log_random() /. int.to_float(k))
+
+      do_sample(rest, reservoir, k, index, w)
+    }
+  }
+}
+
+fn log_random() -> Float {
+  let assert Ok(random) = float.log(float.random() +. 2.220446049250313e-16)
+  random
+}
+
+fn replace_at(list: List(a), index: Int, elem: a) -> List(a) {
+  use current_elem, i <- index_map(list)
+
+  case i == index {
+    True -> elem
+    False -> current_elem
+  }
+}
