@@ -80,19 +80,8 @@ fn decode_bit_array(a: Dynamic) -> Result(BitArray, DecodeErrors)
 /// // -> Error([DecodeError(expected: "String", found: "Int", path: [])])
 /// ```
 ///
-pub fn string(from data: Dynamic) -> Result(String, DecodeErrors) {
-  decode_string(data)
-}
-
-fn map_errors(
-  result: Result(a, DecodeErrors),
-  f: fn(DecodeError) -> DecodeError,
-) -> Result(a, DecodeErrors) {
-  result.map_error(result, list.map(_, f))
-}
-
 @external(javascript, "../gleam_stdlib.mjs", "decode_string")
-fn decode_string(data: Dynamic) -> Result(String, DecodeErrors) {
+pub fn string(from data: Dynamic) -> Result(String, DecodeErrors) {
   bit_array(data)
   |> map_errors(put_expected(_, "String"))
   |> result.try(fn(raw) {
@@ -102,6 +91,13 @@ fn decode_string(data: Dynamic) -> Result(String, DecodeErrors) {
         Error([DecodeError(expected: "String", found: "BitArray", path: [])])
     }
   })
+}
+
+fn map_errors(
+  result: Result(a, DecodeErrors),
+  f: fn(DecodeError) -> DecodeError,
+) -> Result(a, DecodeErrors) {
+  result.map_error(result, list.map(_, f))
 }
 
 fn put_expected(error: DecodeError, expected: String) -> DecodeError {
