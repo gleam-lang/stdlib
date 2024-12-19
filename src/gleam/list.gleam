@@ -2312,6 +2312,32 @@ fn do_shuffle_by_pair_indexes(
   })
 }
 
+/// Takes a list and a comparator, and returns the maximum element in the list
+///
+///
+/// ## Example
+///
+/// ```gleam
+/// range(1, 10) |> list.max(int.compare)
+/// // -> Ok(10)
+/// ```
+///
+/// ```gleam
+/// ["a", "c", "b"] |> list.max(string.compare)
+/// // -> Ok("c")
+/// ```
+pub fn max(
+  over list: List(a),
+  with compare: fn(a, a) -> Order,
+) -> Result(a, Nil) {
+  reduce(over: list, with: fn(acc, other) {
+    case compare(acc, other) {
+      order.Gt -> acc
+      _ -> other
+    }
+  })
+}
+
 /// Take a random sample of k elements from a list using reservoir sampling.
 /// Returns an empty list if the sample size is less than or equal to 0.
 ///

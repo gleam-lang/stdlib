@@ -1282,6 +1282,24 @@ pub fn shuffle_test() {
   |> list.shuffle()
 }
 
+pub fn max_test() {
+  []
+  |> list.max(int.compare)
+  |> should.equal(Error(Nil))
+
+  [1, 3, 2]
+  |> list.max(int.compare)
+  |> should.equal(Ok(3))
+
+  [-1.0, 1.2, 1.104]
+  |> list.max(float.compare)
+  |> should.equal(Ok(1.2))
+
+  ["a", "c", "b"]
+  |> list.max(string.compare)
+  |> should.equal(Ok("c"))
+}
+
 pub fn sample_test() {
   []
   |> list.sample(3)
