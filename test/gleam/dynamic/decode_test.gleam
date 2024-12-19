@@ -927,3 +927,29 @@ pub fn js_map_test() {
   |> should.be_ok
   |> should.equal(dict.from_list([#("a", 10), #("b", 20), #("c", 30)]))
 }
+
+type Nested {
+  Nested(List(Nested))
+  Value(String)
+}
+
+fn recursive_decoder() -> decode.Decoder(Nested) {
+  use <- decode.recursive()
+  decode.one_of(decode.string |> decode.map(Value), [
+    decode.list(recursive_decoder()) |> decode.map(Nested),
+  ])
+}
+
+pub fn recursive_test() {
+  let nested = [["one", "two"], ["three"], []]
+  let expected =
+    Nested([
+      Nested([Value("one"), Value("two")]),
+      Nested([Value("three")]),
+      Nested([]),
+    ])
+
+  decode.run(dynamic.from(nested), recursive_decoder())
+  |> should.be_ok
+  |> should.equal(expected)
+}
