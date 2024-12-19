@@ -1,6 +1,7 @@
 # Changelog
 
 ## v0.49.0 - 2024-12-19
+
 - The `list` module gains the `sample` function.
 - The `float` module gains the `exp` function.
 - The `float` module gains the `log` function.
