@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.49.0 - 2024-12-17
+
+- The `string` module gains the `strip_prefix` and `strip_suffix` functions.
+
 ## v0.48.0 - 2024-12-17
 
 - Fixed a bug where `string.utf_codepoint` would erronously accept negative input.
