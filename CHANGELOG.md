@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.49.0 - 2024-12-19
+
+- The `list` module gains the `max` function.
+
 ## v0.48.0 - 2024-12-17
 
 - Fixed a bug where `string.utf_codepoint` would erronously accept negative input.
