@@ -15,9 +15,7 @@
     less_than/2,
     string_pop_grapheme/1,
     string_pop_codeunit/1,
-    string_starts_with/2,
     wrap_list/1,
-    string_ends_with/2,
     string_pad/4,
     decode_map/1,
     uri_parse/1,
@@ -227,21 +225,9 @@ parse_float(String) ->
 less_than(Lhs, Rhs) ->
     Lhs < Rhs.
 
-string_starts_with(_, <<>>) ->
-    true;
-string_starts_with(String, Prefix) when byte_size(Prefix) > byte_size(String) -> false;
-string_starts_with(String, Prefix) ->
-    PrefixSize = byte_size(Prefix),
-    Prefix == binary_part(String, 0, PrefixSize).
-
-string_strip_prefix(String, <<>>) when is_binary(String) ->
-    {ok, String};
-string_strip_prefix(String, _) when is_binary(String), String == <<>> ->
-    {error, nil};
-string_strip_prefix(String, Prefix) when
-    is_binary(String), is_binary(Prefix), byte_size(Prefix) > byte_size(String)
-->
-    {error, nil};
+string_strip_prefix(String, <<>>) when is_binary(String) -> {ok, String};
+string_strip_prefix(String, _) when is_binary(String), String == <<>> -> {error, nil};
+string_strip_prefix(String, Prefix) when is_binary(String), is_binary(Prefix), byte_size(Prefix) > byte_size(String) -> {error, nil};
 string_strip_prefix(String, Prefix) when is_binary(String), is_binary(Prefix) ->
     PrefixSize = byte_size(Prefix),
     case Prefix == binary_part(String, 0, PrefixSize) of
@@ -249,19 +235,9 @@ string_strip_prefix(String, Prefix) when is_binary(String), is_binary(Prefix) ->
         false -> {error, nil}
     end.
 
-string_ends_with(_, <<>>) ->
-    true;
-string_ends_with(String, Suffix) when byte_size(Suffix) > byte_size(String) -> false;
-string_ends_with(String, Suffix) ->
-    SuffixSize = byte_size(Suffix),
-    Suffix == binary_part(String, byte_size(String) - SuffixSize, SuffixSize).
-
 string_strip_suffix(String, <<>>) when is_binary(String) -> {ok, String};
 string_strip_suffix(String, _) when is_binary(String), String == <<>> -> {error, nil};
-string_strip_suffix(String, Suffix) when
-    is_binary(String), is_binary(Suffix), byte_size(Suffix) > byte_size(String)
-->
-    {error, nil};
+string_strip_suffix(String, Suffix) when is_binary(String), is_binary(Suffix), byte_size(Suffix) > byte_size(String) -> {error, nil};
 string_strip_suffix(String, Suffix) when is_binary(String), is_binary(Suffix) ->
     SuffixSize = byte_size(Suffix),
     case Suffix == binary_part(String, byte_size(String) - SuffixSize, SuffixSize) of

@@ -318,9 +318,12 @@ pub fn contains(does haystack: String, contain needle: String) -> Bool
 /// // -> False
 /// ```
 ///
-@external(erlang, "gleam_stdlib", "string_starts_with")
-@external(javascript, "../gleam_stdlib.mjs", "starts_with")
-pub fn starts_with(string: String, prefix: String) -> Bool
+pub fn starts_with(string: String, prefix: String) -> Bool {
+  case strip_prefix(string, prefix) {
+    Ok(_) -> True
+    Error(_) -> False
+  }
+}
 
 /// Checks whether the first `String` ends with the second one.
 ///
@@ -331,9 +334,12 @@ pub fn starts_with(string: String, prefix: String) -> Bool
 /// // -> True
 /// ```
 ///
-@external(erlang, "gleam_stdlib", "string_ends_with")
-@external(javascript, "../gleam_stdlib.mjs", "ends_with")
-pub fn ends_with(string: String, suffix: String) -> Bool
+pub fn ends_with(string: String, suffix: String) -> Bool {
+  case strip_suffix(string, suffix) {
+    Ok(_) -> True
+    Error(_) -> False
+  }
+}
 
 /// Creates a list of `String`s by splitting a given string on a given substring.
 ///
@@ -967,21 +973,6 @@ pub fn byte_size(string: String) -> Int
 /// strip_prefix("", "Lucy")
 /// // -> Error(Nil)
 /// ```
-// pub fn strip_prefix(
-//   string: String,
-//   prefix prefix: String,
-// ) -> Result(String, Nil) {
-//   case prefix {
-//     "" -> Ok(string)
-//     prefix -> {
-//       let prefix_len = length(prefix)
-//       case starts_with(string, prefix) {
-//         False -> Error(Nil)
-//         True -> Ok(drop_start(string, prefix_len))
-//       }
-//     }
-//   }
-// }
 @external(erlang, "gleam_stdlib", "string_strip_prefix")
 @external(javascript, "../gleam_stdlib.mjs", "string_strip_prefix")
 pub fn strip_prefix(

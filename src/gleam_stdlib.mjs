@@ -1033,12 +1033,12 @@ export function string_strip_suffix(str, suffix) {
   }
 
   if (str == "" && suffix.length != 0) {
-    return new Error(Nil)
+    return new Error(undefined)
   }
 
   if (str.endsWith(suffix)) {
     return new Ok(str.substring(0, str.length - suffix.length))
   }
 
-  return new Error(Nil)
+  return new Error(undefined)
 }

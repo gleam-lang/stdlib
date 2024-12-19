@@ -1398,6 +1398,7 @@ pub fn strip_prefix_test() {
     string.strip_prefix("https://gleam.run", "https://")
   let assert Ok("https://gleam.run") =
     string.strip_prefix("https://gleam.run", "")
+  // string.strip_prefix("👩‍👩‍👧‍👦", prefix: "👩") |> should.equal(Ok("👩‍👧‍👦"))
   let assert Ok("") = string.strip_prefix("", "")
   let assert Error(Nil) = string.strip_prefix("https://gleam.run", "Lucy")
   let assert Error(Nil) = string.strip_prefix("", "Lucy")
