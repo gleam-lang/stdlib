@@ -579,36 +579,26 @@ pub fn subtract(a: Float, b: Float) -> Float {
 /// ## Examples
 ///
 /// ```gleam
-/// log(1.0)
+/// logarithm(1.0)
 /// // -> Ok(0.0)
 /// ```
 ///
 /// ```gleam
-/// log(2.718281828459045)  // e
+/// logarithm(2.718281828459045)  // e
 /// // -> Ok(1.0)
 /// ```
 ///
 /// ```gleam
-/// log(10.0)
-/// // -> Ok(2.302585092994046)
-/// ```
-///
-/// ```gleam
-/// 100.0 |> log
-/// // -> Ok(4.605170185988092)
-/// ```
-///
-/// ```gleam
-/// log(0.0)
+/// logarithm(0.0)
 /// // -> Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// log(-1.0)
+/// logarithm(-1.0)
 /// // -> Error(Nil)
 /// ```
 ///
-pub fn log(x: Float) -> Result(Float, Nil) {
+pub fn logarithm(x: Float) -> Result(Float, Nil) {
   // In the following check:
   // 1. If x is negative then return an error as the natural logarithm
   //    of a negative number is undefined (would be a complex number)
@@ -630,25 +620,20 @@ fn do_log(x: Float) -> Float
 /// ## Examples
 ///
 /// ```gleam
-/// exp(0.0)
+/// exponential(0.0)
 /// // -> Ok(1.0)
 /// ```
 ///
 /// ```gleam
-/// exp(1.0)
+/// exponential(1.0)
 /// // -> Ok(2.718281828459045)
 /// ```
 ///
 /// ```gleam
-/// exp(-1.0)
+/// exponential(-1.0)
 /// // -> Ok(0.36787944117144233)
-/// ```
-///
-/// ```gleam
-/// 2.0 |> exp
-/// // -> Ok(7.38905609893065)
 /// ```
 ///
 @external(erlang, "math", "exp")
 @external(javascript, "../gleam_stdlib.mjs", "exp")
-pub fn exp(x: Float) -> Float
+pub fn exponential(x: Float) -> Float

@@ -2338,8 +2338,8 @@ pub fn max(
   })
 }
 
-/// Take a random sample of k elements from a list using reservoir sampling.
-/// Returns an empty list if the sample size is less than or equal to 0.
+/// Take a random sample of k elements from a list using reservoir sampling via
+/// Algo L. Returns an empty list if the sample size is less than or equal to 0.
 ///
 /// Order is not random, only selection is.
 ///
@@ -2364,16 +2364,16 @@ pub fn sample(list: List(a), k: Int) -> List(a) {
             |> map2(range(0, k - 1), _, fn(a, b) { #(a, b) })
             |> dict.from_list
 
-          let w = float.exp(log_random() /. int.to_float(k))
+          let w = float.exponential(log_random() /. int.to_float(k))
 
-          do_sample(list, reservoir, k, k, w) |> dict.values
+          sample_loop(list, reservoir, k, k, w) |> dict.values
         }
       }
     }
   }
 }
 
-fn do_sample(
+fn sample_loop(
   list,
   reservoir: Dict(Int, a),
   k,
@@ -2381,7 +2381,7 @@ fn do_sample(
   w: Float,
 ) -> Dict(Int, a) {
   let skip = {
-    let assert Ok(log_result) = float.log(1.0 -. w)
+    let assert Ok(log_result) = float.logarithm(1.0 -. w)
 
     log_random() /. log_result |> float.floor |> float.round
   }
@@ -2392,14 +2392,15 @@ fn do_sample(
     [] -> reservoir
     [elem, ..rest] -> {
       let reservoir = int.random(k) |> dict.insert(reservoir, _, elem)
-      let w = w *. float.exp(log_random() /. int.to_float(k))
+      let w = w *. float.exponential(log_random() /. int.to_float(k))
 
-      do_sample(rest, reservoir, k, index, w)
+      sample_loop(rest, reservoir, k, index, w)
     }
   }
 }
 
 fn log_random() -> Float {
-  let assert Ok(random) = float.log(float.random() +. 2.220446049250313e-16)
+  let min_positive = 2.2250738585072014e-308
+  let assert Ok(random) = float.logarithm(float.random() +. min_positive)
   random
 }

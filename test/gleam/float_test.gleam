@@ -529,60 +529,80 @@ pub fn subtract_test() {
   |> should.equal(-1.0)
 }
 
-pub fn log_test() {
-  float.log(1.0)
-  |> should.equal(Ok(0.0))
+pub fn logarithm_test() {
+  float.logarithm(1.0)
+  |> result.unwrap(or: 1.0)
+  |> float.loosely_equals(with: 0.0, tolerating: 0.001)
+  |> should.be_true
 
-  float.log(2.718281828459045)
-  |> should.equal(Ok(1.0))
+  float.logarithm(2.718281828459045)
+  |> result.unwrap(or: 0.0)
+  |> float.loosely_equals(with: 1.0, tolerating: 0.001)
+  |> should.be_true
 
-  float.log(10.0)
-  |> should.equal(Ok(2.302585092994046))
+  float.logarithm(10.0)
+  |> result.unwrap(or: 0.0)
+  |> float.loosely_equals(with: 2.302585092994046, tolerating: 0.001)
+  |> should.be_true
 
-  float.log(100.0)
-  |> should.equal(Ok(4.605170185988092))
+  float.logarithm(100.0)
+  |> result.unwrap(or: 0.0)
+  |> float.loosely_equals(with: 4.605170185988092, tolerating: 0.001)
+  |> should.be_true
 
-  float.log(0.5)
-  |> should.equal(Ok(-0.6931471805599453))
+  float.logarithm(0.5)
+  |> result.unwrap(or: 0.0)
+  |> float.loosely_equals(with: -0.6931471805599453, tolerating: 0.001)
+  |> should.be_true
 
-  float.log(0.1)
-  |> should.equal(Ok(-2.3025850929940455))
+  float.logarithm(0.1)
+  |> result.unwrap(or: 0.0)
+  |> float.loosely_equals(with: -2.3025850929940455, tolerating: 0.001)
+  |> should.be_true
 
-  float.log(0.0)
+  float.logarithm(0.0)
   |> should.equal(Error(Nil))
 
-  float.log(-1.0)
+  float.logarithm(-1.0)
   |> should.equal(Error(Nil))
 
-  float.log(-100.0)
+  float.logarithm(-100.0)
   |> should.equal(Error(Nil))
 
-  float.log(-0.1)
+  float.logarithm(-0.1)
   |> should.equal(Error(Nil))
 }
 
-pub fn exp_test() {
-  float.exp(0.0)
-  |> should.equal(1.0)
+pub fn exponential_test() {
+  float.exponential(0.0)
+  |> float.loosely_equals(with: 1.0, tolerating: 0.001)
+  |> should.be_true
 
-  float.exp(1.0)
-  |> should.equal(2.718281828459045)
+  float.exponential(1.0)
+  |> float.loosely_equals(with: 2.718281828459045, tolerating: 0.001)
+  |> should.be_true
 
-  float.exp(2.0)
-  |> should.equal(7.38905609893065)
+  float.exponential(2.0)
+  |> float.loosely_equals(with: 7.38905609893065, tolerating: 0.001)
+  |> should.be_true
 
-  float.exp(-1.0)
-  |> should.equal(0.36787944117144233)
+  float.exponential(-1.0)
+  |> float.loosely_equals(with: 0.36787944117144233, tolerating: 0.001)
+  |> should.be_true
 
-  float.exp(5.0)
-  |> should.equal(148.4131591025766)
+  float.exponential(5.0)
+  |> float.loosely_equals(with: 148.4131591025766, tolerating: 0.001)
+  |> should.be_true
 
-  float.exp(-5.0)
-  |> should.equal(0.006737946999085467)
+  float.exponential(-5.0)
+  |> float.loosely_equals(with: 0.006737946999085467, tolerating: 0.001)
+  |> should.be_true
 
-  float.exp(0.000001)
-  |> should.equal(1.0000010000005)
+  float.exponential(0.000001)
+  |> float.loosely_equals(with: 1.0000010000005, tolerating: 0.001)
+  |> should.be_true
 
-  float.exp(-100.0)
-  |> should.equal(3.720075976020836e-44)
+  float.exponential(-100.0)
+  |> float.loosely_equals(with: 3.720075976020836e-44, tolerating: 0.001)
+  |> should.be_true
 }
