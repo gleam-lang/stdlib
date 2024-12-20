@@ -1394,20 +1394,73 @@ pub fn inspect_map_test() {
 }
 
 pub fn strip_prefix_test() {
-  let assert Ok("gleam.run") =
-    string.strip_prefix("https://gleam.run", "https://")
-  let assert Ok("https://gleam.run") =
-    string.strip_prefix("https://gleam.run", "")
-  // string.strip_prefix("👩‍👩‍👧‍👦", prefix: "👩") |> should.equal(Ok("👩‍👧‍👦"))
-  let assert Ok("") = string.strip_prefix("", "")
-  let assert Error(Nil) = string.strip_prefix("https://gleam.run", "Lucy")
-  let assert Error(Nil) = string.strip_prefix("", "Lucy")
+  string.strip_prefix("https://gleam.run", "https://")
+  |> should.equal(Ok("gleam.run"))
+
+  string.strip_prefix("https://gleam.run", "")
+  |> should.equal(Ok("https://gleam.run"))
+
+  let assert Ok(top_right) = string.utf_codepoint(0x1F469)
+  let assert Ok(bot_left) = string.utf_codepoint(0x1F467)
+  let assert Ok(bot_right) = string.utf_codepoint(0x1F466)
+  let assert Ok(separator) = string.utf_codepoint(0x200D)
+
+  string.strip_prefix("👩‍👩‍👧‍👦", prefix: "👩")
+  |> should.equal(
+    Ok(
+      string.from_utf_codepoints([
+        separator,
+        top_right,
+        separator,
+        bot_left,
+        separator,
+        bot_right,
+      ]),
+    ),
+  )
+
+  string.strip_prefix("", "")
+  |> should.equal(Ok(""))
+
+  string.strip_prefix("https://gleam.run", "Lucy")
+  |> should.equal(Error(Nil))
+
+  string.strip_prefix("", "Lucy")
+  |> should.equal(Error(Nil))
 }
 
 pub fn strip_suffix_test() {
-  let assert Ok("lucy") = string.strip_suffix("lucy@gleam.run", "@gleam.run")
-  let assert Ok("lucy@gleam.run") = string.strip_suffix("lucy@gleam.run", "")
-  let assert Ok("") = string.strip_suffix("", "")
-  let assert Error(Nil) = string.strip_suffix("lucy@gleam.run", "Lucy")
-  let assert Error(Nil) = string.strip_suffix("", "Lucy")
+  string.strip_suffix("lucy@gleam.run", "@gleam.run")
+  |> should.equal(Ok("lucy"))
+
+  string.strip_suffix("lucy@gleam.run", "")
+  |> should.equal(Ok("lucy@gleam.run"))
+
+  string.strip_suffix("", "")
+  |> should.equal(Ok(""))
+
+  let assert Ok(top_left) = string.utf_codepoint(0x1F468)
+  let assert Ok(top_right) = string.utf_codepoint(0x1F469)
+  let assert Ok(bot_left) = string.utf_codepoint(0x1F467)
+  let assert Ok(separator) = string.utf_codepoint(0x200D)
+
+  string.strip_suffix("👨‍👩‍👧‍👦", suffix: "👦")
+  |> should.equal(
+    Ok(
+      string.from_utf_codepoints([
+        top_left,
+        separator,
+        top_right,
+        separator,
+        bot_left,
+        separator,
+      ]),
+    ),
+  )
+
+  string.strip_suffix("lucy@gleam.run", "Lucy")
+  |> should.equal(Error(Nil))
+
+  string.strip_suffix("", "Lucy")
+  |> should.equal(Error(Nil))
 }

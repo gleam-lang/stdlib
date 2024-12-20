@@ -955,6 +955,9 @@ pub fn byte_size(string: String) -> Int
 /// If an empty prefix is given, the result is always `Ok` containing the whole string.
 /// If an empty string is given with a non empty prefix, then the result is always `Error(Nil)`
 /// 
+/// The function does **not** removes zero width joiners (`\u200D`) codepoints when stripping an emoji.
+/// A leading one may remain.
+/// 
 /// ## Examples
 /// 
 /// ```gleam
@@ -985,6 +988,9 @@ pub fn strip_prefix(
 /// 
 /// If an empty suffix is given, the result is always `Ok` containing the whole string.
 /// If an empty string is given with a non empty suffix, then the result is always `Error(Nil)`
+/// 
+/// The function does **not** removes zero width joiners (`\u200D`) codepoints when stripping an emoji.
+/// A trailing one may remain.
 /// 
 /// ## Examples
 /// 

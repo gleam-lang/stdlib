@@ -1017,14 +1017,14 @@ export function string_strip_prefix(str, prefix) {
   }
 
   if (str == "" && prefix.length != 0) {
-    return new Error(Nil)
+    return new Error(undefined)
   }
 
   if (str.startsWith(prefix)) {
     return new Ok(str.substring(prefix.length))
   }
 
-  return new Error(Nil)
+  return new Error(undefined)
 }
 
 export function string_strip_suffix(str, suffix) {
