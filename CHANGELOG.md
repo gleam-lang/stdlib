@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.50.0 - 2024-12-20
+
+- The `string` module gains the `strip_prefix` and `strip_suffix` functions.
+- Implementations of `starts_with` and `ends_with` from the `string` module are now 
+  based on the `strip_prefix` and `strip_suffix` functions and no longer on Erlang or Javascript.
+
 ## v0.49.0 - 2024-12-19
 
 - The `list` module gains the `max` function.

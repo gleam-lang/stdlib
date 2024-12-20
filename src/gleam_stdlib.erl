@@ -4,7 +4,7 @@
     map_get/2, iodata_append/2, identity/1, decode_int/1, decode_bool/1,
     decode_float/1, decode_list/1, decode_option/2, decode_field/2, parse_int/1,
     parse_float/1, less_than/2, string_pop_grapheme/1, string_pop_codeunit/1,
-    string_starts_with/2, wrap_list/1, string_ends_with/2, string_pad/4,
+    string_strip_prefix/2, wrap_list/1, string_strip_suffix/2, string_pad/4,
     decode_map/1, uri_parse/1,
     decode_result/1, bit_array_slice/3, decode_bit_array/1, compile_regex/2,
     regex_scan/2, percent_encode/1, percent_decode/1, regex_check/2,
@@ -174,17 +174,25 @@ parse_float(String) ->
 less_than(Lhs, Rhs) ->
     Lhs < Rhs.
 
-string_starts_with(_, <<>>) -> true;
-string_starts_with(String, Prefix) when byte_size(Prefix) > byte_size(String) -> false;
-string_starts_with(String, Prefix) ->
+string_strip_prefix(String, <<>>) when is_binary(String) -> {ok, String};
+string_strip_prefix(String, _) when is_binary(String), String == <<>> -> {error, nil};
+string_strip_prefix(String, Prefix) when is_binary(String), is_binary(Prefix), byte_size(Prefix) > byte_size(String) -> {error, nil};
+string_strip_prefix(String, Prefix) when is_binary(String), is_binary(Prefix) ->
     PrefixSize = byte_size(Prefix),
-    Prefix == binary_part(String, 0, PrefixSize).
+    case Prefix == binary_part(String, 0, PrefixSize) of
+        true -> {ok, binary_part(String, PrefixSize, byte_size(String) - PrefixSize)};
+        false -> {error, nil}
+    end.
 
-string_ends_with(_, <<>>) -> true;
-string_ends_with(String, Suffix) when byte_size(Suffix) > byte_size(String) -> false;
-string_ends_with(String, Suffix) ->
+string_strip_suffix(String, <<>>) when is_binary(String) -> {ok, String};
+string_strip_suffix(String, _) when is_binary(String), String == <<>> -> {error, nil};
+string_strip_suffix(String, Suffix) when is_binary(String), is_binary(Suffix), byte_size(Suffix) > byte_size(String) -> {error, nil};
+string_strip_suffix(String, Suffix) when is_binary(String), is_binary(Suffix) ->
     SuffixSize = byte_size(Suffix),
-    Suffix == binary_part(String, byte_size(String) - SuffixSize, SuffixSize).
+    case Suffix == binary_part(String, byte_size(String) - SuffixSize, SuffixSize) of
+        true -> {ok, binary_part(String, 0, byte_size(String) - SuffixSize)};
+        false -> {error, nil}
+    end.
 
 string_pad(String, Length, Dir, PadString) ->
     Chars = string:pad(String, Length, Dir, binary_to_list(PadString)),
