@@ -572,3 +572,68 @@ pub fn multiply(a: Float, b: Float) -> Float {
 pub fn subtract(a: Float, b: Float) -> Float {
   a -. b
 }
+
+/// Returns the natural logarithm (base e) of the given as a `Result`. If the
+/// input is less than or equal to 0, returns `Error(Nil)`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// logarithm(1.0)
+/// // -> Ok(0.0)
+/// ```
+///
+/// ```gleam
+/// logarithm(2.718281828459045)  // e
+/// // -> Ok(1.0)
+/// ```
+///
+/// ```gleam
+/// logarithm(0.0)
+/// // -> Error(Nil)
+/// ```
+///
+/// ```gleam
+/// logarithm(-1.0)
+/// // -> Error(Nil)
+/// ```
+///
+pub fn logarithm(x: Float) -> Result(Float, Nil) {
+  // In the following check:
+  // 1. If x is negative then return an error as the natural logarithm
+  //    of a negative number is undefined (would be a complex number)
+  // 2. If x is 0 then return an error as the natural logarithm of 0
+  //    approaches negative infinity
+  case x <=. 0.0 {
+    True -> Error(Nil)
+    False -> Ok(do_log(x))
+  }
+}
+
+@external(erlang, "math", "log")
+@external(javascript, "../gleam_stdlib.mjs", "log")
+fn do_log(x: Float) -> Float
+
+/// Returns e (Euler's number) raised to the power of the given exponent, as
+/// a `Float`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// exponential(0.0)
+/// // -> Ok(1.0)
+/// ```
+///
+/// ```gleam
+/// exponential(1.0)
+/// // -> Ok(2.718281828459045)
+/// ```
+///
+/// ```gleam
+/// exponential(-1.0)
+/// // -> Ok(0.36787944117144233)
+/// ```
+///
+@external(erlang, "math", "exp")
+@external(javascript, "../gleam_stdlib.mjs", "exp")
+pub fn exponential(x: Float) -> Float

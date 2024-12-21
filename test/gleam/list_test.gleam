@@ -1299,3 +1299,52 @@ pub fn max_test() {
   |> list.max(string.compare)
   |> should.equal(Ok("c"))
 }
+
+pub fn sample_test() {
+  []
+  |> list.sample(3)
+  |> should.equal([])
+
+  [1, 2, 3]
+  |> list.sample(0)
+  |> should.equal([])
+
+  [1, 2, 3]
+  |> list.sample(-1)
+  |> should.equal([])
+
+  [1, 2]
+  |> list.sample(5)
+  |> list.sort(int.compare)
+  |> should.equal([1, 2])
+
+  [1]
+  |> list.sample(1)
+  |> should.equal([1])
+
+  let input = list.range(1, 100)
+  let sample = list.sample(input, 10)
+  list.length(sample)
+  |> should.equal(10)
+
+  let repeated = [1, 1, 1, 1, 1]
+  let sample = list.sample(repeated, 3)
+  sample
+  |> list.all(fn(x) { x == 1 })
+  |> should.be_true()
+
+  let input = list.range(1, 1000)
+  let sample = list.sample(input, 100)
+  sample
+  |> list.sort(int.compare)
+  |> list.all(fn(x) { x >= 1 && x <= 1000 })
+  |> should.be_true()
+
+  list.length(sample)
+  |> should.equal(100)
+
+  let min = list.fold(sample, 1000, int.min)
+  let max = list.fold(sample, 1, int.max)
+  should.be_true(min >= 1)
+  should.be_true(max <= 1000)
+}
