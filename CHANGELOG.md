@@ -2,7 +2,8 @@
 
 ## v0.49.0 - 2024-12-19
 
-- The `list` module gains the `max` function.
+- The `float` module gains the `exponential` and `logarithm` function.
+- The `list` module gains the `max` and `sample` function.
 
 ## v0.48.0 - 2024-12-17
 

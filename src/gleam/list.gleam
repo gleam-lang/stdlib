@@ -2337,3 +2337,70 @@ pub fn max(
     }
   })
 }
+
+/// Take a random sample of k elements from a list using reservoir sampling via
+/// Algo L. Returns an empty list if the sample size is less than or equal to 0.
+///
+/// Order is not random, only selection is.
+///
+/// ## Examples
+///
+/// ```gleam
+/// reservoir_sample([1, 2, 3, 4, 5], 3)
+/// // -> [2, 4, 5]  // A random sample of 3 items
+/// ```
+///
+pub fn sample(list: List(a), k: Int) -> List(a) {
+  case k <= 0 {
+    True -> []
+    False -> {
+      let #(reservoir, list) = split(list, k)
+
+      case length(reservoir) < k {
+        True -> reservoir
+        False -> {
+          let reservoir =
+            reservoir
+            |> map2(range(0, k - 1), _, fn(a, b) { #(a, b) })
+            |> dict.from_list
+
+          let w = float.exponential(log_random() /. int.to_float(k))
+
+          sample_loop(list, reservoir, k, k, w) |> dict.values
+        }
+      }
+    }
+  }
+}
+
+fn sample_loop(
+  list,
+  reservoir: Dict(Int, a),
+  k,
+  index: Int,
+  w: Float,
+) -> Dict(Int, a) {
+  let skip = {
+    let assert Ok(log_result) = float.logarithm(1.0 -. w)
+
+    log_random() /. log_result |> float.floor |> float.round
+  }
+
+  let index = index + skip + 1
+
+  case drop(list, skip) {
+    [] -> reservoir
+    [elem, ..rest] -> {
+      let reservoir = int.random(k) |> dict.insert(reservoir, _, elem)
+      let w = w *. float.exponential(log_random() /. int.to_float(k))
+
+      sample_loop(rest, reservoir, k, index, w)
+    }
+  }
+}
+
+fn log_random() -> Float {
+  let min_positive = 2.2250738585072014e-308
+  let assert Ok(random) = float.logarithm(float.random() +. min_positive)
+  random
+}
