@@ -448,7 +448,7 @@ fn decode_field(a: Dynamic, b: name) -> Result(Option(Dynamic), DecodeErrors)
 /// ```gleam
 /// from(#(1, 2))
 /// |> element(0, int)
-/// // -> Ok(from(1))
+/// // -> Ok(1)
 /// ```
 ///
 /// ```gleam
