@@ -1,7 +1,8 @@
 import { Ok, Error, List, NonEmpty } from "./gleam.mjs";
 import { default as Dict } from "./dict.mjs";
 import { Some, None } from "./gleam/option.mjs";
-import { DecodeError, classify } from "./gleam/dynamic.mjs";
+import { classify } from "./gleam/dynamic.mjs";
+import { DecodeError } from "./gleam/dynamic/decode.mjs";
 
 export function strict_index(data, key) {
   const int = Number.isInteger(key);

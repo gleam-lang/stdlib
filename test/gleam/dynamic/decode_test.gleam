@@ -1,9 +1,10 @@
 import gleam/dict
-import gleam/dynamic.{type Dynamic, DecodeError}
-import gleam/dynamic/decode
+import gleam/dynamic.{type Dynamic}
+import gleam/dynamic/decode.{DecodeError}
 import gleam/float
 import gleam/int
 import gleam/option
+import gleam/result
 import gleam/should
 
 pub type User {
@@ -768,29 +769,45 @@ pub fn documentation_variants_example_test() {
 }
 
 pub fn new_primitive_decoder_string_ok_test() {
+  let decoder =
+    decode.new_primitive_decoder("String", fn(x) {
+      dynamic.string(x) |> result.replace_error("")
+    })
   dynamic.from("Hello!")
-  |> decode.run(decode.new_primitive_decoder(dynamic.string, ""))
+  |> decode.run(decoder)
   |> should.be_ok
   |> should.equal("Hello!")
 }
 
 pub fn new_primitive_decoder_string_error_test() {
+  let decoder =
+    decode.new_primitive_decoder("String", fn(x) {
+      dynamic.string(x) |> result.replace_error("")
+    })
   dynamic.from(123)
-  |> decode.run(decode.new_primitive_decoder(dynamic.string, ""))
+  |> decode.run(decoder)
   |> should.be_error
   |> should.equal([DecodeError("String", "Int", [])])
 }
 
 pub fn new_primitive_decoder_float_ok_test() {
+  let decoder =
+    decode.new_primitive_decoder("Float", fn(x) {
+      dynamic.float(x) |> result.replace_error(0.0)
+    })
   dynamic.from(12.4)
-  |> decode.run(decode.new_primitive_decoder(dynamic.float, 0.0))
+  |> decode.run(decoder)
   |> should.be_ok
   |> should.equal(12.4)
 }
 
 pub fn new_primitive_decoder_float_error_test() {
+  let decoder =
+    decode.new_primitive_decoder("Float", fn(x) {
+      dynamic.float(x) |> result.replace_error(0.0)
+    })
   dynamic.from("blah")
-  |> decode.run(decode.new_primitive_decoder(dynamic.float, 0.0))
+  |> decode.run(decoder)
   |> should.be_error
   |> should.equal([DecodeError("Float", "String", [])])
 }

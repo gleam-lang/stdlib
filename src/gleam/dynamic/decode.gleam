@@ -257,7 +257,7 @@
 //// ```
 
 import gleam/dict.{type Dict}
-import gleam/dynamic.{type DecodeError, DecodeError}
+import gleam/dynamic
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
@@ -271,6 +271,12 @@ import gleam/result
 pub type Dynamic =
   dynamic.Dynamic
 
+/// Error returned when unexpected data is encountered
+///
+pub type DecodeError {
+  DecodeError(expected: String, found: String, path: List(String))
+}
+
 /// A decoder is a value that can be used to turn dynamically typed `Dynamic`
 /// data into typed data using the `run` function.
 ///
@@ -278,7 +284,7 @@ pub type Dynamic =
 /// functions such as `list` and `field`.
 ///
 pub opaque type Decoder(t) {
-  Decoder(function: fn(Dynamic) -> #(t, List(dynamic.DecodeError)))
+  Decoder(function: fn(Dynamic) -> #(t, List(DecodeError)))
 }
 
 /// The same as [`field`](#field), except taking a path to the value rather
@@ -339,10 +345,7 @@ pub fn subfield(
 /// decode.run(data, decoder)
 /// ```
 ///
-pub fn run(
-  data: Dynamic,
-  decoder: Decoder(t),
-) -> Result(t, List(dynamic.DecodeError)) {
+pub fn run(data: Dynamic, decoder: Decoder(t)) -> Result(t, List(DecodeError)) {
   let #(maybe_invalid_data, errors) = decoder.function(data)
   case errors {
     [] -> Ok(maybe_invalid_data)
@@ -392,10 +395,10 @@ pub fn at(path: List(segment), inner: Decoder(a)) -> Decoder(a) {
 fn index(
   path: List(a),
   position: List(a),
-  inner: fn(Dynamic) -> #(b, List(dynamic.DecodeError)),
+  inner: fn(Dynamic) -> #(b, List(DecodeError)),
   data: Dynamic,
-  handle_miss: fn(Dynamic, List(a)) -> #(b, List(dynamic.DecodeError)),
-) -> #(b, List(dynamic.DecodeError)) {
+  handle_miss: fn(Dynamic, List(a)) -> #(b, List(DecodeError)),
+) -> #(b, List(DecodeError)) {
   case path {
     [] -> {
       inner(data)
@@ -477,7 +480,7 @@ pub fn success(data: t) -> Decoder(t) {
 pub fn decode_error(
   expected expected: String,
   found found: Dynamic,
-) -> List(dynamic.DecodeError) {
+) -> List(DecodeError) {
   [DecodeError(expected: expected, found: dynamic.classify(found), path: [])]
 }
 
@@ -601,10 +604,14 @@ fn run_dynamic_function(
   data: Dynamic,
   zero: t,
   f: dynamic.Decoder(t),
-) -> #(t, List(dynamic.DecodeError)) {
+) -> #(t, List(DecodeError)) {
   case f(data) {
     Ok(data) -> #(data, [])
-    Error(errors) -> #(zero, errors)
+    Error(errors) -> {
+      let errors =
+        list.map(errors, fn(e) { DecodeError(e.expected, e.found, e.path) })
+      #(zero, errors)
+    }
   }
 }
 
@@ -619,7 +626,7 @@ fn run_dynamic_function(
 ///
 pub const string: Decoder(String) = Decoder(decode_string)
 
-fn decode_string(data: Dynamic) -> #(String, List(dynamic.DecodeError)) {
+fn decode_string(data: Dynamic) -> #(String, List(DecodeError)) {
   run_dynamic_function(data, "", dynamic.string)
 }
 
@@ -634,7 +641,7 @@ fn decode_string(data: Dynamic) -> #(String, List(dynamic.DecodeError)) {
 ///
 pub const bool: Decoder(Bool) = Decoder(decode_bool)
 
-fn decode_bool(data: Dynamic) -> #(Bool, List(dynamic.DecodeError)) {
+fn decode_bool(data: Dynamic) -> #(Bool, List(DecodeError)) {
   run_dynamic_function(data, False, dynamic.bool)
 }
 
@@ -649,7 +656,7 @@ fn decode_bool(data: Dynamic) -> #(Bool, List(dynamic.DecodeError)) {
 ///
 pub const int: Decoder(Int) = Decoder(decode_int)
 
-fn decode_int(data: Dynamic) -> #(Int, List(dynamic.DecodeError)) {
+fn decode_int(data: Dynamic) -> #(Int, List(DecodeError)) {
   run_dynamic_function(data, 0, dynamic.int)
 }
 
@@ -664,7 +671,7 @@ fn decode_int(data: Dynamic) -> #(Int, List(dynamic.DecodeError)) {
 ///
 pub const float: Decoder(Float) = Decoder(decode_float)
 
-fn decode_float(data: Dynamic) -> #(Float, List(dynamic.DecodeError)) {
+fn decode_float(data: Dynamic) -> #(Float, List(DecodeError)) {
   run_dynamic_function(data, 0.0, dynamic.float)
 }
 
@@ -679,7 +686,7 @@ fn decode_float(data: Dynamic) -> #(Float, List(dynamic.DecodeError)) {
 ///
 pub const dynamic: Decoder(Dynamic) = Decoder(decode_dynamic)
 
-fn decode_dynamic(data: Dynamic) -> #(Dynamic, List(dynamic.DecodeError)) {
+fn decode_dynamic(data: Dynamic) -> #(Dynamic, List(DecodeError)) {
   #(data, [])
 }
 
@@ -694,7 +701,7 @@ fn decode_dynamic(data: Dynamic) -> #(Dynamic, List(dynamic.DecodeError)) {
 ///
 pub const bit_array: Decoder(BitArray) = Decoder(decode_bit_array)
 
-fn decode_bit_array(data: Dynamic) -> #(BitArray, List(dynamic.DecodeError)) {
+fn decode_bit_array(data: Dynamic) -> #(BitArray, List(DecodeError)) {
   run_dynamic_function(data, <<>>, dynamic.bit_array)
 }
 
@@ -719,11 +726,11 @@ pub fn list(of inner: Decoder(a)) -> Decoder(List(a)) {
 @external(javascript, "../../gleam_stdlib_decode_ffi.mjs", "list")
 fn decode_list(
   data: Dynamic,
-  item: fn(Dynamic) -> #(t, List(dynamic.DecodeError)),
+  item: fn(Dynamic) -> #(t, List(DecodeError)),
   push_path: fn(#(t, List(DecodeError)), key) -> #(t, List(DecodeError)),
   index: Int,
   acc: List(t),
-) -> #(List(t), List(dynamic.DecodeError))
+) -> #(List(t), List(DecodeError))
 
 /// A decoder that decodes dicts where all keys and vales are decoded with
 /// given decoders.
@@ -762,12 +769,12 @@ pub fn dict(
 }
 
 fn fold_dict(
-  acc: #(Dict(k, v), List(dynamic.DecodeError)),
+  acc: #(Dict(k, v), List(DecodeError)),
   key: Dynamic,
   value: Dynamic,
-  key_decoder: fn(Dynamic) -> #(k, List(dynamic.DecodeError)),
-  value_decoder: fn(Dynamic) -> #(v, List(dynamic.DecodeError)),
-) -> #(Dict(k, v), List(dynamic.DecodeError)) {
+  key_decoder: fn(Dynamic) -> #(k, List(DecodeError)),
+  value_decoder: fn(Dynamic) -> #(v, List(DecodeError)),
+) -> #(Dict(k, v), List(DecodeError)) {
   // First we decode the key.
   case key_decoder(key) {
     #(key, []) ->
@@ -966,18 +973,24 @@ pub fn failure(zero: a, expected: String) -> Decoder(a) {
 /// import decode/decode
 ///
 /// pub fn string_decoder() -> decode.Decoder(String) {
-///   decode.new_primitive_decoder(dynamic.string, "")
+///   let default = ""
+///   decode.new_primitive_decoder("String", fn(data) {
+///     case dynamic.string {
+///       Ok(x) -> Ok(x)
+///       Error(x) -> Error(default)
+///     }
+///   })
 /// }
 /// ```
 ///
 pub fn new_primitive_decoder(
-  decoding_function: fn(Dynamic) -> Result(t, List(DecodeError)),
-  zero: t,
+  name: String,
+  decoding_function: fn(Dynamic) -> Result(t, t),
 ) -> Decoder(t) {
   Decoder(function: fn(d) {
     case decoding_function(d) {
       Ok(t) -> #(t, [])
-      Error(errors) -> #(zero, errors)
+      Error(zero) -> #(zero, [DecodeError(name, dynamic.classify(d), [])])
     }
   })
 }

@@ -1,11 +1,15 @@
 import gleam/dict
-import gleam/int
-import gleam/list
 import gleam/option.{None, Some}
 import gleam/order
-import gleam/result
 import gleam/should
 import gleam/string
+
+@target(erlang)
+import gleam/int
+@target(erlang)
+import gleam/list
+@target(erlang)
+import gleam/result
 
 pub fn length_test() {
   string.length("ß↑e̊")

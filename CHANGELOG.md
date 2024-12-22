@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.51.0 - 2024-12-22
+
+- `dynamic/decode` now has its own error type.
+- The `new_primitive_decoder` function in the `dynamic/decode` has a new API.
+
 ## v0.50.0 - 2024-12-22
 
 - The `dynamic/decode` module has been added. This module will replace the
