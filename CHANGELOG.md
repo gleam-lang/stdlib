@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.50.0 - 2024-12-22
+
+- The `dynamic/decode` module has been added. This module will replace the
+  dynamic decoding combinators from `dynamic` (`decode3`, etc) in future.
+
 ## v0.49.0 - 2024-12-19
 
 - The `list` module gains the `max` function.
