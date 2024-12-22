@@ -4,6 +4,7 @@
 
 - The `dynamic/decode` module has been added. This module will replace the
   dynamic decoding combinators from `dynamic` (`decode3`, etc) in future.
+- The deprecated `iterator`, `regex`, and `queue` modules have been removed.
 
 ## v0.49.0 - 2024-12-19
 
