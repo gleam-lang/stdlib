@@ -975,9 +975,9 @@ pub fn failure(zero: a, expected: String) -> Decoder(a) {
 /// pub fn string_decoder() -> decode.Decoder(String) {
 ///   let default = ""
 ///   decode.new_primitive_decoder("String", fn(data) {
-///     case dynamic.string {
+///     case dynamic.string(data) {
 ///       Ok(x) -> Ok(x)
-///       Error(x) -> Error(default)
+///       Error(_) -> Error(default)
 ///     }
 ///   })
 /// }
