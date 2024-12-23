@@ -503,7 +503,7 @@ pub fn decode_error(
 /// let decoder = {
 ///   use name <- decode.field("name", string)
 ///   use email <- decode.field("email", string)
-///   SignUp(name: name, email: email)
+///   decode.success(SignUp(name: name, email: email))
 /// }
 ///
 /// let result = decode.run(data, decoder)
