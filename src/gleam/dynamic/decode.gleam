@@ -542,7 +542,7 @@ pub fn field(
 /// let decoder = {
 ///   use name <- decode.field("name", string)
 ///   use email <- decode.optional_field("email", "n/a", string)
-///   SignUp(name: name, email: email)
+///   decode.success(SignUp(name: name, email: email))
 /// }
 ///
 /// let result = decode.run(data, decoder)
