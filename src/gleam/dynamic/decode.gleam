@@ -69,7 +69,7 @@
 //// // Data:
 //// // 12.45
 ////
-//// let result = decode.run(data, decode.optional(decode.int))
+//// let result = decode.run(data, decode.optional(decode.float))
 //// assert result == Ok(option.Some(12.45))
 //// ```
 //// ```gleam
