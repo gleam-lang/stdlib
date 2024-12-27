@@ -974,3 +974,35 @@ export function log(x) {
 export function exp(x) {
   return Math.exp(x);
 }
+
+export function string_strip_prefix(str, prefix) {
+  if (prefix == "") {
+    return new Ok(str)
+  }
+
+  if (str == "" && prefix.length != 0) {
+    return new Error(undefined)
+  }
+
+  if (str.startsWith(prefix)) {
+    return new Ok(str.substring(prefix.length))
+  }
+
+  return new Error(undefined)
+}
+
+export function string_strip_suffix(str, suffix) {
+  if (suffix == "") {
+    return new Ok(str)
+  }
+
+  if (str == "" && suffix.length != 0) {
+    return new Error(undefined)
+  }
+
+  if (str.endsWith(suffix)) {
+    return new Ok(str.substring(0, str.length - suffix.length))
+  }
+
+  return new Error(undefined)
+}

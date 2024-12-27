@@ -14,7 +14,8 @@
     inspect/1, float_to_string/1, int_from_base_string/2,
     utf_codepoint_list_to_string/1, contains_string/2, crop_string/2,
     base16_encode/1, base16_decode/1, string_replace/3, slice/3,
-    bit_array_to_int_and_size/1, bit_array_pad_to_bytes/1
+    bit_array_to_int_and_size/1, bit_array_pad_to_bytes/1,
+    string_strip_prefix/2, string_strip_suffix/2
 ]).
 
 %% Taken from OTP's uri_string module
@@ -526,4 +527,30 @@ slice(String, Index, Length) ->
     case string:slice(String, Index, Length) of
         X when is_binary(X) -> X;
         X when is_list(X) -> unicode:characters_to_binary(X)
+    end.
+
+string_strip_prefix(String, <<>>) -> 
+    {ok, String};
+string_strip_prefix(<<>>, _) -> 
+    {error, nil};
+string_strip_prefix(String, Prefix) when byte_size(Prefix) > byte_size(String) ->
+    {error, nil};
+string_strip_prefix(String, Prefix) ->
+    PrefixSize = byte_size(Prefix),
+    case Prefix == binary_part(String, 0, PrefixSize) of
+        true -> {ok, binary_part(String, PrefixSize, byte_size(String) - PrefixSize)};
+        false -> {error, nil}
+    end.
+
+string_strip_suffix(String, <<>>) -> 
+    {ok, String};
+string_strip_suffix(<<>>, _) -> 
+    {error, nil};
+string_strip_suffix(String, Suffix) when byte_size(Suffix) > byte_size(String) -> 
+    {error, nil};
+string_strip_suffix(String, Suffix) ->
+    SuffixSize = byte_size(Suffix),
+    case Suffix == binary_part(String, byte_size(String) - SuffixSize, SuffixSize) of
+        true -> {ok, binary_part(String, 0, byte_size(String) - SuffixSize)};
+        false -> {error, nil}
     end.

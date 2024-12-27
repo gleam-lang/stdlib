@@ -942,3 +942,93 @@ fn do_inspect(term: anything) -> StringTree
 @external(erlang, "erlang", "byte_size")
 @external(javascript, "../gleam_stdlib.mjs", "byte_size")
 pub fn byte_size(string: String) -> Int
+
+/// Returns a `Result(String, Nil)` of the given string without the given prefix. 
+/// If the string does not start with the given prefix, the function returns `Error(Nil)`
+/// 
+/// If an empty prefix is given, the result is always `Ok` containing the whole string.
+/// If an empty string is given with a non empty prefix, then the result is always `Error(Nil)`
+/// 
+/// The function does **not** removes zero width joiners (`\u200D`) codepoints when stripping an emoji.
+/// A leading one may remain.
+/// 
+/// ## Examples
+/// 
+/// ```gleam
+/// strip_prefix("https://gleam.run", "https://")
+/// // -> Ok("gleam.run")
+/// 
+/// strip_prefix("https://gleam.run", "")
+/// // -> Ok("https://gleam.run")
+/// 
+/// strip_prefix("", "")
+/// // -> Ok("")
+/// 
+/// strip_prefix("https://gleam.run", "Lucy")
+/// // -> Error(Nil)
+/// 
+/// strip_prefix("", "Lucy")
+/// // -> Error(Nil)
+/// ```
+@external(erlang, "gleam_stdlib", "string_strip_prefix")
+@external(javascript, "../gleam_stdlib.mjs", "string_strip_prefix")
+pub fn strip_prefix(
+  string: String,
+  prefix prefix: String,
+) -> Result(String, Nil)
+
+//   let string_codepoints = to_utf_codepoints(string)
+//   let prefix_codepoints = to_utf_codepoints(prefix)
+
+//   let prefix_size = list.length(prefix_codepoints)
+//   let string_start = list.sized_chunk(string_codepoints, prefix_size)
+
+//   case string_start {
+//     [] -> Error(Nil)
+//     [x, ..] -> {
+//       case x == prefix_codepoints {
+//         True -> {
+//           string_codepoints
+//           |> list.drop(prefix_size)
+//           |> from_utf_codepoints
+//           |> Ok
+//         }
+//         False -> Error(Nil)
+//       }
+//     }
+//   }
+// }
+
+/// Returns a `Result(String, Nil)` of the given string without the given suffix. 
+/// If the string does not end with the given suffix, the function returns `Error(Nil)`
+/// 
+/// If an empty suffix is given, the result is always `Ok` containing the whole string.
+/// If an empty string is given with a non empty suffix, then the result is always `Error(Nil)`
+/// 
+/// The function does **not** removes zero width joiners (`\u200D`) codepoints when stripping an emoji.
+/// A trailing one may remain.
+/// 
+/// ## Examples
+/// 
+/// ```gleam
+/// strip_suffix("lucy@gleam.run", "@gleam.run")
+/// // -> Ok("lucy")
+/// 
+/// strip_suffix("lucy@gleam.run", "")
+/// // -> Ok("lucy@gleam.run")
+/// 
+/// strip_suffix("", "")
+/// // -> Ok("")
+/// 
+/// strip_suffix("lucy@gleam.run", "Lucy")
+/// // -> Error(Nil)
+/// 
+/// strip_suffix("", "Lucy")
+/// // -> Error(Nil)
+/// ```
+@external(erlang, "gleam_stdlib", "string_strip_suffix")
+@external(javascript, "../gleam_stdlib.mjs", "string_strip_suffix")
+pub fn strip_suffix(
+  string: String,
+  suffix suffix: String,
+) -> Result(String, Nil)
