@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.52.0 - 2024-12-27
+
+- The `string` module gains the `strip_prefix` and `strip_suffix` functions.
+
 ## v0.51.0 - 2024-12-22
 
 - `dynamic/decode` now has its own error type.
