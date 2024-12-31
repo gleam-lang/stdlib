@@ -702,17 +702,43 @@ pub fn from_utf_codepoints_test() {
 }
 
 pub fn utf_codepoint_test() {
-  string.utf_codepoint(1_114_444)
+  // Less than the lower bound on valid codepoints
+  string.utf_codepoint(-1)
   |> should.be_error
 
+  // The lower bound on valid codepoints
+  string.utf_codepoint(0)
+  |> should.be_ok
+
+  // The upper bound for valid code points
+  string.utf_codepoint(1_114_111)
+  |> should.be_ok
+
+  // Greater than the upper bound on valid codepoints
+  string.utf_codepoint(1_114_112)
+  |> should.be_error
+
+  // Non-characters U+FFFE and U+FFFF are valid codepoints.  See (#778).
   string.utf_codepoint(65_534)
-  |> should.be_error
+  |> should.be_ok
+  string.utf_codepoint(65_535)
+  |> should.be_ok
 
+  // One less than the lowest "High-surrogate code point" 
+  string.utf_codepoint(55_295)
+  |> should.be_ok
+
+  // Lowest value of the "High-surrogate code point" (U+D800 to U+DBFF)
   string.utf_codepoint(55_296)
   |> should.be_error
 
-  string.utf_codepoint(-1)
+  // Highest value of the "Low-surrogate code point" (U+DC00 to U+DFFF)
+  string.utf_codepoint(57_343)
   |> should.be_error
+
+  // One greater than the highest "Low-surrogate code point"
+  string.utf_codepoint(57_344)
+  |> should.be_ok
 }
 
 pub fn bit_array_utf_codepoint_test() {
