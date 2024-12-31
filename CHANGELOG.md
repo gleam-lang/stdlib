@@ -6,6 +6,8 @@
 - The deprecated `function.compose`, `function.constant`, `function.apply*`,
   `function.curry*`, `result.nil_error`, `list.concat`, `bool.compare`, and
   `bool.to_int` functions have been removed.
+- Fixed a bug where `string.utf_codepoint` would treat valid Unicode codepoints
+  `U+FFFE` and `U+FFFF` as invalid.
 
 ## v0.51.0 - 2024-12-22
 
