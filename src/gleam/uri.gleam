@@ -85,18 +85,7 @@ pub fn parse(uri_string: String) -> Result(Uri, Nil) {
   // TODO: This is not perfect and will be more permissive than its Erlang
   // counterpart, ideally we want to replicate Erlang's implementation on the js
   // target as well.
-  let default_pieces =
-    Uri(
-      scheme: None,
-      userinfo: None,
-      host: None,
-      port: None,
-      path: "",
-      query: None,
-      fragment: None,
-    )
-
-  parse_scheme_loop(uri_string, uri_string, default_pieces, 0)
+  parse_scheme_loop(uri_string, uri_string, empty, 0)
 }
 
 fn parse_scheme_loop(
