@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Improved the precision of `float.to_precision`.
+
 ## v0.51.0 - 2024-12-22
 
 - `dynamic/decode` now has its own error type.

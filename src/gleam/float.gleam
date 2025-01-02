@@ -261,8 +261,16 @@ pub fn truncate(x: Float) -> Int
 /// ```
 ///
 pub fn to_precision(x: Float, precision: Int) -> Float {
-  let factor = do_power(10.0, do_to_float(-precision))
-  do_to_float(round(x /. factor)) *. factor
+  case precision <= 0 {
+    True -> {
+      let factor = do_power(10.0, do_to_float(-precision))
+      do_to_float(round(x /. factor)) *. factor
+    }
+    False -> {
+      let factor = do_power(10.0, do_to_float(precision))
+      do_to_float(round(x *. factor)) /. factor
+    }
+  }
 }
 
 @external(erlang, "erlang", "float")
