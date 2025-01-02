@@ -288,6 +288,12 @@ pub fn to_precision_test() {
 
   float.to_precision(435.3224, -0)
   |> should.equal(435.0)
+
+  float.to_precision(184.20000000000002, 2)
+  |> should.equal(184.2)
+
+  float.to_precision(12_345_678_912_345_678_912_345_678.0, -19)
+  |> should.equal(1_234_568.0e19)
 }
 
 pub fn min_test() {
