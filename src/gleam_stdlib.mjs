@@ -14,6 +14,7 @@ import { DecodeError } from "./gleam/dynamic.mjs";
 import { Some, None } from "./gleam/option.mjs";
 import { Eq, Gt, Lt } from "./gleam/order.mjs";
 import Dict from "./dict.mjs";
+import { new$ as set_new, inspect as set_inspect } from "./gleam/set.mjs";
 
 const Nil = undefined;
 const NOT_FOUND = {};
@@ -805,6 +806,7 @@ export function inspect(v) {
   if (v instanceof List) return inspectList(v);
   if (v instanceof UtfCodepoint) return inspectUtfCodepoint(v);
   if (v instanceof BitArray) return inspectBitArray(v);
+  if (v.constructor === set_new().constructor) return set_inspect(v);
   if (v instanceof CustomType) return inspectCustomType(v);
   if (v instanceof Dict) return inspectDict(v);
   if (v instanceof Set) return `//js(Set(${[...v].map(inspect).join(", ")}))`;

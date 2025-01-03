@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- The printing of sets by `string.inspect` has been improved.
+
 ## v0.51.0 - 2024-12-22
 
 - `dynamic/decode` now has its own error type.

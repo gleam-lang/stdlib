@@ -349,6 +349,8 @@ inspect(false) ->
     "False";
 inspect(nil) ->
     "Nil";
+inspect(Data) when is_tuple(Data) andalso element(1, Data) =:= set ->
+    gleam@set:inspect(Data);
 inspect(Data) when is_map(Data) ->
     Fields = [
         [<<"#(">>, inspect(Key), <<", ">>, inspect(Value), <<")">>]

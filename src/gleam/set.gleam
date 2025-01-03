@@ -1,6 +1,9 @@
 import gleam/dict.{type Dict}
 import gleam/list
+import gleam/pair
 import gleam/result
+import gleam/string
+import gleam/string_tree
 
 // A list is used as the dict value as an empty list has the smallest
 // representation in Erlang's binary format
@@ -404,4 +407,25 @@ pub fn each(set: Set(member), fun: fn(member) -> a) -> Nil {
     fun(member)
     nil
   })
+}
+
+@internal
+pub fn inspect(set: Set(member)) -> String {
+  fold(
+    set,
+    #(True, string_tree.from_string("set.from_list([")),
+    fn(acc, member) {
+      let member = string.inspect(member)
+      case acc.0 {
+        True -> #(False, acc.1 |> string_tree.append(member))
+        False -> #(
+          False,
+          acc.1 |> string_tree.append(", ") |> string_tree.append(member),
+        )
+      }
+    },
+  )
+  |> pair.second
+  |> string_tree.append("])")
+  |> string_tree.to_string
 }

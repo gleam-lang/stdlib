@@ -1,6 +1,7 @@
 import gleam/dict
 import gleam/option.{None, Some}
 import gleam/order
+import gleam/set
 import gleam/should
 import gleam/string
 
@@ -1395,4 +1396,10 @@ pub fn inspect_map_test() {
   dict.from_list([#("a", 1), #("b", 2)])
   |> string.inspect
   |> should.equal("dict.from_list([#(\"a\", 1), #(\"b\", 2)])")
+}
+
+pub fn inspect_set_test() {
+  set.from_list(["a", "b"])
+  |> string.inspect
+  |> should.equal("set.from_list([\"a\", \"b\"])")
 }
