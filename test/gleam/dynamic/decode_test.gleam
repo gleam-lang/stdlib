@@ -768,32 +768,40 @@ pub fn documentation_variants_example_test() {
   ])
 }
 
-pub fn new_primitive_decoder_string_ok_test() {
+pub fn new_primitive_decoder_int_ok_test() {
   let decoder =
-    decode.new_primitive_decoder("String", fn(x) {
-      dynamic.string(x) |> result.replace_error("")
-    })
-  dynamic.from("Hello!")
-  |> decode.run(decoder)
-  |> should.be_ok
-  |> should.equal("Hello!")
-}
-
-pub fn new_primitive_decoder_string_error_test() {
-  let decoder =
-    decode.new_primitive_decoder("String", fn(x) {
-      dynamic.string(x) |> result.replace_error("")
+    decode.new_primitive_decoder("Int", fn(x) {
+      decode_int(x) |> result.replace_error(0)
     })
   dynamic.from(123)
   |> decode.run(decoder)
+  |> should.be_ok
+  |> should.equal(123)
+}
+
+@external(erlang, "gleam_stdlib", "decode_int")
+@external(javascript, "../../gleam_stdlib.mjs", "decode_int")
+fn decode_int(a: Dynamic) -> Result(Int, Dynamic)
+
+@external(erlang, "gleam_stdlib", "decode_float")
+@external(javascript, "../../gleam_stdlib.mjs", "decode_float")
+fn decode_float(a: Dynamic) -> Result(Float, Dynamic)
+
+pub fn new_primitive_decoder_int_error_test() {
+  let decoder =
+    decode.new_primitive_decoder("Int", fn(x) {
+      decode_int(x) |> result.replace_error(0)
+    })
+  dynamic.from("hi")
+  |> decode.run(decoder)
   |> should.be_error
-  |> should.equal([DecodeError("String", "Int", [])])
+  |> should.equal([DecodeError("Int", "String", [])])
 }
 
 pub fn new_primitive_decoder_float_ok_test() {
   let decoder =
     decode.new_primitive_decoder("Float", fn(x) {
-      dynamic.float(x) |> result.replace_error(0.0)
+      decode_float(x) |> result.replace_error(0.0)
     })
   dynamic.from(12.4)
   |> decode.run(decoder)
@@ -804,7 +812,7 @@ pub fn new_primitive_decoder_float_ok_test() {
 pub fn new_primitive_decoder_float_error_test() {
   let decoder =
     decode.new_primitive_decoder("Float", fn(x) {
-      dynamic.float(x) |> result.replace_error(0.0)
+      decode_float(x) |> result.replace_error(0.0)
     })
   dynamic.from("blah")
   |> decode.run(decoder)

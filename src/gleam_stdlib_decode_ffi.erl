@@ -1,6 +1,8 @@
 -module(gleam_stdlib_decode_ffi).
 
--export([strict_index/2, list/5, dict/1]).
+-export([
+    strict_index/2, list/5, dict/1, bit_array/1, int/1, float/1, option/1
+]).
 
 strict_index([X | _], 0) ->
     {ok, {some, X}};
@@ -42,3 +44,19 @@ list(_, _, _, _, Acc) ->
 
 dict(#{} = Data) -> {ok, Data};
 dict(_) -> {error, nil}.
+
+bit_array(B) when is_bitstring(B) -> {ok, B};
+bit_array(_) -> {error, nil}.
+
+int(X) when is_integer(X) -> {ok, X};
+int(_) -> {error, nil}.
+
+float(X) when is_float(X) -> {ok, X};
+float(_) -> {error, nil}.
+
+option(nil) -> none;
+option(null) -> none;
+option(none) -> none;
+option(error) -> none;
+option(undefined) -> none;
+option(X) -> {some, X}.

@@ -1,4 +1,4 @@
-import { Ok, Error, List, NonEmpty } from "./gleam.mjs";
+import { Ok, Error, List, NonEmpty, BitArray } from "./gleam.mjs";
 import { default as Dict } from "./dict.mjs";
 import { Some, None } from "./gleam/option.mjs";
 import { classify } from "./gleam/dynamic.mjs";
@@ -79,4 +79,45 @@ export function dict(data) {
     return new Ok(Dict.fromObject(data));
   }
   return new Error("Dict");
+}
+
+export function bit_array(data) {
+  if (data instanceof BitArray) {
+    return new Ok(data);
+  }
+  if (data instanceof Uint8Array) {
+    return new Ok(new BitArray(data));
+  }
+  return new Error(undefined);
+}
+
+export function int(data) {
+  if (Number.isInteger(data)) {
+    return new Ok(data);
+  }
+  return new Error(undefined);
+}
+
+export function float(data) {
+  if (typeof data === "number") {
+    return new Ok(data);
+  }
+  return new Error(undefined);
+}
+
+export function string(data) {
+  if (typeof data === "string") {
+    return new Ok(data);
+  }
+  return new Error(undefined);
+}
+
+export function option(data, decoder) {
+  if (data === null || data === undefined || data instanceof None) {
+    return new None();
+  }
+  if (data instanceof Some) {
+    return data;
+  }
+  return new Some(data);
 }

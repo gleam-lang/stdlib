@@ -1,8 +1,10 @@
 import gleam/bit_array
-import gleam/order
 import gleam/result
 import gleam/should
 import gleam/string
+
+@target(erlang)
+import gleam/order
 
 pub fn bit_size_test() {
   bit_array.bit_size(<<>>)
