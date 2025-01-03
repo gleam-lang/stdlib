@@ -8,6 +8,9 @@
   `bool.to_int` functions have been removed.
 - Fixed a bug where `string.utf_codepoint` would treat valid Unicode codepoints
   `U+FFFE` and `U+FFFF` as invalid.
+- Unaligned bit arrays on the JavaScript target are now supported by the
+  `bit_array` module. Note: unaligned bit arrays on JavaScript are supported
+  starting with Gleam v1.8.
 
 ## v0.51.0 - 2024-12-22
 

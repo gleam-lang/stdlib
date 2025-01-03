@@ -316,8 +316,64 @@ export function bit_array_from_string(string) {
   return toBitArray([stringBits(string)]);
 }
 
+const BIT_ARRAY_UNALIGNED_SUPPORTED =
+  new BitArray(new Uint8Array()).bitSize !== undefined;
+
+export function bit_array_bit_size(bit_array) {
+  if (!BIT_ARRAY_UNALIGNED_SUPPORTED) {
+    return bit_array.length * 8;
+  }
+
+  return bit_array.bitSize;
+}
+
+export function bit_array_byte_size(bit_array) {
+  if (!BIT_ARRAY_UNALIGNED_SUPPORTED) {
+    return bit_array.length;
+  }
+
+  return bit_array.byteSize;
+}
+
+export function bit_array_pad_to_bytes(bit_array) {
+  // If the bit array is byte aligned it can be returned unchanged
+  if (bit_array_bit_size(bit_array) % 8 === 0) {
+    return bit_array;
+  }
+
+  const trailingBitsCount = bit_array_bit_size(bit_array) % 8;
+
+  const finalByte = bit_array.byteAt(bit_array.byteSize - 1);
+
+  const unusedBitsCount = 8 - trailingBitsCount;
+  const correctFinalByte = (finalByte >> unusedBitsCount) << unusedBitsCount;
+
+  // If the unused bits in the final byte are already set to zero then the
+  // existing buffer can be re-used, avoiding a copy
+  if (finalByte === correctFinalByte) {
+    return new BitArray(
+      bit_array.rawBuffer,
+      bit_array.byteSize * 8,
+      bit_array.bitOffset,
+    );
+  }
+
+  // Copy the bit array into a new buffer and set the correct final byte
+  const buffer = new Uint8Array(bit_array.byteSize);
+  for (let i = 0; i < buffer.length - 1; i++) {
+    buffer[i] = bit_array.byteAt(i);
+  }
+  buffer[buffer.length - 1] = correctFinalByte;
+
+  return new BitArray(buffer);
+}
+
 export function bit_array_concat(bit_arrays) {
-  return toBitArray(bit_arrays.toArray().map((b) => b.buffer));
+  if (BIT_ARRAY_UNALIGNED_SUPPORTED) {
+    return toBitArray(bit_arrays.toArray());
+  } else {
+    return toBitArray(bit_arrays.toArray().map((b) => b.buffer));
+  }
 }
 
 export function console_log(term) {
@@ -333,9 +389,25 @@ export function crash(message) {
 }
 
 export function bit_array_to_string(bit_array) {
+  if (bit_array_bit_size(bit_array) % 8 !== 0) {
+    return new Error(Nil);
+  }
+
   try {
     const decoder = new TextDecoder("utf-8", { fatal: true });
-    return new Ok(decoder.decode(bit_array.buffer));
+    if (BIT_ARRAY_UNALIGNED_SUPPORTED) {
+      if (bit_array.bitOffset === 0) {
+        return new Ok(decoder.decode(bit_array.rawBuffer));
+      } else {
+        const buffer = new Uint8Array(bit_array.byteSize);
+        for (let i = 0; i < buffer.length; i++) {
+          buffer[i] = bit_array.byteAt(i);
+        }
+        return new Ok(decoder.decode(buffer));
+      }
+    } else {
+      return new Ok(decoder.decode(bit_array.buffer));
+    }
   } catch {
     return new Error(Nil);
   }
@@ -415,13 +487,21 @@ export function random_uniform() {
 export function bit_array_slice(bits, position, length) {
   const start = Math.min(position, position + length);
   const end = Math.max(position, position + length);
-  if (start < 0 || end > bits.length) return new Error(Nil);
-  const byteOffset = bits.buffer.byteOffset + start;
+
+  if (start < 0 || end * 8 > bit_array_bit_size(bits)) {
+    return new Error(Nil);
+  }
+
+  if (BIT_ARRAY_UNALIGNED_SUPPORTED) {
+    return new Ok(bits.slice(start * 8, end * 8));
+  }
+
   const buffer = new Uint8Array(
     bits.buffer.buffer,
-    byteOffset,
+    bits.buffer.byteOffset + start,
     Math.abs(length),
   );
+
   return new Ok(new BitArray(buffer));
 }
 
@@ -522,16 +602,20 @@ let b64TextDecoder;
 export function encode64(bit_array, padding) {
   b64TextDecoder ??= new TextDecoder();
 
-  const bytes = bit_array.buffer;
+  bit_array = bit_array_pad_to_bytes(bit_array);
 
-  const m = bytes.length;
+  const m = bit_array_byte_size(bit_array);
   const k = m % 3;
   const n = Math.floor(m / 3) * 4 + (k && k + 1);
   const N = Math.ceil(m / 3) * 4;
   const encoded = new Uint8Array(N);
 
   for (let i = 0, j = 0; j < m; i += 4, j += 3) {
-    const y = (bytes[j] << 16) + (bytes[j + 1] << 8) + (bytes[j + 2] | 0);
+    const y =
+      (bit_array.byteAt(j) << 16) +
+      (bit_array.byteAt(j + 1) << 8) +
+      (bit_array.byteAt(j + 2) | 0);
+
     encoded[i] = b64EncodeLookup[y >> 18];
     encoded[i + 1] = b64EncodeLookup[(y >> 12) & 0x3f];
     encoded[i + 2] = b64EncodeLookup[(y >> 6) & 0x3f];
@@ -804,7 +888,7 @@ export function inspect(v) {
   if (Array.isArray(v)) return `#(${v.map(inspect).join(", ")})`;
   if (v instanceof List) return inspectList(v);
   if (v instanceof UtfCodepoint) return inspectUtfCodepoint(v);
-  if (v instanceof BitArray) return inspectBitArray(v);
+  if (v instanceof BitArray) return `<<${bit_array_inspect(v, "")}>>`;
   if (v instanceof CustomType) return inspectCustomType(v);
   if (v instanceof Dict) return inspectDict(v);
   if (v instanceof Set) return `//js(Set(${[...v].map(inspect).join(", ")}))`;
@@ -895,18 +979,16 @@ export function inspectList(list) {
   return `[${list.toArray().map(inspect).join(", ")}]`;
 }
 
-export function inspectBitArray(bits) {
-  return `<<${Array.from(bits.buffer).join(", ")}>>`;
-}
-
 export function inspectUtfCodepoint(codepoint) {
   return `//utfcodepoint(${String.fromCodePoint(codepoint.value)})`;
 }
 
 export function base16_encode(bit_array) {
+  bit_array = bit_array_pad_to_bytes(bit_array);
+
   let result = "";
-  for (const byte of bit_array.buffer) {
-    result += byte.toString(16).padStart(2, "0").toUpperCase();
+  for (let i = 0; i < bit_array.byteSize; i++) {
+    result += bit_array.byteAt(i).toString(16).padStart(2, "0").toUpperCase();
   }
   return result;
 }
@@ -923,38 +1005,108 @@ export function base16_decode(string) {
 }
 
 export function bit_array_inspect(bits, acc) {
-  return `${acc}${[...bits.buffer].join(", ")}`;
+  const bitSize = bit_array_bit_size(bits);
+
+  if (bitSize === 0) {
+    return acc;
+  }
+
+  const byteSize = bit_array_byte_size(bits);
+
+  for (let i = 0; i < byteSize - 1; i++) {
+    acc += bits.byteAt(i).toString();
+    acc += ", ";
+  }
+
+  if (byteSize * 8 === bitSize) {
+    acc += bits.byteAt(byteSize - 1).toString();
+  } else {
+    const trailingBitsCount = bitSize % 8;
+    acc += bits.byteAt(byteSize - 1) >> (8 - trailingBitsCount);
+    acc += `:size(${trailingBitsCount})`;
+  }
+
+  return acc;
 }
 
 export function bit_array_compare(first, second) {
-  for (let i = 0; i < first.length; i++) {
-    if (i >= second.length) {
-      return new Gt(); // first has more items
-    }
-    const f = first.buffer[i];
-    const s = second.buffer[i];
+  let i = 0;
+
+  let firstSize = bit_array_bit_size(first);
+  let secondSize = bit_array_bit_size(second);
+
+  while (firstSize >= 8 && secondSize >= 8) {
+    const f = first.byteAt(i);
+    const s = second.byteAt(i);
+
     if (f > s) {
       return new Gt();
-    }
-    if (f < s) {
+    } else if (f < s) {
       return new Lt();
     }
+
+    i++;
+    firstSize -= 8;
+    secondSize -= 8;
   }
-  // This means that either first did not have any items
-  // or all items in first were equal to second.
-  if (first.length === second.length) {
+
+  if (firstSize === 0 && secondSize === 0) {
     return new Eq();
   }
-  return new Lt(); // second has more items
+
+  // First has more items, example: "AB" > "A":
+  if (secondSize === 0) {
+    return new Gt();
+  }
+
+  // Second has more items, example: "A" < "AB":
+  if (firstSize === 0) {
+    return new Lt();
+  }
+
+  // This happens when there are unaligned bit arrays
+
+  const f = first.byteAt(i) >> (8 - firstSize);
+  const s = second.byteAt(i) >> (8 - secondSize);
+
+  if (f > s) {
+    return new Gt();
+  }
+  if (f < s) {
+    return new Lt();
+  }
+  if (firstSize > secondSize) {
+    return new Gt();
+  }
+  if (firstSize < secondSize) {
+    return new Lt();
+  }
+
+  return new Eq();
 }
 
 export function bit_array_starts_with(bits, prefix) {
-  if (prefix.length > bits.length) {
+  const prefixSize = bit_array_bit_size(prefix);
+
+  if (prefixSize > bit_array_bit_size(bits)) {
     return false;
   }
 
-  for (let i = 0; i < prefix.length; i++) {
-    if (bits.buffer[i] !== prefix.buffer[i]) {
+  // Check any whole bytes
+  const byteCount = Math.trunc(prefixSize / 8);
+  for (let i = 0; i < byteCount; i++) {
+    if (bits.byteAt(i) !== prefix.byteAt(i)) {
+      return false;
+    }
+  }
+
+  // Check any trailing bits at the end of the prefix
+  if (prefixSize % 8 !== 0) {
+    const unusedBitsCount = 8 - (prefixSize % 8);
+    if (
+      bits.byteAt(byteCount) >> unusedBitsCount !==
+      prefix.byteAt(byteCount) >> unusedBitsCount
+    ) {
       return false;
     }
   }
