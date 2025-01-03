@@ -1,5 +1,4 @@
 import gleam/bool
-import gleam/order
 import gleam/should
 
 pub fn and_test() {
@@ -96,28 +95,6 @@ pub fn exclusive_nor_test() {
 
   bool.exclusive_nor(True, True)
   |> should.be_true
-}
-
-pub fn compare_test() {
-  bool.compare(True, True)
-  |> should.equal(order.Eq)
-
-  bool.compare(True, False)
-  |> should.equal(order.Gt)
-
-  bool.compare(False, False)
-  |> should.equal(order.Eq)
-
-  bool.compare(False, True)
-  |> should.equal(order.Lt)
-}
-
-pub fn to_int_test() {
-  bool.to_int(True)
-  |> should.equal(1)
-
-  bool.to_int(False)
-  |> should.equal(0)
 }
 
 pub fn to_string_test() {

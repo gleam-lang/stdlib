@@ -3,6 +3,9 @@
 ## Unreleased
 
 - Improved the precision of `float.to_precision`.
+- The deprecated `function.compose`, `function.constant`, `function.apply*`,
+  `function.curry*`, `result.nil_error`, `list.concat`, `bool.compare`, and
+  `bool.to_int` functions have been removed.
 
 ## v0.51.0 - 2024-12-22
 

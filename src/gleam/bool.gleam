@@ -6,8 +6,6 @@
 //// field consider having a `role: SchoolRole` field where `SchoolRole` is a custom
 //// type that can be either `Student` or `Teacher`.
 
-import gleam/order.{type Order}
-
 /// Returns the and of two bools, but it evaluates both arguments.
 ///
 /// It's the function equivalent of the `&&` operator.
@@ -190,24 +188,6 @@ pub fn exclusive_or(a: Bool, b: Bool) -> Bool {
 ///
 pub fn exclusive_nor(a: Bool, b: Bool) -> Bool {
   a == b
-}
-
-@deprecated("Please use a case expression to get the behaviour you desire")
-pub fn compare(a: Bool, with b: Bool) -> Order {
-  case a, b {
-    True, True -> order.Eq
-    True, False -> order.Gt
-    False, False -> order.Eq
-    False, True -> order.Lt
-  }
-}
-
-@deprecated("Please use a case expression to get the behaviour you desire")
-pub fn to_int(bool: Bool) -> Int {
-  case bool {
-    False -> 0
-    True -> 1
-  }
 }
 
 /// Returns a string representation of the given bool.

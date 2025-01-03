@@ -679,27 +679,11 @@ fn reverse_and_prepend(list prefix: List(a), to suffix: List(a)) -> List(a) {
   }
 }
 
-/// Joins a list of lists into a single list.
-///
-/// This function traverses all elements twice.
-///
-/// ## Examples
-///
-/// ```gleam
-/// concat([[1], [2, 3], []])
-/// // -> [1, 2, 3]
-/// ```
-///
-@deprecated("Use `list.flatten` instead.")
-pub fn concat(lists: List(List(a))) -> List(a) {
-  concat_loop(lists, [])
-}
-
-fn concat_loop(lists: List(List(a)), acc: List(a)) -> List(a) {
+fn flatten_loop(lists: List(List(a)), acc: List(a)) -> List(a) {
   case lists {
     [] -> reverse(acc)
     [list, ..further_lists] ->
-      concat_loop(further_lists, reverse_and_prepend(list: list, to: acc))
+      flatten_loop(further_lists, reverse_and_prepend(list: list, to: acc))
   }
 }
 
@@ -716,7 +700,7 @@ fn concat_loop(lists: List(List(a)), acc: List(a)) -> List(a) {
 /// ```
 ///
 pub fn flatten(lists: List(List(a))) -> List(a) {
-  concat_loop(lists, [])
+  flatten_loop(lists, [])
 }
 
 /// Maps the list with the given function into a list of lists, and then flattens it.

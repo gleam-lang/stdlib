@@ -262,25 +262,6 @@ pub fn unwrap_both(result: Result(a, a)) -> a {
   }
 }
 
-/// Transforms any error into `Error(Nil)`.
-///
-/// ## Examples
-///
-/// ```gleam
-/// nil_error(Error(1))
-/// // -> Error(Nil)
-/// ```
-///
-/// ```gleam
-/// nil_error(Ok(1))
-/// // -> Ok(1)
-/// ```
-///
-@deprecated("Use `result.replace_error` with the `Nil` value instead")
-pub fn nil_error(result: Result(a, e)) -> Result(a, Nil) {
-  replace_error(result, Nil)
-}
-
 /// Returns the first value if it is `Ok`, otherwise returns the second value.
 ///
 /// ## Examples
