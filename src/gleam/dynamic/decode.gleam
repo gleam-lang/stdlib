@@ -969,9 +969,6 @@ pub fn failure(zero: a, expected: String) -> Decoder(a) {
 /// build-in `string` decoder) you would define it like so:
 ///
 /// ```gleam
-/// import gleam/dynamic
-/// import decode/decode
-///
 /// pub fn string_decoder() -> decode.Decoder(String) {
 ///   let default = ""
 ///   decode.new_primitive_decoder("String", fn(data) {
@@ -1003,9 +1000,6 @@ pub fn new_primitive_decoder(
 /// then you may not need to use this function.
 ///
 /// ```gleam
-/// import gleam/dynamic
-/// import gleam/dynamic/decode
-///
 /// type Nested {
 ///   Nested(List(Nested))
 ///   Value(String)
