@@ -995,26 +995,26 @@ pub fn new_primitive_decoder(
   })
 }
 
-/// Create a decoder that can refer to itself, useful for decoding for deeply
+/// Create a decoder that can refer to itself, useful for decoding deeply
 /// nested data.
 ///
 /// Attempting to create a recursive decoder without this function could result
-/// in an infinite loop. If you are using `field` or other `use`able function
+/// in an infinite loop. If you are using `field` or other `use`able functions
 /// then you may not need to use this function.
 ///
 /// ```gleam
 /// import gleam/dynamic
-/// import decode/zero.{type Decoder}
+/// import gleam/dynamic/decode
 ///
 /// type Nested {
 ///   Nested(List(Nested))
 ///   Value(String)
 /// }
 ///
-/// fn nested_decoder() -> Decoder(Nested) {
-///   use <- zero.recursive
-///   zero.one_of(zero.string |> zero.map(Value), [
-///     zero.list(nested_decoder()) |> zero.map(Nested),
+/// fn nested_decoder() -> decode.Decoder(Nested) {
+///   use <- decode.recursive
+///   decode.one_of(decode.string |> decode.map(Value), [
+///     decode.list(nested_decoder()) |> decode.map(Nested),
 ///   ])
 /// }
 /// ```
