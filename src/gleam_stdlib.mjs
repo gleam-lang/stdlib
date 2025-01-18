@@ -342,7 +342,7 @@ export function bit_array_to_string(bit_array) {
 }
 
 export function print(string) {
-  if (typeof process === "object") {
+  if (typeof process === "object" && process.stdout?.write) {
     process.stdout.write(string); // We can write without a trailing newline
   } else if (typeof Deno === "object") {
     Deno.stdout.writeSync(new TextEncoder().encode(string)); // We can write without a trailing newline
