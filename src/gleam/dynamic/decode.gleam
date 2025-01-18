@@ -569,6 +569,48 @@ pub fn optional_field(
   })
 }
 
+/// The same as [`optional_field`](#optional_field), except taking a path to
+/// the value rather than a field name.
+///
+/// This function will index into dictionaries with any key type, and if the
+/// key is an int then it'll also index into Erlang tuples and JavaScript
+/// arrays, and the first two elements of Gleam lists.
+///
+/// # Examples
+///
+/// ```gleam
+/// let data = dynamic.from(dict.from_list([
+///   #("data", dict.from_list([
+///     #("name", "Lucy"),
+///   ]))
+/// ]))
+///
+/// let decoder = {
+///   use name <- decode.subfield(["data", "name"], decode.string)
+///   use email <- decode.optional_subfield(["data", "email"], "n/a", decode.string)
+///   decode.success(SignUp(name: name, email: email))
+/// }
+///
+/// let result = decode.run(data, decoder)
+/// assert result == Ok(SignUp(name: "Lucy", email: "n/a"))
+/// ```
+///
+pub fn optional_subfield(
+  field_path: List(name),
+  default: t,
+  field_decoder: Decoder(t),
+  next: fn(t) -> Decoder(final),
+) -> Decoder(final) {
+  Decoder(function: fn(data) {
+    let #(out, errors1) =
+      index(field_path, [], field_decoder.function, data, fn(_, _) {
+        #(default, [])
+      })
+    let #(out, errors2) = next(out).function(data)
+    #(out, list.append(errors1, errors2))
+  })
+}
+
 /// A decoder that decodes a value that is nested within other values. For
 /// example, decoding a value that is within some deeply nested JSON objects.
 ///

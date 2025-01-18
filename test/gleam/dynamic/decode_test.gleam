@@ -921,6 +921,110 @@ pub fn optionally_at_no_path_error_test() {
   |> should.equal(100)
 }
 
+pub fn optional_subfield_dict_string_ok_test() {
+  let data =
+    dynamic.from(
+      dict.from_list([
+        #(
+          "first",
+          dict.from_list([#("second", dict.from_list([#("third", 1337)]))]),
+        ),
+      ]),
+    )
+
+  let decoder = {
+    use decoded <- decode.optional_subfield(
+      ["first", "second", "third"],
+      100,
+      decode.int,
+    )
+
+    decode.success(decoded)
+  }
+
+  decode.run(data, decoder)
+  |> should.be_ok
+  |> should.equal(1337)
+}
+
+pub fn optional_subfield_dict_int_ok_test() {
+  let data =
+    dynamic.from(
+      dict.from_list([
+        #(10, dict.from_list([#(20, dict.from_list([#(30, 1337)]))])),
+      ]),
+    )
+
+  let decoder = {
+    use decoded <- decode.optional_subfield([10, 20, 30], 123, decode.int)
+    decode.success(decoded)
+  }
+
+  decode.run(data, decoder)
+  |> should.be_ok
+  |> should.equal(1337)
+}
+
+pub fn optional_subfield_tuple_int_ok_test() {
+  let data = dynamic.from(#("x", #("a", "b", "c"), "z"))
+
+  let decoder = {
+    use decoded <- decode.optional_subfield([1, 0], "something", decode.string)
+    decode.success(decoded)
+  }
+
+  decode.run(data, decoder)
+  |> should.be_ok
+  |> should.equal("a")
+}
+
+pub fn optional_subfield_wrong_inner_error_test() {
+  let data =
+    dynamic.from(
+      dict.from_list([
+        #(
+          "first",
+          dict.from_list([#("second", dict.from_list([#("third", 1337)]))]),
+        ),
+      ]),
+    )
+
+  let decoder = {
+    use decoded <- decode.optional_subfield(
+      ["first", "second", "third"],
+      "default",
+      decode.string,
+    )
+
+    decode.success(decoded)
+  }
+
+  decode.run(data, decoder)
+  |> should.be_error
+  |> should.equal([DecodeError("String", "Int", ["first", "second", "third"])])
+}
+
+pub fn optional_subfield_no_path_error_test() {
+  let data =
+    dynamic.from(
+      dict.from_list([#("first", dict.from_list([#("third", 1337)]))]),
+    )
+
+  let decoder = {
+    use decoded <- decode.optional_subfield(
+      ["first", "second", "third"],
+      100,
+      decode.int,
+    )
+
+    decode.success(decoded)
+  }
+
+  decode.run(data, decoder)
+  |> should.be_ok
+  |> should.equal(100)
+}
+
 @external(erlang, "maps", "from_list")
 @external(javascript, "../../gleam_stdlib_test_ffi.mjs", "object")
 fn make_object(items: List(#(String, t))) -> Dynamic
