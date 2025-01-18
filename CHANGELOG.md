@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Fix `io.print` on browser environments, ensuring `process.stdout.write` exists
+
 ## v0.52.0 - 2025-01-04
 
 - Improved the precision of `float.to_precision`.
