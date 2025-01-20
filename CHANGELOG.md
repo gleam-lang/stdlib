@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Fix `io.print` on browser environments, ensuring `process.stdout.write` exists
+- Fix `io.print` when bundling to the Browser using bundlers like `Vite`, `Webpack`, etc. where the `process` object exsits but not `process.stdout.write`.
 
 ## v0.52.0 - 2025-01-04
 
