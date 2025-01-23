@@ -256,12 +256,12 @@
 //// decode.run(data, decoder)
 //// ```
 
+import gleam/bit_array
 import gleam/dict.{type Dict}
 import gleam/dynamic
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
-import gleam/result
 
 /// `Dynamic` data is data that we don't know the type of yet, originating from
 /// external untyped systems.
@@ -423,23 +423,19 @@ fn index(
   }
 }
 
-@external(erlang, "gleam_stdlib_decode_ffi", "strict_index")
-@external(javascript, "../../gleam_stdlib_decode_ffi.mjs", "strict_index")
+@external(erlang, "gleam_stdlib_decode_ffi", "index")
+@external(javascript, "../../gleam_stdlib_decode_ffi.mjs", "index")
 fn bare_index(data: Dynamic, key: anything) -> Result(Option(Dynamic), String)
 
 fn push_path(
   layer: #(t, List(DecodeError)),
   path: List(key),
 ) -> #(t, List(DecodeError)) {
-  let decoder =
-    dynamic.any([
-      dynamic.string,
-      fn(x) { result.map(dynamic.int(x), int.to_string) },
-    ])
+  let decoder = one_of(string, [int |> map(int.to_string)])
   let path =
     list.map(path, fn(key) {
-      let key = dynamic.from(key)
-      case decoder(key) {
+      let key = cast(key)
+      case run(key, decoder) {
         Ok(key) -> key
         Error(_) -> "<" <> dynamic.classify(key) <> ">"
       }
@@ -602,16 +598,12 @@ pub fn optionally_at(
 
 fn run_dynamic_function(
   data: Dynamic,
-  zero: t,
-  f: dynamic.Decoder(t),
+  name: String,
+  f: fn(Dynamic) -> Result(t, t),
 ) -> #(t, List(DecodeError)) {
   case f(data) {
     Ok(data) -> #(data, [])
-    Error(errors) -> {
-      let errors =
-        list.map(errors, fn(e) { DecodeError(e.expected, e.found, e.path) })
-      #(zero, errors)
-    }
+    Error(zero) -> #(zero, [DecodeError(name, dynamic.classify(data), [])])
   }
 }
 
@@ -627,7 +619,19 @@ fn run_dynamic_function(
 pub const string: Decoder(String) = Decoder(decode_string)
 
 fn decode_string(data: Dynamic) -> #(String, List(DecodeError)) {
-  run_dynamic_function(data, "", dynamic.string)
+  run_dynamic_function(data, "String", dynamic_string)
+}
+
+@external(javascript, "../../gleam_stdlib_decode_ffi.mjs", "string")
+fn dynamic_string(from data: Dynamic) -> Result(String, String) {
+  case dynamic_bit_array(data) {
+    Ok(data) ->
+      case bit_array.to_string(data) {
+        Ok(string) -> Ok(string)
+        Error(_) -> Error("")
+      }
+    Error(_) -> Error("")
+  }
 }
 
 /// A decoder that decodes `Bool` values.
@@ -642,7 +646,14 @@ fn decode_string(data: Dynamic) -> #(String, List(DecodeError)) {
 pub const bool: Decoder(Bool) = Decoder(decode_bool)
 
 fn decode_bool(data: Dynamic) -> #(Bool, List(DecodeError)) {
-  run_dynamic_function(data, False, dynamic.bool)
+  case cast(True) == data {
+    True -> #(True, [])
+    False ->
+      case cast(False) == data {
+        True -> #(False, [])
+        False -> #(False, decode_error("Bool", data))
+      }
+  }
 }
 
 /// A decoder that decodes `Int` values.
@@ -657,8 +668,12 @@ fn decode_bool(data: Dynamic) -> #(Bool, List(DecodeError)) {
 pub const int: Decoder(Int) = Decoder(decode_int)
 
 fn decode_int(data: Dynamic) -> #(Int, List(DecodeError)) {
-  run_dynamic_function(data, 0, dynamic.int)
+  run_dynamic_function(data, "Int", dynamic_int)
 }
+
+@external(erlang, "gleam_stdlib_decode_ffi", "int")
+@external(javascript, "../../gleam_stdlib_decode_ffi.mjs", "int")
+fn dynamic_int(data: Dynamic) -> Result(Int, Int)
 
 /// A decoder that decodes `Float` values.
 ///
@@ -672,8 +687,12 @@ fn decode_int(data: Dynamic) -> #(Int, List(DecodeError)) {
 pub const float: Decoder(Float) = Decoder(decode_float)
 
 fn decode_float(data: Dynamic) -> #(Float, List(DecodeError)) {
-  run_dynamic_function(data, 0.0, dynamic.float)
+  run_dynamic_function(data, "Float", dynamic_float)
 }
+
+@external(erlang, "gleam_stdlib_decode_ffi", "float")
+@external(javascript, "../../gleam_stdlib_decode_ffi.mjs", "float")
+fn dynamic_float(data: Dynamic) -> Result(Float, Float)
 
 /// A decoder that decodes `Dynamic` values. This decoder never returns an error.
 ///
@@ -702,8 +721,12 @@ fn decode_dynamic(data: Dynamic) -> #(Dynamic, List(DecodeError)) {
 pub const bit_array: Decoder(BitArray) = Decoder(decode_bit_array)
 
 fn decode_bit_array(data: Dynamic) -> #(BitArray, List(DecodeError)) {
-  run_dynamic_function(data, <<>>, dynamic.bit_array)
+  run_dynamic_function(data, "BitArray", dynamic_bit_array)
 }
+
+@external(erlang, "gleam_stdlib_decode_ffi", "bit_array")
+@external(javascript, "../../gleam_stdlib_decode_ffi.mjs", "bit_array")
+fn dynamic_bit_array(data: Dynamic) -> Result(BitArray, BitArray)
 
 /// A decoder that decodes lists where all elements are decoded with a given
 /// decoder.
@@ -816,13 +839,9 @@ fn decode_dict(data: Dynamic) -> Result(Dict(Dynamic, Dynamic), Nil)
 ///
 pub fn optional(inner: Decoder(a)) -> Decoder(Option(a)) {
   Decoder(function: fn(data) {
-    case dynamic.optional(Ok)(data) {
-      Ok(option.None) -> #(option.None, [])
-      Ok(option.Some(data)) -> {
-        let #(data, errors) = inner.function(data)
-        #(option.Some(data), errors)
-      }
-      Error(_) -> {
+    case is_null(data) {
+      True -> #(option.None, [])
+      False -> {
         let #(data, errors) = inner.function(data)
         #(option.Some(data), errors)
       }
@@ -1019,3 +1038,11 @@ pub fn recursive(inner: fn() -> Decoder(a)) -> Decoder(a) {
     decoder.function(data)
   })
 }
+
+@external(erlang, "gleam_stdlib", "identity")
+@external(javascript, "../../gleam_stdlib.mjs", "identity")
+fn cast(a: anything) -> Dynamic
+
+@external(erlang, "gleam_stdlib_decode_ffi", "is_null")
+@external(javascript, "../../gleam_stdlib_decode_ffi.mjs", "is_null")
+fn is_null(a: Dynamic) -> Bool

@@ -1,10 +1,10 @@
-import { Ok, Error, List, NonEmpty } from "./gleam.mjs";
+import { Ok, Error, List, NonEmpty, BitArray } from "./gleam.mjs";
 import { default as Dict } from "./dict.mjs";
 import { Some, None } from "./gleam/option.mjs";
 import { classify } from "./gleam/dynamic.mjs";
 import { DecodeError } from "./gleam/dynamic/decode.mjs";
 
-export function strict_index(data, key) {
+export function index(data, key) {
   const int = Number.isInteger(key);
 
   // Dictionaries and dictionary-like objects can be indexed
@@ -79,4 +79,29 @@ export function dict(data) {
     return new Ok(Dict.fromObject(data));
   }
   return new Error("Dict");
+}
+
+export function bit_array(data) {
+  if (data instanceof BitArray) return new Ok(data);
+  if (data instanceof Uint8Array) return new Ok(new BitArray(data));
+  return new Error(new BitArray(new Uint8Array()));
+}
+
+export function float(data) {
+  if (typeof data === "number") return new Ok(data);
+  return new Error(0.0);
+}
+
+export function int(data) {
+  if (Number.isInteger(data)) return new Ok(data);
+  return new Error(0);
+}
+
+export function string(data) {
+  if (typeof data === "string") return new Ok(data);
+  return new Error(0);
+}
+
+export function is_null(data) {
+  return data === null || data === undefined;
 }
