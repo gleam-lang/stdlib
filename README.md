@@ -1,8 +1,8 @@
 # stdlib
 
-<a href="https://github.com/gleam-lang/stdlib/releases"><img src="https://img.shields.io/github/release/gleam-lang/stdlib" alt="GitHub release"></a>
-<a href="https://discord.gg/Fm8Pwmy"><img src="https://img.shields.io/discord/768594524158427167?color=blue" alt="Discord chat"></a>
-![CI](https://github.com/gleam-lang/stdlib/workflows/CI/badge.svg?branch=main)
+[![Package Version](https://img.shields.io/hexpm/v/storail)](https://hex.pm/packages/storail)
+[![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/storail/)
+[![Discord chat](https://img.shields.io/discord/768594524158427167?color=blue)](https://discord.gg/Fm8Pwmy)
 
 Gleam's standard library!
 Documentation available on [HexDocs](https://hexdocs.pm/gleam_stdlib/).
