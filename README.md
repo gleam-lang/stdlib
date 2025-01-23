@@ -1,7 +1,7 @@
 # stdlib
 
-[![Package Version](https://img.shields.io/hexpm/v/storail)](https://hex.pm/packages/storail)
-[![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/storail/)
+[![Package Version](https://img.shields.io/hexpm/v/gleam_stdlib)](https://hex.pm/packages/gleam_stdlib)
+[![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/gleam_stdlib/)
 [![Discord chat](https://img.shields.io/discord/768594524158427167?color=blue)](https://discord.gg/Fm8Pwmy)
 
 Gleam's standard library!
