@@ -2,7 +2,9 @@
 
 ## Unreleased
 
-- Fix `io.print` when bundling to the Browser using bundlers like `Vite`, `Webpack`, etc. where the `process` object exsits but not `process.stdout.write`.
+- `io.print` will now work in JavaScript environments where the `process`
+  object exists but does not have a `stdout` property.
+- The decoder API in the `dynamic` module has been deprecated.
 
 ## v0.52.0 - 2025-01-04
 

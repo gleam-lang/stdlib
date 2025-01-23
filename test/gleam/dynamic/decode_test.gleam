@@ -400,13 +400,6 @@ pub fn optional_bool_absent_nil_ok_test() {
   |> should.equal(option.None)
 }
 
-pub fn optional_bool_absent_none_ok_test() {
-  dynamic.from(option.None)
-  |> decode.run(decode.optional(decode.bool))
-  |> should.be_ok
-  |> should.equal(option.None)
-}
-
 pub fn optional_error_test() {
   dynamic.from(123)
   |> decode.run(decode.optional(decode.string))
@@ -768,11 +761,18 @@ pub fn documentation_variants_example_test() {
   ])
 }
 
+fn decode_string(data: Dynamic) -> Result(String, String) {
+  decode.run(data, decode.string)
+  |> result.replace_error("")
+}
+
+fn decode_float(data: Dynamic) -> Result(Float, Float) {
+  decode.run(data, decode.float)
+  |> result.replace_error(0.0)
+}
+
 pub fn new_primitive_decoder_string_ok_test() {
-  let decoder =
-    decode.new_primitive_decoder("String", fn(x) {
-      dynamic.string(x) |> result.replace_error("")
-    })
+  let decoder = decode.new_primitive_decoder("String", decode_string)
   dynamic.from("Hello!")
   |> decode.run(decoder)
   |> should.be_ok
@@ -780,10 +780,7 @@ pub fn new_primitive_decoder_string_ok_test() {
 }
 
 pub fn new_primitive_decoder_string_error_test() {
-  let decoder =
-    decode.new_primitive_decoder("String", fn(x) {
-      dynamic.string(x) |> result.replace_error("")
-    })
+  let decoder = decode.new_primitive_decoder("String", decode_string)
   dynamic.from(123)
   |> decode.run(decoder)
   |> should.be_error
@@ -791,10 +788,7 @@ pub fn new_primitive_decoder_string_error_test() {
 }
 
 pub fn new_primitive_decoder_float_ok_test() {
-  let decoder =
-    decode.new_primitive_decoder("Float", fn(x) {
-      dynamic.float(x) |> result.replace_error(0.0)
-    })
+  let decoder = decode.new_primitive_decoder("Float", decode_float)
   dynamic.from(12.4)
   |> decode.run(decoder)
   |> should.be_ok
@@ -802,10 +796,7 @@ pub fn new_primitive_decoder_float_ok_test() {
 }
 
 pub fn new_primitive_decoder_float_error_test() {
-  let decoder =
-    decode.new_primitive_decoder("Float", fn(x) {
-      dynamic.float(x) |> result.replace_error(0.0)
-    })
+  let decoder = decode.new_primitive_decoder("Float", decode_float)
   dynamic.from("blah")
   |> decode.run(decoder)
   |> should.be_error

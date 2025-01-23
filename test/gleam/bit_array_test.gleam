@@ -1,4 +1,5 @@
 import gleam/bit_array
+@target(erlang)
 import gleam/order
 import gleam/result
 import gleam/should

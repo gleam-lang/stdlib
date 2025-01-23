@@ -1,26 +1,26 @@
 -module(gleam_stdlib_decode_ffi).
 
--export([strict_index/2, list/5, dict/1]).
+-export([index/2, list/5, dict/1, int/1, float/1, bit_array/1, is_null/1]).
 
-strict_index([X | _], 0) ->
+index([X | _], 0) ->
     {ok, {some, X}};
-strict_index([_, X | _], 1) ->
+index([_, X | _], 1) ->
     {ok, {some, X}};
-strict_index(Tuple, Index) when is_tuple(Tuple) andalso is_integer(Index) ->
+index(Tuple, Index) when is_tuple(Tuple) andalso is_integer(Index) ->
     {ok, try
         {some, element(Index + 1, Tuple)}
     catch _:_ -> 
         none
     end};
-strict_index(Map, Key) when is_map(Map) ->
+index(Map, Key) when is_map(Map) ->
     {ok, try
         {some, maps:get(Key, Map)}
     catch _:_ -> 
         none
     end};
-strict_index(_, Index) when is_integer(Index) ->
+index(_, Index) when is_integer(Index) ->
     {error, <<"Indexable">>};
-strict_index(_, _) ->
+index(_, _) ->
     {error, <<"Dict">>}.
 
 list(T, A, B, C, D) when is_tuple(T) ->
@@ -42,3 +42,15 @@ list(_, _, _, _, Acc) ->
 
 dict(#{} = Data) -> {ok, Data};
 dict(_) -> {error, nil}.
+
+int(I) when is_integer(I) -> {ok, I};
+int(_) -> {error, 0}.
+
+float(F) when is_float(F) -> {ok, F};
+float(_) -> {error, 0.0}.
+
+bit_array(B) when is_bitstring(B) -> {ok, B};
+bit_array(_) -> {error, <<>>}.
+
+is_null(X) ->
+    X =:= undefined orelse X =:= null orelse X =:= nil.
