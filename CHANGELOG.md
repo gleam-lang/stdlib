@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.53.0 - 2025-01-23
 
 - `io.print` will now work in JavaScript environments where the `process`
   object exists but does not have a `stdout` property.
