@@ -1159,9 +1159,18 @@ fn intersperse_loop(list: List(a), separator: a, acc: List(a)) -> List(a) {
 /// ```
 ///
 pub fn unique(list: List(a)) -> List(a) {
+  unique_loop(list, dict.new(), [])
+}
+
+fn unique_loop(list: List(a), seen: Dict(a, Nil), acc: List(a)) -> List(a) {
   case list {
-    [] -> []
-    [x, ..rest] -> [x, ..unique(filter(rest, fn(y) { y != x }))]
+    [] -> reverse(acc)
+    [first, ..rest] ->
+      case dict.has_key(seen, first) {
+        True -> unique_loop(rest, seen, acc)
+        False ->
+          unique_loop(rest, dict.insert(seen, first, Nil), [first, ..acc])
+      }
   }
 }
 
