@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Fixed a bug that would result in `list.unique` having quadratic runtime.
+
 ## v0.53.0 - 2025-01-23
 
 - `io.print` will now work in JavaScript environments where the `process`
