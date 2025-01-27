@@ -44,14 +44,14 @@ pub fn all(list: List(Option(a))) -> Option(List(a)) {
 fn all_loop(list: List(Option(a)), acc: List(a)) -> Option(List(a)) {
   case list {
     [] -> Some(acc)
-    [x, ..rest] -> {
+    [first, ..rest] -> {
       let accumulate = fn(acc, item) {
         case acc, item {
           Some(values), Some(value) -> Some([value, ..values])
           _, _ -> None
         }
       }
-      accumulate(all_loop(rest, acc), x)
+      accumulate(all_loop(rest, acc), first)
     }
   }
 }
@@ -109,7 +109,7 @@ pub fn is_none(option: Option(a)) -> Bool {
 pub fn to_result(option: Option(a), e) -> Result(a, e) {
   case option {
     Some(a) -> Ok(a)
-    _ -> Error(e)
+    None -> Error(e)
   }
 }
 
@@ -130,7 +130,7 @@ pub fn to_result(option: Option(a), e) -> Result(a, e) {
 pub fn from_result(result: Result(a, e)) -> Option(a) {
   case result {
     Ok(a) -> Some(a)
-    _ -> None
+    Error(_) -> None
   }
 }
 

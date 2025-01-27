@@ -349,7 +349,7 @@ pub fn run(data: Dynamic, decoder: Decoder(t)) -> Result(t, List(DecodeError)) {
   let #(maybe_invalid_data, errors) = decoder.function(data)
   case errors {
     [] -> Ok(maybe_invalid_data)
-    _ -> Error(errors)
+    [_, ..] -> Error(errors)
   }
 }
 
@@ -784,7 +784,7 @@ pub fn dict(
           // don't need to run the decoders, instead return the existing acc.
           case a.1 {
             [] -> fold_dict(a, k, v, key.function, value.function)
-            _ -> a
+            [_, ..] -> a
           }
         })
     }
@@ -897,7 +897,7 @@ pub fn collapse_errors(decoder: Decoder(a), name: String) -> Decoder(a) {
     let #(data, errors) as layer = decoder.function(dynamic_data)
     case errors {
       [] -> layer
-      _ -> #(data, decode_error(name, dynamic_data))
+      [_, ..] -> #(data, decode_error(name, dynamic_data))
     }
   })
 }
@@ -913,7 +913,7 @@ pub fn then(decoder: Decoder(a), next: fn(a) -> Decoder(b)) -> Decoder(b) {
     let #(data, _) as layer = decoder.function(dynamic_data)
     case errors {
       [] -> layer
-      _ -> #(data, errors)
+      [_, ..] -> #(data, errors)
     }
   })
 }
@@ -944,7 +944,7 @@ pub fn one_of(
     let #(_, errors) as layer = first.function(dynamic_data)
     case errors {
       [] -> layer
-      _ -> run_decoders(dynamic_data, layer, alternatives)
+      [_, ..] -> run_decoders(dynamic_data, layer, alternatives)
     }
   })
 }
@@ -961,7 +961,7 @@ fn run_decoders(
       let #(_, errors) as layer = decoder.function(data)
       case errors {
         [] -> layer
-        _ -> run_decoders(data, failure, decoders)
+        [_, ..] -> run_decoders(data, failure, decoders)
       }
     }
   }

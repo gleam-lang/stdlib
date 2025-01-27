@@ -65,8 +65,7 @@ pub fn absolute_value(x: Int) -> Int {
 /// ```
 ///
 pub fn power(base: Int, of exponent: Float) -> Result(Float, Nil) {
-  base
-  |> to_float()
+  to_float(base)
   |> float.power(exponent)
 }
 
@@ -85,8 +84,7 @@ pub fn power(base: Int, of exponent: Float) -> Result(Float, Nil) {
 /// ```
 ///
 pub fn square_root(x: Int) -> Result(Float, Nil) {
-  x
-  |> to_float()
+  to_float(x)
   |> float.square_root()
 }
 
@@ -420,7 +418,7 @@ pub fn sum(numbers: List(Int)) -> Int {
 
 fn sum_loop(numbers: List(Int), initial: Int) -> Int {
   case numbers {
-    [x, ..rest] -> sum_loop(rest, x + initial)
+    [first, ..rest] -> sum_loop(rest, first + initial)
     [] -> initial
   }
 }
@@ -435,15 +433,12 @@ fn sum_loop(numbers: List(Int), initial: Int) -> Int {
 /// ```
 ///
 pub fn product(numbers: List(Int)) -> Int {
-  case numbers {
-    [] -> 1
-    _ -> product_loop(numbers, 1)
-  }
+  product_loop(numbers, 1)
 }
 
 fn product_loop(numbers: List(Int), initial: Int) -> Int {
   case numbers {
-    [x, ..rest] -> product_loop(rest, x * initial)
+    [first, ..rest] -> product_loop(rest, first * initial)
     [] -> initial
   }
 }
@@ -535,8 +530,8 @@ fn undigits_loop(numbers: List(Int), base: Int, acc: Int) -> Result(Int, Nil) {
 ///
 pub fn random(max: Int) -> Int {
   { float.random() *. to_float(max) }
-  |> float.floor()
-  |> float.round()
+  |> float.floor
+  |> float.round
 }
 
 /// Performs a truncated integer division.

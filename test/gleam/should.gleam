@@ -41,7 +41,8 @@ pub fn not_equal(a: a, b: a) -> Nil {
 pub fn be_ok(a: Result(a, e)) -> a {
   case a {
     Ok(e) -> e
-    _ -> panic as { string.concat(["\n", string.inspect(a), "\nshould be ok"]) }
+    Error(_) ->
+      panic as { string.concat(["\n", string.inspect(a), "\nshould be ok"]) }
   }
 }
 

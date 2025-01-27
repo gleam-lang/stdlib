@@ -148,7 +148,7 @@ pub fn compare(a: String, b: String) -> order.Order {
     _ ->
       case less_than(a, b) {
         True -> order.Lt
-        _ -> order.Gt
+        False -> order.Gt
       }
   }
 }
@@ -716,7 +716,7 @@ pub fn to_graphemes(string: String) -> List(String) {
 fn to_graphemes_loop(string: String, acc: List(String)) -> List(String) {
   case pop_grapheme(string) {
     Ok(#(grapheme, rest)) -> to_graphemes_loop(rest, [grapheme, ..acc])
-    _ -> acc
+    Error(_) -> acc
   }
 }
 
@@ -911,7 +911,7 @@ pub fn last(string: String) -> Result(String, Nil) {
 pub fn capitalise(string: String) -> String {
   case pop_grapheme(string) {
     Ok(#(first, rest)) -> append(to: uppercase(first), suffix: lowercase(rest))
-    _ -> ""
+    Error(_) -> ""
   }
 }
 

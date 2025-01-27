@@ -61,7 +61,7 @@ pub fn length(of list: List(a)) -> Int {
 fn length_loop(list: List(a), count: Int) -> Int {
   case list {
     [_, ..list] -> length_loop(list, count + 1)
-    _ -> count
+    [] -> count
   }
 }
 
@@ -124,13 +124,14 @@ pub fn count(list: List(a), where predicate: fn(a) -> Bool) -> Int {
 ///
 @external(erlang, "lists", "reverse")
 pub fn reverse(list: List(a)) -> List(a) {
-  reverse_loop(list, [])
+  reverse_and_prepend(list, [])
 }
 
-fn reverse_loop(remaining: List(a), accumulator: List(a)) -> List(a) {
-  case remaining {
-    [] -> accumulator
-    [item, ..rest] -> reverse_loop(rest, [item, ..accumulator])
+// Reverses a list and prepends it to another list
+fn reverse_and_prepend(list prefix: List(a), to suffix: List(a)) -> List(a) {
+  case prefix {
+    [] -> suffix
+    [first, ..rest] -> reverse_and_prepend(list: rest, to: [first, ..suffix])
   }
 }
 
@@ -221,7 +222,7 @@ pub fn contains(list: List(a), any elem: a) -> Bool {
 pub fn first(list: List(a)) -> Result(a, Nil) {
   case list {
     [] -> Error(Nil)
-    [x, ..] -> Ok(x)
+    [first, ..] -> Ok(first)
   }
 }
 
@@ -650,7 +651,7 @@ pub fn append(first: List(a), second: List(a)) -> List(a) {
 fn append_loop(first: List(a), second: List(a)) -> List(a) {
   case first {
     [] -> second
-    [item, ..rest] -> append_loop(rest, [item, ..second])
+    [first, ..rest] -> append_loop(rest, [first, ..second])
   }
 }
 
@@ -669,14 +670,6 @@ fn append_loop(first: List(a), second: List(a)) -> List(a) {
 ///
 pub fn prepend(to list: List(a), this item: a) -> List(a) {
   [item, ..list]
-}
-
-// Reverses a list and prepends it to another list
-fn reverse_and_prepend(list prefix: List(a), to suffix: List(a)) -> List(a) {
-  case prefix {
-    [] -> suffix
-    [first, ..rest] -> reverse_and_prepend(list: rest, to: [first, ..suffix])
-  }
 }
 
 fn flatten_loop(lists: List(List(a)), acc: List(a)) -> List(a) {
@@ -732,7 +725,7 @@ pub fn fold(
 ) -> acc {
   case list {
     [] -> initial
-    [x, ..rest] -> fold(rest, fun(initial, x), fun)
+    [first, ..rest] -> fold(rest, fun(initial, first), fun)
   }
 }
 
@@ -754,7 +747,7 @@ pub fn fold_right(
 ) -> acc {
   case list {
     [] -> initial
-    [x, ..rest] -> fun(fold_right(rest, initial, fun), x)
+    [first, ..rest] -> fun(fold_right(rest, initial, fun), first)
   }
 }
 
@@ -889,10 +882,10 @@ pub fn find(
 ) -> Result(a, Nil) {
   case list {
     [] -> Error(Nil)
-    [x, ..rest] ->
-      case is_desired(x) {
-        True -> Ok(x)
-        _ -> find(in: rest, one_that: is_desired)
+    [first, ..rest] ->
+      case is_desired(first) {
+        True -> Ok(first)
+        False -> find(in: rest, one_that: is_desired)
       }
   }
 }
@@ -925,10 +918,10 @@ pub fn find_map(
 ) -> Result(b, Nil) {
   case list {
     [] -> Error(Nil)
-    [x, ..rest] ->
-      case fun(x) {
-        Ok(x) -> Ok(x)
-        _ -> find_map(in: rest, with: fun)
+    [first, ..rest] ->
+      case fun(first) {
+        Ok(first) -> Ok(first)
+        Error(_) -> find_map(in: rest, with: fun)
       }
   }
 }
@@ -1136,14 +1129,15 @@ fn unzip_loop(
 pub fn intersperse(list: List(a), with elem: a) -> List(a) {
   case list {
     [] | [_] -> list
-    [x, ..rest] -> intersperse_loop(rest, elem, [x])
+    [first, ..rest] -> intersperse_loop(rest, elem, [first])
   }
 }
 
 fn intersperse_loop(list: List(a), separator: a, acc: List(a)) -> List(a) {
   case list {
     [] -> reverse(acc)
-    [x, ..rest] -> intersperse_loop(rest, separator, [x, separator, ..acc])
+    [first, ..rest] ->
+      intersperse_loop(rest, separator, [first, separator, ..acc])
   }
 }
 
@@ -1266,7 +1260,7 @@ fn sequences(
         // Notice how we have to reverse the accumulator we're growing: since
         // we always add items to the head, `growing` is built in the opposite
         // sorting order of what it actually is in the original list.
-        Ascending -> [reverse_loop(growing, []), ..acc]
+        Ascending -> [reverse(growing), ..acc]
         Descending -> [growing, ..acc]
       }
 
@@ -1287,7 +1281,7 @@ fn sequences(
         // be the one we just found.
         order.Gt, Ascending | order.Lt, Descending | order.Eq, Descending -> {
           let acc = case direction {
-            Ascending -> [reverse_loop(growing, []), ..acc]
+            Ascending -> [reverse(growing), ..acc]
             Descending -> [growing, ..acc]
           }
           case rest {
@@ -1328,7 +1322,7 @@ fn merge_all(
 
     // If we have a single list in descending order, we reverse it to make sure
     // it's in ascending order and we're done.
-    [sequence], Descending -> reverse_loop(sequence, [])
+    [sequence], Descending -> reverse(sequence)
 
     // Merging together sequences that are in ascending (descending) order
     // reverses their order, so the recursive call will assume to be merging
@@ -1355,12 +1349,12 @@ fn merge_ascending_pairs(
   acc: List(List(a)),
 ) {
   case sequences {
-    [] -> reverse_loop(acc, [])
+    [] -> reverse(acc)
 
     // Beware, if we have just one item left we must reverse it: we take
     // ascending lists as input and have to return descending ones.
     // If we returned it like it is it would be sorted in ascending order.
-    [sequence] -> reverse_loop([reverse_loop(sequence, []), ..acc], [])
+    [sequence] -> reverse([reverse(sequence), ..acc])
 
     [ascending1, ascending2, ..rest] -> {
       let descending = merge_ascendings(ascending1, ascending2, compare, [])
@@ -1377,9 +1371,9 @@ fn merge_descending_pairs(
   acc: List(List(a)),
 ) {
   case sequences {
-    [] -> reverse_loop(acc, [])
+    [] -> reverse(acc)
 
-    [sequence] -> reverse_loop([reverse_loop(sequence, []), ..acc], [])
+    [sequence] -> reverse([reverse(sequence), ..acc])
 
     [descending1, descending2, ..rest] -> {
       let ascending = merge_descendings(descending1, descending2, compare, [])
@@ -1403,7 +1397,7 @@ fn merge_ascendings(
   acc: List(a),
 ) -> List(a) {
   case list1, list2 {
-    [], list | list, [] -> reverse_loop(list, acc)
+    [], list | list, [] -> reverse_and_prepend(list, acc)
 
     [first1, ..rest1], [first2, ..rest2] ->
       case compare(first1, first2) {
@@ -1430,7 +1424,7 @@ fn merge_descendings(
   acc: List(a),
 ) -> List(a) {
   case list1, list2 {
-    [], list | list, [] -> reverse_loop(list, acc)
+    [], list | list, [] -> reverse_and_prepend(list, acc)
     [first1, ..rest1], [first2, ..rest2] ->
       case compare(first1, first2) {
         order.Lt -> merge_descendings(list1, rest2, compare, [first2, ..acc])
@@ -1567,8 +1561,8 @@ fn split_while_loop(
     [] -> #(reverse(acc), [])
     [first, ..rest] ->
       case f(first) {
+        True -> split_while_loop(rest, f, [first, ..acc])
         False -> #(reverse(acc), list)
-        _ -> split_while_loop(rest, f, [first, ..acc])
       }
   }
 }
@@ -1673,10 +1667,10 @@ pub fn pop(
 fn pop_loop(haystack, predicate, checked) {
   case haystack {
     [] -> Error(Nil)
-    [x, ..rest] ->
-      case predicate(x) {
-        True -> Ok(#(x, append(reverse(checked), rest)))
-        False -> pop_loop(rest, predicate, [x, ..checked])
+    [first, ..rest] ->
+      case predicate(first) {
+        True -> Ok(#(first, append(reverse(checked), rest)))
+        False -> pop_loop(rest, predicate, [first, ..checked])
       }
   }
 }
@@ -1717,10 +1711,10 @@ fn pop_map_loop(
 ) -> Result(#(b, List(a)), Nil) {
   case list {
     [] -> Error(Nil)
-    [x, ..rest] ->
-      case mapper(x) {
-        Ok(y) -> Ok(#(y, append(reverse(checked), rest)))
-        Error(_) -> pop_map_loop(rest, mapper, [x, ..checked])
+    [first, ..rest] ->
+      case mapper(first) {
+        Ok(mapped) -> Ok(#(mapped, append(reverse(checked), rest)))
+        Error(_) -> pop_map_loop(rest, mapper, [first, ..checked])
       }
   }
 }
@@ -1751,9 +1745,9 @@ fn pop_map_loop(
 pub fn key_pop(list: List(#(k, v)), key: k) -> Result(#(v, List(#(k, v))), Nil) {
   pop_map(list, fn(entry) {
     let #(k, v) = entry
-    case k {
-      k if k == key -> Ok(v)
-      _ -> Error(Nil)
+    case k == key {
+      True -> Ok(v)
+      False -> Error(Nil)
     }
   })
 }
@@ -1776,10 +1770,20 @@ pub fn key_pop(list: List(#(k, v)), key: k) -> Result(#(v, List(#(k, v))), Nil) 
 /// ```
 ///
 pub fn key_set(list: List(#(k, v)), key: k, value: v) -> List(#(k, v)) {
+  key_set_loop(list, key, value, [])
+}
+
+fn key_set_loop(
+  list: List(#(k, v)),
+  key: k,
+  value: v,
+  inspected: List(#(k, v)),
+) -> List(#(k, v)) {
   case list {
-    [] -> [#(key, value)]
-    [#(k, _), ..rest] if k == key -> [#(key, value), ..rest]
-    [first, ..rest] -> [first, ..key_set(rest, key, value)]
+    [#(k, _), ..rest] if k == key ->
+      reverse_and_prepend(inspected, [#(k, value), ..rest])
+    [first, ..rest] -> key_set_loop(rest, key, value, [first, ..inspected])
+    [] -> reverse([#(key, value), ..inspected])
   }
 }
 
@@ -1879,7 +1883,7 @@ fn partition_loop(list, categorise, trues, falses) {
 pub fn permutations(list: List(a)) -> List(List(a)) {
   case list {
     [] -> [[]]
-    _ ->
+    [_, ..] ->
       index_map(list, fn(i, i_idx) {
         index_fold(list, [], fn(acc, j, j_idx) {
           case i_idx == j_idx {
@@ -2025,14 +2029,14 @@ fn chunk_loop(
     [first, ..rest] -> {
       let key = f(first)
       case key == previous_key {
+        True -> chunk_loop(rest, f, key, [first, ..current_chunk], acc)
         False -> {
           let new_acc = [reverse(current_chunk), ..acc]
           chunk_loop(rest, f, key, [first], new_acc)
         }
-        _true -> chunk_loop(rest, f, key, [first, ..current_chunk], acc)
       }
     }
-    _empty -> reverse([reverse(current_chunk), ..acc])
+    [] -> reverse([reverse(current_chunk), ..acc])
   }
 }
 
@@ -2161,8 +2165,7 @@ fn scan_loop(
 /// ```
 ///
 pub fn last(list: List(a)) -> Result(a, Nil) {
-  list
-  |> reduce(fn(_, elem) { elem })
+  reduce(list, fn(_, elem) { elem })
 }
 
 /// Return unique combinations of elements in the list.
@@ -2252,8 +2255,8 @@ pub fn transpose(list_of_list: List(List(a))) -> List(List(a)) {
   let take_first = fn(list) {
     case list {
       [] -> []
-      [f] -> [f]
-      [f, ..] -> [f]
+      [first] -> [first]
+      [first, ..] -> [first]
     }
   }
 
@@ -2326,7 +2329,7 @@ pub fn max(
   reduce(over: list, with: fn(acc, other) {
     case compare(acc, other) {
       order.Gt -> acc
-      _ -> other
+      order.Lt | order.Eq -> other
     }
   })
 }
@@ -2375,7 +2378,6 @@ fn sample_loop(
 ) -> Dict(Int, a) {
   let skip = {
     let assert Ok(log_result) = float.logarithm(1.0 -. w)
-
     log_random() /. log_result |> float.floor |> float.round
   }
 
@@ -2383,10 +2385,9 @@ fn sample_loop(
 
   case drop(list, skip) {
     [] -> reservoir
-    [elem, ..rest] -> {
-      let reservoir = int.random(k) |> dict.insert(reservoir, _, elem)
+    [first, ..rest] -> {
+      let reservoir = dict.insert(reservoir, int.random(k), first)
       let w = w *. float.exponential(log_random() /. int.to_float(k))
-
       sample_loop(rest, reservoir, k, index, w)
     }
   }

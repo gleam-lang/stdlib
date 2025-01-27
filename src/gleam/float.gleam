@@ -1,19 +1,19 @@
 //// Functions for working with floats.
-//// 
+////
 //// ## Float representation
-//// 
+////
 //// Floats are represented as 64 bit floating point numbers on both the Erlang
 //// and JavaScript runtimes. The floating point behaviour is native to their
 //// respective runtimes, so their exact behaviour will be slightly different on
-//// the two runtimes. 
-//// 
+//// the two runtimes.
+////
 //// ### Infinity and NaN
-//// 
+////
 //// Under the JavaScript runtime, exceeding the maximum (or minimum)
 //// representable value for a floating point value will result in Infinity (or
 //// -Infinity). Should you try to divide two infinities you will get NaN as a
-//// result. 
-//// 
+//// result.
+////
 //// When running on BEAM, exceeding the maximum (or minimum) representable
 //// value for a floating point value will raise an error.
 ////
@@ -240,7 +240,7 @@ pub fn floor(x: Float) -> Float
 pub fn round(x: Float) -> Int {
   case x >=. 0.0 {
     True -> js_round(x)
-    _ -> 0 - js_round(negate(x))
+    False -> 0 - js_round(negate(x))
   }
 }
 
@@ -311,7 +311,7 @@ fn do_to_float(a: Int) -> Float
 pub fn absolute_value(x: Float) -> Float {
   case x >=. 0.0 {
     True -> x
-    _ -> 0.0 -. x
+    False -> 0.0 -. x
   }
 }
 
@@ -409,7 +409,7 @@ pub fn sum(numbers: List(Float)) -> Float {
 
 fn sum_loop(numbers: List(Float), initial: Float) -> Float {
   case numbers {
-    [x, ..rest] -> sum_loop(rest, x +. initial)
+    [first, ..rest] -> sum_loop(rest, first +. initial)
     [] -> initial
   }
 }
@@ -424,15 +424,12 @@ fn sum_loop(numbers: List(Float), initial: Float) -> Float {
 /// ```
 ///
 pub fn product(numbers: List(Float)) -> Float {
-  case numbers {
-    [] -> 1.0
-    _ -> product_loop(numbers, 1.0)
-  }
+  product_loop(numbers, 1.0)
 }
 
 fn product_loop(numbers: List(Float), initial: Float) -> Float {
   case numbers {
-    [x, ..rest] -> product_loop(rest, x *. initial)
+    [first, ..rest] -> product_loop(rest, first *. initial)
     [] -> initial
   }
 }
