@@ -4,6 +4,7 @@
 
 - Fixed a bug that would result in `list.unique` having quadratic runtime.
 - Fixed the implementation of `list.key_set` to be tail recursive.
+- The `pop` and `pop_map` functions in the `list` module have been deprecated.
 
 ## v0.53.0 - 2025-01-23
 
