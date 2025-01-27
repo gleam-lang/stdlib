@@ -78,7 +78,7 @@ fn is_utf8_loop(bits: BitArray) -> Bool {
 fn is_utf8_loop(bits: BitArray) -> Bool {
   case to_string(bits) {
     Ok(_) -> True
-    _ -> False
+    Error(_) -> False
   }
 }
 
@@ -111,7 +111,7 @@ fn unsafe_to_string(a: BitArray) -> String
 pub fn concat(bit_arrays: List(BitArray)) -> BitArray
 
 /// Encodes a BitArray into a base 64 encoded string.
-/// 
+///
 /// If the bit array does not contain a whole number of bytes then it is padded
 /// with zero bits prior to being encoded.
 ///

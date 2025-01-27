@@ -441,7 +441,7 @@ pub fn find_map_test() {
   |> list.find_map(with: fn(x) {
     case x == recursion_test_cycles {
       True -> Ok(recursion_test_cycles)
-      _ -> Error(Nil)
+      False -> Error(Nil)
     }
   })
 }

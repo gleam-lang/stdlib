@@ -95,7 +95,7 @@ fn from_list_loop(
 ) -> Dict(k, v) {
   case list {
     [] -> initial
-    [x, ..rest] -> from_list_loop(rest, insert(initial, x.0, x.1))
+    [#(key, value), ..rest] -> from_list_loop(rest, insert(initial, key, value))
   }
 }
 
@@ -210,21 +210,20 @@ fn do_map_values(f: fn(k, v) -> a, dict: Dict(k, v)) -> Dict(k, a) {
 ///
 @external(erlang, "maps", "keys")
 pub fn keys(dict: Dict(k, v)) -> List(k) {
-  let list_of_pairs = to_list(dict)
-  do_keys_loop(list_of_pairs, [])
-}
-
-fn reverse_and_concat(remaining: List(a), accumulator: List(a)) -> List(a) {
-  case remaining {
-    [] -> accumulator
-    [item, ..rest] -> reverse_and_concat(rest, [item, ..accumulator])
-  }
+  do_keys_loop(to_list(dict), [])
 }
 
 fn do_keys_loop(list: List(#(k, v)), acc: List(k)) -> List(k) {
   case list {
     [] -> reverse_and_concat(acc, [])
-    [first, ..rest] -> do_keys_loop(rest, [first.0, ..acc])
+    [#(key, _value), ..rest] -> do_keys_loop(rest, [key, ..acc])
+  }
+}
+
+fn reverse_and_concat(remaining: List(a), accumulator: List(a)) -> List(a) {
+  case remaining {
+    [] -> accumulator
+    [first, ..rest] -> reverse_and_concat(rest, [first, ..accumulator])
   }
 }
 
@@ -250,7 +249,7 @@ pub fn values(dict: Dict(k, v)) -> List(v) {
 fn do_values_loop(list: List(#(k, v)), acc: List(v)) -> List(v) {
   case list {
     [] -> reverse_and_concat(acc, [])
-    [first, ..rest] -> do_values_loop(rest, [first.1, ..acc])
+    [#(_key, value), ..rest] -> do_values_loop(rest, [value, ..acc])
   }
 }
 
@@ -283,7 +282,7 @@ fn do_filter(f: fn(k, v) -> Bool, dict: Dict(k, v)) -> Dict(k, v) {
   let insert = fn(dict, k, v) {
     case f(k, v) {
       True -> insert(dict, k, v)
-      _ -> dict
+      False -> dict
     }
   }
 
@@ -324,7 +323,7 @@ fn do_take_loop(
   let insert = fn(taken, key) {
     case get(dict, key) {
       Ok(value) -> insert(taken, key, value)
-      _ -> taken
+      Error(_) -> taken
     }
   }
   case desired_keys {
@@ -354,15 +353,15 @@ pub fn merge(into dict: Dict(k, v), from new_entries: Dict(k, v)) -> Dict(k, v) 
   |> fold_inserts(dict)
 }
 
-fn insert_pair(dict: Dict(k, v), pair: #(k, v)) -> Dict(k, v) {
-  insert(dict, pair.0, pair.1)
-}
-
 fn fold_inserts(new_entries: List(#(k, v)), dict: Dict(k, v)) -> Dict(k, v) {
   case new_entries {
     [] -> dict
     [first, ..rest] -> fold_inserts(rest, insert_pair(dict, first))
   }
+}
+
+fn insert_pair(dict: Dict(k, v), pair: #(k, v)) -> Dict(k, v) {
+  insert(dict, pair.0, pair.1)
 }
 
 /// Creates a new dict from a given dict with all the same entries except for the
@@ -443,11 +442,10 @@ pub fn upsert(
   update key: k,
   with fun: fn(Option(v)) -> v,
 ) -> Dict(k, v) {
-  dict
-  |> get(key)
-  |> option.from_result
-  |> fun
-  |> insert(dict, key, _)
+  case get(dict, key) {
+    Ok(value) -> insert(dict, key, fun(option.Some(value)))
+    Error(_) -> insert(dict, key, fun(option.None))
+  }
 }
 
 /// Combines all entries into a single value by calling a given function on each

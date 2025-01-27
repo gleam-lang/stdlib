@@ -68,7 +68,7 @@ pub fn prepend_tree(to second: BytesTree, prefix first: BytesTree) -> BytesTree 
 pub fn append_tree(to first: BytesTree, suffix second: BytesTree) -> BytesTree {
   case second {
     Many(trees) -> Many([first, ..trees])
-    _ -> Many([first, second])
+    Text(_) | Bytes(_) -> Many([first, second])
   }
 }
 
