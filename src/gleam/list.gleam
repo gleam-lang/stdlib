@@ -1657,6 +1657,7 @@ pub fn key_filter(
 /// // -> Error(Nil)
 /// ```
 ///
+@deprecated("This function will be removed in the next gleam_stdlib version")
 pub fn pop(
   in list: List(a),
   one_that is_desired: fn(a) -> Bool,
@@ -1697,6 +1698,7 @@ fn pop_loop(haystack, predicate, checked) {
 /// // -> Error(Nil)
 /// ```
 ///
+@deprecated("This function will be removed in the next gleam_stdlib version")
 pub fn pop_map(
   in haystack: List(a),
   one_that is_desired: fn(a) -> Result(b, c),
@@ -1743,13 +1745,20 @@ fn pop_map_loop(
 /// ```
 ///
 pub fn key_pop(list: List(#(k, v)), key: k) -> Result(#(v, List(#(k, v))), Nil) {
-  pop_map(list, fn(entry) {
-    let #(k, v) = entry
-    case k == key {
-      True -> Ok(v)
-      False -> Error(Nil)
-    }
-  })
+  key_pop_loop(list, key, [])
+}
+
+fn key_pop_loop(
+  list: List(#(k, v)),
+  key: k,
+  checked: List(#(k, v)),
+) -> Result(#(v, List(#(k, v))), Nil) {
+  case list {
+    [] -> Error(Nil)
+    [#(k, v), ..rest] if k == key ->
+      Ok(#(v, reverse_and_prepend(checked, rest)))
+    [first, ..rest] -> key_pop_loop(rest, key, [first, ..checked])
+  }
 }
 
 /// Given a list of 2-element tuples, inserts a key and value into the list.
