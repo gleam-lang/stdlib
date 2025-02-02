@@ -13,22 +13,20 @@ pub fn from_string(x: String) -> BitArray
 /// Returns an integer which is the number of bits in the bit array.
 ///
 @external(erlang, "erlang", "bit_size")
-pub fn bit_size(x: BitArray) -> Int {
-  byte_size(x) * 8
-}
+@external(javascript, "../gleam_stdlib.mjs", "bit_array_bit_size")
+pub fn bit_size(x: BitArray) -> Int
 
 /// Returns an integer which is the number of bytes in the bit array.
 ///
 @external(erlang, "erlang", "byte_size")
-@external(javascript, "../gleam_stdlib.mjs", "length")
+@external(javascript, "../gleam_stdlib.mjs", "bit_array_byte_size")
 pub fn byte_size(x: BitArray) -> Int
 
 /// Pads a bit array with zeros so that it is a whole number of bytes.
 ///
 @external(erlang, "gleam_stdlib", "bit_array_pad_to_bytes")
-pub fn pad_to_bytes(x: BitArray) -> BitArray {
-  x
-}
+@external(javascript, "../gleam_stdlib.mjs", "bit_array_pad_to_bytes")
+pub fn pad_to_bytes(x: BitArray) -> BitArray
 
 /// Creates a new bit array by joining two bit arrays.
 ///
