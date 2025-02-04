@@ -28,6 +28,48 @@ pub type Uri {
   )
 }
 
+/// A constant representing an empty URI, useful as a starting point for constructing
+/// URIs with minimal boilerplate.
+///
+/// ## Examples
+///
+/// ```gleam
+/// let empty_uri = Uri.empty
+/// // -> Uri(
+/// //   scheme: None,
+/// //   userinfo: None,
+/// //   host: None,
+/// //   port: None,
+/// //   path: "",
+/// //   query: None,
+/// //   fragment: None,
+/// // )
+/// ```
+///
+/// ```gleam
+/// // Create a URI by overriding only the needed fields:
+/// let localhost_uri = Uri(..Uri.empty, scheme: Some("http"), host: Some("localhost"))
+/// // -> Uri(
+/// //   scheme: Some("http"),
+/// //   userinfo: None,
+/// //   host: Some("localhost"),
+/// //   port: None,
+/// //   path: "",
+/// //   query: None,
+/// //   fragment: None,
+/// // )
+/// ```
+///
+pub const empty = Uri(
+  scheme: None,
+  userinfo: None,
+  host: None,
+  port: None,
+  path: "",
+  query: None,
+  fragment: None,
+)
+
 /// Parses a compliant URI string into the `Uri` Type.
 /// If the string is not a valid URI string then an error is returned.
 ///
@@ -58,18 +100,7 @@ pub fn parse(uri_string: String) -> Result(Uri, Nil) {
   // TODO: This is not perfect and will be more permissive than its Erlang
   // counterpart, ideally we want to replicate Erlang's implementation on the js
   // target as well.
-  let default_pieces =
-    Uri(
-      scheme: None,
-      userinfo: None,
-      host: None,
-      port: None,
-      path: "",
-      query: None,
-      fragment: None,
-    )
-
-  parse_scheme_loop(uri_string, uri_string, default_pieces, 0)
+  parse_scheme_loop(uri_string, uri_string, empty, 0)
 }
 
 fn parse_scheme_loop(
