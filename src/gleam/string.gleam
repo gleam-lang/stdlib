@@ -222,20 +222,6 @@ fn do_slice(string: String, idx: Int, len: Int) -> String
 @external(javascript, "../gleam_stdlib.mjs", "crop_string")
 pub fn crop(from string: String, before substring: String) -> String
 
-/// Drops *n* graphemes from the left side of a `String`.
-///
-/// ## Examples
-///
-/// ```gleam
-/// drop_left(from: "The Lone Gunmen", up_to: 2)
-/// // -> "e Lone Gunmen"
-/// ```
-///
-@deprecated("Use `string.drop_start` instead.")
-pub fn drop_left(from string: String, up_to num_graphemes: Int) -> String {
-  drop_start(string, num_graphemes)
-}
-
 /// Drops *n* graphemes from the start of a `String`.
 ///
 /// ## Examples
@@ -254,20 +240,6 @@ pub fn drop_start(from string: String, up_to num_graphemes: Int) -> String {
         Error(Nil) -> string
       }
   }
-}
-
-/// Drops *n* graphemes from the right side of a `String`.
-///
-/// ## Examples
-///
-/// ```gleam
-/// drop_right(from: "Cigarette Smoking Man", up_to: 2)
-/// // -> "Cigarette Smoking M"
-/// ```
-///
-@deprecated("Use `string.drop_end` instead.")
-pub fn drop_right(from string: String, up_to num_graphemes: Int) -> String {
-  drop_end(string, num_graphemes)
 }
 
 /// Drops *n* graphemes from the end of a `String`.
@@ -464,34 +436,6 @@ pub fn join(strings: List(String), with separator: String) -> String {
   |> concat
 }
 
-/// Pads a `String` on the left until it has at least given number of graphemes.
-///
-/// ## Examples
-///
-/// ```gleam
-/// pad_left("121", to: 5, with: ".")
-/// // -> "..121"
-/// ```
-///
-/// ```gleam
-/// pad_left("121", to: 3, with: ".")
-/// // -> "121"
-/// ```
-///
-/// ```gleam
-/// pad_left("121", to: 2, with: ".")
-/// // -> "121"
-/// ```
-///
-@deprecated("Use `string.pad_start` instead.")
-pub fn pad_left(
-  string: String,
-  to desired_length: Int,
-  with pad_string: String,
-) -> String {
-  pad_start(string, desired_length, pad_string)
-}
-
 /// Pads the start of a `String` until it has a given length.
 ///
 /// ## Examples
@@ -523,34 +467,6 @@ pub fn pad_start(
     True -> string
     False -> padding(to_pad_length, pad_string) <> string
   }
-}
-
-/// Pads a `String` on the right until it has a given length.
-///
-/// ## Examples
-///
-/// ```gleam
-/// pad_right("123", to: 5, with: ".")
-/// // -> "123.."
-/// ```
-///
-/// ```gleam
-/// pad_right("123", to: 3, with: ".")
-/// // -> "123"
-/// ```
-///
-/// ```gleam
-/// pad_right("123", to: 2, with: ".")
-/// // -> "123"
-/// ```
-///
-@deprecated("Use `string.pad_end` instead.")
-pub fn pad_right(
-  string: String,
-  to desired_length: Int,
-  with pad_string: String,
-) -> String {
-  pad_end(string, desired_length, pad_string)
 }
 
 /// Pads the end of a `String` until it has a given length.
@@ -620,20 +536,6 @@ type Direction {
   Trailing
 }
 
-/// Removes whitespace on the left of a `String`.
-///
-/// ## Examples
-///
-/// ```gleam
-/// trim_left("  hats  \n")
-/// // -> "hats  \n"
-/// ```
-///
-@deprecated("Use `string.trim_start` instead")
-pub fn trim_left(string: String) -> String {
-  trim_start(string)
-}
-
 /// Removes whitespace at the start of a `String`.
 ///
 /// ## Examples
@@ -646,20 +548,6 @@ pub fn trim_left(string: String) -> String {
 @external(javascript, "../gleam_stdlib.mjs", "trim_start")
 pub fn trim_start(string: String) -> String {
   erl_trim(string, Leading)
-}
-
-/// Removes whitespace on the right of a `String`.
-///
-/// ## Examples
-///
-/// ```gleam
-/// trim_right("  hats  \n")
-/// // -> "  hats"
-/// ```
-///
-@deprecated("Use `string.trim_end` instead")
-pub fn trim_right(string: String) -> String {
-  trim_end(string)
 }
 
 /// Removes whitespace at the end of a `String`.
