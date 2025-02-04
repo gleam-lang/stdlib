@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.54.0 - 2025-02-04
 
 - The deprecated `drop_left`, `drop_right`, `pad_left`, `pad_right`,
   `trim_left`, and `trim_right` functions have been removed.
