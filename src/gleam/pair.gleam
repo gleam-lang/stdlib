@@ -70,6 +70,20 @@ pub fn map_second(of pair: #(a, b), with fun: fn(b) -> c) -> #(a, c) {
   #(a, fun(b))
 }
 
+/// Returns a new pair with both elements having had `with` applied to them.
+///
+/// ## Examples
+///
+/// ```gleam
+/// #(1, 2) |> map(fn(n) { n * 2 })
+/// // -> #(2, 4)
+/// ```
+///
+pub fn map(of pair: #(a, a), with fun: fn(a) -> b) -> #(b, b) {
+  let #(a, b) = pair
+  #(fun(a), fun(b))
+}
+
 /// Returns a new pair with the given elements. This can also be done using the dedicated
 /// syntax instead: `new(1, 2) == #(1, 2)`.
 ///
