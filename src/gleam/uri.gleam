@@ -33,7 +33,7 @@ pub type Uri {
 /// ## Examples
 ///
 /// ```gleam
-/// let uri = Uri(..Uri.empty, scheme: Some("https"), host: Some("example.com"))
+/// let uri = Uri(..empty, scheme: Some("https"), host: Some("example.com"))
 /// // -> Uri(
 /// //   scheme: Some("https"),
 /// //   userinfo: None,
@@ -636,7 +636,7 @@ fn remove_dot_segments_loop(
 /// ## Examples
 ///
 /// ```gleam
-/// let uri = Uri(..Uri.empty, scheme: Some("https"), host: Some("example.com"))
+/// let uri = Uri(..empty, scheme: Some("https"), host: Some("example.com"))
 /// to_string(uri)
 /// // -> "https://example.com"
 /// ```
