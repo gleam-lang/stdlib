@@ -425,6 +425,30 @@ export function bit_array_slice(bits, position, length) {
   return new Ok(new BitArray(buffer));
 }
 
+export function bit_array_split_once(bits, pattern) {
+  try {
+    if (!(bits instanceof BitArray) || !(pattern instanceof BitArray) || pattern.buffer.length < 1 || pattern.buffer.length >= bits.buffer.length) {
+      return new Error(Nil);
+    }
+
+    let i = 0;
+    const n = bits.buffer.length - pattern.buffer.length + 1;
+
+    find: for (; i < n; i++) {
+      for (let j = 0; j < pattern.buffer.length; j++) {
+        if (bits.buffer[i + j] !== pattern.buffer[j]) continue find;
+      }
+      const before = bits.buffer.slice(0, i);
+      const after = bits.buffer.slice(i + pattern.buffer.length);
+      return new Ok([new BitArray(before), new BitArray(after)]);
+    }
+
+    return new Error(Nil);
+  } catch (e) {
+    return new Error(Nil);
+  }
+}
+
 export function codepoint(int) {
   return new UtfCodepoint(int);
 }

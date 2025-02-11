@@ -202,6 +202,41 @@ pub fn slice_erlang_only_test() {
   |> should.equal(Error(Nil))
 }
 
+pub fn split_once_test() {
+  <<"hello":utf8>>
+  |> bit_array.split_once(<<"l":utf8>>)
+  |> should.equal(Ok(#(<<"he":utf8>>, <<"lo":utf8>>)))
+
+  <<"hello":utf8>>
+  |> bit_array.split_once(<<"o":utf8>>)
+  |> should.equal(Ok(#(<<"hell":utf8>>, <<>>)))
+
+  <<"hello":utf8>>
+  |> bit_array.split_once(<<"h":utf8>>)
+  |> should.equal(Ok(#(<<>>, <<"ello":utf8>>)))
+
+  <<"hello":utf8>>
+  |> bit_array.split_once(<<1>>)
+  |> should.equal(Error(Nil))
+
+  <<"hello":utf8>>
+  |> bit_array.split_once(<<"":utf8>>)
+  |> should.equal(Error(Nil))
+
+  <<"hello":utf8>>
+  |> bit_array.split_once(<<"hello":utf8>>)
+  |> should.equal(Error(Nil))
+}
+
+// This test is target specific since it's using non byte-aligned BitArrays
+// and those are not supported on the JavaScript target.
+@target(erlang)
+pub fn split_once_erlang_only_test() {
+  <<0, 1, 2:7>>
+  |> bit_array.split_once(<<1>>)
+  |> should.equal(Error(Nil))
+}
+
 pub fn to_string_test() {
   <<>>
   |> bit_array.to_string
