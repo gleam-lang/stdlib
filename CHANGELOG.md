@@ -7,7 +7,8 @@
 - Fixed a bug that would result in `list.unique` having quadratic runtime.
 - Fixed the implementation of `list.key_set` to be tail recursive.
 - The `pop` and `pop_map` functions in the `list` module have been deprecated.
-- Added `Uri.empty` constant representing an empty URI, equivalent to `""`.
+- The `uri` module gains the `empty` value, representing an empty URI which 
+  equivalent to `""`.
 
 ## v0.53.0 - 2025-01-23
 
