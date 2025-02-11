@@ -763,33 +763,28 @@ export function byte_size(string) {
   return new TextEncoder().encode(string).length;
 }
 
-// In Javascript bitwise operations convert numbers to a sequence of 32 bits
-// while Erlang uses arbitrary precision.
-// To get around this problem and get consistent results use BigInt and then
-// downcast the value back to a Number value.
-
 export function bitwise_and(x, y) {
-  return Number(BigInt(x) & BigInt(y));
+  return x & y;
 }
 
 export function bitwise_not(x) {
-  return Number(~BigInt(x));
+  return ~x;
 }
 
 export function bitwise_or(x, y) {
-  return Number(BigInt(x) | BigInt(y));
+  return x | y;
 }
 
 export function bitwise_exclusive_or(x, y) {
-  return Number(BigInt(x) ^ BigInt(y));
+  return x ^ y;
 }
 
 export function bitwise_shift_left(x, y) {
-  return Number(BigInt(x) << BigInt(y));
+  return x << y;
 }
 
 export function bitwise_shift_right(x, y) {
-  return Number(BigInt(x) >> BigInt(y));
+  return x >> y;
 }
 
 export function inspect(v) {
