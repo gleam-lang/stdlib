@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- The `bit_array` module gains the `split` and `split_once` functions.
 - The deprecated `drop_left`, `drop_right`, `pad_left`, `pad_right`,
   `trim_left`, and `trim_right` functions have been removed.
 - Fixed a bug that would result in `list.unique` having quadratic runtime.

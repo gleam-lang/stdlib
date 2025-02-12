@@ -215,16 +215,24 @@ pub fn split_once_test() {
   |> bit_array.split_once(<<"h":utf8>>)
   |> should.equal(Ok(#(<<>>, <<"ello":utf8>>)))
 
-  <<"hello":utf8>>
+  <<0, 1, 0, 2, 0, 3>>
+  |> bit_array.split_once(<<0, 2>>)
+  |> should.equal(Ok(#(<<0, 1>>, <<0, 3>>)))
+
+  <<0, 1, 2, 0, 3, 4, 5>>
+  |> bit_array.split_once(<<>>)
+  |> should.equal(Error(Nil))
+
+  <<>>
   |> bit_array.split_once(<<1>>)
   |> should.equal(Error(Nil))
 
-  <<"hello":utf8>>
-  |> bit_array.split_once(<<"":utf8>>)
+  <<1>>
+  |> bit_array.split_once(<<1>>)
   |> should.equal(Error(Nil))
 
-  <<"hello":utf8>>
-  |> bit_array.split_once(<<"hello":utf8>>)
+  <<0>>
+  |> bit_array.split_once(<<1>>)
   |> should.equal(Error(Nil))
 }
 
@@ -234,6 +242,49 @@ pub fn split_once_test() {
 pub fn split_once_erlang_only_test() {
   <<0, 1, 2:7>>
   |> bit_array.split_once(<<1>>)
+  |> should.equal(Error(Nil))
+}
+
+pub fn split_test() {
+  <<"hello":utf8>>
+  |> bit_array.split(<<"l":utf8>>)
+  |> should.equal(Ok([<<"he":utf8>>, <<"o":utf8>>]))
+
+  <<0, 1, 0, 2, 0, 3>>
+  |> bit_array.split(<<0>>)
+  |> should.equal(Ok([<<1>>, <<2>>, <<3>>]))
+
+  <<1, 0>>
+  |> bit_array.split(<<0>>)
+  |> should.equal(Ok([<<1>>]))
+
+  <<0, 1, 0, 2, 0, 3>>
+  |> bit_array.split(<<0, 2>>)
+  |> should.equal(Ok([<<0, 1>>, <<0, 3>>]))
+
+  <<1>>
+  |> bit_array.split(<<0>>)
+  |> should.equal(Ok([<<1>>]))
+
+  <<1>>
+  |> bit_array.split(<<1>>)
+  |> should.equal(Ok([]))
+
+  <<>>
+  |> bit_array.split(<<1>>)
+  |> should.equal(Ok([]))
+
+  <<0, 1, 2, 0, 3, 4, 5>>
+  |> bit_array.split(<<>>)
+  |> should.equal(Error(Nil))
+}
+
+// This test is target specific since it's using non byte-aligned BitArrays
+// and those are not supported on the JavaScript target.
+@target(erlang)
+pub fn split_erlang_only_test() {
+  <<0, 1, 2:7>>
+  |> bit_array.split(<<1>>)
   |> should.equal(Error(Nil))
 }
 

@@ -14,7 +14,8 @@
     inspect/1, float_to_string/1, int_from_base_string/2,
     utf_codepoint_list_to_string/1, contains_string/2, crop_string/2,
     base16_encode/1, base16_decode/1, string_replace/3, slice/3,
-    bit_array_to_int_and_size/1, bit_array_pad_to_bytes/1, bit_array_split_once/2
+    bit_array_to_int_and_size/1, bit_array_pad_to_bytes/1, bit_array_split_once/2,
+    bit_array_split/2
 ]).
 
 %% Taken from OTP's uri_string module
@@ -235,9 +236,14 @@ bit_array_split_once(Bin, Sub) ->
     try
         case binary:split(Bin, [Sub]) of
             [<<>>, <<>>] -> {error, nil};
-            [Part1, Part2] -> {ok, {Part1, Part2}};
+            [A, B] -> {ok, {A, B}};
             _ -> {error, nil}
         end
+    catch error:badarg -> {error, nil}
+    end.
+
+bit_array_split(Bin, Sub) ->
+    try {ok, binary:split(Bin, [Sub], [global, trim_all])}
     catch error:badarg -> {error, nil}
     end.
 

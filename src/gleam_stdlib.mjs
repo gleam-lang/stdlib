@@ -14,6 +14,7 @@ import { DecodeError } from "./gleam/dynamic.mjs";
 import { Some, None } from "./gleam/option.mjs";
 import { Eq, Gt, Lt } from "./gleam/order.mjs";
 import Dict from "./dict.mjs";
+import { Buffer } from 'node:buffer';
 
 const Nil = undefined;
 const NOT_FOUND = {};
@@ -427,16 +428,19 @@ export function bit_array_slice(bits, position, length) {
 
 export function bit_array_split_once(bits, pattern) {
   try {
-    if (!(bits instanceof BitArray) || !(pattern instanceof BitArray) || pattern.buffer.length < 1 || pattern.buffer.length >= bits.buffer.length) {
+    if (!(bits instanceof BitArray)
+      || !(pattern instanceof BitArray)
+      || pattern.buffer.length < 1
+      || pattern.buffer.length >= bits.buffer.length) {
       return new Error(Nil);
     }
 
-    let i = 0;
     const n = bits.buffer.length - pattern.buffer.length + 1;
-
-    find: for (; i < n; i++) {
+    find: for (let i = 0; i < n; i++) {
       for (let j = 0; j < pattern.buffer.length; j++) {
-        if (bits.buffer[i + j] !== pattern.buffer[j]) continue find;
+        if (bits.buffer[i + j] !== pattern.buffer[j]) {
+          continue find;
+        }
       }
       const before = bits.buffer.slice(0, i);
       const after = bits.buffer.slice(i + pattern.buffer.length);
@@ -444,6 +448,47 @@ export function bit_array_split_once(bits, pattern) {
     }
 
     return new Error(Nil);
+  } catch (e) {
+    return new Error(Nil);
+  }
+}
+
+export function bit_array_split(bits, pattern) {
+  try {
+    const patternEmpty = pattern.buffer.length < 1
+    const incorrectArguments = !(bits instanceof BitArray) || !(pattern instanceof BitArray)
+    if (incorrectArguments || patternEmpty) {
+      return new Error(Nil);
+    }
+
+    const bitsEqualToPattern = Buffer.compare(bits.buffer, pattern.buffer) === 0
+    const bitsEmpty = bits.buffer.length === 0
+    if (bitsEqualToPattern || bitsEmpty) {
+      return new Ok(List.fromArray([]));
+    }
+
+    const results = [];
+    let lastIndex = 0;
+    const n = bits.buffer.length - pattern.buffer.length + 1;
+
+    find: for (let i = 0; i < n; i++) {
+      for (let j = 0; j < pattern.buffer.length; j++) {
+        if (bits.buffer[i + j] !== pattern.buffer[j]) {
+          continue find;
+        }
+      }
+      if (i > lastIndex) {
+        results.push(new BitArray(bits.buffer.slice(lastIndex, i)));
+      }
+      lastIndex = i + pattern.buffer.length;
+      i = lastIndex - 1;
+    }
+
+    if (lastIndex < bits.buffer.length) {
+      results.push(new BitArray(bits.buffer.slice(lastIndex)));
+    }
+
+    return new Ok(List.fromArray(results.length ? results : [bits]));
   } catch (e) {
     return new Error(Nil);
   }
