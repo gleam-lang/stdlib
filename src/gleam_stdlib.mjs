@@ -428,10 +428,10 @@ export function bit_array_slice(bits, position, length) {
 
 export function bit_array_split_once(bits, pattern) {
   try {
-    if (!(bits instanceof BitArray)
-      || !(pattern instanceof BitArray)
-      || pattern.buffer.length < 1
-      || pattern.buffer.length >= bits.buffer.length) {
+    const patternEmpty = pattern.buffer.length < 1
+    const patternLongerThanBits = pattern.buffer.length >= bits.buffer.length
+    const incorrectArguments = !(bits instanceof BitArray) || !(pattern instanceof BitArray)
+    if (incorrectArguments || patternEmpty || patternLongerThanBits) {
       return new Error(Nil);
     }
 
