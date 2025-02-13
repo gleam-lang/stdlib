@@ -2,13 +2,16 @@
 
 ## Unreleased
 
+- The `uri` module gains the `empty` value, representing an empty URI which
+  equivalent to `""`.
+
+## v0.54.0 - 2025-02-04
+
 - The deprecated `drop_left`, `drop_right`, `pad_left`, `pad_right`,
   `trim_left`, and `trim_right` functions have been removed.
 - Fixed a bug that would result in `list.unique` having quadratic runtime.
 - Fixed the implementation of `list.key_set` to be tail recursive.
 - The `pop` and `pop_map` functions in the `list` module have been deprecated.
-- The `uri` module gains the `empty` value, representing an empty URI which 
-  equivalent to `""`.
 
 ## v0.53.0 - 2025-01-23
 
