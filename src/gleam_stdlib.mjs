@@ -14,7 +14,6 @@ import { DecodeError } from "./gleam/dynamic.mjs";
 import { Some, None } from "./gleam/option.mjs";
 import { Eq, Gt, Lt } from "./gleam/order.mjs";
 import Dict from "./dict.mjs";
-import { Buffer } from 'node:buffer';
 
 const Nil = undefined;
 const NOT_FOUND = {};
@@ -461,10 +460,9 @@ export function bit_array_split(bits, pattern) {
       return new Error(Nil);
     }
 
-    const bitsEqualToPattern = Buffer.compare(bits.buffer, pattern.buffer) === 0
-    const bitsEmpty = bits.buffer.length === 0
-    if (bitsEqualToPattern || bitsEmpty) {
-      return new Ok(List.fromArray([]));
+    const bitsShorter = bits.buffer.length < pattern.buffer.length
+    if (bitsShorter) {
+      return new Ok(List.fromArray([bits]))
     }
 
     const results = [];
@@ -477,9 +475,16 @@ export function bit_array_split(bits, pattern) {
           continue find;
         }
       }
+
+      const bitsEqualsPattern = bits.buffer.length === pattern.buffer.length
+      if (bitsEqualsPattern) {
+        return new Ok(List.fromArray([]));
+      }
+
       if (i > lastIndex) {
         results.push(new BitArray(bits.buffer.slice(lastIndex, i)));
       }
+
       lastIndex = i + pattern.buffer.length;
       i = lastIndex - 1;
     }
@@ -488,7 +493,7 @@ export function bit_array_split(bits, pattern) {
       results.push(new BitArray(bits.buffer.slice(lastIndex)));
     }
 
-    return new Ok(List.fromArray(results.length ? results : [bits]));
+    return new Ok(List.fromArray(results))
   } catch (e) {
     return new Error(Nil);
   }

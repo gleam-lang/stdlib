@@ -254,24 +254,24 @@ pub fn split_test() {
   |> bit_array.split(<<0>>)
   |> should.equal(Ok([<<1>>, <<2>>, <<3>>]))
 
-  <<1, 0>>
-  |> bit_array.split(<<0>>)
-  |> should.equal(Ok([<<1>>]))
-
   <<0, 1, 0, 2, 0, 3>>
   |> bit_array.split(<<0, 2>>)
   |> should.equal(Ok([<<0, 1>>, <<0, 3>>]))
 
+  <<1, 0>>
+  |> bit_array.split(<<0>>)
+  |> should.equal(Ok([<<1>>]))
+
+  <<1, 0>>
+  |> bit_array.split(<<1>>)
+  |> should.equal(Ok([<<0>>]))
+
   <<1>>
   |> bit_array.split(<<0>>)
   |> should.equal(Ok([<<1>>]))
 
-  <<1>>
-  |> bit_array.split(<<1>>)
-  |> should.equal(Ok([]))
-
-  <<>>
-  |> bit_array.split(<<1>>)
+  <<1, 2>>
+  |> bit_array.split(<<1, 2>>)
   |> should.equal(Ok([]))
 
   <<0, 1, 2, 0, 3, 4, 5>>

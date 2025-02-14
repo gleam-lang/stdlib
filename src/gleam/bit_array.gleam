@@ -84,8 +84,8 @@ pub fn split_once(
 
 /// Splits a bit array into parts at the locations of the pattern.
 ///
-/// The result will not include the pattern, and returns an empty
-/// list if the pattern is not found.
+/// The result will not include the pattern, and returns the input
+/// as is if the pattern is not found.
 ///
 /// This function runs in linear time.
 ///
@@ -96,7 +96,7 @@ pub fn split_once(
 /// // -> Ok([<<1>>, <<2>>, <<3>>])
 /// 
 /// split(from: <<0>>, on: <<1>>)
-/// // -> Ok([])
+/// // -> Ok([<<0>>])
 /// ```
 @external(erlang, "gleam_stdlib", "bit_array_split")
 @external(javascript, "../gleam_stdlib.mjs", "bit_array_split")
