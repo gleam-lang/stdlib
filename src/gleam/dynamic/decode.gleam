@@ -423,6 +423,46 @@ fn index(
   }
 }
 
+// Indexes into a path similar to `index`, but treats Nil values as a miss
+// instead of an error.
+fn optional_index(
+  path: List(a),
+  position: List(a),
+  inner: fn(Dynamic) -> #(b, List(DecodeError)),
+  data: Dynamic,
+  handle_miss: fn(Dynamic, List(a)) -> #(b, List(DecodeError)),
+) -> #(b, List(DecodeError)) {
+  case path {
+    [] -> {
+      inner(data)
+      |> push_path(list.reverse(position))
+    }
+
+    [key, ..path] -> {
+      case bare_index(data, key) {
+        Ok(Some(data)) -> {
+          optional_index(path, [key, ..position], inner, data, handle_miss)
+        }
+        Ok(None) -> {
+          handle_miss(data, [key, ..position])
+        }
+        Error(kind) -> {
+          case is_null(data) {
+            True -> {
+              handle_miss(data, [key, ..position])
+            }
+            False -> {
+              let #(default, _) = inner(data)
+              #(default, [DecodeError(kind, dynamic.classify(data), [])])
+              |> push_path(list.reverse(position))
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 @external(erlang, "gleam_stdlib_decode_ffi", "index")
 @external(javascript, "../../gleam_stdlib_decode_ffi.mjs", "index")
 fn bare_index(data: Dynamic, key: anything) -> Result(Option(Dynamic), String)
@@ -592,7 +632,7 @@ pub fn optionally_at(
   inner: Decoder(a),
 ) -> Decoder(a) {
   Decoder(function: fn(data) {
-    index(path, [], inner.function, data, fn(_, _) { #(default, []) })
+    optional_index(path, [], inner.function, data, fn(_, _) { #(default, []) })
   })
 }
 
