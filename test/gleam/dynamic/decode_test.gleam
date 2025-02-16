@@ -912,6 +912,17 @@ pub fn optionally_at_no_path_error_test() {
   |> should.equal(100)
 }
 
+pub fn optionally_at_nil_in_path_error_test() {
+  dynamic.from(dict.from_list([#("first", dict.from_list([#("second", Nil)]))]))
+  |> decode.run(decode.optionally_at(
+    ["first", "second", "third"],
+    100,
+    decode.int,
+  ))
+  |> should.be_ok
+  |> should.equal(100)
+}
+
 @external(erlang, "maps", "from_list")
 @external(javascript, "../../gleam_stdlib_test_ffi.mjs", "object")
 fn make_object(items: List(#(String, t))) -> Dynamic
