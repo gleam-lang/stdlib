@@ -414,9 +414,16 @@ fn index(
           handle_miss(data, [key, ..position])
         }
         Error(kind) -> {
-          let #(default, _) = inner(data)
-          #(default, [DecodeError(kind, dynamic.classify(data), [])])
-          |> push_path(list.reverse(position))
+          case is_null(data) {
+            True -> {
+              handle_miss(data, [key, ..position])
+            }
+            False -> {
+              let #(default, _) = inner(data)
+              #(default, [DecodeError(kind, dynamic.classify(data), [])])
+              |> push_path(list.reverse(position))
+            }
+          }
         }
       }
     }
