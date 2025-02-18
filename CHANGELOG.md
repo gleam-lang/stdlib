@@ -3,6 +3,10 @@
 ## Unreleased
 
 - The `bit_array` module gains the `split` and `split_once` functions.
+- The performance of `dict.is_empty` has been improved.
+
+## v0.54.0 - 2025-02-04
+
 - The `uri` module gains the `empty` value, representing an empty URI which
   equivalent to `""`.
 
