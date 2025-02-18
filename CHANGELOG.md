@@ -8,6 +8,7 @@
 
 - The `uri` module gains the `empty` value, representing an empty URI which
   equivalent to `""`.
+- The `bit_array` module gains the `to_string_lossy` function.
 
 ## v0.54.0 - 2025-02-04
 
