@@ -256,11 +256,9 @@ fn list_to_map(list) {
 fn grow_and_shrink_map(initial_size, final_size) {
   range(0, initial_size, [])
   |> list_to_map
-  |> list.fold(
-    range(final_size, initial_size, []),
-    _,
-    fn(map, item) { dict.delete(map, item) },
-  )
+  |> list.fold(range(final_size, initial_size, []), _, fn(map, item) {
+    dict.delete(map, item)
+  })
 }
 
 // maps should be equal even if the insert/removal order was different
