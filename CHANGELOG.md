@@ -2,12 +2,12 @@
 
 ## Unreleased
 
-- The performance of `dict.is_empty` has been improved.
-
-## v0.54.0 - 2025-02-04
-
 - The `uri` module gains the `empty` value, representing an empty URI which
   equivalent to `""`.
+- The performance of `dict.is_empty` has been improved.
+- Unaligned bit arrays on the JavaScript target are now supported by the
+  functions in the `bit_array` module. Note: Gleam >= v1.9 is required to use
+  unaligned bit arrays on the JavaScript target.
 
 ## v0.54.0 - 2025-02-04
 
