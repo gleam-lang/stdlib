@@ -1,6 +1,6 @@
 name = "gleam_stdlib"
 version = "0.56.0"
-gleam = ">= 0.32.0"
+gleam = ">= 1.9.0"
 licences = ["Apache-2.0"]
 description = "A standard library for the Gleam programming language"
 
@@ -11,6 +11,4 @@ links = [
 ]
 
 [javascript.deno]
-allow_read = [
-  "./",
-]
+allow_read = ["./"]
