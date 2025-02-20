@@ -3,6 +3,7 @@
 ## Unreleased
 
 - The performance of `dict.is_empty` has been improved.
+- The `flip` function in the `function` module has been deprecated.
 
 ## v0.54.0 - 2025-02-04
 
