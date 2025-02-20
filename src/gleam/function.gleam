@@ -1,6 +1,7 @@
 /// Takes a function that takes two arguments and returns a new function that
 /// takes the same two arguments, but in reverse order.
 ///
+@deprecated("This function has been deprecated. Use a function literal instead: `fn(a, b) { fun(b, a) }`")
 pub fn flip(fun: fn(a, b) -> c) -> fn(b, a) -> c {
   fn(b, a) { fun(a, b) }
 }
