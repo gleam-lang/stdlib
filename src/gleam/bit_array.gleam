@@ -97,6 +97,154 @@ pub fn to_string(bits: BitArray) -> Result(String, Nil) {
 @external(erlang, "gleam_stdlib", "identity")
 fn unsafe_to_string(a: BitArray) -> String
 
+/// Converts a bit array to a string. Invalid bits are passed to the provided
+/// callback and its result is included in the final string in place of the
+/// invalid data.
+///
+/// ## Examples
+///
+/// ```gleam
+/// to_string_lossy(<<"A":utf8, 0x80, "1":utf8, 0:size(5)>>, fn(_) { "�" })
+/// // -> "A�1�"
+/// ```
+/// 
+pub fn to_string_lossy(
+  bits: BitArray,
+  map_invalid_bits: fn(BitArray) -> String,
+) -> String {
+  to_string_lossy_impl(bits, map_invalid_bits, "")
+}
+
+@target(erlang)
+fn to_string_lossy_impl(
+  bits: BitArray,
+  map_invalid_bits: fn(BitArray) -> String,
+  acc: String,
+) -> String {
+  case bits {
+    <<>> -> acc
+
+    <<x:utf8_codepoint, rest:bits>> ->
+      to_string_lossy_impl(
+        rest,
+        map_invalid_bits,
+        acc <> string.from_utf_codepoints([x]),
+      )
+
+    <<x:bytes-1, rest:bits>> ->
+      to_string_lossy_impl(rest, map_invalid_bits, acc <> map_invalid_bits(x))
+
+    _ -> acc <> map_invalid_bits(bits)
+  }
+}
+
+// The following is the same as the above function but supports the JavaScript
+// target due to not using the `utf8_codepoint` bit array segment type. Once
+// the JavaScript target supports `utf8_codepoint` this function should be
+// removed.
+@target(javascript)
+fn to_string_lossy_impl(
+  bits: BitArray,
+  map_invalid_bits: fn(BitArray) -> String,
+  acc: String,
+) -> String {
+  case bits {
+    <<>> -> acc
+
+    // 1-byte UTF-8 character
+    <<b0, rest:bytes>> if b0 <= 0x7F -> {
+      let codepoint_value = b0
+
+      let acc =
+        acc
+        <> case string.utf_codepoint(codepoint_value) {
+          Ok(codepoint) -> string.from_utf_codepoints([codepoint])
+          Error(Nil) -> map_invalid_bits(<<b0>>)
+        }
+
+      to_string_lossy_impl(rest, map_invalid_bits, acc)
+    }
+
+    // 2-byte UTF-8 character
+    <<b0, b1, rest:bytes>>
+      if b0 >= 0xC0 && b0 <= 0xDF && b1 >= 0x80 && b1 <= 0xBF
+    -> {
+      let codepoint_value =
+        int.bitwise_and(b0, 0x1F) * 64 + int.bitwise_and(b1, 0x3F)
+
+      let acc =
+        acc
+        <> case string.utf_codepoint(codepoint_value) {
+          Ok(codepoint) -> string.from_utf_codepoints([codepoint])
+          Error(Nil) -> map_invalid_bits(<<b0, b1>>)
+        }
+
+      to_string_lossy_impl(rest, map_invalid_bits, acc)
+    }
+
+    // 3-byte UTF-8 character
+    <<b0, b1, b2, rest:bytes>>
+      if b0 >= 0xE0
+      && b0 <= 0xEF
+      && b1 >= 0x80
+      && b1 <= 0xBF
+      && b2 >= 0x80
+      && b2 <= 0xBF
+    -> {
+      let codepoint_value =
+        int.bitwise_and(b0, 0x0F)
+        * 4096
+        + int.bitwise_and(b1, 0x3F)
+        * 64
+        + int.bitwise_and(b2, 0x3F)
+
+      let acc =
+        acc
+        <> case string.utf_codepoint(codepoint_value) {
+          Ok(codepoint) -> string.from_utf_codepoints([codepoint])
+          Error(Nil) -> map_invalid_bits(<<b0, b1, b2>>)
+        }
+
+      to_string_lossy_impl(rest, map_invalid_bits, acc)
+    }
+
+    // 4-byte UTF-8 character
+    <<b0, b1, b2, b3, rest:bytes>>
+      if b0 >= 0xF0
+      && b0 <= 0xF7
+      && b1 >= 0x80
+      && b1 <= 0xBF
+      && b2 >= 0x80
+      && b2 <= 0xBF
+      && b3 >= 0x80
+      && b3 <= 0xBF
+    -> {
+      let codepoint_value =
+        int.bitwise_and(b0, 0x07)
+        * 262_144
+        + int.bitwise_and(b1, 0x3F)
+        * 4096
+        + int.bitwise_and(b2, 0x3F)
+        * 64
+        + int.bitwise_and(b3, 0x3F)
+
+      let acc =
+        acc
+        <> case string.utf_codepoint(codepoint_value) {
+          Ok(codepoint) -> string.from_utf_codepoints([codepoint])
+          Error(Nil) -> map_invalid_bits(<<b0, b1, b2, b3>>)
+        }
+
+      to_string_lossy_impl(rest, map_invalid_bits, acc)
+    }
+
+    <<x:bytes-1, rest:bytes>> ->
+      to_string_lossy_impl(rest, map_invalid_bits, acc <> map_invalid_bits(x))
+
+    _ -> acc <> map_invalid_bits(bits)
+  }
+}
+
 /// Creates a new bit array by joining multiple binaries.
 ///
 /// ## Examples
