@@ -13,22 +13,20 @@ pub fn from_string(x: String) -> BitArray
 /// Returns an integer which is the number of bits in the bit array.
 ///
 @external(erlang, "erlang", "bit_size")
-pub fn bit_size(x: BitArray) -> Int {
-  byte_size(x) * 8
-}
+@external(javascript, "../gleam_stdlib.mjs", "bit_array_bit_size")
+pub fn bit_size(x: BitArray) -> Int
 
 /// Returns an integer which is the number of bytes in the bit array.
 ///
 @external(erlang, "erlang", "byte_size")
-@external(javascript, "../gleam_stdlib.mjs", "length")
+@external(javascript, "../gleam_stdlib.mjs", "bit_array_byte_size")
 pub fn byte_size(x: BitArray) -> Int
 
 /// Pads a bit array with zeros so that it is a whole number of bytes.
 ///
 @external(erlang, "gleam_stdlib", "bit_array_pad_to_bytes")
-pub fn pad_to_bytes(x: BitArray) -> BitArray {
-  x
-}
+@external(javascript, "../gleam_stdlib.mjs", "bit_array_pad_to_bytes")
+pub fn pad_to_bytes(x: BitArray) -> BitArray
 
 /// Creates a new bit array by joining two bit arrays.
 ///
@@ -228,7 +226,6 @@ fn inspect_loop(input: BitArray, accumulator: String) -> String {
 /// // -> Eq
 /// ```
 ///
-@external(javascript, "../gleam_stdlib.mjs", "bit_array_compare")
 pub fn compare(a: BitArray, with b: BitArray) -> order.Order {
   case a, b {
     <<first_byte, first_rest:bits>>, <<second_byte, second_rest:bits>> ->
@@ -257,6 +254,7 @@ pub fn compare(a: BitArray, with b: BitArray) -> order.Order {
 }
 
 @external(erlang, "gleam_stdlib", "bit_array_to_int_and_size")
+@external(javascript, "../gleam_stdlib.mjs", "bit_array_to_int_and_size")
 fn bit_array_to_int_and_size(a: BitArray) -> #(Int, Int)
 
 /// Checks whether the first `BitArray` starts with the second one.
