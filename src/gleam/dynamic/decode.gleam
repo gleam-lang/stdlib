@@ -439,19 +439,19 @@ fn optional_index(
     }
 
     [key, ..path] -> {
-      case bare_index(data, key) {
-        Ok(Some(data)) -> {
-          optional_index(path, [key, ..position], inner, data, handle_miss)
-        }
-        Ok(None) -> {
+      case is_null(data) {
+        True -> {
           handle_miss(data, [key, ..position])
         }
-        Error(kind) -> {
-          case is_null(data) {
-            True -> {
+        False -> {
+          case bare_index(data, key) {
+            Ok(Some(data)) -> {
+              optional_index(path, [key, ..position], inner, data, handle_miss)
+            }
+            Ok(None) -> {
               handle_miss(data, [key, ..position])
             }
-            False -> {
+            Error(kind) -> {
               let #(default, _) = inner(data)
               #(default, [DecodeError(kind, dynamic.classify(data), [])])
               |> push_path(list.reverse(position))
