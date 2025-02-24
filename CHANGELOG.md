@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Improved `optionally_at` in `dynamic/decode` to decode nil values encountered
+  along its path to the default value.
+
 ## v0.55.0 - 2025-02-21
 
 - The performance of `dict.is_empty` has been improved.

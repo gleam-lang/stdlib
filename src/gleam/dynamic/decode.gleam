@@ -319,12 +319,7 @@ pub fn subfield(
   next: fn(t) -> Decoder(final),
 ) -> Decoder(final) {
   Decoder(function: fn(data) {
-    let #(out, errors1) =
-      index(field_path, [], field_decoder.function, data, fn(data, position) {
-        let #(default, _) = field_decoder.function(data)
-        #(default, [DecodeError("Field", "Nothing", [])])
-        |> push_path(list.reverse(position))
-      })
+    let #(out, errors1) = index(field_path, [], field_decoder.function, data)
     let #(out, errors2) = next(out).function(data)
     #(out, list.append(errors1, errors2))
   })
@@ -383,13 +378,7 @@ pub fn run(data: Dynamic, decoder: Decoder(t)) -> Result(t, List(DecodeError)) {
 /// ```
 ///
 pub fn at(path: List(segment), inner: Decoder(a)) -> Decoder(a) {
-  Decoder(function: fn(data) {
-    index(path, [], inner.function, data, fn(data, position) {
-      let #(default, _) = inner.function(data)
-      #(default, [DecodeError("Field", "Nothing", [])])
-      |> push_path(list.reverse(position))
-    })
-  })
+  Decoder(function: fn(data) { index(path, [], inner.function, data) })
 }
 
 fn index(
@@ -397,7 +386,6 @@ fn index(
   position: List(a),
   inner: fn(Dynamic) -> #(b, List(DecodeError)),
   data: Dynamic,
-  handle_miss: fn(Dynamic, List(a)) -> #(b, List(DecodeError)),
 ) -> #(b, List(DecodeError)) {
   case path {
     [] -> {
@@ -408,15 +396,58 @@ fn index(
     [key, ..path] -> {
       case bare_index(data, key) {
         Ok(Some(data)) -> {
-          index(path, [key, ..position], inner, data, handle_miss)
+          index(path, [key, ..position], inner, data)
         }
         Ok(None) -> {
-          handle_miss(data, [key, ..position])
+          let #(default, _) = inner(data)
+          #(default, [DecodeError("Field", "Nothing", [])])
+          |> push_path(list.reverse([key, ..position]))
         }
         Error(kind) -> {
           let #(default, _) = inner(data)
           #(default, [DecodeError(kind, dynamic.classify(data), [])])
           |> push_path(list.reverse(position))
+        }
+      }
+    }
+  }
+}
+
+// Indexes into a path similar to `index`. It will decode to default instead
+// of an error if a Nil value is encountered, except for the final path
+// element.
+fn optional_index(
+  path: List(a),
+  position: List(a),
+  default: b,
+  inner: fn(Dynamic) -> #(b, List(DecodeError)),
+  data: Dynamic,
+) -> #(b, List(DecodeError)) {
+  case path {
+    [] -> {
+      inner(data)
+      |> push_path(list.reverse(position))
+    }
+
+    [key, ..path] -> {
+      case is_null(data) {
+        True -> {
+          #(default, [])
+        }
+        False -> {
+          case bare_index(data, key) {
+            Ok(Some(data)) -> {
+              optional_index(path, [key, ..position], default, inner, data)
+            }
+            Ok(None) -> {
+              #(default, [])
+            }
+            Error(kind) -> {
+              let #(default, _) = inner(data)
+              #(default, [DecodeError(kind, dynamic.classify(data), [])])
+              |> push_path(list.reverse(position))
+            }
+          }
         }
       }
     }
@@ -572,6 +603,10 @@ pub fn optional_field(
 /// an int then it'll also index into Erlang tuples and JavaScript arrays, and
 /// the first two elements of Gleam lists.
 ///
+/// If a nil value is encountered along the path, except at the final position,
+/// the provided default will be returned.  The `optional` function may be used
+/// to accept a nil value at the final location the path points to.
+///
 /// # Examples
 ///
 /// ```gleam
@@ -581,9 +616,24 @@ pub fn optional_field(
 ///   #("one", dict.from_list([])),
 /// ]))
 ///
+/// let result = decode.run(data, decoder)
+/// assert result == Ok(100)
 ///
-/// decode.run(data, decoder)
-/// // -> Ok(100)
+///
+/// let decoder =
+///   decode.optionally_at(
+///     ["first", "second", "third"],
+///     option.None,
+///     decode.optional(decode.int),
+///   )
+///
+/// let data =
+///   dynamic.from(
+///     dict.from_list([#("first", dict.from_list([#("second", Nil)]))]),
+///   )
+///
+/// let result = decode.run(data, decoder)
+/// assert result == Ok(option.None)
 /// ```
 ///
 pub fn optionally_at(
@@ -592,7 +642,7 @@ pub fn optionally_at(
   inner: Decoder(a),
 ) -> Decoder(a) {
   Decoder(function: fn(data) {
-    index(path, [], inner.function, data, fn(_, _) { #(default, []) })
+    optional_index(path, [], default, inner.function, data)
   })
 }
 
