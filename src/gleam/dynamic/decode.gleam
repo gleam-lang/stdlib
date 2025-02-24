@@ -319,12 +319,7 @@ pub fn subfield(
   next: fn(t) -> Decoder(final),
 ) -> Decoder(final) {
   Decoder(function: fn(data) {
-    let #(out, errors1) =
-      index(field_path, [], field_decoder.function, data, fn(data, position) {
-        let #(default, _) = field_decoder.function(data)
-        #(default, [DecodeError("Field", "Nothing", [])])
-        |> push_path(list.reverse(position))
-      })
+    let #(out, errors1) = index(field_path, [], field_decoder.function, data)
     let #(out, errors2) = next(out).function(data)
     #(out, list.append(errors1, errors2))
   })
@@ -383,13 +378,7 @@ pub fn run(data: Dynamic, decoder: Decoder(t)) -> Result(t, List(DecodeError)) {
 /// ```
 ///
 pub fn at(path: List(segment), inner: Decoder(a)) -> Decoder(a) {
-  Decoder(function: fn(data) {
-    index(path, [], inner.function, data, fn(data, position) {
-      let #(default, _) = inner.function(data)
-      #(default, [DecodeError("Field", "Nothing", [])])
-      |> push_path(list.reverse(position))
-    })
-  })
+  Decoder(function: fn(data) { index(path, [], inner.function, data) })
 }
 
 fn index(
@@ -397,7 +386,6 @@ fn index(
   position: List(a),
   inner: fn(Dynamic) -> #(b, List(DecodeError)),
   data: Dynamic,
-  handle_miss: fn(Dynamic, List(a)) -> #(b, List(DecodeError)),
 ) -> #(b, List(DecodeError)) {
   case path {
     [] -> {
@@ -408,10 +396,12 @@ fn index(
     [key, ..path] -> {
       case bare_index(data, key) {
         Ok(Some(data)) -> {
-          index(path, [key, ..position], inner, data, handle_miss)
+          index(path, [key, ..position], inner, data)
         }
         Ok(None) -> {
-          handle_miss(data, [key, ..position])
+          let #(default, _) = inner(data)
+          #(default, [DecodeError("Field", "Nothing", [])])
+          |> push_path(list.reverse([key, ..position]))
         }
         Error(kind) -> {
           let #(default, _) = inner(data)
@@ -423,14 +413,15 @@ fn index(
   }
 }
 
-// Indexes into a path similar to `index`, but treats Nil values as a miss
-// instead of an error.
+// Indexes into a path similar to `index`. It will decode to default instead
+// of an error if a Nil value is encountered, except for the final path
+// element.
 fn optional_index(
   path: List(a),
   position: List(a),
+  default: b,
   inner: fn(Dynamic) -> #(b, List(DecodeError)),
   data: Dynamic,
-  handle_miss: fn(Dynamic, List(a)) -> #(b, List(DecodeError)),
 ) -> #(b, List(DecodeError)) {
   case path {
     [] -> {
@@ -441,15 +432,15 @@ fn optional_index(
     [key, ..path] -> {
       case is_null(data) {
         True -> {
-          handle_miss(data, [key, ..position])
+          #(default, [])
         }
         False -> {
           case bare_index(data, key) {
             Ok(Some(data)) -> {
-              optional_index(path, [key, ..position], inner, data, handle_miss)
+              optional_index(path, [key, ..position], default, inner, data)
             }
             Ok(None) -> {
-              handle_miss(data, [key, ..position])
+              #(default, [])
             }
             Error(kind) -> {
               let #(default, _) = inner(data)
@@ -632,7 +623,7 @@ pub fn optionally_at(
   inner: Decoder(a),
 ) -> Decoder(a) {
   Decoder(function: fn(data) {
-    optional_index(path, [], inner.function, data, fn(_, _) { #(default, []) })
+    optional_index(path, [], default, inner.function, data)
   })
 }
 
