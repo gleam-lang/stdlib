@@ -603,6 +603,10 @@ pub fn optional_field(
 /// an int then it'll also index into Erlang tuples and JavaScript arrays, and
 /// the first two elements of Gleam lists.
 ///
+/// If a nil value is encountered along the path, except at the final position,
+/// the provided default will be returned.  The `optional` function may be used
+/// to accept a nil value at the final location the path points to.
+///
 /// # Examples
 ///
 /// ```gleam
@@ -612,9 +616,24 @@ pub fn optional_field(
 ///   #("one", dict.from_list([])),
 /// ]))
 ///
+/// let result = decode.run(data, decoder)
+/// assert result == Ok(100)
 ///
-/// decode.run(data, decoder)
-/// // -> Ok(100)
+///
+/// let decoder =
+///   decode.optionally_at(
+///     ["first", "second", "third"],
+///     option.None,
+///     decode.optional(decode.int),
+///   )
+///
+/// let data =
+///   dynamic.from(
+///     dict.from_list([#("first", dict.from_list([#("second", Nil)]))]),
+///   )
+///
+/// let result = decode.run(data, decoder)
+/// assert result == Ok(option.None)
 /// ```
 ///
 pub fn optionally_at(
