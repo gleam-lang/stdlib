@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- The `debug` function in the `io` module has been deprecated in favour of
+  the `echo` keyword.
+
 ## v0.55.0 - 2025-02-21
 
 - The performance of `dict.is_empty` has been improved.

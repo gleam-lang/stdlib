@@ -93,6 +93,7 @@ pub fn println_error(string: String) -> Nil
 /// with some types having the same runtime representation results in it not
 /// always being possible to correctly choose which Gleam syntax to show.
 ///
+@deprecated("To debug print a value use the `echo` keyword instead")
 pub fn debug(term: anything) -> anything {
   term
   |> string.inspect
