@@ -912,6 +912,186 @@ pub fn optionally_at_no_path_error_test() {
   |> should.equal(100)
 }
 
+pub fn nullable_subfield_ok_test() {
+  let data =
+    dynamic.from(
+      dict.from_list([
+        #("person", dict.from_list([#("name", dynamic.from("Nubi"))])),
+      ]),
+    )
+  let decoder = {
+    use name <- decode.nullable_subfield(
+      ["person", "name"],
+      "default",
+      decode.string,
+    )
+    decode.success(name)
+  }
+
+  decode.run(data, decoder)
+  |> should.be_ok
+  |> should.equal("Nubi")
+}
+
+pub fn nullable_subfield_int_index_ok_test() {
+  let decoder = {
+    use x <- decode.nullable_subfield([0, 1], "default", decode.string)
+    use y <- decode.nullable_subfield([1, 0], "default", decode.string)
+    decode.success(#(x, y))
+  }
+
+  dynamic.from(#(#("one", "two", "three"), #("a", "b")))
+  |> decode.run(decoder)
+  |> should.be_ok
+  |> should.equal(#("two", "a"))
+}
+
+pub fn nullable_subfield_nil_int_index_ok_test() {
+  let decoder = {
+    use x <- decode.nullable_subfield([0, 1, 1], "default", decode.string)
+    decode.success(x)
+  }
+
+  dynamic.from(#(Nil, #("a", "b")))
+  |> decode.run(decoder)
+  |> should.be_ok
+  |> should.equal("default")
+}
+
+pub fn nullable_subfield_nil_in_path_ok_test() {
+  let data = dynamic.from(dict.from_list([#("person", dynamic.from(Nil))]))
+  let decoder = {
+    use name <- decode.nullable_subfield(
+      ["person", "name"],
+      "default",
+      decode.string,
+    )
+    decode.success(name)
+  }
+
+  decode.run(data, decoder)
+  |> should.be_ok
+  |> should.equal("default")
+}
+
+pub fn nullable_subfield_path_not_found_ok_test() {
+  let data = dynamic.from(dict.from_list([]))
+  let decoder = {
+    use name <- decode.nullable_subfield(
+      ["person", "name"],
+      "default",
+      decode.string,
+    )
+    decode.success(name)
+  }
+
+  decode.run(data, decoder)
+  |> should.be_ok
+  |> should.equal("default")
+}
+
+pub fn nullable_subfield_nil_target_ok_test() {
+  let data =
+    dynamic.from(
+      dict.from_list([
+        #("person", dict.from_list([#("name", dynamic.from(Nil))])),
+      ]),
+    )
+  let decoder = {
+    use name <- decode.nullable_subfield(
+      ["person", "name"],
+      "default",
+      decode.string,
+    )
+    decode.success(name)
+  }
+
+  decode.run(data, decoder)
+  |> should.be_ok
+  |> should.equal("default")
+}
+
+// This test is probably overkill, just wanted to make sure it worked
+pub fn nullable_subfield_optional_nil_target_ok_test() {
+  let data =
+    dynamic.from(
+      dict.from_list([
+        #("person", dict.from_list([#("name", dynamic.from(Nil))])),
+      ]),
+    )
+  let decoder = {
+    use name <- decode.nullable_subfield(
+      ["person", "name"],
+      option.None,
+      decode.optional(decode.string),
+    )
+    decode.success(name)
+  }
+
+  decode.run(data, decoder)
+  |> should.be_ok
+  |> should.equal(option.None)
+}
+
+// This test is probably overkill, just wanted to make sure it worked
+pub fn nullable_subfield_optional_some_target_ok_test() {
+  let data =
+    dynamic.from(
+      dict.from_list([
+        #("person", dict.from_list([#("name", dynamic.from("Nubi"))])),
+      ]),
+    )
+  let decoder = {
+    use name <- decode.nullable_subfield(
+      ["person", "name"],
+      option.None,
+      decode.optional(decode.string),
+    )
+    decode.success(name)
+  }
+
+  decode.run(data, decoder)
+  |> should.be_ok
+  |> should.equal(option.Some("Nubi"))
+}
+
+pub fn nullable_subfield_path_type_error_test() {
+  let data = dynamic.from(dict.from_list([#("person", dynamic.from(123))]))
+  let decoder = {
+    use name <- decode.nullable_subfield(
+      ["person", "name"],
+      "default",
+      decode.string,
+    )
+    decode.success(name)
+  }
+
+  decode.run(data, decoder)
+  |> should.be_error
+  |> should.equal([DecodeError("Dict", "Int", ["person"])])
+}
+
+pub fn nullable_subfield_target_type_error_test() {
+  let data =
+    dynamic.from(
+      dict.from_list([
+        #("person", dict.from_list([#("name", dynamic.from(123))])),
+      ]),
+    )
+  let decoder = {
+    use name <- decode.nullable_subfield(
+      ["person", "name"],
+      "default",
+      decode.string,
+    )
+    decode.success(name)
+  }
+
+  decode.run(data, decoder)
+  |> should.be_error
+  |> should.equal([DecodeError("String", "Int", ["person", "name"])])
+}
+
 @external(erlang, "maps", "from_list")
 @external(javascript, "../../gleam_stdlib_test_ffi.mjs", "object")
 fn make_object(items: List(#(String, t))) -> Dynamic

@@ -330,6 +330,20 @@ pub fn subfield(
   })
 }
 
+pub fn nullable_subfield(
+  field_path: List(name),
+  default: t,
+  field_decoder: Decoder(t),
+  next: fn(t) -> Decoder(final),
+) -> Decoder(final) {
+  Decoder(function: fn(data) {
+    let #(out, errors1) =
+      nullable_index(field_path, [], default, field_decoder.function, data)
+    let #(out, errors2) = next(out).function(data)
+    #(out, list.append(errors1, errors2))
+  })
+}
+
 /// Run a decoder on a `Dynamic` value, decoding the value if it is of the
 /// desired type, or returning errors.
 ///
@@ -417,6 +431,47 @@ fn index(
           let #(default, _) = inner(data)
           #(default, [DecodeError(kind, dynamic.classify(data), [])])
           |> push_path(list.reverse(position))
+        }
+      }
+    }
+  }
+}
+
+// Indexes into a path similar to `index`. It will decode to default instead
+// of an error if a Nil value is encountered.
+fn nullable_index(
+  path: List(a),
+  position: List(a),
+  default: b,
+  inner: fn(Dynamic) -> #(b, List(DecodeError)),
+  data: Dynamic,
+) -> #(b, List(DecodeError)) {
+  case is_null(data) {
+    True -> {
+      #(default, [])
+    }
+
+    False -> {
+      case path {
+        [] -> {
+          inner(data)
+          |> push_path(list.reverse(position))
+        }
+
+        [key, ..path] -> {
+          case bare_index(data, key) {
+            Ok(Some(data)) -> {
+              nullable_index(path, [key, ..position], default, inner, data)
+            }
+            Ok(None) -> {
+              #(default, [])
+            }
+            Error(kind) -> {
+              let #(default, _) = inner(data)
+              #(default, [DecodeError(kind, dynamic.classify(data), [])])
+              |> push_path(list.reverse(position))
+            }
+          }
         }
       }
     }
