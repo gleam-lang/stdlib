@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.56.0 - 2025-03-09
 
 - The decode API can now index into the first 8 elements of lists.
 
