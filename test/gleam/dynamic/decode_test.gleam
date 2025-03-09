@@ -104,6 +104,19 @@ pub fn field_int_index_list_ok_test() {
   |> should.equal(#("one", "two"))
 }
 
+pub fn field_int_index_big_list_ok_test() {
+  let decoder = {
+    use x <- decode.field(6, decode.string)
+    use y <- decode.field(7, decode.string)
+    decode.success(#(x, y))
+  }
+
+  dynamic.from(["one", "two", "three", "four", "five", "six", "seven", "eight"])
+  |> decode.run(decoder)
+  |> should.be_ok
+  |> should.equal(#("seven", "eight"))
+}
+
 pub fn subfield_not_found_error_test() {
   let decoder = {
     use name <- decode.subfield(["name"], decode.string)

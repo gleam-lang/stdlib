@@ -292,7 +292,7 @@ pub opaque type Decoder(t) {
 ///
 /// This function will index into dictionaries with any key type, and if the key is
 /// an int then it'll also index into Erlang tuples and JavaScript arrays, and
-/// the first two elements of Gleam lists.
+/// the first eight elements of Gleam lists.
 ///
 /// # Examples
 ///
@@ -358,7 +358,7 @@ pub fn run(data: Dynamic, decoder: Decoder(t)) -> Result(t, List(DecodeError)) {
 ///
 /// This function will index into dictionaries with any key type, and if the key is
 /// an int then it'll also index into Erlang tuples and JavaScript arrays, and
-/// the first two elements of Gleam lists.
+/// the first eight elements of Gleam lists.
 ///
 /// # Examples
 ///
@@ -486,7 +486,7 @@ pub fn decode_error(
 ///
 /// This function will index into dictionaries with any key type, and if the key is
 /// an int then it'll also index into Erlang tuples and JavaScript arrays, and
-/// the first two elements of Gleam lists.
+/// the first eight elements of Gleam lists.
 ///
 /// # Examples
 ///
@@ -526,7 +526,7 @@ pub fn field(
 ///
 /// This function will index into dictionaries with any key type, and if the key is
 /// an int then it'll also index into Erlang tuples and JavaScript arrays, and
-/// the first two elements of Gleam lists.
+/// the first eight elements of Gleam lists.
 ///
 /// # Examples
 ///
@@ -570,7 +570,7 @@ pub fn optional_field(
 ///
 /// This function will index into dictionaries with any key type, and if the key is
 /// an int then it'll also index into Erlang tuples and JavaScript arrays, and
-/// the first two elements of Gleam lists.
+/// the first eight elements of Gleam lists.
 ///
 /// # Examples
 ///

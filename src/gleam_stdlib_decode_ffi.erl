@@ -6,6 +6,18 @@ index([X | _], 0) ->
     {ok, {some, X}};
 index([_, X | _], 1) ->
     {ok, {some, X}};
+index([_, _, X | _], 2) ->
+    {ok, {some, X}};
+index([_, _, _, X | _], 3) ->
+    {ok, {some, X}};
+index([_, _, _, _, X | _], 4) ->
+    {ok, {some, X}};
+index([_, _, _, _, _, X | _], 5) ->
+    {ok, {some, X}};
+index([_, _, _, _, _, _, X | _], 6) ->
+    {ok, {some, X}};
+index([_, _, _, _, _, _, _, X | _], 7) ->
+    {ok, {some, X}};
 index(Tuple, Index) when is_tuple(Tuple) andalso is_integer(Index) ->
     {ok, try
         {some, element(Index + 1, Tuple)}

@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- The decode API can now index into the first 8 elements of lists.
+
 ## v0.55.0 - 2025-02-21
 
 - The performance of `dict.is_empty` has been improved.
