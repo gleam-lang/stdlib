@@ -301,8 +301,10 @@ const unicode_whitespaces = [
   "\u2029", // Paragraph separator
 ].join("");
 
-const trim_start_regex = new RegExp(`^[${unicode_whitespaces}]*`);
-const trim_end_regex = new RegExp(`[${unicode_whitespaces}]*$`);
+const trim_start_regex = /* @__PURE__ */ new RegExp(
+  `^[${unicode_whitespaces}]*`,
+);
+const trim_end_regex = /* @__PURE__ */ new RegExp(`[${unicode_whitespaces}]*$`);
 
 export function trim_start(string) {
   return string.replace(trim_start_regex, "");

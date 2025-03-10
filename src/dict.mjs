@@ -5,8 +5,10 @@
 
 import { isEqual } from "./gleam.mjs";
 
-const referenceMap = new WeakMap();
-const tempDataView = new DataView(new ArrayBuffer(8));
+const referenceMap = /* @__PURE__ */ new WeakMap();
+const tempDataView = /* @__PURE__ */ new DataView(
+  /* @__PURE__ */ new ArrayBuffer(8),
+);
 let referenceUID = 0;
 /**
  * hash the object by reference using a weak map and incrementing uid
@@ -988,4 +990,4 @@ export default class Dict {
 
 // This is thrown internally in Dict.equals() so that it returns false as soon
 // as a non-matching key is found
-const unequalDictSymbol = Symbol();
+const unequalDictSymbol = /* @__PURE__ */ Symbol();
