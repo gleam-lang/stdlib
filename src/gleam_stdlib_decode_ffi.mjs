@@ -16,7 +16,7 @@ export function index(data, key) {
   const key_is_int = Number.isInteger(key);
 
   // Only elements 0-7 of lists can be indexed, negative indices are not allowed
-  if (key_is_int && key < 8 && key >= 0 && data instanceof List) {
+  if (key_is_int && key >= 0 && key < 8 && data instanceof List) {
     let i = 0;
     for (const value of data) {
       if (i === key) return new Ok(new Some(value));
