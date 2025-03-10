@@ -5,6 +5,8 @@
 - The minimum supported Gleam version has been increased to 1.9.0.
 - The functions in the `bit_array` module now support unaligned bit arrays on
   the JavaScript target.
+- Fixed a bug where tuples with atoms in the first position could be formatted
+  incorrectly by `string.inspect`.
 
 ## v0.56.0 - 2025-03-09
 

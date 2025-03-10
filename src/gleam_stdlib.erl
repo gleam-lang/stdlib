@@ -356,11 +356,7 @@ inspect(Data) when is_map(Data) ->
     ],
     ["dict.from_list([", lists:join(", ", Fields), "])"];
 inspect(Atom) when is_atom(Atom) ->
-    Binary = erlang:atom_to_binary(Atom),
-    case inspect_maybe_gleam_atom(Binary, none, <<>>) of
-        {ok, Inspected} -> Inspected;
-        {error, _} -> ["atom.create_from_string(\"", Binary, "\")"]
-	end;
+    erlang:element(2, inspect_atom(Atom));
 inspect(Any) when is_integer(Any) ->
     erlang:integer_to_list(Any);
 inspect(Any) when is_float(Any) ->
@@ -386,10 +382,15 @@ inspect(Any) when is_tuple(Any) % Record constructors
   andalso element(1, Any) =/= nil
 ->
     [Atom | ArgsList] = erlang:tuple_to_list(Any),
-    Args = lists:join(<<", ">>,
-        lists:map(fun inspect/1, ArgsList)
-    ),
-    [inspect(Atom), "(", Args, ")"];
+    InspectedArgs = lists:map(fun inspect/1, ArgsList),
+    case inspect_atom(Atom) of
+        {gleam_atom, GleamAtom} ->
+            Args = lists:join(<<", ">>, InspectedArgs),
+            [GleamAtom, "(", Args, ")"];
+        {erlang_atom, ErlangAtom} ->
+            Args = lists:join(<<", ">>, [ErlangAtom | InspectedArgs]),
+            ["#(", Args, ")"]
+    end;
 inspect(Tuple) when is_tuple(Tuple) ->
     Elements = lists:map(fun inspect/1, erlang:tuple_to_list(Tuple)),
     ["#(", lists:join(", ", Elements), ")"];
@@ -403,6 +404,12 @@ inspect(Any) when is_function(Any) ->
 inspect(Any) ->
     ["//erl(", io_lib:format("~p", [Any]), ")"].
 
+inspect_atom(Atom) ->
+    Binary = erlang:atom_to_binary(Atom),
+    case inspect_maybe_gleam_atom(Binary, none, <<>>) of
+        {ok, Inspected} -> {gleam_atom, Inspected};
+        {error, _} -> {erlang_atom, ["atom.create_from_string(\"", Binary, "\")"]}
+	end.
 
 inspect_maybe_gleam_atom(<<>>, none, _) ->
     {error, nil};

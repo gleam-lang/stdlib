@@ -724,7 +724,7 @@ pub fn utf_codepoint_test() {
   string.utf_codepoint(65_535)
   |> should.be_ok
 
-  // One less than the lowest "High-surrogate code point" 
+  // One less than the lowest "High-surrogate code point"
   string.utf_codepoint(55_295)
   |> should.be_ok
 
@@ -1383,6 +1383,13 @@ pub fn inspect_erlang_atom_with_uppercases_invalid_in_gleam_test() {
   string_to_erlang_atom("Upper")
   |> string.inspect
   |> should.equal("atom.create_from_string(\"Upper\")")
+}
+
+@target(erlang)
+pub fn inspect_erlang_atom_tag_tuple_test() {
+  #(string_to_erlang_atom("DOWN"), 1, 2)
+  |> string.inspect
+  |> should.equal("#(atom.create_from_string(\"DOWN\"), 1, 2)")
 }
 
 @target(erlang)
