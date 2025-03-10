@@ -15,7 +15,7 @@ export function index(data, key) {
     return new Ok(new Some(entry));
   }
 
-  // The first 3 elements of lists can be indexed
+  // The first elements of lists can be indexed
   if (Number.isInteger(key) && key < 8 && data instanceof List) {
     let i = 0;
     for (const value of data) {
