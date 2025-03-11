@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.57.0 - 2025-03-11
 
 - The minimum supported Gleam version has been increased to 1.9.0.
 - The functions in the `bit_array` module now support unaligned bit arrays on
