@@ -7,6 +7,7 @@
   the JavaScript target.
 - Fixed a bug where tuples with atoms in the first position could be formatted
   incorrectly by `string.inspect`.
+- The `bit_array` module gains the `to_string_lossy` function.
 
 ## v0.56.0 - 2025-03-09
 
