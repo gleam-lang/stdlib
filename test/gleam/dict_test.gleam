@@ -207,6 +207,24 @@ pub fn upsert_test() {
   |> should.equal(dict.from_list([#("a", 0), #("b", 1), #("c", 2), #("z", 0)]))
 }
 
+pub fn update_test() {
+  let dict = dict.from_list([#("a", 0), #("b", 1), #("c", 2)])
+
+  let inc = fn(i) { i + 1 }
+
+  dict
+  |> dict.update("a", inc)
+  |> should.equal(dict.from_list([#("a", 1), #("b", 1), #("c", 2)]))
+
+  dict
+  |> dict.update("b", inc)
+  |> should.equal(dict.from_list([#("a", 0), #("b", 2), #("c", 2)]))
+
+  dict
+  |> dict.update("z", inc)
+  |> should.equal(dict.from_list([#("a", 0), #("b", 1), #("c", 2)]))
+}
+
 pub fn fold_test() {
   let dict = dict.from_list([#("a", 0), #("b", 1), #("c", 2), #("d", 3)])
 
