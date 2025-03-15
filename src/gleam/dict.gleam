@@ -448,6 +448,35 @@ pub fn upsert(
   }
 }
 
+/// Creates a new dict with one entry updated using a given function.
+///
+/// If there was not an entry in the dict for the given key then the dict is
+/// returned unmodified.
+///
+/// ## Example
+///
+/// ```gleam
+/// let dict = from_list([#("a", 0)])
+/// let increment = fn(i) { i + 1 }
+///
+/// update(dict, "a", increment)
+/// // -> from_list([#("a", 1)])
+///
+/// update(dict, "b", increment)
+/// // -> from_list([#("a", 0)])
+/// ```
+///
+pub fn update(
+  in dict: Dict(k, v),
+  update key: k,
+  with fun: fn(v) -> v,
+) -> Dict(k, v) {
+  case get(dict, key) {
+    Ok(value) -> insert(dict, key, fun(value))
+    Error(_) -> dict
+  }
+}
+
 /// Combines all entries into a single value by calling a given function on each
 /// one.
 ///
