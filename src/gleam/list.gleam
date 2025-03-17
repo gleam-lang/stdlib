@@ -1778,14 +1778,12 @@ pub fn try_each(
   over list: List(a),
   with fun: fn(a) -> Result(b, e),
 ) -> Result(Nil, e) {
-  case list {
-    [] -> Ok(Nil)
-    [first, ..rest] ->
-      case fun(first) {
-        Ok(_) -> try_each(over: rest, with: fun)
-        Error(e) -> Error(e)
-      }
-  }
+  fold_until(list, Ok(Nil), fn(_, e) {
+    case fun(e) {
+      Ok(_) -> Continue(Ok(Nil))
+      Error(e) -> Stop(Error(e))
+    }
+  })
 }
 
 /// Partitions a list into a tuple/pair of lists
