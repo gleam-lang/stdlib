@@ -305,20 +305,13 @@ fn update_group(f: fn(a) -> k) -> fn(Dict(k, List(a)), a) -> Dict(k, List(a)) {
 /// ```
 ///
 pub fn filter(list: List(a), keeping predicate: fn(a) -> Bool) -> List(a) {
-  filter_loop(list, predicate, [])
-}
-
-fn filter_loop(list: List(a), fun: fn(a) -> Bool, acc: List(a)) -> List(a) {
-  case list {
-    [] -> reverse(acc)
-    [first, ..rest] -> {
-      let new_acc = case fun(first) {
-        True -> [first, ..acc]
-        False -> acc
-      }
-      filter_loop(rest, fun, new_acc)
+  fold(list, [], fn(acc, e) {
+    case predicate(e) {
+      True -> [e, ..acc]
+      False -> acc
     }
-  }
+  })
+  |> reverse()
 }
 
 /// Returns a new list containing only the elements from the first list for
