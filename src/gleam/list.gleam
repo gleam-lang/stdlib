@@ -611,14 +611,7 @@ pub fn wrap(item: a) -> List(a) {
 ///
 @external(erlang, "lists", "append")
 pub fn append(first: List(a), second: List(a)) -> List(a) {
-  append_loop(reverse(first), second)
-}
-
-fn append_loop(first: List(a), second: List(a)) -> List(a) {
-  case first {
-    [] -> second
-    [first, ..rest] -> append_loop(rest, [first, ..second])
-  }
+  fold(reverse(first), second, fn(acc, e) { [e, ..acc] })
 }
 
 /// Prefixes an item to a list. This can also be done using the dedicated
