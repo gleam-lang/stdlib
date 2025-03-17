@@ -833,14 +833,12 @@ pub fn find(
   in list: List(a),
   one_that is_desired: fn(a) -> Bool,
 ) -> Result(a, Nil) {
-  case list {
-    [] -> Error(Nil)
-    [first, ..rest] ->
-      case is_desired(first) {
-        True -> Ok(first)
-        False -> find(in: rest, one_that: is_desired)
-      }
-  }
+  fold_until(list, Error(Nil), fn(_, e) {
+    case is_desired(e) {
+      True -> Stop(Ok(e))
+      False -> Continue(Error(Nil))
+    }
+  })
 }
 
 /// Finds the first element in a given list for which the given function returns
