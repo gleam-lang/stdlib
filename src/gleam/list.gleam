@@ -1927,22 +1927,13 @@ pub fn take_while(
   in list: List(a),
   satisfying predicate: fn(a) -> Bool,
 ) -> List(a) {
-  take_while_loop(list, predicate, [])
-}
-
-fn take_while_loop(
-  list: List(a),
-  predicate: fn(a) -> Bool,
-  acc: List(a),
-) -> List(a) {
-  case list {
-    [] -> reverse(acc)
-    [first, ..rest] ->
-      case predicate(first) {
-        True -> take_while_loop(rest, predicate, [first, ..acc])
-        False -> reverse(acc)
-      }
-  }
+  fold_until(list, [], fn(acc, e) {
+    case predicate(e) {
+      True -> Continue([e, ..acc])
+      False -> Stop(acc)
+    }
+  })
+  |> reverse()
 }
 
 /// Returns a list of chunks in which
