@@ -631,14 +631,6 @@ pub fn prepend(to list: List(a), this item: a) -> List(a) {
   [item, ..list]
 }
 
-fn flatten_loop(lists: List(List(a)), acc: List(a)) -> List(a) {
-  case lists {
-    [] -> reverse(acc)
-    [list, ..further_lists] ->
-      flatten_loop(further_lists, reverse_and_prepend(list: list, to: acc))
-  }
-}
-
 /// This is the same as `concat`: it joins a list of lists into a single
 /// list.
 ///
@@ -652,7 +644,8 @@ fn flatten_loop(lists: List(List(a)), acc: List(a)) -> List(a) {
 /// ```
 ///
 pub fn flatten(lists: List(List(a))) -> List(a) {
-  flatten_loop(lists, [])
+  fold(lists, [], fn(acc, e) { reverse_and_prepend(list: e, to: acc) })
+  |> reverse()
 }
 
 /// Maps the list with the given function into a list of lists, and then flattens it.
