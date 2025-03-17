@@ -129,10 +129,7 @@ pub fn reverse(list: List(a)) -> List(a) {
 
 // Reverses a list and prepends it to another list
 fn reverse_and_prepend(list prefix: List(a), to suffix: List(a)) -> List(a) {
-  case prefix {
-    [] -> suffix
-    [first, ..rest] -> reverse_and_prepend(list: rest, to: [first, ..suffix])
-  }
+  fold(prefix, suffix, fn(suffix, e) { [e, ..suffix] })
 }
 
 /// Determines whether or not the list is empty.
