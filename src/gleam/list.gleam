@@ -1905,14 +1905,13 @@ pub fn drop_while(
   in list: List(a),
   satisfying predicate: fn(a) -> Bool,
 ) -> List(a) {
-  case list {
-    [] -> []
-    [first, ..rest] ->
-      case predicate(first) {
-        True -> drop_while(rest, predicate)
-        False -> [first, ..rest]
-      }
-  }
+  fold(list, [], fn(acc, e) {
+    case predicate(e) {
+      True -> acc
+      False -> [e, ..acc]
+    }
+  })
+  |> reverse()
 }
 
 /// Takes the first elements in a given list for which the predicate function returns `True`.
