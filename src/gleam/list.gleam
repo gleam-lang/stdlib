@@ -330,24 +330,13 @@ pub fn filter(list: List(a), keeping predicate: fn(a) -> Bool) -> List(a) {
 /// ```
 ///
 pub fn filter_map(list: List(a), with fun: fn(a) -> Result(b, e)) -> List(b) {
-  filter_map_loop(list, fun, [])
-}
-
-fn filter_map_loop(
-  list: List(a),
-  fun: fn(a) -> Result(b, e),
-  acc: List(b),
-) -> List(b) {
-  case list {
-    [] -> reverse(acc)
-    [first, ..rest] -> {
-      let new_acc = case fun(first) {
-        Ok(first) -> [first, ..acc]
-        Error(_) -> acc
-      }
-      filter_map_loop(rest, fun, new_acc)
+  fold(list, [], fn(acc, e) {
+    case fun(e) {
+      Ok(e) -> [e, ..acc]
+      Error(_) -> acc
     }
-  }
+  })
+  |> reverse()
 }
 
 /// Returns a new list containing only the elements of the first list after the
