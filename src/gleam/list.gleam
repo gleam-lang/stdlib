@@ -183,11 +183,12 @@ pub fn is_empty(list: List(a)) -> Bool {
 /// ```
 ///
 pub fn contains(list: List(a), any elem: a) -> Bool {
-  case list {
-    [] -> False
-    [first, ..] if first == elem -> True
-    [_, ..rest] -> contains(rest, elem)
-  }
+  fold_until(list, False, fn(_, e) {
+    case elem == e {
+      True -> Stop(True)
+      False -> Continue(False)
+    }
+  })
 }
 
 /// Gets the first element from the start of the list, if there is one.
