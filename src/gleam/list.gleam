@@ -867,14 +867,12 @@ pub fn find_map(
   in list: List(a),
   with fun: fn(a) -> Result(b, c),
 ) -> Result(b, Nil) {
-  case list {
-    [] -> Error(Nil)
-    [first, ..rest] ->
-      case fun(first) {
-        Ok(first) -> Ok(first)
-        Error(_) -> find_map(in: rest, with: fun)
-      }
-  }
+  fold_until(list, Error(Nil), fn(_, e) {
+    case fun(e) {
+      Ok(e) -> Stop(Ok(e))
+      Error(_) -> Continue(Error(Nil))
+    }
+  })
 }
 
 /// Returns `True` if the given function returns `True` for all the elements in
