@@ -936,14 +936,12 @@ pub fn all(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
 /// ```
 ///
 pub fn any(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
-  case list {
-    [] -> False
-    [first, ..rest] ->
-      case predicate(first) {
-        True -> True
-        False -> any(rest, predicate)
-      }
-  }
+  fold_until(list, False, fn(_, e) {
+    case predicate(e) {
+      True -> Stop(True)
+      False -> Continue(False)
+    }
+  })
 }
 
 /// Takes two lists and returns a single list of 2-element tuples.
