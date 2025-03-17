@@ -901,14 +901,12 @@ pub fn find_map(
 /// ```
 ///
 pub fn all(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
-  case list {
-    [] -> True
-    [first, ..rest] ->
-      case predicate(first) {
-        True -> all(rest, predicate)
-        False -> False
-      }
-  }
+  fold_until(list, True, fn(_, e) {
+    case predicate(e) {
+      True -> Continue(True)
+      False -> Stop(False)
+    }
+  })
 }
 
 /// Returns `True` if the given function returns `True` for any the elements in
