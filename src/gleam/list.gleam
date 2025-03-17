@@ -1752,13 +1752,10 @@ fn key_set_loop(
 /// ```
 ///
 pub fn each(list: List(a), f: fn(a) -> b) -> Nil {
-  case list {
-    [] -> Nil
-    [first, ..rest] -> {
-      f(first)
-      each(rest, f)
-    }
-  }
+  fold(list, Nil, fn(_, e) {
+    f(e)
+    Nil
+  })
 }
 
 /// Calls a `Result` returning function for each element in a list, discarding
