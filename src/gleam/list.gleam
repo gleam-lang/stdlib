@@ -55,14 +55,7 @@ import gleam/pair
 ///
 @external(erlang, "erlang", "length")
 pub fn length(of list: List(a)) -> Int {
-  length_loop(list, 0)
-}
-
-fn length_loop(list: List(a), count: Int) -> Int {
-  case list {
-    [_, ..list] -> length_loop(list, count + 1)
-    [] -> count
-  }
+  fold(list, 0, fn(length, _) { length + 1 })
 }
 
 /// Counts the number of elements in a given list satisfying a given predicate.
