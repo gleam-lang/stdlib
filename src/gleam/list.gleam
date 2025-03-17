@@ -1074,15 +1074,11 @@ fn unzip_loop(
 pub fn intersperse(list: List(a), with elem: a) -> List(a) {
   case list {
     [] | [_] -> list
-    [first, ..rest] -> intersperse_loop(rest, elem, [first])
-  }
-}
-
-fn intersperse_loop(list: List(a), separator: a, acc: List(a)) -> List(a) {
-  case list {
-    [] -> reverse(acc)
-    [first, ..rest] ->
-      intersperse_loop(rest, separator, [first, separator, ..acc])
+    [first, ..rest] -> {
+      [first]
+      |> fold(rest, _, fn(acc, e) { [e, elem, ..acc] })
+      |> reverse()
+    }
   }
 }
 
