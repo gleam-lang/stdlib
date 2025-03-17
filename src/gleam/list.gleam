@@ -350,14 +350,8 @@ pub fn filter_map(list: List(a), with fun: fn(a) -> Result(b, e)) -> List(b) {
 /// ```
 ///
 pub fn map(list: List(a), with fun: fn(a) -> b) -> List(b) {
-  map_loop(list, fun, [])
-}
-
-fn map_loop(list: List(a), fun: fn(a) -> b, acc: List(b)) -> List(b) {
-  case list {
-    [] -> reverse(acc)
-    [first, ..rest] -> map_loop(rest, fun, [fun(first), ..acc])
-  }
+  fold(list, [], fn(acc, e) { [fun(e), ..acc] })
+  |> reverse()
 }
 
 /// Combines two lists into a single list using the given function.
