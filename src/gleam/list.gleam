@@ -312,7 +312,7 @@ pub fn filter(list: List(a), keeping predicate: fn(a) -> Bool) -> List(a) {
       False -> acc
     }
   })
-  |> reverse()
+  |> reverse
 }
 
 /// Returns a new list containing only the elements from the first list for
@@ -337,7 +337,7 @@ pub fn filter_map(list: List(a), with fun: fn(a) -> Result(b, e)) -> List(b) {
       Error(_) -> acc
     }
   })
-  |> reverse()
+  |> reverse
 }
 
 /// Returns a new list containing only the elements of the first list after the
@@ -352,7 +352,7 @@ pub fn filter_map(list: List(a), with fun: fn(a) -> Result(b, e)) -> List(b) {
 ///
 pub fn map(list: List(a), with fun: fn(a) -> b) -> List(b) {
   fold(list, [], fn(acc, e) { [fun(e), ..acc] })
-  |> reverse()
+  |> reverse
 }
 
 /// Combines two lists into a single list using the given function.
@@ -646,7 +646,7 @@ pub fn prepend(to list: List(a), this item: a) -> List(a) {
 ///
 pub fn flatten(lists: List(List(a))) -> List(a) {
   fold(lists, [], fn(acc, e) { reverse_and_prepend(list: e, to: acc) })
-  |> reverse()
+  |> reverse
 }
 
 /// Maps the list with the given function into a list of lists, and then flattens it.
@@ -1077,7 +1077,7 @@ pub fn intersperse(list: List(a), with elem: a) -> List(a) {
     [first, ..rest] -> {
       [first]
       |> fold(rest, _, fn(acc, e) { [e, elem, ..acc] })
-      |> reverse()
+      |> reverse
     }
   }
 }
@@ -1911,7 +1911,7 @@ pub fn drop_while(
       False -> [e, ..acc]
     }
   })
-  |> reverse()
+  |> reverse
 }
 
 /// Takes the first elements in a given list for which the predicate function returns `True`.
@@ -1933,7 +1933,7 @@ pub fn take_while(
       False -> Stop(acc)
     }
   })
-  |> reverse()
+  |> reverse
 }
 
 /// Returns a list of chunks in which
