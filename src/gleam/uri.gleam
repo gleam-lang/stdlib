@@ -517,14 +517,6 @@ fn pop_codeunit(str: String) -> #(Int, String)
 @external(javascript, "../gleam_stdlib.mjs", "string_codeunit_slice")
 fn codeunit_slice(str: String, at_index from: Int, length length: Int) -> String
 
-fn extra_required(list: List(a), remaining: Int) -> Int {
-  case list {
-    _ if remaining == 0 -> 0
-    [] -> remaining
-    [_, ..rest] -> extra_required(rest, remaining - 1)
-  }
-}
-
 /// Parses an urlencoded query string into a list of key value pairs.
 /// Returns an error for invalid encoding.
 ///
