@@ -13,7 +13,6 @@ import {
 } from "./gleam.mjs";
 import { DecodeError } from "./gleam/dynamic.mjs";
 import { Some, None } from "./gleam/option.mjs";
-import { Eq, Gt, Lt } from "./gleam/order.mjs";
 import Dict from "./dict.mjs";
 
 const Nil = undefined;
@@ -885,7 +884,7 @@ export function inspect(v) {
 function inspectString(str) {
   let new_str = '"';
   for (let i = 0; i < str.length; i++) {
-    let char = str[i];
+    const char = str[i];
     switch (char) {
       case "\n":
         new_str += "\\n";
