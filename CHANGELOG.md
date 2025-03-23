@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.58.0 - 2025-03-23
+
+- The deprecated `pop` and `pop_map` functions have been removed from the
+  `list` module.
+
 ## v0.57.0 - 2025-03-11
 
 - The minimum supported Gleam version has been increased to 1.9.0.

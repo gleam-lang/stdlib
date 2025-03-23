@@ -828,41 +828,6 @@ pub fn key_filter_test() {
   |> should.equal([])
 }
 
-pub fn pop_test() {
-  [1, 2, 3]
-  |> list.pop(fn(x) { x > 2 })
-  |> should.equal(Ok(#(3, [1, 2])))
-
-  [1, 2, 3]
-  |> list.pop(fn(x) { x > 4 })
-  |> should.equal(Error(Nil))
-
-  []
-  |> list.pop(fn(_x) { True })
-  |> should.equal(Error(Nil))
-
-  // TCO test
-  list.repeat(0, recursion_test_cycles + 10)
-  |> list.pop(fn(x) { x > recursion_test_cycles + 1 })
-}
-
-pub fn pop_map_test() {
-  let get = fn(x) {
-    case x > 0 {
-      True -> Ok(x * 2)
-      False -> Error(Nil)
-    }
-  }
-  list.pop_map([0, 2, 3], get)
-  |> should.equal(Ok(#(4, [0, 3])))
-
-  list.pop_map([0, -1], get)
-  |> should.equal(Error(Nil))
-
-  list.pop_map([], get)
-  |> should.equal(Error(Nil))
-}
-
 pub fn key_pop_test() {
   list.key_pop([#("a", 0), #("b", 1)], "a")
   |> should.equal(Ok(#(0, [#("b", 1)])))
