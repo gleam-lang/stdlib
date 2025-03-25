@@ -207,6 +207,26 @@ pub fn to_string_test() {
   |> should.equal(Ok("ø"))
 }
 
+pub fn to_string_lossy_test() {
+  <<>>
+  |> bit_array.to_string_lossy(fn(_) { "�" })
+  |> should.equal("")
+
+  <<0x80, "A":utf8, 0x81>>
+  |> bit_array.to_string_lossy(fn(_) { "�" })
+  |> should.equal("�A�")
+
+  // Test some codepoints that require 2/3/4 bytes to be stored as UTF-8
+  <<"£И한𐍈":utf8>>
+  |> bit_array.to_string_lossy(fn(_) { "�" })
+  |> should.equal("£И한𐍈")
+
+  // Test unaligned bit array
+  <<"ø":utf8, 50:4>>
+  |> bit_array.to_string_lossy(fn(_) { "�" })
+  |> should.equal("ø�")
+}
+
 pub fn is_utf8_test() {
   <<>>
   |> bit_array.is_utf8
