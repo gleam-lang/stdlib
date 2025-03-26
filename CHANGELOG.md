@@ -19,6 +19,7 @@
 
 ## v0.55.0 - 2025-02-21
 
+- The `bit_array` module gains the `split` and `split_once` functions.
 - The performance of `dict.is_empty` has been improved.
 - The `flip` function in the `function` module has been deprecated.
 - The `uri` module gains the `empty` value, representing an empty URI which
