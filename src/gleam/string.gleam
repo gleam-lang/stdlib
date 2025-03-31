@@ -567,9 +567,11 @@ pub fn trim_end(string: String) -> String {
 /// Splits a non-empty `String` into its first element (head) and rest (tail).
 /// This lets you pattern match on `String`s exactly as you would with lists.
 ///
-/// Note on JavaScript using the function to iterate over a string will likely
-/// be slower than using `to_graphemes` due to string slicing being more
-/// expensive on JavaScript than Erlang.
+/// ## Performance
+///
+/// There is a notable overhead to using this function, so you may not want to
+/// use it in a tight loop. If you wish to efficiently parse a string you may
+/// want to use alternatives such as the [splitter package]( https://hex.pm/packages/splitter).
 ///
 /// ## Examples
 ///
