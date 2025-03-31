@@ -99,7 +99,7 @@ export function int(data) {
 
 export function string(data) {
   if (typeof data === "string") return new Ok(data);
-  return new Error(0);
+  return new Error("");
 }
 
 export function is_null(data) {
