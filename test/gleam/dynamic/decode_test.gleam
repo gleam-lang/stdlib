@@ -6,6 +6,7 @@ import gleam/int
 import gleam/option
 import gleam/result
 import gleam/should
+import gleam/string
 
 pub type User {
   User(
@@ -174,6 +175,53 @@ pub fn subfield_wrong_inner_error_test() {
   })
   |> should.be_error
   |> should.equal([DecodeError("String", "Int", ["name"])])
+}
+
+pub fn optional_field_wrong_inner_error_test() {
+  let data = dynamic.from(dict.from_list([#("a", Nil)]))
+  decode.run(data, {
+    use bar <- decode.optional_field("a", "", decode.string)
+    decode.success(bar)
+  })
+  |> should.be_error
+  |> should.equal([DecodeError("String", "Nil", ["a"])])
+}
+
+pub fn sub_optional_field_wrong_inner_error_test() {
+  let data =
+    dynamic.from(dict.from_list([#("a", dict.from_list([#("b", Nil)]))]))
+  decode.run(data, {
+    use bar <- decode.optional_field("a", "", {
+      use foo <- decode.optional_field("b", "", decode.string)
+      decode.success(foo)
+    })
+    decode.success(bar)
+  })
+  |> should.be_error
+  |> should.equal([DecodeError("String", "Nil", ["a", "b"])])
+}
+
+pub fn optional_field_wrong_inner_error_type_test() {
+  let data = dynamic.from(dict.from_list([#("a", 0)]))
+  decode.run(data, {
+    use bar <- decode.optional_field("a", "", decode.string)
+    decode.success(bar)
+  })
+  |> should.be_error
+  |> should.equal([DecodeError("String", "Int", ["a"])])
+}
+
+pub fn string_map_ok_test() {
+  dynamic.from("tEsT")
+  |> decode.run(decode.string |> decode.map(string.lowercase))
+  |> should.be_ok
+  |> should.equal("test")
+}
+
+pub fn string_map_error_test() {
+  dynamic.from(0)
+  |> decode.run(decode.string |> decode.map(string.lowercase))
+  |> should.be_error
 }
 
 pub fn string_ok_test() {

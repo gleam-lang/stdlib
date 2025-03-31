@@ -552,14 +552,15 @@ pub fn optional_field(
   next: fn(t) -> Decoder(final),
 ) -> Decoder(final) {
   Decoder(function: fn(data) {
-    let #(out, errors1) = case bare_index(data, key) {
-      Ok(Some(data)) -> field_decoder.function(data)
-      Ok(None) -> #(default, [])
-      Error(kind) -> {
-        #(default, [DecodeError(kind, dynamic.classify(data), [])])
-        |> push_path([key])
+    let #(out, errors1) =
+      case bare_index(data, key) {
+        Ok(Some(data)) -> field_decoder.function(data)
+        Ok(None) -> #(default, [])
+        Error(kind) -> #(default, [
+          DecodeError(kind, dynamic.classify(data), []),
+        ])
       }
-    }
+      |> push_path([key])
     let #(out, errors2) = next(out).function(data)
     #(out, list.append(errors1, errors2))
   })
