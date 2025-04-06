@@ -371,10 +371,7 @@ fn erl_split(a: String, b: String) -> List(String)
 /// ```
 ///
 pub fn append(to first: String, suffix second: String) -> String {
-  first
-  |> string_tree.from_string
-  |> string_tree.append(second)
-  |> string_tree.to_string
+  first <> second
 }
 
 /// Creates a new `String` by joining many `String`s together.
