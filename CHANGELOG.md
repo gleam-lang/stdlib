@@ -4,7 +4,8 @@
 
 - The `debug` function in the `io` module has been deprecated in favour of
   the `echo` keyword.
-- The performance of `string.append` and `string.concat` have been improved.
+- The performance of `string.append`, `string.join`, and `string.concat` have
+  been improved.
 
 ## v0.58.0 - 2025-03-23
 

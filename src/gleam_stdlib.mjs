@@ -205,17 +205,6 @@ export function split(xs, pattern) {
   return List.fromArray(xs.split(pattern));
 }
 
-export function join(xs, separator) {
-  const iterator = xs[Symbol.iterator]();
-  let result = iterator.next().value || "";
-  let current = iterator.next();
-  while (!current.done) {
-    result = result + separator + current.value;
-    current = iterator.next();
-  }
-  return result;
-}
-
 export function concat(xs) {
   let result = "";
   for (const x of xs) {

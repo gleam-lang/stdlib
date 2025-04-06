@@ -432,11 +432,23 @@ fn repeat_loop(string: String, times: Int, acc: String) -> String {
 /// // -> "home/evan/Desktop"
 /// ```
 ///
-@external(javascript, "../gleam_stdlib.mjs", "join")
 pub fn join(strings: List(String), with separator: String) -> String {
-  strings
-  |> list.intersperse(with: separator)
-  |> concat
+  case strings {
+    [] -> ""
+    [first, ..rest] -> do_join(rest, separator, first)
+  }
+}
+
+fn do_join(
+  strings: List(String),
+  separator: String,
+  accumulator: String,
+) -> String {
+  case strings {
+    [] -> accumulator
+    [string, ..strings] ->
+      do_join(strings, separator, accumulator <> separator <> string)
+  }
 }
 
 /// Pads the start of a `String` until it has a given length.
