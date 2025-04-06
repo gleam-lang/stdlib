@@ -387,10 +387,16 @@ pub fn append(to first: String, suffix second: String) -> String {
 /// // -> "nevertheless"
 /// ```
 ///
+@external(erlang, "erlang", "list_to_binary")
 pub fn concat(strings: List(String)) -> String {
-  strings
-  |> string_tree.from_strings
-  |> string_tree.to_string
+  do_concat(strings, "")
+}
+
+fn do_concat(strings: List(String), accumulator: String) -> String {
+  case strings {
+    [string, ..strings] -> do_concat(strings, accumulator <> string)
+    [] -> accumulator
+  }
 }
 
 /// Creates a new `String` by repeating a `String` a given number of times.
