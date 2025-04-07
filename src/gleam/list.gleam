@@ -2147,20 +2147,15 @@ pub fn last(list: List(a)) -> Result(a, Nil) {
 /// ```
 ///
 pub fn combinations(items: List(a), by n: Int) -> List(List(a)) {
-  case n {
-    0 -> [[]]
-    _ ->
-      case items {
-        [] -> []
-        [first, ..rest] -> {
-          let first_combinations =
-            map(combinations(rest, n - 1), with: fn(com) { [first, ..com] })
-            |> reverse
-          fold(first_combinations, combinations(rest, n), fn(acc, c) {
-            [c, ..acc]
-          })
-        }
-      }
+  case n, items {
+    0, _ -> [[]]
+    _, [] -> []
+    _, [first, ..rest] -> {
+      let first_combinations =
+        map(combinations(rest, n - 1), with: fn(com) { [first, ..com] })
+        |> reverse
+      fold(first_combinations, combinations(rest, n), fn(acc, c) { [c, ..acc] })
+    }
   }
 }
 
