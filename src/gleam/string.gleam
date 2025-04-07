@@ -435,11 +435,11 @@ fn repeat_loop(string: String, times: Int, acc: String) -> String {
 pub fn join(strings: List(String), with separator: String) -> String {
   case strings {
     [] -> ""
-    [first, ..rest] -> do_join(rest, separator, first)
+    [first, ..rest] -> join_loop(rest, separator, first)
   }
 }
 
-fn do_join(
+fn join_loop(
   strings: List(String),
   separator: String,
   accumulator: String,
@@ -447,7 +447,7 @@ fn do_join(
   case strings {
     [] -> accumulator
     [string, ..strings] ->
-      do_join(strings, separator, accumulator <> separator <> string)
+      join_loop(strings, separator, accumulator <> separator <> string)
   }
 }
 
