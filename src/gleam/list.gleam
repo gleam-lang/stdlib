@@ -296,14 +296,23 @@ pub fn rest(list: List(a)) -> Result(List(a), Nil) {
 /// ```
 ///
 pub fn group(list: List(v), by key: fn(v) -> k) -> Dict(k, List(v)) {
-  fold(list, dict.new(), update_group(key))
+  group_loop(list, key, dict.new())
 }
 
-fn update_group(f: fn(a) -> k) -> fn(Dict(k, List(a)), a) -> Dict(k, List(a)) {
-  fn(groups, elem) {
-    case dict.get(groups, f(elem)) {
-      Ok(existing) -> dict.insert(groups, f(elem), [elem, ..existing])
-      Error(_) -> dict.insert(groups, f(elem), [elem])
+fn group_loop(
+  list: List(v),
+  to_key: fn(v) -> k,
+  groups: Dict(k, List(v)),
+) -> Dict(k, List(v)) {
+  case list {
+    [] -> groups
+    [first, ..rest] -> {
+      let key = to_key(first)
+      let groups = case dict.get(groups, key) {
+        Error(_) -> dict.insert(groups, key, [first])
+        Ok(existing) -> dict.insert(groups, key, [first, ..existing])
+      }
+      group_loop(rest, to_key, groups)
     }
   }
 }
