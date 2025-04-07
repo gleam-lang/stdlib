@@ -133,7 +133,10 @@ pub fn reverse(list: List(a)) -> List(a) {
   reverse_and_prepend(list, [])
 }
 
-// Reverses a list and prepends it to another list
+/// Reverses a list and prepends it to another list.
+/// This function runs in linear time, proportional to the lenght of the list
+/// to prepend.
+///
 fn reverse_and_prepend(list prefix: List(a), to suffix: List(a)) -> List(a) {
   case prefix {
     [] -> suffix
