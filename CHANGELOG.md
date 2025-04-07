@@ -3,6 +3,8 @@
 ## Unreleased
 
 - The performance of various functions in the `list` module has been improved.
+- Fixed the implementation of `option.values` and `option.all` to be tail
+  recursive.
 
 ## v0.59.0 - 2025-04-07
 
