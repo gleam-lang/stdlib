@@ -389,12 +389,12 @@ pub fn append(to first: String, suffix second: String) -> String {
 ///
 @external(erlang, "erlang", "list_to_binary")
 pub fn concat(strings: List(String)) -> String {
-  do_concat(strings, "")
+  concat_loop(strings, "")
 }
 
-fn do_concat(strings: List(String), accumulator: String) -> String {
+fn concat_loop(strings: List(String), accumulator: String) -> String {
   case strings {
-    [string, ..strings] -> do_concat(strings, accumulator <> string)
+    [string, ..strings] -> concat_loop(strings, accumulator <> string)
     [] -> accumulator
   }
 }
