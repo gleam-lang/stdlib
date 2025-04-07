@@ -2159,7 +2159,7 @@ pub fn combinations(items: List(a), by n: Int) -> List(List(a)) {
   }
 }
 
-/// Return unique pair combinations of elements in the list
+/// Return unique pair combinations of elements in the list.
 ///
 /// ## Examples
 ///
@@ -2169,16 +2169,16 @@ pub fn combinations(items: List(a), by n: Int) -> List(List(a)) {
 /// ```
 ///
 pub fn combination_pairs(items: List(a)) -> List(#(a, a)) {
-  combination_pairs_loop(items)
-  |> flatten
+  combination_pairs_loop(items, [])
 }
 
-fn combination_pairs_loop(items: List(a)) -> List(List(#(a, a))) {
+fn combination_pairs_loop(items: List(a), acc: List(#(a, a))) -> List(#(a, a)) {
   case items {
-    [] -> []
+    [] -> reverse(acc)
     [first, ..rest] -> {
       let first_combinations = map(rest, with: fn(other) { #(first, other) })
-      [first_combinations, ..combination_pairs_loop(rest)]
+      let acc = reverse_and_prepend(first_combinations, acc)
+      combination_pairs_loop(rest, acc)
     }
   }
 }
