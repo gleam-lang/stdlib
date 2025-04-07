@@ -43,16 +43,22 @@ pub fn all(list: List(Option(a))) -> Option(List(a)) {
 
 fn all_loop(list: List(Option(a)), acc: List(a)) -> Option(List(a)) {
   case list {
-    [] -> Some(acc)
-    [first, ..rest] -> {
-      let accumulate = fn(acc, item) {
-        case acc, item {
-          Some(values), Some(value) -> Some([value, ..values])
-          _, _ -> None
-        }
-      }
-      accumulate(all_loop(rest, acc), first)
-    }
+    [] -> Some(reverse(acc))
+    [None, ..] -> None
+    [Some(first), ..rest] -> all_loop(rest, [first, ..acc])
+  }
+}
+
+// This is copied from the list module and not imported as importing it would
+// result in a circular dependency!
+fn reverse(list: List(a)) -> List(a) {
+  reverse_and_prepend(list, [])
+}
+
+fn reverse_and_prepend(list prefix: List(a), to suffix: List(a)) -> List(a) {
+  case prefix {
+    [] -> suffix
+    [first, ..rest] -> reverse_and_prepend(list: rest, to: [first, ..suffix])
   }
 }
 
@@ -344,15 +350,8 @@ pub fn values(options: List(Option(a))) -> List(a) {
 
 fn values_loop(list: List(Option(a)), acc: List(a)) -> List(a) {
   case list {
-    [] -> acc
-    [first, ..rest] -> {
-      let accumulate = fn(acc, item) {
-        case item {
-          Some(value) -> [value, ..acc]
-          None -> acc
-        }
-      }
-      accumulate(values_loop(rest, acc), first)
-    }
+    [] -> reverse(acc)
+    [None, ..rest] -> values_loop(rest, acc)
+    [Some(first), ..rest] -> values_loop(rest, [first, ..acc])
   }
 }
