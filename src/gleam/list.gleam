@@ -733,8 +733,17 @@ fn flatten_loop(lists: List(List(a)), acc: List(a)) -> List(a) {
 /// ```
 ///
 pub fn flat_map(over list: List(a), with fun: fn(a) -> List(b)) -> List(b) {
-  map(list, fun)
-  |> flatten
+  flat_map_loop(list, fun, [])
+}
+
+fn flat_map_loop(list: List(a), fun: fn(a) -> List(b), acc: List(b)) -> List(b) {
+  case list {
+    [] -> reverse(acc)
+    [first, ..rest] -> {
+      let list = fun(first)
+      flat_map_loop(rest, fun, reverse_and_prepend(list, to: acc))
+    }
+  }
 }
 
 /// Reduces a list of elements into a single value by calling a given function
