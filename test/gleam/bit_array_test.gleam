@@ -193,11 +193,11 @@ pub fn to_string_test() {
   |> bit_array.to_string
   |> should.equal(Ok("ø"))
 
-  <<65_535>>
+  <<255>>
   |> bit_array.to_string
   |> should.equal(Error(Nil))
 
-  <<"ø":utf8, 50:4>>
+  <<"ø":utf8, 2:4>>
   |> bit_array.to_string
   |> should.equal(Error(Nil))
 
@@ -224,7 +224,7 @@ pub fn is_utf8_test() {
   |> bit_array.is_utf8
   |> should.be_true
 
-  <<65_535>>
+  <<255>>
   |> bit_array.is_utf8
   |> should.be_false
 }
@@ -452,7 +452,7 @@ pub fn compare_test() {
   bit_array.compare(<<4:5, 3:3, 0:0>>, <<4:5, 3:3, 0:0>>)
   |> should.equal(order.Eq)
 
-  bit_array.compare(<<4:2, 3:4, 0:0>>, <<4:2, 3:3, 0:0>>)
+  bit_array.compare(<<0:2, 3:4, 0:0>>, <<0:2, 3:3, 0:0>>)
   |> should.equal(order.Gt)
 
   // first is: <<33, 1:size(1)>>
