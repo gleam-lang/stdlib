@@ -2201,7 +2201,7 @@ pub fn interleave(list: List(List(a))) -> List(a) {
 ///
 /// Notice: This function is not tail recursive,
 /// and thus may exceed stack size if called,
-/// with large lists (on target JavaScript).
+/// with large lists (on the JavaScript target).
 ///
 /// ## Examples
 ///
@@ -2285,12 +2285,21 @@ pub fn max(
   over list: List(a),
   with compare: fn(a, a) -> Order,
 ) -> Result(a, Nil) {
-  reduce(over: list, with: fn(acc, other) {
-    case compare(acc, other) {
-      order.Gt -> acc
-      order.Lt | order.Eq -> other
-    }
-  })
+  case list {
+    [] -> Error(Nil)
+    [first, ..rest] -> Ok(max_loop(rest, compare, first))
+  }
+}
+
+fn max_loop(list, compare, max) {
+  case list {
+    [] -> max
+    [first, ..rest] ->
+      case compare(first, max) {
+        order.Gt -> max_loop(rest, compare, first)
+        order.Lt | order.Eq -> max_loop(rest, compare, max)
+      }
+  }
 }
 
 /// Take a random sample of k elements from a list using reservoir sampling via
