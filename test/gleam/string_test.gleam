@@ -161,7 +161,27 @@ pub fn repeat_test() {
   |> should.equal("")
 }
 
-pub fn join_test() {
+pub fn join_0_test() {
+  []
+  |> string.join(with: ", ")
+  |> should.equal("")
+
+  []
+  |> string.join(with: "-")
+  |> should.equal("")
+}
+
+pub fn join_1_test() {
+  ["Hello"]
+  |> string.join(with: ", ")
+  |> should.equal("Hello")
+
+  ["Hello"]
+  |> string.join(with: "-")
+  |> should.equal("Hello")
+}
+
+pub fn join_2_test() {
   ["Hello", "world!"]
   |> string.join(with: ", ")
   |> should.equal("Hello, world!")
@@ -169,6 +189,16 @@ pub fn join_test() {
   ["Hello", "world!"]
   |> string.join(with: "-")
   |> should.equal("Hello-world!")
+}
+
+pub fn join_3_test() {
+  ["Hello", "there", "world!"]
+  |> string.join(with: ", ")
+  |> should.equal("Hello, there, world!")
+
+  ["Hello", "there", "world!"]
+  |> string.join(with: "-")
+  |> should.equal("Hello-there-world!")
 }
 
 pub fn trim_test() {
