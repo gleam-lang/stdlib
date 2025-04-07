@@ -26,7 +26,6 @@ import gleam/dict.{type Dict}
 import gleam/float
 import gleam/int
 import gleam/order.{type Order}
-import gleam/pair
 
 /// Counts the number of elements in a given list.
 ///
@@ -88,12 +87,18 @@ fn length_loop(list: List(a), count: Int) -> Int {
 /// ```
 ///
 pub fn count(list: List(a), where predicate: fn(a) -> Bool) -> Int {
-  fold(list, 0, fn(acc, value) {
-    case predicate(value) {
-      True -> acc + 1
-      False -> acc
-    }
-  })
+  count_loop(list, predicate, 0)
+}
+
+fn count_loop(list: List(a), predicate: fn(a) -> Bool, acc: Int) -> Int {
+  case list {
+    [] -> acc
+    [first, ..rest] ->
+      case predicate(first) {
+        True -> count_loop(rest, predicate, acc + 1)
+        False -> count_loop(rest, predicate, acc)
+      }
+  }
 }
 
 /// Creates a new list from a given list containing the same elements but in the
@@ -127,7 +132,10 @@ pub fn reverse(list: List(a)) -> List(a) {
   reverse_and_prepend(list, [])
 }
 
-// Reverses a list and prepends it to another list
+/// Reverses a list and prepends it to another list.
+/// This function runs in linear time, proportional to the lenght of the list
+/// to prepend.
+///
 fn reverse_and_prepend(list prefix: List(a), to suffix: List(a)) -> List(a) {
   case prefix {
     [] -> suffix
@@ -287,14 +295,23 @@ pub fn rest(list: List(a)) -> Result(List(a), Nil) {
 /// ```
 ///
 pub fn group(list: List(v), by key: fn(v) -> k) -> Dict(k, List(v)) {
-  fold(list, dict.new(), update_group(key))
+  group_loop(list, key, dict.new())
 }
 
-fn update_group(f: fn(a) -> k) -> fn(Dict(k, List(a)), a) -> Dict(k, List(a)) {
-  fn(groups, elem) {
-    case dict.get(groups, f(elem)) {
-      Ok(existing) -> dict.insert(groups, f(elem), [elem, ..existing])
-      Error(_) -> dict.insert(groups, f(elem), [elem])
+fn group_loop(
+  list: List(v),
+  to_key: fn(v) -> k,
+  groups: Dict(k, List(v)),
+) -> Dict(k, List(v)) {
+  case list {
+    [] -> groups
+    [first, ..rest] -> {
+      let key = to_key(first)
+      let groups = case dict.get(groups, key) {
+        Error(_) -> dict.insert(groups, key, [first])
+        Ok(existing) -> dict.insert(groups, key, [first, ..existing])
+      }
+      group_loop(rest, to_key, groups)
     }
   }
 }
@@ -438,12 +455,22 @@ pub fn map_fold(
   from initial: acc,
   with fun: fn(acc, a) -> #(acc, b),
 ) -> #(acc, List(b)) {
-  fold(over: list, from: #(initial, []), with: fn(acc, item) {
-    let #(current_acc, items) = acc
-    let #(next_acc, next_item) = fun(current_acc, item)
-    #(next_acc, [next_item, ..items])
-  })
-  |> pair.map_second(reverse)
+  map_fold_loop(list, fun, initial, [])
+}
+
+fn map_fold_loop(
+  list: List(a),
+  fun: fn(acc, a) -> #(acc, b),
+  acc: acc,
+  list_acc: List(b),
+) -> #(acc, List(b)) {
+  case list {
+    [] -> #(acc, reverse(list_acc))
+    [first, ..rest] -> {
+      let #(acc, first) = fun(acc, first)
+      map_fold_loop(rest, fun, acc, [first, ..list_acc])
+    }
+  }
 }
 
 /// Returns a new list containing only the elements of the first list after the
@@ -672,14 +699,6 @@ pub fn prepend(to list: List(a), this item: a) -> List(a) {
   [item, ..list]
 }
 
-fn flatten_loop(lists: List(List(a)), acc: List(a)) -> List(a) {
-  case lists {
-    [] -> reverse(acc)
-    [list, ..further_lists] ->
-      flatten_loop(further_lists, reverse_and_prepend(list: list, to: acc))
-  }
-}
-
 /// This is the same as `concat`: it joins a list of lists into a single
 /// list.
 ///
@@ -696,6 +715,14 @@ pub fn flatten(lists: List(List(a))) -> List(a) {
   flatten_loop(lists, [])
 }
 
+fn flatten_loop(lists: List(List(a)), acc: List(a)) -> List(a) {
+  case lists {
+    [] -> reverse(acc)
+    [list, ..further_lists] ->
+      flatten_loop(further_lists, reverse_and_prepend(list, to: acc))
+  }
+}
+
 /// Maps the list with the given function into a list of lists, and then flattens it.
 ///
 /// ## Examples
@@ -706,8 +733,17 @@ pub fn flatten(lists: List(List(a))) -> List(a) {
 /// ```
 ///
 pub fn flat_map(over list: List(a), with fun: fn(a) -> List(b)) -> List(b) {
-  map(list, fun)
-  |> flatten
+  flat_map_loop(list, fun, [])
+}
+
+fn flat_map_loop(list: List(a), fun: fn(a) -> List(b), acc: List(b)) -> List(b) {
+  case list {
+    [] -> reverse(acc)
+    [first, ..rest] -> {
+      let list = fun(first)
+      flat_map_loop(rest, fun, reverse_and_prepend(list, to: acc))
+    }
+  }
 }
 
 /// Reduces a list of elements into a single value by calling a given function
@@ -2089,7 +2125,11 @@ fn scan_loop(
 /// ```
 ///
 pub fn last(list: List(a)) -> Result(a, Nil) {
-  reduce(list, fn(_, elem) { elem })
+  case list {
+    [] -> Error(Nil)
+    [last] -> Ok(last)
+    [_, ..rest] -> last(rest)
+  }
 }
 
 /// Return unique combinations of elements in the list.
@@ -2107,24 +2147,19 @@ pub fn last(list: List(a)) -> Result(a, Nil) {
 /// ```
 ///
 pub fn combinations(items: List(a), by n: Int) -> List(List(a)) {
-  case n {
-    0 -> [[]]
-    _ ->
-      case items {
-        [] -> []
-        [first, ..rest] -> {
-          let first_combinations =
-            map(combinations(rest, n - 1), with: fn(com) { [first, ..com] })
-            |> reverse
-          fold(first_combinations, combinations(rest, n), fn(acc, c) {
-            [c, ..acc]
-          })
-        }
-      }
+  case n, items {
+    0, _ -> [[]]
+    _, [] -> []
+    _, [first, ..rest] -> {
+      let first_combinations =
+        map(combinations(rest, n - 1), with: fn(com) { [first, ..com] })
+        |> reverse
+      fold(first_combinations, combinations(rest, n), fn(acc, c) { [c, ..acc] })
+    }
   }
 }
 
-/// Return unique pair combinations of elements in the list
+/// Return unique pair combinations of elements in the list.
 ///
 /// ## Examples
 ///
@@ -2134,16 +2169,16 @@ pub fn combinations(items: List(a), by n: Int) -> List(List(a)) {
 /// ```
 ///
 pub fn combination_pairs(items: List(a)) -> List(#(a, a)) {
-  combination_pairs_loop(items)
-  |> flatten
+  combination_pairs_loop(items, [])
 }
 
-fn combination_pairs_loop(items: List(a)) -> List(List(#(a, a))) {
+fn combination_pairs_loop(items: List(a), acc: List(#(a, a))) -> List(#(a, a)) {
   case items {
-    [] -> []
+    [] -> reverse(acc)
     [first, ..rest] -> {
       let first_combinations = map(rest, with: fn(other) { #(first, other) })
-      [first_combinations, ..combination_pairs_loop(rest)]
+      let acc = reverse_and_prepend(first_combinations, acc)
+      combination_pairs_loop(rest, acc)
     }
   }
 }
@@ -2166,7 +2201,7 @@ pub fn interleave(list: List(List(a))) -> List(a) {
 ///
 /// Notice: This function is not tail recursive,
 /// and thus may exceed stack size if called,
-/// with large lists (on target JavaScript).
+/// with large lists (on the JavaScript target).
 ///
 /// ## Examples
 ///
@@ -2250,12 +2285,21 @@ pub fn max(
   over list: List(a),
   with compare: fn(a, a) -> Order,
 ) -> Result(a, Nil) {
-  reduce(over: list, with: fn(acc, other) {
-    case compare(acc, other) {
-      order.Gt -> acc
-      order.Lt | order.Eq -> other
-    }
-  })
+  case list {
+    [] -> Error(Nil)
+    [first, ..rest] -> Ok(max_loop(rest, compare, first))
+  }
+}
+
+fn max_loop(list, compare, max) {
+  case list {
+    [] -> max
+    [first, ..rest] ->
+      case compare(first, max) {
+        order.Gt -> max_loop(rest, compare, first)
+        order.Lt | order.Eq -> max_loop(rest, compare, max)
+      }
+  }
 }
 
 /// Take a random sample of k elements from a list using reservoir sampling via

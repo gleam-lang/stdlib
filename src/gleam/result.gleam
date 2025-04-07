@@ -346,7 +346,7 @@ pub fn lazy_or(
 /// ```
 ///
 pub fn all(results: List(Result(a, e))) -> Result(List(a), e) {
-  list.try_map(results, fn(x) { x })
+  list.try_map(results, fn(result) { result })
 }
 
 /// Given a list of results, returns a pair where the first element is a list
@@ -425,7 +425,7 @@ pub fn replace_error(result: Result(a, e), error: f) -> Result(a, f) {
 /// ```
 ///
 pub fn values(results: List(Result(a, e))) -> List(a) {
-  list.filter_map(results, fn(r) { r })
+  list.filter_map(results, fn(result) { result })
 }
 
 /// Updates a value held within the `Error` of a result by calling a given function

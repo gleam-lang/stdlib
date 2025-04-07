@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Fixed the implementation of `option.values` and `option.all` to be tail
+  recursive.
+
 ## v0.59.0 - 2025-04-07
 
 - The `debug` function in the `io` module has been deprecated in favour of
