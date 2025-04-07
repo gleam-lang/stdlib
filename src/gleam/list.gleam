@@ -2125,7 +2125,11 @@ fn scan_loop(
 /// ```
 ///
 pub fn last(list: List(a)) -> Result(a, Nil) {
-  reduce(list, fn(_, elem) { elem })
+  case list {
+    [] -> Error(Nil)
+    [last] -> Ok(last)
+    [_, ..rest] -> last(rest)
+  }
 }
 
 /// Return unique combinations of elements in the list.
