@@ -26,7 +26,6 @@ import gleam/dict.{type Dict}
 import gleam/float
 import gleam/int
 import gleam/order.{type Order}
-import gleam/pair
 
 /// Counts the number of elements in a given list.
 ///
@@ -456,12 +455,22 @@ pub fn map_fold(
   from initial: acc,
   with fun: fn(acc, a) -> #(acc, b),
 ) -> #(acc, List(b)) {
-  fold(over: list, from: #(initial, []), with: fn(acc, item) {
-    let #(current_acc, items) = acc
-    let #(next_acc, next_item) = fun(current_acc, item)
-    #(next_acc, [next_item, ..items])
-  })
-  |> pair.map_second(reverse)
+  map_fold_loop(list, fun, initial, [])
+}
+
+fn map_fold_loop(
+  list: List(a),
+  fun: fn(acc, a) -> #(acc, b),
+  acc: acc,
+  list_acc: List(b),
+) -> #(acc, List(b)) {
+  case list {
+    [] -> #(acc, reverse(list_acc))
+    [first, ..rest] -> {
+      let #(acc, first) = fun(acc, first)
+      map_fold_loop(rest, fun, acc, [first, ..list_acc])
+    }
+  }
 }
 
 /// Returns a new list containing only the elements of the first list after the
