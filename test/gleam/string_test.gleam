@@ -141,6 +141,12 @@ pub fn concat_test() {
   |> should.equal("Hello, world!")
 }
 
+pub fn concat_emoji_test() {
+  ["💃🏿", "💇🏼‍♀️", "🧔‍♂️", "🧑‍🦼‍➡️"]
+  |> string.concat
+  |> should.equal("💃🏿💇🏼‍♀️🧔‍♂️🧑‍🦼‍➡️")
+}
+
 pub fn repeat_test() {
   "hi"
   |> string.repeat(times: 3)
