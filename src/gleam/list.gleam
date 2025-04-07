@@ -88,12 +88,18 @@ fn length_loop(list: List(a), count: Int) -> Int {
 /// ```
 ///
 pub fn count(list: List(a), where predicate: fn(a) -> Bool) -> Int {
-  fold(list, 0, fn(acc, value) {
-    case predicate(value) {
-      True -> acc + 1
-      False -> acc
-    }
-  })
+  count_loop(list, predicate, 0)
+}
+
+fn count_loop(list: List(a), predicate: fn(a) -> Bool, acc: Int) -> Int {
+  case list {
+    [] -> acc
+    [first, ..rest] ->
+      case predicate(first) {
+        True -> count_loop(rest, predicate, acc + 1)
+        False -> count_loop(rest, predicate, acc)
+      }
+  }
 }
 
 /// Creates a new list from a given list containing the same elements but in the
