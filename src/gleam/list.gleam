@@ -2210,25 +2210,34 @@ pub fn interleave(list: List(List(a))) -> List(a) {
 /// // -> [[1, 101], [2, 102], [3, 103]]
 /// ```
 ///
-pub fn transpose(list_of_list: List(List(a))) -> List(List(a)) {
-  let take_first = fn(list) {
-    case list {
-      [] -> []
-      [first] -> [first]
-      [first, ..] -> [first]
+pub fn transpose(list_of_lists: List(List(a))) -> List(List(a)) {
+  transpose_loop(list_of_lists, [])
+}
+
+fn transpose_loop(rows: List(List(a)), columns: List(List(a))) -> List(List(a)) {
+  case rows {
+    [] -> reverse(columns)
+    _ -> {
+      let #(column, rest) = take_firsts(rows, [], [])
+      case column {
+        [_, ..] -> transpose_loop(rest, [column, ..columns])
+        [] -> transpose_loop(rest, columns)
+      }
     }
   }
+}
 
-  case list_of_list {
-    [] -> []
-    [[], ..rest] -> transpose(rest)
-    rows -> {
-      let firsts =
-        rows
-        |> map(take_first)
-        |> flatten
-      let rest = transpose(map(rows, drop(_, 1)))
-      [firsts, ..rest]
+fn take_firsts(
+  rows: List(List(a)),
+  column: List(a),
+  remaining_rows: List(List(a)),
+) -> #(List(a), List(List(a))) {
+  case rows {
+    [] -> #(reverse(column), reverse(remaining_rows))
+    [[], ..rest] -> take_firsts(rest, column, remaining_rows)
+    [[first, ..remaining_row], ..rest_rows] -> {
+      let remaining_rows = [remaining_row, ..remaining_rows]
+      take_firsts(rest_rows, [first, ..column], remaining_rows)
     }
   }
 }
