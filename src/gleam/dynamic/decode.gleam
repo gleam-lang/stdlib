@@ -36,7 +36,7 @@
 //// // "Hello, Joe!"
 ////
 //// let result = decode.run(data, decode.string)
-//// assert result == Ok("Hello, Joe!")
+//// let assert Ok("Hello, Joe!") = result
 //// ```
 ////
 //// ## Lists
@@ -51,7 +51,7 @@
 //// // [1, 2, 3, 4]
 ////
 //// let result = decode.run(data, decode.list(decode.int))
-//// assert result == Ok([1, 2, 3, 4])
+//// let assert Ok([1, 2, 3, 4]) = result
 //// ```
 ////
 //// On Erlang this decoder can decode from lists, and on JavaScript it can
@@ -70,14 +70,14 @@
 //// // 12.45
 ////
 //// let result = decode.run(data, decode.optional(decode.float))
-//// assert result == Ok(option.Some(12.45))
+//// let assert Ok(option.Some(12.45)) = result
 //// ```
 //// ```gleam
 //// // Data:
 //// // null
 ////
 //// let result = decode.run(data, decode.optional(decode.int))
-//// assert result == Ok(option.None)
+//// let assert Ok(option.None) = result
 //// ```
 ////
 //// This decoder knows how to handle multiple different runtime representations of
@@ -93,10 +93,10 @@
 //// // { "Lucy" -> 10, "Nubi" -> 20 }
 ////
 //// let result = decode.run(data, decode.dict(decode.string, decode.int))
-//// assert result == Ok(dict.from_list([
+//// let assert Ok(dict.from_list([
 ////   #("Lucy", 10),
 ////   #("Nubi", 20),
-//// ]))
+//// ])) = result
 //// ```
 ////
 //// ## Indexing objects
@@ -109,7 +109,7 @@
 //// // { "one" -> { "two" -> 123 } }
 ////
 //// let result = decode.run(data, decode.at(["one", "two"], decode.int))
-//// assert result == Ok(123)
+//// let assert Ok(123) = result
 //// ```
 ////
 //// ## Indexing arrays
@@ -122,7 +122,7 @@
 //// // ["one", "two", "three"]
 ////
 //// let result = decode.run(data, decode.at([1], decode.string))
-//// assert result == Ok("two")
+//// let assert Ok("two") = result
 //// ```
 ////
 //// ## Records
@@ -150,7 +150,7 @@
 //// }
 ////
 //// let result = decode.run(data, decoder)
-//// assert result == Ok(Player("Mel Smith", 180, "Red", True))
+//// let assert Ok(Player("Mel Smith", 180, "Red", True)) = result
 //// ```
 ////
 //// ## Enum variants
@@ -188,10 +188,10 @@
 //// }
 ////
 //// let result = decode.run(dynamic.from("water"), decoder)
-//// assert result == Ok(Water)
+//// let assert Ok(Water) == result
 ////
 //// let result = decode.run(dynamic.from("wobble"), decoder)
-//// assert result == Error([DecodeError("PocketMonsterType", "String", [])])
+//// let assert Error([DecodeError("PocketMonsterType", "String", [])]) = result
 //// ```
 ////
 //// ## Record variants
@@ -245,6 +245,13 @@
 //// `then` function then returns whichever decoder is suitable for the document.
 ////
 //// ```gleam
+//// // Data:
+//// // {
+//// //   "type" -> "gym-leader",
+//// //   "name" -> "Misty",
+//// //   "speciality" -> "water",
+//// // }
+////
 //// let decoder = {
 ////   use tag <- decode.field("type", decode.string)
 ////   case tag {
@@ -253,7 +260,8 @@
 ////   }
 //// }
 ////
-//// decode.run(data, decoder)
+//// let result = decode.run(data, decoder)
+//// let assert Ok(GymLeader("Misty", Water)) = result
 //// ```
 
 import gleam/bit_array
