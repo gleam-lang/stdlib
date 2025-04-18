@@ -699,8 +699,7 @@ pub fn prepend(to list: List(a), this item: a) -> List(a) {
   [item, ..list]
 }
 
-/// This is the same as `concat`: it joins a list of lists into a single
-/// list.
+/// Joins a list of lists into a single list.
 ///
 /// This function traverses all elements twice.
 ///
