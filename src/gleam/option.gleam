@@ -51,6 +51,7 @@ fn all_loop(list: List(Option(a)), acc: List(a)) -> Option(List(a)) {
 
 // This is copied from the list module and not imported as importing it would
 // result in a circular dependency!
+@external(erlang, "lists", "reverse")
 fn reverse(list: List(a)) -> List(a) {
   reverse_and_prepend(list, [])
 }
