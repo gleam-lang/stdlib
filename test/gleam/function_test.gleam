@@ -23,7 +23,7 @@ pub fn identity_test() {
 pub fn tap_test() {
   "Thanks Joe & Louis"
   |> function.tap(fn(s: String) {
-    string.append(s, "... and Jose!")
+    let _ = string.append(s, "... and Jose!")
     Nil
   })
   |> should.equal("Thanks Joe & Louis")

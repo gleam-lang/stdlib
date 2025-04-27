@@ -274,9 +274,9 @@ pub fn insert_order_equality_test() {
 // ensure operations on a map don't mutate it
 pub fn persistence_test() {
   let a = list_to_map([0])
-  dict.insert(a, 0, 5)
-  dict.insert(a, 1, 6)
-  dict.delete(a, 0)
+  let _ = dict.insert(a, 0, 5)
+  let _ = dict.insert(a, 1, 6)
+  let _ = dict.delete(a, 0)
   dict.get(a, 0)
   |> should.equal(Ok(0))
 }

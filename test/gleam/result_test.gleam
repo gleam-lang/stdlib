@@ -200,8 +200,9 @@ pub fn partition_test() {
   |> should.equal(#([2, 1], ["c", "b", "a"]))
 
   // TCO test
-  list.repeat(Ok(1), 1_000_000)
-  |> result.partition
+  let _ =
+    list.repeat(Ok(1), 1_000_000)
+    |> result.partition
 
   list.repeat(Error("a"), 1_000_000)
   |> result.partition
