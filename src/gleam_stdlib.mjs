@@ -11,7 +11,6 @@ import {
   NonEmpty,
   CustomType,
 } from "./gleam.mjs";
-import { DecodeError } from "./gleam/dynamic.mjs";
 import { Some, None } from "./gleam/option.mjs";
 import Dict from "./dict.mjs";
 
@@ -650,12 +649,6 @@ function decoder_error(expected, got) {
   return decoder_error_no_classify(expected, classify_dynamic(got));
 }
 
-function decoder_error_no_classify(expected, got) {
-  return new Error(
-    List.fromArray([new DecodeError(expected, got, List.fromArray([]))]),
-  );
-}
-
 export function decode_string(data) {
   return typeof data === "string"
     ? new Ok(data)
@@ -1046,4 +1039,14 @@ export function log(x) {
 
 export function exp(x) {
   return Math.exp(x);
+}
+
+export function list_to_array(list) {
+  let current = list;
+  let array = [];
+  while (current instanceof NonEmpty) {
+    array.push(current.head);
+    current = current.tail;
+  }
+  return array;
 }
