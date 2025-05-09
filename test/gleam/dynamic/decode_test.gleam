@@ -3,6 +3,7 @@ import gleam/dynamic.{type Dynamic}
 import gleam/dynamic/decode.{DecodeError}
 import gleam/float
 import gleam/int
+import gleam/list
 import gleam/option
 import gleam/result
 import gleam/should
@@ -20,15 +21,13 @@ pub type User {
 
 pub fn decoder_test() {
   let data =
-    dynamic.from(
-      dict.from_list([
-        #("name", dynamic.from("Nubi")),
-        #("email", dynamic.from("nubi@example.com")),
-        #("is_admin", dynamic.from(False)),
-        #("is_confirmed", dynamic.from(True)),
-        #("score", dynamic.from(180)),
-      ]),
-    )
+    dynamic.object([
+      #(dynamic.string("name"), dynamic.string("Nubi")),
+      #(dynamic.string("email"), dynamic.string("nubi@example.com")),
+      #(dynamic.string("is_admin"), dynamic.bool(False)),
+      #(dynamic.string("is_confirmed"), dynamic.bool(True)),
+      #(dynamic.string("score"), dynamic.int(180)),
+    ])
 
   let decoder = {
     use name <- decode.field("name", decode.string)
@@ -51,7 +50,7 @@ pub fn decoder_test() {
 }
 
 pub fn field_ok_test() {
-  let data = dynamic.from(dict.from_list([#("name", dynamic.from("Nubi"))]))
+  let data = dynamic.object([#(dynamic.string("name"), dynamic.string("Nubi"))])
   let decoder = {
     use name <- decode.field("name", decode.string)
     decode.success(name)
@@ -64,11 +63,12 @@ pub fn field_ok_test() {
 
 pub fn subfield_ok_test() {
   let data =
-    dynamic.from(
-      dict.from_list([
-        #("person", dict.from_list([#("name", dynamic.from("Nubi"))])),
-      ]),
-    )
+    dynamic.object([
+      #(
+        dynamic.string("person"),
+        dynamic.object([#(dynamic.string("name"), dynamic.string("Nubi"))]),
+      ),
+    ])
   let decoder = {
     use name <- decode.subfield(["person", "name"], decode.string)
     decode.success(name)
@@ -86,7 +86,7 @@ pub fn field_int_index_ok_test() {
     decode.success(#(x, y))
   }
 
-  dynamic.from(#("one", "two", "three"))
+  dynamic.array(["one", "two", "three"] |> list.map(dynamic.string))
   |> decode.run(decoder)
   |> should.be_ok
   |> should.equal(#("one", "two"))
@@ -99,7 +99,7 @@ pub fn field_int_index_list_ok_test() {
     decode.success(#(x, y))
   }
 
-  dynamic.from(["one", "two", "three", "four"])
+  dynamic.list(["one", "two", "three", "four"] |> list.map(dynamic.string))
   |> decode.run(decoder)
   |> should.be_ok
   |> should.equal(#("one", "two"))
@@ -112,7 +112,10 @@ pub fn field_int_index_big_list_ok_test() {
     decode.success(#(x, y))
   }
 
-  dynamic.from(["one", "two", "three", "four", "five", "six", "seven", "eight"])
+  dynamic.list(
+    ["one", "two", "three", "four", "five", "six", "seven", "eight"]
+    |> list.map(dynamic.string),
+  )
   |> decode.run(decoder)
   |> should.be_ok
   |> should.equal(#("seven", "eight"))
@@ -124,7 +127,7 @@ pub fn subfield_not_found_error_test() {
     decode.success(name)
   }
 
-  dynamic.from(123)
+  dynamic.int(123)
   |> decode.run(decoder)
   |> should.be_error
   |> should.equal([DecodeError("Dict", "Int", [])])
@@ -136,7 +139,7 @@ pub fn field_not_found_error_test() {
     decode.success(name)
   }
 
-  dynamic.from(123)
+  dynamic.int(123)
   |> decode.run(decoder)
   |> should.be_error
   |> should.equal([DecodeError("Dict", "Int", [])])
@@ -148,7 +151,7 @@ pub fn field_wrong_inner_error_test() {
     decode.success(name)
   }
 
-  dynamic.from(dict.from_list([#("name", dynamic.from(123))]))
+  dynamic.object([#(dynamic.string("name"), dynamic.int(123))])
   |> decode.run(decoder)
   |> should.be_error
   |> should.equal([DecodeError("String", "Int", ["name"])])
@@ -161,14 +164,17 @@ pub fn subfield_int_index_ok_test() {
     decode.success(#(x, y))
   }
 
-  dynamic.from(#(#("one", "two", "three"), #("a", "b")))
+  dynamic.array([
+    dynamic.array(["one", "two", "three"] |> list.map(dynamic.string)),
+    dynamic.array(["a", "b"] |> list.map(dynamic.string)),
+  ])
   |> decode.run(decoder)
   |> should.be_ok
   |> should.equal(#("two", "a"))
 }
 
 pub fn subfield_wrong_inner_error_test() {
-  let data = dynamic.from(dict.from_list([#("name", dynamic.from(123))]))
+  let data = dynamic.object([#(dynamic.string("name"), dynamic.int(123))])
   decode.run(data, {
     use name <- decode.field("name", decode.string)
     decode.success(name)
@@ -178,7 +184,7 @@ pub fn subfield_wrong_inner_error_test() {
 }
 
 pub fn optional_field_wrong_inner_error_test() {
-  let data = dynamic.from(dict.from_list([#("a", Nil)]))
+  let data = dynamic.object([#(dynamic.string("a"), dynamic.null())])
   decode.run(data, {
     use bar <- decode.optional_field("a", "", decode.string)
     decode.success(bar)
@@ -189,7 +195,12 @@ pub fn optional_field_wrong_inner_error_test() {
 
 pub fn sub_optional_field_wrong_inner_error_test() {
   let data =
-    dynamic.from(dict.from_list([#("a", dict.from_list([#("b", Nil)]))]))
+    dynamic.object([
+      #(
+        dynamic.string("a"),
+        dynamic.object([#(dynamic.string("b"), dynamic.null())]),
+      ),
+    ])
   decode.run(data, {
     use bar <- decode.optional_field("a", "", {
       use foo <- decode.optional_field("b", "", decode.string)
@@ -202,7 +213,7 @@ pub fn sub_optional_field_wrong_inner_error_test() {
 }
 
 pub fn optional_field_wrong_inner_error_type_test() {
-  let data = dynamic.from(dict.from_list([#("a", 0)]))
+  let data = dynamic.object([#(dynamic.string("a"), dynamic.int(0))])
   decode.run(data, {
     use bar <- decode.optional_field("a", "", decode.string)
     decode.success(bar)
@@ -212,34 +223,34 @@ pub fn optional_field_wrong_inner_error_type_test() {
 }
 
 pub fn string_map_ok_test() {
-  dynamic.from("tEsT")
+  dynamic.string("tEsT")
   |> decode.run(decode.string |> decode.map(string.lowercase))
   |> should.be_ok
   |> should.equal("test")
 }
 
 pub fn string_map_error_test() {
-  dynamic.from(0)
+  dynamic.int(0)
   |> decode.run(decode.string |> decode.map(string.lowercase))
   |> should.be_error
 }
 
 pub fn string_ok_test() {
-  dynamic.from("Hello!")
+  dynamic.string("Hello!")
   |> decode.run(decode.string)
   |> should.be_ok
   |> should.equal("Hello!")
 }
 
 pub fn string_error_test() {
-  dynamic.from(123)
+  dynamic.int(123)
   |> decode.run(decode.string)
   |> should.be_error
   |> should.equal([DecodeError("String", "Int", [])])
 }
 
 pub fn dynamic_test() {
-  let data = dynamic.from(123)
+  let data = dynamic.int(123)
   data
   |> decode.run(decode.dynamic)
   |> should.be_ok
@@ -247,112 +258,112 @@ pub fn dynamic_test() {
 }
 
 pub fn int_ok_test() {
-  dynamic.from(123)
+  dynamic.int(123)
   |> decode.run(decode.int)
   |> should.be_ok
   |> should.equal(123)
 }
 
 pub fn int_error_test() {
-  dynamic.from("123")
+  dynamic.string("123")
   |> decode.run(decode.int)
   |> should.be_error
   |> should.equal([DecodeError("Int", "String", [])])
 }
 
 pub fn float_ok_test() {
-  dynamic.from(123.45)
+  dynamic.float(123.45)
   |> decode.run(decode.float)
   |> should.be_ok
   |> should.equal(123.45)
 }
 
 pub fn float_error_test() {
-  dynamic.from("123.45")
+  dynamic.string("123.45")
   |> decode.run(decode.float)
   |> should.be_error
   |> should.equal([DecodeError("Float", "String", [])])
 }
 
 pub fn bool_true_test() {
-  dynamic.from(True)
+  dynamic.bool(True)
   |> decode.run(decode.bool)
   |> should.be_ok
   |> should.equal(True)
 }
 
 pub fn bool_false_test() {
-  dynamic.from(False)
+  dynamic.bool(False)
   |> decode.run(decode.bool)
   |> should.be_ok
   |> should.equal(False)
 }
 
 pub fn bool_error_test() {
-  dynamic.from(123)
+  dynamic.int(123)
   |> decode.run(decode.bool)
   |> should.be_error
   |> should.equal([DecodeError("Bool", "Int", [])])
 }
 
 pub fn bit_array_ok_test() {
-  dynamic.from(<<1, 5, 3>>)
+  dynamic.bit_array(<<1, 5, 3>>)
   |> decode.run(decode.bit_array)
   |> should.be_ok
   |> should.equal(<<1, 5, 3>>)
 }
 
 pub fn bit_array_error_test() {
-  dynamic.from(123)
+  dynamic.int(123)
   |> decode.run(decode.bit_array)
   |> should.be_error
   |> should.equal([DecodeError("BitArray", "Int", [])])
 }
 
 pub fn list_tuple_ok_test() {
-  dynamic.from(#("Hello", "Joe"))
+  dynamic.array([dynamic.string("Hello"), dynamic.string("Joe")])
   |> decode.run(decode.list(decode.string))
   |> should.be_ok
   |> should.equal(["Hello", "Joe"])
 }
 
 pub fn list_string_ok_test() {
-  dynamic.from(["Hello", "Joe"])
+  dynamic.list(["Hello", "Joe"] |> list.map(dynamic.string))
   |> decode.run(decode.list(decode.string))
   |> should.be_ok
   |> should.equal(["Hello", "Joe"])
 }
 
 pub fn list_bool_ok_test() {
-  dynamic.from([True, False])
+  dynamic.list([True, False] |> list.map(dynamic.bool))
   |> decode.run(decode.list(decode.bool))
   |> should.be_ok
   |> should.equal([True, False])
 }
 
 pub fn list_error_test() {
-  dynamic.from(123)
+  dynamic.int(123)
   |> decode.run(decode.list(decode.int))
   |> should.be_error
   |> should.equal([DecodeError("List", "Int", [])])
 }
 
 pub fn list_inner_0_error_test() {
-  dynamic.from([1, 2])
+  dynamic.list([dynamic.int(1), dynamic.int(2)])
   |> decode.run(decode.list(decode.string))
   |> should.be_error
   |> should.equal([DecodeError("String", "Int", ["0"])])
 }
 
 pub fn list_inner_1_error_test() {
-  dynamic.from([dynamic.from("1"), dynamic.from(2)])
+  dynamic.list([dynamic.string("1"), dynamic.int(2)])
   |> decode.run(decode.list(decode.string))
   |> should.be_error
   |> should.equal([DecodeError("String", "Int", ["1"])])
 }
 
 pub fn list_tuple_inner_1_error_test() {
-  dynamic.from(#("1", 2))
+  dynamic.array([dynamic.string("1"), dynamic.int(2)])
   |> decode.run(decode.list(decode.string))
   |> should.be_error
   |> should.equal([DecodeError("String", "Int", ["1"])])
@@ -381,7 +392,7 @@ pub fn dict_key_error_test() {
 }
 
 pub fn dict_error_test() {
-  dynamic.from(123)
+  dynamic.int(123)
   |> decode.run(decode.dict(decode.string, decode.int))
   |> should.be_error
   |> should.equal([DecodeError("Dict", "Int", [])])
@@ -434,42 +445,47 @@ pub fn at_wrong_inner_error_test() {
 }
 
 pub fn at_no_path_error_test() {
-  dynamic.from(dict.from_list([#("first", dict.from_list([#("third", 1337)]))]))
+  dynamic.object([
+    #(
+      dynamic.string("first"),
+      dynamic.object([#(dynamic.string("third"), dynamic.int(1337))]),
+    ),
+  ])
   |> decode.run(decode.at(["first", "second", "third"], decode.int))
   |> should.be_error
   |> should.equal([DecodeError("Field", "Nothing", ["first", "second"])])
 }
 
 pub fn optional_string_present_ok_test() {
-  dynamic.from("Hello, Joe!")
+  dynamic.string("Hello, Joe!")
   |> decode.run(decode.optional(decode.string))
   |> should.be_ok
   |> should.equal(option.Some("Hello, Joe!"))
 }
 
 pub fn optional_bool_present_ok_test() {
-  dynamic.from(True)
+  dynamic.bool(True)
   |> decode.run(decode.optional(decode.bool))
   |> should.be_ok
   |> should.equal(option.Some(True))
 }
 
 pub fn optional_bool_absent_nil_ok_test() {
-  dynamic.from(Nil)
+  dynamic.null()
   |> decode.run(decode.optional(decode.bool))
   |> should.be_ok
   |> should.equal(option.None)
 }
 
 pub fn optional_error_test() {
-  dynamic.from(123)
+  dynamic.int(123)
   |> decode.run(decode.optional(decode.string))
   |> should.be_error
   |> should.equal([DecodeError("String", "Int", [])])
 }
 
 pub fn map_test() {
-  dynamic.from(123)
+  dynamic.int(123)
   |> decode.run(decode.int |> decode.map(int.to_string))
   |> should.be_ok
   |> should.equal("123")
@@ -488,7 +504,7 @@ pub fn map_errors_test() {
       }),
     )
 
-  dynamic.from(dict.from_list([#("data", 123)]))
+  dynamic.object([#(dynamic.string("data"), dynamic.int(123))])
   |> decode.run(decoder)
   |> should.be_error
   |> should.equal([
@@ -498,7 +514,7 @@ pub fn map_errors_test() {
 }
 
 pub fn collapse_errors_test() {
-  dynamic.from(dict.from_list([#("data", 123)]))
+  dynamic.object([#(dynamic.string("data"), dynamic.int(123))])
   |> decode.run(decode.at(
     ["data"],
     decode.string |> decode.collapse_errors("Wibble"),
@@ -517,14 +533,18 @@ pub fn then_test() {
       })
     })
 
-  dynamic.from(dict.from_list([#("key", 1), #("value", 100)]))
+  dynamic.object([
+    #(dynamic.string("key"), dynamic.int(1)),
+    #(dynamic.string("value"), dynamic.int(100)),
+  ])
   |> decode.run(decoder)
   |> should.be_ok
   |> should.equal(AnInt(100))
 
-  dynamic.from(
-    dict.from_list([#("key", dynamic.from(2)), #("value", dynamic.from("Hi!"))]),
-  )
+  dynamic.object([
+    #(dynamic.string("key"), dynamic.int(2)),
+    #(dynamic.string("value"), dynamic.string("Hi!")),
+  ])
   |> decode.run(decoder)
   |> should.be_ok
   |> should.equal(AString("Hi!"))
@@ -545,7 +565,7 @@ pub fn then_error_0_test() {
       })
     })
 
-  dynamic.from(123)
+  dynamic.int(123)
   |> decode.run(decoder)
   |> should.be_error
   |> should.equal([DecodeError("Dict", "Int", [])])
@@ -562,7 +582,7 @@ pub fn then_error_1_test() {
     })
 
   dynamic.from(
-    dict.from_list([#("key", dynamic.from(1)), #("value", dynamic.from("Hi!"))]),
+    dict.from_list([#("key", dynamic.int(1)), #("value", dynamic.string("Hi!"))]),
   )
   |> decode.run(decoder)
   |> should.be_error
@@ -587,25 +607,25 @@ pub fn then_enum_test() {
       }
     })
 
-  decode.run(dynamic.from("a"), decoder)
+  decode.run(dynamic.string("a"), decoder)
   |> should.be_ok
   |> should.equal(A)
 
-  decode.run(dynamic.from("b"), decoder)
+  decode.run(dynamic.string("b"), decoder)
   |> should.be_ok
   |> should.equal(B)
 
-  decode.run(dynamic.from("c"), decoder)
+  decode.run(dynamic.string("c"), decoder)
   |> should.be_ok
   |> should.equal(C)
 
-  decode.run(dynamic.from("d"), decoder)
+  decode.run(dynamic.string("d"), decoder)
   |> should.be_error
   |> should.equal([DecodeError("MyEnum", "String", [])])
 }
 
 pub fn one_of_ok_0_test() {
-  dynamic.from("Hello!")
+  dynamic.string("Hello!")
   |> decode.run(
     decode.one_of(decode.string, [decode.int |> decode.map(int.to_string)]),
   )
@@ -619,7 +639,7 @@ pub fn one_of_ok_1_test() {
       decode.int
       |> decode.map(int.to_string),
     ])
-  dynamic.from(123)
+  dynamic.int(123)
   |> decode.run(decoder)
   |> should.be_ok
   |> should.equal("123")
@@ -631,7 +651,7 @@ pub fn one_of_ok_2_test() {
       decode.int |> decode.map(int.to_string),
       decode.float |> decode.map(float.to_string),
     ])
-  dynamic.from(12.45)
+  dynamic.float(12.45)
   |> decode.run(decoder)
   |> should.be_ok
   |> should.equal("12.45")
@@ -643,14 +663,14 @@ pub fn one_of_error_test() {
       decode.int
       |> decode.map(int.to_string),
     ])
-  dynamic.from(1.2)
+  dynamic.float(1.2)
   |> decode.run(decoder)
   |> should.be_error
   |> should.equal([DecodeError("String", "Float", [])])
 }
 
 pub fn failure_test() {
-  dynamic.from(123)
+  dynamic.int(123)
   |> decode.run(decode.failure(1, "WibbleWobble"))
   |> should.be_error
   |> should.equal([DecodeError("WibbleWobble", "Int", [])])
@@ -677,8 +697,8 @@ pub fn variants_test() {
   // Int variant
   dynamic.from(
     dict.from_list([
-      #("tag", dynamic.from("int")),
-      #("the-int", dynamic.from(123)),
+      #("tag", dynamic.string("int")),
+      #("the-int", dynamic.int(123)),
     ]),
   )
   |> decode.run(decoder)
@@ -688,8 +708,8 @@ pub fn variants_test() {
   // String variant
   dynamic.from(
     dict.from_list([
-      #("tag", dynamic.from("string")),
-      #("the-string", dynamic.from("hello")),
+      #("tag", dynamic.string("string")),
+      #("the-string", dynamic.string("hello")),
     ]),
   )
   |> decode.run(decoder)
@@ -699,8 +719,8 @@ pub fn variants_test() {
   // Invalid tag
   dynamic.from(
     dict.from_list([
-      #("tag", dynamic.from("dunno")),
-      #("the-string", dynamic.from("hello")),
+      #("tag", dynamic.string("dunno")),
+      #("the-string", dynamic.string("hello")),
     ]),
   )
   |> decode.run(decoder)
@@ -708,7 +728,7 @@ pub fn variants_test() {
   |> should.equal([DecodeError("IntOrString", "Dict", [])])
 
   // Missing tag
-  dynamic.from(dict.from_list([#("the-string", dynamic.from("hello"))]))
+  dynamic.object([#(dynamic.string("the-string"), dynamic.string("hello"))])
   |> decode.run(decoder)
   |> should.be_error
   |> should.equal([
@@ -719,8 +739,8 @@ pub fn variants_test() {
   // String invalid field
   dynamic.from(
     dict.from_list([
-      #("tag", dynamic.from("string")),
-      #("the-string", dynamic.from(12.3)),
+      #("tag", dynamic.string("string")),
+      #("the-string", dynamic.float(12.3)),
     ]),
   )
   |> decode.run(decoder)
@@ -749,11 +769,11 @@ pub fn documentation_enum_example_test() {
     }
   }
 
-  decode.run(dynamic.from("water"), decoder)
+  decode.run(dynamic.string("water"), decoder)
   |> should.be_ok
   |> should.equal(Water)
 
-  decode.run(dynamic.from("wobble"), decoder)
+  decode.run(dynamic.string("wobble"), decoder)
   |> should.be_error
   |> should.equal([DecodeError("PocketMonsterType", "String", [])])
 }
@@ -787,8 +807,8 @@ pub fn documentation_variants_example_test() {
   // Trainer
   dynamic.from(
     dict.from_list([
-      #("type", dynamic.from("trainer")),
-      #("name", dynamic.from("Ash")),
+      #("type", dynamic.string("trainer")),
+      #("name", dynamic.string("Ash")),
       #("badge-count", dynamic.from(8)),
     ]),
   )
@@ -799,9 +819,9 @@ pub fn documentation_variants_example_test() {
   // Gym leader
   dynamic.from(
     dict.from_list([
-      #("type", dynamic.from("gym-leader")),
-      #("name", dynamic.from("Brock")),
-      #("speciality", dynamic.from("Rock")),
+      #("type", dynamic.string("gym-leader")),
+      #("name", dynamic.string("Brock")),
+      #("speciality", dynamic.string("Rock")),
     ]),
   )
   |> decode.run(decoder)
@@ -811,8 +831,8 @@ pub fn documentation_variants_example_test() {
   // Error
   dynamic.from(
     dict.from_list([
-      #("type", dynamic.from("gym-leader")),
-      #("name", dynamic.from("Brock")),
+      #("type", dynamic.string("gym-leader")),
+      #("name", dynamic.string("Brock")),
     ]),
   )
   |> decode.run(decoder)
@@ -834,7 +854,7 @@ fn decode_float(data: Dynamic) -> Result(Float, Float) {
 
 pub fn new_primitive_decoder_string_ok_test() {
   let decoder = decode.new_primitive_decoder("String", decode_string)
-  dynamic.from("Hello!")
+  dynamic.string("Hello!")
   |> decode.run(decoder)
   |> should.be_ok
   |> should.equal("Hello!")
@@ -842,7 +862,7 @@ pub fn new_primitive_decoder_string_ok_test() {
 
 pub fn new_primitive_decoder_string_error_test() {
   let decoder = decode.new_primitive_decoder("String", decode_string)
-  dynamic.from(123)
+  dynamic.int(123)
   |> decode.run(decoder)
   |> should.be_error
   |> should.equal([DecodeError("String", "Int", [])])
@@ -850,7 +870,7 @@ pub fn new_primitive_decoder_string_error_test() {
 
 pub fn new_primitive_decoder_float_ok_test() {
   let decoder = decode.new_primitive_decoder("Float", decode_float)
-  dynamic.from(12.4)
+  dynamic.float(12.4)
   |> decode.run(decoder)
   |> should.be_ok
   |> should.equal(12.4)
@@ -858,7 +878,7 @@ pub fn new_primitive_decoder_float_ok_test() {
 
 pub fn new_primitive_decoder_float_error_test() {
   let decoder = decode.new_primitive_decoder("Float", decode_float)
-  dynamic.from("blah")
+  dynamic.string("blah")
   |> decode.run(decoder)
   |> should.be_error
   |> should.equal([DecodeError("Float", "String", [])])
@@ -884,18 +904,18 @@ pub fn list_decoder() -> decode.Decoder(LinkedList) {
 pub fn recursive_data_structure_test() {
   dynamic.from(
     dict.from_list([
-      #("type", dynamic.from("list-non-empty")),
-      #("element", dynamic.from(1)),
+      #("type", dynamic.string("list-non-empty")),
+      #("element", dynamic.int(1)),
       #(
         "tail",
         dynamic.from(
           dict.from_list([
-            #("type", dynamic.from("list-non-empty")),
-            #("element", dynamic.from(2)),
+            #("type", dynamic.string("list-non-empty")),
+            #("element", dynamic.int(2)),
             #(
               "tail",
               dynamic.from(
-                dict.from_list([#("type", dynamic.from("list-empty"))]),
+                dict.from_list([#("type", dynamic.string("list-empty"))]),
               ),
             ),
           ]),
@@ -963,7 +983,12 @@ pub fn optionally_at_wrong_inner_error_test() {
 }
 
 pub fn optionally_at_no_path_error_test() {
-  dynamic.from(dict.from_list([#("first", dict.from_list([#("third", 1337)]))]))
+  dynamic.object([
+    #(
+      dynamic.string("first"),
+      dynamic.object([#(dynamic.string("third"), dynamic.int(1337))]),
+    ),
+  ])
   |> decode.run(decode.optionally_at(
     ["first", "second", "third"],
     100,
