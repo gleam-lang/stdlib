@@ -13,6 +13,8 @@ import {
 } from "./gleam.mjs";
 import { Some, None } from "./gleam/option.mjs";
 import Dict from "./dict.mjs";
+import { classify } from "./gleam/dynamic.mjs";
+import { DecodeError } from "./gleam/dynamic/decode.mjs";
 
 const Nil = undefined;
 const NOT_FOUND = {};
@@ -645,164 +647,6 @@ export function classify_dynamic(data) {
   }
 }
 
-function decoder_error(expected, got) {
-  return decoder_error_no_classify(expected, classify_dynamic(got));
-}
-
-export function decode_string(data) {
-  return typeof data === "string"
-    ? new Ok(data)
-    : decoder_error("String", data);
-}
-
-export function decode_int(data) {
-  return Number.isInteger(data) ? new Ok(data) : decoder_error("Int", data);
-}
-
-export function decode_float(data) {
-  return typeof data === "number" ? new Ok(data) : decoder_error("Float", data);
-}
-
-export function decode_bool(data) {
-  return typeof data === "boolean" ? new Ok(data) : decoder_error("Bool", data);
-}
-
-export function decode_bit_array(data) {
-  if (data instanceof BitArray) {
-    return new Ok(data);
-  }
-  if (data instanceof Uint8Array) {
-    return new Ok(new BitArray(data));
-  }
-  return decoder_error("BitArray", data);
-}
-
-export function decode_tuple(data) {
-  return Array.isArray(data) ? new Ok(data) : decoder_error("Tuple", data);
-}
-
-export function decode_tuple2(data) {
-  return decode_tupleN(data, 2);
-}
-
-export function decode_tuple3(data) {
-  return decode_tupleN(data, 3);
-}
-
-export function decode_tuple4(data) {
-  return decode_tupleN(data, 4);
-}
-
-export function decode_tuple5(data) {
-  return decode_tupleN(data, 5);
-}
-
-export function decode_tuple6(data) {
-  return decode_tupleN(data, 6);
-}
-
-function decode_tupleN(data, n) {
-  if (Array.isArray(data) && data.length == n) {
-    return new Ok(data);
-  }
-
-  const list = decode_exact_length_list(data, n);
-  if (list) return new Ok(list);
-
-  return decoder_error(`Tuple of ${n} elements`, data);
-}
-
-function decode_exact_length_list(data, n) {
-  if (!(data instanceof List)) return;
-
-  const elements = [];
-  let current = data;
-
-  for (let i = 0; i < n; i++) {
-    if (!(current instanceof NonEmpty)) break;
-    elements.push(current.head);
-    current = current.tail;
-  }
-
-  if (elements.length === n && !(current instanceof NonEmpty)) return elements;
-}
-
-export function tuple_get(data, index) {
-  return index >= 0 && data.length > index
-    ? new Ok(data[index])
-    : new Error(Nil);
-}
-
-export function decode_list(data) {
-  if (Array.isArray(data)) {
-    return new Ok(List.fromArray(data));
-  }
-  return data instanceof List ? new Ok(data) : decoder_error("List", data);
-}
-
-export function decode_result(data) {
-  return data instanceof Result ? new Ok(data) : decoder_error("Result", data);
-}
-
-export function decode_map(data) {
-  if (data instanceof Dict) {
-    return new Ok(data);
-  }
-  if (data instanceof Map || data instanceof WeakMap) {
-    return new Ok(Dict.fromMap(data));
-  }
-  if (data == null) {
-    return decoder_error("Dict", data);
-  }
-  if (typeof data !== "object") {
-    return decoder_error("Dict", data);
-  }
-  const proto = Object.getPrototypeOf(data);
-  if (proto === Object.prototype || proto === null) {
-    return new Ok(Dict.fromObject(data));
-  }
-  return decoder_error("Dict", data);
-}
-
-export function decode_option(data, decoder) {
-  if (data === null || data === undefined || data instanceof None)
-    return new Ok(new None());
-  if (data instanceof Some) data = data[0];
-  const result = decoder(data);
-  if (result.isOk()) {
-    return new Ok(new Some(result[0]));
-  } else {
-    return result;
-  }
-}
-
-export function decode_field(value, name) {
-  const not_a_map_error = () => decoder_error("Dict", value);
-
-  if (
-    value instanceof Dict ||
-    value instanceof WeakMap ||
-    value instanceof Map
-  ) {
-    const entry = map_get(value, name);
-    return new Ok(entry.isOk() ? new Some(entry[0]) : new None());
-  } else if (value === null) {
-    return not_a_map_error();
-  } else if (Object.getPrototypeOf(value) == Object.prototype) {
-    return try_get_field(value, name, () => new Ok(new None()));
-  } else {
-    return try_get_field(value, name, not_a_map_error);
-  }
-}
-
-function try_get_field(value, field, or_else) {
-  try {
-    return field in value ? new Ok(new Some(value[field])) : or_else();
-  } catch {
-    return or_else();
-  }
-}
-
 export function byte_size(string) {
   return new TextEncoder().encode(string).length;
 }
@@ -1049,4 +893,106 @@ export function list_to_array(list) {
     current = current.tail;
   }
   return array;
+}
+
+export function index(data, key) {
+  // Dictionaries and dictionary-like objects can be indexed
+  if (data instanceof Dict || data instanceof WeakMap || data instanceof Map) {
+    const token = {};
+    const entry = data.get(key, token);
+    if (entry === token) return new Ok(new None());
+    return new Ok(new Some(entry));
+  }
+
+  const key_is_int = Number.isInteger(key);
+
+  // Only elements 0-7 of lists can be indexed, negative indices are not allowed
+  if (key_is_int && key >= 0 && key < 8 && data instanceof List) {
+    let i = 0;
+    for (const value of data) {
+      if (i === key) return new Ok(new Some(value));
+      i++;
+    }
+    return new Error("Indexable");
+  }
+
+  // Arrays and objects can be indexed
+  if (
+    (key_is_int && Array.isArray(data)) ||
+    (data && typeof data === "object") ||
+    (data && Object.getPrototypeOf(data) === Object.prototype)
+  ) {
+    if (key in data) return new Ok(new Some(data[key]));
+    return new Ok(new None());
+  }
+
+  return new Error(key_is_int ? "Indexable" : "Dict");
+}
+
+export function list(data, decode, pushPath, index, emptyList) {
+  if (!(data instanceof List || Array.isArray(data))) {
+    const error = new DecodeError("List", classify(data), emptyList);
+    return [emptyList, List.fromArray([error])];
+  }
+
+  const decoded = [];
+
+  for (const element of data) {
+    const layer = decode(element);
+    const [out, errors] = layer;
+
+    if (errors instanceof NonEmpty) {
+      const [_, errors] = pushPath(layer, index.toString());
+      return [emptyList, errors];
+    }
+    decoded.push(out);
+    index++;
+  }
+
+  return [List.fromArray(decoded), emptyList];
+}
+
+export function dict(data) {
+  if (data instanceof Dict) {
+    return new Ok(data);
+  }
+  if (data instanceof Map || data instanceof WeakMap) {
+    return new Ok(Dict.fromMap(data));
+  }
+  if (data == null) {
+    return new Error("Dict");
+  }
+  if (typeof data !== "object") {
+    return new Error("Dict");
+  }
+  const proto = Object.getPrototypeOf(data);
+  if (proto === Object.prototype || proto === null) {
+    return new Ok(Dict.fromObject(data));
+  }
+  return new Error("Dict");
+}
+
+export function bit_array(data) {
+  if (data instanceof BitArray) return new Ok(data);
+  if (data instanceof Uint8Array) return new Ok(new BitArray(data));
+  return new Error(new BitArray(new Uint8Array()));
+}
+
+export function float(data) {
+  if (typeof data === "number") return new Ok(data);
+  return new Error(0.0);
+}
+
+export function int(data) {
+  if (Number.isInteger(data)) return new Ok(data);
+  return new Error(0);
+}
+
+export function string(data) {
+  if (typeof data === "string") return new Ok(data);
+  return new Error("");
+}
+
+export function is_null(data) {
+  return data === null || data === undefined;
 }
