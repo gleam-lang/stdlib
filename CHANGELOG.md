@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- The deprecated items in the `dynamic` module have been removed.
+- The `from` function in the `dynamic` module has been deprecated.
+- The `array`, `bit_array`, `bool`, `float`, `int`, `list`, `null`, `object`,
+  and `string` functions have been added to the `dynamic` module.
 - The performance of various functions in the `list` module has been improved.
 - Fixed the implementation of `option.values` and `option.all` to be tail
   recursive.

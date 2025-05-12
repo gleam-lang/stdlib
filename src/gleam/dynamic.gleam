@@ -31,51 +31,52 @@ pub fn classify(data: Dynamic) -> String
 @external(javascript, "../gleam_stdlib.mjs", "identity")
 pub fn from(a: anything) -> Dynamic
 
-// TODO: document
+/// Create a dynamic value from a bool.
 @external(erlang, "gleam_stdlib", "identity")
 @external(javascript, "../gleam_stdlib.mjs", "identity")
 pub fn bool(a: Bool) -> Dynamic
 
-// TODO: document
+/// Create a dynamic value from a string.
 @external(erlang, "gleam_stdlib", "identity")
 @external(javascript, "../gleam_stdlib.mjs", "identity")
 pub fn string(a: String) -> Dynamic
 
-// TODO: document
-// TODO: test
+/// Create a dynamic value from a float.
 @external(erlang, "gleam_stdlib", "identity")
 @external(javascript, "../gleam_stdlib.mjs", "identity")
 pub fn float(a: Float) -> Dynamic
 
-// TODO: document
+/// Create a dynamic value from an int.
 @external(erlang, "gleam_stdlib", "identity")
 @external(javascript, "../gleam_stdlib.mjs", "identity")
 pub fn int(a: Int) -> Dynamic
 
-// TODO: document
-// TODO: test
+/// Create a dynamic value from a bit array.
 @external(erlang, "gleam_stdlib", "identity")
 @external(javascript, "../gleam_stdlib.mjs", "identity")
 pub fn bit_array(a: BitArray) -> Dynamic
 
-// TODO: document
-// TODO: test
+/// Create a dynamic value from a list.
 @external(erlang, "gleam_stdlib", "identity")
 @external(javascript, "../gleam_stdlib.mjs", "identity")
 pub fn list(a: List(Dynamic)) -> Dynamic
 
-// TODO: document
-// TODO: test
+/// Create a dynamic value from a list, converting it to a sequential runtime
+/// format rather than the regular list format.
+///
+/// On Erlang this will be a tuple, on JavaScript this wil be an array.
+///
 @external(erlang, "erlang", "list_to_tuple")
 @external(javascript, "../gleam_stdlib.mjs", "list_to_array")
 pub fn array(a: List(Dynamic)) -> Dynamic
 
-// TODO: document
+/// Create a dynamic value made an unordered series of keys and values, where
+/// the keys are unique.
 pub fn object(entries: List(#(Dynamic, Dynamic))) -> Dynamic {
   cast(dict.from_list(entries))
 }
 
-// TODO: document
+/// A dynamic value representing nothing.
 pub fn null() -> Dynamic {
   cast(Nil)
 }

@@ -370,22 +370,30 @@ pub fn list_tuple_inner_1_error_test() {
 }
 
 pub fn dict_ok_test() {
-  let values = dict.from_list([#("first", 1), #("second", 2)])
-  dynamic.from(values)
+  dynamic.object([
+    #(dynamic.string("first"), dynamic.int(1)),
+    #(dynamic.string("second"), dynamic.int(2)),
+  ])
   |> decode.run(decode.dict(decode.string, decode.int))
   |> should.be_ok
-  |> should.equal(values)
+  |> should.equal(dict.from_list([#("first", 1), #("second", 2)]))
 }
 
 pub fn dict_value_error_test() {
-  dynamic.from(dict.from_list([#(1.1, 1), #(1.2, 2)]))
+  dynamic.object([
+    #(dynamic.float(1.1), dynamic.int(1)),
+    #(dynamic.float(1.2), dynamic.int(2)),
+  ])
   |> decode.run(decode.dict(decode.float, decode.string))
   |> should.be_error
   |> should.equal([DecodeError("String", "Int", ["values"])])
 }
 
 pub fn dict_key_error_test() {
-  dynamic.from(dict.from_list([#(1.1, 1), #(1.2, 2)]))
+  dynamic.object([
+    #(dynamic.float(1.1), dynamic.int(1)),
+    #(dynamic.float(1.2), dynamic.int(2)),
+  ])
   |> decode.run(decode.dict(decode.string, decode.int))
   |> should.be_error
   |> should.equal([DecodeError("String", "Float", ["keys"])])
@@ -399,46 +407,62 @@ pub fn dict_error_test() {
 }
 
 pub fn at_dict_string_ok_test() {
-  dynamic.from(
-    dict.from_list([
-      #(
-        "first",
-        dict.from_list([#("second", dict.from_list([#("third", 1337)]))]),
-      ),
-    ]),
-  )
+  dynamic.object([
+    #(
+      dynamic.string("first"),
+      dynamic.object([
+        #(
+          dynamic.string("second"),
+          dynamic.object([#(dynamic.string("third"), dynamic.int(1337))]),
+        ),
+      ]),
+    ),
+  ])
   |> decode.run(decode.at(["first", "second", "third"], decode.int))
   |> should.be_ok
   |> should.equal(1337)
 }
 
 pub fn at_dict_int_ok_test() {
-  dynamic.from(
-    dict.from_list([
-      #(10, dict.from_list([#(20, dict.from_list([#(30, 1337)]))])),
-    ]),
-  )
+  dynamic.object([
+    #(
+      dynamic.int(10),
+      dynamic.object([
+        #(
+          dynamic.int(20),
+          dynamic.object([#(dynamic.int(30), dynamic.int(1337))]),
+        ),
+      ]),
+    ),
+  ])
   |> decode.run(decode.at([10, 20, 30], decode.int))
   |> should.be_ok
   |> should.equal(1337)
 }
 
 pub fn at_tuple_int_ok_test() {
-  dynamic.from(#("x", #("a", "b", "c"), "z"))
+  dynamic.array([
+    dynamic.string("x"),
+    dynamic.array(["a", "b", "c"] |> list.map(dynamic.string)),
+    dynamic.string("z"),
+  ])
   |> decode.run(decode.at([1, 0], decode.string))
   |> should.be_ok
   |> should.equal("a")
 }
 
 pub fn at_wrong_inner_error_test() {
-  dynamic.from(
-    dict.from_list([
-      #(
-        "first",
-        dict.from_list([#("second", dict.from_list([#("third", 1337)]))]),
-      ),
-    ]),
-  )
+  dynamic.object([
+    #(
+      dynamic.string("first"),
+      dynamic.object([
+        #(
+          dynamic.string("second"),
+          dynamic.object([#(dynamic.string("third"), dynamic.int(1337))]),
+        ),
+      ]),
+    ),
+  ])
   |> decode.run(decode.at(["first", "second", "third"], decode.string))
   |> should.be_error
   |> should.equal([DecodeError("String", "Int", ["first", "second", "third"])])
@@ -581,9 +605,10 @@ pub fn then_error_1_test() {
       })
     })
 
-  dynamic.from(
-    dict.from_list([#("key", dynamic.int(1)), #("value", dynamic.string("Hi!"))]),
-  )
+  dynamic.object([
+    #(dynamic.string("key"), dynamic.int(1)),
+    #(dynamic.string("value"), dynamic.string("Hi!")),
+  ])
   |> decode.run(decoder)
   |> should.be_error
   |> should.equal([DecodeError("Int", "String", ["value"])])
@@ -695,34 +720,28 @@ pub fn variants_test() {
   }
 
   // Int variant
-  dynamic.from(
-    dict.from_list([
-      #("tag", dynamic.string("int")),
-      #("the-int", dynamic.int(123)),
-    ]),
-  )
+  dynamic.object([
+    #(dynamic.string("tag"), dynamic.string("int")),
+    #(dynamic.string("the-int"), dynamic.int(123)),
+  ])
   |> decode.run(decoder)
   |> should.be_ok
   |> should.equal(AnInt(123))
 
   // String variant
-  dynamic.from(
-    dict.from_list([
-      #("tag", dynamic.string("string")),
-      #("the-string", dynamic.string("hello")),
-    ]),
-  )
+  dynamic.object([
+    #(dynamic.string("tag"), dynamic.string("string")),
+    #(dynamic.string("the-string"), dynamic.string("hello")),
+  ])
   |> decode.run(decoder)
   |> should.be_ok
   |> should.equal(AString("hello"))
 
   // Invalid tag
-  dynamic.from(
-    dict.from_list([
-      #("tag", dynamic.string("dunno")),
-      #("the-string", dynamic.string("hello")),
-    ]),
-  )
+  dynamic.object([
+    #(dynamic.string("tag"), dynamic.string("dunno")),
+    #(dynamic.string("the-string"), dynamic.string("hello")),
+  ])
   |> decode.run(decoder)
   |> should.be_error
   |> should.equal([DecodeError("IntOrString", "Dict", [])])
@@ -737,12 +756,10 @@ pub fn variants_test() {
   ])
 
   // String invalid field
-  dynamic.from(
-    dict.from_list([
-      #("tag", dynamic.string("string")),
-      #("the-string", dynamic.float(12.3)),
-    ]),
-  )
+  dynamic.object([
+    #(dynamic.string("tag"), dynamic.string("string")),
+    #(dynamic.string("the-string"), dynamic.float(12.3)),
+  ])
   |> decode.run(decoder)
   |> should.be_error
   |> should.equal([DecodeError("String", "Float", ["the-string"])])
@@ -805,36 +822,30 @@ pub fn documentation_variants_example_test() {
   }
 
   // Trainer
-  dynamic.from(
-    dict.from_list([
-      #("type", dynamic.string("trainer")),
-      #("name", dynamic.string("Ash")),
-      #("badge-count", dynamic.from(8)),
-    ]),
-  )
+  dynamic.object([
+    #(dynamic.string("type"), dynamic.string("trainer")),
+    #(dynamic.string("name"), dynamic.string("Ash")),
+    #(dynamic.string("badge-count"), dynamic.int(8)),
+  ])
   |> decode.run(decoder)
   |> should.be_ok
   |> should.equal(Trainer("Ash", 8))
 
   // Gym leader
-  dynamic.from(
-    dict.from_list([
-      #("type", dynamic.string("gym-leader")),
-      #("name", dynamic.string("Brock")),
-      #("speciality", dynamic.string("Rock")),
-    ]),
-  )
+  dynamic.object([
+    #(dynamic.string("type"), dynamic.string("gym-leader")),
+    #(dynamic.string("name"), dynamic.string("Brock")),
+    #(dynamic.string("speciality"), dynamic.string("Rock")),
+  ])
   |> decode.run(decoder)
   |> should.be_ok
   |> should.equal(GymLeader("Brock", "Rock"))
 
   // Error
-  dynamic.from(
-    dict.from_list([
-      #("type", dynamic.string("gym-leader")),
-      #("name", dynamic.string("Brock")),
-    ]),
-  )
+  dynamic.object([
+    #(dynamic.string("type"), dynamic.string("gym-leader")),
+    #(dynamic.string("name"), dynamic.string("Brock")),
+  ])
   |> decode.run(decoder)
   |> should.be_error
   |> should.equal([
@@ -902,41 +913,40 @@ pub fn list_decoder() -> decode.Decoder(LinkedList) {
 }
 
 pub fn recursive_data_structure_test() {
-  dynamic.from(
-    dict.from_list([
-      #("type", dynamic.string("list-non-empty")),
-      #("element", dynamic.int(1)),
-      #(
-        "tail",
-        dynamic.from(
-          dict.from_list([
-            #("type", dynamic.string("list-non-empty")),
-            #("element", dynamic.int(2)),
-            #(
-              "tail",
-              dynamic.from(
-                dict.from_list([#("type", dynamic.string("list-empty"))]),
-              ),
-            ),
+  dynamic.object([
+    #(dynamic.string("type"), dynamic.string("list-non-empty")),
+    #(dynamic.string("element"), dynamic.int(1)),
+    #(
+      dynamic.string("tail"),
+      dynamic.object([
+        #(dynamic.string("type"), dynamic.string("list-non-empty")),
+        #(dynamic.string("element"), dynamic.int(2)),
+        #(
+          dynamic.string("tail"),
+          dynamic.object([
+            #(dynamic.string("type"), dynamic.string("list-empty")),
           ]),
         ),
-      ),
-    ]),
-  )
+      ]),
+    ),
+  ])
   |> decode.run(list_decoder())
   |> should.be_ok
   |> should.equal(ListNonEmpty(1, ListNonEmpty(2, ListEmpty)))
 }
 
 pub fn optionally_at_dict_string_ok_test() {
-  dynamic.from(
-    dict.from_list([
-      #(
-        "first",
-        dict.from_list([#("second", dict.from_list([#("third", 1337)]))]),
-      ),
-    ]),
-  )
+  dynamic.object([
+    #(
+      dynamic.string("first"),
+      dynamic.object([
+        #(
+          dynamic.string("second"),
+          dynamic.object([#(dynamic.string("third"), dynamic.int(1337))]),
+        ),
+      ]),
+    ),
+  ])
   |> decode.run(decode.optionally_at(
     ["first", "second", "third"],
     100,
@@ -947,32 +957,45 @@ pub fn optionally_at_dict_string_ok_test() {
 }
 
 pub fn optionally_at_dict_int_ok_test() {
-  dynamic.from(
-    dict.from_list([
-      #(10, dict.from_list([#(20, dict.from_list([#(30, 1337)]))])),
-    ]),
-  )
+  dynamic.object([
+    #(
+      dynamic.int(10),
+      dynamic.object([
+        #(
+          dynamic.int(20),
+          dynamic.object([#(dynamic.int(30), dynamic.int(1337))]),
+        ),
+      ]),
+    ),
+  ])
   |> decode.run(decode.optionally_at([10, 20, 30], 123, decode.int))
   |> should.be_ok
   |> should.equal(1337)
 }
 
 pub fn optionally_at_tuple_int_ok_test() {
-  dynamic.from(#("x", #("a", "b", "c"), "z"))
+  dynamic.array([
+    dynamic.string("x"),
+    dynamic.array(["a", "b", "c"] |> list.map(dynamic.string)),
+    dynamic.string("z"),
+  ])
   |> decode.run(decode.optionally_at([1, 0], "something", decode.string))
   |> should.be_ok
   |> should.equal("a")
 }
 
 pub fn optionally_at_wrong_inner_error_test() {
-  dynamic.from(
-    dict.from_list([
-      #(
-        "first",
-        dict.from_list([#("second", dict.from_list([#("third", 1337)]))]),
-      ),
-    ]),
-  )
+  dynamic.object([
+    #(
+      dynamic.string("first"),
+      dynamic.object([
+        #(
+          dynamic.string("second"),
+          dynamic.object([#(dynamic.string("third"), dynamic.int(1337))]),
+        ),
+      ]),
+    ),
+  ])
   |> decode.run(decode.optionally_at(
     ["first", "second", "third"],
     "default",
@@ -1035,7 +1058,6 @@ fn recursive_decoder() -> decode.Decoder(Nested) {
 }
 
 pub fn recursive_test() {
-  let nested = [["one", "two"], ["three"], []]
   let expected =
     Nested([
       Nested([Value("one"), Value("two")]),
@@ -1043,7 +1065,15 @@ pub fn recursive_test() {
       Nested([]),
     ])
 
-  decode.run(dynamic.from(nested), recursive_decoder())
+  dynamic.list(
+    [
+      ["one", "two"] |> list.map(dynamic.string),
+      ["three"] |> list.map(dynamic.string),
+      [],
+    ]
+    |> list.map(dynamic.list),
+  )
+  |> decode.run(recursive_decoder())
   |> should.be_ok
   |> should.equal(expected)
 }
