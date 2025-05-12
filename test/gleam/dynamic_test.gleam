@@ -12,3 +12,9 @@ pub fn classify_false_test() {
   |> dynamic.classify
   |> should.equal("Bool")
 }
+
+pub fn null_test() {
+  dynamic.null()
+  |> dynamic.classify
+  |> should.equal("Nil")
+}
