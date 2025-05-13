@@ -21,7 +21,7 @@ pub type User {
 
 pub fn decoder_test() {
   let data =
-    dynamic.object([
+    dynamic.properties([
       #(dynamic.string("name"), dynamic.string("Nubi")),
       #(dynamic.string("email"), dynamic.string("nubi@example.com")),
       #(dynamic.string("is_admin"), dynamic.bool(False)),
@@ -50,7 +50,8 @@ pub fn decoder_test() {
 }
 
 pub fn field_ok_test() {
-  let data = dynamic.object([#(dynamic.string("name"), dynamic.string("Nubi"))])
+  let data =
+    dynamic.properties([#(dynamic.string("name"), dynamic.string("Nubi"))])
   let decoder = {
     use name <- decode.field("name", decode.string)
     decode.success(name)
@@ -63,10 +64,10 @@ pub fn field_ok_test() {
 
 pub fn subfield_ok_test() {
   let data =
-    dynamic.object([
+    dynamic.properties([
       #(
         dynamic.string("person"),
-        dynamic.object([#(dynamic.string("name"), dynamic.string("Nubi"))]),
+        dynamic.properties([#(dynamic.string("name"), dynamic.string("Nubi"))]),
       ),
     ])
   let decoder = {
@@ -151,7 +152,7 @@ pub fn field_wrong_inner_error_test() {
     decode.success(name)
   }
 
-  dynamic.object([#(dynamic.string("name"), dynamic.int(123))])
+  dynamic.properties([#(dynamic.string("name"), dynamic.int(123))])
   |> decode.run(decoder)
   |> should.be_error
   |> should.equal([DecodeError("String", "Int", ["name"])])
@@ -174,7 +175,7 @@ pub fn subfield_int_index_ok_test() {
 }
 
 pub fn subfield_wrong_inner_error_test() {
-  let data = dynamic.object([#(dynamic.string("name"), dynamic.int(123))])
+  let data = dynamic.properties([#(dynamic.string("name"), dynamic.int(123))])
   decode.run(data, {
     use name <- decode.field("name", decode.string)
     decode.success(name)
@@ -184,7 +185,7 @@ pub fn subfield_wrong_inner_error_test() {
 }
 
 pub fn optional_field_wrong_inner_error_test() {
-  let data = dynamic.object([#(dynamic.string("a"), dynamic.null())])
+  let data = dynamic.properties([#(dynamic.string("a"), dynamic.nil())])
   decode.run(data, {
     use bar <- decode.optional_field("a", "", decode.string)
     decode.success(bar)
@@ -195,10 +196,10 @@ pub fn optional_field_wrong_inner_error_test() {
 
 pub fn sub_optional_field_wrong_inner_error_test() {
   let data =
-    dynamic.object([
+    dynamic.properties([
       #(
         dynamic.string("a"),
-        dynamic.object([#(dynamic.string("b"), dynamic.null())]),
+        dynamic.properties([#(dynamic.string("b"), dynamic.nil())]),
       ),
     ])
   decode.run(data, {
@@ -213,7 +214,7 @@ pub fn sub_optional_field_wrong_inner_error_test() {
 }
 
 pub fn optional_field_wrong_inner_error_type_test() {
-  let data = dynamic.object([#(dynamic.string("a"), dynamic.int(0))])
+  let data = dynamic.properties([#(dynamic.string("a"), dynamic.int(0))])
   decode.run(data, {
     use bar <- decode.optional_field("a", "", decode.string)
     decode.success(bar)
@@ -370,7 +371,7 @@ pub fn list_tuple_inner_1_error_test() {
 }
 
 pub fn dict_ok_test() {
-  dynamic.object([
+  dynamic.properties([
     #(dynamic.string("first"), dynamic.int(1)),
     #(dynamic.string("second"), dynamic.int(2)),
   ])
@@ -380,7 +381,7 @@ pub fn dict_ok_test() {
 }
 
 pub fn dict_value_error_test() {
-  dynamic.object([
+  dynamic.properties([
     #(dynamic.float(1.1), dynamic.int(1)),
     #(dynamic.float(1.2), dynamic.int(2)),
   ])
@@ -390,7 +391,7 @@ pub fn dict_value_error_test() {
 }
 
 pub fn dict_key_error_test() {
-  dynamic.object([
+  dynamic.properties([
     #(dynamic.float(1.1), dynamic.int(1)),
     #(dynamic.float(1.2), dynamic.int(2)),
   ])
@@ -407,13 +408,13 @@ pub fn dict_error_test() {
 }
 
 pub fn at_dict_string_ok_test() {
-  dynamic.object([
+  dynamic.properties([
     #(
       dynamic.string("first"),
-      dynamic.object([
+      dynamic.properties([
         #(
           dynamic.string("second"),
-          dynamic.object([#(dynamic.string("third"), dynamic.int(1337))]),
+          dynamic.properties([#(dynamic.string("third"), dynamic.int(1337))]),
         ),
       ]),
     ),
@@ -424,13 +425,13 @@ pub fn at_dict_string_ok_test() {
 }
 
 pub fn at_dict_int_ok_test() {
-  dynamic.object([
+  dynamic.properties([
     #(
       dynamic.int(10),
-      dynamic.object([
+      dynamic.properties([
         #(
           dynamic.int(20),
-          dynamic.object([#(dynamic.int(30), dynamic.int(1337))]),
+          dynamic.properties([#(dynamic.int(30), dynamic.int(1337))]),
         ),
       ]),
     ),
@@ -452,13 +453,13 @@ pub fn at_tuple_int_ok_test() {
 }
 
 pub fn at_wrong_inner_error_test() {
-  dynamic.object([
+  dynamic.properties([
     #(
       dynamic.string("first"),
-      dynamic.object([
+      dynamic.properties([
         #(
           dynamic.string("second"),
-          dynamic.object([#(dynamic.string("third"), dynamic.int(1337))]),
+          dynamic.properties([#(dynamic.string("third"), dynamic.int(1337))]),
         ),
       ]),
     ),
@@ -469,10 +470,10 @@ pub fn at_wrong_inner_error_test() {
 }
 
 pub fn at_no_path_error_test() {
-  dynamic.object([
+  dynamic.properties([
     #(
       dynamic.string("first"),
-      dynamic.object([#(dynamic.string("third"), dynamic.int(1337))]),
+      dynamic.properties([#(dynamic.string("third"), dynamic.int(1337))]),
     ),
   ])
   |> decode.run(decode.at(["first", "second", "third"], decode.int))
@@ -495,7 +496,7 @@ pub fn optional_bool_present_ok_test() {
 }
 
 pub fn optional_bool_absent_nil_ok_test() {
-  dynamic.null()
+  dynamic.nil()
   |> decode.run(decode.optional(decode.bool))
   |> should.be_ok
   |> should.equal(option.None)
@@ -528,7 +529,7 @@ pub fn map_errors_test() {
       }),
     )
 
-  dynamic.object([#(dynamic.string("data"), dynamic.int(123))])
+  dynamic.properties([#(dynamic.string("data"), dynamic.int(123))])
   |> decode.run(decoder)
   |> should.be_error
   |> should.equal([
@@ -538,7 +539,7 @@ pub fn map_errors_test() {
 }
 
 pub fn collapse_errors_test() {
-  dynamic.object([#(dynamic.string("data"), dynamic.int(123))])
+  dynamic.properties([#(dynamic.string("data"), dynamic.int(123))])
   |> decode.run(decode.at(
     ["data"],
     decode.string |> decode.collapse_errors("Wibble"),
@@ -557,7 +558,7 @@ pub fn then_test() {
       })
     })
 
-  dynamic.object([
+  dynamic.properties([
     #(dynamic.string("key"), dynamic.int(1)),
     #(dynamic.string("value"), dynamic.int(100)),
   ])
@@ -565,7 +566,7 @@ pub fn then_test() {
   |> should.be_ok
   |> should.equal(AnInt(100))
 
-  dynamic.object([
+  dynamic.properties([
     #(dynamic.string("key"), dynamic.int(2)),
     #(dynamic.string("value"), dynamic.string("Hi!")),
   ])
@@ -605,7 +606,7 @@ pub fn then_error_1_test() {
       })
     })
 
-  dynamic.object([
+  dynamic.properties([
     #(dynamic.string("key"), dynamic.int(1)),
     #(dynamic.string("value"), dynamic.string("Hi!")),
   ])
@@ -720,7 +721,7 @@ pub fn variants_test() {
   }
 
   // Int variant
-  dynamic.object([
+  dynamic.properties([
     #(dynamic.string("tag"), dynamic.string("int")),
     #(dynamic.string("the-int"), dynamic.int(123)),
   ])
@@ -729,7 +730,7 @@ pub fn variants_test() {
   |> should.equal(AnInt(123))
 
   // String variant
-  dynamic.object([
+  dynamic.properties([
     #(dynamic.string("tag"), dynamic.string("string")),
     #(dynamic.string("the-string"), dynamic.string("hello")),
   ])
@@ -738,7 +739,7 @@ pub fn variants_test() {
   |> should.equal(AString("hello"))
 
   // Invalid tag
-  dynamic.object([
+  dynamic.properties([
     #(dynamic.string("tag"), dynamic.string("dunno")),
     #(dynamic.string("the-string"), dynamic.string("hello")),
   ])
@@ -747,7 +748,7 @@ pub fn variants_test() {
   |> should.equal([DecodeError("IntOrString", "Dict", [])])
 
   // Missing tag
-  dynamic.object([#(dynamic.string("the-string"), dynamic.string("hello"))])
+  dynamic.properties([#(dynamic.string("the-string"), dynamic.string("hello"))])
   |> decode.run(decoder)
   |> should.be_error
   |> should.equal([
@@ -756,7 +757,7 @@ pub fn variants_test() {
   ])
 
   // String invalid field
-  dynamic.object([
+  dynamic.properties([
     #(dynamic.string("tag"), dynamic.string("string")),
     #(dynamic.string("the-string"), dynamic.float(12.3)),
   ])
@@ -822,7 +823,7 @@ pub fn documentation_variants_example_test() {
   }
 
   // Trainer
-  dynamic.object([
+  dynamic.properties([
     #(dynamic.string("type"), dynamic.string("trainer")),
     #(dynamic.string("name"), dynamic.string("Ash")),
     #(dynamic.string("badge-count"), dynamic.int(8)),
@@ -832,7 +833,7 @@ pub fn documentation_variants_example_test() {
   |> should.equal(Trainer("Ash", 8))
 
   // Gym leader
-  dynamic.object([
+  dynamic.properties([
     #(dynamic.string("type"), dynamic.string("gym-leader")),
     #(dynamic.string("name"), dynamic.string("Brock")),
     #(dynamic.string("speciality"), dynamic.string("Rock")),
@@ -842,7 +843,7 @@ pub fn documentation_variants_example_test() {
   |> should.equal(GymLeader("Brock", "Rock"))
 
   // Error
-  dynamic.object([
+  dynamic.properties([
     #(dynamic.string("type"), dynamic.string("gym-leader")),
     #(dynamic.string("name"), dynamic.string("Brock")),
   ])
@@ -913,17 +914,17 @@ pub fn list_decoder() -> decode.Decoder(LinkedList) {
 }
 
 pub fn recursive_data_structure_test() {
-  dynamic.object([
+  dynamic.properties([
     #(dynamic.string("type"), dynamic.string("list-non-empty")),
     #(dynamic.string("element"), dynamic.int(1)),
     #(
       dynamic.string("tail"),
-      dynamic.object([
+      dynamic.properties([
         #(dynamic.string("type"), dynamic.string("list-non-empty")),
         #(dynamic.string("element"), dynamic.int(2)),
         #(
           dynamic.string("tail"),
-          dynamic.object([
+          dynamic.properties([
             #(dynamic.string("type"), dynamic.string("list-empty")),
           ]),
         ),
@@ -936,13 +937,13 @@ pub fn recursive_data_structure_test() {
 }
 
 pub fn optionally_at_dict_string_ok_test() {
-  dynamic.object([
+  dynamic.properties([
     #(
       dynamic.string("first"),
-      dynamic.object([
+      dynamic.properties([
         #(
           dynamic.string("second"),
-          dynamic.object([#(dynamic.string("third"), dynamic.int(1337))]),
+          dynamic.properties([#(dynamic.string("third"), dynamic.int(1337))]),
         ),
       ]),
     ),
@@ -957,13 +958,13 @@ pub fn optionally_at_dict_string_ok_test() {
 }
 
 pub fn optionally_at_dict_int_ok_test() {
-  dynamic.object([
+  dynamic.properties([
     #(
       dynamic.int(10),
-      dynamic.object([
+      dynamic.properties([
         #(
           dynamic.int(20),
-          dynamic.object([#(dynamic.int(30), dynamic.int(1337))]),
+          dynamic.properties([#(dynamic.int(30), dynamic.int(1337))]),
         ),
       ]),
     ),
@@ -985,13 +986,13 @@ pub fn optionally_at_tuple_int_ok_test() {
 }
 
 pub fn optionally_at_wrong_inner_error_test() {
-  dynamic.object([
+  dynamic.properties([
     #(
       dynamic.string("first"),
-      dynamic.object([
+      dynamic.properties([
         #(
           dynamic.string("second"),
-          dynamic.object([#(dynamic.string("third"), dynamic.int(1337))]),
+          dynamic.properties([#(dynamic.string("third"), dynamic.int(1337))]),
         ),
       ]),
     ),
@@ -1006,10 +1007,10 @@ pub fn optionally_at_wrong_inner_error_test() {
 }
 
 pub fn optionally_at_no_path_error_test() {
-  dynamic.object([
+  dynamic.properties([
     #(
       dynamic.string("first"),
-      dynamic.object([#(dynamic.string("third"), dynamic.int(1337))]),
+      dynamic.properties([#(dynamic.string("third"), dynamic.int(1337))]),
     ),
   ])
   |> decode.run(decode.optionally_at(

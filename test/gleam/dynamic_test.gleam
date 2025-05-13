@@ -14,7 +14,7 @@ pub fn classify_false_test() {
 }
 
 pub fn null_test() {
-  dynamic.null()
+  dynamic.nil()
   |> dynamic.classify
   |> should.equal("Nil")
 }

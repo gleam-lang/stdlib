@@ -9,6 +9,9 @@ import gleam/dict
 /// into Gleam data with known types. You will likely mostly use the other
 /// module in your projects.
 ///
+/// The exact runtime representation of dynamic values will depend on the
+/// compilation target used.
+///
 pub type Dynamic
 
 /// Return a string indicating the type of the dynamic value.
@@ -32,31 +35,39 @@ pub fn classify(data: Dynamic) -> String
 pub fn from(a: anything) -> Dynamic
 
 /// Create a dynamic value from a bool.
+///
 @external(erlang, "gleam_stdlib", "identity")
 @external(javascript, "../gleam_stdlib.mjs", "identity")
 pub fn bool(a: Bool) -> Dynamic
 
 /// Create a dynamic value from a string.
+///
+/// On Erlang this will be a binary string rather than a character list.
+///
 @external(erlang, "gleam_stdlib", "identity")
 @external(javascript, "../gleam_stdlib.mjs", "identity")
 pub fn string(a: String) -> Dynamic
 
 /// Create a dynamic value from a float.
+///
 @external(erlang, "gleam_stdlib", "identity")
 @external(javascript, "../gleam_stdlib.mjs", "identity")
 pub fn float(a: Float) -> Dynamic
 
 /// Create a dynamic value from an int.
+///
 @external(erlang, "gleam_stdlib", "identity")
 @external(javascript, "../gleam_stdlib.mjs", "identity")
 pub fn int(a: Int) -> Dynamic
 
 /// Create a dynamic value from a bit array.
+///
 @external(erlang, "gleam_stdlib", "identity")
 @external(javascript, "../gleam_stdlib.mjs", "identity")
 pub fn bit_array(a: BitArray) -> Dynamic
 
 /// Create a dynamic value from a list.
+///
 @external(erlang, "gleam_stdlib", "identity")
 @external(javascript, "../gleam_stdlib.mjs", "identity")
 pub fn list(a: List(Dynamic)) -> Dynamic
@@ -72,12 +83,19 @@ pub fn array(a: List(Dynamic)) -> Dynamic
 
 /// Create a dynamic value made an unordered series of keys and values, where
 /// the keys are unique.
-pub fn object(entries: List(#(Dynamic, Dynamic))) -> Dynamic {
+///
+/// On Erlang this will be a map, on JavaScript this wil be a Gleam dict object.
+///
+pub fn properties(entries: List(#(Dynamic, Dynamic))) -> Dynamic {
   cast(dict.from_list(entries))
 }
 
 /// A dynamic value representing nothing.
-pub fn null() -> Dynamic {
+///
+/// On Erlang this will be the atom `nil`, on JavaScript this wil be
+/// `undefined`.
+///
+pub fn nil() -> Dynamic {
   cast(Nil)
 }
 
