@@ -6,11 +6,10 @@
     string_starts_with/2, wrap_list/1, string_ends_with/2, string_pad/4,
     uri_parse/1, bit_array_slice/3, percent_encode/1, percent_decode/1,
     base_decode64/1, parse_query/1, bit_array_concat/1,
-    bit_array_base64_encode/2, size_of_tuple/1, 
-    tuple_get/2, classify_dynamic/1, print/1, println/1, print_error/1,
-    println_error/1, inspect/1, float_to_string/1, int_from_base_string/2,
-    utf_codepoint_list_to_string/1, contains_string/2, crop_string/2,
-    base16_encode/1, base16_decode/1, string_replace/3, slice/3,
+    bit_array_base64_encode/2, tuple_get/2, classify_dynamic/1, print/1,
+    println/1, print_error/1, println_error/1, inspect/1, float_to_string/1,
+    int_from_base_string/2, utf_codepoint_list_to_string/1, contains_string/2,
+    crop_string/2, base16_encode/1, base16_decode/1, string_replace/3, slice/3,
     bit_array_to_int_and_size/1, bit_array_pad_to_bytes/1, index/2, list/5,
     dict/1, int/1, float/1, bit_array/1, is_null/1
 ]).
@@ -45,6 +44,8 @@ iodata_append(Iodata, String) -> [Iodata, String].
 identity(X) -> X.
 
 classify_dynamic(nil) -> <<"Nil">>;
+classify_dynamic(null) -> <<"Nil">>;
+classify_dynamic(undefined) -> <<"Nil">>;
 classify_dynamic(X) when is_boolean(X) -> <<"Bool">>;
 classify_dynamic(X) when is_atom(X) -> <<"Atom">>;
 classify_dynamic(X) when is_binary(X) -> <<"String">>;
@@ -53,17 +54,17 @@ classify_dynamic(X) when is_integer(X) -> <<"Int">>;
 classify_dynamic(X) when is_float(X) -> <<"Float">>;
 classify_dynamic(X) when is_list(X) -> <<"List">>;
 classify_dynamic(X) when is_map(X) -> <<"Dict">>;
-classify_dynamic(X) when is_tuple(X) ->
-    iolist_to_binary(["Tuple of ", integer_to_list(tuple_size(X)), " elements"]);
+classify_dynamic(X) when is_tuple(X) -> <<"Array">>;
+classify_dynamic(X) when is_reference(X) -> <<"Reference">>;
+classify_dynamic(X) when is_pid(X) -> <<"Pid">>;
+classify_dynamic(X) when is_port(X) -> <<"Port">>;
 classify_dynamic(X) when
     is_function(X, 0) orelse is_function(X, 1) orelse is_function(X, 2) orelse
     is_function(X, 3) orelse is_function(X, 4) orelse is_function(X, 5) orelse
     is_function(X, 6) orelse is_function(X, 7) orelse is_function(X, 8) orelse
     is_function(X, 9) orelse is_function(X, 10) orelse is_function(X, 11) orelse
     is_function(X, 12) -> <<"Function">>;
-classify_dynamic(_) -> <<"Some other type">>.
-
-size_of_tuple(Data) -> tuple_size(Data).
+classify_dynamic(_) -> <<"Unknown">>.
 
 tuple_get(_tup, Index) when Index < 0 -> {error, nil};
 tuple_get(Data, Index) when Index >= tuple_size(Data) -> {error, nil};

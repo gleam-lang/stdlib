@@ -634,11 +634,11 @@ export function classify_dynamic(data) {
   } else if (Number.isInteger(data)) {
     return "Int";
   } else if (Array.isArray(data)) {
-    return `Tuple of ${data.length} elements`;
+    return `Array`;
   } else if (typeof data === "number") {
     return "Float";
   } else if (data === null) {
-    return "Null";
+    return "Nil";
   } else if (data === undefined) {
     return "Nil";
   } else {
