@@ -6,6 +6,9 @@
 - The `from` function in the `dynamic` module has been deprecated.
 - The `array`, `bit_array`, `bool`, `float`, `int`, `list`, `nil`, `properties`,
   and `string` functions have been added to the `dynamic` module.
+- The `classify` function in the `dynamic` module now understands more Erlang
+  types and uses the term "Array" rather than "Tuple" for Erlang tuples and
+  JavaScript arrays.
 - The performance of various functions in the `list` module has been improved.
 - Fixed the implementation of `option.values` and `option.all` to be tail
   recursive.
