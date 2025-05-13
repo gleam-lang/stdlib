@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.60.0 - 2025-05-13
 
 - The deprecated items in the `dynamic` module have been removed.
 - The `from` function in the `dynamic` module has been deprecated.

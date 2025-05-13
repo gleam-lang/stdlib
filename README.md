@@ -17,7 +17,7 @@ gleam add gleam_stdlib
 ```gleam
 import gleam/io
 
-pub fn greet(name: String) {
+pub fn greet(name: String) -> Nil {
   io.println("Hello " <> name <> "!")
 }
 ```
