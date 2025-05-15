@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- The deprecated `debug` function in the `io` module has been removed.
+- The deprecated `from` function in the `dynamic` module has been removed.
+
 ## v0.60.0 - 2025-05-13
 
 - The deprecated items in the `dynamic` module have been removed.

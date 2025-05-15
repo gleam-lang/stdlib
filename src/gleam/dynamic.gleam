@@ -29,11 +29,6 @@ pub type Dynamic
 @external(javascript, "../gleam_stdlib.mjs", "classify_dynamic")
 pub fn classify(data: Dynamic) -> String
 
-@deprecated("Please use the other functions in the gleam/dynamic module")
-@external(erlang, "gleam_stdlib", "identity")
-@external(javascript, "../gleam_stdlib.mjs", "identity")
-pub fn from(a: anything) -> Dynamic
-
 /// Create a dynamic value from a bool.
 ///
 @external(erlang, "gleam_stdlib", "identity")
