@@ -701,8 +701,9 @@ pub fn prepend(to list: List(a), this item: a) -> List(a) {
 
 /// Joins a list of lists into a single list.
 ///
-/// This function traverses all elements twice.
-///
+/// This function traverses all elements twice on the Javascript target.
+/// This function traverses all elements once on the Erlang target.
+/// 
 /// ## Examples
 ///
 /// ```gleam
@@ -710,6 +711,7 @@ pub fn prepend(to list: List(a), this item: a) -> List(a) {
 /// // -> [1, 2, 3]
 /// ```
 ///
+@external(erlang, "lists", "append")
 pub fn flatten(lists: List(List(a))) -> List(a) {
   flatten_loop(lists, [])
 }
