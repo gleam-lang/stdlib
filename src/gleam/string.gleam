@@ -586,7 +586,7 @@ pub fn trim_end(string: String) -> String {
 ///
 /// There is a notable overhead to using this function, so you may not want to
 /// use it in a tight loop. If you wish to efficiently parse a string you may
-/// want to use alternatives such as the [splitter package]( https://hex.pm/packages/splitter).
+/// want to use alternatives such as the [splitter package](https://hex.pm/packages/splitter).
 ///
 /// ## Examples
 ///

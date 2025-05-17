@@ -70,7 +70,7 @@ pub fn list(a: List(Dynamic)) -> Dynamic
 /// Create a dynamic value from a list, converting it to a sequential runtime
 /// format rather than the regular list format.
 ///
-/// On Erlang this will be a tuple, on JavaScript this wil be an array.
+/// On Erlang this will be a tuple, on JavaScript this will be an array.
 ///
 @external(erlang, "erlang", "list_to_tuple")
 @external(javascript, "../gleam_stdlib.mjs", "list_to_array")
@@ -79,7 +79,8 @@ pub fn array(a: List(Dynamic)) -> Dynamic
 /// Create a dynamic value made an unordered series of keys and values, where
 /// the keys are unique.
 ///
-/// On Erlang this will be a map, on JavaScript this wil be a Gleam dict object.
+/// On Erlang this will be a map, on JavaScript this will be a Gleam dict
+/// object.
 ///
 pub fn properties(entries: List(#(Dynamic, Dynamic))) -> Dynamic {
   cast(dict.from_list(entries))
@@ -87,7 +88,7 @@ pub fn properties(entries: List(#(Dynamic, Dynamic))) -> Dynamic {
 
 /// A dynamic value representing nothing.
 ///
-/// On Erlang this will be the atom `nil`, on JavaScript this wil be
+/// On Erlang this will be the atom `nil`, on JavaScript this will be
 /// `undefined`.
 ///
 pub fn nil() -> Dynamic {
