@@ -651,7 +651,7 @@ export function byte_size(string) {
   return new TextEncoder().encode(string).length;
 }
 
-// In Javascript bitwise operations convert numbers to a sequence of 32 bits
+// In JavaScript bitwise operations convert numbers to a sequence of 32 bits
 // while Erlang uses arbitrary precision.
 // To get around this problem and get consistent results use BigInt and then
 // downcast the value back to a Number value.

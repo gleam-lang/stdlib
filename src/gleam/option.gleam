@@ -6,9 +6,9 @@
 ///
 /// ## `Option` and `Result`
 ///
-/// In other languages failible functions may return either `Result` or
+/// In other languages fallible functions may return either `Result` or
 /// `Option` depending on whether there is more information to be given about the
-/// failure. In Gleam all failible functions return `Result`, and `Nil` is used
+/// failure. In Gleam all fallible functions return `Result`, and `Nil` is used
 /// as the error if there is no extra detail to give. This consistency removes
 /// the boilerplate that would otherwise be needed to convert between `Option`
 /// and `Result` types, and makes APIs more predictable.
