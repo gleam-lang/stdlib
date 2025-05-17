@@ -133,7 +133,7 @@ pub fn reverse(list: List(a)) -> List(a) {
 }
 
 /// Reverses a list and prepends it to another list.
-/// This function runs in linear time, proportional to the lenght of the list
+/// This function runs in linear time, proportional to the length of the list
 /// to prepend.
 ///
 fn reverse_and_prepend(list prefix: List(a), to suffix: List(a)) -> List(a) {
@@ -701,9 +701,9 @@ pub fn prepend(to list: List(a), this item: a) -> List(a) {
 
 /// Joins a list of lists into a single list.
 ///
-/// This function traverses all elements twice on the Javascript target.
+/// This function traverses all elements twice on the JavaScript target.
 /// This function traverses all elements once on the Erlang target.
-/// 
+///
 /// ## Examples
 ///
 /// ```gleam
