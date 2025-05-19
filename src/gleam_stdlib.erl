@@ -27,9 +27,14 @@
         ((X) >= $a) andalso ((X) =< $f) -> (X) - $a + 10
     end).
 
--define(is_lowercase_char(X), (X > 96 andalso X < 123)).
--define(is_underscore_char(X), (X == 95)).
--define(is_digit_char(X), (X > 47 andalso X < 58)).
+-define(is_lowercase_char(X),
+        (X > 96 andalso X < 123)).
+-define(is_underscore_char(X),
+        (X == 95)).
+-define(is_digit_char(X),
+        (X > 47 andalso X < 58)).
+-define(is_ascii_character(X), 
+        (erlang:is_integer(X) andalso X >= 32 andalso X =< 126)).
 
 uppercase(X) -> X - 32.
 
@@ -289,7 +294,8 @@ inspect(Binary) when is_binary(Binary) ->
 inspect(Bits) when is_bitstring(Bits) ->
     inspect_bit_array(Bits);
 inspect(List) when is_list(List) ->
-    case inspect_list(List) of
+    case inspect_list(List, true) of
+        {charlist, _} -> ["charlist.from_string(\"", list_to_binary(List), "\")"];
         {proper, Elements} -> ["[", Elements, "]"];
         {improper, Elements} -> ["//erl([", Elements, "])"]
     end;
@@ -356,14 +362,17 @@ inspect_maybe_gleam_atom(A, B, C) ->
     erlang:display({A, B, C}),
     throw({gleam_error, A, B, C}).
 
-inspect_list([]) ->
+inspect_list([], _) ->
     {proper, []};
-inspect_list([First]) ->
+inspect_list([First], true) when ?is_ascii_character(First) ->
+    {charlist, nil};
+inspect_list([First], _) ->
     {proper, [inspect(First)]};
-inspect_list([First | Rest]) when is_list(Rest) ->
-    {Kind, Inspected} = inspect_list(Rest),
+inspect_list([First | Rest], ValidCharlist) when is_list(Rest) ->
+    StillValidCharlist = ValidCharlist andalso ?is_ascii_character(First),
+    {Kind, Inspected} = inspect_list(Rest, StillValidCharlist),
     {Kind, [inspect(First), <<", ">> | Inspected]};
-inspect_list([First | ImproperTail]) ->
+inspect_list([First | ImproperTail], _) ->
     {improper, [inspect(First), <<" | ">>, inspect(ImproperTail)]}.
 
 inspect_bit_array(Bits) ->

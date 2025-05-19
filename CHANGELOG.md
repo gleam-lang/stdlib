@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- The `inspect` function in the `string` module will now print lists of ascii
+  characters in a human readable format, to aid with debugging programs that use
+  Erlang character lists.
 - The deprecated `debug` function in the `io` module has been removed.
 - The deprecated `from` function in the `dynamic` module has been removed.
 

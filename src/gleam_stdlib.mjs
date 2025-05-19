@@ -9,6 +9,7 @@ import {
   toBitArray,
   bitArraySlice,
   NonEmpty,
+  Empty,
   CustomType,
 } from "./gleam.mjs";
 import { Some, None } from "./gleam/option.mjs";
@@ -780,7 +781,37 @@ function inspectCustomType(record) {
 }
 
 export function inspectList(list) {
-  return `[${list.toArray().map(inspect).join(", ")}]`;
+  if (list instanceof Empty) {
+    return "[]";
+  }
+
+  let char_out = 'charlist.from_string("';
+  let list_out = "[";
+
+  let current = list;
+  while (current instanceof NonEmpty) {
+    let element = current.head;
+    current = current.tail;
+
+    if (list_out !== "[") {
+      list_out += ", ";
+    }
+    list_out += inspect(element);
+
+    if (char_out) {
+      if (Number.isInteger(element) && element >= 32 && element <= 126) {
+        char_out += String.fromCharCode(element);
+      } else {
+        char_out = null;
+      }
+    }
+  }
+
+  if (char_out) {
+    return char_out + '")';
+  } else {
+    return list_out + "]";
+  }
 }
 
 export function inspectUtfCodepoint(codepoint) {

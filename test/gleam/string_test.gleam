@@ -1218,6 +1218,20 @@ pub fn inspect_test() {
   |> should.equal("<<255, 2, 0>>")
 }
 
+pub fn inspect_charlist_test() {
+  let list = [
+    70, 97, 105, 108, 101, 100, 32, 116, 111, 32, 108, 111, 97, 100, 32, 78, 73,
+    70, 32, 108, 105, 98, 114, 97, 114, 121, 58, 32, 39, 47, 114, 117, 110, 47,
+    99, 117, 114, 114, 101, 110, 116, 45, 115, 121, 115, 116, 101, 109, 47, 115,
+    119, 47, 115, 104, 97, 114, 101, 47, 110, 105, 120, 45, 108, 100, 47, 108,
+    105, 98, 47, 108, 105, 98, 99, 114, 121, 112, 116, 111, 46, 115, 111, 46, 51,
+  ]
+  string.inspect(list)
+  |> should.equal(
+    "charlist.from_string(\"Failed to load NIF library: '/run/current-system/sw/share/nix-ld/lib/libcrypto.so.3\")",
+  )
+}
+
 @target(javascript)
 pub fn target_inspect_test() {
   // Due to Erlang's internal representation, on Erlang this passes, instead:
