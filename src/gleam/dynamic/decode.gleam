@@ -232,7 +232,7 @@
 ////   use name <- decode.field("name", decode.string)
 ////   use badge_count <- decode.field("badge-count", decode.int)
 ////   decode.success(Trainer(name, badge_count))
-//// })
+//// }
 ////
 //// let gym_leader_decoder = {
 ////   use name <- decode.field("name", decode.string)
@@ -242,9 +242,16 @@
 //// ```
 ////
 //// A third decoder can be used to extract and decode the `"type"` field, and the
-//// `then` function then returns whichever decoder is suitable for the document.
+//// expression can evaluate to whichever decoder is suitable for the document.
 ////
 //// ```gleam
+//// // Data:
+//// // {
+//// //   "type" -> "gym-leader",
+//// //   "name" -> "Misty",
+//// //   "speciality" -> "water",
+//// // }
+////
 //// let decoder = {
 ////   use tag <- decode.field("type", decode.string)
 ////   case tag {
@@ -253,7 +260,8 @@
 ////   }
 //// }
 ////
-//// decode.run(data, decoder)
+//// let result = decode.run(data, decoder)
+//// assert result == Ok(GymLeader("Misty", Water))
 //// ```
 
 import gleam/bit_array
