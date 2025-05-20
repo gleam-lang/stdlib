@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- The fallback code for older NodeJS versions in the JavaScript target
+  implementation of `string.replace` has been removed.
 - The `inspect` function in the `string` module will now print lists of ascii
   characters in a human readable format, to aid with debugging programs that use
   Erlang character lists.
