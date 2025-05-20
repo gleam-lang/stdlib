@@ -115,19 +115,7 @@ export function int_from_base_string(string, base) {
 }
 
 export function string_replace(string, target, substitute) {
-  if (typeof string.replaceAll !== "undefined") {
-    return string.replaceAll(target, substitute);
-  }
-  // Fallback for older Node.js versions:
-  // 1. <https://stackoverflow.com/a/1144788>
-  // 2. <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#escaping>
-  // TODO: This fallback could be remove once Node.js 14 is EOL
-  // aka <https://nodejs.org/en/about/releases/> on or after 2024-04-30
-  return string.replace(
-    // $& means the whole matched string
-    new RegExp(target.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"),
-    substitute,
-  );
+  return string.replaceAll(target, substitute);
 }
 
 export function string_reverse(string) {
