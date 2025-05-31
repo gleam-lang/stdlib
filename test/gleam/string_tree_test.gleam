@@ -1,4 +1,3 @@
-import gleam/should
 import gleam/string_tree
 
 pub fn string_tree_test() {
@@ -8,13 +7,13 @@ pub fn string_tree_test() {
     |> string_tree.append(" world!")
     |> string_tree.prepend("H")
 
-  data
-  |> string_tree.to_string
-  |> should.equal("Hello, world!")
+  assert data
+    |> string_tree.to_string
+    == "Hello, world!"
 
-  data
-  |> string_tree.byte_size
-  |> should.equal(13)
+  assert data
+    |> string_tree.byte_size
+    == 13
 
   let data =
     string_tree.from_string("ello")
@@ -27,123 +26,120 @@ pub fn string_tree_test() {
     )
     |> string_tree.prepend_tree(string_tree.from_string("H"))
 
-  data
-  |> string_tree.to_string
-  |> should.equal("Hello, world!")
+  assert data
+    |> string_tree.to_string
+    == "Hello, world!"
 
-  data
-  |> string_tree.byte_size
-  |> should.equal(13)
+  assert data
+    |> string_tree.byte_size
+    == 13
 }
 
 pub fn reverse_test() {
-  "Ĺo͂řȩm̅"
-  |> string_tree.from_string
-  |> string_tree.reverse
-  |> string_tree.reverse
-  |> string_tree.to_string
-  |> should.equal("Ĺo͂řȩm̅")
+  assert "Ĺo͂řȩm̅"
+    |> string_tree.from_string
+    |> string_tree.reverse
+    |> string_tree.reverse
+    |> string_tree.to_string
+    == "Ĺo͂řȩm̅"
 
-  "Ĺo͂řȩm̅"
-  |> string_tree.from_string
-  |> string_tree.reverse
-  |> string_tree.to_string
-  |> should.equal("m̅ȩřo͂Ĺ")
+  assert "Ĺo͂řȩm̅"
+    |> string_tree.from_string
+    |> string_tree.reverse
+    |> string_tree.to_string
+    == "m̅ȩřo͂Ĺ"
 
-  "👶🏿"
-  |> string_tree.from_string
-  |> string_tree.reverse
-  |> string_tree.reverse
-  |> string_tree.to_string
-  |> should.equal("👶🏿")
+  assert "👶🏿"
+    |> string_tree.from_string
+    |> string_tree.reverse
+    |> string_tree.reverse
+    |> string_tree.to_string
+    == "👶🏿"
 
-  "👶🏿"
-  |> string_tree.from_string
-  |> string_tree.reverse
-  |> string_tree.to_string
-  |> should.equal("👶🏿")
+  assert "👶🏿"
+    |> string_tree.from_string
+    |> string_tree.reverse
+    |> string_tree.to_string
+    == "👶🏿"
 }
 
 pub fn lowercase_test() {
-  ["Gleam", "Gleam"]
-  |> string_tree.from_strings
-  |> string_tree.lowercase
-  |> string_tree.to_string
-  |> should.equal("gleamgleam")
+  assert ["Gleam", "Gleam"]
+    |> string_tree.from_strings
+    |> string_tree.lowercase
+    |> string_tree.to_string
+    == "gleamgleam"
 }
 
 pub fn uppercase_test() {
-  ["Gleam", "Gleam"]
-  |> string_tree.from_strings
-  |> string_tree.uppercase
-  |> string_tree.to_string
-  |> should.equal("GLEAMGLEAM")
+  assert ["Gleam", "Gleam"]
+    |> string_tree.from_strings
+    |> string_tree.uppercase
+    |> string_tree.to_string
+    == "GLEAMGLEAM"
 }
 
 pub fn split_test() {
-  "Gleam,Erlang,Elixir"
-  |> string_tree.from_string
-  |> string_tree.split(",")
-  |> should.equal([
-    string_tree.from_string("Gleam"),
-    string_tree.from_string("Erlang"),
-    string_tree.from_string("Elixir"),
-  ])
+  assert "Gleam,Erlang,Elixir"
+    |> string_tree.from_string
+    |> string_tree.split(",")
+    == [
+      string_tree.from_string("Gleam"),
+      string_tree.from_string("Erlang"),
+      string_tree.from_string("Elixir"),
+    ]
 
-  ["Gleam, Erl", "ang,Elixir"]
-  |> string_tree.from_strings
-  |> string_tree.split(", ")
-  |> should.equal([
-    string_tree.from_string("Gleam"),
-    string_tree.from_strings(["Erl", "ang,Elixir"]),
-  ])
+  assert ["Gleam, Erl", "ang,Elixir"]
+    |> string_tree.from_strings
+    |> string_tree.split(", ")
+    == [
+      string_tree.from_string("Gleam"),
+      string_tree.from_strings(["Erl", "ang,Elixir"]),
+    ]
 }
 
 pub fn is_equal_test() {
-  string_tree.from_string("12")
-  |> string_tree.is_equal(string_tree.from_strings(["1", "2"]))
-  |> should.be_true
+  assert string_tree.from_string("12")
+    |> string_tree.is_equal(string_tree.from_strings(["1", "2"]))
 
-  string_tree.from_string("12")
-  |> string_tree.is_equal(string_tree.from_string("12"))
-  |> should.be_true
+  assert string_tree.from_string("12")
+    |> string_tree.is_equal(string_tree.from_string("12"))
 
-  string_tree.from_string("12")
-  |> string_tree.is_equal(string_tree.from_string("2"))
-  |> should.be_false
+  assert !{
+    string_tree.from_string("12")
+    |> string_tree.is_equal(string_tree.from_string("2"))
+  }
 }
 
 pub fn is_empty_test() {
-  string_tree.from_string("")
-  |> string_tree.is_empty
-  |> should.be_true
+  assert string_tree.from_string("")
+    |> string_tree.is_empty
 
-  string_tree.from_string("12")
-  |> string_tree.is_empty
-  |> should.be_false
+  assert !{
+    string_tree.from_string("12")
+    |> string_tree.is_empty
+  }
 
-  string_tree.from_strings([])
-  |> string_tree.is_empty
-  |> should.be_true
+  assert string_tree.from_strings([])
+    |> string_tree.is_empty
 
-  string_tree.from_strings(["", ""])
-  |> string_tree.is_empty
-  |> should.be_true
+  assert string_tree.from_strings(["", ""])
+    |> string_tree.is_empty
 }
 
 pub fn new_test() {
-  string_tree.new()
-  |> string_tree.to_string
-  |> should.equal("")
+  assert string_tree.new()
+    |> string_tree.to_string
+    == ""
 }
 
 pub fn join_test() {
-  [
-    string_tree.from_string("Gleam"),
-    string_tree.from_string("Elixir"),
-    string_tree.from_string("Erlang"),
-  ]
-  |> string_tree.join(", ")
-  |> string_tree.to_string
-  |> should.equal("Gleam, Elixir, Erlang")
+  assert [
+      string_tree.from_string("Gleam"),
+      string_tree.from_string("Elixir"),
+      string_tree.from_string("Erlang"),
+    ]
+    |> string_tree.join(", ")
+    |> string_tree.to_string
+    == "Gleam, Elixir, Erlang"
 }

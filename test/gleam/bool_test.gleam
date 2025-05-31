@@ -1,108 +1,81 @@
 import gleam/bool
-import gleam/should
 
 pub fn and_test() {
-  bool.and(True, True)
-  |> should.be_true
+  assert bool.and(True, True)
 
-  bool.and(False, True)
-  |> should.be_false
+  assert !bool.and(False, True)
 
-  True
-  |> bool.and(True)
-  |> should.be_true
+  assert True
+    |> bool.and(True)
 
-  False
-  |> bool.and(True, _)
-  |> should.be_false
+  assert !{
+    False
+    |> bool.and(True, _)
+  }
 }
 
 pub fn or_test() {
-  bool.or(True, True)
-  |> should.be_true
+  assert bool.or(True, True)
 
-  bool.or(False, True)
-  |> should.be_true
+  assert bool.or(False, True)
 
-  True
-  |> bool.or(False)
-  |> should.be_true
+  assert True
+    |> bool.or(False)
 
-  False
-  |> bool.or(True, _)
-  |> should.be_true
+  assert False
+    |> bool.or(True, _)
 }
 
 pub fn negate_test() {
-  bool.negate(True)
-  |> should.be_false
+  assert !bool.negate(True)
 
-  bool.negate(False)
-  |> should.be_true
+  assert bool.negate(False)
 }
 
 pub fn nor_test() {
-  bool.nor(False, False)
-  |> should.be_true
+  assert bool.nor(False, False)
 
-  bool.nor(False, True)
-  |> should.be_false
+  assert !bool.nor(False, True)
 
-  bool.nor(True, False)
-  |> should.be_false
+  assert !bool.nor(True, False)
 
-  bool.nor(True, True)
-  |> should.be_false
+  assert !bool.nor(True, True)
 }
 
 pub fn nand_test() {
-  bool.nand(False, False)
-  |> should.be_true
+  assert bool.nand(False, False)
 
-  bool.nand(False, True)
-  |> should.be_true
+  assert bool.nand(False, True)
 
-  bool.nand(True, False)
-  |> should.be_true
+  assert bool.nand(True, False)
 
-  bool.nand(True, True)
-  |> should.be_false
+  assert !bool.nand(True, True)
 }
 
 pub fn exclusive_or_test() {
-  bool.exclusive_or(True, True)
-  |> should.be_false
+  assert !bool.exclusive_or(True, True)
 
-  bool.exclusive_or(False, False)
-  |> should.be_false
+  assert !bool.exclusive_or(False, False)
 
-  bool.exclusive_or(True, False)
-  |> should.be_true
+  assert bool.exclusive_or(True, False)
 
-  bool.exclusive_or(False, True)
-  |> should.be_true
+  assert bool.exclusive_or(False, True)
 }
 
 pub fn exclusive_nor_test() {
-  bool.exclusive_nor(False, False)
-  |> should.be_true
+  assert bool.exclusive_nor(False, False)
 
-  bool.exclusive_nor(False, True)
-  |> should.be_false
+  assert !bool.exclusive_nor(False, True)
 
-  bool.exclusive_nor(True, False)
-  |> should.be_false
+  assert !bool.exclusive_nor(True, False)
 
-  bool.exclusive_nor(True, True)
-  |> should.be_true
+  assert bool.exclusive_nor(True, True)
 }
 
 pub fn to_string_test() {
-  bool.to_string(True)
-  |> should.equal("True")
+  assert bool.to_string(True) == "True"
 
-  bool.to_string(False)
-  |> should.equal("False")
+  assert bool.to_string(False) == "False"
 }
 
 pub fn guard_test() {
