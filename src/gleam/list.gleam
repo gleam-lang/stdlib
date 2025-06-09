@@ -2337,9 +2337,9 @@ pub fn sample(from list: List(a), up_to n: Int) -> List(a) {
 }
 
 fn sample_loop(
-  list,
+  list: List(a),
   reservoir: Dict(Int, a),
-  k,
+  k: Int,
   index: Int,
   w: Float,
 ) -> Dict(Int, a) {
