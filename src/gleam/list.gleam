@@ -2301,8 +2301,9 @@ fn max_loop(list, compare, max) {
   }
 }
 
-/// Take a random sample of k elements from a list using reservoir sampling via
-/// Algo L. Returns an empty list if the sample size is less than or equal to 0.
+/// Returns a random sample of up to n elements from a list using reservoir
+/// sampling via [Algorithm L](https://en.wikipedia.org/wiki/Reservoir_sampling#Optimal:_Algorithm_L).
+/// Returns an empty list if the sample size is less than or equal to 0.
 ///
 /// Order is not random, only selection is.
 ///
