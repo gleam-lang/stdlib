@@ -2313,23 +2313,22 @@ fn max_loop(list, compare, max) {
 /// // -> [2, 4, 5]  // A random sample of 3 items
 /// ```
 ///
-pub fn sample(list: List(a), k: Int) -> List(a) {
-  case k <= 0 {
+pub fn sample(from list: List(a), up_to n: Int) -> List(a) {
+  case n <= 0 {
     True -> []
     False -> {
-      let #(reservoir, list) = split(list, k)
+      let #(reservoir, list) = split(list, n)
 
-      case length(reservoir) < k {
+      case length(reservoir) < n {
         True -> reservoir
         False -> {
           let reservoir =
             reservoir
-            |> map2(range(0, k - 1), _, fn(a, b) { #(a, b) })
+            |> map2(range(0, n - 1), _, fn(a, b) { #(a, b) })
             |> dict.from_list
 
-          let w = float.exponential(log_random() /. int.to_float(k))
-
-          sample_loop(list, reservoir, k, k, w) |> dict.values
+          let w = float.exponential(log_random() /. int.to_float(n))
+          sample_loop(list, reservoir, n, n, w) |> dict.values
         }
       }
     }
