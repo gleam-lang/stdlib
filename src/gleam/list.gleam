@@ -2315,24 +2315,56 @@ fn max_loop(list, compare, max) {
 /// ```
 ///
 pub fn sample(from list: List(a), up_to n: Int) -> List(a) {
-  case n <= 0 {
-    True -> []
-    False -> {
-      let #(reservoir, list) = split(list, n)
+  let #(reservoir, rest) = build_reservoir(from: list, sized: n)
 
-      case length(reservoir) < n {
-        True -> reservoir
+  case rest {
+    // If we've already taken all the items there were in the list there's no
+    // need to do anything else, we return the entire reservoire.
+    [] -> dict.values(reservoir)
+    _ ->
+      case dict.is_empty(reservoir) {
+        // If the reservoire is empty that means we were asking to sample 0 or
+        // less items. That doesn't make much sense, so we just return an empty
+        // list.
+        True -> []
         False -> {
-          let reservoir =
-            reservoir
-            |> map2(range(0, n - 1), _, fn(a, b) { #(a, b) })
-            |> dict.from_list
-
           let w = float.exponential(log_random() /. int.to_float(n))
           sample_loop(list, reservoir, n, n, w) |> dict.values
         }
       }
-    }
+  }
+}
+
+/// Builds the initial reservoir used by Algorithm L.
+/// This is a dictionary with keys ranging from `0` up to `n - 1` where each
+/// value is the corresponding element at that position in `list`.
+///
+/// This also returns the remaining elements of `list` that didn't end up in
+/// the reservoir.
+///
+fn build_reservoir(from list: List(a), sized n: Int) -> #(Dict(Int, a), List(a)) {
+  build_reservoir_loop(list, n, dict.new())
+}
+
+fn build_reservoir_loop(
+  list: List(a),
+  size: Int,
+  reservoir: Dict(Int, a),
+) -> #(Dict(Int, a), List(a)) {
+  let reservoir_size = dict.size(reservoir)
+  case reservoir_size >= size {
+    // The reservoir already has the size we wanted.
+    True -> #(reservoir, list)
+
+    // Otherwise we add another element from the list to the reservoir
+    False ->
+      case list {
+        [] -> #(reservoir, [])
+        [first, ..rest] -> {
+          let reservoir = dict.insert(reservoir, reservoir_size, first)
+          build_reservoir_loop(rest, size, reservoir)
+        }
+      }
   }
 }
 
