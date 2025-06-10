@@ -970,36 +970,34 @@ pub fn max_test() {
 
 pub fn sample_test() {
   assert list.sample([], 3) == []
-
   assert list.sample([1, 2, 3], 0) == []
-
   assert list.sample([1, 2, 3], -1) == []
-
-  assert [1, 2]
-    |> list.sample(5)
-    |> list.sort(int.compare)
-    == [1, 2]
-
+  assert list.sort(list.sample([1, 2], 5), int.compare) == [1, 2]
   assert list.sample([1], 1) == [1]
 
-  let input = list.range(1, 100)
-  let sample = list.sample(input, 10)
-  assert list.length(sample) == 10
+  assert 10
+    == list.range(1, 100)
+    |> list.sample(10)
+    |> list.unique
+    |> list.length
 
-  let repeated = [1, 1, 1, 1, 1]
-  let sample = list.sample(repeated, 3)
-  assert list.all(sample, fn(x) { x == 1 })
+  assert [1, 1, 1, 1, 1]
+    |> list.sample(3)
+    |> list.all(fn(x) { x == 1 })
 
-  let input = list.range(1, 1000)
-  let sample = list.sample(input, 100)
+  // Some tests on a bigger sample.
+  let sample =
+    list.range(1, 1000)
+    |> list.sample(100)
+
   assert sample
     |> list.sort(int.compare)
     |> list.all(fn(x) { x >= 1 && x <= 1000 })
 
-  assert list.length(sample) == 100
+  assert 100 == list.length(list.unique(sample))
 
-  let min = list.fold(sample, 1000, int.min)
-  let max = list.fold(sample, 1, int.max)
+  let assert Ok(min) = list.reduce(sample, int.min)
+  let assert Ok(max) = list.reduce(sample, int.max)
   assert min >= 1
   assert max <= 1000
 }
