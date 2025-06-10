@@ -2329,10 +2329,38 @@ pub fn sample(from list: List(a), up_to n: Int) -> List(a) {
         True -> []
         False -> {
           let w = float.exponential(log_random() /. int.to_float(n))
-          sample_loop(list, reservoir, n, n, w) |> dict.values
+          dict.values(sample_loop(list, reservoir, n, w))
         }
       }
   }
+}
+
+fn sample_loop(
+  list: List(a),
+  reservoir: Dict(Int, a),
+  k: Int,
+  w: Float,
+) -> Dict(Int, a) {
+  let skip = {
+    let assert Ok(log) = float.logarithm(1.0 -. w)
+    float.round(float.floor(log_random() /. log))
+  }
+
+  case drop(list, skip) {
+    [] -> reservoir
+    [first, ..rest] -> {
+      let reservoir = dict.insert(reservoir, int.random(k), first)
+      let w = w *. float.exponential(log_random() /. int.to_float(k))
+      sample_loop(rest, reservoir, k, w)
+    }
+  }
+}
+
+const min_positive = 2.2250738585072014e-308
+
+fn log_random() -> Float {
+  let assert Ok(random) = float.logarithm(float.random() +. min_positive)
+  random
 }
 
 /// Builds the initial reservoir used by Algorithm L.
@@ -2366,34 +2394,4 @@ fn build_reservoir_loop(
         }
       }
   }
-}
-
-fn sample_loop(
-  list: List(a),
-  reservoir: Dict(Int, a),
-  k: Int,
-  index: Int,
-  w: Float,
-) -> Dict(Int, a) {
-  let skip = {
-    let assert Ok(log_result) = float.logarithm(1.0 -. w)
-    log_random() /. log_result |> float.floor |> float.round
-  }
-
-  let index = index + skip + 1
-
-  case drop(list, skip) {
-    [] -> reservoir
-    [first, ..rest] -> {
-      let reservoir = dict.insert(reservoir, int.random(k), first)
-      let w = w *. float.exponential(log_random() /. int.to_float(k))
-      sample_loop(rest, reservoir, k, index, w)
-    }
-  }
-}
-
-fn log_random() -> Float {
-  let min_positive = 2.2250738585072014e-308
-  let assert Ok(random) = float.logarithm(float.random() +. min_positive)
-  random
 }
