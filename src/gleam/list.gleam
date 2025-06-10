@@ -2317,28 +2317,25 @@ fn max_loop(list, compare, max) {
 pub fn sample(from list: List(a), up_to n: Int) -> List(a) {
   let #(reservoir, rest) = build_reservoir(from: list, sized: n)
 
-  case rest {
-    // If we've already taken all the items there were in the list there's no
-    // need to do anything else, we return the entire reservoire.
-    [] -> dict.values(reservoir)
-    _ ->
-      case dict.is_empty(reservoir) {
-        // If the reservoire is empty that means we were asking to sample 0 or
-        // less items. That doesn't make much sense, so we just return an empty
-        // list.
-        True -> []
-        False -> {
-          let w = float.exponential(log_random() /. int.to_float(n))
-          dict.values(sample_loop(list, reservoir, n, w))
-        }
-      }
+  case dict.is_empty(reservoir) {
+    // If the reservoire is empty that means we were asking to sample 0 or
+    // less items. That doesn't make much sense, so we just return an empty
+    // list.
+    True -> []
+
+    // Otherwise we keep looping over the remaining part of the list replacing
+    // random elements in the reservoir.
+    False -> {
+      let w = float.exponential(log_random() /. int.to_float(n))
+      dict.values(sample_loop(rest, reservoir, n, w))
+    }
   }
 }
 
 fn sample_loop(
   list: List(a),
   reservoir: Dict(Int, a),
-  k: Int,
+  n: Int,
   w: Float,
 ) -> Dict(Int, a) {
   let skip = {
@@ -2349,9 +2346,9 @@ fn sample_loop(
   case drop(list, skip) {
     [] -> reservoir
     [first, ..rest] -> {
-      let reservoir = dict.insert(reservoir, int.random(k), first)
-      let w = w *. float.exponential(log_random() /. int.to_float(k))
-      sample_loop(rest, reservoir, k, w)
+      let reservoir = dict.insert(reservoir, int.random(n), first)
+      let w = w *. float.exponential(log_random() /. int.to_float(n))
+      sample_loop(rest, reservoir, n, w)
     }
   }
 }
