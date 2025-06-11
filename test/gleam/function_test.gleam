@@ -1,30 +1,20 @@
 import gleam/function
-import gleam/should
 import gleam/string
 
 pub fn identity_test() {
-  1
-  |> function.identity
-  |> should.equal(1)
+  assert function.identity(1) == 1
 
-  ""
-  |> function.identity
-  |> should.equal("")
+  assert function.identity("") == ""
 
-  []
-  |> function.identity
-  |> should.equal([])
+  assert function.identity([]) == []
 
-  #(1, 2.0)
-  |> function.identity
-  |> should.equal(#(1, 2.0))
+  assert function.identity(#(1, 2.0)) == #(1, 2.0)
 }
 
 pub fn tap_test() {
-  "Thanks Joe & Louis"
-  |> function.tap(fn(s: String) {
-    let _ = string.append(s, "... and Jose!")
-    Nil
-  })
-  |> should.equal("Thanks Joe & Louis")
+  assert function.tap("Thanks Joe & Louis", fn(s: String) {
+      let _ = string.append(s, "... and Jose!")
+      Nil
+    })
+    == "Thanks Joe & Louis"
 }
