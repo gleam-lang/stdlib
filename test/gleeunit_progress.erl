@@ -48,8 +48,8 @@ handle_end(test, Data, State) ->
             ?reporting:test_failed(State, Module, Function, Exception)
     end.
 
-handle_cancel(_test_or_group, _data, State) ->
-    State.
+handle_cancel(_test_or_group, Data, State) ->
+    ?reporting:test_failed(State, <<"gleeunit">>, <<"main">>, Data).
 
 terminate({ok, _Data}, State) ->
     ?reporting:finished(State),
