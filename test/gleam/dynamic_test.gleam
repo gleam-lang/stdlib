@@ -1,20 +1,13 @@
 import gleam/dynamic
-import gleam/should
 
 pub fn classify_true_test() {
-  dynamic.bool(True)
-  |> dynamic.classify
-  |> should.equal("Bool")
+  assert dynamic.classify(dynamic.bool(True)) == "Bool"
 }
 
 pub fn classify_false_test() {
-  dynamic.bool(False)
-  |> dynamic.classify
-  |> should.equal("Bool")
+  assert dynamic.classify(dynamic.bool(False)) == "Bool"
 }
 
 pub fn null_test() {
-  dynamic.nil()
-  |> dynamic.classify
-  |> should.equal("Nil")
+  assert dynamic.classify(dynamic.nil()) == "Nil"
 }

@@ -3,7 +3,6 @@ import gleam/float
 import gleam/int
 import gleam/list
 import gleam/pair
-import gleam/should
 import gleam/string
 
 @target(erlang)
@@ -18,17 +17,14 @@ const recursion_test_cycles = 1_000_000
 const recursion_test_cycles = 40_000
 
 pub fn length_test() {
-  list.length([])
-  |> should.equal(0)
+  let zero = 0
+  assert list.length([]) == zero
 
-  list.length([1])
-  |> should.equal(1)
+  assert list.length([1]) == 1
 
-  list.length([1, 1])
-  |> should.equal(2)
+  assert list.length([1, 1]) == 2
 
-  list.length([1, 1, 1])
-  |> should.equal(3)
+  assert list.length([1, 1, 1]) == 3
 
   // TCO test
   list.range(0, recursion_test_cycles)
@@ -36,33 +32,26 @@ pub fn length_test() {
 }
 
 pub fn count_test() {
-  list.count([], int.is_odd)
-  |> should.equal(0)
+  assert list.count([], int.is_odd) == 0
 
-  list.count([2, 4, 6], int.is_odd)
-  |> should.equal(0)
+  assert list.count([2, 4, 6], int.is_odd) == 0
 
-  list.count([1, 2, 3, 4, 5], int.is_odd)
-  |> should.equal(3)
+  assert list.count([1, 2, 3, 4, 5], int.is_odd) == 3
 
-  list.count(["a", "list", "with", "some", "string", "values"], fn(a) {
-    string.length(a) > 4
-  })
-  |> should.equal(2)
+  assert list.count(["a", "list", "with", "some", "string", "values"], fn(a) {
+      string.length(a) > 4
+    })
+    == 2
 }
 
 pub fn reverse_test() {
-  list.reverse([])
-  |> should.equal([])
+  assert list.reverse([]) == []
 
-  list.reverse([1])
-  |> should.equal([1])
+  assert list.reverse([1]) == [1]
 
-  list.reverse([1, 2])
-  |> should.equal([2, 1])
+  assert list.reverse([1, 2]) == [2, 1]
 
-  list.reverse([1, 2, 3, 4, 5])
-  |> should.equal([5, 4, 3, 2, 1])
+  assert list.reverse([1, 2, 3, 4, 5]) == [5, 4, 3, 2, 1]
 
   // TCO test
   list.range(0, recursion_test_cycles)
@@ -70,22 +59,17 @@ pub fn reverse_test() {
 }
 
 pub fn is_empty_test() {
-  list.is_empty([])
-  |> should.be_true
+  assert list.is_empty([])
 
-  list.is_empty([1])
-  |> should.be_false
+  assert !list.is_empty([1])
 }
 
 pub fn contains_test() {
-  list.contains([0, 4, 5, 1], 1)
-  |> should.be_true
+  assert list.contains([0, 4, 5, 1], 1)
 
-  list.contains([0, 4, 5, 7], 1)
-  |> should.be_false
+  assert !list.contains([0, 4, 5, 7], 1)
 
-  list.contains([], 1)
-  |> should.be_false
+  assert !list.contains([], 1)
 
   // TCO test
   list.repeat(0, recursion_test_cycles)
@@ -93,63 +77,45 @@ pub fn contains_test() {
 }
 
 pub fn first_test() {
-  list.first([0, 4, 5, 7])
-  |> should.equal(Ok(0))
+  assert list.first([0, 4, 5, 7]) == Ok(0)
 
-  list.first([])
-  |> should.equal(Error(Nil))
+  assert list.first([]) == Error(Nil)
 }
 
 pub fn rest_test() {
-  list.rest([0, 4, 5, 7])
-  |> should.equal(Ok([4, 5, 7]))
+  assert list.rest([0, 4, 5, 7]) == Ok([4, 5, 7])
 
-  list.rest([0])
-  |> should.equal(Ok([]))
+  assert list.rest([0]) == Ok([])
 
-  list.rest([])
-  |> should.equal(Error(Nil))
+  assert list.rest([]) == Error(Nil)
 }
 
 pub fn group_test() {
-  [Ok(10), Error("Wrong"), Ok(200), Ok(1)]
-  |> list.group(fn(i) {
-    case i {
-      Ok(_) -> "Successful"
-      Error(_) -> "Failed"
-    }
-  })
-  |> should.equal(
-    dict.new()
+  assert list.group([Ok(10), Error("Wrong"), Ok(200), Ok(1)], fn(i) {
+      case i {
+        Ok(_) -> "Successful"
+        Error(_) -> "Failed"
+      }
+    })
+    == dict.new()
     |> dict.insert("Failed", [Error("Wrong")])
-    |> dict.insert("Successful", [Ok(1), Ok(200), Ok(10)]),
-  )
+    |> dict.insert("Successful", [Ok(1), Ok(200), Ok(10)])
 
-  list.group([1, 2, 3, 4, 5], fn(i) { i - i / 3 * 3 })
-  |> should.equal(
-    dict.new()
+  assert list.group([1, 2, 3, 4, 5], fn(i) { i - i / 3 * 3 })
+    == dict.new()
     |> dict.insert(0, [3])
     |> dict.insert(1, [4, 1])
-    |> dict.insert(2, [5, 2]),
-  )
+    |> dict.insert(2, [5, 2])
 }
 
 pub fn filter_test() {
-  []
-  |> list.filter(fn(_) { True })
-  |> should.equal([])
+  assert list.filter([], fn(_) { True }) == []
 
-  [0, 4, 5, 7, 3]
-  |> list.filter(fn(_) { True })
-  |> should.equal([0, 4, 5, 7, 3])
+  assert list.filter([0, 4, 5, 7, 3], fn(_) { True }) == [0, 4, 5, 7, 3]
 
-  [0, 4, 5, 7, 3]
-  |> list.filter(fn(x) { x > 4 })
-  |> should.equal([5, 7])
+  assert list.filter([0, 4, 5, 7, 3], fn(x) { x > 4 }) == [5, 7]
 
-  [0, 4, 5, 7, 3]
-  |> list.filter(fn(x) { x < 4 })
-  |> should.equal([0, 3])
+  assert list.filter([0, 4, 5, 7, 3], fn(x) { x < 4 }) == [0, 3]
 
   // TCO test
   list.range(0, recursion_test_cycles)
@@ -157,13 +123,9 @@ pub fn filter_test() {
 }
 
 pub fn filter_map_test() {
-  [2, 4, 6, 1]
-  |> list.filter_map(fn(x) { Ok(x + 1) })
-  |> should.equal([3, 5, 7, 2])
+  assert list.filter_map([2, 4, 6, 1], fn(x) { Ok(x + 1) }) == [3, 5, 7, 2]
 
-  [2, 4, 6, 1]
-  |> list.filter_map(Error)
-  |> should.equal([])
+  assert list.filter_map([2, 4, 6, 1], Error) == []
 
   // TCO test
   list.repeat(0, recursion_test_cycles)
@@ -171,13 +133,9 @@ pub fn filter_map_test() {
 }
 
 pub fn map_test() {
-  []
-  |> list.map(fn(x) { x * 2 })
-  |> should.equal([])
+  assert list.map([], fn(x) { x * 2 }) == []
 
-  [0, 4, 5, 7, 3]
-  |> list.map(fn(x) { x * 2 })
-  |> should.equal([0, 8, 10, 14, 6])
+  assert list.map([0, 4, 5, 7, 3], fn(x) { x * 2 }) == [0, 8, 10, 14, 6]
 
   // TCO test
   list.repeat(0, recursion_test_cycles)
@@ -185,23 +143,17 @@ pub fn map_test() {
 }
 
 pub fn map2_test() {
-  list.map2([1, 2, 3], [], int.add)
-  |> should.equal([])
+  assert list.map2([1, 2, 3], [], int.add) == []
 
-  list.map2([], [1, 2, 3], int.add)
-  |> should.equal([])
+  assert list.map2([], [1, 2, 3], int.add) == []
 
-  list.map2([], [], int.add)
-  |> should.equal([])
+  assert list.map2([], [], int.add) == []
 
-  list.map2([1, 2, 3], [4, 5], int.add)
-  |> should.equal([5, 7])
+  assert list.map2([1, 2, 3], [4, 5], int.add) == [5, 7]
 
-  list.map2([1, 2, 3], [4, 5, 6], int.add)
-  |> should.equal([5, 7, 9])
+  assert list.map2([1, 2, 3], [4, 5, 6], int.add) == [5, 7, 9]
 
-  list.map2([1, 2, 3], ["1", "2"], pair.new)
-  |> should.equal([#(1, "1"), #(2, "2")])
+  assert list.map2([1, 2, 3], ["1", "2"], pair.new) == [#(1, "1"), #(2, "2")]
 
   // TCO test
   let list = list.repeat(0, recursion_test_cycles)
@@ -209,9 +161,10 @@ pub fn map2_test() {
 }
 
 pub fn map_fold_test() {
-  [1, 2, 3, 4]
-  |> list.map_fold(from: 0, with: fn(acc, i) { #(acc + i, i * 2) })
-  |> should.equal(#(10, [2, 4, 6, 8]))
+  assert list.map_fold([1, 2, 3, 4], from: 0, with: fn(acc, i) {
+      #(acc + i, i * 2)
+    })
+    == #(10, [2, 4, 6, 8])
 
   // TCO test
   list.repeat(0, recursion_test_cycles)
@@ -226,13 +179,9 @@ pub fn try_map_test() {
     }
   }
 
-  [5, 6, 5, 6]
-  |> list.try_map(fun)
-  |> should.equal(Ok([10, 12, 10, 12]))
+  assert list.try_map([5, 6, 5, 6], fun) == Ok([10, 12, 10, 12])
 
-  [4, 6, 5, 7, 3]
-  |> list.try_map(fun)
-  |> should.equal(Error(7))
+  assert list.try_map([4, 6, 5, 7, 3], fun) == Error(7)
 
   // TCO test
   list.repeat(6, recursion_test_cycles)
@@ -240,13 +189,9 @@ pub fn try_map_test() {
 }
 
 pub fn drop_test() {
-  []
-  |> list.drop(5)
-  |> should.equal([])
+  assert list.drop([], 5) == []
 
-  [1, 2, 3, 4, 5, 6, 7, 8]
-  |> list.drop(5)
-  |> should.equal([6, 7, 8])
+  assert list.drop([1, 2, 3, 4, 5, 6, 7, 8], 5) == [6, 7, 8]
 
   // TCO test
   list.repeat(0, recursion_test_cycles)
@@ -254,13 +199,9 @@ pub fn drop_test() {
 }
 
 pub fn take_test() {
-  []
-  |> list.take(5)
-  |> should.equal([])
+  assert list.take([], 5) == []
 
-  [1, 2, 3, 4, 5, 6, 7, 8]
-  |> list.take(5)
-  |> should.equal([1, 2, 3, 4, 5])
+  assert list.take([1, 2, 3, 4, 5, 6, 7, 8], 5) == [1, 2, 3, 4, 5]
 
   // TCO test
   list.repeat(0, recursion_test_cycles)
@@ -268,54 +209,39 @@ pub fn take_test() {
 }
 
 pub fn new_test() {
-  list.new()
-  |> should.equal([])
+  assert list.new() == []
 }
 
 pub fn wrap_test() {
-  list.wrap([])
-  |> should.equal([[]])
+  assert list.wrap([]) == [[]]
 
-  list.wrap([[]])
-  |> should.equal([[[]]])
+  assert list.wrap([[]]) == [[[]]]
 
-  list.wrap(Nil)
-  |> should.equal([Nil])
+  assert list.wrap(Nil) == [Nil]
 
-  list.wrap(1)
-  |> should.equal([1])
+  assert list.wrap(1) == [1]
 
-  list.wrap([1, 2])
-  |> should.equal([[1, 2]])
+  assert list.wrap([1, 2]) == [[1, 2]]
 
-  list.wrap([[1, 2, 3]])
-  |> should.equal([[[1, 2, 3]]])
+  assert list.wrap([[1, 2, 3]]) == [[[1, 2, 3]]]
 }
 
 pub fn append_test() {
-  list.append([1], [2, 3])
-  |> should.equal([1, 2, 3])
+  assert list.append([1], [2, 3]) == [1, 2, 3]
 
-  list.append([1, 2], [])
-  |> should.equal([1, 2])
+  assert list.append([1, 2], []) == [1, 2]
 
-  list.append([], [1, 2])
-  |> should.equal([1, 2])
+  assert list.append([], [1, 2]) == [1, 2]
 
-  list.append([1, 2], [3, 4])
-  |> should.equal([1, 2, 3, 4])
+  assert list.append([1, 2], [3, 4]) == [1, 2, 3, 4]
 
-  list.append([1, 2, 3], [])
-  |> should.equal([1, 2, 3])
+  assert list.append([1, 2, 3], []) == [1, 2, 3]
 
-  list.append([1, 2, 3], [4])
-  |> should.equal([1, 2, 3, 4])
+  assert list.append([1, 2, 3], [4]) == [1, 2, 3, 4]
 
-  list.append([1, 2, 3, 4], [5])
-  |> should.equal([1, 2, 3, 4, 5])
+  assert list.append([1, 2, 3, 4], [5]) == [1, 2, 3, 4, 5]
 
-  list.append([], [])
-  |> should.equal([])
+  assert list.append([], []) == []
 
   // TCO test
   list.range(0, recursion_test_cycles)
@@ -323,28 +249,22 @@ pub fn append_test() {
 }
 
 pub fn flatten_test() {
-  list.flatten([])
-  |> should.equal([])
+  assert list.flatten([]) == []
 
-  list.flatten([[]])
-  |> should.equal([])
+  assert list.flatten([[]]) == []
 
-  list.flatten([[], [], []])
-  |> should.equal([])
+  assert list.flatten([[], [], []]) == []
 
-  list.flatten([[1, 2], [], [3, 4]])
-  |> should.equal([1, 2, 3, 4])
+  assert list.flatten([[1, 2], [], [3, 4]]) == [1, 2, 3, 4]
 }
 
 pub fn flat_map_test() {
-  list.flat_map([1, 10, 20], fn(x) { [x, x + 1] })
-  |> should.equal([1, 2, 10, 11, 20, 21])
+  assert list.flat_map([1, 10, 20], fn(x) { [x, x + 1] })
+    == [1, 2, 10, 11, 20, 21]
 }
 
 pub fn fold_test() {
-  [1, 2, 3]
-  |> list.fold([], fn(acc, x) { [x, ..acc] })
-  |> should.equal([3, 2, 1])
+  assert list.fold([1, 2, 3], [], fn(acc, x) { [x, ..acc] }) == [3, 2, 1]
 
   // TCO test
   list.range(0, recursion_test_cycles)
@@ -352,15 +272,15 @@ pub fn fold_test() {
 }
 
 pub fn fold_right_test() {
-  [1, 2, 3]
-  |> list.fold_right(from: [], with: fn(acc, x) { [x, ..acc] })
-  |> should.equal([1, 2, 3])
+  assert list.fold_right([1, 2, 3], from: [], with: fn(acc, x) { [x, ..acc] })
+    == [1, 2, 3]
 }
 
 pub fn index_fold_test() {
-  ["a", "b", "c"]
-  |> list.index_fold([], fn(acc, i, ix) { [#(ix, i), ..acc] })
-  |> should.equal([#(2, "c"), #(1, "b"), #(0, "a")])
+  assert list.index_fold(["a", "b", "c"], [], fn(acc, i, ix) {
+      [#(ix, i), ..acc]
+    })
+    == [#(2, "c"), #(1, "b"), #(0, "a")]
 
   // TCO test
   list.range(0, recursion_test_cycles)
@@ -368,14 +288,13 @@ pub fn index_fold_test() {
 }
 
 pub fn fold_until_test() {
-  [1, 2, 3, 4]
-  |> list.fold_until(from: 0, with: fn(acc, n) {
-    case n < 4 {
-      True -> list.Continue(acc + n)
-      False -> list.Stop(acc)
-    }
-  })
-  |> should.equal(6)
+  assert list.fold_until([1, 2, 3, 4], from: 0, with: fn(acc, n) {
+      case n < 4 {
+        True -> list.Continue(acc + n)
+        False -> list.Stop(acc)
+      }
+    })
+    == 6
 
   // TCO test
   list.range(0, recursion_test_cycles)
@@ -388,23 +307,21 @@ pub fn fold_until_test() {
 }
 
 pub fn try_fold_test() {
-  [1, 2, 3]
-  |> list.try_fold(0, fn(acc, i) {
-    case i < 4 {
-      True -> Ok(acc + i)
-      False -> Error(Nil)
-    }
-  })
-  |> should.equal(Ok(6))
+  assert list.try_fold([1, 2, 3], 0, fn(acc, i) {
+      case i < 4 {
+        True -> Ok(acc + i)
+        False -> Error(Nil)
+      }
+    })
+    == Ok(6)
 
-  [1, 2, 3]
-  |> list.try_fold(0, fn(acc, i) {
-    case i < 3 {
-      True -> Ok(acc + i)
-      False -> Error(Nil)
-    }
-  })
-  |> should.equal(Error(Nil))
+  assert list.try_fold([1, 2, 3], 0, fn(acc, i) {
+      case i < 3 {
+        True -> Ok(acc + i)
+        False -> Error(Nil)
+      }
+    })
+    == Error(Nil)
 
   // TCO test
   list.range(0, recursion_test_cycles)
@@ -424,17 +341,11 @@ pub fn find_map_test() {
     }
   }
 
-  [1, 2, 3]
-  |> list.find_map(with: f)
-  |> should.equal(Ok(4))
+  assert list.find_map([1, 2, 3], with: f) == Ok(4)
 
-  [1, 3, 2]
-  |> list.find_map(with: f)
-  |> should.equal(Ok(4))
+  assert list.find_map([1, 3, 2], with: f) == Ok(4)
 
-  [1, 3]
-  |> list.find_map(with: f)
-  |> should.equal(Error(Nil))
+  assert list.find_map([1, 3], with: f) == Error(Nil)
 
   // TCO test
   list.range(0, recursion_test_cycles)
@@ -449,17 +360,11 @@ pub fn find_map_test() {
 pub fn find_test() {
   let is_two = fn(x) { x == 2 }
 
-  [1, 2, 3]
-  |> list.find(one_that: is_two)
-  |> should.equal(Ok(2))
+  assert list.find([1, 2, 3], one_that: is_two) == Ok(2)
 
-  [1, 3, 2]
-  |> list.find(one_that: is_two)
-  |> should.equal(Ok(2))
+  assert list.find([1, 3, 2], one_that: is_two) == Ok(2)
 
-  [1, 3]
-  |> list.find(one_that: is_two)
-  |> should.equal(Error(Nil))
+  assert list.find([1, 3], one_that: is_two) == Error(Nil)
 
   // TCO test
   list.range(0, recursion_test_cycles)
@@ -467,14 +372,11 @@ pub fn find_test() {
 }
 
 pub fn all_test() {
-  list.all([1, 2, 3, 4, 5], fn(x) { x > 0 })
-  |> should.be_true
+  assert list.all([1, 2, 3, 4, 5], fn(x) { x > 0 })
 
-  list.all([1, 2, 3, 4, 5], fn(x) { x < 0 })
-  |> should.be_false
+  assert !list.all([1, 2, 3, 4, 5], fn(x) { x < 0 })
 
-  list.all([], fn(_) { False })
-  |> should.be_true
+  assert list.all([], fn(_) { False })
 
   [1, 2, 3]
   |> list.all(fn(x) {
@@ -497,14 +399,11 @@ pub fn all_test() {
 }
 
 pub fn any_test() {
-  list.any([1, 2, 3, 4, 5], fn(x) { x == 2 })
-  |> should.be_true
+  assert list.any([1, 2, 3, 4, 5], fn(x) { x == 2 })
 
-  list.any([1, 2, 3, 4, 5], fn(x) { x < 0 })
-  |> should.be_false
+  assert !list.any([1, 2, 3, 4, 5], fn(x) { x < 0 })
 
-  list.any([], fn(_) { False })
-  |> should.be_false
+  assert !list.any([], fn(_) { False })
 
   [1, 2, 3]
   |> list.any(fn(x) {
@@ -522,20 +421,15 @@ pub fn any_test() {
 }
 
 pub fn zip_test() {
-  list.zip([], [1, 2, 3])
-  |> should.equal([])
+  assert list.zip([], [1, 2, 3]) == []
 
-  list.zip([1, 2], [])
-  |> should.equal([])
+  assert list.zip([1, 2], []) == []
 
-  list.zip([1, 2, 3], [4, 5, 6])
-  |> should.equal([#(1, 4), #(2, 5), #(3, 6)])
+  assert list.zip([1, 2, 3], [4, 5, 6]) == [#(1, 4), #(2, 5), #(3, 6)]
 
-  list.zip([5, 6], [1, 2, 3])
-  |> should.equal([#(5, 1), #(6, 2)])
+  assert list.zip([5, 6], [1, 2, 3]) == [#(5, 1), #(6, 2)]
 
-  list.zip([5, 6, 7], [1, 2])
-  |> should.equal([#(5, 1), #(6, 2)])
+  assert list.zip([5, 6, 7], [1, 2]) == [#(5, 1), #(6, 2)]
 
   // TCO test
   let recursion_test_cycles_list = list.range(0, recursion_test_cycles)
@@ -543,28 +437,22 @@ pub fn zip_test() {
 }
 
 pub fn strict_zip_test() {
-  list.strict_zip([], [1, 2, 3])
-  |> should.equal(Error(Nil))
+  assert list.strict_zip([], [1, 2, 3]) == Error(Nil)
 
-  list.strict_zip([1, 2], [])
-  |> should.equal(Error(Nil))
+  assert list.strict_zip([1, 2], []) == Error(Nil)
 
-  list.strict_zip([1, 2, 3], [4, 5, 6])
-  |> should.equal(Ok([#(1, 4), #(2, 5), #(3, 6)]))
+  assert list.strict_zip([1, 2, 3], [4, 5, 6])
+    == Ok([#(1, 4), #(2, 5), #(3, 6)])
 
-  list.strict_zip([5, 6], [1, 2, 3])
-  |> should.equal(Error(Nil))
+  assert list.strict_zip([5, 6], [1, 2, 3]) == Error(Nil)
 
-  list.strict_zip([5, 6, 7], [1, 2])
-  |> should.equal(Error(Nil))
+  assert list.strict_zip([5, 6, 7], [1, 2]) == Error(Nil)
 }
 
 pub fn unzip_test() {
-  list.unzip([#(1, 2), #(3, 4)])
-  |> should.equal(#([1, 3], [2, 4]))
+  assert list.unzip([#(1, 2), #(3, 4)]) == #([1, 3], [2, 4])
 
-  list.unzip([])
-  |> should.equal(#([], []))
+  assert list.unzip([]) == #([], [])
 
   // TCO test
   let recursion_test_cycles_list = list.range(0, recursion_test_cycles)
@@ -573,11 +461,9 @@ pub fn unzip_test() {
 }
 
 pub fn intersperse_test() {
-  list.intersperse([1, 2, 3], 4)
-  |> should.equal([1, 4, 2, 4, 3])
+  assert list.intersperse([1, 2, 3], 4) == [1, 4, 2, 4, 3]
 
-  list.intersperse([], 2)
-  |> should.equal([])
+  assert list.intersperse([], 2) == []
 
   // TCO test
   list.range(0, recursion_test_cycles)
@@ -585,17 +471,13 @@ pub fn intersperse_test() {
 }
 
 pub fn unique_test() {
-  list.unique([1, 1, 2, 3, 4, 4, 4, 5, 6])
-  |> should.equal([1, 2, 3, 4, 5, 6])
+  assert list.unique([1, 1, 2, 3, 4, 4, 4, 5, 6]) == [1, 2, 3, 4, 5, 6]
 
-  list.unique([7, 1, 45, 6, 2, 47, 2, 7, 5])
-  |> should.equal([7, 1, 45, 6, 2, 47, 5])
+  assert list.unique([7, 1, 45, 6, 2, 47, 2, 7, 5]) == [7, 1, 45, 6, 2, 47, 5]
 
-  list.unique([3, 4, 5])
-  |> should.equal([3, 4, 5])
+  assert list.unique([3, 4, 5]) == [3, 4, 5]
 
-  list.unique([])
-  |> should.equal([])
+  assert list.unique([]) == []
 
   // TCO test
   list.range(0, recursion_test_cycles / 100)
@@ -603,37 +485,22 @@ pub fn unique_test() {
 }
 
 pub fn sort_test() {
-  []
-  |> list.sort(int.compare)
-  |> should.equal([])
+  assert list.sort([], int.compare) == []
 
-  [1]
-  |> list.sort(int.compare)
-  |> should.equal([1])
+  assert list.sort([1], int.compare) == [1]
 
-  [2, 1]
-  |> list.sort(int.compare)
-  |> should.equal([1, 2])
+  assert list.sort([2, 1], int.compare) == [1, 2]
 
-  [3, 1, 2]
-  |> list.sort(int.compare)
-  |> should.equal([1, 2, 3])
+  assert list.sort([3, 1, 2], int.compare) == [1, 2, 3]
 
-  [4, 3, 6, 5, 4]
-  |> list.sort(int.compare)
-  |> should.equal([3, 4, 4, 5, 6])
+  assert list.sort([4, 3, 6, 5, 4], int.compare) == [3, 4, 4, 5, 6]
 
-  [4, 3, 6, 5, 4, 1]
-  |> list.sort(int.compare)
-  |> should.equal([1, 3, 4, 4, 5, 6])
+  assert list.sort([4, 3, 6, 5, 4, 1], int.compare) == [1, 3, 4, 4, 5, 6]
 
-  [4.1, 3.1, 6.1, 5.1, 4.1]
-  |> list.sort(float.compare)
-  |> should.equal([3.1, 4.1, 4.1, 5.1, 6.1])
+  assert list.sort([4.1, 3.1, 6.1, 5.1, 4.1], float.compare)
+    == [3.1, 4.1, 4.1, 5.1, 6.1]
 
-  []
-  |> list.sort(int.compare)
-  |> should.equal([])
+  assert list.sort([], int.compare) == []
 
   // Stability tests
   let sorted_cards = [
@@ -672,10 +539,10 @@ pub fn sort_test() {
     #(1, 3),
     #(2, 3),
   ]
-  shuffled_cards
-  |> list.sort(fn(a, b) { int.compare(a.0, b.0) })
-  |> list.sort(fn(a, b) { int.compare(a.1, b.1) })
-  |> should.equal(sorted_cards)
+  assert shuffled_cards
+    |> list.sort(fn(a, b) { int.compare(a.0, b.0) })
+    |> list.sort(fn(a, b) { int.compare(a.1, b.1) })
+    == sorted_cards
 
   // TCO test
   list.range(0, recursion_test_cycles)
@@ -684,82 +551,58 @@ pub fn sort_test() {
 }
 
 pub fn index_map_test() {
-  list.index_map([3, 4, 5], fn(x, i) { #(i, x) })
-  |> should.equal([#(0, 3), #(1, 4), #(2, 5)])
+  assert list.index_map([3, 4, 5], fn(x, i) { #(i, x) })
+    == [#(0, 3), #(1, 4), #(2, 5)]
 
   let f = fn(x, i) { #(x, i) }
-  list.index_map(["a", "b"], f)
-  |> should.equal([#("a", 0), #("b", 1)])
+  assert list.index_map(["a", "b"], f) == [#("a", 0), #("b", 1)]
 
   let f = fn(x, i) { #(x, i) }
-  list.index_map(["a", "b", "c"], f)
-  |> should.equal([#("a", 0), #("b", 1), #("c", 2)])
+  assert list.index_map(["a", "b", "c"], f) == [#("a", 0), #("b", 1), #("c", 2)]
 }
 
 pub fn range_test() {
-  list.range(0, 0)
-  |> should.equal([0])
+  assert list.range(0, 0) == [0]
 
-  list.range(1, 1)
-  |> should.equal([1])
+  assert list.range(1, 1) == [1]
 
-  list.range(-1, -1)
-  |> should.equal([-1])
+  assert list.range(-1, -1) == [-1]
 
-  list.range(0, 1)
-  |> should.equal([0, 1])
+  assert list.range(0, 1) == [0, 1]
 
-  list.range(0, 5)
-  |> should.equal([0, 1, 2, 3, 4, 5])
+  assert list.range(0, 5) == [0, 1, 2, 3, 4, 5]
 
-  list.range(1, -5)
-  |> should.equal([1, 0, -1, -2, -3, -4, -5])
+  assert list.range(1, -5) == [1, 0, -1, -2, -3, -4, -5]
 
   // TCO test
   list.range(1, recursion_test_cycles)
 }
 
 pub fn repeat_test() {
-  list.repeat(1, -10)
-  |> should.equal([])
+  assert list.repeat(1, -10) == []
 
-  list.repeat(1, 0)
-  |> should.equal([])
+  assert list.repeat(1, 0) == []
 
-  list.repeat(2, 3)
-  |> should.equal([2, 2, 2])
+  assert list.repeat(2, 3) == [2, 2, 2]
 
-  list.repeat("x", 5)
-  |> should.equal(["x", "x", "x", "x", "x"])
+  assert list.repeat("x", 5) == ["x", "x", "x", "x", "x"]
 
   // TCO test
   list.repeat(0, recursion_test_cycles)
 }
 
 pub fn split_test() {
-  []
-  |> list.split(0)
-  |> should.equal(#([], []))
+  assert list.split([], 0) == #([], [])
 
-  [0, 1, 2, 3, 4]
-  |> list.split(0)
-  |> should.equal(#([], [0, 1, 2, 3, 4]))
+  assert list.split([0, 1, 2, 3, 4], 0) == #([], [0, 1, 2, 3, 4])
 
-  [0, 1, 2, 3, 4]
-  |> list.split(-2)
-  |> should.equal(#([], [0, 1, 2, 3, 4]))
+  assert list.split([0, 1, 2, 3, 4], -2) == #([], [0, 1, 2, 3, 4])
 
-  [0, 1, 2, 3, 4]
-  |> list.split(1)
-  |> should.equal(#([0], [1, 2, 3, 4]))
+  assert list.split([0, 1, 2, 3, 4], 1) == #([0], [1, 2, 3, 4])
 
-  [0, 1, 2, 3, 4]
-  |> list.split(3)
-  |> should.equal(#([0, 1, 2], [3, 4]))
+  assert list.split([0, 1, 2, 3, 4], 3) == #([0, 1, 2], [3, 4])
 
-  [0, 1, 2, 3, 4]
-  |> list.split(9)
-  |> should.equal(#([0, 1, 2, 3, 4], []))
+  assert list.split([0, 1, 2, 3, 4], 9) == #([0, 1, 2, 3, 4], [])
 
   // TCO test
   list.repeat(0, recursion_test_cycles + 10)
@@ -767,25 +610,19 @@ pub fn split_test() {
 }
 
 pub fn split_while_test() {
-  []
-  |> list.split_while(fn(x) { x <= 5 })
-  |> should.equal(#([], []))
+  assert list.split_while([], fn(x) { x <= 5 }) == #([], [])
 
-  [1, 2, 3, 4, 5]
-  |> list.split_while(fn(x) { x <= 5 })
-  |> should.equal(#([1, 2, 3, 4, 5], []))
+  assert list.split_while([1, 2, 3, 4, 5], fn(x) { x <= 5 })
+    == #([1, 2, 3, 4, 5], [])
 
-  [1, 2, 3, 4, 5]
-  |> list.split_while(fn(x) { x == 2 })
-  |> should.equal(#([], [1, 2, 3, 4, 5]))
+  assert list.split_while([1, 2, 3, 4, 5], fn(x) { x == 2 })
+    == #([], [1, 2, 3, 4, 5])
 
-  [1, 2, 3, 4, 5]
-  |> list.split_while(fn(x) { x <= 3 })
-  |> should.equal(#([1, 2, 3], [4, 5]))
+  assert list.split_while([1, 2, 3, 4, 5], fn(x) { x <= 3 })
+    == #([1, 2, 3], [4, 5])
 
-  [1, 2, 3, 4, 5]
-  |> list.split_while(fn(x) { x <= -3 })
-  |> should.equal(#([], [1, 2, 3, 4, 5]))
+  assert list.split_while([1, 2, 3, 4, 5], fn(x) { x <= -3 })
+    == #([], [1, 2, 3, 4, 5])
 
   // TCO test
   list.repeat(0, recursion_test_cycles + 10)
@@ -795,58 +632,38 @@ pub fn split_while_test() {
 pub fn key_find_test() {
   let proplist = [#(0, "1"), #(1, "2")]
 
-  proplist
-  |> list.key_find(0)
-  |> should.equal(Ok("1"))
+  assert list.key_find(proplist, 0) == Ok("1")
 
-  proplist
-  |> list.key_find(1)
-  |> should.equal(Ok("2"))
+  assert list.key_find(proplist, 1) == Ok("2")
 
-  proplist
-  |> list.key_find(2)
-  |> should.equal(Error(Nil))
+  assert list.key_find(proplist, 2) == Error(Nil)
 }
 
 pub fn key_filter_test() {
   let proplist = [#(0, "1"), #(1, "2"), #(0, "3"), #(1, "4"), #(2, "5")]
 
-  proplist
-  |> list.key_filter(0)
-  |> should.equal(["1", "3"])
+  assert list.key_filter(proplist, 0) == ["1", "3"]
 
-  proplist
-  |> list.key_filter(1)
-  |> should.equal(["2", "4"])
+  assert list.key_filter(proplist, 1) == ["2", "4"]
 
-  proplist
-  |> list.key_filter(2)
-  |> should.equal(["5"])
+  assert list.key_filter(proplist, 2) == ["5"]
 
-  proplist
-  |> list.key_filter(3)
-  |> should.equal([])
+  assert list.key_filter(proplist, 3) == []
 }
 
 pub fn key_pop_test() {
-  list.key_pop([#("a", 0), #("b", 1)], "a")
-  |> should.equal(Ok(#(0, [#("b", 1)])))
+  assert list.key_pop([#("a", 0), #("b", 1)], "a") == Ok(#(0, [#("b", 1)]))
 
-  list.key_pop([#("a", 0), #("b", 1)], "b")
-  |> should.equal(Ok(#(1, [#("a", 0)])))
+  assert list.key_pop([#("a", 0), #("b", 1)], "b") == Ok(#(1, [#("a", 0)]))
 
-  list.key_pop([#("a", 0), #("b", 1)], "c")
-  |> should.equal(Error(Nil))
+  assert list.key_pop([#("a", 0), #("b", 1)], "c") == Error(Nil)
 }
 
 pub fn key_set_test() {
-  [#(5, 0), #(4, 1)]
-  |> list.key_set(4, 100)
-  |> should.equal([#(5, 0), #(4, 100)])
+  assert list.key_set([#(5, 0), #(4, 1)], 4, 100) == [#(5, 0), #(4, 100)]
 
-  [#(5, 0), #(4, 1)]
-  |> list.key_set(1, 100)
-  |> should.equal([#(5, 0), #(4, 1), #(1, 100)])
+  assert list.key_set([#(5, 0), #(4, 1)], 1, 100)
+    == [#(5, 0), #(4, 1), #(1, 100)]
 
   // TCO test
   let recursion_test_cycles_list = list.range(0, recursion_test_cycles)
@@ -855,10 +672,10 @@ pub fn key_set_test() {
 }
 
 pub fn each_test() {
-  list.each([1, 1, 1], fn(x) {
-    let assert 1 = x
-  })
-  |> should.equal(Nil)
+  assert list.each([1, 1, 1], fn(x) {
+      let assert 1 = x
+    })
+    == Nil
 
   // TCO test
   list.each(list.repeat(1, recursion_test_cycles), fn(x) {
@@ -869,14 +686,14 @@ pub fn each_test() {
 pub fn try_each_test() {
   let assert Ok(Nil) =
     list.try_each(over: [1, 1, 1], with: fn(x) {
-      should.equal(x, 1)
+      assert x == 1
       Ok(Nil)
     })
 
   // `try_each` actually stops when `fun` returns error
   let assert Error(1) =
     list.try_each(over: [1, 2, 3], with: fn(x) {
-      should.equal(x, 1)
+      assert x == 1
       Error(x)
     })
 
@@ -887,9 +704,8 @@ pub fn try_each_test() {
 }
 
 pub fn partition_test() {
-  [1, 2, 3, 4, 5, 6, 7]
-  |> list.partition(int.is_odd)
-  |> should.equal(#([1, 3, 5, 7], [2, 4, 6]))
+  assert list.partition([1, 2, 3, 4, 5, 6, 7], int.is_odd)
+    == #([1, 3, 5, 7], [2, 4, 6])
 
   // TCO test
   list.range(0, recursion_test_cycles)
@@ -897,134 +713,90 @@ pub fn partition_test() {
 }
 
 pub fn permutations_test() {
-  [1, 2]
-  |> list.permutations
-  |> should.equal([[1, 2], [2, 1]])
+  assert list.permutations([1, 2]) == [[1, 2], [2, 1]]
 
-  [1, 2, 3]
-  |> list.permutations
-  |> should.equal([
-    [1, 2, 3],
-    [1, 3, 2],
-    [2, 1, 3],
-    [2, 3, 1],
-    [3, 1, 2],
-    [3, 2, 1],
-  ])
+  assert list.permutations([1, 2, 3])
+    == [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]
 
-  [1, 2, 3, 4]
-  |> list.permutations
-  |> should.equal([
-    [1, 2, 3, 4],
-    [1, 2, 4, 3],
-    [1, 3, 2, 4],
-    [1, 3, 4, 2],
-    [1, 4, 2, 3],
-    [1, 4, 3, 2],
-    [2, 1, 3, 4],
-    [2, 1, 4, 3],
-    [2, 3, 1, 4],
-    [2, 3, 4, 1],
-    [2, 4, 1, 3],
-    [2, 4, 3, 1],
-    [3, 1, 2, 4],
-    [3, 1, 4, 2],
-    [3, 2, 1, 4],
-    [3, 2, 4, 1],
-    [3, 4, 1, 2],
-    [3, 4, 2, 1],
-    [4, 1, 2, 3],
-    [4, 1, 3, 2],
-    [4, 2, 1, 3],
-    [4, 2, 3, 1],
-    [4, 3, 1, 2],
-    [4, 3, 2, 1],
-  ])
+  assert list.permutations([1, 2, 3, 4])
+    == [
+      [1, 2, 3, 4],
+      [1, 2, 4, 3],
+      [1, 3, 2, 4],
+      [1, 3, 4, 2],
+      [1, 4, 2, 3],
+      [1, 4, 3, 2],
+      [2, 1, 3, 4],
+      [2, 1, 4, 3],
+      [2, 3, 1, 4],
+      [2, 3, 4, 1],
+      [2, 4, 1, 3],
+      [2, 4, 3, 1],
+      [3, 1, 2, 4],
+      [3, 1, 4, 2],
+      [3, 2, 1, 4],
+      [3, 2, 4, 1],
+      [3, 4, 1, 2],
+      [3, 4, 2, 1],
+      [4, 1, 2, 3],
+      [4, 1, 3, 2],
+      [4, 2, 1, 3],
+      [4, 2, 3, 1],
+      [4, 3, 1, 2],
+      [4, 3, 2, 1],
+    ]
 
-  ["a", "b"]
-  |> list.permutations
-  |> should.equal([["a", "b"], ["b", "a"]])
+  assert list.permutations(["a", "b"]) == [["a", "b"], ["b", "a"]]
 
-  [1, 1]
-  |> list.permutations
-  |> should.equal([[1, 1], [1, 1]])
+  assert list.permutations([1, 1]) == [[1, 1], [1, 1]]
 
-  [1, 1, 1]
-  |> list.permutations
-  |> should.equal([
-    [1, 1, 1],
-    [1, 1, 1],
-    [1, 1, 1],
-    [1, 1, 1],
-    [1, 1, 1],
-    [1, 1, 1],
-  ])
+  assert list.permutations([1, 1, 1])
+    == [[1, 1, 1], [1, 1, 1], [1, 1, 1], [1, 1, 1], [1, 1, 1], [1, 1, 1]]
 
-  [1, 2, 2]
-  |> list.permutations
-  |> should.equal([
-    [1, 2, 2],
-    [1, 2, 2],
-    [2, 1, 2],
-    [2, 2, 1],
-    [2, 1, 2],
-    [2, 2, 1],
-  ])
+  assert list.permutations([1, 2, 2])
+    == [[1, 2, 2], [1, 2, 2], [2, 1, 2], [2, 2, 1], [2, 1, 2], [2, 2, 1]]
 
-  ["a", "a", "a", "a"]
-  |> list.permutations
-  |> should.equal([
-    ["a", "a", "a", "a"],
-    ["a", "a", "a", "a"],
-    ["a", "a", "a", "a"],
-    ["a", "a", "a", "a"],
-    ["a", "a", "a", "a"],
-    ["a", "a", "a", "a"],
-    ["a", "a", "a", "a"],
-    ["a", "a", "a", "a"],
-    ["a", "a", "a", "a"],
-    ["a", "a", "a", "a"],
-    ["a", "a", "a", "a"],
-    ["a", "a", "a", "a"],
-    ["a", "a", "a", "a"],
-    ["a", "a", "a", "a"],
-    ["a", "a", "a", "a"],
-    ["a", "a", "a", "a"],
-    ["a", "a", "a", "a"],
-    ["a", "a", "a", "a"],
-    ["a", "a", "a", "a"],
-    ["a", "a", "a", "a"],
-    ["a", "a", "a", "a"],
-    ["a", "a", "a", "a"],
-    ["a", "a", "a", "a"],
-    ["a", "a", "a", "a"],
-  ])
+  assert list.permutations(["a", "a", "a", "a"])
+    == [
+      ["a", "a", "a", "a"],
+      ["a", "a", "a", "a"],
+      ["a", "a", "a", "a"],
+      ["a", "a", "a", "a"],
+      ["a", "a", "a", "a"],
+      ["a", "a", "a", "a"],
+      ["a", "a", "a", "a"],
+      ["a", "a", "a", "a"],
+      ["a", "a", "a", "a"],
+      ["a", "a", "a", "a"],
+      ["a", "a", "a", "a"],
+      ["a", "a", "a", "a"],
+      ["a", "a", "a", "a"],
+      ["a", "a", "a", "a"],
+      ["a", "a", "a", "a"],
+      ["a", "a", "a", "a"],
+      ["a", "a", "a", "a"],
+      ["a", "a", "a", "a"],
+      ["a", "a", "a", "a"],
+      ["a", "a", "a", "a"],
+      ["a", "a", "a", "a"],
+      ["a", "a", "a", "a"],
+      ["a", "a", "a", "a"],
+      ["a", "a", "a", "a"],
+    ]
 }
 
 pub fn window_test() {
-  [1, 2, 3]
-  |> list.window(by: 2)
-  |> should.equal([[1, 2], [2, 3]])
+  assert list.window([1, 2, 3], by: 2) == [[1, 2], [2, 3]]
 
-  [1, 2, 3]
-  |> list.window(3)
-  |> should.equal([[1, 2, 3]])
+  assert list.window([1, 2, 3], 3) == [[1, 2, 3]]
 
-  [1, 2, 3]
-  |> list.window(4)
-  |> should.equal([])
+  assert list.window([1, 2, 3], 4) == []
 
-  [1, 2, 3, 4, 5]
-  |> list.window(3)
-  |> should.equal([[1, 2, 3], [2, 3, 4], [3, 4, 5]])
+  assert list.window([1, 2, 3, 4, 5], 3) == [[1, 2, 3], [2, 3, 4], [3, 4, 5]]
 
-  [1, 2, 3]
-  |> list.window(0)
-  |> should.equal([])
+  assert list.window([1, 2, 3], 0) == []
 
-  [1, 2, 3]
-  |> list.window(-1)
-  |> should.equal([])
+  assert list.window([1, 2, 3], -1) == []
 
   // TCO test
   list.range(0, recursion_test_cycles)
@@ -1032,19 +804,13 @@ pub fn window_test() {
 }
 
 pub fn window_by_2_test() {
-  [1, 2, 3, 4]
-  |> list.window_by_2
-  |> should.equal([#(1, 2), #(2, 3), #(3, 4)])
+  assert list.window_by_2([1, 2, 3, 4]) == [#(1, 2), #(2, 3), #(3, 4)]
 
-  [1]
-  |> list.window_by_2
-  |> should.equal([])
+  assert list.window_by_2([1]) == []
 }
 
 pub fn drop_while_test() {
-  [1, 2, 3, 4]
-  |> list.drop_while(fn(x) { x < 3 })
-  |> should.equal([3, 4])
+  assert list.drop_while([1, 2, 3, 4], fn(x) { x < 3 }) == [3, 4]
 
   // TCO test
   list.range(0, recursion_test_cycles + 10)
@@ -1052,9 +818,7 @@ pub fn drop_while_test() {
 }
 
 pub fn take_while_test() {
-  [1, 2, 3, 2, 4]
-  |> list.take_while(fn(x) { x < 3 })
-  |> should.equal([1, 2])
+  assert list.take_while([1, 2, 3, 2, 4], fn(x) { x < 3 }) == [1, 2]
 
   // TCO test
   list.range(0, recursion_test_cycles + 10)
@@ -1062,13 +826,10 @@ pub fn take_while_test() {
 }
 
 pub fn chunk_test() {
-  [1, 2, 3]
-  |> list.chunk(by: fn(n) { n % 2 })
-  |> should.equal([[1], [2], [3]])
+  assert list.chunk([1, 2, 3], by: fn(n) { n % 2 }) == [[1], [2], [3]]
 
-  [1, 2, 2, 3, 4, 4, 6, 7, 7]
-  |> list.chunk(by: fn(n) { n % 2 })
-  |> should.equal([[1], [2, 2], [3], [4, 4, 6], [7, 7]])
+  assert list.chunk([1, 2, 2, 3, 4, 4, 6, 7, 7], by: fn(n) { n % 2 })
+    == [[1], [2, 2], [3], [4, 4, 6], [7, 7]]
 
   // TCO test
   list.range(0, recursion_test_cycles)
@@ -1076,13 +837,11 @@ pub fn chunk_test() {
 }
 
 pub fn sized_chunk_test() {
-  [1, 2, 3, 4, 5, 6]
-  |> list.sized_chunk(into: 2)
-  |> should.equal([[1, 2], [3, 4], [5, 6]])
+  assert list.sized_chunk([1, 2, 3, 4, 5, 6], into: 2)
+    == [[1, 2], [3, 4], [5, 6]]
 
-  [1, 2, 3, 4, 5, 6, 7, 8]
-  |> list.sized_chunk(into: 3)
-  |> should.equal([[1, 2, 3], [4, 5, 6], [7, 8]])
+  assert list.sized_chunk([1, 2, 3, 4, 5, 6, 7, 8], into: 3)
+    == [[1, 2, 3], [4, 5, 6], [7, 8]]
 
   // TCO test
   list.range(0, recursion_test_cycles * 3)
@@ -1090,37 +849,29 @@ pub fn sized_chunk_test() {
 }
 
 pub fn reduce_test() {
-  []
-  |> list.reduce(with: fn(x, y) { x + y })
-  |> should.equal(Error(Nil))
+  assert list.reduce([], with: fn(x, y) { x + y }) == Error(Nil)
 
-  [1, 2, 3, 4, 5]
-  |> list.reduce(with: fn(x, y) { x + y })
-  |> should.equal(Ok(15))
+  assert list.reduce([1, 2, 3, 4, 5], with: fn(x, y) { x + y }) == Ok(15)
 }
 
 pub fn scan_test() {
-  []
-  |> list.scan(from: 0, with: fn(acc, i) { i + acc })
-  |> should.equal([])
+  assert list.scan([], from: 0, with: fn(acc, i) { i + acc }) == []
 
-  [1, 2, 3, 4]
-  |> list.scan(from: 0, with: fn(acc, i) { 2 * i + acc })
-  |> should.equal([2, 6, 12, 20])
+  assert list.scan([1, 2, 3, 4], from: 0, with: fn(acc, i) { 2 * i + acc })
+    == [2, 6, 12, 20]
 
-  [1, 2, 3, 4]
-  |> list.scan(from: [], with: fn(acc, i) {
-    case int.is_even(i) {
-      True -> ["Even", ..acc]
-      False -> ["Odd", ..acc]
-    }
-  })
-  |> should.equal([
-    ["Odd"],
-    ["Even", "Odd"],
-    ["Odd", "Even", "Odd"],
-    ["Even", "Odd", "Even", "Odd"],
-  ])
+  assert list.scan([1, 2, 3, 4], from: [], with: fn(acc, i) {
+      case int.is_even(i) {
+        True -> ["Even", ..acc]
+        False -> ["Odd", ..acc]
+      }
+    })
+    == [
+      ["Odd"],
+      ["Even", "Odd"],
+      ["Odd", "Even", "Odd"],
+      ["Even", "Odd", "Even", "Odd"],
+    ]
 
   // TCO test
   list.range(0, recursion_test_cycles)
@@ -1128,45 +879,35 @@ pub fn scan_test() {
 }
 
 pub fn last_test() {
-  list.last([])
-  |> should.equal(Error(Nil))
+  assert list.last([]) == Error(Nil)
 
-  list.last([1, 2, 3, 4, 5])
-  |> should.equal(Ok(5))
+  assert list.last([1, 2, 3, 4, 5]) == Ok(5)
 }
 
 pub fn combinations_test() {
-  list.combinations([1, 2, 3], by: 0)
-  |> should.equal([[]])
+  assert list.combinations([1, 2, 3], by: 0) == [[]]
 
-  list.combinations([1, 2, 3], by: 1)
-  |> should.equal([[1], [2], [3]])
+  assert list.combinations([1, 2, 3], by: 1) == [[1], [2], [3]]
 
-  list.combinations([1, 2, 3], by: 2)
-  |> should.equal([[1, 2], [1, 3], [2, 3]])
+  assert list.combinations([1, 2, 3], by: 2) == [[1, 2], [1, 3], [2, 3]]
 
-  list.combinations([1, 2, 3], by: 3)
-  |> should.equal([[1, 2, 3]])
+  assert list.combinations([1, 2, 3], by: 3) == [[1, 2, 3]]
 
-  list.combinations([1, 2, 3], by: 4)
-  |> should.equal([])
+  assert list.combinations([1, 2, 3], by: 4) == []
 
-  list.combinations([1, 2, 3, 4], 3)
-  |> should.equal([[1, 2, 3], [1, 2, 4], [1, 3, 4], [2, 3, 4]])
+  assert list.combinations([1, 2, 3, 4], 3)
+    == [[1, 2, 3], [1, 2, 4], [1, 3, 4], [2, 3, 4]]
 }
 
 pub fn combination_pairs_test() {
-  list.combination_pairs([1])
-  |> should.equal([])
+  assert list.combination_pairs([1]) == []
 
-  list.combination_pairs([1, 2])
-  |> should.equal([#(1, 2)])
+  assert list.combination_pairs([1, 2]) == [#(1, 2)]
 
-  list.combination_pairs([1, 2, 3])
-  |> should.equal([#(1, 2), #(1, 3), #(2, 3)])
+  assert list.combination_pairs([1, 2, 3]) == [#(1, 2), #(1, 3), #(2, 3)]
 
-  list.combination_pairs([1, 2, 3, 4])
-  |> should.equal([#(1, 2), #(1, 3), #(1, 4), #(2, 3), #(2, 4), #(3, 4)])
+  assert list.combination_pairs([1, 2, 3, 4])
+    == [#(1, 2), #(1, 3), #(1, 4), #(2, 3), #(2, 4), #(3, 4)]
 
   // TCO test
   list.range(0, 200)
@@ -1174,52 +915,43 @@ pub fn combination_pairs_test() {
 }
 
 pub fn interleave_test() {
-  list.interleave([[1, 2], [101, 102]])
-  |> should.equal([1, 101, 2, 102])
+  assert list.interleave([[1, 2], [101, 102]]) == [1, 101, 2, 102]
 
-  list.interleave([[1, 2], [101, 102], [201, 202]])
-  |> should.equal([1, 101, 201, 2, 102, 202])
+  assert list.interleave([[1, 2], [101, 102], [201, 202]])
+    == [1, 101, 201, 2, 102, 202]
 
   // Left over elements are added at the end
-  list.interleave([[1, 2, 3], [101, 102]])
-  |> should.equal([1, 101, 2, 102, 3])
+  assert list.interleave([[1, 2, 3], [101, 102]]) == [1, 101, 2, 102, 3]
 
-  list.interleave([[1, 2], [101, 102, 103]])
-  |> should.equal([1, 101, 2, 102, 103])
+  assert list.interleave([[1, 2], [101, 102, 103]]) == [1, 101, 2, 102, 103]
 }
 
 pub fn transpose_test() {
-  list.transpose([[1, 2, 3], [101, 102, 103]])
-  |> should.equal([[1, 101], [2, 102], [3, 103]])
+  assert list.transpose([[1, 2, 3], [101, 102, 103]])
+    == [[1, 101], [2, 102], [3, 103]]
 
-  list.transpose([[1, 2, 3], [101, 102, 103], [201, 202, 203]])
-  |> should.equal([[1, 101, 201], [2, 102, 202], [3, 103, 203]])
+  assert list.transpose([[1, 2, 3], [101, 102, 103], [201, 202, 203]])
+    == [[1, 101, 201], [2, 102, 202], [3, 103, 203]]
 
   // Left over elements are still returned
-  list.transpose([[1, 2], [101, 102, 103]])
-  |> should.equal([[1, 101], [2, 102], [103]])
+  assert list.transpose([[1, 2], [101, 102, 103]])
+    == [[1, 101], [2, 102], [103]]
 
-  list.transpose([[1, 2, 3], [101, 102], [201, 202, 203]])
-  |> should.equal([[1, 101, 201], [2, 102, 202], [3, 203]])
+  assert list.transpose([[1, 2, 3], [101, 102], [201, 202, 203]])
+    == [[1, 101, 201], [2, 102, 202], [3, 203]]
 }
 
 pub fn shuffle_test() {
-  []
-  |> list.shuffle
-  |> should.equal([])
+  assert list.shuffle([]) == []
 
-  [1, 1]
-  |> list.shuffle
-  |> should.equal([1, 1])
+  assert list.shuffle([1, 1]) == [1, 1]
 
-  [1, 1, 1]
-  |> list.shuffle
-  |> should.equal([1, 1, 1])
+  assert list.shuffle([1, 1, 1]) == [1, 1, 1]
 
-  list.range(1, 100)
-  |> list.shuffle
-  |> list.sort(int.compare)
-  |> should.equal(list.range(1, 100))
+  assert list.range(1, 100)
+    |> list.shuffle
+    |> list.sort(int.compare)
+    == list.range(1, 100)
 
   // TCO test
   list.range(0, recursion_test_cycles)
@@ -1227,68 +959,47 @@ pub fn shuffle_test() {
 }
 
 pub fn max_test() {
-  []
-  |> list.max(int.compare)
-  |> should.equal(Error(Nil))
+  assert list.max([], int.compare) == Error(Nil)
 
-  [1, 3, 2]
-  |> list.max(int.compare)
-  |> should.equal(Ok(3))
+  assert list.max([1, 3, 2], int.compare) == Ok(3)
 
-  [-1.0, 1.2, 1.104]
-  |> list.max(float.compare)
-  |> should.equal(Ok(1.2))
+  assert list.max([-1.0, 1.2, 1.104], float.compare) == Ok(1.2)
 
-  ["a", "c", "b"]
-  |> list.max(string.compare)
-  |> should.equal(Ok("c"))
+  assert list.max(["a", "c", "b"], string.compare) == Ok("c")
 }
 
 pub fn sample_test() {
-  []
-  |> list.sample(3)
-  |> should.equal([])
+  assert list.sample([], 3) == []
 
-  [1, 2, 3]
-  |> list.sample(0)
-  |> should.equal([])
+  assert list.sample([1, 2, 3], 0) == []
 
-  [1, 2, 3]
-  |> list.sample(-1)
-  |> should.equal([])
+  assert list.sample([1, 2, 3], -1) == []
 
-  [1, 2]
-  |> list.sample(5)
-  |> list.sort(int.compare)
-  |> should.equal([1, 2])
+  assert [1, 2]
+    |> list.sample(5)
+    |> list.sort(int.compare)
+    == [1, 2]
 
-  [1]
-  |> list.sample(1)
-  |> should.equal([1])
+  assert list.sample([1], 1) == [1]
 
   let input = list.range(1, 100)
   let sample = list.sample(input, 10)
-  list.length(sample)
-  |> should.equal(10)
+  assert list.length(sample) == 10
 
   let repeated = [1, 1, 1, 1, 1]
   let sample = list.sample(repeated, 3)
-  sample
-  |> list.all(fn(x) { x == 1 })
-  |> should.be_true()
+  assert list.all(sample, fn(x) { x == 1 })
 
   let input = list.range(1, 1000)
   let sample = list.sample(input, 100)
-  sample
-  |> list.sort(int.compare)
-  |> list.all(fn(x) { x >= 1 && x <= 1000 })
-  |> should.be_true()
+  assert sample
+    |> list.sort(int.compare)
+    |> list.all(fn(x) { x >= 1 && x <= 1000 })
 
-  list.length(sample)
-  |> should.equal(100)
+  assert list.length(sample) == 100
 
   let min = list.fold(sample, 1000, int.min)
   let max = list.fold(sample, 1, int.max)
-  should.be_true(min >= 1)
-  should.be_true(max <= 1000)
+  assert min >= 1
+  assert max <= 1000
 }

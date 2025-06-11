@@ -1,95 +1,67 @@
 import gleam/int
 import gleam/list
 import gleam/order.{Eq, Gt, Lt}
-import gleam/should
 
 pub fn negate_test() {
-  order.negate(Lt)
-  |> should.equal(Gt)
+  assert order.negate(Lt) == Gt
 
-  order.negate(Eq)
-  |> should.equal(Eq)
+  assert order.negate(Eq) == Eq
 
-  order.negate(Gt)
-  |> should.equal(Lt)
+  assert order.negate(Gt) == Lt
 }
 
 pub fn to_int_test() {
-  order.to_int(Lt)
-  |> should.equal(-1)
+  assert order.to_int(Lt) == -1
 
-  order.to_int(Eq)
-  |> should.equal(0)
+  assert order.to_int(Eq) == 0
 
-  order.to_int(Gt)
-  |> should.equal(1)
+  assert order.to_int(Gt) == 1
 }
 
 pub fn compare_test() {
-  order.compare(Lt, Lt)
-  |> should.equal(Eq)
+  assert order.compare(Lt, Lt) == Eq
 
-  order.compare(Lt, Eq)
-  |> should.equal(Lt)
+  assert order.compare(Lt, Eq) == Lt
 
-  order.compare(Lt, Gt)
-  |> should.equal(Lt)
+  assert order.compare(Lt, Gt) == Lt
 
-  order.compare(Eq, Lt)
-  |> should.equal(Gt)
+  assert order.compare(Eq, Lt) == Gt
 
-  order.compare(Eq, Eq)
-  |> should.equal(Eq)
+  assert order.compare(Eq, Eq) == Eq
 
-  order.compare(Eq, Gt)
-  |> should.equal(Lt)
+  assert order.compare(Eq, Gt) == Lt
 
-  order.compare(Gt, Lt)
-  |> should.equal(Gt)
+  assert order.compare(Gt, Lt) == Gt
 
-  order.compare(Gt, Eq)
-  |> should.equal(Gt)
+  assert order.compare(Gt, Eq) == Gt
 
-  order.compare(Gt, Gt)
-  |> should.equal(Eq)
+  assert order.compare(Gt, Gt) == Eq
 }
 
 pub fn reverse_test() {
-  [4, 5, 1]
-  |> list.sort(by: order.reverse(int.compare))
-  |> should.equal([5, 4, 1])
+  assert list.sort([4, 5, 1], by: order.reverse(int.compare)) == [5, 4, 1]
 }
 
 pub fn break_tie_test() {
-  order.break_tie(in: Eq, with: Lt)
-  |> should.equal(Lt)
+  assert order.break_tie(in: Eq, with: Lt) == Lt
 
-  order.break_tie(in: Eq, with: Gt)
-  |> should.equal(Gt)
+  assert order.break_tie(in: Eq, with: Gt) == Gt
 
-  order.break_tie(in: Eq, with: Eq)
-  |> should.equal(Eq)
+  assert order.break_tie(in: Eq, with: Eq) == Eq
 
-  order.break_tie(in: Gt, with: Lt)
-  |> should.equal(Gt)
+  assert order.break_tie(in: Gt, with: Lt) == Gt
 
-  order.break_tie(in: Lt, with: Gt)
-  |> should.equal(Lt)
+  assert order.break_tie(in: Lt, with: Gt) == Lt
 }
 
 pub fn lazy_break_tie_test() {
-  order.lazy_break_tie(in: Eq, with: fn() { Lt })
-  |> should.equal(Lt)
+  assert order.lazy_break_tie(in: Eq, with: fn() { Lt }) == Lt
 
-  order.lazy_break_tie(in: Eq, with: fn() { Gt })
-  |> should.equal(Gt)
+  assert order.lazy_break_tie(in: Eq, with: fn() { Gt }) == Gt
 
-  order.lazy_break_tie(in: Eq, with: fn() { Eq })
-  |> should.equal(Eq)
+  assert order.lazy_break_tie(in: Eq, with: fn() { Eq }) == Eq
 
-  order.lazy_break_tie(in: Gt, with: fn() { panic })
-  |> should.equal(Gt)
+  assert order.lazy_break_tie(in: Gt, with: fn() { panic }) == Gt
 
-  order.lazy_break_tie(in: Lt, with: fn() { panic })
-  |> should.equal(Lt)
+  assert order.lazy_break_tie(in: Lt, with: fn() { panic }) == Lt
 }
