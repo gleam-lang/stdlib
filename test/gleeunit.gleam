@@ -1,4 +1,5 @@
 import gleam/list
+import gleam/result
 import gleam/string
 
 /// Find and run all test functions for the current project using Erlang's EUnit
@@ -34,10 +35,19 @@ fn do_main() -> Nil {
 fn halt(a: Int) -> Nil
 
 fn gleam_to_erlang_module_name(path: String) -> String {
-  path
-  |> string.replace(".gleam", "")
-  |> string.replace(".erl", "")
-  |> string.replace("/", "@")
+  case string.ends_with(path, ".gleam") {
+    True ->
+      path
+      |> string.replace(".gleam", "")
+      |> string.replace("/", "@")
+
+    False ->
+      path
+      |> string.split("/")
+      |> list.last
+      |> result.unwrap(path)
+      |> string.replace(".erl", "")
+  }
 }
 
 @external(erlang, "gleeunit_ffi", "find_files")
