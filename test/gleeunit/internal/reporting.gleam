@@ -89,13 +89,12 @@ fn format_unknown(
   function: String,
   error: dynamic.Dynamic,
 ) -> String {
-  [
-    grey(module <> "." <> function),
-    "An unexpected error occurred:",
-    "",
-    "  " <> string.inspect(error),
-  ]
-  |> string.join("\n")
+  string.concat([
+    grey(module <> "." <> function) <> "\n",
+    "An unexpected error occurred:\n",
+    "\n",
+    "  " <> string.inspect(error) <> "\n",
+  ])
 }
 
 fn format_gleam_error(

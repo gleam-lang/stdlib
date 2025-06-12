@@ -11,6 +11,8 @@
 - The deprecated `from` function in the `dynamic` module has been removed.
 - Fixed a bug in the `sample` function from the `list` module where it would end
   up picking the same element twice from a given list.
+- Improved formatting of JavaScript errors in `string.inspect`.
+- JavaScript circular references can now be printed by `string.inspect`.
 
 ## v0.60.0 - 2025-05-13
 

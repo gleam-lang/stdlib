@@ -10,6 +10,9 @@ import gleam/list
 @target(erlang)
 import gleam/result
 
+@target(javascript)
+import gleam/dynamic.{type Dynamic}
+
 pub fn length_test() {
   assert string.length("ß↑e̊") == 3
 
@@ -579,235 +582,458 @@ type InspectType(a, b) {
   InspectTypeTwo(a, b)
 }
 
-pub fn inspect_test() {
+pub fn inspect_0_test() {
   assert string.inspect(True) == "True"
+}
 
+pub fn inspect_4_test() {
   assert string.inspect(False) == "False"
+}
 
+pub fn inspect_8_test() {
   assert string.inspect([True, False]) == "[True, False]"
+}
 
+pub fn inspect_12_test() {
   assert string.inspect([False, False]) == "[False, False]"
+}
 
+pub fn inspect_16_test() {
   assert string.inspect([True, True]) == "[True, True]"
+}
 
+pub fn inspect_20_test() {
   assert string.inspect([Nil, Nil]) == "[Nil, Nil]"
+}
 
+pub fn inspect_24_test() {
   assert string.inspect(#(True, False)) == "#(True, False)"
+}
 
+pub fn inspect_28_test() {
   assert string.inspect(#(False, False)) == "#(False, False)"
+}
 
+pub fn inspect_32_test() {
   assert string.inspect(#(True, True)) == "#(True, True)"
+}
 
+pub fn inspect_36_test() {
   assert string.inspect(#(Nil, True)) == "#(Nil, True)"
+}
 
+pub fn inspect_40_test() {
   assert string.inspect(#(Nil, False)) == "#(Nil, False)"
+}
 
+pub fn inspect_44_test() {
   assert string.inspect(#(True, Nil)) == "#(True, Nil)"
+}
 
+pub fn inspect_48_test() {
   assert string.inspect(#(False, Nil)) == "#(False, Nil)"
+}
 
+pub fn inspect_52_test() {
   assert string.inspect(-1) == "-1"
+}
 
+pub fn inspect_56_test() {
   assert string.inspect(0) == "0"
+}
 
+pub fn inspect_60_test() {
   assert string.inspect(1) == "1"
+}
 
+pub fn inspect_64_test() {
   assert string.inspect([]) == "[]"
+}
 
+pub fn inspect_68_test() {
   assert string.inspect([1]) == "[1]"
+}
 
+pub fn inspect_72_test() {
   assert string.inspect([1, 2]) == "[1, 2]"
+}
 
+pub fn inspect_76_test() {
   assert string.inspect([[1], [1]]) == "[[1], [1]]"
+}
 
+pub fn inspect_80_test() {
   assert string.inspect(-1.5) == "-1.5"
+}
 
+pub fn inspect_84_test() {
   assert string.inspect(5.0e-26) == "5.0e-26"
+}
 
+pub fn inspect_88_test() {
   assert string.inspect(1.5) == "1.5"
+}
 
+pub fn inspect_92_test() {
   assert string.inspect(-5.0e-26) == "-5.0e-26"
+}
 
+pub fn inspect_96_test() {
   assert string.inspect([1.5]) == "[1.5]"
+}
 
+pub fn inspect_100_test() {
   assert string.inspect("") == "\"\""
+}
 
+pub fn inspect_104_test() {
   assert string.inspect("\\") == "\"\\\\\""
+}
 
+pub fn inspect_108_test() {
   assert string.inspect("\\\\") == "\"\\\\\\\\\""
+}
 
+pub fn inspect_112_test() {
   assert string.inspect("\\\\\\") == "\"\\\\\\\\\\\\\""
+}
 
+pub fn inspect_116_test() {
   assert string.inspect("\"") == "\"\\\"\""
+}
+
+pub fn inspect_120_test() {
   assert string.inspect("\"\"") == "\"\\\"\\\"\""
+}
 
+pub fn inspect_124_test() {
   assert string.inspect("\r") == "\"\\r\""
+}
 
+pub fn inspect_128_test() {
   assert string.inspect("\n") == "\"\\n\""
+}
 
+pub fn inspect_132_test() {
   assert string.inspect("\t") == "\"\\t\""
+}
 
+pub fn inspect_136_test() {
   assert string.inspect("\f") == "\"\\f\""
+}
 
+pub fn inspect_140_test() {
   assert string.inspect("\u{0008}") == "\"\\u{0008}\""
+}
 
+pub fn inspect_144_test() {
   assert string.inspect("\u{000B}") == "\"\\u{000B}\""
+}
 
+pub fn inspect_148_test() {
   assert string.inspect("\u{001B}") == "\"\\u{001B}\""
+}
 
+pub fn inspect_152_test() {
   assert string.inspect("\u{0015}") == "\"\\u{0015}\""
+}
 
+pub fn inspect_156_test() {
   assert string.inspect("\u{001F}") == "\"\\u{001F}\""
+}
 
+pub fn inspect_160_test() {
   assert string.inspect("\u{0020}") == "\" \""
+}
 
+pub fn inspect_164_test() {
   assert string.inspect("\u{007F}") == "\"\\u{007F}\""
+}
 
+pub fn inspect_168_test() {
   assert string.inspect("\u{009F}") == "\"\\u{009F}\""
+}
 
+pub fn inspect_172_test() {
   assert string.inspect("\u{00A0}") == "\"\u{00A0}\""
+}
 
+pub fn inspect_176_test() {
   assert string.inspect("\r\r") == "\"\\r\\r\""
+}
 
+pub fn inspect_180_test() {
   assert string.inspect("\n\n") == "\"\\n\\n\""
+}
 
+pub fn inspect_184_test() {
   assert string.inspect("\r\n") == "\"\\r\\n\""
+}
 
+pub fn inspect_188_test() {
   assert string.inspect("\n\r") == "\"\\n\\r\""
+}
 
+pub fn inspect_192_test() {
   assert string.inspect("\t\t") == "\"\\t\\t\""
+}
 
+pub fn inspect_196_test() {
   assert string.inspect("\t\n") == "\"\\t\\n\""
+}
 
+pub fn inspect_200_test() {
   assert string.inspect("\n\t") == "\"\\n\\t\""
+}
 
+pub fn inspect_204_test() {
   assert string.inspect("\t\r") == "\"\\t\\r\""
+}
 
+pub fn inspect_208_test() {
   assert string.inspect("\r\t") == "\"\\r\\t\""
+}
 
+pub fn inspect_212_test() {
   assert string.inspect("\t\f") == "\"\\t\\f\""
+}
 
+pub fn inspect_216_test() {
   assert string.inspect("\f\t") == "\"\\f\\t\""
+}
 
+pub fn inspect_220_test() {
   assert string.inspect("\t\u{0008}") == "\"\\t\\u{0008}\""
+}
 
+pub fn inspect_224_test() {
   assert string.inspect("\u{0008}\t") == "\"\\u{0008}\\t\""
+}
 
+pub fn inspect_228_test() {
   assert string.inspect("\t\u{000B}") == "\"\\t\\u{000B}\""
+}
 
+pub fn inspect_232_test() {
   assert string.inspect("\u{000B}\t") == "\"\\u{000B}\\t\""
+}
 
+pub fn inspect_236_test() {
   assert string.inspect("\t\u{001B}") == "\"\\t\\u{001B}\""
+}
 
+pub fn inspect_240_test() {
   assert string.inspect("\u{001B}\t") == "\"\\u{001B}\\t\""
+}
 
+pub fn inspect_244_test() {
   assert string.inspect("\\\n\\") == "\"\\\\\\n\\\\\""
+}
 
+pub fn inspect_248_test() {
   assert string.inspect("\\\"\\") == "\"\\\\\\\"\\\\\""
+}
 
+pub fn inspect_252_test() {
   assert string.inspect("\\\"\"\\") == "\"\\\\\\\"\\\"\\\\\""
+}
 
+pub fn inspect_256_test() {
   assert string.inspect("'") == "\"'\""
+}
 
+pub fn inspect_260_test() {
   assert string.inspect("''") == "\"''\""
+}
 
+pub fn inspect_264_test() {
   assert string.inspect("around-single-quotes'around-single-quotes")
     == "\"around-single-quotes'around-single-quotes\""
+}
 
+pub fn inspect_269_test() {
   assert string.inspect("'between-single-quotes'")
     == "\"'between-single-quotes'\""
+}
 
+pub fn inspect_274_test() {
   assert string.inspect("0") == "\"0\""
+}
 
+pub fn inspect_278_test() {
   assert string.inspect("1") == "\"1\""
+}
 
+pub fn inspect_282_test() {
   assert string.inspect("2") == "\"2\""
+}
 
+pub fn inspect_286_test() {
   assert string.inspect("Hello Joe!") == "\"Hello Joe!\""
+}
 
+pub fn inspect_290_test() {
   assert string.inspect("Hello \"Manuel\"!") == "\"Hello \\\"Manuel\\\"!\""
+}
 
+pub fn inspect_294_test() {
   assert string.inspect("👨‍👩‍👦‍👦 💜 Gleam") == "\"👨‍👩‍👦‍👦 💜 Gleam\""
+}
 
+pub fn inspect_298_test() {
   assert string.inspect("✨") == "\"✨\""
+}
 
+pub fn inspect_302_test() {
   assert string.inspect("🏳️‍⚧️") == "\"🏳️‍⚧️\""
+}
 
+pub fn inspect_306_test() {
   assert string.inspect("True") == "\"True\""
+}
 
+pub fn inspect_310_test() {
   assert string.inspect("False") == "\"False\""
+}
 
+pub fn inspect_314_test() {
   assert string.inspect("Nil") == "\"Nil\""
+}
 
+pub fn inspect_318_test() {
   assert string.inspect(["1"]) == "[\"1\"]"
+}
 
+pub fn inspect_322_test() {
   assert string.inspect(#()) == "#()"
+}
 
+pub fn inspect_326_test() {
   assert string.inspect(#(1)) == "#(1)"
+}
 
+pub fn inspect_330_test() {
   assert string.inspect(#("1")) == "#(\"1\")"
+}
 
+pub fn inspect_334_test() {
   assert string.inspect(#(1.5)) == "#(1.5)"
+}
 
+pub fn inspect_338_test() {
   assert string.inspect([#(1, 2, 3), #(1, 2, 3)]) == "[#(1, 2, 3), #(1, 2, 3)]"
+}
 
+pub fn inspect_342_test() {
   assert string.inspect(#([1, 2, 3], "🌈", "🏳️‍🌈", #(1, "1", True)))
     == "#([1, 2, 3], \"🌈\", \"🏳️‍🌈\", #(1, \"1\", True))"
+}
 
+pub fn inspect_347_test() {
   assert string.inspect(Nil) == "Nil"
+}
 
+pub fn inspect_351_test() {
   assert string.inspect(Ok(1)) == "Ok(1)"
+}
 
+pub fn inspect_355_test() {
   assert string.inspect(Ok(True)) == "Ok(True)"
+}
 
+pub fn inspect_359_test() {
   assert string.inspect(Ok(False)) == "Ok(False)"
+}
 
+pub fn inspect_363_test() {
   assert string.inspect(Ok(Nil)) == "Ok(Nil)"
+}
 
+pub fn inspect_367_test() {
   assert string.inspect(Error(2)) == "Error(2)"
+}
 
+pub fn inspect_371_test() {
   assert string.inspect(Error(True)) == "Error(True)"
+}
 
+pub fn inspect_375_test() {
   assert string.inspect(Error(False)) == "Error(False)"
+}
 
+pub fn inspect_379_test() {
   assert string.inspect(Error(Nil)) == "Error(Nil)"
+}
 
+pub fn inspect_383_test() {
   assert string.inspect(InspectTypeZero) == "InspectTypeZero"
+}
 
+pub fn inspect_387_test() {
   assert string.inspect(InspectTypeOne(1)) == "InspectTypeOne(1)"
+}
 
+pub fn inspect_391_test() {
   assert string.inspect(InspectTypeTwo(1, 2)) == "InspectTypeTwo(1, 2)"
+}
 
+pub fn inspect_395_test() {
   assert string.inspect(InspectTypeOne([1])) == "InspectTypeOne([1])"
+}
 
+pub fn inspect_399_test() {
   assert string.inspect(InspectTypeOne("1")) == "InspectTypeOne(\"1\")"
+}
 
+pub fn inspect_403_test() {
   assert string.inspect(InspectTypeOne(["1"])) == "InspectTypeOne([\"1\"])"
+}
 
+pub fn inspect_407_test() {
   assert string.inspect(InspectTypeOne(#([1], "a")))
     == "InspectTypeOne(#([1], \"a\"))"
+}
 
+pub fn inspect_412_test() {
   assert string.inspect(Ok) == "//fn(a) { ... }"
+}
 
+pub fn inspect_416_test() {
   assert string.inspect(Error) == "//fn(a) { ... }"
+}
 
+pub fn inspect_420_test() {
   assert string.inspect(fn() { Nil }) == "//fn() { ... }"
+}
 
+pub fn inspect_424_test() {
   assert string.inspect(fn(_) { Nil }) == "//fn(a) { ... }"
+}
 
+pub fn inspect_428_test() {
   assert string.inspect(fn(_, _) { Nil }) == "//fn(a, b) { ... }"
+}
 
+pub fn inspect_432_test() {
   assert string.inspect(fn(_, _) { Nil }) == "//fn(a, b) { ... }"
+}
 
+pub fn inspect_436_test() {
   assert string.inspect(fn(_: Int, _: String) -> Bool { False })
     == "//fn(a, b) { ... }"
+}
 
+pub fn inspect_441_test() {
   assert string.inspect(#(InspectTypeOne, InspectTypeTwo))
     == "#(//fn(a) { ... }, //fn(a, b) { ... })"
+}
 
+pub fn inspect_446_test() {
   assert string.inspect(InspectTypeOne(InspectTypeZero))
     == "InspectTypeOne(InspectTypeZero)"
+}
 
+pub fn inspect_451_test() {
   assert string.inspect(<<255, 2, 0>>) == "<<255, 2, 0>>"
 }
 
@@ -1012,8 +1238,27 @@ pub fn inspect_erlang_atom_with_leading_digit_invalid_in_gleam_test() {
 }
 
 @target(erlang)
-pub fn fifteen_bit_int_test() {
+pub fn inspect_fifteen_bit_int_test() {
   assert string.inspect(<<2, 3:size(7)>>) == "<<2, 3:size(7)>>"
+}
+
+@target(javascript)
+@external(javascript, "../gleam_stdlib_test_ffi.mjs", "circular_reference")
+fn circular_reference() -> Dynamic
+
+@target(javascript)
+pub fn inspect_circular_reference_test() {
+  assert string.inspect(circular_reference())
+    |> string.starts_with("#(1, 2, 3, #")
+}
+
+@target(javascript)
+@external(javascript, "../gleam_stdlib_test_ffi.mjs", "js_error")
+fn js_error() -> Dynamic
+
+@target(javascript)
+pub fn inspect_js_error_test() {
+  assert string.inspect(js_error()) == "//js(SomeError: Oh no!)"
 }
 
 pub fn byte_size_test() {

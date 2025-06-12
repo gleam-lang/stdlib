@@ -678,22 +678,29 @@ export function inspect(v) {
   if (t === "string") return inspectString(v);
   if (t === "bigint" || Number.isInteger(v)) return v.toString();
   if (t === "number") return float_to_string(v);
-  if (Array.isArray(v)) return `#(${v.map(inspect).join(", ")})`;
-  if (v instanceof List) return inspectList(v);
   if (v instanceof UtfCodepoint) return inspectUtfCodepoint(v);
   if (v instanceof BitArray) return `<<${bit_array_inspect(v, "")}>>`;
-  if (v instanceof CustomType) return inspectCustomType(v);
-  if (v instanceof Dict) return inspectDict(v);
-  if (v instanceof Set) return `//js(Set(${[...v].map(inspect).join(", ")}))`;
   if (v instanceof RegExp) return `//js(${v})`;
   if (v instanceof Date) return `//js(Date("${v.toISOString()}"))`;
+  if (v instanceof globalThis.Error) return `//js(${v.toString()})`;
   if (v instanceof Function) {
     const args = [];
     for (const i of Array(v.length).keys())
       args.push(String.fromCharCode(i + 97));
     return `//fn(${args.join(", ")}) { ... }`;
   }
-  return inspectObject(v);
+
+  try {
+    if (Array.isArray(v)) return `#(${v.map(inspect).join(", ")})`;
+    if (v instanceof List) return inspectList(v);
+    if (v instanceof CustomType) return inspectCustomType(v);
+    if (v instanceof Dict) return inspectDict(v);
+    if (v instanceof Set) return `//js(Set(${[...v].map(inspect).join(", ")}))`;
+    return inspectObject(v);
+  } catch (e) {
+    if (e instanceof RangeError) return "//js(circular)";
+    throw e;
+  }
 }
 
 function inspectString(str) {
