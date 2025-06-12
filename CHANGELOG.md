@@ -9,6 +9,8 @@
   Erlang character lists.
 - The deprecated `debug` function in the `io` module has been removed.
 - The deprecated `from` function in the `dynamic` module has been removed.
+- Fixed a bug in the `sample` function from the `list` module where it would end
+  up picking the same element twice from a given list.
 
 ## v0.60.0 - 2025-05-13
 
