@@ -1249,7 +1249,7 @@ fn circular_reference() -> Dynamic
 @target(javascript)
 pub fn inspect_circular_reference_test() {
   assert string.inspect(circular_reference())
-    |> string.starts_with("#(1, 2, 3, #")
+    == "#(1, 2, 3, //js(circular reference))"
 }
 
 @target(javascript)

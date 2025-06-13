@@ -170,6 +170,9 @@ pub fn base16_decode(input: String) -> Result(BitArray, Nil)
 
 /// Converts a bit array to a string containing the decimal value of each byte.
 ///
+/// Use this over `string.inspect` when you have a bit array you want printed
+/// in the array syntax even if it is valid UTF-8.
+///
 /// ## Examples
 ///
 /// ```gleam
@@ -184,7 +187,6 @@ pub fn inspect(input: BitArray) -> String {
   inspect_loop(input, "<<") <> ">>"
 }
 
-@external(javascript, "../gleam_stdlib.mjs", "bit_array_inspect")
 fn inspect_loop(input: BitArray, accumulator: String) -> String {
   case input {
     <<>> -> accumulator

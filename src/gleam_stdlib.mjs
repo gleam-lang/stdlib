@@ -670,147 +670,179 @@ export function bitwise_shift_right(x, y) {
 }
 
 export function inspect(v) {
-  const t = typeof v;
-  if (v === true) return "True";
-  if (v === false) return "False";
-  if (v === null) return "//js(null)";
-  if (v === undefined) return "Nil";
-  if (t === "string") return inspectString(v);
-  if (t === "bigint" || Number.isInteger(v)) return v.toString();
-  if (t === "number") return float_to_string(v);
-  if (v instanceof UtfCodepoint) return inspectUtfCodepoint(v);
-  if (v instanceof BitArray) return `<<${bit_array_inspect(v, "")}>>`;
-  if (v instanceof RegExp) return `//js(${v})`;
-  if (v instanceof Date) return `//js(Date("${v.toISOString()}"))`;
-  if (v instanceof globalThis.Error) return `//js(${v.toString()})`;
-  if (v instanceof Function) {
-    const args = [];
-    for (const i of Array(v.length).keys())
-      args.push(String.fromCharCode(i + 97));
-    return `//fn(${args.join(", ")}) { ... }`;
-  }
-
-  try {
-    if (Array.isArray(v)) return `#(${v.map(inspect).join(", ")})`;
-    if (v instanceof List) return inspectList(v);
-    if (v instanceof CustomType) return inspectCustomType(v);
-    if (v instanceof Dict) return inspectDict(v);
-    if (v instanceof Set) return `//js(Set(${[...v].map(inspect).join(", ")}))`;
-    return inspectObject(v);
-  } catch (e) {
-    if (e instanceof RangeError) return "//js(circular)";
-    throw e;
-  }
+  return new Inspector().inspect(v);
 }
 
-function inspectString(str) {
-  let new_str = '"';
-  for (let i = 0; i < str.length; i++) {
-    const char = str[i];
-    switch (char) {
-      case "\n":
-        new_str += "\\n";
-        break;
-      case "\r":
-        new_str += "\\r";
-        break;
-      case "\t":
-        new_str += "\\t";
-        break;
-      case "\f":
-        new_str += "\\f";
-        break;
-      case "\\":
-        new_str += "\\\\";
-        break;
-      case '"':
-        new_str += '\\"';
-        break;
-      default:
-        if (char < " " || (char > "~" && char < "\u{00A0}")) {
-          new_str +=
-            "\\u{" +
-            char.charCodeAt(0).toString(16).toUpperCase().padStart(4, "0") +
-            "}";
+class Inspector {
+  #references = new Set();
+
+  inspect(v) {
+    const t = typeof v;
+    if (v === true) return "True";
+    if (v === false) return "False";
+    if (v === null) return "//js(null)";
+    if (v === undefined) return "Nil";
+    if (t === "string") return this.#string(v);
+    if (t === "bigint" || Number.isInteger(v)) return v.toString();
+    if (t === "number") return float_to_string(v);
+    if (v instanceof UtfCodepoint) return this.#utfCodepoint(v);
+    if (v instanceof BitArray) return this.#bit_array(v);
+    if (v instanceof RegExp) return `//js(${v})`;
+    if (v instanceof Date) return `//js(Date("${v.toISOString()}"))`;
+    if (v instanceof globalThis.Error) return `//js(${v.toString()})`;
+    if (v instanceof Function) {
+      const args = [];
+      for (const i of Array(v.length).keys())
+        args.push(String.fromCharCode(i + 97));
+      return `//fn(${args.join(", ")}) { ... }`;
+    }
+
+    if (this.#references.size === this.#references.add(v).size) {
+      return "//js(circular reference)";
+    }
+
+    if (Array.isArray(v))
+      return `#(${v.map((v) => this.inspect(v)).join(", ")})`;
+    if (v instanceof List) return this.#list(v);
+    if (v instanceof CustomType) return this.#customType(v);
+    if (v instanceof Dict) return this.#dict(v);
+    if (v instanceof Set)
+      return `//js(Set(${[...v].map((v) => this.inspect(v)).join(", ")}))`;
+    return this.#object(v);
+  }
+
+  #object(v) {
+    const name = Object.getPrototypeOf(v)?.constructor?.name || "Object";
+    const props = [];
+    for (const k of Object.keys(v)) {
+      props.push(`${this.inspect(k)}: ${this.inspect(v[k])}`);
+    }
+    const body = props.length ? " " + props.join(", ") + " " : "";
+    const head = name === "Object" ? "" : name + " ";
+    return `//js(${head}{${body}})`;
+  }
+
+  #dict(map) {
+    let body = "dict.from_list([";
+    let first = true;
+    map.forEach((value, key) => {
+      if (!first) body = body + ", ";
+      body = body + "#(" + this.inspect(key) + ", " + this.inspect(value) + ")";
+      first = false;
+    });
+    return body + "])";
+  }
+
+  #customType(record) {
+    const props = Object.keys(record)
+      .map((label) => {
+        const value = this.inspect(record[label]);
+        return isNaN(parseInt(label)) ? `${label}: ${value}` : value;
+      })
+      .join(", ");
+    return props
+      ? `${record.constructor.name}(${props})`
+      : record.constructor.name;
+  }
+
+  #list(list) {
+    if (list instanceof Empty) {
+      return "[]";
+    }
+
+    let char_out = 'charlist.from_string("';
+    let list_out = "[";
+
+    let current = list;
+    while (current instanceof NonEmpty) {
+      let element = current.head;
+      current = current.tail;
+
+      if (list_out !== "[") {
+        list_out += ", ";
+      }
+      list_out += this.inspect(element);
+
+      if (char_out) {
+        if (Number.isInteger(element) && element >= 32 && element <= 126) {
+          char_out += String.fromCharCode(element);
         } else {
-          new_str += char;
+          char_out = null;
         }
-    }
-  }
-  new_str += '"';
-  return new_str;
-}
-
-function inspectDict(map) {
-  let body = "dict.from_list([";
-  let first = true;
-  map.forEach((value, key) => {
-    if (!first) body = body + ", ";
-    body = body + "#(" + inspect(key) + ", " + inspect(value) + ")";
-    first = false;
-  });
-  return body + "])";
-}
-
-function inspectObject(v) {
-  const name = Object.getPrototypeOf(v)?.constructor?.name || "Object";
-  const props = [];
-  for (const k of Object.keys(v)) {
-    props.push(`${inspect(k)}: ${inspect(v[k])}`);
-  }
-  const body = props.length ? " " + props.join(", ") + " " : "";
-  const head = name === "Object" ? "" : name + " ";
-  return `//js(${head}{${body}})`;
-}
-
-function inspectCustomType(record) {
-  const props = Object.keys(record)
-    .map((label) => {
-      const value = inspect(record[label]);
-      return isNaN(parseInt(label)) ? `${label}: ${value}` : value;
-    })
-    .join(", ");
-  return props
-    ? `${record.constructor.name}(${props})`
-    : record.constructor.name;
-}
-
-export function inspectList(list) {
-  if (list instanceof Empty) {
-    return "[]";
-  }
-
-  let char_out = 'charlist.from_string("';
-  let list_out = "[";
-
-  let current = list;
-  while (current instanceof NonEmpty) {
-    let element = current.head;
-    current = current.tail;
-
-    if (list_out !== "[") {
-      list_out += ", ";
-    }
-    list_out += inspect(element);
-
-    if (char_out) {
-      if (Number.isInteger(element) && element >= 32 && element <= 126) {
-        char_out += String.fromCharCode(element);
-      } else {
-        char_out = null;
       }
     }
+
+    if (char_out) {
+      return char_out + '")';
+    } else {
+      return list_out + "]";
+    }
   }
 
-  if (char_out) {
-    return char_out + '")';
-  } else {
-    return list_out + "]";
+  #string(str) {
+    let new_str = '"';
+    for (let i = 0; i < str.length; i++) {
+      const char = str[i];
+      switch (char) {
+        case "\n":
+          new_str += "\\n";
+          break;
+        case "\r":
+          new_str += "\\r";
+          break;
+        case "\t":
+          new_str += "\\t";
+          break;
+        case "\f":
+          new_str += "\\f";
+          break;
+        case "\\":
+          new_str += "\\\\";
+          break;
+        case '"':
+          new_str += '\\"';
+          break;
+        default:
+          if (char < " " || (char > "~" && char < "\u{00A0}")) {
+            new_str +=
+              "\\u{" +
+              char.charCodeAt(0).toString(16).toUpperCase().padStart(4, "0") +
+              "}";
+          } else {
+            new_str += char;
+          }
+      }
+    }
+    new_str += '"';
+    return new_str;
   }
-}
 
-export function inspectUtfCodepoint(codepoint) {
-  return `//utfcodepoint(${String.fromCodePoint(codepoint.value)})`;
+  #utfCodepoint(codepoint) {
+    return `//utfcodepoint(${String.fromCodePoint(codepoint.value)})`;
+  }
+
+  #bit_array(bits) {
+    let acc = "<<";
+    if (bits.bitSize === 0) {
+      return acc;
+    }
+
+    for (let i = 0; i < bits.byteSize - 1; i++) {
+      acc += bits.byteAt(i).toString();
+      acc += ", ";
+    }
+
+    if (bits.byteSize * 8 === bits.bitSize) {
+      acc += bits.byteAt(bits.byteSize - 1).toString();
+    } else {
+      const trailingBitsCount = bits.bitSize % 8;
+      acc += bits.byteAt(bits.byteSize - 1) >> (8 - trailingBitsCount);
+      acc += `:size(${trailingBitsCount})`;
+    }
+
+    acc += ">>";
+    return acc;
+  }
 }
 
 export function base16_encode(bit_array) {
@@ -841,27 +873,6 @@ export function base16_decode(string) {
     bytes[i / 2] = a * 16 + b;
   }
   return new Ok(new BitArray(bytes));
-}
-
-export function bit_array_inspect(bits, acc) {
-  if (bits.bitSize === 0) {
-    return acc;
-  }
-
-  for (let i = 0; i < bits.byteSize - 1; i++) {
-    acc += bits.byteAt(i).toString();
-    acc += ", ";
-  }
-
-  if (bits.byteSize * 8 === bits.bitSize) {
-    acc += bits.byteAt(bits.byteSize - 1).toString();
-  } else {
-    const trailingBitsCount = bits.bitSize % 8;
-    acc += bits.byteAt(bits.byteSize - 1) >> (8 - trailingBitsCount);
-    acc += `:size(${trailingBitsCount})`;
-  }
-
-  return acc;
 }
 
 export function bit_array_to_int_and_size(bits) {
