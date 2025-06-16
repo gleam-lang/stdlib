@@ -27,6 +27,12 @@ export function map(items) {
   return object;
 }
 
+const singleton = { a: 1 };
+
+export function singleton_object() {
+  return singleton;
+}
+
 export function circular_reference() {
   const x = [1, 2, 3];
   x.push(x);

@@ -1253,6 +1253,16 @@ pub fn inspect_circular_reference_test() {
 }
 
 @target(javascript)
+@external(javascript, "../gleam_stdlib_test_ffi.mjs", "singleton_object")
+fn singleton_object() -> Dynamic
+
+@target(javascript)
+pub fn inspect_singleton_test() {
+  assert string.inspect(#(singleton_object(), singleton_object()))
+    == "#(//js({ \"a\": 1 }), //js({ \"a\": 1 }))"
+}
+
+@target(javascript)
 @external(javascript, "../gleam_stdlib_test_ffi.mjs", "js_error")
 fn js_error() -> Dynamic
 
