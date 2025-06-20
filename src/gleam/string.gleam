@@ -359,9 +359,14 @@ fn erl_split(a: String, b: String) -> List(String)
 
 /// Creates a new `String` by joining two `String`s together.
 ///
-/// This function copies both `String`s and runs in linear time. If you find
-/// yourself joining `String`s frequently consider using the [`string_tree`](../gleam/string_tree.html)
-/// module as it can append `String`s much faster!
+/// This function typically copies both `String`s and runs in linear time, but
+/// the exact behaviour will depend on how the runtime you are using optimises
+/// your code. Benchmark and profile your code if you need to understand its
+/// performance better.
+///
+/// If you are joining together large string and want to avoid copying any data
+/// you may want to investigate using the [`string_tree`](../gleam/string_tree.html)
+/// module.
 ///
 /// ## Examples
 ///
