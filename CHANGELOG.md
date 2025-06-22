@@ -13,6 +13,8 @@
   up picking the same element twice from a given list.
 - Improved formatting of JavaScript errors in `string.inspect`.
 - JavaScript circular references can now be printed by `string.inspect`.
+- The alias `result.then` was deprecated in favour of using `result.try`
+  directly.
 
 ## v0.60.0 - 2025-05-13
 

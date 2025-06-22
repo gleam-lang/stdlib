@@ -48,16 +48,6 @@ pub fn try_test() {
   assert result.try(Ok(1), fn(_) { Error(1) }) == Error(1)
 }
 
-pub fn then_test() {
-  assert result.then(Error(1), fn(x) { Ok(x + 1) }) == Error(1)
-
-  assert result.then(Ok(1), fn(x) { Ok(x + 1) }) == Ok(2)
-
-  assert result.then(Ok(1), fn(_) { Ok("type change") }) == Ok("type change")
-
-  assert result.then(Ok(1), fn(_) { Error(1) }) == Error(1)
-}
-
 pub fn unwrap_test() {
   assert result.unwrap(Ok(1), 50) == 1
 

@@ -165,8 +165,7 @@ pub fn try(
   }
 }
 
-/// An alias for `try`. See the documentation for that function for more information.
-///
+@deprecated("This function is an alias of result.try, use that instead")
 pub fn then(
   result: Result(a, e),
   apply fun: fn(a) -> Result(b, e),
