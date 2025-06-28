@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.61.0 - 2025-06-22
+## v0.61.0 - 2025-06-28
 
 - The fallback code for older NodeJS versions in the JavaScript target
   implementation of `string.replace` has been removed.
