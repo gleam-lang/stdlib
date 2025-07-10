@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.62.0 - 2025-07-10
+
+- The `digits` and `undigits` functions of the `int` module have been deprecated.
+
 ## v0.61.0 - 2025-06-28
 
 - The fallback code for older NodeJS versions in the JavaScript target

@@ -235,30 +235,6 @@ pub fn product_test() {
   assert int.product([1, 2, 3]) == 6
 }
 
-pub fn digits_test() {
-  assert int.digits(123, 10) == Ok([1, 2, 3])
-
-  assert int.digits(-123, 10) == Ok([-1, -2, -3])
-
-  assert int.digits(123, 2) == Ok([1, 1, 1, 1, 0, 1, 1])
-
-  assert int.digits(123, 1) == Error(Nil)
-}
-
-pub fn undigits_test() {
-  assert int.undigits([], 10) == Ok(0)
-
-  assert int.undigits([1, 2, 3], 10) == Ok(123)
-
-  assert int.undigits([-1, -2, -3], 10) == Ok(-123)
-
-  assert int.undigits([1, 1, 1, 1, 0, 1, 1], 2) == Ok(123)
-
-  assert int.undigits([1, 2, 3], 1) == Error(Nil)
-
-  assert int.undigits([1, 1, 2], 2) == Error(Nil)
-}
-
 pub fn random_test() {
   use _ <- list.each(list.range(0, 100))
 
