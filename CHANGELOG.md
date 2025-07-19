@@ -105,7 +105,7 @@
 
 ## v0.48.0 - 2024-12-17
 
-- Fixed a bug where `string.utf_codepoint` would erronously accept negative input.
+- Fixed a bug where `string.utf_codepoint` would erroneously accept negative input.
 - The deprecated `string_builder` and `bytes_builder` modules have been removed.
 
 ## v0.47.0 - 2024-12-10
