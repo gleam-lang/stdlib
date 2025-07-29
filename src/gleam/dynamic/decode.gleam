@@ -187,10 +187,10 @@
 ////   }
 //// }
 ////
-//// let result = decode.run(dynamic.from("water"), decoder)
+//// let result = decode.run(dynamic.string("water"), decoder)
 //// assert result == Ok(Water)
 ////
-//// let result = decode.run(dynamic.from("wobble"), decoder)
+//// let result = decode.run(dynamic.string("wobble"), decoder)
 //// assert result == Error([DecodeError("PocketMonsterType", "String", [])])
 //// ```
 ////
@@ -305,11 +305,11 @@ pub opaque type Decoder(t) {
 /// # Examples
 ///
 /// ```gleam
-/// let data = dynamic.from(dict.from_list([
-///   #("data", dict.from_list([
-///     #("email", "lucy@example.com"),
-///     #("name", "Lucy"),
-///   ]))
+/// let data = dynamic.properties([
+///   #(dynamic.string("data"), dynamic.properties([
+///     #(dynamic.string("email"), dynamic.string("lucy@example.com")),
+///     #(dynamic.string("name"), dynamic.string("Lucy")),
+///   ])
 /// ]))
 ///
 /// let decoder = {
@@ -373,9 +373,9 @@ pub fn run(data: Dynamic, decoder: Decoder(t)) -> Result(t, List(DecodeError)) {
 /// ```gleam
 /// let decoder = decode.at(["one", "two"], decode.int)
 ///
-/// let data = dynamic.from(dict.from_list([
-///   #("one", dict.from_list([
-///     #("two", 1000),
+/// let data = dynamic.properties([
+///   #(dynamic.string("one"), dynamic.properties([
+///     #(dynamic.string("two"), dynamic.int(1000)),
 ///   ])),
 /// ]))
 ///
@@ -460,9 +460,9 @@ fn push_path(
 /// # Examples
 ///
 /// ```gleam
-/// let data = dynamic.from(dict.from_list([
-///   #("email", "lucy@example.com"),
-///   #("name", "Lucy"),
+/// let data = dynamic.properties([
+///   #(dynamic.string("email"), dynamic.string("lucy@example.com")),
+///   #(dynamic.string("name"), dynamic.string("Lucy")),
 /// ]))
 ///
 /// let decoder = {
@@ -499,9 +499,9 @@ pub fn decode_error(
 /// # Examples
 ///
 /// ```gleam
-/// let data = dynamic.from(dict.from_list([
-///   #("email", "lucy@example.com"),
-///   #("name", "Lucy"),
+/// let data = dynamic.properties([
+///   #(dynamic.string("email"), dynamic.string("lucy@example.com")),
+///   #(dynamic.string("name"), dynamic.string("Lucy")),
 /// ]))
 ///
 /// let decoder = {
@@ -539,8 +539,8 @@ pub fn field(
 /// # Examples
 ///
 /// ```gleam
-/// let data = dynamic.from(dict.from_list([
-///   #("name", "Lucy"),
+/// let data = dynamic.properties([
+///   #(dynamic.string("name"), dynamic.string("Lucy")),
 /// ]))
 ///
 /// let decoder = {
@@ -586,8 +586,8 @@ pub fn optional_field(
 /// ```gleam
 /// let decoder = decode.optionally_at(["one", "two"], 100, decode.int)
 ///
-/// let data = dynamic.from(dict.from_list([
-///   #("one", dict.from_list([])),
+/// let data = dynamic.properties([
+///   #(dynamic.string("one"), dynamic.properties([])),
 /// ]))
 ///
 ///
