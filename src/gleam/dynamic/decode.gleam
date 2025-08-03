@@ -385,7 +385,7 @@ pub fn run(data: Dynamic, decoder: Decoder(t)) -> Result(t, List(DecodeError)) {
 /// ```
 ///
 /// ```gleam
-/// dynamic.from(Nil)
+/// dynamic.nil()
 /// |> decode.run(decode.optional(decode.int))
 /// // -> Ok(option.None)
 /// ```
@@ -621,7 +621,7 @@ fn run_dynamic_function(
 /// # Examples
 ///
 /// ```gleam
-/// let result = decode.run(dynamic.from("Hello!"), decode.string)
+/// let result = decode.run(dynamic.string("Hello!"), decode.string)
 /// assert result == Ok("Hello!")
 /// ```
 ///
@@ -648,7 +648,7 @@ fn dynamic_string(from data: Dynamic) -> Result(String, String) {
 /// # Examples
 ///
 /// ```gleam
-/// let result = decode.run(dynamic.from(True), decode.bool)
+/// let result = decode.run(dynamic.bool(True), decode.bool)
 /// assert result == Ok(True)
 /// ```
 ///
@@ -670,7 +670,7 @@ fn decode_bool(data: Dynamic) -> #(Bool, List(DecodeError)) {
 /// # Examples
 ///
 /// ```gleam
-/// let result = decode.run(dynamic.from(147), decode.int)
+/// let result = decode.run(dynamic.int(147), decode.int)
 /// assert result == Ok(147)
 /// ```
 ///
@@ -689,7 +689,7 @@ fn dynamic_int(data: Dynamic) -> Result(Int, Int)
 /// # Examples
 ///
 /// ```gleam
-/// let result = decode.run(dynamic.from(3.14), decode.float)
+/// let result = decode.run(dynamic.float(3.14), decode.float)
 /// assert result == Ok(3.14)
 /// ```
 ///
@@ -708,8 +708,8 @@ fn dynamic_float(data: Dynamic) -> Result(Float, Float)
 /// # Examples
 ///
 /// ```gleam
-/// let result = decode.run(dynamic.from(3.14), decode.dynamic)
-/// assert result == Ok(dynamic.from(3.14))
+/// let result = decode.run(dynamic.float(3.14), decode.dynamic)
+/// assert result == Ok(dynamic.float(3.14))
 /// ```
 ///
 pub const dynamic: Decoder(Dynamic) = Decoder(decode_dynamic)
@@ -723,7 +723,7 @@ fn decode_dynamic(data: Dynamic) -> #(Dynamic, List(DecodeError)) {
 /// # Examples
 ///
 /// ```gleam
-/// let result = decode.run(dynamic.from(<<5, 7>>), decode.bit_array)
+/// let result = decode.run(dynamic.bit_array(<<5, 7>>), decode.bit_array)
 /// assert result == Ok(<<5, 7>>)
 /// ```
 ///
@@ -744,7 +744,10 @@ fn dynamic_bit_array(data: Dynamic) -> Result(BitArray, BitArray)
 ///
 /// ```gleam
 /// let result =
-///   decode.run(dynamic.from([1, 2, 3]), decode.list(of: decode.int))
+///   [1, 2, 3]
+///   |> list.map(dynamic.int)
+///   |> dynamic.list
+///   |> decode.run(decode.list(of: decode.int))
 /// assert result == Ok([1, 2, 3])
 /// ```
 ///
@@ -770,13 +773,13 @@ fn decode_list(
 /// # Examples
 ///
 /// ```gleam
-/// let values = dict.from_list([
-///   #("one", 1),
-///   #("two", 2),
+/// let values = dynamic.properties([
+///   #(dynamic.string("one"), dynamic.int(1)),
+///   #(dynamic.string("two"), dynamic.int(2)),
 /// ])
 ///
 /// let result =
-///   decode.run(dynamic.from(values), decode.dict(decode.string, decode.int))
+///   decode.run(values, decode.dict(decode.string, decode.int))
 /// assert result == Ok(values)
 /// ```
 ///
@@ -837,12 +840,12 @@ fn decode_dict(data: Dynamic) -> Result(Dict(Dynamic, Dynamic), Nil)
 /// # Examples
 ///
 /// ```gleam
-/// let result = decode.run(dynamic.from(100), decode.optional(decode.int))
+/// let result = decode.run(dynamic.int(100), decode.optional(decode.int))
 /// assert result == Ok(option.Some(100))
 /// ```
 ///
 /// ```gleam
-/// let result = decode.run(dynamic.from(Nil), decode.optional(decode.int))
+/// let result = decode.run(dynamic.nil(), decode.optional(decode.int))
 /// assert result == Ok(option.None)
 /// ```
 ///
@@ -864,7 +867,7 @@ pub fn optional(inner: Decoder(a)) -> Decoder(Option(a)) {
 ///
 /// ```gleam
 /// let decoder = decode.int |> decode.map(int.to_string)
-/// let result = decode.run(dynamic.from(1000), decoder)
+/// let result = decode.run(dynamic.int(1000), decoder)
 /// assert result == Ok("1000")
 /// ```
 ///
@@ -897,7 +900,7 @@ pub fn map_errors(
 ///
 /// ```gleam
 /// let decoder = decode.string |> decode.collapse_errors("MyThing")
-/// let result = decode.run(dynamic.from(1000), decoder)
+/// let result = decode.run(dynamic.int(1000), decoder)
 /// assert result == Error([DecodeError("MyThing", "Int", [])])
 /// ```
 ///
@@ -941,7 +944,7 @@ pub fn then(decoder: Decoder(a), next: fn(a) -> Decoder(b)) -> Decoder(b) {
 ///   decode.int |> decode.map(int.to_string),
 ///   decode.float |> decode.map(float.to_string),
 /// ])
-/// decode.run(dynamic.from(1000), decoder)
+/// decode.run(dynamic.int(1000), decoder)
 /// // -> Ok("1000")
 /// ```
 ///
