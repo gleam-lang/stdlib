@@ -1187,54 +1187,50 @@ pub fn inspect_erlang_atom_is_valid_in_gleam_test() {
 
 @target(erlang)
 pub fn inspect_erlang_atom_with_a_leading_underscore_is_invalid_in_gleam_test() {
-  assert string.inspect(string_to_erlang_atom("_ok"))
-    == "atom.create_from_string(\"_ok\")"
+  assert string.inspect(string_to_erlang_atom("_ok")) == "atom.create(\"_ok\")"
 }
 
 @target(erlang)
 pub fn inspect_erlang_atom_with_a_trailing_underscore_is_invalid_in_gleam_test() {
-  assert string.inspect(string_to_erlang_atom("ok_"))
-    == "atom.create_from_string(\"ok_\")"
+  assert string.inspect(string_to_erlang_atom("ok_")) == "atom.create(\"ok_\")"
 }
 
 @target(erlang)
 pub fn inspect_erlang_atom_with_a_double_underscore_is_invalid_in_gleam_test() {
   assert string.inspect(string_to_erlang_atom("ok__ok"))
-    == "atom.create_from_string(\"ok__ok\")"
+    == "atom.create(\"ok__ok\")"
 }
 
 @target(erlang)
 pub fn inspect_erlang_atom_with_white_spaces_is_invalid_in_gleam_test() {
   assert string.inspect(string_to_erlang_atom("ok ok"))
-    == "atom.create_from_string(\"ok ok\")"
+    == "atom.create(\"ok ok\")"
 }
 
 @target(erlang)
 pub fn inspect_erlang_atom_that_is_an_empty_string_is_invalid_in_gleam_test() {
   // An empty string based atom is invalid in gleam
-  assert string.inspect(string_to_erlang_atom(""))
-    == "atom.create_from_string(\"\")"
+  assert string.inspect(string_to_erlang_atom("")) == "atom.create(\"\")"
 }
 
 @target(erlang)
 pub fn inspect_erlang_atom_with_uppercases_invalid_in_gleam_test() {
   assert string.inspect(string_to_erlang_atom("Upper"))
-    == "atom.create_from_string(\"Upper\")"
+    == "atom.create(\"Upper\")"
 }
 
 @target(erlang)
 pub fn inspect_erlang_atom_tag_tuple_test() {
   assert string.inspect(#(string_to_erlang_atom("DOWN"), 1, 2))
-    == "#(atom.create_from_string(\"DOWN\"), 1, 2)"
+    == "#(atom.create(\"DOWN\"), 1, 2)"
 }
 
 @target(erlang)
 pub fn inspect_erlang_atom_with_leading_digit_invalid_in_gleam_test() {
   assert string.inspect(string_to_erlang_atom("1_ok"))
-    == "atom.create_from_string(\"1_ok\")"
+    == "atom.create(\"1_ok\")"
 
-  assert string.inspect(string_to_erlang_atom("1Ok"))
-    == "atom.create_from_string(\"1Ok\")"
+  assert string.inspect(string_to_erlang_atom("1Ok")) == "atom.create(\"1Ok\")"
 }
 
 @target(erlang)

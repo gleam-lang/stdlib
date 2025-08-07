@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.62.1 - 2025-08-07
+
+- `string.inspect` now shows Erlang atoms as `atom.create("value")`, to match
+  the latest version of `gleam_erlang`.
+
 ## v0.62.0 - 2025-07-10
 
 - The `digits` and `undigits` functions of the `int` module have been deprecated.
