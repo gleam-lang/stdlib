@@ -1,6 +1,7 @@
 //// Strings in Gleam are UTF-8 binaries. They can be written in your code as
 //// text surrounded by `"double quotes"`.
 
+import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/order
@@ -406,7 +407,7 @@ fn concat_loop(strings: List(String), accumulator: String) -> String {
 
 /// Creates a new `String` by repeating a `String` a given number of times.
 ///
-/// This function runs in linear time.
+/// This function runs in loglinear time.
 ///
 /// ## Examples
 ///
@@ -416,13 +417,28 @@ fn concat_loop(strings: List(String), accumulator: String) -> String {
 /// ```
 ///
 pub fn repeat(string: String, times times: Int) -> String {
-  repeat_loop(string, times, "")
+  repeat_loop(string, times, string, "")
 }
 
-fn repeat_loop(string: String, times: Int, acc: String) -> String {
+fn repeat_loop(
+  string: String,
+  times: Int,
+  doubling_acc: String,
+  acc: String,
+) -> String {
   case times <= 0 {
     True -> acc
-    False -> repeat_loop(string, times - 1, acc <> string)
+    False -> {
+      let acc = case int.bitwise_and(times, 1) {
+        1 -> acc <> doubling_acc
+        _ -> acc
+      }
+      let times = int.bitwise_shift_right(times, 1)
+      case times <= 0 {
+        True -> acc
+        False -> repeat_loop(string, times, doubling_acc <> doubling_acc, acc)
+      }
+    }
   }
 }
 

@@ -1,5 +1,8 @@
 # Changelog
 
+- The performance of the `string.repeat` function has been improved. It now runs
+  in loglinear time.
+
 ## v0.62.1 - 2025-08-07
 
 - `string.inspect` now shows Erlang atoms as `atom.create("value")`, to match
