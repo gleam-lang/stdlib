@@ -106,7 +106,13 @@ pub fn concat_emoji_test() {
 }
 
 pub fn repeat_test() {
+  assert string.repeat("hi", times: 1) == "hi"
+
+  assert string.repeat("hi", times: 2) == "hihi"
+
   assert string.repeat("hi", times: 3) == "hihihi"
+
+  assert string.repeat("a", times: 10_001) |> string.length == 10_001
 
   assert string.repeat("hi", 0) == ""
 
