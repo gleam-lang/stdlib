@@ -1,7 +1,6 @@
 //// Strings in Gleam are UTF-8 binaries. They can be written in your code as
 //// text surrounded by `"double quotes"`.
 
-import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/order
@@ -429,11 +428,11 @@ fn repeat_loop(
   doubling_acc: String,
   acc: String,
 ) -> String {
-  let acc = case int.bitwise_and(times, 1) {
+  let acc = case times % 2 {
     0 -> acc
     _ -> acc <> doubling_acc
   }
-  let times = int.bitwise_shift_right(times, 1)
+  let times = times / 2
   case times <= 0 {
     True -> acc
     False -> repeat_loop(string, times, doubling_acc <> doubling_acc, acc)
