@@ -417,7 +417,10 @@ fn concat_loop(strings: List(String), accumulator: String) -> String {
 /// ```
 ///
 pub fn repeat(string: String, times times: Int) -> String {
-  repeat_loop(string, times, string, "")
+  case times <= 0 {
+    True -> ""
+    False -> repeat_loop(string, times, string, "")
+  }
 }
 
 fn repeat_loop(
@@ -426,19 +429,14 @@ fn repeat_loop(
   doubling_acc: String,
   acc: String,
 ) -> String {
+  let acc = case int.bitwise_and(times, 1) {
+    0 -> acc
+    _ -> acc <> doubling_acc
+  }
+  let times = int.bitwise_shift_right(times, 1)
   case times <= 0 {
     True -> acc
-    False -> {
-      let acc = case int.bitwise_and(times, 1) {
-        1 -> acc <> doubling_acc
-        _ -> acc
-      }
-      let times = int.bitwise_shift_right(times, 1)
-      case times <= 0 {
-        True -> acc
-        False -> repeat_loop(string, times, doubling_acc <> doubling_acc, acc)
-      }
-    }
+    False -> repeat_loop(string, times, doubling_acc <> doubling_acc, acc)
   }
 }
 
