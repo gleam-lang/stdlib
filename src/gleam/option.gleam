@@ -208,6 +208,33 @@ pub fn map(over option: Option(a), with fun: fn(a) -> b) -> Option(b) {
   }
 }
 
+/// Transforms a value inside an Option by applying a function that itself returns an Option,
+/// then flattens the nested result into a single Option.
+///
+/// ## Examples
+///
+/// ```gleam
+/// flat_map(Some(1), fn(x) { Some(x + 1) })
+/// // -> Some(2)
+/// ```
+///
+/// ```gleam
+/// flat_map(Some(1), fn(x) { None })
+/// // -> None
+/// ```
+///
+/// ```gleam
+/// flat_map(None, fn(x) { Some(x + 1) })
+/// // -> None
+/// ```
+///
+pub fn flat_map(
+  over option: Option(a),
+  with fun: fn(a) -> Option(b),
+) -> Option(b) {
+  flatten(map(option, fun))
+}
+
 /// Merges a nested `Option` into a single layer.
 ///
 /// ## Examples
