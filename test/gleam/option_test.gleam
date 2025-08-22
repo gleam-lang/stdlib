@@ -92,7 +92,7 @@ pub fn values_test() {
   assert option.values([Some(1), None, Some(3)]) == [1, 3]
 }
 
-pub fn flat_map_test() {
+pub fn flat_map_option_test() {
   assert option.flat_map(Some(1), fn(x) { Some(x + 1) }) == Some(2)
 
   assert option.flat_map(Some(1), fn(_) { None }) == None
