@@ -381,9 +381,7 @@ pub fn append(to first: String, suffix second: String) -> String {
 
 /// Creates a new `String` by joining many `String`s together.
 ///
-/// This function copies both `String`s and runs in linear time. If you find
-/// yourself joining `String`s frequently consider using the [`string_tree`](../gleam/string_tree.html)
-/// module as it can append `String`s much faster!
+/// This function copies all the `String`s and runs in linear time.
 ///
 /// ## Examples
 ///
