@@ -416,16 +416,11 @@ fn concat_loop(strings: List(String), accumulator: String) -> String {
 pub fn repeat(string: String, times times: Int) -> String {
   case times <= 0 {
     True -> ""
-    False -> repeat_loop(string, times, string, "")
+    False -> repeat_loop(times, string, "")
   }
 }
 
-fn repeat_loop(
-  string: String,
-  times: Int,
-  doubling_acc: String,
-  acc: String,
-) -> String {
+fn repeat_loop(times: Int, doubling_acc: String, acc: String) -> String {
   let acc = case times % 2 {
     0 -> acc
     _ -> acc <> doubling_acc
@@ -433,7 +428,7 @@ fn repeat_loop(
   let times = times / 2
   case times <= 0 {
     True -> acc
-    False -> repeat_loop(string, times, doubling_acc <> doubling_acc, acc)
+    False -> repeat_loop(times, doubling_acc <> doubling_acc, acc)
   }
 }
 
