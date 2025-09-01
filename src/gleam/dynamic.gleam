@@ -21,7 +21,7 @@ pub type Dynamic
 /// `gleam/dynamic/decode` module.
 ///
 /// ```gleam
-/// classify(from("Hello"))
+/// classify(string("Hello"))
 /// // -> "String"
 /// ```
 ///
