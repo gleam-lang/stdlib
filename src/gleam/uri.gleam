@@ -635,10 +635,12 @@ fn remove_dot_segments_loop(
 ///
 pub fn to_string(uri: Uri) -> String {
   let parts = case uri.fragment {
+    Some("") -> []
     Some(fragment) -> ["#", fragment]
     None -> []
   }
   let parts = case uri.query {
+    Some("") -> parts
     Some(query) -> ["?", query, ..parts]
     None -> parts
   }

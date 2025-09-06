@@ -384,6 +384,65 @@ pub fn port_to_string_test() {
     == "noslash"
 }
 
+pub fn empty_query_uri_to_string_test() {
+  assert uri.to_string(uri.Uri(
+      None,
+      None,
+      Some("localhost"),
+      None,
+      "",
+      Some(""),
+      None,
+    ))
+    == "//localhost/"
+
+  assert uri.to_string(uri.Uri(
+      None,
+      None,
+      Some("localhost"),
+      None,
+      "",
+      Some(""),
+      Some("section-a"),
+    ))
+    == "//localhost/#section-a"
+}
+
+pub fn empty_fragment_uri_to_string_test() {
+  assert uri.to_string(uri.Uri(
+      None,
+      None,
+      Some("localhost"),
+      None,
+      "",
+      Some(""),
+      Some(""),
+    ))
+    == "//localhost/"
+
+  assert uri.to_string(uri.Uri(
+      None,
+      None,
+      Some("localhost"),
+      None,
+      "",
+      Some("q=1"),
+      Some(""),
+    ))
+    == "//localhost/?q=1"
+
+  assert uri.to_string(uri.Uri(
+      None,
+      None,
+      Some("localhost"),
+      None,
+      "",
+      None,
+      Some(""),
+    ))
+    == "//localhost/"
+}
+
 pub fn parse_query_string_test() {
   let assert Ok(parsed) = uri.parse_query("weebl+bob=1&city=%C3%B6rebro")
   assert parsed == [#("weebl bob", "1"), #("city", "örebro")]
