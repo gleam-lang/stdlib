@@ -1,5 +1,7 @@
 # Changelog
 
+## v0.63.0 - 2025-09-07
+
 - The performance of the `string.repeat` function has been improved. It now runs
   in loglinear time.
 - Fixed a bug in the `uri.parse` function where parsing a uri with an empty port
