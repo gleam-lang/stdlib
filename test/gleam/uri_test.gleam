@@ -418,6 +418,62 @@ pub fn empty_query_to_string_test() {
   assert query_string == ""
 }
 
+pub fn empty_port_test() {
+  let assert Ok(uri) = uri.parse("//:")
+  assert uri
+    == uri.Uri(
+      scheme: None,
+      userinfo: None,
+      host: Some(""),
+      port: None,
+      path: "",
+      query: None,
+      fragment: None,
+    )
+}
+
+pub fn empty_port_followed_by_query_test() {
+  let assert Ok(uri) = uri.parse("//:?")
+  assert uri
+    == uri.Uri(
+      scheme: None,
+      userinfo: None,
+      host: Some(""),
+      port: None,
+      path: "",
+      query: Some(""),
+      fragment: None,
+    )
+}
+
+pub fn empty_port_followed_by_fragment_test() {
+  let assert Ok(uri) = uri.parse("//:#")
+  assert uri
+    == uri.Uri(
+      scheme: None,
+      userinfo: None,
+      host: Some(""),
+      port: None,
+      path: "",
+      query: None,
+      fragment: Some(""),
+    )
+}
+
+pub fn empty_port_followed_by_path_test() {
+  let assert Ok(uri) = uri.parse("//:/")
+  assert uri
+    == uri.Uri(
+      scheme: None,
+      userinfo: None,
+      host: Some(""),
+      port: None,
+      path: "/",
+      query: None,
+      fragment: None,
+    )
+}
+
 const percent_codec_fixtures = [
   #(" ", "%20"),
   #(",", "%2C"),

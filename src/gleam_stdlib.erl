@@ -33,7 +33,7 @@
         (X == 95)).
 -define(is_digit_char(X),
         (X > 47 andalso X < 58)).
--define(is_ascii_character(X), 
+-define(is_ascii_character(X),
         (erlang:is_integer(X) andalso X >= 32 andalso X =< 126)).
 
 uppercase(X) -> X - 32.
@@ -229,11 +229,17 @@ uri_parse(String) ->
     case uri_string:parse(String) of
         {error, _, _} -> {error, nil};
         Uri ->
+            Port =
+                try maps:get(port, Uri) of
+                    undefined -> none;
+                    Value -> {some, Value}
+                catch _:_ -> none
+                end,
             {ok, {uri,
                 maps_get_optional(Uri, scheme),
                 maps_get_optional(Uri, userinfo),
                 maps_get_optional(Uri, host),
-                maps_get_optional(Uri, port),
+                Port,
                 maps_get_or(Uri, path, <<>>),
                 maps_get_optional(Uri, query),
                 maps_get_optional(Uri, fragment)
@@ -482,13 +488,13 @@ index([_, _, _, _, _, _, _, X | _], 7) ->
 index(Tuple, Index) when is_tuple(Tuple) andalso is_integer(Index) ->
     {ok, try
         {some, element(Index + 1, Tuple)}
-    catch _:_ -> 
+    catch _:_ ->
         none
     end};
 index(Map, Key) when is_map(Map) ->
     {ok, try
         {some, maps:get(Key, Map)}
-    catch _:_ -> 
+    catch _:_ ->
         none
     end};
 index(_, Index) when is_integer(Index) ->
