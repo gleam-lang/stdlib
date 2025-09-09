@@ -248,7 +248,7 @@ pub fn drop_start(from string: String, up_to num_graphemes: Int) -> String {
 /// ```
 ///
 pub fn drop_end(from string: String, up_to num_graphemes: Int) -> String {
-  case num_graphemes < 0 {
+  case num_graphemes <= 0 {
     True -> string
     False -> slice(string, 0, length(string) - num_graphemes)
   }
