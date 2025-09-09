@@ -1,5 +1,7 @@
 # Changelog
 
+- The performance of the `string.drop_start` function has been improved.
+
 ## v0.63.0 - 2025-09-07
 
 - The performance of the `string.repeat` function has been improved. It now runs
