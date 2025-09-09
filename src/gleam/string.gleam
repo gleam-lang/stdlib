@@ -829,6 +829,28 @@ pub fn capitalise(string: String) -> String {
 
 /// Returns a `String` representation of a term in Gleam syntax.
 ///
+/// This may be occasionally useful for quick-and-dirty printing of values in
+/// scripts. For error reporting and other uses prefer constructing strings by
+/// pattern matching on the values.
+///
+/// ## Limitations
+///
+/// The output format of this function is not stable and could change at any
+/// time. The output is not suitable for parsing.
+///
+/// This function works using runtime reflection, so the output may not be
+/// perfectly accurate for data structures where the runtime structure doesn't
+/// hold enough information to determine the original syntax. For example,
+/// tuples with an Erlang atom in the first position will be mistaken for Gleam
+/// records.
+///
+/// ## Security and safety
+///
+/// There is no limit to how large the strings that this function can produce.
+/// Be careful not to call this function with large data structures or you
+/// could use very large amounts of memory, potentially causing runtime
+/// problems.
+///
 pub fn inspect(term: anything) -> String {
   do_inspect(term)
   |> string_tree.to_string
