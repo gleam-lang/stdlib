@@ -356,6 +356,8 @@ pub fn drop_start_test() {
   assert string.drop_start("gleam", up_to: 6) == ""
 
   assert string.drop_start("gleam", up_to: -2) == "gleam"
+
+  assert string.drop_start("gleam", up_to: 0) == "gleam"
 }
 
 pub fn drop_start_3499_test() {
@@ -369,6 +371,8 @@ pub fn drop_end_test() {
   assert string.drop_end("gleam", up_to: 5) == ""
 
   assert string.drop_end("gleam", up_to: -2) == "gleam"
+
+  assert string.drop_end("gleam", up_to: 0) == "gleam"
 }
 
 pub fn pad_start_test() {
