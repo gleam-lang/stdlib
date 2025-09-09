@@ -232,13 +232,9 @@ pub fn crop(from string: String, before substring: String) -> String
 /// ```
 ///
 pub fn drop_start(from string: String, up_to num_graphemes: Int) -> String {
-  case num_graphemes > 0 {
-    False -> string
-    True ->
-      case pop_grapheme(string) {
-        Ok(#(_, string)) -> drop_start(string, num_graphemes - 1)
-        Error(Nil) -> string
-      }
+  case num_graphemes <= 0 {
+    True -> string
+    False -> slice(string, num_graphemes, length(string))
   }
 }
 
