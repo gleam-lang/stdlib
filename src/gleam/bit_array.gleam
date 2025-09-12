@@ -138,7 +138,8 @@ fn decode64(a: String) -> Result(BitArray, Nil)
 /// with zero bits prior to being encoded.
 ///
 pub fn base64_url_encode(input: BitArray, padding: Bool) -> String {
-  base64_encode(input, padding)
+  input
+  |> base64_encode(padding)
   |> string.replace("+", "-")
   |> string.replace("/", "_")
 }
