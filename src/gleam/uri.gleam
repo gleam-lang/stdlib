@@ -709,7 +709,8 @@ pub fn merge(base: Uri, relative: Uri) -> Result(Uri, Nil) {
       case relative {
         Uri(host: Some(_), ..) -> {
           let path =
-            string.split(relative.path, "/")
+            relative.path
+            |> string.split("/")
             |> remove_dot_segments()
             |> join_segments()
           let resolved =
@@ -731,7 +732,8 @@ pub fn merge(base: Uri, relative: Uri) -> Result(Uri, Nil) {
               let path_segments = case string.starts_with(relative.path, "/") {
                 True -> string.split(relative.path, "/")
                 False ->
-                  string.split(base.path, "/")
+                  base.path
+                  |> string.split("/")
                   |> drop_last()
                   |> list.append(string.split(relative.path, "/"))
               }

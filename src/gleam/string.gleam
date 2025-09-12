@@ -621,7 +621,8 @@ pub fn pop_grapheme(string: String) -> Result(#(String, String), Nil)
 ///
 @external(javascript, "../gleam_stdlib.mjs", "graphemes")
 pub fn to_graphemes(string: String) -> List(String) {
-  to_graphemes_loop(string, [])
+  string
+  |> to_graphemes_loop([])
   |> list.reverse
 }
 
@@ -852,7 +853,8 @@ pub fn capitalise(string: String) -> String {
 /// problems.
 ///
 pub fn inspect(term: anything) -> String {
-  do_inspect(term)
+  term
+  |> do_inspect
   |> string_tree.to_string
 }
 
