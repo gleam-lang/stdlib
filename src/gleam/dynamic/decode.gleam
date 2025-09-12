@@ -409,7 +409,8 @@ fn index(
 ) -> #(b, List(DecodeError)) {
   case path {
     [] -> {
-      inner(data)
+      data
+      |> inner
       |> push_path(list.reverse(position))
     }
 

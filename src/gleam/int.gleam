@@ -65,7 +65,8 @@ pub fn absolute_value(x: Int) -> Int {
 /// ```
 ///
 pub fn power(base: Int, of exponent: Float) -> Result(Float, Nil) {
-  to_float(base)
+  base
+  |> to_float
   |> float.power(exponent)
 }
 
@@ -84,7 +85,8 @@ pub fn power(base: Int, of exponent: Float) -> Result(Float, Nil) {
 /// ```
 ///
 pub fn square_root(x: Int) -> Result(Float, Nil) {
-  to_float(x)
+  x
+  |> to_float
   |> float.square_root()
 }
 

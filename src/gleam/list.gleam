@@ -2163,7 +2163,8 @@ pub fn combinations(items: List(a), by n: Int) -> List(List(a)) {
     0, _ -> [[]]
     _, [] -> []
     _, [first, ..rest] ->
-      combinations(rest, n - 1)
+      rest
+      |> combinations(n - 1)
       |> map(fn(combination) { [first, ..combination] })
       |> reverse
       |> fold(combinations(rest, n), fn(acc, c) { [c, ..acc] })
@@ -2204,7 +2205,8 @@ fn combination_pairs_loop(items: List(a), acc: List(#(a, a))) -> List(#(a, a)) {
 /// ```
 ///
 pub fn interleave(list: List(List(a))) -> List(a) {
-  transpose(list)
+  list
+  |> transpose
   |> flatten
 }
 
