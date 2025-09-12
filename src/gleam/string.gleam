@@ -188,7 +188,7 @@ fn less_than(a: String, b: String) -> Bool
 /// ```
 ///
 pub fn slice(from string: String, at_index idx: Int, length len: Int) -> String {
-  case len < 0 {
+  case len <= 0 {
     True -> ""
     False ->
       case idx < 0 {

@@ -335,6 +335,8 @@ pub fn slice_test() {
 
   assert string.slice("gleam", at_index: 2, length: -3) == ""
 
+  assert string.slice("gleam", at_index: 2, length: 0) == ""
+
   assert string.slice("👶🏿", at_index: 0, length: 3) == "👶🏿"
 }
 
