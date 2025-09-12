@@ -105,7 +105,7 @@ pub fn concat(trees: List(BytesTree)) -> BytesTree {
 ///
 pub fn concat_bit_arrays(bits: List(BitArray)) -> BytesTree {
   bits
-  |> list.map(fn(b) { from_bit_array(b) })
+  |> list.map(from_bit_array)
   |> concat()
 }
 
