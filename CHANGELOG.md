@@ -1,6 +1,9 @@
 # Changelog
 
+## v0.63.1 - 2025-09-12
+
 - The performance of the `string.drop_start` function has been improved.
+- `string.slice` now correctly handles zero-length slices.
 
 ## v0.63.0 - 2025-09-07
 
