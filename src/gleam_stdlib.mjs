@@ -593,6 +593,81 @@ export function decode64(sBase64) {
   }
 }
 
+const b32Alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+
+export function encode32(bit_array, padding) {
+  bit_array = bit_array_pad_to_bytes(bit_array);
+
+  let output = "";
+  let bitBuffer = 0;
+  let bitCount = 0;
+
+  for (let i = 0; i < bit_array.byteSize; i++) {
+    bitBuffer = (bitBuffer << 8) | bit_array.byteAt(i);
+    bitCount += 8;
+
+    while (bitCount >= 5) {
+      const index = (bitBuffer >> (bitCount - 5)) & 31;
+      output += b32Alphabet[index];
+      bitCount -= 5;
+    }
+  }
+
+  if (bitCount > 0) {
+    output += b32Alphabet[(bitBuffer << (5 - bitCount)) & 31];
+  }
+
+  if (padding) {
+    const mod = output.length % 8;
+    if (mod !== 0) output += "=".repeat(8 - mod);
+  }
+
+  return output;
+}
+
+export function decode32(s) {
+  try {
+    const clean = s.replace(/=+$/g, "");
+
+    // ASCII lookup table initialised to -1 (invalid)
+    const map = new Int16Array(128);
+    for (let i = 0; i < map.length; i++) map[i] = -1;
+    for (let i = 0; i < 26; i++) {
+      map[65 + i] = i; // 'A'..'Z'
+      map[97 + i] = i; // 'a'..'z'
+    }
+    for (let i = 0; i < 6; i++) {
+      map[50 + i] = 26 + i; // '2'..'7'
+    }
+
+    let bitBuffer = 0;
+    let bitCount = 0;
+
+    const outLen = Math.floor((clean.length * 5) / 8);
+    const bytes = new Uint8Array(outLen);
+    let j = 0;
+
+    for (let i = 0; i < clean.length; i++) {
+      const code = clean.charCodeAt(i);
+      if (code >= 128) return new Error(Nil);
+      const val = map[code];
+      if (val < 0) return new Error(Nil);
+
+      bitBuffer = (bitBuffer << 5) | val;
+      bitCount += 5;
+
+      if (bitCount >= 8) {
+        bitCount -= 8;
+        bytes[j++] = (bitBuffer >> bitCount) & 255;
+      }
+    }
+
+    return new Ok(new BitArray(j === bytes.length ? bytes : bytes.slice(0, j)));
+  } catch {
+    return new Error(Nil);
+  }
+}
+
 export function classify_dynamic(data) {
   if (typeof data === "string") {
     return "String";

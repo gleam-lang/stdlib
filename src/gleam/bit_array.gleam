@@ -153,6 +153,29 @@ pub fn base64_url_decode(encoded: String) -> Result(BitArray, Nil) {
   |> base64_decode()
 }
 
+/// Encodes a `BitArray` into a base 32 encoded string.
+///
+/// If the bit array does not contain a whole number of bytes then it is padded
+/// with zero bits prior to being encoded.
+///
+@external(erlang, "gleam_stdlib", "base_encode32")
+@external(javascript, "../gleam_stdlib.mjs", "encode32")
+pub fn base32_encode(input: BitArray, padding: Bool) -> String
+
+/// Decodes a base 32 encoded string into a `BitArray`.
+///
+pub fn base32_decode(encoded: String) -> Result(BitArray, Nil) {
+  let padded = case byte_size(from_string(encoded)) % 8 {
+    0 -> encoded
+    n -> string.append(encoded, string.repeat("=", 8 - n))
+  }
+  decode32(padded)
+}
+
+@external(erlang, "gleam_stdlib", "base_decode32")
+@external(javascript, "../gleam_stdlib.mjs", "decode32")
+fn decode32(a: String) -> Result(BitArray, Nil)
+
 /// Encodes a `BitArray` into a base 16 encoded string.
 ///
 /// If the bit array does not contain a whole number of bytes then it is padded

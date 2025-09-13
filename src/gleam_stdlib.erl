@@ -5,8 +5,8 @@
     less_than/2, string_pop_grapheme/1, string_pop_codeunit/1,
     string_starts_with/2, wrap_list/1, string_ends_with/2, string_pad/4,
     uri_parse/1, bit_array_slice/3, percent_encode/1, percent_decode/1,
-    base_decode64/1, parse_query/1, bit_array_concat/1,
-    bit_array_base64_encode/2, tuple_get/2, classify_dynamic/1, print/1,
+    base_decode64/1, base_decode32/1, parse_query/1, bit_array_concat/1,
+    bit_array_base64_encode/2, base_encode32/2, tuple_get/2, classify_dynamic/1, print/1,
     println/1, print_error/1, println_error/1, inspect/1, float_to_string/1,
     int_from_base_string/2, utf_codepoint_list_to_string/1, contains_string/2,
     crop_string/2, base16_encode/1, base16_decode/1, string_replace/3, slice/3,
@@ -149,6 +149,20 @@ bit_array_base64_encode(_Bin, _Padding) ->
     erlang:error(<<"Erlang OTP/26 or higher is required to use base64:encode">>).
 -endif.
 
+base_encode32(Bin, Padding) ->
+    PaddedBin = bit_array_pad_to_bytes(Bin),
+    {Encoded0, Rest} = base32_encode_body(PaddedBin),
+    {Encoded1, _PadBy} = base32_encode_rest(Rest),
+    Encoded = <<Encoded0/binary, Encoded1/binary>>,
+    case Padding of
+        true ->
+            Rem = byte_size(Encoded) rem 8,
+            PadLen = case Rem of 0 -> 0; N -> 8 - N end,
+            list_to_binary([Encoded, lists:duplicate(PadLen, $=)]);
+        false ->
+            Encoded
+    end.
+
 bit_array_slice(Bin, Pos, Len) ->
     try {ok, binary:part(Bin, Pos, Len)}
     catch error:badarg -> {error, nil}
@@ -158,6 +172,61 @@ base_decode64(S) ->
     try {ok, base64:decode(S)}
     catch error:_ -> {error, nil}
     end.
+
+base_decode32(S) ->
+    try
+        Pad = base32_count_trailing_equals(S),
+        Size = byte_size(S),
+        S1 = case Pad of 0 -> S; _ -> binary:part(S, 0, Size - Pad) end,
+        case binary:match(S1, <<"=">>) of
+            nomatch -> ok;
+            _ -> erlang:error(badarg)
+        end,
+        Bits = <<<<(base32_std_dec(C)):5>> || <<C>> <= S1>>,
+        Bytes = (erlang:bit_size(Bits) div 8) * 8,
+        <<Body:Bytes/bits, _/bits>> = Bits,
+        {ok, Body}
+    catch error:_ -> {error, nil}
+    end.
+
+base32_count_trailing_equals(Bin) ->
+    base32_count_trailing_equals(Bin, byte_size(Bin), 0).
+
+base32_count_trailing_equals(_Bin, 0, N) -> N;
+base32_count_trailing_equals(Bin, I, N) ->
+    C = binary:at(Bin, I - 1),
+    case C of
+        $= -> base32_count_trailing_equals(Bin, I - 1, N + 1);
+        _ -> N
+    end.
+
+base32_std_enc(I) when is_integer(I) andalso I >= 26 andalso I =< 31 -> I + 24;
+base32_std_enc(I) when is_integer(I) andalso I >= 0 andalso I =< 25 ->
+    I + $A.
+
+base32_std_dec(C) when is_integer(C) andalso C >= $A andalso C =< $Z -> C - $A;
+base32_std_dec(C) when is_integer(C) andalso C >= $a andalso C =< $z -> C - $a;
+base32_std_dec(C) when is_integer(C) andalso C >= $2 andalso C =< $7 -> C - $2 + 26;
+base32_std_dec(_) -> erlang:error(badarg).
+
+base32_encode_body(Bin) ->
+    Offset = 5 * (byte_size(Bin) div 5),
+    <<Body:Offset/binary, Rest/binary>> = Bin,
+    {<<<<(base32_std_enc(I))>> || <<I:5>> <= Body>>, Rest}.
+
+base32_encode_rest(Bin) ->
+    Whole = erlang:bit_size(Bin) div 5,
+    Offset = 5 * Whole,
+    <<Body:Offset/bits, Rest/bits>> = Bin,
+    Body0 = <<<<(base32_std_enc(I))>> || <<I:5>> <= Body>>,
+    {Body1, Pad} = case Rest of
+        <<I:3>> -> {<<(base32_std_enc(I bsl 2))>>, 6};
+        <<I:1>> -> {<<(base32_std_enc(I bsl 4))>>, 4};
+        <<I:4>> -> {<<(base32_std_enc(I bsl 1))>>, 3};
+        <<I:2>> -> {<<(base32_std_enc(I bsl 3))>>, 1};
+        <<>> -> {<<>>, 0}
+    end,
+    {<<Body0/binary, Body1/binary>>, Pad}.
 
 wrap_list(X) when is_list(X) -> X;
 wrap_list(X) -> [X].
