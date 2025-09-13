@@ -136,6 +136,7 @@ pub fn reverse(list: List(a)) -> List(a) {
 /// This function runs in linear time, proportional to the length of the list
 /// to prepend.
 ///
+@external(erlang, "lists", "reverse")
 fn reverse_and_prepend(list prefix: List(a), to suffix: List(a)) -> List(a) {
   case prefix {
     [] -> suffix
@@ -1834,19 +1835,35 @@ fn partition_loop(list, categorise, trues, falses) {
 pub fn permutations(list: List(a)) -> List(List(a)) {
   case list {
     [] -> [[]]
-    [_, ..] ->
-      index_map(list, fn(i, i_idx) {
-        index_fold(list, [], fn(acc, j, j_idx) {
-          case i_idx == j_idx {
-            True -> acc
-            False -> [j, ..acc]
-          }
-        })
-        |> reverse
-        |> permutations
-        |> map(fn(permutation) { [i, ..permutation] })
-      })
-      |> flatten
+    l -> zipper(l, [], [])
+  }
+}
+
+fn zipper(list: List(a), rest: List(a), acc: List(List(a))) -> List(List(a)) {
+  case list {
+    [] -> reverse(acc)
+    [head, ..tail] ->
+      zip_prepend(
+        head,
+        permutations(reverse_and_prepend(rest, tail)),
+        tail,
+        [head, ..rest],
+        acc,
+      )
+  }
+}
+
+fn zip_prepend(
+  el: a,
+  permutations: List(List(a)),
+  list_1: List(a),
+  list_2: List(a),
+  acc: List(List(a)),
+) -> List(List(a)) {
+  case permutations {
+    [] -> zipper(list_1, list_2, acc)
+    [head, ..tail] ->
+      zip_prepend(el, tail, list_1, list_2, [[el, ..head], ..acc])
   }
 }
 
