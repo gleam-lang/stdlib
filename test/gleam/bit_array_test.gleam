@@ -212,6 +212,72 @@ pub fn decode64_crash_regression_1_test() {
     == Error(Nil)
 }
 
+pub fn base32_encode_test() {
+  assert bit_array.base32_encode(<<>>, True) == ""
+
+  assert bit_array.base32_encode(<<"f":utf8>>, True) == "MY======"
+
+  assert bit_array.base32_encode(<<"fo":utf8>>, True) == "MZXQ===="
+
+  assert bit_array.base32_encode(<<"foo":utf8>>, True) == "MZXW6==="
+
+  assert bit_array.base32_encode(<<"foob":utf8>>, True) == "MZXW6YQ="
+
+  assert bit_array.base32_encode(<<"fooba":utf8>>, True) == "MZXW6YTB"
+
+  assert bit_array.base32_encode(<<"foobar":utf8>>, True) == "MZXW6YTBOI======"
+
+  assert bit_array.base32_encode(<<"f":utf8>>, False) == "MY"
+
+  assert bit_array.base32_encode(<<"fo":utf8>>, False) == "MZXQ"
+
+  assert bit_array.base32_encode(<<"foo":utf8>>, False) == "MZXW6"
+
+  assert bit_array.base32_encode(<<"foob":utf8>>, False) == "MZXW6YQ"
+
+  assert bit_array.base32_encode(<<"fooba":utf8>>, False) == "MZXW6YTB"
+
+  assert bit_array.base32_encode(<<"foobar":utf8>>, False) == "MZXW6YTBOI"
+
+  assert bit_array.base32_encode(<<-1:7>>, True) == "7Y======"
+
+  assert bit_array.base32_encode(<<-1:7>>, False) == "7Y"
+}
+
+pub fn base32_decode_test() {
+  assert bit_array.base32_decode("") == Ok(<<>>)
+
+  assert bit_array.base32_decode("MY======") == Ok(<<"f":utf8>>)
+
+  assert bit_array.base32_decode("MZXQ====") == Ok(<<"fo":utf8>>)
+
+  assert bit_array.base32_decode("MZXW6===") == Ok(<<"foo":utf8>>)
+
+  assert bit_array.base32_decode("MZXW6YQ=") == Ok(<<"foob":utf8>>)
+
+  assert bit_array.base32_decode("MZXW6YTB") == Ok(<<"fooba":utf8>>)
+
+  assert bit_array.base32_decode("MZXW6YTBOI======") == Ok(<<"foobar":utf8>>)
+
+  assert bit_array.base32_decode("MY") == Ok(<<"f":utf8>>)
+
+  assert bit_array.base32_decode("MZXQ") == Ok(<<"fo":utf8>>)
+
+  assert bit_array.base32_decode("MZXW6") == Ok(<<"foo":utf8>>)
+
+  assert bit_array.base32_decode("MZXW6YQ") == Ok(<<"foob":utf8>>)
+
+  assert bit_array.base32_decode("MZXW6YTB") == Ok(<<"fooba":utf8>>)
+
+  assert bit_array.base32_decode("MZXW6YTBOI") == Ok(<<"foobar":utf8>>)
+
+  assert bit_array.base32_decode("mzxw6ytboi======") == Ok(<<"foobar":utf8>>)
+
+  assert bit_array.base32_decode("!)") == Error(Nil)
+
+  assert bit_array.base32_decode("=AAAAAAA") == Error(Nil)
+}
+
 pub fn base16_encode_test() {
   assert bit_array.base16_encode(<<"":utf8>>) == ""
 
