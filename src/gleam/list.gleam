@@ -1835,15 +1835,19 @@ fn partition_loop(list, categorise, trues, falses) {
 pub fn permutations(list: List(a)) -> List(List(a)) {
   case list {
     [] -> [[]]
-    l -> zipper(l, [], [])
+    l -> permutation_zip(l, [], [])
   }
 }
 
-fn zipper(list: List(a), rest: List(a), acc: List(List(a))) -> List(List(a)) {
+fn permutation_zip(
+  list: List(a),
+  rest: List(a),
+  acc: List(List(a)),
+) -> List(List(a)) {
   case list {
     [] -> reverse(acc)
     [head, ..tail] ->
-      zip_prepend(
+      permutation_prepend(
         head,
         permutations(reverse_and_prepend(rest, tail)),
         tail,
@@ -1853,7 +1857,7 @@ fn zipper(list: List(a), rest: List(a), acc: List(List(a))) -> List(List(a)) {
   }
 }
 
-fn zip_prepend(
+fn permutation_prepend(
   el: a,
   permutations: List(List(a)),
   list_1: List(a),
@@ -1861,9 +1865,9 @@ fn zip_prepend(
   acc: List(List(a)),
 ) -> List(List(a)) {
   case permutations {
-    [] -> zipper(list_1, list_2, acc)
+    [] -> permutation_zip(list_1, list_2, acc)
     [head, ..tail] ->
-      zip_prepend(el, tail, list_1, list_2, [[el, ..head], ..acc])
+      permutation_prepend(el, tail, list_1, list_2, [[el, ..head], ..acc])
   }
 }
 
