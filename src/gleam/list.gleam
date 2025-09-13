@@ -1842,12 +1842,12 @@ pub fn permutations(list: List(a)) -> List(List(a)) {
 fn zipper(list: List(a), rest: List(a), acc: List(List(a))) -> List(List(a)) {
   case list {
     [] -> reverse(acc)
-    [el, ..tail] ->
+    [head, ..tail] ->
       zip_prepend(
-        el,
+        head,
         permutations(reverse_and_prepend(rest, tail)),
         tail,
-        [el, ..rest],
+        [head, ..rest],
         acc,
       )
   }
@@ -1862,7 +1862,8 @@ fn zip_prepend(
 ) -> List(List(a)) {
   case permutations {
     [] -> zipper(list_1, list_2, acc)
-    [h, ..rest] -> zip_prepend(el, rest, list_1, list_2, [[el, ..h], ..acc])
+    [head, ..tail] ->
+      zip_prepend(el, tail, list_1, list_2, [[el, ..head], ..acc])
   }
 }
 
