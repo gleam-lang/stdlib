@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.63.2 - 2025-09-15
+
+- The performance of the `list.permutations` function has been improved.
+
 ## v0.63.1 - 2025-09-12
 
 - The performance of the `string.drop_start` function has been improved.
