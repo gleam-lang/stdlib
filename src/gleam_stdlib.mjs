@@ -542,7 +542,7 @@ const b64EncodeLookup = [
 let b64TextDecoder;
 
 // Implementation based on https://github.com/mitschabaude/fast-base64/blob/main/js.js
-export function encode64(bit_array, padding) {
+export function base64_encode(bit_array, padding) {
   b64TextDecoder ??= new TextDecoder();
 
   bit_array = bit_array_pad_to_bytes(bit_array);
@@ -579,7 +579,7 @@ export function encode64(bit_array, padding) {
 }
 
 // From https://developer.mozilla.org/en-US/docs/Glossary/Base64
-export function decode64(sBase64) {
+export function base64_decode(sBase64) {
   try {
     const binString = atob(sBase64);
     const length = binString.length;
