@@ -5,8 +5,8 @@
     less_than/2, string_pop_grapheme/1, string_pop_codeunit/1,
     string_starts_with/2, wrap_list/1, string_ends_with/2, string_pad/4,
     uri_parse/1, bit_array_slice/3, percent_encode/1, percent_decode/1,
-    base_decode64/1, parse_query/1, bit_array_concat/1,
-    bit_array_base64_encode/2, tuple_get/2, classify_dynamic/1, print/1,
+    base64_decode/1, parse_query/1, bit_array_concat/1,
+    base64_encode/2, tuple_get/2, classify_dynamic/1, print/1,
     println/1, print_error/1, println_error/1, inspect/1, float_to_string/1,
     int_from_base_string/2, utf_codepoint_list_to_string/1, contains_string/2,
     crop_string/2, base16_encode/1, base16_decode/1, string_replace/3, slice/3,
@@ -141,11 +141,11 @@ bit_array_concat(BitArrays) ->
     list_to_bitstring(BitArrays).
 
 -if(?OTP_RELEASE >= 26).
-bit_array_base64_encode(Bin, Padding) ->
+base64_encode(Bin, Padding) ->
     PaddedBin = bit_array_pad_to_bytes(Bin),
     base64:encode(PaddedBin, #{padding => Padding}).
 -else.
-bit_array_base64_encode(_Bin, _Padding) ->
+base64_encode(_Bin, _Padding) ->
     erlang:error(<<"Erlang OTP/26 or higher is required to use base64:encode">>).
 -endif.
 
@@ -154,7 +154,7 @@ bit_array_slice(Bin, Pos, Len) ->
     catch error:badarg -> {error, nil}
     end.
 
-base_decode64(S) ->
+base64_decode(S) ->
     try {ok, base64:decode(S)}
     catch error:_ -> {error, nil}
     end.

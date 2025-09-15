@@ -207,7 +207,7 @@ pub fn base64_url_decode_test() {
   assert bit_array.base64_url_decode(")!") == Error(Nil)
 }
 
-pub fn decode64_crash_regression_1_test() {
+pub fn base64_decode_crash_regression_1_test() {
   assert bit_array.base64_decode("aGktdGhlcmU.uWUWvrAleKQ2jsWcU97H-RPJ5qRRcE_s")
     == Error(Nil)
 }
