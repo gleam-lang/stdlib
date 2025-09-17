@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Fixed `int.clamp` and `float.clamp` behaviours when `min_bound` is bigger
+  than `max_bound`.
+
 ## v0.67.0 - 2025-11-24
 
 - The `failure` from the `dynamic/decode` module gains the `expected` label.

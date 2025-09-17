@@ -15,8 +15,9 @@ pub fn clamp_test() {
 
   assert int.clamp(60, min: 30, max: 50) == 50
 
-  // If the bounds are reversed we return the min
   assert int.clamp(100, min: 50, max: 30) == 50
+
+  assert int.clamp(40, min: 50, max: 30) == 40
 }
 
 pub fn to_string_test() {
