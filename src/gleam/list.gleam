@@ -785,7 +785,14 @@ pub fn fold_right(
 ///
 /// ```gleam
 /// ["a", "b", "c"]
-/// |> index_fold([], fn(acc, item, index) { ... })
+/// |> index_fold("", fn(acc, item, index) { acc <> int.to_string(index) <> ":" <> item <> " " })
+/// // -> 0:a 1:b 2:c
+/// ```
+///
+/// ```gleam
+/// [10, 20, 30]
+/// |> index_fold(0, fn(acc, item, index) { acc + item * index })
+/// // -> 80
 /// ```
 ///
 pub fn index_fold(
