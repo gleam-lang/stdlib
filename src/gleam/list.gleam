@@ -786,9 +786,9 @@ pub fn fold_right(
 /// ```gleam
 /// ["a", "b", "c"]
 /// |> index_fold("", fn(acc, item, index) {
-///      acc <> int.to_string(index) <> ":" <> item <> " "
+///    acc <> int.to_string(index) <> ":" <> item <> " "
 /// })
-/// // -> 0:a 1:b 2:c
+/// // -> "0:a 1:b 2:c"
 /// ```
 ///
 /// ```gleam
