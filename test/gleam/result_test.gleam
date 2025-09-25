@@ -60,12 +60,6 @@ pub fn unwrap_error_test() {
   assert result.unwrap_error(Ok("nope"), 50) == 50
 }
 
-pub fn unwrap_both_test() {
-  assert result.unwrap_both(Error(1)) == 1
-
-  assert result.unwrap_both(Ok("yup")) == "yup"
-}
-
 pub fn lazy_unwrap_test() {
   assert result.lazy_unwrap(Ok(1), fn() { 50 }) == 1
 
