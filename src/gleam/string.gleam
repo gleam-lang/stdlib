@@ -27,7 +27,7 @@ pub fn is_empty(str: String) -> Bool {
 /// Gets the number of grapheme clusters in a given `String`.
 ///
 /// This function has to iterate across the whole string to count the number of
-/// graphemes, so it runs in linear time.
+/// graphemes, so it runs in linear time. Avoid using this in a loop.
 ///
 /// ## Examples
 ///
@@ -53,7 +53,7 @@ pub fn length(string: String) -> Int
 /// Reverses a `String`.
 ///
 /// This function has to iterate across the whole `String` so it runs in linear
-/// time.
+/// time. Avoid using this in a loop.
 ///
 /// ## Examples
 ///
@@ -160,6 +160,10 @@ fn less_than(a: String, b: String) -> Bool
 /// Takes a substring given a start grapheme index and a length. Negative indexes
 /// are taken starting from the *end* of the list.
 ///
+/// This function runs in linear time with the size of the index and the
+/// length. Negative indexes are linear with the size of the input string in
+/// addition to the other costs.
+///
 /// ## Examples
 ///
 /// ```gleam
@@ -252,7 +256,7 @@ pub fn drop_start(from string: String, up_to num_graphemes: Int) -> String {
 /// Drops *n* graphemes from the end of a `String`.
 ///
 /// This function traverses the full string, so it runs in linear time with the
-/// size of the string.
+/// size of the string. Avoid using this in a loop.
 ///
 /// ## Examples
 ///
@@ -804,6 +808,9 @@ pub fn first(string: String) -> Result(String, Nil) {
 /// Returns the last grapheme cluster in a given `String` and wraps it in a
 /// `Result(String, Nil)`. If the `String` is empty, it returns `Error(Nil)`.
 /// Otherwise, it returns `Ok(String)`.
+///
+/// This function traverses the full string, so it runs in linear time with the
+/// length of the string. Avoid using this in a loop.
 ///
 /// ## Examples
 ///
