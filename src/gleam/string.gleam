@@ -209,7 +209,8 @@ pub fn slice(from string: String, at_index idx: Int, length len: Int) -> String 
 fn do_slice(string: String, idx: Int, len: Int) -> String
 
 /// Drops contents of the first `String` that occur before the second `String`.
-/// If the `from` string does not contain the `before` string, `from` is returned unchanged.
+/// If the `from` string does not contain the `before` string, `from` is
+/// returned unchanged.
 ///
 /// ## Examples
 ///
@@ -234,11 +235,17 @@ pub fn crop(from string: String, before substring: String) -> String
 pub fn drop_start(from string: String, up_to num_graphemes: Int) -> String {
   case num_graphemes <= 0 {
     True -> string
-    False -> slice(string, num_graphemes, length(string))
+    False -> {
+      let bigger_than_rest_of_string = byte_size(string) * 32
+      slice(string, num_graphemes, bigger_than_rest_of_string)
+    }
   }
 }
 
 /// Drops *n* graphemes from the end of a `String`.
+///
+/// This function traverses the full string, so it runs in linear time with the
+/// size of the string.
 ///
 /// ## Examples
 ///
