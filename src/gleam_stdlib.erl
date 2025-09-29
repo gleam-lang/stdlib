@@ -468,7 +468,6 @@ slice(String, Index, Length) ->
         X when is_list(X) -> unicode:characters_to_binary(X)
     end.
 
-
 index([X | _], 0) ->
     {ok, {some, X}};
 index([_, X | _], 1) ->
