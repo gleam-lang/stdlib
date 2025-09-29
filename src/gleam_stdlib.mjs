@@ -193,7 +193,11 @@ export function length(data) {
   return data.length;
 }
 
-export function string_slice(string, idx, len) {
+export function string_byte_slice(string, index, length) {
+  return string.slice(index, index + length);
+}
+
+export function string_grapheme_slice(string, idx, len) {
   if (len <= 0 || idx >= string.length) {
     return "";
   }

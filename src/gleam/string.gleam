@@ -196,17 +196,21 @@ pub fn slice(from string: String, at_index idx: Int, length len: Int) -> String 
           let translated_idx = length(string) + idx
           case translated_idx < 0 {
             True -> ""
-            False -> do_slice(string, translated_idx, len)
+            False -> grapheme_slice(string, translated_idx, len)
           }
         }
-        False -> do_slice(string, idx, len)
+        False -> grapheme_slice(string, idx, len)
       }
   }
 }
 
 @external(erlang, "gleam_stdlib", "slice")
-@external(javascript, "../gleam_stdlib.mjs", "string_slice")
-fn do_slice(string: String, idx: Int, len: Int) -> String
+@external(javascript, "../gleam_stdlib.mjs", "string_grapheme_slice")
+fn grapheme_slice(string: String, index: Int, length: Int) -> String
+
+@external(erlang, "binary", "part")
+@external(javascript, "../gleam_stdlib.mjs", "string_byte_slice")
+fn unsafe_byte_slice(string: String, index: Int, length: Int) -> String
 
 /// Drops contents of the first `String` that occur before the second `String`.
 /// If the `from` string does not contain the `before` string, `from` is
@@ -225,6 +229,8 @@ pub fn crop(from string: String, before substring: String) -> String
 
 /// Drops *n* graphemes from the start of a `String`.
 ///
+/// This function runs in linear time with the number of graphemes to drop.
+///
 /// ## Examples
 ///
 /// ```gleam
@@ -236,8 +242,9 @@ pub fn drop_start(from string: String, up_to num_graphemes: Int) -> String {
   case num_graphemes <= 0 {
     True -> string
     False -> {
-      let bigger_than_rest_of_string = byte_size(string) * 32
-      slice(string, num_graphemes, bigger_than_rest_of_string)
+      let prefix = grapheme_slice(string, 0, num_graphemes)
+      let prefix_size = byte_size(prefix)
+      unsafe_byte_slice(string, prefix_size, byte_size(string) - prefix_size)
     }
   }
 }
