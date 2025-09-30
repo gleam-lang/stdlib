@@ -66,6 +66,8 @@ pub fn clamp_test() {
   assert float.clamp(1.2, min: 1.3, max: 1.5) == 1.3
 
   assert float.clamp(1.6, min: 1.3, max: 1.5) == 1.5
+
+  assert float.clamp(1.2, min: 1.4, max: 0.6) == 1.2
 }
 
 pub fn compare_test() {
