@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- The `tap` function from the `function` module has been deprecated.
+
 ## v0.65.0 - 2025-09-29
 
 - The performance of the `drop_start` function from the `string` module has
