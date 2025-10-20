@@ -9,6 +9,7 @@ pub fn identity(x: a) -> a {
 ///
 /// Useful for running synchronous side effects in a pipeline.
 ///
+@deprecated("This function has been deprecated. You can bind the value you want to tap to a variable instead.")
 pub fn tap(arg: a, effect: fn(a) -> b) -> a {
   effect(arg)
   arg
