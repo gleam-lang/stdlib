@@ -413,6 +413,12 @@ pub fn query_to_string_test() {
   assert query_string == "weebl%20bob=1&city=%C3%B6rebro"
 }
 
+pub fn query_to_string_special_characters_test() {
+  let query_string =
+    uri.query_to_string([#("weebl bob", "1+1-1*1.1~1!1'1(1);%")])
+  assert query_string == "weebl%20bob=1%2B1-1*1.1~1!1'1(1)%3B%25"
+}
+
 pub fn empty_query_to_string_test() {
   let query_string = uri.query_to_string([])
   assert query_string == ""
@@ -555,6 +561,13 @@ pub fn parse_segments_test() {
   assert uri.path_segments("/../bob") == ["bob"]
   assert uri.path_segments("../bob") == ["bob"]
   assert uri.path_segments("/weebl/../bob") == ["bob"]
+}
+
+pub fn query_to_string_parse_query_opposite_unreserved_marks_test() {
+  let queries = [#("weebl bob", "1+1-1*1.1~1!1'1(1);%"), #("city", "örebro")]
+  let query_string = uri.query_to_string(queries)
+  let parsed = uri.parse_query(query_string)
+  assert parsed == Ok(queries)
 }
 
 pub fn origin1_test() {
