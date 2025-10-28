@@ -11,6 +11,7 @@
 - The `dynamic/decode` module now uses the term "placeholder value" rather than
   "zero value".
 - The `tap` function from the `function` module has been deprecated.
+- `uri.query_to_string` now correctly handles `+` in query params.
 
 ## v0.65.0 - 2025-09-29
 
