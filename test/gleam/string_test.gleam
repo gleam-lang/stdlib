@@ -1250,6 +1250,11 @@ pub fn inspect_fifteen_bit_int_test() {
   assert string.inspect(<<2, 3:size(7)>>) == "<<2, 3:size(7)>>"
 }
 
+@target(erlang)
+pub fn inspect_non_byte_aligned_bit_array_test() {
+  assert string.inspect(<<251, 3:size(3)>>) == "<<251, 3:size(3)>>"
+}
+
 @target(javascript)
 @external(javascript, "../gleam_stdlib_test_ffi.mjs", "circular_reference")
 fn circular_reference() -> Dynamic

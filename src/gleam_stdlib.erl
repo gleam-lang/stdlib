@@ -290,15 +290,19 @@ inspect(Any) when is_integer(Any) ->
     erlang:integer_to_list(Any);
 inspect(Any) when is_float(Any) ->
     io_lib_format:fwrite_g(Any);
-inspect(Binary) when is_binary(Binary) ->
-    case inspect_maybe_utf8_string(Binary, <<>>) of
-        {ok, InspectedUtf8String} -> InspectedUtf8String;
-        {error, not_a_utf8_string} ->
-            Segments = [erlang:integer_to_list(X) || <<X>> <= Binary],
-            ["<<", lists:join(", ", Segments), ">>"]
-    end;
 inspect(Bits) when is_bitstring(Bits) ->
-    inspect_bit_array(Bits);
+    case inspect_maybe_utf8_string(Bits, <<>>) of
+        {ok, InspectedUtf8String} ->
+            InspectedUtf8String;
+        {error, not_a_utf8_string} ->
+            case is_binary(Bits) of
+                true ->
+                    Segments = [erlang:integer_to_list(X) || <<X>> <= Bits],
+                    ["<<", lists:join(", ", Segments), ">>"];
+                false ->
+                    inspect_bit_array(Bits)
+            end
+    end;
 inspect(List) when is_list(List) ->
     case inspect_list(List, true) of
         {charlist, _} -> ["charlist.from_string(\"", list_to_binary(List), "\")"];
