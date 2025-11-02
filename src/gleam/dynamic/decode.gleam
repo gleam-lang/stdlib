@@ -995,19 +995,28 @@ pub fn failure(zero: a, expected: String) -> Decoder(a) {
 /// a placeholder so that the rest of the decoder can continue to run and
 /// collect all decoding errors.
 ///
-/// If you were to make a decoder for the `String` type (rather than using the
-/// build-in `string` decoder) you would define it like so:
+/// If you were to make a decoder for the `Int` type (rather than using the
+/// build-in `Int` decoder) you would define it like so:
 ///
 /// ```gleam
-/// pub fn string_decoder() -> decode.Decoder(String) {
+/// pub fn int_decoder() -> decode.Decoder(Int) {
 ///   let default = ""
-///   decode.new_primitive_decoder("String", fn(data) {
-///     case dynamic.string(data) {
-///       Ok(x) -> Ok(x)
-///       Error(_) -> Error(default)
-///     }
-///   })
+///   decode.new_primitive_decoder("Int", int_from_dynamic)
 /// }
+///
+/// @external(erlang, "my_module", "int_from_dynamic")
+/// fn int_from_dynamic(data: Int) -> Result(Int, Int)
+/// ```
+///
+/// ```erlang
+/// -module(my_module).
+/// -export([int_from_dynamic/1]).
+///
+/// int_from_dynamic(Data) ->
+///     case is_integer(Data) of
+///         true -> {ok, Data};
+///         false -> {error, 0}
+///     end.
 /// ```
 ///
 pub fn new_primitive_decoder(
