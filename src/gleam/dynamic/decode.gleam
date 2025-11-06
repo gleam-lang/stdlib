@@ -345,8 +345,8 @@ pub fn subfield(
 ///
 /// ```gleam
 /// let decoder = {
-///   use name <- decode.field("email", decode.string)
-///   use email <- decode.field("password", decode.string)
+///   use name <- decode.field("name", decode.string)
+///   use email <- decode.field("email", decode.string)
 ///   decode.success(SignUp(name: name, email: email))
 /// }
 ///
