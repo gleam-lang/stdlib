@@ -169,6 +169,10 @@ export function uppercase(string) {
   return string.toUpperCase();
 }
 
+export function casefold(string) {
+  return string.toLowerCase().toUpperCase();
+}
+
 export function less_than(a, b) {
   return a < b;
 }

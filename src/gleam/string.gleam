@@ -126,6 +126,26 @@ pub fn lowercase(string: String) -> String
 @external(javascript, "../gleam_stdlib.mjs", "uppercase")
 pub fn uppercase(string: String) -> String
 
+/// Converts `String` to a case-agnostic comparable string.
+///
+/// Preferred over `lowercase` or `uppercase` for case-insensitive
+/// equality comparisons since Unicode case is also folded.
+///
+/// Note that this will produce different results on the
+/// Erlang and Javascript targets. To ensure consistent
+/// results across targets at a slight performance cost,
+/// call `lowercase` on the result of `casefold`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// casefold("Ω and ẞ SHARP S")
+/// // -> "ω and ss sharp s"
+/// ```
+@external(erlang, "string", "casefold")
+@external(javascript, "../gleam_stdlib.mjs", "casefold")
+pub fn casefold(string: String) -> String
+
 /// Compares two `String`s to see which is "larger" by comparing their graphemes.
 ///
 /// This does not compare the size or length of the given `String`s.
