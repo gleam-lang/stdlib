@@ -63,7 +63,7 @@ pub fn parse(string: String) -> Result(Float, Nil)
 @external(javascript, "../gleam_stdlib.mjs", "float_to_string")
 pub fn to_string(x: Float) -> String
 
-/// Restricts a `Float` between a lower and upper bound.
+/// Restricts a `Float` between two bounds.
 ///
 /// ## Examples
 ///
@@ -72,10 +72,16 @@ pub fn to_string(x: Float) -> String
 /// // -> 1.4
 /// ```
 ///
+/// ```gleam
+/// clamp(1.2, min: 1.4, max: 0.6)
+/// // -> 1.2
+/// ```
+///
 pub fn clamp(x: Float, min min_bound: Float, max max_bound: Float) -> Float {
-  x
-  |> min(max_bound)
-  |> max(min_bound)
+  case min_bound >=. max_bound {
+    True -> x |> min(min_bound) |> max(max_bound)
+    False -> x |> min(max_bound) |> max(min_bound)
+  }
 }
 
 /// Compares two `Float`s, returning an `Order`:

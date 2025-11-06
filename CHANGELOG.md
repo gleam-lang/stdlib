@@ -1,5 +1,7 @@
 # Changelog
 
+- Fixed `int.clamp` and `float.clamp` behaviours when `min_bound` is bigger than `max_bound`.
+
 ## v0.66.0 - 2025-10-21
 
 - The `tap` function from the `function` module has been deprecated.
