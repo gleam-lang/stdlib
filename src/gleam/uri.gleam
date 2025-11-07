@@ -556,7 +556,13 @@ pub fn query_to_string(query: List(#(String, String))) -> String {
 }
 
 fn query_pair(pair: #(String, String)) -> StringTree {
-  string_tree.from_strings([percent_encode(pair.0), "=", percent_encode(pair.1)])
+  [percent_encode_query(pair.0), "=", percent_encode_query(pair.1)]
+  |> string_tree.from_strings
+}
+
+fn percent_encode_query(part: String) -> String {
+  percent_encode(part)
+  |> string.replace(each: "+", with: "%2B")
 }
 
 /// Encodes a string into a percent encoded representation.
