@@ -13,12 +13,11 @@ import {
   CustomType,
 } from "./gleam.mjs";
 import { Some, None } from "./gleam/option.mjs";
-import Dict from "./dict.mjs";
+import { default as Dict, fold as dict_fold, get as dict_get, from as dict_from_iterable } from "./dict.mjs";
 import { classify } from "./gleam/dynamic.mjs";
 import { DecodeError } from "./gleam/dynamic/decode.mjs";
 
 const Nil = undefined;
-const NOT_FOUND = {};
 
 export function identity(x) {
   return x;
@@ -471,34 +470,6 @@ export function utf_codepoint_to_int(utf_codepoint) {
   return utf_codepoint.value;
 }
 
-export function new_map() {
-  return Dict.new();
-}
-
-export function map_size(map) {
-  return map.size;
-}
-
-export function map_to_list(map) {
-  return List.fromArray(map.entries());
-}
-
-export function map_remove(key, map) {
-  return map.delete(key);
-}
-
-export function map_get(map, key) {
-  const value = map.get(key, NOT_FOUND);
-  if (value === NOT_FOUND) {
-    return new Error(Nil);
-  }
-  return new Ok(value);
-}
-
-export function map_insert(key, value, map) {
-  return map.set(key, value);
-}
-
 function unsafe_percent_decode(string) {
   return decodeURIComponent(string || "");
 }
@@ -737,11 +708,13 @@ class Inspector {
   #dict(map) {
     let body = "dict.from_list([";
     let first = true;
-    map.forEach((value, key) => {
+
+    body = dict_fold(map, body, (body, key, value) => {
       if (!first) body = body + ", ";
-      body = body + "#(" + this.inspect(key) + ", " + this.inspect(value) + ")";
       first = false;
+      return body + "#(" + this.inspect(key) + ", " + this.inspect(value) + ")";
     });
+
     return body + "])";
   }
 
@@ -947,7 +920,12 @@ export function list_to_array(list) {
 
 export function index(data, key) {
   // Dictionaries and dictionary-like objects can be indexed
-  if (data instanceof Dict || data instanceof WeakMap || data instanceof Map) {
+  if (data instanceof Dict) {
+    const result = dict_get(data, key);
+    return new Ok(result.isOk() ? new Some(result[0]) : new None());
+  }
+
+  if (data instanceof WeakMap || data instanceof Map) {
     const token = {};
     const entry = data.get(key, token);
     if (entry === token) return new Ok(new None());
@@ -1007,7 +985,7 @@ export function dict(data) {
     return new Ok(data);
   }
   if (data instanceof Map || data instanceof WeakMap) {
-    return new Ok(Dict.fromMap(data));
+    return new Ok(dict_from_iterable(data));
   }
   if (data == null) {
     return new Error("Dict");
@@ -1017,7 +995,7 @@ export function dict(data) {
   }
   const proto = Object.getPrototypeOf(data);
   if (proto === Object.prototype || proto === null) {
-    return new Ok(Dict.fromObject(data));
+    return new Ok(dict_from_iterable(Object.entries(data)));
   }
   return new Error("Dict");
 }
