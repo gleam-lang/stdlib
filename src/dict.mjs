@@ -3,12 +3,13 @@
  * These types can be checked using the typescript compiler with "checkjs" option.
  */
 
-import { isEqual } from "./gleam.mjs";
+import { isEqual, Result$Error, Result$Ok } from "./gleam.mjs";
+import { Option$Some, Option$None } from "./gleam/option.mjs";
+
+// -- HASH --------------------------------------------------------------------
 
 const referenceMap = /* @__PURE__ */ new WeakMap();
-const tempDataView = /* @__PURE__ */ new DataView(
-  /* @__PURE__ */ new ArrayBuffer(8),
-);
+const tempDataView = /* @__PURE__ */ new DataView(/* @__PURE__ */ new ArrayBuffer(8));
 let referenceUID = 0;
 /**
  * hash the object by reference using a weak map and incrementing uid
@@ -149,845 +150,459 @@ export function getHash(u) {
   }
 }
 
-/**
- * @template K,V
- * @typedef {ArrayNode<K,V> | IndexNode<K,V> | CollisionNode<K,V>} Node
- */
-/**
- * @template K,V
- * @typedef {{ type: typeof ENTRY, k: K, v: V }} Entry
- */
-/**
- * @template K,V
- * @typedef {{ type: typeof ARRAY_NODE, size: number, array: (undefined | Entry<K,V> | Node<K,V>)[] }} ArrayNode
- */
-/**
- * @template K,V
- * @typedef {{ type: typeof INDEX_NODE, bitmap: number, array: (Entry<K,V> | Node<K,V>)[] }} IndexNode
- */
-/**
- * @template K,V
- * @typedef {{ type: typeof COLLISION_NODE, hash: number, array: Entry<K, V>[] }} CollisionNode
- */
-/**
- * @typedef {{ val: boolean }} Flag
- */
-const SHIFT = 5; // number of bits you need to shift by to get the next bucket
-const BUCKET_SIZE = Math.pow(2, SHIFT);
-const MASK = BUCKET_SIZE - 1; // used to zero out all bits not in the bucket
-const MAX_INDEX_NODE = BUCKET_SIZE / 2; // when does index node grow into array node
-const MIN_ARRAY_NODE = BUCKET_SIZE / 4; // when does array node shrink to index node
-const ENTRY = 0;
-const ARRAY_NODE = 1;
-const INDEX_NODE = 2;
-const COLLISION_NODE = 3;
-
-/** @type {IndexNode<any,any>} */
-const EMPTY = {
-  type: INDEX_NODE,
-  bitmap: 0,
-  array: [],
-};
-/**
- * Mask the hash to get only the bucket corresponding to shift
- * @param {number} hash
- * @param {number} shift
- * @returns {number}
- */
-function mask(hash, shift) {
-  return (hash >>> shift) & MASK;
-}
+// -- DICT --------------------------------------------------------------------
 
 /**
- * Set only the Nth bit where N is the masked hash
- * @param {number} hash
- * @param {number} shift
- * @returns {number}
- */
-function bitpos(hash, shift) {
-  return 1 << mask(hash, shift);
-}
-
-/**
- * Count the number of 1 bits in a number
- * @param {number} x
- * @returns {number}
- */
-function bitcount(x) {
-  x -= (x >> 1) & 0x55555555;
-  x = (x & 0x33333333) + ((x >> 2) & 0x33333333);
-  x = (x + (x >> 4)) & 0x0f0f0f0f;
-  x += x >> 8;
-  x += x >> 16;
-  return x & 0x7f;
-}
-
-/**
- * Calculate the array index of an item in a bitmap index node
- * @param {number} bitmap
- * @param {number} bit
- * @returns {number}
- */
-function index(bitmap, bit) {
-  return bitcount(bitmap & (bit - 1));
-}
-
-/**
- * Efficiently copy an array and set one value at an index
- * @template T
- * @param {T[]} arr
- * @param {number} at
- * @param {T} val
- * @returns {T[]}
- */
-function cloneAndSet(arr, at, val) {
-  const len = arr.length;
-  const out = new Array(len);
-  for (let i = 0; i < len; ++i) {
-    out[i] = arr[i];
-  }
-  out[at] = val;
-  return out;
-}
-
-/**
- * Efficiently copy an array and insert one value at an index
- * @template T
- * @param {T[]} arr
- * @param {number} at
- * @param {T} val
- * @returns {T[]}
- */
-function spliceIn(arr, at, val) {
-  const len = arr.length;
-  const out = new Array(len + 1);
-  let i = 0;
-  let g = 0;
-  while (i < at) {
-    out[g++] = arr[i++];
-  }
-  out[g++] = val;
-  while (i < len) {
-    out[g++] = arr[i++];
-  }
-  return out;
-}
-
-/**
- * Efficiently copy an array and remove one value at an index
- * @template T
- * @param {T[]} arr
- * @param {number} at
- * @returns {T[]}
- */
-function spliceOut(arr, at) {
-  const len = arr.length;
-  const out = new Array(len - 1);
-  let i = 0;
-  let g = 0;
-  while (i < at) {
-    out[g++] = arr[i++];
-  }
-  ++i;
-  while (i < len) {
-    out[g++] = arr[i++];
-  }
-  return out;
-}
-
-/**
- * Create a new node containing two entries
- * @template K,V
- * @param {number} shift
- * @param {K} key1
- * @param {V} val1
- * @param {number} key2hash
- * @param {K} key2
- * @param {V} val2
- * @returns {Node<K,V>}
- */
-function createNode(shift, key1, val1, key2hash, key2, val2) {
-  const key1hash = getHash(key1);
-  if (key1hash === key2hash) {
-    return {
-      type: COLLISION_NODE,
-      hash: key1hash,
-      array: [
-        { type: ENTRY, k: key1, v: val1 },
-        { type: ENTRY, k: key2, v: val2 },
-      ],
-    };
-  }
-  const addedLeaf = { val: false };
-  return assoc(
-    assocIndex(EMPTY, shift, key1hash, key1, val1, addedLeaf),
-    shift,
-    key2hash,
-    key2,
-    val2,
-    addedLeaf,
-  );
-}
-
-/**
- * @template T,K,V
- * @callback AssocFunction
- * @param {T} root
- * @param {number} shift
- * @param {number} hash
- * @param {K} key
- * @param {V} val
- * @param {Flag} addedLeaf
- * @returns {Node<K,V>}
- */
-/**
- * Associate a node with a new entry, creating a new node
- * @template T,K,V
- * @type {AssocFunction<Node<K,V>,K,V>}
- */
-function assoc(root, shift, hash, key, val, addedLeaf) {
-  switch (root.type) {
-    case ARRAY_NODE:
-      return assocArray(root, shift, hash, key, val, addedLeaf);
-    case INDEX_NODE:
-      return assocIndex(root, shift, hash, key, val, addedLeaf);
-    case COLLISION_NODE:
-      return assocCollision(root, shift, hash, key, val, addedLeaf);
-  }
-}
-/**
- * @template T,K,V
- * @type {AssocFunction<ArrayNode<K,V>,K,V>}
- */
-function assocArray(root, shift, hash, key, val, addedLeaf) {
-  const idx = mask(hash, shift);
-  const node = root.array[idx];
-  // if the corresponding index is empty set the index to a newly created node
-  if (node === undefined) {
-    addedLeaf.val = true;
-    return {
-      type: ARRAY_NODE,
-      size: root.size + 1,
-      array: cloneAndSet(root.array, idx, { type: ENTRY, k: key, v: val }),
-    };
-  }
-  if (node.type === ENTRY) {
-    // if keys are equal replace the entry
-    if (isEqual(key, node.k)) {
-      if (val === node.v) {
-        return root;
-      }
-      return {
-        type: ARRAY_NODE,
-        size: root.size,
-        array: cloneAndSet(root.array, idx, {
-          type: ENTRY,
-          k: key,
-          v: val,
-        }),
-      };
-    }
-    // otherwise upgrade the entry to a node and insert
-    addedLeaf.val = true;
-    return {
-      type: ARRAY_NODE,
-      size: root.size,
-      array: cloneAndSet(
-        root.array,
-        idx,
-        createNode(shift + SHIFT, node.k, node.v, hash, key, val),
-      ),
-    };
-  }
-  // otherwise call assoc on the child node
-  const n = assoc(node, shift + SHIFT, hash, key, val, addedLeaf);
-  // if the child node hasn't changed just return the old root
-  if (n === node) {
-    return root;
-  }
-  // otherwise set the index to the new node
-  return {
-    type: ARRAY_NODE,
-    size: root.size,
-    array: cloneAndSet(root.array, idx, n),
-  };
-}
-/**
- * @template T,K,V
- * @type {AssocFunction<IndexNode<K,V>,K,V>}
- */
-function assocIndex(root, shift, hash, key, val, addedLeaf) {
-  const bit = bitpos(hash, shift);
-  const idx = index(root.bitmap, bit);
-  // if there is already a item at this hash index..
-  if ((root.bitmap & bit) !== 0) {
-    // if there is a node at the index (not an entry), call assoc on the child node
-    const node = root.array[idx];
-    if (node.type !== ENTRY) {
-      const n = assoc(node, shift + SHIFT, hash, key, val, addedLeaf);
-      if (n === node) {
-        return root;
-      }
-      return {
-        type: INDEX_NODE,
-        bitmap: root.bitmap,
-        array: cloneAndSet(root.array, idx, n),
-      };
-    }
-    // otherwise there is an entry at the index
-    // if the keys are equal replace the entry with the updated value
-    const nodeKey = node.k;
-    if (isEqual(key, nodeKey)) {
-      if (val === node.v) {
-        return root;
-      }
-      return {
-        type: INDEX_NODE,
-        bitmap: root.bitmap,
-        array: cloneAndSet(root.array, idx, {
-          type: ENTRY,
-          k: key,
-          v: val,
-        }),
-      };
-    }
-    // if the keys are not equal, replace the entry with a new child node
-    addedLeaf.val = true;
-    return {
-      type: INDEX_NODE,
-      bitmap: root.bitmap,
-      array: cloneAndSet(
-        root.array,
-        idx,
-        createNode(shift + SHIFT, nodeKey, node.v, hash, key, val),
-      ),
-    };
-  } else {
-    // else there is currently no item at the hash index
-    const n = root.array.length;
-    // if the number of nodes is at the maximum, expand this node into an array node
-    if (n >= MAX_INDEX_NODE) {
-      // create a 32 length array for the new array node (one for each bit in the hash)
-      const nodes = new Array(32);
-      // create and insert a node for the new entry
-      const jdx = mask(hash, shift);
-      nodes[jdx] = assocIndex(EMPTY, shift + SHIFT, hash, key, val, addedLeaf);
-      let j = 0;
-      let bitmap = root.bitmap;
-      // place each item in the index node into the correct spot in the array node
-      // loop through all 32 bits / array positions
-      for (let i = 0; i < 32; i++) {
-        if ((bitmap & 1) !== 0) {
-          const node = root.array[j++];
-          nodes[i] = node;
-        }
-        // shift the bitmap to process the next bit
-        bitmap = bitmap >>> 1;
-      }
-      return {
-        type: ARRAY_NODE,
-        size: n + 1,
-        array: nodes,
-      };
-    } else {
-      // else there is still space in this index node
-      // simply insert a new entry at the hash index
-      const newArray = spliceIn(root.array, idx, {
-        type: ENTRY,
-        k: key,
-        v: val,
-      });
-      addedLeaf.val = true;
-      return {
-        type: INDEX_NODE,
-        bitmap: root.bitmap | bit,
-        array: newArray,
-      };
-    }
-  }
-}
-/**
- * @template T,K,V
- * @type {AssocFunction<CollisionNode<K,V>,K,V>}
- */
-function assocCollision(root, shift, hash, key, val, addedLeaf) {
-  // if there is a hash collision
-  if (hash === root.hash) {
-    const idx = collisionIndexOf(root, key);
-    // if this key already exists replace the entry with the new value
-    if (idx !== -1) {
-      const entry = root.array[idx];
-      if (entry.v === val) {
-        return root;
-      }
-      return {
-        type: COLLISION_NODE,
-        hash: hash,
-        array: cloneAndSet(root.array, idx, { type: ENTRY, k: key, v: val }),
-      };
-    }
-    // otherwise insert the entry at the end of the array
-    const size = root.array.length;
-    addedLeaf.val = true;
-    return {
-      type: COLLISION_NODE,
-      hash: hash,
-      array: cloneAndSet(root.array, size, { type: ENTRY, k: key, v: val }),
-    };
-  }
-  // if there is no hash collision, upgrade to an index node
-  return assoc(
-    {
-      type: INDEX_NODE,
-      bitmap: bitpos(root.hash, shift),
-      array: [root],
-    },
-    shift,
-    hash,
-    key,
-    val,
-    addedLeaf,
-  );
-}
-/**
- * Find the index of a key in the collision node's array
- * @template K,V
- * @param {CollisionNode<K,V>} root
- * @param {K} key
- * @returns {number}
- */
-function collisionIndexOf(root, key) {
-  const size = root.array.length;
-  for (let i = 0; i < size; i++) {
-    if (isEqual(key, root.array[i].k)) {
-      return i;
-    }
-  }
-  return -1;
-}
-/**
- * @template T,K,V
- * @callback FindFunction
- * @param {T} root
- * @param {number} shift
- * @param {number} hash
- * @param {K} key
- * @returns {undefined | Entry<K,V>}
- */
-/**
- * Return the found entry or undefined if not present in the root
- * @template K,V
- * @type {FindFunction<Node<K,V>,K,V>}
- */
-function find(root, shift, hash, key) {
-  switch (root.type) {
-    case ARRAY_NODE:
-      return findArray(root, shift, hash, key);
-    case INDEX_NODE:
-      return findIndex(root, shift, hash, key);
-    case COLLISION_NODE:
-      return findCollision(root, key);
-  }
-}
-/**
- * @template K,V
- * @type {FindFunction<ArrayNode<K,V>,K,V>}
- */
-function findArray(root, shift, hash, key) {
-  const idx = mask(hash, shift);
-  const node = root.array[idx];
-  if (node === undefined) {
-    return undefined;
-  }
-  if (node.type !== ENTRY) {
-    return find(node, shift + SHIFT, hash, key);
-  }
-  if (isEqual(key, node.k)) {
-    return node;
-  }
-  return undefined;
-}
-/**
- * @template K,V
- * @type {FindFunction<IndexNode<K,V>,K,V>}
- */
-function findIndex(root, shift, hash, key) {
-  const bit = bitpos(hash, shift);
-  if ((root.bitmap & bit) === 0) {
-    return undefined;
-  }
-  const idx = index(root.bitmap, bit);
-  const node = root.array[idx];
-  if (node.type !== ENTRY) {
-    return find(node, shift + SHIFT, hash, key);
-  }
-  if (isEqual(key, node.k)) {
-    return node;
-  }
-  return undefined;
-}
-/**
- * @template K,V
- * @param {CollisionNode<K,V>} root
- * @param {K} key
- * @returns {undefined | Entry<K,V>}
- */
-function findCollision(root, key) {
-  const idx = collisionIndexOf(root, key);
-  if (idx < 0) {
-    return undefined;
-  }
-  return root.array[idx];
-}
-/**
- * @template T,K,V
- * @callback WithoutFunction
- * @param {T} root
- * @param {number} shift
- * @param {number} hash
- * @param {K} key
- * @returns {undefined | Node<K,V>}
- */
-/**
- * Remove an entry from the root, returning the updated root.
- * Returns undefined if the node should be removed from the parent.
- * @template K,V
- * @type {WithoutFunction<Node<K,V>,K,V>}
- * */
-function without(root, shift, hash, key) {
-  switch (root.type) {
-    case ARRAY_NODE:
-      return withoutArray(root, shift, hash, key);
-    case INDEX_NODE:
-      return withoutIndex(root, shift, hash, key);
-    case COLLISION_NODE:
-      return withoutCollision(root, key);
-  }
-}
-/**
- * @template K,V
- * @type {WithoutFunction<ArrayNode<K,V>,K,V>}
- */
-function withoutArray(root, shift, hash, key) {
-  const idx = mask(hash, shift);
-  const node = root.array[idx];
-  if (node === undefined) {
-    return root; // already empty
-  }
-  let n = undefined;
-  // if node is an entry and the keys are not equal there is nothing to remove
-  // if node is not an entry do a recursive call
-  if (node.type === ENTRY) {
-    if (!isEqual(node.k, key)) {
-      return root; // no changes
-    }
-  } else {
-    n = without(node, shift + SHIFT, hash, key);
-    if (n === node) {
-      return root; // no changes
-    }
-  }
-  // if the recursive call returned undefined the node should be removed
-  if (n === undefined) {
-    // if the number of child nodes is at the minimum, pack into an index node
-    if (root.size <= MIN_ARRAY_NODE) {
-      const arr = root.array;
-      const out = new Array(root.size - 1);
-      let i = 0;
-      let j = 0;
-      let bitmap = 0;
-      while (i < idx) {
-        const nv = arr[i];
-        if (nv !== undefined) {
-          out[j] = nv;
-          bitmap |= 1 << i;
-          ++j;
-        }
-        ++i;
-      }
-      ++i; // skip copying the removed node
-      while (i < arr.length) {
-        const nv = arr[i];
-        if (nv !== undefined) {
-          out[j] = nv;
-          bitmap |= 1 << i;
-          ++j;
-        }
-        ++i;
-      }
-      return {
-        type: INDEX_NODE,
-        bitmap: bitmap,
-        array: out,
-      };
-    }
-    return {
-      type: ARRAY_NODE,
-      size: root.size - 1,
-      array: cloneAndSet(root.array, idx, n),
-    };
-  }
-  return {
-    type: ARRAY_NODE,
-    size: root.size,
-    array: cloneAndSet(root.array, idx, n),
-  };
-}
-/**
- * @template K,V
- * @type {WithoutFunction<IndexNode<K,V>,K,V>}
- */
-function withoutIndex(root, shift, hash, key) {
-  const bit = bitpos(hash, shift);
-  if ((root.bitmap & bit) === 0) {
-    return root; // already empty
-  }
-  const idx = index(root.bitmap, bit);
-  const node = root.array[idx];
-  // if the item is not an entry
-  if (node.type !== ENTRY) {
-    const n = without(node, shift + SHIFT, hash, key);
-    if (n === node) {
-      return root; // no changes
-    }
-    // if not undefined, the child node still has items, so update it
-    if (n !== undefined) {
-      return {
-        type: INDEX_NODE,
-        bitmap: root.bitmap,
-        array: cloneAndSet(root.array, idx, n),
-      };
-    }
-    // otherwise the child node should be removed
-    // if it was the only child node, remove this node from the parent
-    if (root.bitmap === bit) {
-      return undefined;
-    }
-    // otherwise just remove the child node
-    return {
-      type: INDEX_NODE,
-      bitmap: root.bitmap ^ bit,
-      array: spliceOut(root.array, idx),
-    };
-  }
-  // otherwise the item is an entry, remove it if the key matches
-  if (isEqual(key, node.k)) {
-    if (root.bitmap === bit) {
-      return undefined;
-    }
-    return {
-      type: INDEX_NODE,
-      bitmap: root.bitmap ^ bit,
-      array: spliceOut(root.array, idx),
-    };
-  }
-  return root;
-}
-/**
- * @template K,V
- * @param {CollisionNode<K,V>} root
- * @param {K} key
- * @returns {undefined | Node<K,V>}
- */
-function withoutCollision(root, key) {
-  const idx = collisionIndexOf(root, key);
-  // if the key not found, no changes
-  if (idx < 0) {
-    return root;
-  }
-  // otherwise the entry was found, remove it
-  // if it was the only entry in this node, remove the whole node
-  if (root.array.length === 1) {
-    return undefined;
-  }
-  // otherwise just remove the entry
-  return {
-    type: COLLISION_NODE,
-    hash: root.hash,
-    array: spliceOut(root.array, idx),
-  };
-}
-/**
- * @template K,V
- * @param {undefined | Node<K,V>} root
- * @param {(value:V,key:K)=>void} fn
- * @returns {void}
- */
-function forEach(root, fn) {
-  if (root === undefined) {
-    return;
-  }
-  const items = root.array;
-  const size = items.length;
-  for (let i = 0; i < size; i++) {
-    const item = items[i];
-    if (item === undefined) {
-      continue;
-    }
-    if (item.type === ENTRY) {
-      fn(item.v, item.k);
-      continue;
-    }
-    forEach(item, fn);
-  }
-}
-
-/**
- * Extra wrapper to keep track of Dict size and clean up the API
- * @template K,V
+ * An implementation of the CHAMP data structure, an optimised HAMT.
+ *
+ * See: M. J. Steindorfer, J.J. Vinju (2015). Optimizing Hash-Array Mapped Tries for
+ Fast and Lean Immutable JVM Collections. Available: https://michael.steindorfer.name/publications/oopsla15.pdf
  */
 export default class Dict {
-  /**
-   * @template V
-   * @param {Record<string,V>} o
-   * @returns {Dict<string,V>}
-   */
-  static fromObject(o) {
-    const keys = Object.keys(o);
-    /** @type Dict<string,V> */
-    let m = Dict.new();
-    for (let i = 0; i < keys.length; i++) {
-      const k = keys[i];
-      m = m.set(k, o[k]);
-    }
-    return m;
-  }
-
-  /**
-   * @template K,V
-   * @param {Map<K,V>} o
-   * @returns {Dict<K,V>}
-   */
-  static fromMap(o) {
-    /** @type Dict<K,V> */
-    let m = Dict.new();
-    o.forEach((v, k) => {
-      m = m.set(k, v);
-    });
-    return m;
-  }
-
-  static new() {
-    return new Dict(undefined, 0);
-  }
-
-  /**
-   * @param {undefined | Node<K,V>} root
-   * @param {number} size
-   */
-  constructor(root, size) {
-    this.root = root;
+  constructor(size, root) {
     this.size = size;
-  }
-  /**
-   * @template NotFound
-   * @param {K} key
-   * @param {NotFound} notFound
-   * @returns {NotFound | V}
-   */
-  get(key, notFound) {
-    if (this.root === undefined) {
-      return notFound;
-    }
-    const found = find(this.root, 0, getHash(key), key);
-    if (found === undefined) {
-      return notFound;
-    }
-    return found.v;
-  }
-  /**
-   * @param {K} key
-   * @param {V} val
-   * @returns {Dict<K,V>}
-   */
-  set(key, val) {
-    const addedLeaf = { val: false };
-    const root = this.root === undefined ? EMPTY : this.root;
-    const newRoot = assoc(root, 0, getHash(key), key, val, addedLeaf);
-    if (newRoot === this.root) {
-      return this;
-    }
-    return new Dict(newRoot, addedLeaf.val ? this.size + 1 : this.size);
-  }
-  /**
-   * @param {K} key
-   * @returns {Dict<K,V>}
-   */
-  delete(key) {
-    if (this.root === undefined) {
-      return this;
-    }
-    const newRoot = without(this.root, 0, getHash(key), key);
-    if (newRoot === this.root) {
-      return this;
-    }
-    if (newRoot === undefined) {
-      return Dict.new();
-    }
-    return new Dict(newRoot, this.size - 1);
-  }
-  /**
-   * @param {K} key
-   * @returns {boolean}
-   */
-  has(key) {
-    if (this.root === undefined) {
-      return false;
-    }
-    return find(this.root, 0, getHash(key), key) !== undefined;
-  }
-  /**
-   * @returns {[K,V][]}
-   */
-  entries() {
-    if (this.root === undefined) {
-      return [];
-    }
-    /** @type [K,V][] */
-    const result = [];
-    this.forEach((v, k) => result.push([k, v]));
-    return result;
-  }
-  /**
-   *
-   * @param {(val:V,key:K)=>void} fn
-   */
-  forEach(fn) {
-    forEach(this.root, fn);
-  }
-  hashCode() {
-    let h = 0;
-    this.forEach((v, k) => {
-      h = (h + hashMerge(getHash(v), getHash(k))) | 0;
-    });
-    return h;
-  }
-  /**
-   * @param {unknown} o
-   * @returns {boolean}
-   */
-  equals(o) {
-    if (!(o instanceof Dict) || this.size !== o.size) {
-      return false;
-    }
-
-    try {
-      this.forEach((v, k) => {
-        if (!isEqual(o.get(k, !v), v)) {
-          throw unequalDictSymbol;
-        }
-      });
-      return true;
-    } catch (e) {
-      if (e === unequalDictSymbol) {
-        return false;
-      }
-
-      throw e;
-    }
+    this.root = root;
   }
 }
 
-// This is thrown internally in Dict.equals() so that it returns false as soon
-// as a non-matching key is found
-const unequalDictSymbol = /* @__PURE__ */ Symbol();
+class Node {
+  #generation;
+
+  constructor(generation, datamap, nodemap, data) {
+    // The generation value for transient copy tracking.
+    this.#generation = generation;
+    // A node is a high-arity (32 in practice) hybrid tree node.
+    // Hybrid means that it stores data directly as well as pointers to child nodes.
+    //
+    // Each node contains 2 bitmaps:
+    // - The datamap has a bit set if that slot in the node contains direct data
+    // - The nodemap has a bit set if that slot in the node ctonains another node.
+    //
+    // Both are exclusive to on another, so datamap & nodemap == 0.
+    //
+    // Every key/hash value directly correlates to a specific bit by using a trie
+    // suffix (least significant bits first) encoding.
+    // For example, if the last 5 bits of the hash are 1101, the bit to check for
+    // that value is the 13th bit.
+    this.datamap = datamap;
+    this.nodemap = nodemap;
+    // The slots itself are stored in a single contiguous array that contains
+    // both direct k/v-pairs and child nodes.
+    //
+    // The direct children come first, followed by the child nodes in _reverse order_:
+    //
+    //              7654321
+    //     datamap: 1000100
+    //     nodemap:   10011
+    //     data: [key3, value3, key7, value7, child5, child2, child1]
+    //            ------------------------->  <---------------------
+    //                     datamap                    nodemap
+    //
+    // Every `1` bit in the datamap corresponds to a pair of [key, value] entries,
+    // and every `1` bit in the nodemap corresponds to a child node entry.
+    //
+    // Children are stored in reverse order to avoid having to store or calculate an
+    // "offset" value to skip over the direct children.
+    this.data = data;
+  }
+
+  get generation() {
+    // hide generation so it's not enumerable - this makes dicts
+    // supported by the default equality and hash codes without custom implementations.
+    return this.#generation;
+  }
+
+  set generation(value) {
+    this.#generation = value;
+  }
+}
+
+/// The power-of-2 branch factor for the dict. For example, a vlaue of `5` indicates a 32-ary tree.
+const bits = 5;
+const mask = (1 << bits) - 1;
+
+/// This symbol is used internally to avoid constructing results.
+const noElementMarker = Symbol();
+
+// Some commonly used constants throughout the code.
+const emptyNode = /* @__PURE__ */ new Node(0, 0, 0, []);
+const emptyDict = /* @__PURE__ */ new Dict(0, emptyNode);
+const errorNil = /* @__PURE__ */ Result$Error(undefined);
+
+/**
+ * Copies a node and its data array if it's from another generation, making it safe
+ * to mutate the node.
+ */
+function copyNode(node, generation) {
+  if (node.generation === generation) {
+    return node;
+  }
+
+  const { datamap, nodemap, data } = node;
+  return new Node(generation, datamap, nodemap, data.slice(0));
+}
+
+export function make() {
+  return emptyDict;
+}
+
+export function from(iterable) {
+  let transient = toTransient(emptyDict);
+  for (const [key, value] of iterable) {
+    transient = put(key, value, transient);
+  }
+  return fromTransient(transient);
+}
+
+export function size(dict) {
+  return dict.size;
+}
+
+export function get(dict, key) {
+  return lookup(dict.root, key);
+}
+
+function lookup(node, key) {
+  const hash = getHash(key);
+
+  for (let shift = 0; shift < 32; shift += bits) {
+    const { data, datamap, nodemap } = node;
+    const bit = hashbit(hash, shift);
+
+    if (datamap & bit) {
+      // we store this hash directly!
+      //
+      // this also means that there are no other values with the same
+      // hash prefix in this dict.
+      //
+      // We still need to check if the key matches, but if it does we know for
+      // sure that this is the correct value, and if it doesn't that we don't
+      // contain the value in question.
+      const dataidx = 2 * index(datamap, bit);
+      return isEqual(key, data[dataidx]) ? Result$Ok(data[dataidx + 1]) : errorNil;
+    } else if (nodemap & bit) {
+      // we found our hash inside the nodemap, so we can continue our search there.
+      node = data[data.length - 1 - index(nodemap, bit)];
+    } else {
+      // if the hash bit is not set in neither bitmaps, we immediately know that
+      // this key cannot be inside this dict.
+      return errorNil;
+    }
+  }
+
+  // our shift has exceeded 32 bits. Everything that follows is
+  // implicitely an overflow node and only contains direct children.
+  const overflow = node.data;
+  for (let i = 0; i < overflow.length; i += 2) {
+    if (isEqual(key, overflow[i])) {
+      return Result$Ok(overflow[i + 1]);
+    }
+  }
+
+  return errorNil;
+}
+
+/**
+ * We use "transient" values to allow for safer internal mutations of the data
+ * structure. This is an optimisation only. No mutable API is exposed to the user.
+ *
+ * Transients are to be treated as having a linear (single-use, think rust) type.
+ * A transient value becomes invalid as soon as it's passed to one of the functions.
+ *
+ * Internally, we track a "generation" value on each node. If the generation
+ * doesn't match the one for the current transient, we have to copy - the node
+ * could still be referenced by another dict instance!
+ * After that, no other references than the transient one exists, so it's safe
+ * to mutate in place.
+ */
+export function toTransient(dict) {
+  return {
+    generation: nextGeneration(dict),
+    root: dict.root,
+    size: dict.size,
+    dict: dict,
+  };
+}
+
+/**
+ * Consume a transient, producing a normal Dict again.
+ */
+export function fromTransient(transient) {
+  if (transient.root === transient.dict.root) {
+    return transient.dict;
+  }
+
+  return new Dict(transient.size, transient.root);
+}
+
+/**
+ * Find and allocate the next generation id.
+ *
+ * @template K,V
+ * @param {Dict<K,V>} dict
+ * @returns {number}
+ */
+function nextGeneration(dict) {
+  const root = dict.root;
+  if (root.generation < Number.MAX_SAFE_INTEGER) {
+    return root.generation + 1;
+  }
+
+  // we have reached MAX_SAFE_INTEGER generations -
+  // at this point, we have to walk the dictionary once to reset the counter
+  // on every node. This is safe since it's part of the contract for transient
+  // that only one of them exists at any given time.
+  //
+  const queue = [root];
+  while (queue.length) {
+    // order doesn't matter, so we can use push/pop for faster array usage.
+    const node = queue.pop();
+
+    // reset the generation to 0
+    node.generation = 0;
+
+    // queue all other referenced nodes
+    const nodeStart = 2 * popcount(node.datamap);
+    for (let i = nodeStart; i < node.data.length; ++i) {
+      queue.push(node.data[i]);
+    }
+  }
+
+  return 1;
+}
+
+/*
+ * Like `get`, but for transient values. Note that this function is not pure!
+ */
+export function query(transient, key) {
+  return lookup(transient.root, key);
+}
+
+/**
+ * Consume a transient, writing a new key/value pair into the dictionary it
+ * represents. If the key already exists, it will be overwritten.
+ *
+ * Returns a new transient.
+ */
+export function put(key, value, transient) {
+  transient.root = doUpsert(transient, transient.root, key, always(value), getHash(key), 0);
+  return transient;
+}
+
+/**
+ * Consume a transient, removing a key if it exists.
+ * Returns a new transient.
+ */
+export function remove(key, transient) {
+  return put(key, noElementMarker, transient);
+}
+
+export function upsert(dict, key, fun) {
+  // we can use our noElementMarker value to skip traversing the dictionary twice.
+  const transient = toTransient(dict);
+  const wrapped = (value) => fun(value === noElementMarker ? Option$None() : Option$Some(value));
+  transient.root = doUpsert(transient, transient.root, key, wrapped, getHash(key), 0);
+  return fromTransient(transient);
+}
+
+export function map(dict, fun) {
+  // map can never modify the structure, so we can walk the dictionary directly,
+  // but still move to a new generation to make sure we get a new copy of every node.
+  const generation = nextGeneration(dict);
+  const root = copyNode(dict.root, generation);
+  const queue = [root];
+
+  while (queue.length) {
+    // order doesn't matter, so we can use push/pop for faster array usage.
+    const { data, datamap } = queue.pop();
+    // every node contains popcount(datamap) direct entries
+    const edgesStart = 2 * popcount(datamap);
+    for (let i = 0; i < edgesStart; i += 2) {
+      // we copied the node while queueing it, so direct mutation here is safe.
+      data[i + 1] = fun(data[i], data[i + 1]);
+    }
+    // the remaining entries are other nodes we can queue
+    for (let i = edgesStart; i < data.length; ++i) {
+      // copy the node first to make it safe to mutate
+      data[i] = copyNode(data[i], generation);
+      queue.push(data[i]);
+    }
+  }
+
+  return new Dict(dict.size, root);
+}
+
+export function fold(dict, state, fun) {
+  const queue = [dict.root];
+
+  while (queue.length) {
+    // order doesn't matter, so we can use push/pop for faster array usage.
+    const { data, datamap } = queue.pop();
+    // every node contains popcount(datamap) direct entries
+    const edgesStart = 2 * popcount(datamap);
+    for (let i = 0; i < edgesStart; i += 2) {
+      state = fun(state, data[i], data[i + 1]);
+    }
+    // the remaining entries are child nodes we can queue.
+    for (let i = edgesStart; i < data.length; ++i) {
+      queue.push(data[i]);
+    }
+  }
+
+  return state;
+}
+
+/**
+ * Main helper function for insert/upsert/remove.
+ */
+function doUpsert(transient, node, key, fun, hash, shift) {
+  const { data, datamap, nodemap } = node;
+
+  // 1. Overflow Node
+  // overflow nodes only contain key/value-pairs. we walk the data linearly trying to find a match.
+  if (shift > 32) {
+    for (let i = 0; i < data.length; i += 2) {
+      if (isEqual(key, data[i])) {
+        return doUpdate(transient, node, fun, 0, i);
+      }
+    }
+
+    return doInsert(transient, node, key, fun, 0, data.length);
+  }
+
+  const bit = hashbit(hash, shift);
+  const nodeidx = data.length - 1 - index(nodemap, bit);
+  const dataidx = 2 * index(datamap, bit);
+
+  // 2. Child Node
+  // We have to check first if there is already a child node we have to traverse to.
+  if ((nodemap & bit) !== 0) {
+    const oldChild = data[nodeidx];
+    const newChild = doUpsert(transient, oldChild, key, fun, hash, shift + bits);
+    if (newChild === oldChild) {
+      return node;
+    }
+
+    // the node did change, so let's copy to incorporate that change.
+    node = copyNode(node, transient.generation);
+    if (newChild.nodemap !== 0 || newChild.data.length > 2) {
+      node.data[nodeidx] = newChild;
+    } else {
+      // this node only has a single data (k/v-pair) child.
+      // to restore the CHAMP invariant, we "pull" that pair up into ourselves.
+      // this ensures that every tree stays in its single optimal representation,
+      // and allows dicts to be structurally compared.
+      node.datamap |= bit;
+      node.nodemap &= ~bit;
+      // NOTE: the order here is important to avoid mutation bugs!
+      // Remove the old child node, and insert the data pair into ourselves.
+      node.data.splice(nodeidx, 1);
+      node.data.splice(dataidx, 0, newChild.data[0], newChild.data[1]);
+    }
+
+    return node;
+  }
+
+  // 3. New Data Node
+  // No child node and no data node exists yet, so we can potentially just insert a new value.
+  if ((datamap & bit) === 0) {
+    return doInsert(transient, node, key, fun, bit, dataidx);
+  }
+
+  // 4. Existing Data Node
+  // We have a match that we can update, or remove.
+  if (isEqual(key, data[dataidx])) {
+    return doUpdate(transient, node, fun, bit, dataidx);
+  }
+
+  // 5. Collision
+  // There is no child node, but a data node with the same hash, but with a different key.
+  // To resolve this, we push both nodes down one level.
+  let child = new Node(transient.generation, 0, 0, []);
+  child = doUpsert(transient, child, key, fun, hash, shift + bits);
+  if (!child.data.length) {
+    return node;
+  }
+
+  const otherKey = data[dataidx];
+  child = doUpsert(transient, child, otherKey, always(data[dataidx + 1]), getHash(otherKey), shift + bits);
+  // we inserted 2 elements, but implicitely deleted the one we pushed down from the datamap.
+  transient.size -= 1;
+
+  node = copyNode(node, transient.generation);
+  node.datamap &= ~bit;
+  node.nodemap |= bit;
+
+  // remove the old data pair, and insert the new child node.
+  // because we remove 2 elements first, our indices are off-by-one!
+  // When calculating the nodeidx, we measure with the length including those
+  // 2 extra elements, but missing the one we haven't inserted yet, so we have
+  // to correct for both of these with (1-2) = -1
+  node.data.splice(dataidx, 2);
+  node.data.splice(nodeidx - 1, 0, child);
+
+  return node;
+}
+
+function doUpdate(transient, node, fun, bit, index) {
+  node = copyNode(node, transient.generation);
+
+  const value = fun(node.data[index + 1]);
+
+  if (value === noElementMarker) {
+    node.data.splice(index, 2);
+    node.datamap &= ~bit;
+    transient.size -= 1;
+  } else {
+    node.data[index + 1] = value;
+  }
+
+  return node;
+}
+
+function doInsert(transient, node, key, fun, bit, index) {
+  const value = fun(noElementMarker);
+  if (value === noElementMarker) {
+    return node;
+  }
+
+  node = copyNode(node, transient.generation);
+
+  node.datamap |= bit;
+  node.data.splice(index, 0, key, value);
+  transient.size += 1;
+
+  return node;
+}
+
+function always(value) {
+  return (_) => value;
+}
+
+/**
+ * How many `1` bits are set in a 32-bit integer.
+ */
+function popcount(n) {
+  n -= (n >>> 1) & 0x55555555;
+  n = (n & 0x33333333) + ((n >>> 2) & 0x33333333);
+  return (((n + (n >>> 4)) & 0x0f0f0f0f) * 0x01010101) >>> 24;
+}
+
+/**
+ * Given a population bitmap and a bit selected from that map, returns
+ * how many less significant 1 bits there are.
+ *
+ * For example, index(10101, 100) returns 1, since there is a single less
+ * significant `1` bit. This translates to the 0-based "index" of that bit.
+ */
+function index(bitmap, bit) {
+  return popcount(bitmap & (bit - 1));
+}
+
+/**
+ * Extracts a single slice ofthe hash, and returns a bitmask for the resulting value.
+ * For example, if the slice returns 5, this function returns 10000 = 1 << 5.
+ */
+function hashbit(hash, shift) {
+  return 1 << ((hash >>> shift) & mask);
+}
