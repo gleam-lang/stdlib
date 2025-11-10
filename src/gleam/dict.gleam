@@ -16,6 +16,25 @@ import gleam/option.{type Option}
 ///
 pub type Dict(key, value)
 
+/// "TransientDict" is a mutable view on a dictionary used internally by the
+/// javascript target. No mutable API is exposed to the user.
+///
+/// Transients are to be treated as having a linear (single-use, think rust) type.
+/// A transient value becomes invalid as soon as it's passed to one of the functions.
+type TransientDict(key, value)
+
+/// Convert a normal Dict to a transient dict.
+/// A transient dict is a mutable copy of the original.
+@external(erlang, "gleam_stdlib", "identity")
+@external(javascript, "../dict.mjs", "toTransient")
+fn to_transient(dict: Dict(key, value)) -> TransientDict(key, value)
+
+/// Convert a transient dict back into a normal dict, freezing its contents.
+/// Using the transient after this point is highly unsafe and leads to undefined behavior.
+@external(erlang, "gleam_stdlib", "identity")
+@external(javascript, "../dict.mjs", "fromTransient")
+fn from_transient(transient: TransientDict(key, value)) -> Dict(key, value)
+
 /// Determines the number of key-value pairs in the dict.
 /// This function runs in constant time and does not need to iterate the dict.
 ///
@@ -32,7 +51,7 @@ pub type Dict(key, value)
 /// ```
 ///
 @external(erlang, "maps", "size")
-@external(javascript, "../gleam_stdlib.mjs", "map_size")
+@external(javascript, "../dict.mjs", "size")
 pub fn size(dict: Dict(k, v)) -> Int
 
 /// Determines whether or not the dict is empty.
@@ -76,8 +95,10 @@ pub fn is_empty(dict: Dict(k, v)) -> Bool {
 /// ```
 ///
 @external(erlang, "maps", "to_list")
-@external(javascript, "../gleam_stdlib.mjs", "map_to_list")
-pub fn to_list(dict: Dict(k, v)) -> List(#(k, v))
+pub fn to_list(dict: Dict(k, v)) -> List(#(k, v)) {
+  use acc, key, value <- fold(dict, from: [])
+  [#(key, value), ..acc]
+}
 
 /// Converts a list of 2-element tuples `#(key, value)` to a dict.
 ///
@@ -86,16 +107,16 @@ pub fn to_list(dict: Dict(k, v)) -> List(#(k, v))
 ///
 @external(erlang, "maps", "from_list")
 pub fn from_list(list: List(#(k, v))) -> Dict(k, v) {
-  from_list_loop(list, new())
+  from_list_loop(to_transient(new()), list)
 }
 
 fn from_list_loop(
-  over list: List(#(k, v)),
-  from initial: Dict(k, v),
+  transient: TransientDict(k, v),
+  list: List(#(k, v)),
 ) -> Dict(k, v) {
   case list {
-    [] -> initial
-    [#(key, value), ..rest] -> from_list_loop(rest, insert(initial, key, value))
+    [] -> from_transient(transient)
+    [#(key, value), ..rest] -> from_list_loop(put(key, value, transient), rest)
   }
 }
 
@@ -119,13 +140,16 @@ pub fn has_key(dict: Dict(k, v), key: k) -> Bool {
 
 @external(erlang, "maps", "is_key")
 fn do_has_key(key: k, dict: Dict(k, v)) -> Bool {
-  get(dict, key) != Error(Nil)
+  case get(dict, key) {
+    Ok(_) -> True
+    Error(_) -> False
+  }
 }
 
 /// Creates a fresh dict that contains no values.
 ///
 @external(erlang, "maps", "new")
-@external(javascript, "../gleam_stdlib.mjs", "new_map")
+@external(javascript, "../dict.mjs", "make")
 pub fn new() -> Dict(k, v)
 
 /// Fetches a value from a dict for a given key.
@@ -146,7 +170,7 @@ pub fn new() -> Dict(k, v)
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "map_get")
-@external(javascript, "../gleam_stdlib.mjs", "map_get")
+@external(javascript, "../dict.mjs", "get")
 pub fn get(from: Dict(k, v), get: k) -> Result(v, Nil)
 
 /// Inserts a value into the dict with the given key.
@@ -167,12 +191,12 @@ pub fn get(from: Dict(k, v), get: k) -> Result(v, Nil)
 /// ```
 ///
 pub fn insert(into dict: Dict(k, v), for key: k, insert value: v) -> Dict(k, v) {
-  do_insert(key, value, dict)
+  to_transient(dict) |> put(key, value, _) |> from_transient
 }
 
 @external(erlang, "maps", "put")
-@external(javascript, "../gleam_stdlib.mjs", "map_insert")
-fn do_insert(key: k, value: v, dict: Dict(k, v)) -> Dict(k, v)
+@external(javascript, "../dict.mjs", "put")
+fn put(key: k, value: v, transient: TransientDict(k, v)) -> TransientDict(k, v)
 
 /// Updates all values in a given dict by calling a given function on each key
 /// and value.
@@ -185,15 +209,13 @@ fn do_insert(key: k, value: v, dict: Dict(k, v)) -> Dict(k, v)
 /// // -> from_list([#(3, 9), #(2, 8)])
 /// ```
 ///
+@external(javascript, "../dict.mjs", "map")
 pub fn map_values(in dict: Dict(k, v), with fun: fn(k, v) -> a) -> Dict(k, a) {
   do_map_values(fun, dict)
 }
 
 @external(erlang, "maps", "map")
-fn do_map_values(f: fn(k, v) -> a, dict: Dict(k, v)) -> Dict(k, a) {
-  let f = fn(dict, k, v) { insert(dict, k, f(k, v)) }
-  fold(dict, from: new(), with: f)
-}
+fn do_map_values(f: fn(k, v) -> a, dict: Dict(k, v)) -> Dict(k, a)
 
 /// Gets a list of all keys in a given dict.
 ///
@@ -210,21 +232,8 @@ fn do_map_values(f: fn(k, v) -> a, dict: Dict(k, v)) -> Dict(k, a) {
 ///
 @external(erlang, "maps", "keys")
 pub fn keys(dict: Dict(k, v)) -> List(k) {
-  do_keys_loop(to_list(dict), [])
-}
-
-fn do_keys_loop(list: List(#(k, v)), acc: List(k)) -> List(k) {
-  case list {
-    [] -> reverse_and_concat(acc, [])
-    [#(key, _value), ..rest] -> do_keys_loop(rest, [key, ..acc])
-  }
-}
-
-fn reverse_and_concat(remaining: List(a), accumulator: List(a)) -> List(a) {
-  case remaining {
-    [] -> accumulator
-    [first, ..rest] -> reverse_and_concat(rest, [first, ..accumulator])
-  }
+  use acc, key, _value <- fold(dict, [])
+  [key, ..acc]
 }
 
 /// Gets a list of all values in a given dict.
@@ -242,15 +251,8 @@ fn reverse_and_concat(remaining: List(a), accumulator: List(a)) -> List(a) {
 ///
 @external(erlang, "maps", "values")
 pub fn values(dict: Dict(k, v)) -> List(v) {
-  let list_of_pairs = to_list(dict)
-  do_values_loop(list_of_pairs, [])
-}
-
-fn do_values_loop(list: List(#(k, v)), acc: List(v)) -> List(v) {
-  case list {
-    [] -> reverse_and_concat(acc, [])
-    [#(_key, value), ..rest] -> do_values_loop(rest, [value, ..acc])
-  }
+  use acc, _key, value <- fold(dict, [])
+  [value, ..acc]
 }
 
 /// Creates a new dict from a given dict, minus any entries that a given function
@@ -279,14 +281,14 @@ pub fn filter(
 
 @external(erlang, "maps", "filter")
 fn do_filter(f: fn(k, v) -> Bool, dict: Dict(k, v)) -> Dict(k, v) {
-  let insert = fn(dict, k, v) {
-    case f(k, v) {
-      True -> insert(dict, k, v)
-      False -> dict
+  to_transient(new())
+  |> fold(over: dict, with: fn(transient, key, value) {
+    case f(key, value) {
+      True -> put(key, value, transient)
+      False -> transient
     }
-  }
-
-  fold(dict, from: new(), with: insert)
+  })
+  |> from_transient
 }
 
 /// Creates a new dict from a given dict, only including any entries for which the
@@ -312,23 +314,21 @@ pub fn take(from dict: Dict(k, v), keeping desired_keys: List(k)) -> Dict(k, v) 
 
 @external(erlang, "maps", "with")
 fn do_take(desired_keys: List(k), dict: Dict(k, v)) -> Dict(k, v) {
-  do_take_loop(dict, desired_keys, new())
+  do_take_loop(dict, desired_keys, to_transient(new()))
 }
 
 fn do_take_loop(
   dict: Dict(k, v),
   desired_keys: List(k),
-  acc: Dict(k, v),
+  acc: TransientDict(k, v),
 ) -> Dict(k, v) {
-  let insert = fn(taken, key) {
-    case get(dict, key) {
-      Ok(value) -> insert(taken, key, value)
-      Error(_) -> taken
-    }
-  }
   case desired_keys {
-    [] -> acc
-    [first, ..rest] -> do_take_loop(dict, rest, insert(acc, first))
+    [] -> from_transient(acc)
+    [key, ..rest] ->
+      case get(dict, key) {
+        Ok(value) -> do_take_loop(dict, rest, put(key, value, acc))
+        Error(_) -> do_take_loop(dict, rest, acc)
+      }
   }
 }
 
@@ -348,20 +348,11 @@ fn do_take_loop(
 ///
 @external(erlang, "maps", "merge")
 pub fn merge(into dict: Dict(k, v), from new_entries: Dict(k, v)) -> Dict(k, v) {
-  new_entries
-  |> to_list
-  |> fold_inserts(dict)
-}
-
-fn fold_inserts(new_entries: List(#(k, v)), dict: Dict(k, v)) -> Dict(k, v) {
-  case new_entries {
-    [] -> dict
-    [first, ..rest] -> fold_inserts(rest, insert_pair(dict, first))
-  }
-}
-
-fn insert_pair(dict: Dict(k, v), pair: #(k, v)) -> Dict(k, v) {
-  insert(dict, pair.0, pair.1)
+  to_transient(dict)
+  |> fold(over: new_entries, with: fn(transient, key, value) {
+    put(key, value, transient)
+  })
+  |> from_transient
 }
 
 /// Creates a new dict from a given dict with all the same entries except for the
@@ -380,12 +371,12 @@ fn insert_pair(dict: Dict(k, v), pair: #(k, v)) -> Dict(k, v) {
 /// ```
 ///
 pub fn delete(from dict: Dict(k, v), delete key: k) -> Dict(k, v) {
-  do_delete(key, dict)
+  to_transient(dict) |> remove(key, _) |> from_transient
 }
 
 @external(erlang, "maps", "remove")
-@external(javascript, "../gleam_stdlib.mjs", "map_remove")
-fn do_delete(a: k, b: Dict(k, v)) -> Dict(k, v)
+@external(javascript, "../dict.mjs", "remove")
+fn remove(a: k, b: TransientDict(k, v)) -> TransientDict(k, v)
 
 /// Creates a new dict from a given dict with all the same entries except any with
 /// keys found in a given list.
@@ -408,9 +399,21 @@ fn do_delete(a: k, b: Dict(k, v)) -> Dict(k, v)
 /// ```
 ///
 pub fn drop(from dict: Dict(k, v), drop disallowed_keys: List(k)) -> Dict(k, v) {
+  do_drop(disallowed_keys, dict)
+}
+
+@external(erlang, "maps", "without")
+fn do_drop(disallowed_keys: List(k), dict: Dict(k, v)) -> Dict(k, v) {
+  drop_loop(to_transient(dict), disallowed_keys)
+}
+
+fn drop_loop(
+  transient: TransientDict(k, v),
+  disallowed_keys: List(k),
+) -> Dict(k, v) {
   case disallowed_keys {
-    [] -> dict
-    [first, ..rest] -> drop(delete(dict, first), rest)
+    [] -> from_transient(transient)
+    [key, ..rest] -> drop_loop(remove(key, transient), rest)
   }
 }
 
@@ -437,6 +440,7 @@ pub fn drop(from dict: Dict(k, v), drop disallowed_keys: List(k)) -> Dict(k, v) 
 /// // -> from_list([#("a", 0), #("b", 0)])
 /// ```
 ///
+@external(javascript, "../dict.mjs", "upsert")
 pub fn upsert(
   in dict: Dict(k, v),
   update key: k,
@@ -473,24 +477,18 @@ pub fn upsert(
 /// // -> "abc"
 /// ```
 ///
+@external(javascript, "../dict.mjs", "fold")
 pub fn fold(
   over dict: Dict(k, v),
   from initial: acc,
   with fun: fn(acc, k, v) -> acc,
 ) -> acc {
-  fold_loop(to_list(dict), initial, fun)
+  let fun = fn(key, value, acc) { fun(acc, key, value) }
+  do_fold(fun, initial, dict)
 }
 
-fn fold_loop(
-  list: List(#(k, v)),
-  initial: acc,
-  fun: fn(acc, k, v) -> acc,
-) -> acc {
-  case list {
-    [] -> initial
-    [#(k, v), ..rest] -> fold_loop(rest, fun(initial, k, v), fun)
-  }
-}
+@external(erlang, "maps", "fold")
+fn do_fold(fun: fn(k, v, acc) -> acc, initial: acc, dict: Dict(k, v)) -> acc
 
 /// Calls a function for each key and value in a dict, discarding the return
 /// value.
@@ -540,9 +538,53 @@ pub fn combine(
   other: Dict(k, v),
   with fun: fn(v, v) -> v,
 ) -> Dict(k, v) {
-  use acc, key, value <- fold(over: dict, from: other)
-  case get(acc, key) {
-    Ok(other_value) -> insert(acc, key, fun(value, other_value))
-    Error(_) -> insert(acc, key, value)
+  do_combine(fn(_, l, r) { fun(l, r) }, dict, other)
+}
+
+@external(erlang, "maps", "merge_with")
+fn do_combine(
+  combine: fn(k, v, v) -> v,
+  left: Dict(k, v),
+  right: Dict(k, v),
+) -> Dict(k, v) {
+  let #(big, small, combine) = case size(left) >= size(right) {
+    True -> #(left, right, combine)
+    False -> #(right, left, fn(k, l, r) { combine(k, r, l) })
+  }
+
+  to_transient(big)
+  |> fold(over: small, with: fn(transient, key, value) {
+    case query(transient, key) {
+      Ok(existing) -> put(key, combine(key, existing, value), transient)
+      Error(_) -> put(key, value, transient)
+    }
+  })
+  |> from_transient
+}
+
+@external(erlang, "gleam_stdlib", "map_get")
+@external(javascript, "../dict.mjs", "query")
+fn query(transient: TransientDict(k, v), key: k) -> Result(v, Nil)
+
+@internal
+pub fn group(key: fn(v) -> k, list: List(v)) -> Dict(k, List(v)) {
+  group_loop(to_transient(new()), key, list)
+}
+
+fn group_loop(
+  transient: TransientDict(k, List(v)),
+  to_key: fn(v) -> k,
+  list: List(v),
+) -> Dict(k, List(v)) {
+  case list {
+    [] -> from_transient(transient)
+    [value, ..rest] -> {
+      let key = to_key(value)
+      case query(transient, key) {
+        Ok(existing) ->
+          group_loop(put(key, [value, ..existing], transient), to_key, rest)
+        Error(_) -> group_loop(put(key, [value], transient), to_key, rest)
+      }
+    }
   }
 }

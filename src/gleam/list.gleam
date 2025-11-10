@@ -296,25 +296,7 @@ pub fn rest(list: List(a)) -> Result(List(a), Nil) {
 /// ```
 ///
 pub fn group(list: List(v), by key: fn(v) -> k) -> Dict(k, List(v)) {
-  group_loop(list, key, dict.new())
-}
-
-fn group_loop(
-  list: List(v),
-  to_key: fn(v) -> k,
-  groups: Dict(k, List(v)),
-) -> Dict(k, List(v)) {
-  case list {
-    [] -> groups
-    [first, ..rest] -> {
-      let key = to_key(first)
-      let groups = case dict.get(groups, key) {
-        Error(_) -> dict.insert(groups, key, [first])
-        Ok(existing) -> dict.insert(groups, key, [first, ..existing])
-      }
-      group_loop(rest, to_key, groups)
-    }
-  }
+  dict.group(key, list)
 }
 
 /// Returns a new list containing only the elements from the first list for
