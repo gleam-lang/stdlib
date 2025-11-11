@@ -259,7 +259,12 @@ export function size(dict) {
 }
 
 export function get(dict, key) {
-  return lookup(dict.root, key);
+  const result = lookup(dict.root, key);
+  return result !== noElementMarker ? Result$Ok(result) : errorNil;
+}
+
+export function has(dict, key) {
+  return lookup(dict.root, key) !== noElementMarker;
 }
 
 function lookup(node, key) {
@@ -279,14 +284,14 @@ function lookup(node, key) {
       // sure that this is the correct value, and if it doesn't that we don't
       // contain the value in question.
       const dataidx = 2 * index(datamap, bit);
-      return isEqual(key, data[dataidx]) ? Result$Ok(data[dataidx + 1]) : errorNil;
+      return isEqual(key, data[dataidx]) ? data[dataidx + 1] : noElementMarker;
     } else if (nodemap & bit) {
       // we found our hash inside the nodemap, so we can continue our search there.
       node = data[data.length - 1 - index(nodemap, bit)];
     } else {
       // if the hash bit is not set in neither bitmaps, we immediately know that
       // this key cannot be inside this dict.
-      return errorNil;
+      return noElementMarker;
     }
   }
 
@@ -295,11 +300,11 @@ function lookup(node, key) {
   const overflow = node.data;
   for (let i = 0; i < overflow.length; i += 2) {
     if (isEqual(key, overflow[i])) {
-      return Result$Ok(overflow[i + 1]);
+      return overflow[i + 1];
     }
   }
 
-  return errorNil;
+  return noElementMarker;
 }
 
 /**
@@ -375,7 +380,8 @@ function nextGeneration(dict) {
  * Like `get`, but for transient values. Note that this function is not pure!
  */
 export function query(transient, key) {
-  return lookup(transient.root, key);
+  const result = lookup(transient.root, key);
+  return result !== noElementMarker ? Result$Ok(result) : errorNil;
 }
 
 /**
