@@ -134,17 +134,13 @@ fn from_list_loop(
 /// // -> False
 /// ```
 ///
+@external(javascript, "../dict.mjs", "has")
 pub fn has_key(dict: Dict(k, v), key: k) -> Bool {
   do_has_key(key, dict)
 }
 
 @external(erlang, "maps", "is_key")
-fn do_has_key(key: k, dict: Dict(k, v)) -> Bool {
-  case get(dict, key) {
-    Ok(_) -> True
-    Error(_) -> False
-  }
-}
+fn do_has_key(key: k, dict: Dict(k, v)) -> Bool
 
 /// Creates a fresh dict that contains no values.
 ///
