@@ -344,11 +344,7 @@ fn do_take_loop(
 ///
 @external(erlang, "maps", "merge")
 pub fn merge(into dict: Dict(k, v), from new_entries: Dict(k, v)) -> Dict(k, v) {
-  to_transient(dict)
-  |> fold(over: new_entries, with: fn(transient, key, value) {
-    put(key, value, transient)
-  })
-  |> from_transient
+  combine(dict, new_entries, fn(_, new_entry) { new_entry })
 }
 
 /// Creates a new dict from a given dict with all the same entries except for the
@@ -550,17 +546,20 @@ fn do_combine(
 
   to_transient(big)
   |> fold(over: small, with: fn(transient, key, value) {
-    case query(transient, key) {
-      Ok(existing) -> put(key, combine(key, existing, value), transient)
-      Error(_) -> put(key, value, transient)
-    }
+    let update = fn(existing) { combine(key, existing, value) }
+    update_with(key, update, value, transient)
   })
   |> from_transient
 }
 
-@external(erlang, "gleam_stdlib", "map_get")
-@external(javascript, "../dict.mjs", "query")
-fn query(transient: TransientDict(k, v), key: k) -> Result(v, Nil)
+@external(erlang, "maps", "update_with")
+@external(javascript, "../dict.mjs", "update_with")
+fn update_with(
+  key: k,
+  fun: fn(v) -> v,
+  init: v,
+  transient: TransientDict(k, v),
+) -> TransientDict(k, v)
 
 @internal
 pub fn group(key: fn(v) -> k, list: List(v)) -> Dict(k, List(v)) {
@@ -576,11 +575,11 @@ fn group_loop(
     [] -> from_transient(transient)
     [value, ..rest] -> {
       let key = to_key(value)
-      case query(transient, key) {
-        Ok(existing) ->
-          group_loop(put(key, [value, ..existing], transient), to_key, rest)
-        Error(_) -> group_loop(put(key, [value], transient), to_key, rest)
-      }
+      let update = fn(existing) { [value, ..existing] }
+
+      transient
+      |> update_with(key, update, [value], _)
+      |> group_loop(to_key, rest)
     }
   }
 }

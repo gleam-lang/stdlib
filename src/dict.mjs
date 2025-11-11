@@ -376,14 +376,6 @@ function nextGeneration(dict) {
   return 1;
 }
 
-/*
- * Like `get`, but for transient values. Note that this function is not pure!
- */
-export function query(transient, key) {
-  const result = lookup(transient.root, key);
-  return result !== noElementMarker ? Result$Ok(result) : errorNil;
-}
-
 /**
  * Consume a transient, writing a new key/value pair into the dictionary it
  * represents. If the key already exists, it will be overwritten.
@@ -409,6 +401,12 @@ export function upsert(dict, key, fun) {
   const wrapped = (value) => fun(value === noElementMarker ? Option$None() : Option$Some(value));
   transient.root = doUpsert(transient, transient.root, key, wrapped, getHash(key), 0);
   return fromTransient(transient);
+}
+
+export function update_with(key, fun, init, transient) {
+  const wrapped = (value) => (value === noElementMarker ? init : fun(value));
+  transient.root = doUpsert(transient, transient.root, key, wrapped, getHash(key), 0);
+  return transient;
 }
 
 export function map(dict, fun) {
