@@ -283,7 +283,7 @@ function lookup(node, key) {
       // We still need to check if the key matches, but if it does we know for
       // sure that this is the correct value, and if it doesn't that we don't
       // contain the value in question.
-      const dataidx = 2 * index(datamap, bit);
+      const dataidx = Math.imul(index(datamap, bit), 2);
       return isEqual(key, data[dataidx]) ? data[dataidx + 1] : noElementMarker;
     } else if (nodemap & bit) {
       // we found our hash inside the nodemap, so we can continue our search there.
@@ -367,7 +367,7 @@ function nextGeneration(dict) {
     node.generation = 0;
 
     // queue all other referenced nodes
-    const nodeStart = 2 * popcount(node.datamap);
+    const nodeStart = Math.imul(popcount(node.datamap), 2);
     for (let i = nodeStart; i < node.data.length; ++i) {
       queue.push(node.data[i]);
     }
@@ -420,7 +420,7 @@ export function map(dict, fun) {
     // order doesn't matter, so we can use push/pop for faster array usage.
     const { data, datamap } = queue.pop();
     // every node contains popcount(datamap) direct entries
-    const edgesStart = 2 * popcount(datamap);
+    const edgesStart = Math.imul(popcount(datamap), 2);
     for (let i = 0; i < edgesStart; i += 2) {
       // we copied the node while queueing it, so direct mutation here is safe.
       data[i + 1] = fun(data[i], data[i + 1]);
@@ -443,7 +443,7 @@ export function fold(dict, state, fun) {
     // order doesn't matter, so we can use push/pop for faster array usage.
     const { data, datamap } = queue.pop();
     // every node contains popcount(datamap) direct entries
-    const edgesStart = 2 * popcount(datamap);
+    const edgesStart = Math.imul(popcount(datamap), 2);
     for (let i = 0; i < edgesStart; i += 2) {
       state = fun(state, data[i], data[i + 1]);
     }
@@ -476,7 +476,7 @@ function doUpsert(transient, node, key, fun, hash, shift) {
 
   const bit = hashbit(hash, shift);
   const nodeidx = data.length - 1 - index(nodemap, bit);
-  const dataidx = 2 * index(datamap, bit);
+  const dataidx = Math.imul(index(datamap, bit), 2);
 
   // 2. Child Node
   // We have to check first if there is already a child node we have to traverse to.
@@ -589,7 +589,7 @@ function always(value) {
 function popcount(n) {
   n -= (n >>> 1) & 0x55555555;
   n = (n & 0x33333333) + ((n >>> 2) & 0x33333333);
-  return (((n + (n >>> 4)) & 0x0f0f0f0f) * 0x01010101) >>> 24;
+  return Math.imul((n + (n >>> 4)) & 0x0f0f0f0f, 0x01010101) >>> 24;
 }
 
 /**
