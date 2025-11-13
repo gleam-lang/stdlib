@@ -176,7 +176,7 @@ class Node {
     //
     // Each node contains 2 bitmaps:
     // - The datamap has a bit set if that slot in the node contains direct data
-    // - The nodemap has a bit set if that slot in the node ctonains another node.
+    // - The nodemap has a bit set if that slot in the node contains another node.
     //
     // Both are exclusive to on another, so datamap & nodemap == 0.
     //
@@ -217,7 +217,7 @@ class Node {
   }
 }
 
-/// The power-of-2 branch factor for the dict. For example, a vlaue of `5` indicates a 32-ary tree.
+/// The power-of-2 branching factor for the dict. For example, a value of `5` indicates a 32-ary tree.
 const bits = 5;
 const mask = (1 << bits) - 1;
 
@@ -383,7 +383,9 @@ function nextGeneration(dict) {
  * Returns a new transient.
  */
 export function put(key, value, transient) {
-  transient.root = doUpsert(transient, transient.root, key, always(value), getHash(key), 0);
+  const fun = always(value);
+  const hash = getHash(key);
+  transient.root = doUpsert(transient, transient.root, key, fun, hash, 0);
   return transient;
 }
 
@@ -398,14 +400,17 @@ export function remove(key, transient) {
 export function upsert(dict, key, fun) {
   // we can use our noElementMarker value to skip traversing the dictionary twice.
   const transient = toTransient(dict);
-  const wrapped = (value) => fun(value === noElementMarker ? Option$None() : Option$Some(value));
-  transient.root = doUpsert(transient, transient.root, key, wrapped, getHash(key), 0);
+  const wrapped = (value) =>
+    fun(value === noElementMarker ? Option$None() : Option$Some(value));
+  const hash = getHash(key);
+  transient.root = doUpsert(transient, transient.root, key, wrapped, hash, 0);
   return fromTransient(transient);
 }
 
 export function update_with(key, fun, init, transient) {
   const wrapped = (value) => (value === noElementMarker ? init : fun(value));
-  transient.root = doUpsert(transient, transient.root, key, wrapped, getHash(key), 0);
+  const hash = getHash(key);
+  transient.root = doUpsert(transient, transient.root, key, wrapped, hash, 0);
   return transient;
 }
 
@@ -497,7 +502,7 @@ function doUpsert(transient, node, key, fun, hash, shift) {
       // this ensures that every tree stays in its single optimal representation,
       // and allows dicts to be structurally compared.
       node.datamap |= bit;
-      node.nodemap &= ~bit;
+      node.nodemap ^= bit;
       // NOTE: the order here is important to avoid mutation bugs!
       // Remove the old child node, and insert the data pair into ourselves.
       node.data.splice(nodeidx, 1);
@@ -529,12 +534,14 @@ function doUpsert(transient, node, key, fun, hash, shift) {
   }
 
   const otherKey = data[dataidx];
-  child = doUpsert(transient, child, otherKey, always(data[dataidx + 1]), getHash(otherKey), shift + bits);
+  const childHash = getHash(otherKey);
+  const childFun = always(data[dataidx + 1]);
+  child = doUpsert(transient, child, otherKey, childFun, childHash, shift + bits);
   // we inserted 2 elements, but implicitely deleted the one we pushed down from the datamap.
   transient.size -= 1;
 
   node = copyNode(node, transient.generation);
-  node.datamap &= ~bit;
+  node.datamap ^= bit;
   node.nodemap |= bit;
 
   // remove the old data pair, and insert the new child node.
@@ -555,7 +562,7 @@ function doUpdate(transient, node, fun, bit, index) {
 
   if (value === noElementMarker) {
     node.data.splice(index, 2);
-    node.datamap &= ~bit;
+    node.datamap ^= bit;
     transient.size -= 1;
   } else {
     node.data[index + 1] = value;
