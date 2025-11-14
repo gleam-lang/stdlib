@@ -186,9 +186,13 @@ pub fn get(from: Dict(k, v), get: k) -> Result(v, Nil)
 /// // -> from_list([#("a", 5)])
 /// ```
 ///
+@external(javascript, "../dict.mjs", "insert")
 pub fn insert(into dict: Dict(k, v), for key: k, insert value: v) -> Dict(k, v) {
-  to_transient(dict) |> put(key, value, _) |> from_transient
+  do_insert(key, value, dict)
 }
+
+@external(erlang, "maps", "put")
+fn do_insert(key: k, value: v, dict: Dict(k, v)) -> Dict(k, v)
 
 @external(erlang, "maps", "put")
 @external(javascript, "../dict.mjs", "put")
@@ -432,7 +436,6 @@ fn drop_loop(
 /// // -> from_list([#("a", 0), #("b", 0)])
 /// ```
 ///
-@external(javascript, "../dict.mjs", "upsert")
 pub fn upsert(
   in dict: Dict(k, v),
   update key: k,

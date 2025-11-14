@@ -4,7 +4,6 @@
  */
 
 import { isEqual, Result$Error, Result$Ok } from "./gleam.mjs";
-import { Option$Some, Option$None } from "./gleam/option.mjs";
 
 // -- HASH --------------------------------------------------------------------
 
@@ -165,12 +164,25 @@ export default class Dict {
   }
 }
 
-class Node {
-  #generation;
+/// The power-of-2 branching factor for the dict. For example, a value of `5` indicates a 32-ary tree.
+const bits = 5;
+const mask = (1 << bits) - 1;
 
-  constructor(generation, datamap, nodemap, data) {
-    // The generation value for transient copy tracking.
-    this.#generation = generation;
+/// This symbol is used internally to avoid constructing results.
+const noElementMarker = Symbol();
+
+/// This symbol is used to store the "generation" on a node.
+/// Using a symbol makes the property not enumerable, which means the generation
+/// will be ignored during equality checks.
+const generationKey = Symbol();
+
+// Some commonly used constants throughout the code.
+const emptyNode = /* @__PURE__ */ makeNode(0);
+const emptyDict = /* @__PURE__ */ new Dict(0, emptyNode);
+const errorNil = /* @__PURE__ */ Result$Error(undefined);
+
+function makeNode(generation) {
+  return {
     // A node is a high-arity (32 in practice) hybrid tree node.
     // Hybrid means that it stores data directly as well as pointers to child nodes.
     //
@@ -184,8 +196,8 @@ class Node {
     // suffix (least significant bits first) encoding.
     // For example, if the last 5 bits of the hash are 1101, the bit to check for
     // that value is the 13th bit.
-    this.datamap = datamap;
-    this.nodemap = nodemap;
+    datamap: 0,
+    nodemap: 0,
     // The slots itself are stored in a single contiguous array that contains
     // both direct k/v-pairs and child nodes.
     //
@@ -203,43 +215,29 @@ class Node {
     //
     // Children are stored in reverse order to avoid having to store or calculate an
     // "offset" value to skip over the direct children.
-    this.data = data;
-  }
-
-  get generation() {
-    // hide generation so it's not enumerable - this makes dicts
-    // supported by the default equality and hash codes without custom implementations.
-    return this.#generation;
-  }
-
-  set generation(value) {
-    this.#generation = value;
-  }
+    data: [],
+    // The generation is used to track which nodes need to be copied during transient updates.
+    [generationKey]: generation,
+  };
 }
-
-/// The power-of-2 branching factor for the dict. For example, a value of `5` indicates a 32-ary tree.
-const bits = 5;
-const mask = (1 << bits) - 1;
-
-/// This symbol is used internally to avoid constructing results.
-const noElementMarker = Symbol();
-
-// Some commonly used constants throughout the code.
-const emptyNode = /* @__PURE__ */ new Node(0, 0, 0, []);
-const emptyDict = /* @__PURE__ */ new Dict(0, emptyNode);
-const errorNil = /* @__PURE__ */ Result$Error(undefined);
 
 /**
  * Copies a node and its data array if it's from another generation, making it safe
  * to mutate the node.
  */
 function copyNode(node, generation) {
-  if (node.generation === generation) {
+  if (node[generationKey] === generation) {
     return node;
   }
 
   const { datamap, nodemap, data } = node;
-  return new Node(generation, datamap, nodemap, data.slice(0));
+
+  return {
+    datamap,
+    nodemap,
+    data: data.slice(0),
+    [generationKey]: generation,
+  };
 }
 
 export function make() {
@@ -259,22 +257,23 @@ export function size(dict) {
 }
 
 export function get(dict, key) {
-  const result = lookup(dict.root, key);
+  const result = lookup(dict.root, key, getHash(key));
   return result !== noElementMarker ? Result$Ok(result) : errorNil;
 }
 
 export function has(dict, key) {
-  return lookup(dict.root, key) !== noElementMarker;
+  return lookup(dict.root, key, getHash(key)) !== noElementMarker;
 }
 
-function lookup(node, key) {
-  const hash = getHash(key);
-
+function lookup(node, key, hash) {
   for (let shift = 0; shift < 32; shift += bits) {
     const { data, datamap, nodemap } = node;
     const bit = hashbit(hash, shift);
 
-    if (datamap & bit) {
+    if (nodemap & bit) {
+      // we found our hash inside the nodemap, so we can continue our search there.
+      node = data[data.length - 1 - index(nodemap, bit)];
+    } else if (datamap & bit) {
       // we store this hash directly!
       //
       // this also means that there are no other values with the same
@@ -285,9 +284,6 @@ function lookup(node, key) {
       // contain the value in question.
       const dataidx = Math.imul(index(datamap, bit), 2);
       return isEqual(key, data[dataidx]) ? data[dataidx + 1] : noElementMarker;
-    } else if (nodemap & bit) {
-      // we found our hash inside the nodemap, so we can continue our search there.
-      node = data[data.length - 1 - index(nodemap, bit)];
     } else {
       // if the hash bit is not set in neither bitmaps, we immediately know that
       // this key cannot be inside this dict.
@@ -349,8 +345,8 @@ export function fromTransient(transient) {
  */
 function nextGeneration(dict) {
   const root = dict.root;
-  if (root.generation < Number.MAX_SAFE_INTEGER) {
-    return root.generation + 1;
+  if (root[generationKey] < Number.MAX_SAFE_INTEGER) {
+    return root[generationKey] + 1;
   }
 
   // we have reached MAX_SAFE_INTEGER generations -
@@ -364,7 +360,7 @@ function nextGeneration(dict) {
     const node = queue.pop();
 
     // reset the generation to 0
-    node.generation = 0;
+    node[generationKey] = 0;
 
     // queue all other referenced nodes
     const nodeStart = Math.imul(popcount(node.datamap), 2);
@@ -376,6 +372,19 @@ function nextGeneration(dict) {
   return 1;
 }
 
+/// Insert is the second-most performance-sensitive operation.
+/// We use a global "transient" value here to avoid doing a memory allocation.
+const globalTransient = /* @__PURE__ */ toTransient(emptyDict);
+
+export function insert(dict, key, value) {
+  globalTransient.generation = nextGeneration(dict);
+  globalTransient.size = dict.size;
+
+  const root = doPut(globalTransient, dict.root, key, value, getHash(key), 0);
+
+  return new Dict(globalTransient.size, root);
+}
+
 /**
  * Consume a transient, writing a new key/value pair into the dictionary it
  * represents. If the key already exists, it will be overwritten.
@@ -383,10 +392,91 @@ function nextGeneration(dict) {
  * Returns a new transient.
  */
 export function put(key, value, transient) {
-  const fun = always(value);
   const hash = getHash(key);
-  transient.root = doUpsert(transient, transient.root, key, fun, hash, 0);
+  transient.root = doPut(transient, transient.root, key, value, hash, 0);
   return transient;
+}
+
+function doPut(transient, node, key, value, hash, shift) {
+  node = copyNode(node, transient.generation);
+  const { data, datamap, nodemap } = node;
+
+  // 1. Overflow Node
+  // overflow nodes only contain key/value-pairs. we walk the data linearly trying to find a match.
+  if (shift > 32) {
+    for (let i = 0; i < data.length; i += 2) {
+      if (isEqual(key, data[i])) {
+        data[i + 1] = value;
+        return node;
+      }
+    }
+
+    data.push(key, value);
+    transient.size += 1;
+
+    return node;
+  }
+
+  const bit = hashbit(hash, shift);
+  const nodeidx = data.length - 1 - index(nodemap, bit);
+
+  // 2. Child Node
+  // We have to check first if there is already a child node we have to traverse to.
+  if ((nodemap & bit) !== 0) {
+    const child = data[nodeidx];
+    data[nodeidx] = doPut(transient, child, key, value, hash, shift + bits);
+    return node;
+  }
+
+  // 3. New Data Node
+  // No child node and no data node exists yet, so we can potentially just insert a new value.
+  const dataidx = Math.imul(index(datamap, bit), 2);
+  if ((datamap & bit) === 0) {
+    node.datamap |= bit;
+    data.splice(dataidx, 0, key, value);
+    transient.size += 1;
+
+    return node;
+  }
+
+  // 4. Existing Data Node
+  // We have a match that we can update, or remove.
+  if (isEqual(key, data[dataidx])) {
+    data[dataidx + 1] = value;
+    return node;
+  }
+
+  // 5. Collision
+  // There is no child node, but a data node with the same hash, but with a different key.
+  // To resolve this, we push both nodes down one level.
+  let child = makeNode(transient.generation);
+  child = doPut(transient, child, key, value, hash, shift + bits);
+
+  const otherKey = data[dataidx];
+  child = doPut(
+    transient,
+    child,
+    otherKey,
+    data[dataidx + 1],
+    getHash(otherKey),
+    shift + bits,
+  );
+  // we inserted 2 elements, but implicitely deleted the one we pushed down from the datamap.
+  transient.size -= 1;
+
+  node.datamap ^= bit;
+  node.nodemap |= bit;
+
+  // remove the old data pair, and insert the new child node.
+  // because we remove 2 elements first, our indices are off-by-one!
+  // When calculating the nodeidx, we measure with the length including those
+  // 2 extra elements, but missing the one we haven't inserted yet, so we have
+  // to correct for both of these with (1-2) = -1
+
+  data.splice(dataidx, 2);
+  data.splice(nodeidx - 1, 0, child);
+
+  return node;
 }
 
 /**
@@ -394,23 +484,86 @@ export function put(key, value, transient) {
  * Returns a new transient.
  */
 export function remove(key, transient) {
-  return put(key, noElementMarker, transient);
+  transient.root = doRemove(transient, transient.root, key, getHash(key), 0);
+  return transient;
 }
 
-export function upsert(dict, key, fun) {
-  // we can use our noElementMarker value to skip traversing the dictionary twice.
-  const transient = toTransient(dict);
-  const wrapped = (value) =>
-    fun(value === noElementMarker ? Option$None() : Option$Some(value));
-  const hash = getHash(key);
-  transient.root = doUpsert(transient, transient.root, key, wrapped, hash, 0);
-  return fromTransient(transient);
+function doRemove(transient, node, key, hash, shift) {
+  const { data, datamap, nodemap } = node;
+
+  // 1. Overflow Node
+  // overflow nodes only contain key/value-pairs. we walk the data linearly trying to find a match.
+  if (shift > 32) {
+    for (let i = 0; i < data.length; i += 2) {
+      if (isEqual(key, data[i])) {
+        node = copyNode(node, transient.generation);
+        node.data.splice(i, 2);
+        transient.size -= 1;
+        break;
+      }
+    }
+
+    return node;
+  }
+
+  const bit = hashbit(hash, shift);
+  const nodeidx = data.length - 1 - index(nodemap, bit);
+  const dataidx = Math.imul(index(datamap, bit), 2);
+
+  // 2. Child Node
+  // We have to check first if there is already a child node we have to traverse to.
+  if ((nodemap & bit) !== 0) {
+    const oldChild = data[nodeidx];
+    const newChild = doRemove(transient, oldChild, key, hash, shift + bits);
+    // no child entry found, we don't have to update this path.
+    if (newChild === oldChild) {
+      return node;
+    }
+
+    // the node did change, so let's copy to incorporate that change.
+    node = copyNode(node, transient.generation);
+    if (newChild.nodemap !== 0 || newChild.data.length > 2) {
+      node.data[nodeidx] = newChild;
+    } else {
+      // this node only has a single data (k/v-pair) child.
+      // to restore the CHAMP invariant, we "pull" that pair up into ourselves.
+      // this ensures that every tree stays in its single optimal representation,
+      // and allows dicts to be structurally compared.
+      node.datamap |= bit;
+      node.nodemap ^= bit;
+      // NOTE: the order here is important to avoid mutation bugs!
+      // Remove the old child node, and insert the data pair into ourselves.
+      node.data.splice(nodeidx, 1);
+      node.data.splice(dataidx, 0, newChild.data[0], newChild.data[1]);
+    }
+
+    return node;
+  }
+
+  // 3. Data Node
+  // There is no data entry here, or it is a prefix for a different key
+  if ((datamap & bit) === 0 || !isEqual(key, data[dataidx])) {
+    return node;
+  }
+
+  // we found a data entry that we can delete.
+  node = copyNode(node, transient.generation);
+  node.data.splice(dataidx, 2);
+  node.datamap ^= bit;
+  transient.size -= 1;
+
+  return node;
 }
 
-export function update_with(key, fun, init, transient) {
-  const wrapped = (value) => (value === noElementMarker ? init : fun(value));
+export function update_with(key, fun, value, transient) {
   const hash = getHash(key);
-  transient.root = doUpsert(transient, transient.root, key, wrapped, hash, 0);
+
+  const existing = lookup(transient.root, key, hash);
+  if (existing !== noElementMarker) {
+    value = fun(existing);
+  }
+
+  transient.root = doPut(transient, transient.root, key, value, hash, 0);
   return transient;
 }
 
@@ -459,135 +612,6 @@ export function fold(dict, state, fun) {
   }
 
   return state;
-}
-
-/**
- * Main helper function for insert/upsert/remove.
- */
-function doUpsert(transient, node, key, fun, hash, shift) {
-  const { data, datamap, nodemap } = node;
-
-  // 1. Overflow Node
-  // overflow nodes only contain key/value-pairs. we walk the data linearly trying to find a match.
-  if (shift > 32) {
-    for (let i = 0; i < data.length; i += 2) {
-      if (isEqual(key, data[i])) {
-        return doUpdate(transient, node, fun, 0, i);
-      }
-    }
-
-    return doInsert(transient, node, key, fun, 0, data.length);
-  }
-
-  const bit = hashbit(hash, shift);
-  const nodeidx = data.length - 1 - index(nodemap, bit);
-  const dataidx = Math.imul(index(datamap, bit), 2);
-
-  // 2. Child Node
-  // We have to check first if there is already a child node we have to traverse to.
-  if ((nodemap & bit) !== 0) {
-    const oldChild = data[nodeidx];
-    const newChild = doUpsert(transient, oldChild, key, fun, hash, shift + bits);
-    if (newChild === oldChild) {
-      return node;
-    }
-
-    // the node did change, so let's copy to incorporate that change.
-    node = copyNode(node, transient.generation);
-    if (newChild.nodemap !== 0 || newChild.data.length > 2) {
-      node.data[nodeidx] = newChild;
-    } else {
-      // this node only has a single data (k/v-pair) child.
-      // to restore the CHAMP invariant, we "pull" that pair up into ourselves.
-      // this ensures that every tree stays in its single optimal representation,
-      // and allows dicts to be structurally compared.
-      node.datamap |= bit;
-      node.nodemap ^= bit;
-      // NOTE: the order here is important to avoid mutation bugs!
-      // Remove the old child node, and insert the data pair into ourselves.
-      node.data.splice(nodeidx, 1);
-      node.data.splice(dataidx, 0, newChild.data[0], newChild.data[1]);
-    }
-
-    return node;
-  }
-
-  // 3. New Data Node
-  // No child node and no data node exists yet, so we can potentially just insert a new value.
-  if ((datamap & bit) === 0) {
-    return doInsert(transient, node, key, fun, bit, dataidx);
-  }
-
-  // 4. Existing Data Node
-  // We have a match that we can update, or remove.
-  if (isEqual(key, data[dataidx])) {
-    return doUpdate(transient, node, fun, bit, dataidx);
-  }
-
-  // 5. Collision
-  // There is no child node, but a data node with the same hash, but with a different key.
-  // To resolve this, we push both nodes down one level.
-  let child = new Node(transient.generation, 0, 0, []);
-  child = doUpsert(transient, child, key, fun, hash, shift + bits);
-  if (!child.data.length) {
-    return node;
-  }
-
-  const otherKey = data[dataidx];
-  const childHash = getHash(otherKey);
-  const childFun = always(data[dataidx + 1]);
-  child = doUpsert(transient, child, otherKey, childFun, childHash, shift + bits);
-  // we inserted 2 elements, but implicitely deleted the one we pushed down from the datamap.
-  transient.size -= 1;
-
-  node = copyNode(node, transient.generation);
-  node.datamap ^= bit;
-  node.nodemap |= bit;
-
-  // remove the old data pair, and insert the new child node.
-  // because we remove 2 elements first, our indices are off-by-one!
-  // When calculating the nodeidx, we measure with the length including those
-  // 2 extra elements, but missing the one we haven't inserted yet, so we have
-  // to correct for both of these with (1-2) = -1
-  node.data.splice(dataidx, 2);
-  node.data.splice(nodeidx - 1, 0, child);
-
-  return node;
-}
-
-function doUpdate(transient, node, fun, bit, index) {
-  node = copyNode(node, transient.generation);
-
-  const value = fun(node.data[index + 1]);
-
-  if (value === noElementMarker) {
-    node.data.splice(index, 2);
-    node.datamap ^= bit;
-    transient.size -= 1;
-  } else {
-    node.data[index + 1] = value;
-  }
-
-  return node;
-}
-
-function doInsert(transient, node, key, fun, bit, index) {
-  const value = fun(noElementMarker);
-  if (value === noElementMarker) {
-    return node;
-  }
-
-  node = copyNode(node, transient.generation);
-
-  node.datamap |= bit;
-  node.data.splice(index, 0, key, value);
-  transient.size += 1;
-
-  return node;
-}
-
-function always(value) {
-  return (_) => value;
 }
 
 /**
