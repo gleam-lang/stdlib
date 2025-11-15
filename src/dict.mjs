@@ -418,11 +418,11 @@ function doPut(transient, node, key, value, hash, shift) {
   }
 
   const bit = hashbit(hash, shift);
-  const nodeidx = data.length - 1 - index(nodemap, bit);
 
   // 2. Child Node
   // We have to check first if there is already a child node we have to traverse to.
   if ((nodemap & bit) !== 0) {
+    const nodeidx = data.length - 1 - index(nodemap, bit);
     const child = data[nodeidx];
     data[nodeidx] = doPut(transient, child, key, value, hash, shift + bits);
     return node;
@@ -472,6 +472,8 @@ function doPut(transient, node, key, value, hash, shift) {
   // When calculating the nodeidx, we measure with the length including those
   // 2 extra elements, but missing the one we haven't inserted yet, so we have
   // to correct for both of these with (1-2) = -1
+
+  const nodeidx = data.length - 1 - index(nodemap, bit);
 
   data.splice(dataidx, 2);
   data.splice(nodeidx - 1, 0, child);
