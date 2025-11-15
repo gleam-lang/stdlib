@@ -177,11 +177,14 @@ const noElementMarker = Symbol();
 const generationKey = Symbol();
 
 // Some commonly used constants throughout the code.
-const emptyNode = /* @__PURE__ */ makeNode(0);
+const emptyNode = /* @__PURE__ */ newNode(0);
 const emptyDict = /* @__PURE__ */ new Dict(0, emptyNode);
 const errorNil = /* @__PURE__ */ Result$Error(undefined);
 
-function makeNode(generation) {
+function makeNode(generation, datamap, nodemap, data) {
+  // The order of fields is important, as they define the order `isEqual` will
+  // compare our fields. Putting the bitmaps first means that equality can
+  // early-out if the bitmaps are not equal.
   return {
     // A node is a high-arity (32 in practice) hybrid tree node.
     // Hybrid means that it stores data directly as well as pointers to child nodes.
@@ -196,8 +199,8 @@ function makeNode(generation) {
     // suffix (least significant bits first) encoding.
     // For example, if the last 5 bits of the hash are 1101, the bit to check for
     // that value is the 13th bit.
-    datamap: 0,
-    nodemap: 0,
+    datamap,
+    nodemap,
     // The slots itself are stored in a single contiguous array that contains
     // both direct k/v-pairs and child nodes.
     //
@@ -215,10 +218,15 @@ function makeNode(generation) {
     //
     // Children are stored in reverse order to avoid having to store or calculate an
     // "offset" value to skip over the direct children.
-    data: [],
+    data,
     // The generation is used to track which nodes need to be copied during transient updates.
+    // Using a symbol here makes `isEqual` ignore this field.
     [generationKey]: generation,
   };
+}
+
+function newNode(generation) {
+  return makeNode(generation, 0, 0, []);
 }
 
 /**
@@ -230,14 +238,50 @@ function copyNode(node, generation) {
     return node;
   }
 
-  const { datamap, nodemap, data } = node;
+  const newData = node.data.slice(0);
+  return makeNode(generation, node.datamap, node.nodemap, newData);
+}
 
-  return {
-    datamap,
-    nodemap,
-    data: data.slice(0),
-    [generationKey]: generation,
-  };
+/**
+ * Copies a node if needed ands sets a new value.
+ */
+function copyAndSet(node, generation, idx, val) {
+  if (node.data[idx] === val) {
+    return node;
+  }
+
+  // Using copyNode is faster than a specialised implementation.
+  node = copyNode(node, generation);
+  node.data[idx] = val;
+  return node;
+}
+
+/**
+ * Copies a node if needed, and then inserts a new key-value pair.
+ */
+function copyAndInsertPair(node, generation, bit, idx, key, val) {
+  const data = node.data;
+  const length = data.length;
+
+  // the fastest way to insert a pair is to always copy.
+  const newData = new Array(length + 2);
+
+  let readIndex = 0;
+  let writeIndex = 0;
+
+  while (readIndex < idx) newData[writeIndex++] = data[readIndex++];
+  newData[writeIndex++] = key;
+  newData[writeIndex++] = val;
+  while (readIndex < length) newData[writeIndex++] = data[readIndex++];
+
+  return makeNode(generation, node.datamap | bit, node.nodemap, newData);
+}
+
+function copyAndRemovePair(node, generation, bit, idx) {
+  node = copyNode(node, generation);
+  node.datamap ^= bit;
+  node.data.splice(idx, 2);
+  return node;
 }
 
 export function make() {
@@ -267,13 +311,13 @@ export function has(dict, key) {
 
 function lookup(node, key, hash) {
   for (let shift = 0; shift < 32; shift += bits) {
-    const { data, datamap, nodemap } = node;
+    const data = node.data;
     const bit = hashbit(hash, shift);
 
-    if (nodemap & bit) {
+    if (node.nodemap & bit) {
       // we found our hash inside the nodemap, so we can continue our search there.
-      node = data[data.length - 1 - index(nodemap, bit)];
-    } else if (datamap & bit) {
+      node = data[data.length - 1 - index(node.nodemap, bit)];
+    } else if (node.datamap & bit) {
       // we store this hash directly!
       //
       // this also means that there are no other values with the same
@@ -282,7 +326,7 @@ function lookup(node, key, hash) {
       // We still need to check if the key matches, but if it does we know for
       // sure that this is the correct value, and if it doesn't that we don't
       // contain the value in question.
-      const dataidx = Math.imul(index(datamap, bit), 2);
+      const dataidx = Math.imul(index(node.datamap, bit), 2);
       return isEqual(key, data[dataidx]) ? data[dataidx + 1] : noElementMarker;
     } else {
       // if the hash bit is not set in neither bitmaps, we immediately know that
@@ -381,6 +425,9 @@ export function insert(dict, key, value) {
   globalTransient.size = dict.size;
 
   const root = doPut(globalTransient, dict.root, key, value, getHash(key), 0);
+  if (root === dict.root) {
+    return dict;
+  }
 
   return new Dict(globalTransient.size, root);
 }
@@ -398,89 +445,82 @@ export function put(key, value, transient) {
 }
 
 function doPut(transient, node, key, value, hash, shift) {
-  node = copyNode(node, transient.generation);
-  const { data, datamap, nodemap } = node;
+  const data = node.data;
+  const generation = transient.generation;
 
   // 1. Overflow Node
   // overflow nodes only contain key/value-pairs. we walk the data linearly trying to find a match.
   if (shift > 32) {
     for (let i = 0; i < data.length; i += 2) {
       if (isEqual(key, data[i])) {
-        data[i + 1] = value;
-        return node;
+        return copyAndSet(node, generation, i + 1, value);
       }
     }
 
-    data.push(key, value);
     transient.size += 1;
-
-    return node;
+    return copyAndInsertPair(node, generation, 0, data.length, key, value);
   }
 
   const bit = hashbit(hash, shift);
 
   // 2. Child Node
   // We have to check first if there is already a child node we have to traverse to.
-  if ((nodemap & bit) !== 0) {
-    const nodeidx = data.length - 1 - index(nodemap, bit);
+  if (node.nodemap & bit) {
+    const nodeidx = data.length - 1 - index(node.nodemap, bit);
     const child = data[nodeidx];
-    data[nodeidx] = doPut(transient, child, key, value, hash, shift + bits);
-    return node;
+    const newChild = doPut(transient, child, key, value, hash, shift + bits);
+    return copyAndSet(node, generation, nodeidx, newChild);
   }
 
   // 3. New Data Node
   // No child node and no data node exists yet, so we can potentially just insert a new value.
-  const dataidx = Math.imul(index(datamap, bit), 2);
-  if ((datamap & bit) === 0) {
-    node.datamap |= bit;
-    data.splice(dataidx, 0, key, value);
+  const dataidx = Math.imul(index(node.datamap, bit), 2);
+  if ((node.datamap & bit) === 0) {
     transient.size += 1;
-
-    return node;
+    return copyAndInsertPair(node, generation, bit, dataidx, key, value);
   }
 
   // 4. Existing Data Node
   // We have a match that we can update, or remove.
   if (isEqual(key, data[dataidx])) {
-    data[dataidx + 1] = value;
-    return node;
+    return copyAndSet(node, generation, dataidx + 1, value);
   }
 
   // 5. Collision
   // There is no child node, but a data node with the same hash, but with a different key.
   // To resolve this, we push both nodes down one level.
-  let child = makeNode(transient.generation);
-  child = doPut(transient, child, key, value, hash, shift + bits);
-
   const otherKey = data[dataidx];
-  child = doPut(
-    transient,
-    child,
-    otherKey,
-    data[dataidx + 1],
-    getHash(otherKey),
-    shift + bits,
-  );
+  const otherVal = data[dataidx + 1];
+  const otherHash = getHash(otherKey);
+  const childShift = shift + bits;
+
+  let child = emptyNode;
+  child = doPut(transient, child, key, value, hash, childShift);
+  child = doPut(transient, child, otherKey, otherVal, otherHash, childShift);
+
   // we inserted 2 elements, but implicitely deleted the one we pushed down from the datamap.
   transient.size -= 1;
 
-  node.datamap ^= bit;
-  node.nodemap |= bit;
-
   // remove the old data pair, and insert the new child node.
-  // because we remove 2 elements first, our indices are off-by-one!
-  // When calculating the nodeidx, we measure with the length including those
-  // 2 extra elements, but missing the one we haven't inserted yet, so we have
-  // to correct for both of these with (1-2) = -1
+  const length = data.length;
+  const nodeidx = length - 1 - index(node.nodemap, bit);
 
-  const nodeidx = data.length - 1 - index(nodemap, bit);
+  // writing these loops in javascript instead of a combination of splices
+  // turns out to be faster. Copying always turned out to be faster.
+  const newData = new Array(length - 1);
 
-  data.splice(dataidx, 2);
-  data.splice(nodeidx - 1, 0, child);
+  let readIndex = 0;
+  let writeIndex = 0;
 
-  return node;
+  // [0..dataidx, skip 2 elements, ..nodeidx, newChild, ..rest]
+  while (readIndex < dataidx) newData[writeIndex++] = data[readIndex++];
+  readIndex += 2;
+  while (readIndex <= nodeidx) newData[writeIndex++] = data[readIndex++];
+  newData[writeIndex++] = child;
+  while (readIndex < length) newData[writeIndex++] = data[readIndex++];
+
+  return makeNode(generation, node.datamap ^ bit, node.nodemap | bit, newData);
 }
-
 /**
  * Consume a transient, removing a key if it exists.
  * Returns a new transient.
@@ -491,17 +531,16 @@ export function remove(key, transient) {
 }
 
 function doRemove(transient, node, key, hash, shift) {
-  const { data, datamap, nodemap } = node;
+  const data = node.data;
+  const generation = transient.generation;
 
   // 1. Overflow Node
   // overflow nodes only contain key/value-pairs. we walk the data linearly trying to find a match.
   if (shift > 32) {
     for (let i = 0; i < data.length; i += 2) {
       if (isEqual(key, data[i])) {
-        node = copyNode(node, transient.generation);
-        node.data.splice(i, 2);
         transient.size -= 1;
-        break;
+        return copyAndRemovePair(node, generation, 0, i);
       }
     }
 
@@ -509,52 +548,46 @@ function doRemove(transient, node, key, hash, shift) {
   }
 
   const bit = hashbit(hash, shift);
-  const nodeidx = data.length - 1 - index(nodemap, bit);
-  const dataidx = Math.imul(index(datamap, bit), 2);
+  const dataidx = Math.imul(index(node.datamap, bit), 2);
 
   // 2. Child Node
   // We have to check first if there is already a child node we have to traverse to.
-  if ((nodemap & bit) !== 0) {
+  if ((node.nodemap & bit) !== 0) {
+    const nodeidx = data.length - 1 - index(node.nodemap, bit);
+
     const oldChild = data[nodeidx];
     const newChild = doRemove(transient, oldChild, key, hash, shift + bits);
-    // no child entry found, we don't have to update this path.
-    if (newChild === oldChild) {
-      return node;
-    }
 
     // the node did change, so let's copy to incorporate that change.
-    node = copyNode(node, transient.generation);
     if (newChild.nodemap !== 0 || newChild.data.length > 2) {
-      node.data[nodeidx] = newChild;
-    } else {
-      // this node only has a single data (k/v-pair) child.
-      // to restore the CHAMP invariant, we "pull" that pair up into ourselves.
-      // this ensures that every tree stays in its single optimal representation,
-      // and allows dicts to be structurally compared.
-      node.datamap |= bit;
-      node.nodemap ^= bit;
-      // NOTE: the order here is important to avoid mutation bugs!
-      // Remove the old child node, and insert the data pair into ourselves.
-      node.data.splice(nodeidx, 1);
-      node.data.splice(dataidx, 0, newChild.data[0], newChild.data[1]);
+      return copyAndSet(node, generation, nodeidx, newChild);
     }
+
+    // when writing, it looks like since we delete first it's not too bad.
+    node = copyNode(node, generation);
+    // this node only has a single data (k/v-pair) child.
+    // to restore the CHAMP invariant, we "pull" that pair up into ourselves.
+    // this ensures that every tree stays in its single optimal representation,
+    // and allows dicts to be structurally compared.
+    node.datamap |= bit;
+    node.nodemap ^= bit;
+    // NOTE: the order here is important to avoid mutation bugs!
+    // Remove the old child node, and insert the data pair into ourselves.
+    node.data.splice(nodeidx, 1);
+    node.data.splice(dataidx, 0, newChild.data[0], newChild.data[1]);
 
     return node;
   }
 
   // 3. Data Node
   // There is no data entry here, or it is a prefix for a different key
-  if ((datamap & bit) === 0 || !isEqual(key, data[dataidx])) {
+  if ((node.datamap & bit) === 0 || !isEqual(key, data[dataidx])) {
     return node;
   }
 
   // we found a data entry that we can delete.
-  node = copyNode(node, transient.generation);
-  node.data.splice(dataidx, 2);
-  node.datamap ^= bit;
   transient.size -= 1;
-
-  return node;
+  return copyAndRemovePair(node, generation, bit, dataidx);
 }
 
 export function update_with(key, fun, value, transient) {
@@ -578,9 +611,10 @@ export function map(dict, fun) {
 
   while (queue.length) {
     // order doesn't matter, so we can use push/pop for faster array usage.
-    const { data, datamap } = queue.pop();
+    const node = queue.pop();
+    const data = node.data;
     // every node contains popcount(datamap) direct entries
-    const edgesStart = Math.imul(popcount(datamap), 2);
+    const edgesStart = Math.imul(popcount(node.datamap), 2);
     for (let i = 0; i < edgesStart; i += 2) {
       // we copied the node while queueing it, so direct mutation here is safe.
       data[i + 1] = fun(data[i], data[i + 1]);
@@ -601,9 +635,10 @@ export function fold(dict, state, fun) {
 
   while (queue.length) {
     // order doesn't matter, so we can use push/pop for faster array usage.
-    const { data, datamap } = queue.pop();
+    const node = queue.pop();
+    const data = node.data;
     // every node contains popcount(datamap) direct entries
-    const edgesStart = Math.imul(popcount(datamap), 2);
+    const edgesStart = Math.imul(popcount(node.datamap), 2);
     for (let i = 0; i < edgesStart; i += 2) {
       state = fun(state, data[i], data[i + 1]);
     }
