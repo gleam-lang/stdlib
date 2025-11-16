@@ -279,8 +279,16 @@ function copyAndInsertPair(node, generation, bit, idx, key, val) {
 
 function copyAndRemovePair(node, generation, bit, idx) {
   node = copyNode(node, generation);
+
+  const data = node.data;
+  const length = data.length;
+  for (let w = idx, r = idx + 2; r < length; ++r, ++w) {
+    data[w] = data[r];
+  }
+  data.pop();
+  data.pop();
+
   node.datamap ^= bit;
-  node.data.splice(idx, 2);
   return node;
 }
 
@@ -563,20 +571,24 @@ function doRemove(transient, node, key, hash, shift) {
       return copyAndSet(node, generation, nodeidx, newChild);
     }
 
-    // when writing, it looks like since we delete first it's not too bad.
-    node = copyNode(node, generation);
     // this node only has a single data (k/v-pair) child.
     // to restore the CHAMP invariant, we "pull" that pair up into ourselves.
     // this ensures that every tree stays in its single optimal representation,
     // and allows dicts to be structurally compared.
-    node.datamap |= bit;
-    node.nodemap ^= bit;
-    // NOTE: the order here is important to avoid mutation bugs!
-    // Remove the old child node, and insert the data pair into ourselves.
-    node.data.splice(nodeidx, 1);
-    node.data.splice(dataidx, 0, newChild.data[0], newChild.data[1]);
+    const length = data.length;
+    const newData = new Array(length + 1);
 
-    return node;
+    let readIndex = 0;
+    let writeIndex = 0;
+
+    while (readIndex < dataidx) newData[writeIndex++] = data[readIndex++];
+    newData[writeIndex++] = newChild.data[0];
+    newData[writeIndex++] = newChild.data[1];
+    while (readIndex < nodeidx) newData[writeIndex++] = data[readIndex++];
+    readIndex++;
+    while (readIndex < length) newData[writeIndex++] = data[readIndex++];
+
+    return makeNode(generation, node.datamap | bit, node.nodemap ^ bit, newData);
   }
 
   // 3. Data Node
