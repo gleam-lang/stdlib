@@ -8,11 +8,11 @@ pub fn equal(a: t, b: t) -> Nil {
     True -> Nil
     _ ->
       panic as string.concat([
-        "\n",
-        string.inspect(a),
-        "\nshould equal\n",
-        string.inspect(b),
-      ])
+          "\n",
+          string.inspect(a),
+          "\nshould equal\n",
+          string.inspect(b),
+        ])
   }
 }
 
@@ -21,11 +21,11 @@ pub fn not_equal(a: t, b: t) -> Nil {
     True -> Nil
     _ ->
       panic as string.concat([
-        "\n",
-        string.inspect(a),
-        "\nshould not equal\n",
-        string.inspect(b),
-      ])
+          "\n",
+          string.inspect(a),
+          "\nshould not equal\n",
+          string.inspect(b),
+        ])
   }
 }
 
