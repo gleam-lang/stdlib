@@ -981,6 +981,10 @@ fn run_decoders(
 /// Define a decoder that always fails. The parameter for this function is the
 /// name of the type that has failed to decode.
 ///
+/// When this decoder is used as part of a larger decoder, the zero value is 
+/// used as a placeholder so that the rest of the decoder can continue to run
+/// and collect all decoding errors.
+///
 pub fn failure(zero: a, expected: String) -> Decoder(a) {
   Decoder(function: fn(d) { #(zero, decode_error(expected, d)) })
 }
@@ -991,7 +995,7 @@ pub fn failure(zero: a, expected: String) -> Decoder(a) {
 /// define a decoder for Erlang's pid type.
 ///
 /// A default "zero" value is also required to make a decoder. When this
-/// decoder is used as part of a larger decoder this zero value used as
+/// decoder is used as part of a larger decoder this zero value is used as
 /// a placeholder so that the rest of the decoder can continue to run and
 /// collect all decoding errors.
 ///
