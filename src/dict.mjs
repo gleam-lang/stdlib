@@ -8,7 +8,9 @@ import { isEqual, Result$Error, Result$Ok } from "./gleam.mjs";
 // -- HASH --------------------------------------------------------------------
 
 const referenceMap = /* @__PURE__ */ new WeakMap();
-const tempDataView = /* @__PURE__ */ new DataView(/* @__PURE__ */ new ArrayBuffer(8));
+const tempDataView = /* @__PURE__ */ new DataView(
+  /* @__PURE__ */ new ArrayBuffer(8),
+);
 let referenceUID = 0;
 /**
  * hash the object by reference using a weak map and incrementing uid
@@ -299,7 +301,7 @@ export function make() {
 export function from(iterable) {
   let transient = toTransient(emptyDict);
   for (const [key, value] of iterable) {
-    transient = put(key, value, transient);
+    transient = transientInsert(key, value, transient);
   }
   return fromTransient(transient);
 }
@@ -432,7 +434,7 @@ export function insert(dict, key, value) {
   globalTransient.generation = nextGeneration(dict);
   globalTransient.size = dict.size;
 
-  const root = doPut(globalTransient, dict.root, key, value, getHash(key), 0);
+  const root = doInsert(globalTransient, dict.root, key, value, getHash(key), 0);
   if (root === dict.root) {
     return dict;
   }
@@ -446,13 +448,30 @@ export function insert(dict, key, value) {
  *
  * Returns a new transient.
  */
-export function put(key, value, transient) {
+export function transientInsert(key, value, transient) {
   const hash = getHash(key);
-  transient.root = doPut(transient, transient.root, key, value, hash, 0);
+  transient.root = doInsert(transient, transient.root, key, value, hash, 0);
   return transient;
 }
 
-function doPut(transient, node, key, value, hash, shift) {
+/**
+ * Consume a transient, writing a new key/value pair if the key doesn't exist or updating
+ * the existing value with a function if it does.
+ *
+ * Returns a new transient.
+ */
+export function transientUpdateWith(key, fun, value, transient) {
+  const hash = getHash(key);
+
+  const existing = lookup(transient.root, key, hash);
+  if (existing !== noElementMarker) {
+    value = fun(existing);
+  }
+  transient.root = doInsert(transient, transient.root, key, value, hash, 0);
+  return transient;
+}
+
+function doInsert(transient, node, key, value, hash, shift) {
   const data = node.data;
   const generation = transient.generation;
 
@@ -476,7 +495,7 @@ function doPut(transient, node, key, value, hash, shift) {
   if (node.nodemap & bit) {
     const nodeidx = data.length - 1 - index(node.nodemap, bit);
     const child = data[nodeidx];
-    const newChild = doPut(transient, child, key, value, hash, shift + bits);
+    const newChild = doInsert(transient, child, key, value, hash, shift + bits);
     return copyAndSet(node, generation, nodeidx, newChild);
   }
 
@@ -503,8 +522,8 @@ function doPut(transient, node, key, value, hash, shift) {
   const childShift = shift + bits;
 
   let child = emptyNode;
-  child = doPut(transient, child, key, value, hash, childShift);
-  child = doPut(transient, child, otherKey, otherVal, otherHash, childShift);
+  child = doInsert(transient, child, key, value, hash, childShift);
+  child = doInsert(transient, child, otherKey, otherVal, otherHash, childShift);
 
   // we inserted 2 elements, but implicitely deleted the one we pushed down from the datamap.
   transient.size -= 1;
@@ -529,16 +548,17 @@ function doPut(transient, node, key, value, hash, shift) {
 
   return makeNode(generation, node.datamap ^ bit, node.nodemap | bit, newData);
 }
+
 /**
  * Consume a transient, removing a key if it exists.
  * Returns a new transient.
  */
-export function remove(key, transient) {
-  transient.root = doRemove(transient, transient.root, key, getHash(key), 0);
+export function transientDelete(key, transient) {
+  transient.root = doDelete(transient, transient.root, key, getHash(key), 0);
   return transient;
 }
 
-function doRemove(transient, node, key, hash, shift) {
+function doDelete(transient, node, key, hash, shift) {
   const data = node.data;
   const generation = transient.generation;
 
@@ -564,7 +584,7 @@ function doRemove(transient, node, key, hash, shift) {
     const nodeidx = data.length - 1 - index(node.nodemap, bit);
 
     const oldChild = data[nodeidx];
-    const newChild = doRemove(transient, oldChild, key, hash, shift + bits);
+    const newChild = doDelete(transient, oldChild, key, hash, shift + bits);
 
     // the node did change, so let's copy to incorporate that change.
     if (newChild.nodemap !== 0 || newChild.data.length > 2) {
@@ -600,18 +620,6 @@ function doRemove(transient, node, key, hash, shift) {
   // we found a data entry that we can delete.
   transient.size -= 1;
   return copyAndRemovePair(node, generation, bit, dataidx);
-}
-
-export function update_with(key, fun, value, transient) {
-  const hash = getHash(key);
-
-  const existing = lookup(transient.root, key, hash);
-  if (existing !== noElementMarker) {
-    value = fun(existing);
-  }
-
-  transient.root = doPut(transient, transient.root, key, value, hash, 0);
-  return transient;
 }
 
 export function map(dict, fun) {
