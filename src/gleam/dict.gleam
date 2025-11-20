@@ -115,7 +115,8 @@ fn from_list_loop(
 ) -> Dict(k, v) {
   case list {
     [] -> from_transient(transient)
-    [#(key, value), ..rest] -> from_list_loop(put(key, value, transient), rest)
+    [#(key, value), ..rest] ->
+      from_list_loop(transient_insert(key, value, transient), rest)
   }
 }
 
@@ -194,8 +195,12 @@ pub fn insert(into dict: Dict(k, v), for key: k, insert value: v) -> Dict(k, v) 
 fn do_insert(key: k, value: v, dict: Dict(k, v)) -> Dict(k, v)
 
 @external(erlang, "maps", "put")
-@external(javascript, "../dict.mjs", "put")
-fn put(key: k, value: v, transient: TransientDict(k, v)) -> TransientDict(k, v)
+@external(javascript, "../dict.mjs", "transientInsert")
+fn transient_insert(
+  key: k,
+  value: v,
+  transient: TransientDict(k, v),
+) -> TransientDict(k, v)
 
 /// Updates all values in a given dict by calling a given function on each key
 /// and value.
@@ -281,7 +286,7 @@ fn do_filter(f: fn(k, v) -> Bool, dict: Dict(k, v)) -> Dict(k, v) {
   to_transient(new())
   |> fold(over: dict, with: fn(transient, key, value) {
     case f(key, value) {
-      True -> put(key, value, transient)
+      True -> transient_insert(key, value, transient)
       False -> transient
     }
   })
@@ -323,7 +328,7 @@ fn do_take_loop(
     [] -> from_transient(acc)
     [key, ..rest] ->
       case get(dict, key) {
-        Ok(value) -> do_take_loop(dict, rest, put(key, value, acc))
+        Ok(value) -> do_take_loop(dict, rest, transient_insert(key, value, acc))
         Error(_) -> do_take_loop(dict, rest, acc)
       }
   }
@@ -364,12 +369,12 @@ pub fn merge(into dict: Dict(k, v), from new_entries: Dict(k, v)) -> Dict(k, v) 
 /// ```
 ///
 pub fn delete(from dict: Dict(k, v), delete key: k) -> Dict(k, v) {
-  to_transient(dict) |> remove(key, _) |> from_transient
+  to_transient(dict) |> transient_delete(key, _) |> from_transient
 }
 
 @external(erlang, "maps", "remove")
-@external(javascript, "../dict.mjs", "remove")
-fn remove(a: k, b: TransientDict(k, v)) -> TransientDict(k, v)
+@external(javascript, "../dict.mjs", "transientDelete")
+fn transient_delete(a: k, b: TransientDict(k, v)) -> TransientDict(k, v)
 
 /// Creates a new dict from a given dict with all the same entries except any with
 /// keys found in a given list.
@@ -406,7 +411,7 @@ fn drop_loop(
 ) -> Dict(k, v) {
   case disallowed_keys {
     [] -> from_transient(transient)
-    [key, ..rest] -> drop_loop(remove(key, transient), rest)
+    [key, ..rest] -> drop_loop(transient_delete(key, transient), rest)
   }
 }
 
@@ -547,14 +552,14 @@ fn do_combine(
   to_transient(big)
   |> fold(over: small, with: fn(transient, key, value) {
     let update = fn(existing) { combine(key, existing, value) }
-    update_with(key, update, value, transient)
+    transient_update_with(key, update, value, transient)
   })
   |> from_transient
 }
 
 @external(erlang, "maps", "update_with")
-@external(javascript, "../dict.mjs", "update_with")
-fn update_with(
+@external(javascript, "../dict.mjs", "transientUpdateWith")
+fn transient_update_with(
   key: k,
   fun: fn(v) -> v,
   init: v,
@@ -578,7 +583,7 @@ fn group_loop(
       let update = fn(existing) { [value, ..existing] }
 
       transient
-      |> update_with(key, update, [value], _)
+      |> transient_update_with(key, update, [value], _)
       |> group_loop(to_key, rest)
     }
   }
