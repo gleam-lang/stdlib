@@ -96,8 +96,7 @@ pub fn is_empty(dict: Dict(k, v)) -> Bool {
 ///
 @external(erlang, "maps", "to_list")
 pub fn to_list(dict: Dict(k, v)) -> List(#(k, v)) {
-  use acc, key, value <- fold(dict, from: [])
-  [#(key, value), ..acc]
+  fold(dict, from: [], with: fn(acc, key, value) { [#(key, value), ..acc] })
 }
 
 /// Converts a list of 2-element tuples `#(key, value)` to a dict.
@@ -232,8 +231,7 @@ fn do_map_values(f: fn(k, v) -> a, dict: Dict(k, v)) -> Dict(k, a)
 ///
 @external(erlang, "maps", "keys")
 pub fn keys(dict: Dict(k, v)) -> List(k) {
-  use acc, key, _value <- fold(dict, [])
-  [key, ..acc]
+  fold(dict, [], fn(acc, key, _value) { [key, ..acc] })
 }
 
 /// Gets a list of all values in a given dict.
@@ -251,8 +249,7 @@ pub fn keys(dict: Dict(k, v)) -> List(k) {
 ///
 @external(erlang, "maps", "values")
 pub fn values(dict: Dict(k, v)) -> List(v) {
-  use acc, _key, value <- fold(dict, [])
-  [value, ..acc]
+  fold(dict, [], fn(acc, _key, value) { [value, ..acc] })
 }
 
 /// Creates a new dict from a given dict, minus any entries that a given function
