@@ -301,7 +301,7 @@ export function make() {
 export function from(iterable) {
   let transient = toTransient(emptyDict);
   for (const [key, value] of iterable) {
-    transient = transientInsert(key, value, transient);
+    transient = destructiveTransientInsert(key, value, transient);
   }
   return fromTransient(transient);
 }
@@ -448,7 +448,7 @@ export function insert(dict, key, value) {
  *
  * Returns a new transient.
  */
-export function transientInsert(key, value, transient) {
+export function destructiveTransientInsert(key, value, transient) {
   const hash = getHash(key);
   transient.root = doInsert(transient, transient.root, key, value, hash, 0);
   return transient;
@@ -460,7 +460,7 @@ export function transientInsert(key, value, transient) {
  *
  * Returns a new transient.
  */
-export function transientUpdateWith(key, fun, value, transient) {
+export function destructiveTransientUpdateWith(key, fun, value, transient) {
   const hash = getHash(key);
 
   const existing = lookup(transient.root, key, hash);
@@ -553,7 +553,7 @@ function doInsert(transient, node, key, value, hash, shift) {
  * Consume a transient, removing a key if it exists.
  * Returns a new transient.
  */
-export function transientDelete(key, transient) {
+export function destructiveTransientDelete(key, transient) {
   transient.root = doDelete(transient, transient.root, key, getHash(key), 0);
   return transient;
 }

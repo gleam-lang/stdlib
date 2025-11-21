@@ -195,7 +195,7 @@ pub fn insert(into dict: Dict(k, v), for key: k, insert value: v) -> Dict(k, v) 
 fn do_insert(key: k, value: v, dict: Dict(k, v)) -> Dict(k, v)
 
 @external(erlang, "maps", "put")
-@external(javascript, "../dict.mjs", "transientInsert")
+@external(javascript, "../dict.mjs", "destructiveTransientInsert")
 fn transient_insert(
   key: k,
   value: v,
@@ -373,7 +373,7 @@ pub fn delete(from dict: Dict(k, v), delete key: k) -> Dict(k, v) {
 }
 
 @external(erlang, "maps", "remove")
-@external(javascript, "../dict.mjs", "transientDelete")
+@external(javascript, "../dict.mjs", "destructiveTransientDelete")
 fn transient_delete(a: k, b: TransientDict(k, v)) -> TransientDict(k, v)
 
 /// Creates a new dict from a given dict with all the same entries except any with
@@ -558,7 +558,7 @@ fn do_combine(
 }
 
 @external(erlang, "maps", "update_with")
-@external(javascript, "../dict.mjs", "transientUpdateWith")
+@external(javascript, "../dict.mjs", "destructiveTransientUpdateWith")
 fn transient_update_with(
   key: k,
   fun: fn(v) -> v,
