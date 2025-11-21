@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.67.0 - 2025-10-21
+
+- The `failure` from the `dynamic/decode` module gains the `expected` label.
+- The `dynamic/decode` module now uses the term "placeholder value" rather than
+  "zero value".
+
 ## v0.66.0 - 2025-10-21
 
 - The `tap` function from the `function` module has been deprecated.
