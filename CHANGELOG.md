@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- The `bit_array` module gains the `to_string_lossy` function.
+
 ## v0.66.0 - 2025-10-21
 
 - The `tap` function from the `function` module has been deprecated.

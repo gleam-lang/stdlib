@@ -135,6 +135,19 @@ pub fn to_string_test() {
   assert bit_array.to_string(x) == Ok("ø")
 }
 
+pub fn to_string_lossy_test() {
+  assert bit_array.to_string_lossy(<<>>, fn(_) { "�" }) == ""
+
+  assert bit_array.to_string_lossy(<<0x80, "A":utf8, 0x81>>, fn(_) { "�" })
+    == "�A�"
+
+  // Test some codepoints that require 2/3/4 bytes to be stored as UTF-8
+  assert bit_array.to_string_lossy(<<"£И한𐍈":utf8>>, fn(_) { "�" }) == "£И한𐍈"
+
+  // Test unaligned bit array
+  assert bit_array.to_string_lossy(<<"ø":utf8, 2:4>>, fn(_) { "�" }) == "ø�"
+}
+
 pub fn is_utf8_test() {
   assert bit_array.is_utf8(<<>>)
 
