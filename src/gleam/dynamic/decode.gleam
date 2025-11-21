@@ -183,7 +183,7 @@
 ////     "grass" -> decode.success(Grass)
 ////     "electric" -> decode.success(Electric)
 ////     // Return a failing decoder for any other strings
-////     _ -> decode.failure(Fire, "PocketMonsterType")
+////     _ -> decode.failure(Fire, expected: "PocketMonsterType")
 ////   }
 //// }
 ////
@@ -611,7 +611,9 @@ fn run_dynamic_function(
 ) -> #(t, List(DecodeError)) {
   case f(data) {
     Ok(data) -> #(data, [])
-    Error(zero) -> #(zero, [DecodeError(name, dynamic.classify(data), [])])
+    Error(placeholder) -> #(placeholder, [
+      DecodeError(name, dynamic.classify(data), []),
+    ])
   }
 }
 
@@ -978,15 +980,23 @@ fn run_decoders(
   }
 }
 
-/// Define a decoder that always fails. The parameter for this function is the
-/// name of the type that has failed to decode.
+/// Define a decoder that always fails.
 ///
-/// When this decoder is used as part of a larger decoder, the zero value is 
-/// used as a placeholder so that the rest of the decoder can continue to run
-/// and collect all decoding errors.
+/// The first parameter is a "placeholder" value, which is some default value that the
+/// decoder uses internally in place of the value that would have been produced
+/// if the decoder was successful. It doesn't matter what this value is, it is
+/// never returned by the decoder or shown to the user, so pick some arbitrary
+/// value. If it is an int you might pick `0`, if it is a list you might pick
+/// `[]`.
 ///
-pub fn failure(zero: a, expected: String) -> Decoder(a) {
-  Decoder(function: fn(d) { #(zero, decode_error(expected, d)) })
+/// The second parameter is the name of the type that has failed to decode.
+///
+/// ```gleam
+/// decode.failure("User", User(name: "", score: 0, tags: []))
+/// ```
+///
+pub fn failure(placeholder: a, expected name: String) -> Decoder(a) {
+  Decoder(function: fn(d) { #(placeholder, decode_error(name, d)) })
 }
 
 /// Create a decoder for a new data type from a decoding function.
@@ -994,10 +1004,13 @@ pub fn failure(zero: a, expected: String) -> Decoder(a) {
 /// This function is used for new primitive types. For example, you might
 /// define a decoder for Erlang's pid type.
 ///
-/// A default "zero" value is also required to make a decoder. When this
-/// decoder is used as part of a larger decoder this zero value is used as
-/// a placeholder so that the rest of the decoder can continue to run and
-/// collect all decoding errors.
+/// A default "placeholder" value is also required to make a decoder. When this
+/// decoder is used as part of a larger decoder this placeholder value is used
+/// so that the rest of the decoder can continue to run and
+/// collect all decoding errors. It doesn't matter what this value is, it is
+/// never returned by the decoder or shown to the user, so pick some arbitrary
+/// value. If it is an int you might pick `0`, if it is a list you might pick
+/// `[]`.
 ///
 /// If you were to make a decoder for the `Int` type (rather than using the
 /// build-in `Int` decoder) you would define it like so:
@@ -1030,7 +1043,9 @@ pub fn new_primitive_decoder(
   Decoder(function: fn(d) {
     case decoding_function(d) {
       Ok(t) -> #(t, [])
-      Error(zero) -> #(zero, [DecodeError(name, dynamic.classify(d), [])])
+      Error(placeholder) -> #(placeholder, [
+        DecodeError(name, dynamic.classify(d), []),
+      ])
     }
   })
 }
