@@ -434,7 +434,8 @@ export function insert(dict, key, value) {
   globalTransient.generation = nextGeneration(dict);
   globalTransient.size = dict.size;
 
-  const root = doInsert(globalTransient, dict.root, key, value, getHash(key), 0);
+  const hash = getHash(key);
+  const root = insertIntoNode(globalTransient, dict.root, key, value, hash, 0);
   if (root === dict.root) {
     return dict;
   }
@@ -450,7 +451,7 @@ export function insert(dict, key, value) {
  */
 export function destructiveTransientInsert(key, value, transient) {
   const hash = getHash(key);
-  transient.root = doInsert(transient, transient.root, key, value, hash, 0);
+  transient.root = insertIntoNode(transient, transient.root, key, value, hash, 0);
   return transient;
 }
 
@@ -467,11 +468,11 @@ export function destructiveTransientUpdateWith(key, fun, value, transient) {
   if (existing !== noElementMarker) {
     value = fun(existing);
   }
-  transient.root = doInsert(transient, transient.root, key, value, hash, 0);
+  transient.root = insertIntoNode(transient, transient.root, key, value, hash, 0);
   return transient;
 }
 
-function doInsert(transient, node, key, value, hash, shift) {
+function insertIntoNode(transient, node, key, value, hash, shift) {
   const data = node.data;
   const generation = transient.generation;
 
@@ -494,9 +495,10 @@ function doInsert(transient, node, key, value, hash, shift) {
   // We have to check first if there is already a child node we have to traverse to.
   if (node.nodemap & bit) {
     const nodeidx = data.length - 1 - index(node.nodemap, bit);
-    const child = data[nodeidx];
-    const newChild = doInsert(transient, child, key, value, hash, shift + bits);
-    return copyAndSet(node, generation, nodeidx, newChild);
+
+    let child = data[nodeidx];
+    child = insertIntoNode(transient, child, key, value, hash, shift + bits);
+    return copyAndSet(node, generation, nodeidx, child);
   }
 
   // 3. New Data Node
@@ -516,14 +518,15 @@ function doInsert(transient, node, key, value, hash, shift) {
   // 5. Collision
   // There is no child node, but a data node with the same hash, but with a different key.
   // To resolve this, we push both nodes down one level.
-  const otherKey = data[dataidx];
-  const otherVal = data[dataidx + 1];
-  const otherHash = getHash(otherKey);
   const childShift = shift + bits;
 
   let child = emptyNode;
-  child = doInsert(transient, child, key, value, hash, childShift);
-  child = doInsert(transient, child, otherKey, otherVal, otherHash, childShift);
+  child = insertIntoNode(transient, emptyNode, key, value, hash, childShift);
+
+  const key2 = data[dataidx];
+  const value2 = data[dataidx + 1];
+  const hash2 = getHash(key2);
+  child = insertIntoNode(transient, child, key2, value2, hash2, childShift);
 
   // we inserted 2 elements, but implicitely deleted the one we pushed down from the datamap.
   transient.size -= 1;
@@ -554,11 +557,12 @@ function doInsert(transient, node, key, value, hash, shift) {
  * Returns a new transient.
  */
 export function destructiveTransientDelete(key, transient) {
-  transient.root = doDelete(transient, transient.root, key, getHash(key), 0);
+  const hash = getHash(key);
+  transient.root = deleteFromNode(transient, transient.root, key, hash, 0);
   return transient;
 }
 
-function doDelete(transient, node, key, hash, shift) {
+function deleteFromNode(transient, node, key, hash, shift) {
   const data = node.data;
   const generation = transient.generation;
 
@@ -583,12 +587,12 @@ function doDelete(transient, node, key, hash, shift) {
   if ((node.nodemap & bit) !== 0) {
     const nodeidx = data.length - 1 - index(node.nodemap, bit);
 
-    const oldChild = data[nodeidx];
-    const newChild = doDelete(transient, oldChild, key, hash, shift + bits);
+    let child = data[nodeidx];
+    child = deleteFromNode(transient, child, key, hash, shift + bits);
 
     // the node did change, so let's copy to incorporate that change.
-    if (newChild.nodemap !== 0 || newChild.data.length > 2) {
-      return copyAndSet(node, generation, nodeidx, newChild);
+    if (child.nodemap !== 0 || child.data.length > 2) {
+      return copyAndSet(node, generation, nodeidx, child);
     }
 
     // this node only has a single data (k/v-pair) child.
@@ -602,8 +606,8 @@ function doDelete(transient, node, key, hash, shift) {
     let writeIndex = 0;
 
     while (readIndex < dataidx) newData[writeIndex++] = data[readIndex++];
-    newData[writeIndex++] = newChild.data[0];
-    newData[writeIndex++] = newChild.data[1];
+    newData[writeIndex++] = child.data[0];
+    newData[writeIndex++] = child.data[1];
     while (readIndex < nodeidx) newData[writeIndex++] = data[readIndex++];
     readIndex++;
     while (readIndex < length) newData[writeIndex++] = data[readIndex++];
