@@ -385,8 +385,7 @@ fn filter_map_loop(
   }
 }
 
-/// Returns a new list containing only the elements of the first list after the
-/// function has been applied to each one.
+/// Returns a new list containing the results of applying the supplied function to each element.
 ///
 /// ## Examples
 ///
@@ -474,8 +473,8 @@ fn map_fold_loop(
   }
 }
 
-/// Returns a new list containing only the elements of the first list after the
-/// function has been applied to each one and their index.
+/// Similar to `map`, but the supplied function will also be passed the index
+/// of the element being mapped as an additional argument.
 ///
 /// The index starts at 0, so the first element is 0, the second is 1, and so
 /// on.
