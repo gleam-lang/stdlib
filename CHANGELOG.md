@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.67.0 - 2025-10-21
+## v0.67.0 - 2025-11-24
 
 - The `failure` from the `dynamic/decode` module gains the `expected` label.
 - The `dynamic/decode` module now uses the term "placeholder value" rather than
