@@ -992,7 +992,7 @@ fn run_decoders(
 /// The second parameter is the name of the type that has failed to decode.
 ///
 /// ```gleam
-/// decode.failure("User", User(name: "", score: 0, tags: []))
+/// decode.failure(User(name: "", score: 0, tags: []), expected: "User")
 /// ```
 ///
 pub fn failure(placeholder: a, expected name: String) -> Decoder(a) {
