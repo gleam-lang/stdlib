@@ -391,3 +391,202 @@ pub fn combine_with_no_overlapping_keys_test() {
   assert dict.combine(map1, map2, fn(one, _) { one })
     == dict.from_list([#("a", 1), #("b", 2), #("c", 3), #("d", 4)])
 }
+
+// Enums without fields all hash to 0 due to how the hash function works -
+// we use this fact here to produce and test collisions.
+//
+// Object.keys() returns [] for variants without fields, so the hash always
+// stays on it's initial value.
+type CollidingKey {
+  CollidingKey1
+  CollidingKey2
+}
+
+pub fn hash_collision_overflow_test() {
+  let d =
+    dict.new() |> dict.insert(CollidingKey1, 1) |> dict.insert(CollidingKey2, 2)
+
+  assert dict.size(d) == 2
+  assert dict.get(d, CollidingKey1) == Ok(1)
+  assert dict.get(d, CollidingKey2) == Ok(2)
+
+  let d = dict.delete(d, CollidingKey1)
+
+  assert dict.size(d) == 1
+  assert dict.get(d, CollidingKey1) == Error(Nil)
+  assert dict.get(d, CollidingKey2) == Ok(2)
+}
+
+fn test_random_operations(
+  initial_seed: Int,
+  num_ops: Int,
+  key_space: Int,
+  initial: dict.Dict(Int, Int),
+) -> Nil {
+  test_random_operations_loop(
+    initial_seed,
+    prng(initial_seed),
+    num_ops,
+    key_space,
+    dict.to_list(initial),
+    initial,
+  )
+}
+
+fn test_random_operations_loop(
+  initial_seed: Int,
+  seed: Int,
+  remaining: Int,
+  key_space: Int,
+  proplist: List(#(Int, Int)),
+  dict: dict.Dict(Int, Int),
+) -> Nil {
+  case remaining > 0 {
+    False -> {
+      assert_dict_matches_proplist(dict, proplist, initial_seed)
+    }
+    True -> {
+      let seed = prng(seed)
+      let op_choice = seed % 2
+      let seed = prng(seed)
+      let key = seed % key_space
+
+      case op_choice {
+        // Insert
+        0 -> {
+          let new_proplist = list.key_set(proplist, key, key * 2)
+          let new_dict = dict.insert(dict, key, key * 2)
+          test_random_operations_loop(
+            initial_seed,
+            seed,
+            remaining - 1,
+            key_space,
+            new_proplist,
+            new_dict,
+          )
+        }
+        // Delete
+        _ -> {
+          let new_proplist = case list.key_pop(proplist, key) {
+            Ok(#(_, remaining)) -> remaining
+            Error(Nil) -> proplist
+          }
+          let new_dict = dict.delete(dict, key)
+          test_random_operations_loop(
+            initial_seed,
+            seed,
+            remaining - 1,
+            key_space,
+            new_proplist,
+            new_dict,
+          )
+        }
+      }
+    }
+  }
+}
+
+fn run_many_random_tests(
+  count count: Int,
+  ops_per_test ops_per_test: Int,
+  key_space key_space: Int,
+  initial dict: dict.Dict(Int, Int),
+) -> Nil {
+  case count {
+    0 -> Nil
+    _ -> {
+      let start_seed = int.random(0x7fffffff)
+      test_random_operations(start_seed, ops_per_test, key_space, dict)
+      run_many_random_tests(
+        count: count - 1,
+        ops_per_test: ops_per_test,
+        key_space: key_space,
+        initial: dict,
+      )
+    }
+  }
+}
+
+pub fn random_operations_small_test() {
+  run_many_random_tests(
+    count: 100,
+    ops_per_test: 50,
+    key_space: 32,
+    initial: dict.new(),
+  )
+}
+
+pub fn random_operations_medium_test() {
+  run_many_random_tests(
+    count: 100,
+    ops_per_test: 50,
+    key_space: 200,
+    initial: range_dict(50),
+  )
+}
+
+pub fn random_operations_large_test() {
+  run_many_random_tests(
+    count: 100,
+    ops_per_test: 1000,
+    key_space: 2000,
+    initial: range_dict(1000),
+  )
+}
+
+fn range_dict(size) {
+  list.range(1, size)
+  |> list.map(fn(x) { #(x, x) })
+  |> dict.from_list
+}
+
+fn prng(state: Int) -> Int {
+  { state * 48_271 } % 0x7FFFFFFF
+}
+
+fn assert_dict_matches_proplist(
+  d: dict.Dict(k, v),
+  proplist: List(#(k, v)),
+  seed: Int,
+) -> Nil {
+  case dict.size(d) == list.length(proplist) {
+    True -> Nil
+    False ->
+      panic as {
+        "Size mismatch with seed "
+        <> int.to_string(seed)
+        <> ": dict.size="
+        <> int.to_string(dict.size(d))
+        <> " proplist.size="
+        <> int.to_string(list.length(proplist))
+      }
+  }
+
+  list.each(proplist, fn(pair) {
+    let #(key, value) = pair
+    let result = dict.get(d, key)
+
+    case result == Ok(value) {
+      True -> Nil
+      False ->
+        panic as {
+          "Get mismatch with seed "
+          <> int.to_string(seed)
+          <> ": key="
+          <> string.inspect(key)
+          <> ", value="
+          <> string.inspect(value)
+          <> ", dict.get="
+          <> string.inspect(result)
+        }
+    }
+  })
+
+  case d == dict.from_list(proplist) {
+    True -> Nil
+    False ->
+      panic as {
+        "Structural equality failed with seed " <> int.to_string(seed)
+      }
+  }
+}
