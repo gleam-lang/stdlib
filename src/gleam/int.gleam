@@ -594,8 +594,8 @@ pub fn remainder(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
 /// Returns division of the inputs as a `Result`: If the given divisor equals
 /// `0`, this function returns an `Error`.
 ///
-/// Most the time you will want to use the `%` operator instead of this
-/// function.
+/// Note that this is different from `int.remainder` and `%` in that the
+/// computed value will always have the same sign as the `divisor`.
 ///
 /// ## Examples
 ///
@@ -622,6 +622,11 @@ pub fn remainder(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
 /// ```gleam
 /// modulo(-13, by: 3)
 /// // -> Ok(2)
+/// ```
+///
+/// ```gleam
+/// modulo(13, by: -3)
+/// // -> Ok(-2)
 /// ```
 ///
 pub fn modulo(dividend: Int, by divisor: Int) -> Result(Int, Nil) {

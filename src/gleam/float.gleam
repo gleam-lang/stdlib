@@ -456,6 +456,8 @@ pub fn random() -> Float
 /// Returns division of the inputs as a `Result`: If the given divisor equals
 /// `0`, this function returns an `Error`.
 ///
+/// The computed value will always have the same sign as the `divisor`.
+///
 /// ## Examples
 ///
 /// ```gleam
