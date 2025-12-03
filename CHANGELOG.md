@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.67.1 - 2025-12-03
 
 - Fixed `int.clamp` and `float.clamp` behaviours when `min_bound` is bigger
   than `max_bound`.
