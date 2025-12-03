@@ -578,6 +578,28 @@ pub fn range_test() {
   list.range(1, recursion_test_cycles)
 }
 
+pub fn range_with_step_test() {
+  assert list.range_with_step(1, 5, 2) == [1, 3, 5]
+
+  assert list.range_with_step(1, 6, 2) == [1, 3, 5]
+
+  assert list.range_with_step(6, -1, -3) == [6, 3, 0]
+
+  assert list.range_with_step(6, -3, -3) == [6, 3, 0, -3]
+
+  assert list.range_with_step(123, 123, 0) == [123]
+
+  assert list.range_with_step(123, 999, 0) == []
+
+  assert list.range_with_step(123, 999, -1) == []
+
+  assert list.range_with_step(123, 100, 1) == []
+
+  // TCO tests
+  let _ = list.range_with_step(1, recursion_test_cycles * 2, 2)
+  list.range_with_step(1, -recursion_test_cycles * 2, -2)
+}
+
 pub fn repeat_test() {
   assert list.repeat(1, -10) == []
 
