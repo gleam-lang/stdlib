@@ -63,7 +63,12 @@ pub fn parse(string: String) -> Result(Float, Nil)
 @external(javascript, "../gleam_stdlib.mjs", "float_to_string")
 pub fn to_string(x: Float) -> String
 
-/// Restricts a `Float` between two bounds.
+/// Restricts a float between two bounds.
+///
+/// Note: If the `min` argument is larger than the `max` argument then they
+/// will be swapped, so the minimum bound is always lower than the maximum
+/// bound.
+///
 ///
 /// ## Examples
 ///

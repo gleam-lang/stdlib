@@ -281,6 +281,10 @@ pub fn to_float(x: Int) -> Float
 
 /// Restricts an int between two bounds.
 ///
+/// Note: If the `min` argument is larger than the `max` argument then they
+/// will be swapped, so the minimum bound is always lower than the maximum
+/// bound.
+///
 /// ## Examples
 ///
 /// ```gleam
