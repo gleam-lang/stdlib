@@ -164,6 +164,13 @@ export default class Dict {
     this.size = size;
     this.root = root;
   }
+
+  /**
+   * @deprecated Use the `fold` function instead.
+   */
+  forEach(f) {
+    fold(this, null, (_, k, v) => f(v, k));
+  }
 }
 
 /// The power-of-2 branching factor for the dict. For example, a value of `5` indicates a 32-ary tree.
