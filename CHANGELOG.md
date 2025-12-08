@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.68.0 - Unreleased
+
+- The dict implementation has been rewritten implementing the CHAMP (Compressed
+  Hash Array Mapped Prefix-trees) data structure as described by M.J. Steindorfer
+  and J.J. Vinju in Optimizing Hash-Array Mapped Tries for Fast and Lean
+  Immutable JVM Collections.
+  - 50% reduction in code size
+  - 10-30% faster get and insert operations
+  - O(log n) equality checks, orders of magnitude faster bulk operations and iteration
+- `uri.query_to_string` now correctly handles `+` in query params.
+
 ## v0.67.1 - 2025-12-03
 
 - Fixed `int.clamp` and `float.clamp` behaviours when `min_bound` is bigger
@@ -11,7 +22,6 @@
 - The `dynamic/decode` module now uses the term "placeholder value" rather than
   "zero value".
 - The `tap` function from the `function` module has been deprecated.
-- `uri.query_to_string` now correctly handles `+` in query params.
 
 ## v0.65.0 - 2025-09-29
 
