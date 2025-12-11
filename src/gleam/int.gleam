@@ -455,37 +455,6 @@ fn product_loop(numbers: List(Int), initial: Int) -> Int {
   }
 }
 
-@deprecated("Vendor this function into your codebase")
-pub fn digits(x: Int, base: Int) -> Result(List(Int), Nil) {
-  case base < 2 {
-    True -> Error(Nil)
-    False -> Ok(digits_loop(x, base, []))
-  }
-}
-
-fn digits_loop(x: Int, base: Int, acc: List(Int)) -> List(Int) {
-  case absolute_value(x) < base {
-    True -> [x, ..acc]
-    False -> digits_loop(x / base, base, [x % base, ..acc])
-  }
-}
-
-@deprecated("Vendor this function into your codebase")
-pub fn undigits(numbers: List(Int), base: Int) -> Result(Int, Nil) {
-  case base < 2 {
-    True -> Error(Nil)
-    False -> undigits_loop(numbers, base, 0)
-  }
-}
-
-fn undigits_loop(numbers: List(Int), base: Int, acc: Int) -> Result(Int, Nil) {
-  case numbers {
-    [] -> Ok(acc)
-    [digit, ..] if digit >= base -> Error(Nil)
-    [digit, ..rest] -> undigits_loop(rest, base, acc * base + digit)
-  }
-}
-
 /// Generates a random int between zero and the given maximum.
 ///
 /// The lower number is inclusive, the upper number is exclusive.

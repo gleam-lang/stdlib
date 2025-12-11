@@ -165,14 +165,6 @@ pub fn try(
   }
 }
 
-@deprecated("This function is an alias of result.try, use that instead")
-pub fn then(
-  result: Result(a, e),
-  apply fun: fn(a) -> Result(b, e),
-) -> Result(b, e) {
-  try(result, fun)
-}
-
 /// Extracts the `Ok` value from a result, returning a default value if the result
 /// is an `Error`.
 ///
@@ -236,14 +228,6 @@ pub fn unwrap_error(result: Result(a, e), or default: e) -> e {
   case result {
     Ok(_) -> default
     Error(e) -> e
-  }
-}
-
-@deprecated("Use a case expression instead of this function")
-pub fn unwrap_both(result: Result(a, a)) -> a {
-  case result {
-    Ok(a) -> a
-    Error(a) -> a
   }
 }
 
