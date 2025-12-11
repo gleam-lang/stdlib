@@ -10,6 +10,8 @@
   - 10-30% faster get and insert operations
   - O(log n) equality checks, orders of magnitude faster bulk operations and iteration
 - `uri.query_to_string` now correctly handles `+` in query params.
+- The deprecated `result.then`, `result.unwrap_both`, `function.tap`,
+  `int.digits`, and `int.undigits` functions have been removed.
 
 ## v0.67.1 - 2025-12-03
 
