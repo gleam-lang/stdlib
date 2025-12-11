@@ -1452,25 +1452,7 @@ fn merge_descendings(
   }
 }
 
-/// Creates a list of ints ranging from a given start and finish.
-///
-/// ## Examples
-///
-/// ```gleam
-/// range(0, 0)
-/// // -> [0]
-/// ```
-///
-/// ```gleam
-/// range(0, 5)
-/// // -> [0, 1, 2, 3, 4, 5]
-/// ```
-///
-/// ```gleam
-/// range(1, -5)
-/// // -> [1, 0, -1, -2, -3, -4, -5]
-/// ```
-///
+@deprecated("Use int.range or function.loop instead")
 pub fn range(from start: Int, to stop: Int) -> List(Int) {
   range_loop(start, stop, [])
 }
