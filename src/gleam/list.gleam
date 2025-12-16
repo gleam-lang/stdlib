@@ -1483,6 +1483,101 @@ fn range_loop(start: Int, stop: Int, acc: List(Int)) -> List(Int) {
   }
 }
 
+/// Creates a list of ints ranging from a given start and finish with the given step.
+///
+/// Intended usage is from < to and positive step or from > to and negative step.
+/// 
+/// Edge cases:
+/// If called with same from and to return one element list disregarding step.
+/// Otherwise if called with step 0 returns empty list.
+/// Otherwise from from < to and negative step returns empty list.
+/// Otherwise from to < from and positive step returns empty list.
+/// 
+/// ## Examples
+///
+/// ```gleam
+/// range_with_step(1, 5, 2)
+/// // -> [1, 3, 5]
+/// ```
+///
+/// ```gleam
+/// range_with_step(1, 6, 2)
+/// // -> [1, 3, 5]
+/// ```
+///
+/// ```gleam
+/// range_with_step(6, -1, -3)
+/// // -> [6, 3, 0]
+/// ```
+/// 
+/// ```gleam
+/// range_with_step(6, -3, -3)
+/// // -> [6, 3, 0, -3]
+/// ```
+///
+/// ```gleam
+/// range_with_step(123, 123, 0)
+/// // -> [123]
+/// ```
+///
+/// ```gleam
+/// range_with_step(123, 999, 0)
+/// // -> []
+/// ```
+/// 
+/// ```gleam
+/// range_with_step(123, 999, -1)
+/// // -> []
+/// ```
+/// 
+/// ```gleam
+/// range_with_step(123, 100, 1)
+/// // -> []
+/// ```
+/// 
+pub fn range_with_step(
+  from start: Int,
+  to stop: Int,
+  step step: Int,
+) -> List(Int) {
+  case int.compare(start, stop), step {
+    order.Eq, _ -> [start]
+    _, 0 -> []
+    order.Lt, x if x < 0 -> []
+    order.Gt, x if x > 0 -> []
+    order.Lt, _ -> range_with_step_positive_loop(start, stop, step, [])
+    order.Gt, _ -> range_with_step_negative_loop(start, stop, step, [])
+  }
+}
+
+fn range_with_step_positive_loop(
+  start: Int,
+  stop: Int,
+  step: Int,
+  acc: List(Int),
+) -> List(Int) {
+  case int.compare(start, stop) {
+    order.Eq -> reverse([stop, ..acc])
+    order.Gt -> reverse(acc)
+    order.Lt ->
+      range_with_step_positive_loop(start + step, stop, step, [start, ..acc])
+  }
+}
+
+fn range_with_step_negative_loop(
+  start: Int,
+  stop: Int,
+  step: Int,
+  acc: List(Int),
+) -> List(Int) {
+  case int.compare(start, stop) {
+    order.Eq -> reverse([stop, ..acc])
+    order.Gt ->
+      range_with_step_negative_loop(start + step, stop, step, [start, ..acc])
+    order.Lt -> reverse(acc)
+  }
+}
+
 /// Builds a list of a given value a given number of times.
 ///
 /// ## Examples
