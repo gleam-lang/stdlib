@@ -20,7 +20,7 @@ pub fn print(string: String) -> Nil
 ///
 /// ## Example
 ///
-/// ```
+/// ```gleam
 /// io.print_error("Hi pop")
 /// // -> Nil
 /// // Hi pop

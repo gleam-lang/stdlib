@@ -23,7 +23,7 @@ pub type Option(a) {
 
 /// Combines a list of `Option`s into a single `Option`.
 /// If all elements in the list are `Some` then returns a `Some` holding the list of values.
-/// If any element is `None` then returns`None`.
+/// If any element is `None` then returns `None`.
 ///
 /// ## Examples
 ///

@@ -158,7 +158,7 @@ pub fn compare(a: String, b: String) -> order.Order {
 fn less_than(a: String, b: String) -> Bool
 
 /// Takes a substring given a start grapheme index and a length. Negative indexes
-/// are taken starting from the *end* of the list.
+/// are taken starting from the *end* of the string.
 ///
 /// This function runs in linear time with the size of the index and the
 /// length. Negative indexes are linear with the size of the input string in
@@ -746,7 +746,7 @@ pub fn utf_codepoint(value: Int) -> Result(UtfCodepoint, Nil) {
   }
 }
 
-/// Converts an UtfCodepoint to its ordinal code point value.
+/// Converts a `UtfCodepoint` to its ordinal code point value.
 ///
 /// ## Examples
 ///

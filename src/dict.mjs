@@ -41,7 +41,7 @@ function hashMerge(a, b) {
 }
 
 /**
- * standard string hash popularised by java
+ * standard string hash popularised by Java
  * @param {string} s
  * @returns {number}
  */
@@ -245,7 +245,7 @@ function copyNode(node, generation) {
 }
 
 /**
- * Copies a node if needed ands sets a new value.
+ * Copies a node if needed and sets a new value.
  */
 function copyAndSet(node, generation, idx, val) {
   if (node.data[idx] === val) {
@@ -696,7 +696,7 @@ function index(bitmap, bit) {
 }
 
 /**
- * Extracts a single slice ofthe hash, and returns a bitmask for the resulting value.
+ * Extracts a single slice of the hash, and returns a bitmask for the resulting value.
  * For example, if the slice returns 5, this function returns 10000 = 1 << 5.
  */
 function hashbit(hash, shift) {

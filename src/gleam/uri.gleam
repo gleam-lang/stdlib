@@ -13,7 +13,7 @@ import gleam/option.{type Option, None, Some}
 import gleam/string
 import gleam/string_tree.{type StringTree}
 
-/// Type representing holding the parsed components of an URI.
+/// Type representing the parsed components of an URI.
 /// All components of a URI are optional, except the path.
 ///
 pub type Uri {
@@ -55,7 +55,7 @@ pub const empty = Uri(
   fragment: None,
 )
 
-/// Parses a compliant URI string into the `Uri` Type.
+/// Parses a compliant URI string into the `Uri` type.
 /// If the string is not a valid URI string then an error is returned.
 ///
 /// The opposite operation is `uri.to_string`.
@@ -520,7 +520,7 @@ fn pop_codeunit(str: String) -> #(Int, String)
 @external(javascript, "../gleam_stdlib.mjs", "string_codeunit_slice")
 fn codeunit_slice(str: String, at_index from: Int, length length: Int) -> String
 
-/// Parses an urlencoded query string into a list of key value pairs.
+/// Parses an URL-encoded query string into a list of key value pairs.
 /// Returns an error for invalid encoding.
 ///
 /// The opposite operation is `uri.query_to_string`.
@@ -591,7 +591,7 @@ pub fn percent_encode(value: String) -> String
 @external(javascript, "../gleam_stdlib.mjs", "percent_decode")
 pub fn percent_decode(value: String) -> Result(String, Nil)
 
-/// Splits the path section of a URI into it's constituent segments.
+/// Splits the path section of a URI into its constituent segments.
 ///
 /// Removes empty segments and resolves dot-segments as specified in
 /// [section 5.2](https://www.ietf.org/rfc/rfc3986.html#section-5.2) of the RFC.
@@ -706,7 +706,7 @@ pub fn origin(uri: Uri) -> Result(String, Nil) {
 /// Resolves a URI with respect to the given base URI.
 ///
 /// The base URI must be an absolute URI or this function will return an error.
-/// The algorithm for merging uris is described in
+/// The algorithm for merging URIs is described in
 /// [RFC 3986](https://tools.ietf.org/html/rfc3986#section-5.2).
 ///
 pub fn merge(base: Uri, relative: Uri) -> Result(Uri, Nil) {

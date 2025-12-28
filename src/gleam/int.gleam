@@ -34,7 +34,7 @@ pub fn absolute_value(x: Int) -> Int {
   }
 }
 
-/// Returns the results of the base being raised to the power of the
+/// Returns the result of the base being raised to the power of the
 /// exponent, as a `Float`.
 ///
 /// ## Examples
@@ -521,7 +521,7 @@ pub fn divide(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
 /// Returns division of the inputs as a `Result`: If the given divisor equals
 /// `0`, this function returns an `Error`.
 ///
-/// Most the time you will want to use the `%` operator instead of this
+/// Most of the time you will want to use the `%` operator instead of this
 /// function.
 ///
 /// ## Examples

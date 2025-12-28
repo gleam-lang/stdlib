@@ -17,7 +17,7 @@ import gleam/option.{type Option}
 pub type Dict(key, value)
 
 /// "TransientDict" is a mutable view on a dictionary used internally by the
-/// javascript target. No mutable API is exposed to the user.
+/// JavaScript target. No mutable API is exposed to the user.
 ///
 /// Transients are to be treated as having a linear (single-use, think rust) type.
 /// A transient value becomes invalid as soon as it's passed to one of the functions.
@@ -120,7 +120,7 @@ fn from_list_loop(
   }
 }
 
-/// Determines whether or not a value present in the dict for a given key.
+/// Determines whether or not a value is present in the dict for a given key.
 ///
 /// ## Examples
 ///
@@ -420,7 +420,7 @@ fn drop_loop(
 /// If there was not an entry in the dict for the given key then the function
 /// gets `None` as its argument, otherwise it gets `Some(value)`.
 ///
-/// ## Example
+/// ## Examples
 ///
 /// ```gleam
 /// let dict = from_list([#("a", 0)])
@@ -456,7 +456,7 @@ pub fn upsert(
 /// not write code that relies on the order entries are used by this function
 /// as it may change in later versions of Gleam or Erlang.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
 /// let dict = from_list([#("a", 1), #("b", 3), #("c", 9)])

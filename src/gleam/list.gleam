@@ -389,7 +389,7 @@ fn map_loop(list: List(a), fun: fn(a) -> b, acc: List(b)) -> List(b) {
 
 /// Combines two lists into a single list using the given function.
 ///
-/// If a list is longer than the other the extra elements are dropped.
+/// If a list is longer than the other, the extra elements are dropped.
 ///
 /// ## Examples
 ///
@@ -544,7 +544,7 @@ fn try_map_loop(
 /// Returns a list that is the given list with up to the given number of
 /// elements removed from the front of the list.
 ///
-/// If the element has less than the number of elements an empty list is
+/// If the list has less than the number of elements an empty list is
 /// returned.
 ///
 /// This function runs in linear time but does not copy the list.
@@ -575,7 +575,7 @@ pub fn drop(from list: List(a), up_to n: Int) -> List(a) {
 /// Returns a list containing the first given number of elements from the given
 /// list.
 ///
-/// If the element has less than the number of elements then the full list is
+/// If the list has less than the number of elements then the full list is
 /// returned.
 ///
 /// This function runs in linear time.
@@ -665,7 +665,7 @@ fn append_loop(first: List(a), second: List(a)) -> List(a) {
 }
 
 /// Prefixes an item to a list. This can also be done using the dedicated
-/// syntax instead
+/// syntax instead.
 ///
 /// ```gleam
 /// let existing_list = [2, 3, 4]
@@ -760,7 +760,7 @@ pub fn fold_right(
   }
 }
 
-/// Like fold but the folding function also receives the index of the current element.
+/// Like `fold` but the folding function also receives the index of the current element.
 ///
 /// ## Examples
 ///
@@ -2281,8 +2281,7 @@ fn do_shuffle_by_pair_indexes(
 
 /// Takes a list and a comparator, and returns the maximum element in the list
 ///
-///
-/// ## Example
+/// ## Examples
 ///
 /// ```gleam
 /// range(1, 10) |> list.max(int.compare)
@@ -2293,6 +2292,7 @@ fn do_shuffle_by_pair_indexes(
 /// ["a", "c", "b"] |> list.max(string.compare)
 /// // -> Ok("c")
 /// ```
+///
 pub fn max(
   over list: List(a),
   with compare: fn(a, a) -> Order,

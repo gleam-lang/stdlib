@@ -60,7 +60,7 @@
 //// ## Options
 ////
 //// The [`optional`](#optional) decoder is used to decode values that may or may not
-//// be present. In other environment these might be called "nullable" values.
+//// be present. In other environments these might be called "nullable" values.
 ////
 //// Like the `list` decoder, the `optional` decoder takes another decoder,
 //// which is used to decode the value if it is present.
@@ -302,7 +302,7 @@ pub opaque type Decoder(t) {
 /// an int then it'll also index into Erlang tuples and JavaScript arrays, and
 /// the first eight elements of Gleam lists.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
 /// let data = dynamic.properties([
@@ -341,7 +341,7 @@ pub fn subfield(
 /// Run a decoder on a `Dynamic` value, decoding the value if it is of the
 /// desired type, or returning errors.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
 /// let decoder = {
@@ -368,7 +368,7 @@ pub fn run(data: Dynamic, decoder: Decoder(t)) -> Result(t, List(DecodeError)) {
 /// an int then it'll also index into Erlang tuples and JavaScript arrays, and
 /// the first eight elements of Gleam lists.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
 /// let decoder = decode.at(["one", "two"], decode.int)
@@ -457,7 +457,7 @@ fn push_path(
 
 /// Finalise a decoder having successfully extracted a value.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
 /// let data = dynamic.properties([
@@ -496,7 +496,7 @@ pub fn decode_error(
 /// an int then it'll also index into Erlang tuples and JavaScript arrays, and
 /// the first eight elements of Gleam lists.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
 /// let data = dynamic.properties([
@@ -536,7 +536,7 @@ pub fn field(
 /// an int then it'll also index into Erlang tuples and JavaScript arrays, and
 /// the first eight elements of Gleam lists.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
 /// let data = dynamic.properties([
@@ -581,7 +581,7 @@ pub fn optional_field(
 /// an int then it'll also index into Erlang tuples and JavaScript arrays, and
 /// the first eight elements of Gleam lists.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
 /// let decoder = decode.optionally_at(["one", "two"], 100, decode.int)
@@ -619,7 +619,7 @@ fn run_dynamic_function(
 
 /// A decoder that decodes `String` values.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
 /// let result = decode.run(dynamic.string("Hello!"), decode.string)
@@ -646,7 +646,7 @@ fn dynamic_string(from data: Dynamic) -> Result(String, String) {
 
 /// A decoder that decodes `Bool` values.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
 /// let result = decode.run(dynamic.bool(True), decode.bool)
@@ -668,7 +668,7 @@ fn decode_bool(data: Dynamic) -> #(Bool, List(DecodeError)) {
 
 /// A decoder that decodes `Int` values.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
 /// let result = decode.run(dynamic.int(147), decode.int)
@@ -687,7 +687,7 @@ fn dynamic_int(data: Dynamic) -> Result(Int, Int)
 
 /// A decoder that decodes `Float` values.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
 /// let result = decode.run(dynamic.float(3.14), decode.float)
@@ -706,7 +706,7 @@ fn dynamic_float(data: Dynamic) -> Result(Float, Float)
 
 /// A decoder that decodes `Dynamic` values. This decoder never returns an error.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
 /// let result = decode.run(dynamic.float(3.14), decode.dynamic)
@@ -721,7 +721,7 @@ fn decode_dynamic(data: Dynamic) -> #(Dynamic, List(DecodeError)) {
 
 /// A decoder that decodes `BitArray` values. This decoder never returns an error.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
 /// let result = decode.run(dynamic.bit_array(<<5, 7>>), decode.bit_array)
@@ -741,7 +741,7 @@ fn dynamic_bit_array(data: Dynamic) -> Result(BitArray, BitArray)
 /// A decoder that decodes lists where all elements are decoded with a given
 /// decoder.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
 /// let result =
@@ -768,10 +768,10 @@ fn decode_list(
   acc: List(t),
 ) -> #(List(t), List(DecodeError))
 
-/// A decoder that decodes dicts where all keys and vales are decoded with
+/// A decoder that decodes dicts where all keys and values are decoded with
 /// given decoders.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
 /// let values = dynamic.properties([
@@ -838,7 +838,7 @@ fn decode_dict(data: Dynamic) -> Result(Dict(Dynamic, Dynamic), Nil)
 /// `nil`, `null`, and `undefined` on Erlang, and `undefined` and `null` on
 /// JavaScript.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
 /// let result = decode.run(dynamic.int(100), decode.optional(decode.int))
@@ -864,7 +864,7 @@ pub fn optional(inner: Decoder(a)) -> Decoder(Option(a)) {
 
 /// Apply a transformation function to any value decoded by the decoder.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
 /// let decoder = decode.int |> decode.map(int.to_string)
@@ -897,7 +897,7 @@ pub fn map_errors(
 /// This function may be useful if you wish to simplify errors before
 /// presenting them to a user, particularly when using the `one_of` function.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
 /// let decoder = decode.string |> decode.collapse_errors("MyThing")
@@ -934,11 +934,11 @@ pub fn then(decoder: Decoder(a), next: fn(a) -> Decoder(b)) -> Decoder(b) {
 /// Create a new decoder from several other decoders. Each of the inner
 /// decoders is run in turn, and the value from the first to succeed is used.
 ///
-/// If no decoder succeeds then the errors from the first decoder is used.
+/// If no decoder succeeds then the errors from the first decoder are used.
 /// If you wish for different errors then you may wish to use the
 /// `collapse_errors` or `map_errors` functions.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
 /// let decoder = decode.one_of(decode.string, or: [
@@ -1056,6 +1056,8 @@ pub fn new_primitive_decoder(
 /// Attempting to create a recursive decoder without this function could result
 /// in an infinite loop. If you are using `field` or other `use`able functions
 /// then you may not need to use this function.
+///
+/// ## Examples
 ///
 /// ```gleam
 /// type Nested {

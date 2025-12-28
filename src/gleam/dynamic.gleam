@@ -76,7 +76,7 @@ pub fn list(a: List(Dynamic)) -> Dynamic
 @external(javascript, "../gleam_stdlib.mjs", "list_to_array")
 pub fn array(a: List(Dynamic)) -> Dynamic
 
-/// Create a dynamic value made an unordered series of keys and values, where
+/// Create a dynamic value made of an unordered series of keys and values, where
 /// the keys are unique.
 ///
 /// On Erlang this will be a map, on JavaScript this will be a Gleam dict
