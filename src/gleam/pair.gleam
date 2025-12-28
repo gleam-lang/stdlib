@@ -73,7 +73,7 @@ pub fn map_second(of pair: #(a, b), with fun: fn(b) -> c) -> #(a, c) {
 /// Returns a new pair with the given elements. This can also be done using the dedicated
 /// syntax instead: `new(1, 2) == #(1, 2)`.
 ///
-/// ## Examples
+/// ## Examples
 ///
 /// ```gleam
 /// new(1, 2)

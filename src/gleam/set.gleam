@@ -69,7 +69,7 @@ pub fn is_empty(set: Set(member)) -> Bool {
   set == new()
 }
 
-/// Inserts an member into the set.
+/// Inserts a member into the set.
 ///
 /// This function runs in logarithmic time.
 ///
@@ -179,7 +179,7 @@ pub fn from_list(members: List(member)) -> Set(member) {
 /// Do not write code that relies on the order entries are used by this
 /// function as it may change in later versions of Gleam or Erlang.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
 /// from_list([1, 3, 9])
@@ -229,6 +229,7 @@ pub fn filter(
 /// |> to_list
 /// // -> [2, 4, 6, 8]
 /// ```
+///
 pub fn map(set: Set(member), with fun: fn(member) -> mapped) -> Set(mapped) {
   fold(over: set, from: new(), with: fn(acc, member) {
     insert(acc, fun(member))
@@ -246,6 +247,7 @@ pub fn map(set: Set(member), with fun: fn(member) -> mapped) -> Set(mapped) {
 /// |> to_list
 /// // -> [2, 4]
 /// ```
+///
 pub fn drop(from set: Set(member), drop disallowed: List(member)) -> Set(member) {
   list.fold(over: disallowed, from: set, with: delete)
 }
@@ -366,6 +368,8 @@ pub fn is_disjoint(first: Set(member), from second: Set(member)) -> Bool {
 /// Creates a new set that contains members that are present in either set, but
 /// not both.
 ///
+/// ## Examples
+///
 /// ```gleam
 /// symmetric_difference(from_list([1, 2, 3]), from_list([3, 4])) |> to_list
 /// // -> [1, 2, 4]
@@ -386,6 +390,11 @@ pub fn symmetric_difference(
 ///
 /// Useful for producing a side effect for every item of a set.
 ///
+/// The order of elements in the iteration is an implementation detail that
+/// should not be relied upon.
+///
+/// ## Examples
+///
 /// ```gleam
 /// let set = from_list(["apple", "banana", "cherry"])
 ///
@@ -395,9 +404,6 @@ pub fn symmetric_difference(
 /// // banana
 /// // cherry
 /// ```
-///
-/// The order of elements in the iteration is an implementation detail that
-/// should not be relied upon.
 ///
 pub fn each(set: Set(member), fun: fn(member) -> a) -> Nil {
   fold(set, Nil, fn(nil, member) {
