@@ -12,7 +12,6 @@
 - `uri.query_to_string` now correctly handles `+` in query params.
 - The deprecated `result.then`, `result.unwrap_both`, `function.tap`,
   `int.digits`, and `int.undigits` functions have been removed.
-- Fixed various typos.
 
 ## v0.67.1 - 2025-12-03
 
