@@ -27,7 +27,7 @@ pub fn is_empty(str: String) -> Bool {
 /// Gets the number of grapheme clusters in a given `String`.
 ///
 /// This function has to iterate across the whole string to count the number of
-/// graphemes, so it runs in linear time.
+/// graphemes, so it runs in linear time. Avoid using this in a loop.
 ///
 /// ## Examples
 ///
@@ -53,7 +53,7 @@ pub fn length(string: String) -> Int
 /// Reverses a `String`.
 ///
 /// This function has to iterate across the whole `String` so it runs in linear
-/// time.
+/// time. Avoid using this in a loop.
 ///
 /// ## Examples
 ///
@@ -158,7 +158,11 @@ pub fn compare(a: String, b: String) -> order.Order {
 fn less_than(a: String, b: String) -> Bool
 
 /// Takes a substring given a start grapheme index and a length. Negative indexes
-/// are taken starting from the *end* of the list.
+/// are taken starting from the *end* of the string.
+///
+/// This function runs in linear time with the size of the index and the
+/// length. Negative indexes are linear with the size of the input string in
+/// addition to the other costs.
 ///
 /// ## Examples
 ///
@@ -188,7 +192,7 @@ fn less_than(a: String, b: String) -> Bool
 /// ```
 ///
 pub fn slice(from string: String, at_index idx: Int, length len: Int) -> String {
-  case len < 0 {
+  case len <= 0 {
     True -> ""
     False ->
       case idx < 0 {
@@ -196,20 +200,25 @@ pub fn slice(from string: String, at_index idx: Int, length len: Int) -> String 
           let translated_idx = length(string) + idx
           case translated_idx < 0 {
             True -> ""
-            False -> do_slice(string, translated_idx, len)
+            False -> grapheme_slice(string, translated_idx, len)
           }
         }
-        False -> do_slice(string, idx, len)
+        False -> grapheme_slice(string, idx, len)
       }
   }
 }
 
 @external(erlang, "gleam_stdlib", "slice")
-@external(javascript, "../gleam_stdlib.mjs", "string_slice")
-fn do_slice(string: String, idx: Int, len: Int) -> String
+@external(javascript, "../gleam_stdlib.mjs", "string_grapheme_slice")
+fn grapheme_slice(string: String, index: Int, length: Int) -> String
+
+@external(erlang, "binary", "part")
+@external(javascript, "../gleam_stdlib.mjs", "string_byte_slice")
+fn unsafe_byte_slice(string: String, index: Int, length: Int) -> String
 
 /// Drops contents of the first `String` that occur before the second `String`.
-/// If the `from` string does not contain the `before` string, `from` is returned unchanged.
+/// If the `from` string does not contain the `before` string, `from` is
+/// returned unchanged.
 ///
 /// ## Examples
 ///
@@ -224,6 +233,8 @@ pub fn crop(from string: String, before substring: String) -> String
 
 /// Drops *n* graphemes from the start of a `String`.
 ///
+/// This function runs in linear time with the number of graphemes to drop.
+///
 /// ## Examples
 ///
 /// ```gleam
@@ -232,17 +243,20 @@ pub fn crop(from string: String, before substring: String) -> String
 /// ```
 ///
 pub fn drop_start(from string: String, up_to num_graphemes: Int) -> String {
-  case num_graphemes > 0 {
-    False -> string
-    True ->
-      case pop_grapheme(string) {
-        Ok(#(_, string)) -> drop_start(string, num_graphemes - 1)
-        Error(Nil) -> string
-      }
+  case num_graphemes <= 0 {
+    True -> string
+    False -> {
+      let prefix = grapheme_slice(string, 0, num_graphemes)
+      let prefix_size = byte_size(prefix)
+      unsafe_byte_slice(string, prefix_size, byte_size(string) - prefix_size)
+    }
   }
 }
 
 /// Drops *n* graphemes from the end of a `String`.
+///
+/// This function traverses the full string, so it runs in linear time with the
+/// size of the string. Avoid using this in a loop.
 ///
 /// ## Examples
 ///
@@ -252,7 +266,7 @@ pub fn drop_start(from string: String, up_to num_graphemes: Int) -> String {
 /// ```
 ///
 pub fn drop_end(from string: String, up_to num_graphemes: Int) -> String {
-  case num_graphemes < 0 {
+  case num_graphemes <= 0 {
     True -> string
     False -> slice(string, 0, length(string) - num_graphemes)
   }
@@ -359,9 +373,14 @@ fn erl_split(a: String, b: String) -> List(String)
 
 /// Creates a new `String` by joining two `String`s together.
 ///
-/// This function copies both `String`s and runs in linear time. If you find
-/// yourself joining `String`s frequently consider using the [`string_tree`](../gleam/string_tree.html)
-/// module as it can append `String`s much faster!
+/// This function typically copies both `String`s and runs in linear time, but
+/// the exact behaviour will depend on how the runtime you are using optimises
+/// your code. Benchmark and profile your code if you need to understand its
+/// performance better.
+///
+/// If you are joining together large string and want to avoid copying any data
+/// you may want to investigate using the [`string_tree`](../gleam/string_tree.html)
+/// module.
 ///
 /// ## Examples
 ///
@@ -371,17 +390,12 @@ fn erl_split(a: String, b: String) -> List(String)
 /// ```
 ///
 pub fn append(to first: String, suffix second: String) -> String {
-  first
-  |> string_tree.from_string
-  |> string_tree.append(second)
-  |> string_tree.to_string
+  first <> second
 }
 
 /// Creates a new `String` by joining many `String`s together.
 ///
-/// This function copies both `String`s and runs in linear time. If you find
-/// yourself joining `String`s frequently consider using the [`string_tree`](../gleam/string_tree.html)
-/// module as it can append `String`s much faster!
+/// This function copies all the `String`s and runs in linear time.
 ///
 /// ## Examples
 ///
@@ -390,15 +404,21 @@ pub fn append(to first: String, suffix second: String) -> String {
 /// // -> "nevertheless"
 /// ```
 ///
+@external(erlang, "erlang", "list_to_binary")
 pub fn concat(strings: List(String)) -> String {
-  strings
-  |> string_tree.from_strings
-  |> string_tree.to_string
+  concat_loop(strings, "")
+}
+
+fn concat_loop(strings: List(String), accumulator: String) -> String {
+  case strings {
+    [string, ..strings] -> concat_loop(strings, accumulator <> string)
+    [] -> accumulator
+  }
 }
 
 /// Creates a new `String` by repeating a `String` a given number of times.
 ///
-/// This function runs in linear time.
+/// This function runs in loglinear time.
 ///
 /// ## Examples
 ///
@@ -408,13 +428,21 @@ pub fn concat(strings: List(String)) -> String {
 /// ```
 ///
 pub fn repeat(string: String, times times: Int) -> String {
-  repeat_loop(string, times, "")
+  case times <= 0 {
+    True -> ""
+    False -> repeat_loop(times, string, "")
+  }
 }
 
-fn repeat_loop(string: String, times: Int, acc: String) -> String {
+fn repeat_loop(times: Int, doubling_acc: String, acc: String) -> String {
+  let acc = case times % 2 {
+    0 -> acc
+    _ -> acc <> doubling_acc
+  }
+  let times = times / 2
   case times <= 0 {
     True -> acc
-    False -> repeat_loop(string, times - 1, acc <> string)
+    False -> repeat_loop(times, doubling_acc <> doubling_acc, acc)
   }
 }
 
@@ -429,11 +457,23 @@ fn repeat_loop(string: String, times: Int, acc: String) -> String {
 /// // -> "home/evan/Desktop"
 /// ```
 ///
-@external(javascript, "../gleam_stdlib.mjs", "join")
 pub fn join(strings: List(String), with separator: String) -> String {
-  strings
-  |> list.intersperse(with: separator)
-  |> concat
+  case strings {
+    [] -> ""
+    [first, ..rest] -> join_loop(rest, separator, first)
+  }
+}
+
+fn join_loop(
+  strings: List(String),
+  separator: String,
+  accumulator: String,
+) -> String {
+  case strings {
+    [] -> accumulator
+    [string, ..strings] ->
+      join_loop(strings, separator, accumulator <> separator <> string)
+  }
 }
 
 /// Pads the start of a `String` until it has a given length.
@@ -567,9 +607,11 @@ pub fn trim_end(string: String) -> String {
 /// Splits a non-empty `String` into its first element (head) and rest (tail).
 /// This lets you pattern match on `String`s exactly as you would with lists.
 ///
-/// Note on JavaScript using the function to iterate over a string will likely
-/// be slower than using `to_graphemes` due to string slicing being more
-/// expensive on JavaScript than Erlang.
+/// ## Performance
+///
+/// There is a notable overhead to using this function, so you may not want to
+/// use it in a tight loop. If you wish to efficiently parse a string you may
+/// want to use alternatives such as the [splitter package](https://hex.pm/packages/splitter).
 ///
 /// ## Examples
 ///
@@ -597,7 +639,8 @@ pub fn pop_grapheme(string: String) -> Result(#(String, String), Nil)
 ///
 @external(javascript, "../gleam_stdlib.mjs", "graphemes")
 pub fn to_graphemes(string: String) -> List(String) {
-  to_graphemes_loop(string, [])
+  string
+  |> to_graphemes_loop([])
   |> list.reverse
 }
 
@@ -703,7 +746,7 @@ pub fn utf_codepoint(value: Int) -> Result(UtfCodepoint, Nil) {
   }
 }
 
-/// Converts an UtfCodepoint to its ordinal code point value.
+/// Converts a `UtfCodepoint` to its ordinal code point value.
 ///
 /// ## Examples
 ///
@@ -766,6 +809,9 @@ pub fn first(string: String) -> Result(String, Nil) {
 /// `Result(String, Nil)`. If the `String` is empty, it returns `Error(Nil)`.
 /// Otherwise, it returns `Ok(String)`.
 ///
+/// This function traverses the full string, so it runs in linear time with the
+/// length of the string. Avoid using this in a loop.
+///
 /// ## Examples
 ///
 /// ```gleam
@@ -805,8 +851,31 @@ pub fn capitalise(string: String) -> String {
 
 /// Returns a `String` representation of a term in Gleam syntax.
 ///
+/// This may be occasionally useful for quick-and-dirty printing of values in
+/// scripts. For error reporting and other uses prefer constructing strings by
+/// pattern matching on the values.
+///
+/// ## Limitations
+///
+/// The output format of this function is not stable and could change at any
+/// time. The output is not suitable for parsing.
+///
+/// This function works using runtime reflection, so the output may not be
+/// perfectly accurate for data structures where the runtime structure doesn't
+/// hold enough information to determine the original syntax. For example,
+/// tuples with an Erlang atom in the first position will be mistaken for Gleam
+/// records.
+///
+/// ## Security and safety
+///
+/// There is no limit to how large the strings that this function can produce.
+/// Be careful not to call this function with large data structures or you
+/// could use very large amounts of memory, potentially causing runtime
+/// problems.
+///
 pub fn inspect(term: anything) -> String {
-  do_inspect(term)
+  term
+  |> do_inspect
   |> string_tree.to_string
 }
 

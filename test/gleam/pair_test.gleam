@@ -1,63 +1,43 @@
 import gleam/pair
-import gleam/should
 
 pub fn first_test() {
-  #(1, 2)
-  |> pair.first
-  |> should.equal(1)
+  assert pair.first(#(1, 2)) == 1
 
-  #("abc", [])
-  |> pair.first
-  |> should.equal("abc")
+  assert pair.first(#("abc", [])) == "abc"
 }
 
 pub fn second_test() {
-  #(1, 2)
-  |> pair.second
-  |> should.equal(2)
+  assert pair.second(#(1, 2)) == 2
 
-  #("abc", [])
-  |> pair.second
-  |> should.equal([])
+  assert pair.second(#("abc", [])) == []
 }
 
 pub fn swap_test() {
-  #(1, "2")
-  |> pair.swap
-  |> should.equal(#("2", 1))
+  assert pair.swap(#(1, "2")) == #("2", 1)
 }
 
 pub fn map_first_test() {
   let inc = fn(a) { a + 1 }
-  pair.map_first(#(1, 2), inc)
-  |> should.equal(#(2, 2))
+  assert pair.map_first(#(1, 2), inc) == #(2, 2)
 
-  pair.map_first(#(8, 2), inc)
-  |> should.equal(#(9, 2))
+  assert pair.map_first(#(8, 2), inc) == #(9, 2)
 
-  pair.map_first(#(0, -2), inc)
-  |> should.equal(#(1, -2))
+  assert pair.map_first(#(0, -2), inc) == #(1, -2)
 
-  pair.map_first(#(-10, 20), inc)
-  |> should.equal(#(-9, 20))
+  assert pair.map_first(#(-10, 20), inc) == #(-9, 20)
 }
 
 pub fn map_second_test() {
   let dec = fn(a) { a - 1 }
-  pair.map_second(#(1, 2), dec)
-  |> should.equal(#(1, 1))
+  assert pair.map_second(#(1, 2), dec) == #(1, 1)
 
-  pair.map_second(#(8, 2), dec)
-  |> should.equal(#(8, 1))
+  assert pair.map_second(#(8, 2), dec) == #(8, 1)
 
-  pair.map_second(#(0, -2), dec)
-  |> should.equal(#(0, -3))
+  assert pair.map_second(#(0, -2), dec) == #(0, -3)
 
-  pair.map_second(#(-10, 20), dec)
-  |> should.equal(#(-10, 19))
+  assert pair.map_second(#(-10, 20), dec) == #(-10, 19)
 }
 
 pub fn new_test() {
-  pair.new(1, 2)
-  |> should.equal(#(1, 2))
+  assert pair.new(1, 2) == #(1, 2)
 }

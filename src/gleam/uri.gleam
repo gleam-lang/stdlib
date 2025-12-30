@@ -13,7 +13,7 @@ import gleam/option.{type Option, None, Some}
 import gleam/string
 import gleam/string_tree.{type StringTree}
 
-/// Type representing holding the parsed components of an URI.
+/// Type representing the parsed components of an URI.
 /// All components of a URI are optional, except the path.
 ///
 pub type Uri {
@@ -55,7 +55,7 @@ pub const empty = Uri(
   fragment: None,
 )
 
-/// Parses a compliant URI string into the `Uri` Type.
+/// Parses a compliant URI string into the `Uri` type.
 /// If the string is not a valid URI string then an error is returned.
 ///
 /// The opposite operation is `uri.to_string`.
@@ -363,20 +363,23 @@ fn parse_port(uri_string: String, pieces: Uri) -> Result(Uri, Nil) {
     ":8" <> rest -> parse_port_loop(rest, pieces, 8)
     ":9" <> rest -> parse_port_loop(rest, pieces, 9)
 
-    // It means the port segment is not composed of numbers, the port is invalid
-    // and so is the uri!
-    ":" <> _ -> Error(Nil)
+    // The port could be empty and be followed by any of the next delimiters.
+    // Like `:#`, `:?` or `:/`
+    ":" | "" -> Ok(pieces)
 
     // `?` marks the beginning of the query with question mark.
-    "?" <> rest -> parse_query_with_question_mark(rest, pieces)
+    "?" <> rest | ":?" <> rest -> parse_query_with_question_mark(rest, pieces)
 
     // `#` marks the beginning of the fragment part.
-    "#" <> rest -> parse_fragment(rest, pieces)
+    "#" <> rest | ":#" <> rest -> parse_fragment(rest, pieces)
 
     // `/` marks the beginning of a path.
     "/" <> _ -> parse_path(uri_string, pieces)
-
-    "" -> Ok(pieces)
+    ":" <> rest ->
+      case rest {
+        "/" <> _ -> parse_path(rest, pieces)
+        _ -> Error(Nil)
+      }
 
     _ -> Error(Nil)
   }
@@ -517,15 +520,7 @@ fn pop_codeunit(str: String) -> #(Int, String)
 @external(javascript, "../gleam_stdlib.mjs", "string_codeunit_slice")
 fn codeunit_slice(str: String, at_index from: Int, length length: Int) -> String
 
-fn extra_required(list: List(a), remaining: Int) -> Int {
-  case list {
-    _ if remaining == 0 -> 0
-    [] -> remaining
-    [_, ..rest] -> extra_required(rest, remaining - 1)
-  }
-}
-
-/// Parses an urlencoded query string into a list of key value pairs.
+/// Parses an URL-encoded query string into a list of key value pairs.
 /// Returns an error for invalid encoding.
 ///
 /// The opposite operation is `uri.query_to_string`.
@@ -561,7 +556,13 @@ pub fn query_to_string(query: List(#(String, String))) -> String {
 }
 
 fn query_pair(pair: #(String, String)) -> StringTree {
-  string_tree.from_strings([percent_encode(pair.0), "=", percent_encode(pair.1)])
+  [percent_encode_query(pair.0), "=", percent_encode_query(pair.1)]
+  |> string_tree.from_strings
+}
+
+fn percent_encode_query(part: String) -> String {
+  percent_encode(part)
+  |> string.replace(each: "+", with: "%2B")
 }
 
 /// Encodes a string into a percent encoded representation.
@@ -590,7 +591,7 @@ pub fn percent_encode(value: String) -> String
 @external(javascript, "../gleam_stdlib.mjs", "percent_decode")
 pub fn percent_decode(value: String) -> Result(String, Nil)
 
-/// Splits the path section of a URI into it's constituent segments.
+/// Splits the path section of a URI into its constituent segments.
 ///
 /// Removes empty segments and resolves dot-segments as specified in
 /// [section 5.2](https://www.ietf.org/rfc/rfc3986.html#section-5.2) of the RFC.
@@ -705,7 +706,7 @@ pub fn origin(uri: Uri) -> Result(String, Nil) {
 /// Resolves a URI with respect to the given base URI.
 ///
 /// The base URI must be an absolute URI or this function will return an error.
-/// The algorithm for merging uris is described in
+/// The algorithm for merging URIs is described in
 /// [RFC 3986](https://tools.ietf.org/html/rfc3986#section-5.2).
 ///
 pub fn merge(base: Uri, relative: Uri) -> Result(Uri, Nil) {
@@ -714,7 +715,8 @@ pub fn merge(base: Uri, relative: Uri) -> Result(Uri, Nil) {
       case relative {
         Uri(host: Some(_), ..) -> {
           let path =
-            string.split(relative.path, "/")
+            relative.path
+            |> string.split("/")
             |> remove_dot_segments()
             |> join_segments()
           let resolved =
@@ -736,7 +738,8 @@ pub fn merge(base: Uri, relative: Uri) -> Result(Uri, Nil) {
               let path_segments = case string.starts_with(relative.path, "/") {
                 True -> string.split(relative.path, "/")
                 False ->
-                  string.split(base.path, "/")
+                  base.path
+                  |> string.split("/")
                   |> drop_last()
                   |> list.append(string.split(relative.path, "/"))
               }

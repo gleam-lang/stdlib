@@ -1,602 +1,385 @@
 import gleam/int
 import gleam/list
 import gleam/order
-import gleam/should
 
 pub fn absolute_value_test() {
-  123
-  |> int.absolute_value
-  |> should.equal(123)
+  assert int.absolute_value(123) == 123
 
-  -123
-  |> int.absolute_value
-  |> should.equal(123)
+  assert int.absolute_value(-123) == 123
 }
 
 pub fn clamp_test() {
-  int.clamp(40, min: 30, max: 50)
-  |> should.equal(40)
+  assert int.clamp(40, min: 30, max: 50) == 40
 
-  int.clamp(20, min: 30, max: 50)
-  |> should.equal(30)
+  assert int.clamp(20, min: 30, max: 50) == 30
 
-  int.clamp(60, min: 30, max: 50)
-  |> should.equal(50)
+  assert int.clamp(60, min: 30, max: 50) == 50
 
-  // If the bounds are reversed we return the min
-  int.clamp(100, min: 50, max: 30)
-  |> should.equal(50)
+  assert int.clamp(100, min: 50, max: 30) == 50
+
+  assert int.clamp(40, min: 50, max: 30) == 40
 }
 
 pub fn to_string_test() {
-  123
-  |> int.to_string
-  |> should.equal("123")
+  assert int.to_string(123) == "123"
 
-  -123
-  |> int.to_string
-  |> should.equal("-123")
+  assert int.to_string(-123) == "-123"
 
-  123
-  |> int.to_string
-  |> should.equal("123")
+  assert int.to_string(123) == "123"
 }
 
 pub fn parse_test() {
-  "123"
-  |> int.parse
-  |> should.equal(Ok(123))
+  assert int.parse("123") == Ok(123)
 
-  "-123"
-  |> int.parse
-  |> should.equal(Ok(-123))
+  assert int.parse("-123") == Ok(-123)
 
-  "0123"
-  |> int.parse
-  |> should.equal(Ok(123))
+  assert int.parse("0123") == Ok(123)
 
-  ""
-  |> int.parse
-  |> should.equal(Error(Nil))
+  assert int.parse("") == Error(Nil)
 
-  "what"
-  |> int.parse
-  |> should.equal(Error(Nil))
+  assert int.parse("what") == Error(Nil)
 
-  "1.23"
-  |> int.parse
-  |> should.equal(Error(Nil))
+  assert int.parse("1.23") == Error(Nil)
 }
 
 pub fn base_parse_test() {
-  "100"
-  |> int.base_parse(16)
-  |> should.equal(Ok(256))
+  assert int.base_parse("100", 16) == Ok(256)
 
-  "-100"
-  |> int.base_parse(16)
-  |> should.equal(Ok(-256))
+  assert int.base_parse("-100", 16) == Ok(-256)
 
-  "100"
-  |> int.base_parse(1)
-  |> should.equal(Error(Nil))
+  assert int.base_parse("100", 1) == Error(Nil)
 
-  "100"
-  |> int.base_parse(37)
-  |> should.equal(Error(Nil))
+  assert int.base_parse("100", 37) == Error(Nil)
 
-  "AG"
-  |> int.base_parse(16)
-  |> should.equal(Error(Nil))
+  assert int.base_parse("AG", 16) == Error(Nil)
 }
 
 pub fn to_base_string_test() {
-  100
-  |> int.to_base_string(16)
-  |> should.equal(Ok("64"))
+  assert int.to_base_string(100, 16) == Ok("64")
 
-  -100
-  |> int.to_base_string(16)
-  |> should.equal(Ok("-64"))
+  assert int.to_base_string(-100, 16) == Ok("-64")
 
-  100
-  |> int.to_base_string(1)
-  |> should.equal(Error(Nil))
+  assert int.to_base_string(100, 1) == Error(Nil)
 
-  100
-  |> int.to_base_string(37)
-  |> should.equal(Error(Nil))
+  assert int.to_base_string(100, 37) == Error(Nil)
 }
 
 pub fn to_base2_test() {
-  100
-  |> int.to_base2()
-  |> should.equal("1100100")
+  assert int.to_base2(100) == "1100100"
 
-  -100
-  |> int.to_base2()
-  |> should.equal("-1100100")
+  assert int.to_base2(-100) == "-1100100"
 }
 
 pub fn to_base8_test() {
-  100
-  |> int.to_base8()
-  |> should.equal("144")
+  assert int.to_base8(100) == "144"
 
-  -100
-  |> int.to_base8()
-  |> should.equal("-144")
+  assert int.to_base8(-100) == "-144"
 }
 
 pub fn to_base16_test() {
-  100
-  |> int.to_base16()
-  |> should.equal("64")
+  assert int.to_base16(100) == "64"
 
-  -100
-  |> int.to_base16()
-  |> should.equal("-64")
+  assert int.to_base16(-100) == "-64"
 
-  43_981
-  |> int.to_base16()
-  |> should.equal("ABCD")
+  assert int.to_base16(43_981) == "ABCD"
 
-  -43_981
-  |> int.to_base16()
-  |> should.equal("-ABCD")
+  assert int.to_base16(-43_981) == "-ABCD"
 }
 
 pub fn to_base36_test() {
-  100
-  |> int.to_base36()
-  |> should.equal("2S")
+  assert int.to_base36(100) == "2S"
 
-  -100
-  |> int.to_base36()
-  |> should.equal("-2S")
+  assert int.to_base36(-100) == "-2S"
 }
 
 pub fn to_float_test() {
-  int.to_float(1)
-  |> should.equal(1.0)
+  assert int.to_float(1) == 1.0
 
-  int.to_float(5)
-  |> should.equal(5.0)
+  assert int.to_float(5) == 5.0
 
-  int.to_float(0)
-  |> should.equal(0.0)
+  assert int.to_float(0) == 0.0
 
-  int.to_float(-5)
-  |> should.equal(-5.0)
+  assert int.to_float(-5) == -5.0
 }
 
 pub fn compare_test() {
-  int.compare(0, 0)
-  |> should.equal(order.Eq)
+  assert int.compare(0, 0) == order.Eq
 
-  int.compare(1, 1)
-  |> should.equal(order.Eq)
+  assert int.compare(1, 1) == order.Eq
 
-  int.compare(0, 1)
-  |> should.equal(order.Lt)
+  assert int.compare(0, 1) == order.Lt
 
-  int.compare(-2, -1)
-  |> should.equal(order.Lt)
+  assert int.compare(-2, -1) == order.Lt
 
-  int.compare(2, 1)
-  |> should.equal(order.Gt)
+  assert int.compare(2, 1) == order.Gt
 
-  int.compare(-1, -2)
-  |> should.equal(order.Gt)
+  assert int.compare(-1, -2) == order.Gt
 }
 
 pub fn min_test() {
-  int.min(0, 0)
-  |> should.equal(0)
+  assert int.min(0, 0) == 0
 
-  int.min(0, 1)
-  |> should.equal(0)
+  assert int.min(0, 1) == 0
 
-  int.min(1, 0)
-  |> should.equal(0)
+  assert int.min(1, 0) == 0
 
-  int.min(-1, 2)
-  |> should.equal(-1)
+  assert int.min(-1, 2) == -1
 
-  int.min(2, -2)
-  |> should.equal(-2)
+  assert int.min(2, -2) == -2
 
-  int.min(-1, -1)
-  |> should.equal(-1)
+  assert int.min(-1, -1) == -1
 }
 
 pub fn max_test() {
-  int.max(0, 0)
-  |> should.equal(0)
+  assert int.max(0, 0) == 0
 
-  int.max(0, 1)
-  |> should.equal(1)
+  assert int.max(0, 1) == 1
 
-  int.max(1, 0)
-  |> should.equal(1)
+  assert int.max(1, 0) == 1
 
-  int.max(-1, 2)
-  |> should.equal(2)
+  assert int.max(-1, 2) == 2
 
-  int.max(2, -2)
-  |> should.equal(2)
+  assert int.max(2, -2) == 2
 
-  int.max(-1, -1)
-  |> should.equal(-1)
+  assert int.max(-1, -1) == -1
 }
 
 pub fn is_even_test() {
-  int.is_even(0)
-  |> should.be_true
+  assert int.is_even(0)
 
-  int.is_even(2)
-  |> should.be_true
+  assert int.is_even(2)
 
-  int.is_even(-2)
-  |> should.be_true
+  assert int.is_even(-2)
 
-  int.is_even(10_006)
-  |> should.be_true
+  assert int.is_even(10_006)
 
-  int.is_even(1)
-  |> should.be_false
+  assert !int.is_even(1)
 
-  int.is_even(-3)
-  |> should.be_false
+  assert !int.is_even(-3)
 
-  int.is_even(10_005)
-  |> should.be_false
+  assert !int.is_even(10_005)
 }
 
 pub fn is_odd_test() {
-  int.is_odd(0)
-  |> should.be_false
+  assert !int.is_odd(0)
 
-  int.is_odd(2)
-  |> should.be_false
+  assert !int.is_odd(2)
 
-  int.is_odd(-2)
-  |> should.be_false
+  assert !int.is_odd(-2)
 
-  int.is_odd(10_006)
-  |> should.be_false
+  assert !int.is_odd(10_006)
 
-  int.is_odd(1)
-  |> should.be_true
+  assert int.is_odd(1)
 
-  int.is_odd(-3)
-  |> should.be_true
+  assert int.is_odd(-3)
 
-  int.is_odd(10_005)
-  |> should.be_true
+  assert int.is_odd(10_005)
 }
 
 pub fn power_test() {
-  int.power(2, 2.0)
-  |> should.equal(Ok(4.0))
+  assert int.power(2, 2.0) == Ok(4.0)
 
-  int.power(-5, 3.0)
-  |> should.equal(Ok(-125.0))
+  assert int.power(-5, 3.0) == Ok(-125.0)
 
-  int.power(10, 0.0)
-  |> should.equal(Ok(1.0))
+  assert int.power(10, 0.0) == Ok(1.0)
 
-  int.power(16, 0.5)
-  |> should.equal(Ok(4.0))
+  assert int.power(16, 0.5) == Ok(4.0)
 
-  int.power(2, -1.0)
-  |> should.equal(Ok(0.5))
+  assert int.power(2, -1.0) == Ok(0.5)
 
   // int.power(-1, 0.5) is equivalent to int.square_root(-1) and should
   // return an error as an imaginary number would otherwise have to be
   // returned
-  int.power(-1, 0.5)
-  |> should.equal(Error(Nil))
+  assert int.power(-1, 0.5) == Error(Nil)
 
   // Check another case with a negative base and fractional exponent
-  int.power(-1, 1.5)
-  |> should.equal(Error(Nil))
+  assert int.power(-1, 1.5) == Error(Nil)
 
   // float.power(0, -1) is equivalent to 1 / 0 and is expected
   // to be an error
-  int.power(0, -1.0)
-  |> should.equal(Error(Nil))
+  assert int.power(0, -1.0) == Error(Nil)
 
   // Check that a negative base and exponent is fine as long as the
   // exponent is not fractional
-  int.power(-2, -1.0)
-  |> should.equal(Ok(-0.5))
+  assert int.power(-2, -1.0) == Ok(-0.5)
 }
 
 pub fn square_root_test() {
-  int.square_root(4)
-  |> should.equal(Ok(2.0))
+  assert int.square_root(4) == Ok(2.0)
 
-  int.square_root(16)
-  |> should.equal(Ok(4.0))
+  assert int.square_root(16) == Ok(4.0)
 
-  int.square_root(0)
-  |> should.equal(Ok(0.0))
+  assert int.square_root(0) == Ok(0.0)
 
-  int.square_root(-4)
-  |> should.equal(Error(Nil))
+  assert int.square_root(-4) == Error(Nil)
 }
 
 pub fn negate_test() {
-  int.negate(-1)
-  |> should.equal(1)
+  assert int.negate(-1) == 1
 
-  int.negate(2)
-  |> should.equal(-2)
+  assert int.negate(2) == -2
 
-  int.negate(0)
-  |> should.equal(0)
+  assert int.negate(0) == 0
 }
 
 pub fn sum_test() {
-  int.sum([])
-  |> should.equal(0)
+  assert int.sum([]) == 0
 
-  int.sum([1, 2, 3])
-  |> should.equal(6)
+  assert int.sum([1, 2, 3]) == 6
 }
 
 pub fn product_test() {
-  int.product([])
-  |> should.equal(1)
+  assert int.product([]) == 1
 
-  int.product([4])
-  |> should.equal(4)
+  assert int.product([4]) == 4
 
-  int.product([1, 2, 3])
-  |> should.equal(6)
-}
-
-pub fn digits_test() {
-  int.digits(123, 10)
-  |> should.equal(Ok([1, 2, 3]))
-
-  int.digits(-123, 10)
-  |> should.equal(Ok([-1, -2, -3]))
-
-  int.digits(123, 2)
-  |> should.equal(Ok([1, 1, 1, 1, 0, 1, 1]))
-
-  int.digits(123, 1)
-  |> should.equal(Error(Nil))
-}
-
-pub fn undigits_test() {
-  int.undigits([], 10)
-  |> should.equal(Ok(0))
-
-  int.undigits([1, 2, 3], 10)
-  |> should.equal(Ok(123))
-
-  int.undigits([-1, -2, -3], 10)
-  |> should.equal(Ok(-123))
-
-  int.undigits([1, 1, 1, 1, 0, 1, 1], 2)
-  |> should.equal(Ok(123))
-
-  int.undigits([1, 2, 3], 1)
-  |> should.equal(Error(Nil))
-
-  int.undigits([1, 1, 2], 2)
-  |> should.equal(Error(Nil))
+  assert int.product([1, 2, 3]) == 6
 }
 
 pub fn random_test() {
   use _ <- list.each(list.range(0, 100))
 
-  int.random(0)
-  |> should.equal(0)
+  assert int.random(0) == 0
 
-  int.random(1)
-  |> should.equal(0)
+  assert int.random(1) == 0
 
-  int.random(-1)
-  |> should.equal(-1)
+  assert int.random(-1) == -1
 
-  int.random(2)
-  |> list.contains([0, 1], _)
-  |> should.be_true
+  assert list.contains([0, 1], int.random(2))
 
-  int.random(3)
-  |> list.contains([0, 1, 2], _)
-  |> should.be_true
+  assert list.contains([0, 1, 2], int.random(3))
 }
 
 pub fn divide_test() {
-  int.divide(1, 1)
-  |> should.equal(Ok(1))
+  assert int.divide(1, 1) == Ok(1)
 
-  int.divide(1, 0)
-  |> should.equal(Error(Nil))
+  assert int.divide(1, 0) == Error(Nil)
 
-  int.divide(0, by: 1)
-  |> should.equal(Ok(0))
+  assert int.divide(0, by: 1) == Ok(0)
 
-  int.divide(1, by: 0)
-  |> should.equal(Error(Nil))
+  assert int.divide(1, by: 0) == Error(Nil)
 
-  int.divide(5, by: 2)
-  |> should.equal(Ok(2))
+  assert int.divide(5, by: 2) == Ok(2)
 
-  int.divide(-99, by: 2)
-  |> should.equal(Ok(-49))
+  assert int.divide(-99, by: 2) == Ok(-49)
 }
 
 pub fn remainder_test() {
-  int.remainder(3, 2)
-  |> should.equal(Ok(1))
+  assert int.remainder(3, 2) == Ok(1)
 
-  int.remainder(1, 0)
-  |> should.equal(Error(Nil))
+  assert int.remainder(1, 0) == Error(Nil)
 
-  int.remainder(10, -1)
-  |> should.equal(Ok(0))
+  assert int.remainder(10, -1) == Ok(0)
 
-  int.remainder(13, by: 3)
-  |> should.equal(Ok(1))
+  assert int.remainder(13, by: 3) == Ok(1)
 
-  int.remainder(-13, by: 3)
-  |> should.equal(Ok(-1))
+  assert int.remainder(-13, by: 3) == Ok(-1)
 
-  int.remainder(13, by: -3)
-  |> should.equal(Ok(1))
+  assert int.remainder(13, by: -3) == Ok(1)
 
-  int.remainder(-13, by: -3)
-  |> should.equal(Ok(-1))
+  assert int.remainder(-13, by: -3) == Ok(-1)
 }
 
 pub fn modulo_test() {
-  int.modulo(3, 2)
-  |> should.equal(Ok(1))
+  assert int.modulo(3, 2) == Ok(1)
 
-  int.modulo(1, 0)
-  |> should.equal(Error(Nil))
+  assert int.modulo(1, 0) == Error(Nil)
 
-  int.modulo(10, -1)
-  |> should.equal(Ok(0))
+  assert int.modulo(10, -1) == Ok(0)
 
-  int.modulo(13, by: 3)
-  |> should.equal(Ok(1))
+  assert int.modulo(13, by: 3) == Ok(1)
 
-  int.modulo(-13, by: 3)
-  |> should.equal(Ok(2))
+  assert int.modulo(-13, by: 3) == Ok(2)
 
-  int.modulo(13, by: -3)
-  |> should.equal(Ok(-2))
+  assert int.modulo(13, by: -3) == Ok(-2)
 
-  int.modulo(-13, by: -3)
-  |> should.equal(Ok(-1))
+  assert int.modulo(-13, by: -3) == Ok(-1)
 }
 
 pub fn floor_divide_test() {
-  int.floor_divide(1, 1)
-  |> should.equal(Ok(1))
+  assert int.floor_divide(1, 1) == Ok(1)
 
-  int.floor_divide(1, 0)
-  |> should.equal(Error(Nil))
+  assert int.floor_divide(1, 0) == Error(Nil)
 
-  int.floor_divide(0, by: 1)
-  |> should.equal(Ok(0))
+  assert int.floor_divide(0, by: 1) == Ok(0)
 
-  int.floor_divide(1, by: 0)
-  |> should.equal(Error(Nil))
+  assert int.floor_divide(1, by: 0) == Error(Nil)
 
-  int.floor_divide(5, by: 2)
-  |> should.equal(Ok(2))
+  assert int.floor_divide(5, by: 2) == Ok(2)
 
-  int.floor_divide(6, by: -4)
-  |> should.equal(Ok(-2))
+  assert int.floor_divide(6, by: -4) == Ok(-2)
 
-  int.floor_divide(-99, by: 2)
-  |> should.equal(Ok(-50))
+  assert int.floor_divide(-99, by: 2) == Ok(-50)
 
-  int.floor_divide(-1, by: 2)
-  |> should.equal(Ok(-1))
+  assert int.floor_divide(-1, by: 2) == Ok(-1)
 }
 
 pub fn add_test() {
-  int.add(1, 2)
-  |> should.equal(3)
+  assert int.add(1, 2) == 3
 
-  3
-  |> int.add(2)
-  |> should.equal(5)
+  assert int.add(3, 2) == 5
 }
 
 pub fn multiply_test() {
-  int.multiply(2, 4)
-  |> should.equal(8)
+  assert int.multiply(2, 4) == 8
 
-  3
-  |> int.multiply(2)
-  |> should.equal(6)
+  assert int.multiply(3, 2) == 6
 }
 
 pub fn subtract_test() {
-  int.subtract(3, 1)
-  |> should.equal(2)
+  assert int.subtract(3, 1) == 2
 
-  3
-  |> int.subtract(2)
-  |> should.equal(1)
+  assert int.subtract(3, 2) == 1
 
-  3
-  |> int.subtract(2, _)
-  |> should.equal(-1)
+  assert int.subtract(2, 3) == -1
 }
 
 pub fn and_test() {
-  int.bitwise_and(9, 3)
-  |> should.equal(1)
+  assert int.bitwise_and(9, 3) == 1
 
   // To check compatibility with JavaScript, try a 32 bit unsigned integer
   // (signed integers are in the range -2147483648 to +2147483647, while
   //  32 bit unsigned integers are in the range 0 to +4294967295).
-  int.bitwise_and(2_147_483_648, 2_147_483_648)
-  |> should.equal(2_147_483_648)
+  assert int.bitwise_and(2_147_483_648, 2_147_483_648) == 2_147_483_648
 }
 
 pub fn not_test() {
-  int.bitwise_not(2)
-  |> should.equal(-3)
+  assert int.bitwise_not(2) == -3
 
   // To check compatibility with JavaScript, try a 32 bit unsigned integer.
-  int.bitwise_not(2_147_483_648)
-  |> should.equal(-2_147_483_649)
+  assert int.bitwise_not(2_147_483_648) == -2_147_483_649
 }
 
 pub fn or_test() {
-  int.bitwise_or(9, 3)
-  |> should.equal(11)
+  assert int.bitwise_or(9, 3) == 11
 
   // To check compatibility with JavaScript, try a 32 bit unsigned integer.
-  int.bitwise_or(1, 2_147_483_648)
-  |> should.equal(2_147_483_649)
+  assert int.bitwise_or(1, 2_147_483_648) == 2_147_483_649
 }
 
 pub fn exclusive_or_test() {
-  int.bitwise_exclusive_or(9, 3)
-  |> should.equal(10)
+  assert int.bitwise_exclusive_or(9, 3) == 10
 
   // To check compatibility with JavaScript, try a 32 bit unsigned integer.
-  int.bitwise_exclusive_or(0, 2_147_483_648)
-  |> should.equal(2_147_483_648)
+  assert int.bitwise_exclusive_or(0, 2_147_483_648) == 2_147_483_648
 }
 
 pub fn shift_left_test() {
-  int.bitwise_shift_left(1, 2)
-  |> should.equal(4)
+  assert int.bitwise_shift_left(1, 2) == 4
 
-  int.bitwise_shift_left(1, -2)
-  |> should.equal(0)
+  assert int.bitwise_shift_left(1, -2) == 0
 
-  int.bitwise_shift_left(-1, 2)
-  |> should.equal(-4)
+  assert int.bitwise_shift_left(-1, 2) == -4
 
-  int.bitwise_shift_left(-1, -2)
-  |> should.equal(-1)
+  assert int.bitwise_shift_left(-1, -2) == -1
 }
 
 pub fn shift_right_test() {
-  int.bitwise_shift_right(1, 2)
-  |> should.equal(0)
+  assert int.bitwise_shift_right(1, 2) == 0
 
-  int.bitwise_shift_right(1, -2)
-  |> should.equal(4)
+  assert int.bitwise_shift_right(1, -2) == 4
 
-  int.bitwise_shift_right(-1, 2)
-  |> should.equal(-1)
+  assert int.bitwise_shift_right(-1, 2) == -1
 
-  int.bitwise_shift_right(-1, -2)
-  |> should.equal(-4)
+  assert int.bitwise_shift_right(-1, -2) == -4
 }

@@ -34,7 +34,7 @@ pub fn absolute_value(x: Int) -> Int {
   }
 }
 
-/// Returns the results of the base being raised to the power of the
+/// Returns the result of the base being raised to the power of the
 /// exponent, as a `Float`.
 ///
 /// ## Examples
@@ -65,7 +65,8 @@ pub fn absolute_value(x: Int) -> Int {
 /// ```
 ///
 pub fn power(base: Int, of exponent: Float) -> Result(Float, Nil) {
-  to_float(base)
+  base
+  |> to_float
   |> float.power(exponent)
 }
 
@@ -84,7 +85,8 @@ pub fn power(base: Int, of exponent: Float) -> Result(Float, Nil) {
 /// ```
 ///
 pub fn square_root(x: Int) -> Result(Float, Nil) {
-  to_float(x)
+  x
+  |> to_float
   |> float.square_root()
 }
 
@@ -277,7 +279,11 @@ pub fn to_base36(x: Int) -> String {
 @external(javascript, "../gleam_stdlib.mjs", "identity")
 pub fn to_float(x: Int) -> Float
 
-/// Restricts an int between a lower and upper bound.
+/// Restricts an int between two bounds.
+///
+/// Note: If the `min` argument is larger than the `max` argument then they
+/// will be swapped, so the minimum bound is always lower than the maximum
+/// bound.
 ///
 /// ## Examples
 ///
@@ -286,10 +292,16 @@ pub fn to_float(x: Int) -> Float
 /// // -> 50
 /// ```
 ///
+/// ```gleam
+/// clamp(40, min: 50, max: 30)
+/// // -> 40
+/// ```
+///
 pub fn clamp(x: Int, min min_bound: Int, max max_bound: Int) -> Int {
-  x
-  |> min(max_bound)
-  |> max(min_bound)
+  case min_bound >= max_bound {
+    True -> x |> min(min_bound) |> max(max_bound)
+    False -> x |> min(max_bound) |> max(min_bound)
+  }
 }
 
 /// Compares two ints, returning an order.
@@ -443,70 +455,6 @@ fn product_loop(numbers: List(Int), initial: Int) -> Int {
   }
 }
 
-/// Splits an integer into its digit representation in the specified base.
-/// Returns an error if the base is less than 2.
-///
-/// ## Examples
-///
-/// ```gleam
-/// digits(234, 10)
-/// // -> Ok([2,3,4])
-/// ```
-///
-/// ```gleam
-/// digits(234, 1)
-/// // -> Error(Nil)
-/// ```
-///
-pub fn digits(x: Int, base: Int) -> Result(List(Int), Nil) {
-  case base < 2 {
-    True -> Error(Nil)
-    False -> Ok(digits_loop(x, base, []))
-  }
-}
-
-fn digits_loop(x: Int, base: Int, acc: List(Int)) -> List(Int) {
-  case absolute_value(x) < base {
-    True -> [x, ..acc]
-    False -> digits_loop(x / base, base, [x % base, ..acc])
-  }
-}
-
-/// Joins a list of digits into a single value.
-/// Returns an error if the base is less than 2 or if the list contains a digit greater than or equal to the specified base.
-///
-/// ## Examples
-///
-/// ```gleam
-/// undigits([2,3,4], 10)
-/// // -> Ok(234)
-/// ```
-///
-/// ```gleam
-/// undigits([2,3,4], 1)
-/// // -> Error(Nil)
-/// ```
-///
-/// ```gleam
-/// undigits([2,3,4], 2)
-/// // -> Error(Nil)
-/// ```
-///
-pub fn undigits(numbers: List(Int), base: Int) -> Result(Int, Nil) {
-  case base < 2 {
-    True -> Error(Nil)
-    False -> undigits_loop(numbers, base, 0)
-  }
-}
-
-fn undigits_loop(numbers: List(Int), base: Int, acc: Int) -> Result(Int, Nil) {
-  case numbers {
-    [] -> Ok(acc)
-    [digit, ..] if digit >= base -> Error(Nil)
-    [digit, ..rest] -> undigits_loop(rest, base, acc * base + digit)
-  }
-}
-
 /// Generates a random int between zero and the given maximum.
 ///
 /// The lower number is inclusive, the upper number is exclusive.
@@ -573,7 +521,7 @@ pub fn divide(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
 /// Returns division of the inputs as a `Result`: If the given divisor equals
 /// `0`, this function returns an `Error`.
 ///
-/// Most the time you will want to use the `%` operator instead of this
+/// Most of the time you will want to use the `%` operator instead of this
 /// function.
 ///
 /// ## Examples
@@ -625,8 +573,8 @@ pub fn remainder(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
 /// Returns division of the inputs as a `Result`: If the given divisor equals
 /// `0`, this function returns an `Error`.
 ///
-/// Most the time you will want to use the `%` operator instead of this
-/// function.
+/// Note that this is different from `int.remainder` and `%` in that the
+/// computed value will always have the same sign as the `divisor`.
 ///
 /// ## Examples
 ///
@@ -653,6 +601,11 @@ pub fn remainder(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
 /// ```gleam
 /// modulo(-13, by: 3)
 /// // -> Ok(2)
+/// ```
+///
+/// ```gleam
+/// modulo(13, by: -3)
+/// // -> Ok(-2)
 /// ```
 ///
 pub fn modulo(dividend: Int, by divisor: Int) -> Result(Int, Nil) {

@@ -1,21 +1,18 @@
 -module(gleam_stdlib).
 
 -export([
-    map_get/2, iodata_append/2, identity/1, decode_int/1, decode_bool/1,
-    decode_float/1, decode_list/1, decode_option/2, decode_field/2, parse_int/1,
-    parse_float/1, less_than/2, string_pop_grapheme/1, string_pop_codeunit/1,
+    map_get/2, iodata_append/2, identity/1, parse_int/1, parse_float/1,
+    less_than/2, string_pop_grapheme/1, string_pop_codeunit/1,
     string_starts_with/2, wrap_list/1, string_ends_with/2, string_pad/4,
-    decode_map/1, uri_parse/1, decode_result/1, bit_array_slice/3,
-    decode_bit_array/1, percent_encode/1, percent_decode/1, base_decode64/1,
-    parse_query/1, bit_array_concat/1, bit_array_base64_encode/2,
-    size_of_tuple/1, decode_tuple/1, decode_tuple2/1, decode_tuple3/1,
-    decode_tuple4/1, decode_tuple5/1, decode_tuple6/1, tuple_get/2,
-    classify_dynamic/1, print/1, println/1, print_error/1, println_error/1,
-    inspect/1, float_to_string/1, int_from_base_string/2,
-    utf_codepoint_list_to_string/1, contains_string/2, crop_string/2,
-    base16_encode/1, base16_decode/1, string_replace/3, slice/3,
-    bit_array_to_int_and_size/1, bit_array_pad_to_bytes/1, bit_array_split_once/2,
-    bit_array_split/2
+    uri_parse/1, bit_array_slice/3, percent_encode/1, percent_decode/1,
+    base64_decode/1, parse_query/1, bit_array_concat/1,
+    base64_encode/2, tuple_get/2, classify_dynamic/1, print/1,
+    println/1, print_error/1, println_error/1, inspect/1, float_to_string/1,
+    int_from_base_string/2, utf_codepoint_list_to_string/1, contains_string/2,
+    crop_string/2, base16_encode/1, base16_decode/1, string_replace/3, slice/3,
+    bit_array_to_int_and_size/1, bit_array_pad_to_bytes/1, index/2, list/5,
+    dict/1, int/1, float/1, bit_array/1, is_null/1, bit_array_split/2, 
+    bit_array_split_once/2
 ]).
 
 %% Taken from OTP's uri_string module
@@ -31,9 +28,14 @@
         ((X) >= $a) andalso ((X) =< $f) -> (X) - $a + 10
     end).
 
--define(is_lowercase_char(X), (X > 96 andalso X < 123)).
--define(is_underscore_char(X), (X == 95)).
--define(is_digit_char(X), (X > 47 andalso X < 58)).
+-define(is_lowercase_char(X),
+        (X > 96 andalso X < 123)).
+-define(is_underscore_char(X),
+        (X == 95)).
+-define(is_digit_char(X),
+        (X > 47 andalso X < 58)).
+-define(is_ascii_character(X),
+        (erlang:is_integer(X) andalso X >= 32 andalso X =< 126)).
 
 uppercase(X) -> X - 32.
 
@@ -47,12 +49,9 @@ iodata_append(Iodata, String) -> [Iodata, String].
 
 identity(X) -> X.
 
-decode_error_msg(Expected, Data) when is_binary(Expected) ->
-    decode_error(Expected, classify_dynamic(Data)).
-decode_error(Expected, Got) when is_binary(Expected) andalso is_binary(Got) ->
-    {error, [{decode_error, Expected, Got, []}]}.
-
 classify_dynamic(nil) -> <<"Nil">>;
+classify_dynamic(null) -> <<"Nil">>;
+classify_dynamic(undefined) -> <<"Nil">>;
 classify_dynamic(X) when is_boolean(X) -> <<"Bool">>;
 classify_dynamic(X) when is_atom(X) -> <<"Atom">>;
 classify_dynamic(X) when is_binary(X) -> <<"String">>;
@@ -61,97 +60,21 @@ classify_dynamic(X) when is_integer(X) -> <<"Int">>;
 classify_dynamic(X) when is_float(X) -> <<"Float">>;
 classify_dynamic(X) when is_list(X) -> <<"List">>;
 classify_dynamic(X) when is_map(X) -> <<"Dict">>;
-classify_dynamic(X) when is_tuple(X) ->
-    iolist_to_binary(["Tuple of ", integer_to_list(tuple_size(X)), " elements"]);
+classify_dynamic(X) when is_tuple(X) -> <<"Array">>;
+classify_dynamic(X) when is_reference(X) -> <<"Reference">>;
+classify_dynamic(X) when is_pid(X) -> <<"Pid">>;
+classify_dynamic(X) when is_port(X) -> <<"Port">>;
 classify_dynamic(X) when
     is_function(X, 0) orelse is_function(X, 1) orelse is_function(X, 2) orelse
     is_function(X, 3) orelse is_function(X, 4) orelse is_function(X, 5) orelse
     is_function(X, 6) orelse is_function(X, 7) orelse is_function(X, 8) orelse
     is_function(X, 9) orelse is_function(X, 10) orelse is_function(X, 11) orelse
     is_function(X, 12) -> <<"Function">>;
-classify_dynamic(_) -> <<"Some other type">>.
-
-decode_map(Data) when is_map(Data) -> {ok, Data};
-decode_map(Data) -> decode_error_msg(<<"Dict">>, Data).
-
-decode_bit_array(Data) when is_bitstring(Data) -> {ok, Data};
-decode_bit_array(Data) -> decode_error_msg(<<"BitArray">>, Data).
-
-decode_int(Data) when is_integer(Data) -> {ok, Data};
-decode_int(Data) -> decode_error_msg(<<"Int">>, Data).
-
-decode_float(Data) when is_float(Data) -> {ok, Data};
-decode_float(Data) -> decode_error_msg(<<"Float">>, Data).
-
-decode_bool(Data) when is_boolean(Data) -> {ok, Data};
-decode_bool(Data) -> decode_error_msg(<<"Bool">>, Data).
-
-decode_list(Data) when is_list(Data) -> {ok, Data};
-decode_list(Data) -> decode_error_msg(<<"List">>, Data).
-
-decode_field(Data, Key) when is_map(Data) ->
-    case Data of
-        #{Key := Value} -> {ok, {some, Value}};
-        _ ->
-            {ok, none}
-    end;
-decode_field(Data, _) ->
-    decode_error_msg(<<"Dict">>, Data).
-
-size_of_tuple(Data) -> tuple_size(Data).
+classify_dynamic(_) -> <<"Unknown">>.
 
 tuple_get(_tup, Index) when Index < 0 -> {error, nil};
 tuple_get(Data, Index) when Index >= tuple_size(Data) -> {error, nil};
 tuple_get(Data, Index) -> {ok, element(Index + 1, Data)}.
-
-decode_tuple(Data) when is_tuple(Data) -> {ok, Data};
-decode_tuple(Data) -> decode_error_msg(<<"Tuple">>, Data).
-
-decode_tuple2({_,_} = A) -> {ok, A};
-decode_tuple2([A,B]) -> {ok, {A,B}};
-decode_tuple2(Data) -> decode_error_msg(<<"Tuple of 2 elements">>, Data).
-
-decode_tuple3({_,_,_} = A) -> {ok, A};
-decode_tuple3([A,B,C]) -> {ok, {A,B,C}};
-decode_tuple3(Data) -> decode_error_msg(<<"Tuple of 3 elements">>, Data).
-
-decode_tuple4({_,_,_,_} = A) -> {ok, A};
-decode_tuple4([A,B,C,D]) -> {ok, {A,B,C,D}};
-decode_tuple4(Data) -> decode_error_msg(<<"Tuple of 4 elements">>, Data).
-
-decode_tuple5({_,_,_,_,_} = A) -> {ok, A};
-decode_tuple5([A,B,C,D,E]) -> {ok, {A,B,C,D,E}};
-decode_tuple5(Data) -> decode_error_msg(<<"Tuple of 5 elements">>, Data).
-
-decode_tuple6({_,_,_,_,_,_} = A) -> {ok, A};
-decode_tuple6([A,B,C,D,E,F]) -> {ok, {A,B,C,D,E,F}};
-decode_tuple6(Data) -> decode_error_msg(<<"Tuple of 6 elements">>, Data).
-
-decode_option(Term, F) ->
-    Decode = fun(Inner) ->
-        case F(Inner) of
-            {ok, Decoded} -> {ok, {some, Decoded}};
-            Error -> Error
-        end
-    end,
-    case Term of
-        undefined -> {ok, none};
-        error -> {ok, none};
-        null -> {ok, none};
-        none -> {ok, none};
-        nil -> {ok, none};
-        {some, Inner} -> Decode(Inner);
-        _ -> Decode(Term)
-    end.
-
-decode_result(Term) ->
-    case Term of
-        {ok, Inner} -> {ok, {ok, Inner}};
-        ok -> {ok, {ok, nil}};
-        {error, Inner} -> {ok, {error, Inner}};
-        error -> {ok, {error, nil}};
-        _ -> decode_error_msg(<<"Result">>, Term)
-    end.
 
 int_from_base_string(String, Base) ->
     case catch binary_to_integer(String, Base) of
@@ -219,11 +142,11 @@ bit_array_concat(BitArrays) ->
     list_to_bitstring(BitArrays).
 
 -if(?OTP_RELEASE >= 26).
-bit_array_base64_encode(Bin, Padding) ->
+base64_encode(Bin, Padding) ->
     PaddedBin = bit_array_pad_to_bytes(Bin),
     base64:encode(PaddedBin, #{padding => Padding}).
 -else.
-bit_array_base64_encode(_Bin, _Padding) ->
+base64_encode(_Bin, _Padding) ->
     erlang:error(<<"Erlang OTP/26 or higher is required to use base64:encode">>).
 -endif.
 
@@ -247,7 +170,7 @@ bit_array_split(Bin, Sub) ->
     catch error:badarg -> {error, nil}
     end.
 
-base_decode64(S) ->
+base64_decode(S) ->
     try {ok, base64:decode(S)}
     catch error:_ -> {error, nil}
     end.
@@ -322,11 +245,17 @@ uri_parse(String) ->
     case uri_string:parse(String) of
         {error, _, _} -> {error, nil};
         Uri ->
+            Port =
+                try maps:get(port, Uri) of
+                    undefined -> none;
+                    Value -> {some, Value}
+                catch _:_ -> none
+                end,
             {ok, {uri,
                 maps_get_optional(Uri, scheme),
                 maps_get_optional(Uri, userinfo),
                 maps_get_optional(Uri, host),
-                maps_get_optional(Uri, port),
+                Port,
                 maps_get_or(Uri, path, <<>>),
                 maps_get_optional(Uri, query),
                 maps_get_optional(Uri, fragment)
@@ -372,11 +301,7 @@ inspect(Data) when is_map(Data) ->
     ],
     ["dict.from_list([", lists:join(", ", Fields), "])"];
 inspect(Atom) when is_atom(Atom) ->
-    Binary = erlang:atom_to_binary(Atom),
-    case inspect_maybe_gleam_atom(Binary, none, <<>>) of
-        {ok, Inspected} -> Inspected;
-        {error, _} -> ["atom.create_from_string(\"", Binary, "\")"]
-	end;
+    erlang:element(2, inspect_atom(Atom));
 inspect(Any) when is_integer(Any) ->
     erlang:integer_to_list(Any);
 inspect(Any) when is_float(Any) ->
@@ -391,7 +316,8 @@ inspect(Binary) when is_binary(Binary) ->
 inspect(Bits) when is_bitstring(Bits) ->
     inspect_bit_array(Bits);
 inspect(List) when is_list(List) ->
-    case inspect_list(List) of
+    case inspect_list(List, true) of
+        {charlist, _} -> ["charlist.from_string(\"", list_to_binary(List), "\")"];
         {proper, Elements} -> ["[", Elements, "]"];
         {improper, Elements} -> ["//erl([", Elements, "])"]
     end;
@@ -402,10 +328,15 @@ inspect(Any) when is_tuple(Any) % Record constructors
   andalso element(1, Any) =/= nil
 ->
     [Atom | ArgsList] = erlang:tuple_to_list(Any),
-    Args = lists:join(<<", ">>,
-        lists:map(fun inspect/1, ArgsList)
-    ),
-    [inspect(Atom), "(", Args, ")"];
+    InspectedArgs = lists:map(fun inspect/1, ArgsList),
+    case inspect_atom(Atom) of
+        {gleam_atom, GleamAtom} ->
+            Args = lists:join(<<", ">>, InspectedArgs),
+            [GleamAtom, "(", Args, ")"];
+        {erlang_atom, ErlangAtom} ->
+            Args = lists:join(<<", ">>, [ErlangAtom | InspectedArgs]),
+            ["#(", Args, ")"]
+    end;
 inspect(Tuple) when is_tuple(Tuple) ->
     Elements = lists:map(fun inspect/1, erlang:tuple_to_list(Tuple)),
     ["#(", lists:join(", ", Elements), ")"];
@@ -419,6 +350,12 @@ inspect(Any) when is_function(Any) ->
 inspect(Any) ->
     ["//erl(", io_lib:format("~p", [Any]), ")"].
 
+inspect_atom(Atom) ->
+    Binary = erlang:atom_to_binary(Atom),
+    case inspect_maybe_gleam_atom(Binary, none, <<>>) of
+        {ok, Inspected} -> {gleam_atom, Inspected};
+        {error, _} -> {erlang_atom, ["atom.create(\"", Binary, "\")"]}
+	end.
 
 inspect_maybe_gleam_atom(<<>>, none, _) ->
     {error, nil};
@@ -447,14 +384,17 @@ inspect_maybe_gleam_atom(A, B, C) ->
     erlang:display({A, B, C}),
     throw({gleam_error, A, B, C}).
 
-inspect_list([]) ->
+inspect_list([], _) ->
     {proper, []};
-inspect_list([First]) ->
+inspect_list([First], true) when ?is_ascii_character(First) ->
+    {charlist, nil};
+inspect_list([First], _) ->
     {proper, [inspect(First)]};
-inspect_list([First | Rest]) when is_list(Rest) ->
-    {Kind, Inspected} = inspect_list(Rest),
+inspect_list([First | Rest], ValidCharlist) when is_list(Rest) ->
+    StillValidCharlist = ValidCharlist andalso ?is_ascii_character(First),
+    {Kind, Inspected} = inspect_list(Rest, StillValidCharlist),
     {Kind, [inspect(First), <<", ">> | Inspected]};
-inspect_list([First | ImproperTail]) ->
+inspect_list([First | ImproperTail], _) ->
     {improper, [inspect(First), <<" | ">>, inspect(ImproperTail)]}.
 
 inspect_bit_array(Bits) ->
@@ -543,3 +483,68 @@ slice(String, Index, Length) ->
         X when is_binary(X) -> X;
         X when is_list(X) -> unicode:characters_to_binary(X)
     end.
+
+index([X | _], 0) ->
+    {ok, {some, X}};
+index([_, X | _], 1) ->
+    {ok, {some, X}};
+index([_, _, X | _], 2) ->
+    {ok, {some, X}};
+index([_, _, _, X | _], 3) ->
+    {ok, {some, X}};
+index([_, _, _, _, X | _], 4) ->
+    {ok, {some, X}};
+index([_, _, _, _, _, X | _], 5) ->
+    {ok, {some, X}};
+index([_, _, _, _, _, _, X | _], 6) ->
+    {ok, {some, X}};
+index([_, _, _, _, _, _, _, X | _], 7) ->
+    {ok, {some, X}};
+index(Tuple, Index) when is_tuple(Tuple) andalso is_integer(Index) ->
+    {ok, try
+        {some, element(Index + 1, Tuple)}
+    catch _:_ ->
+        none
+    end};
+index(Map, Key) when is_map(Map) ->
+    {ok, try
+        {some, maps:get(Key, Map)}
+    catch _:_ ->
+        none
+    end};
+index(_, Index) when is_integer(Index) ->
+    {error, <<"Indexable">>};
+index(_, _) ->
+    {error, <<"Dict">>}.
+
+list(T, A, B, C, D) when is_tuple(T) ->
+    list(tuple_to_list(T), A, B, C, D);
+list([], _, _, _, Acc) ->
+    {lists:reverse(Acc), []};
+list([X | Xs], Decode, PushPath, Index, Acc) ->
+    {Out, Errors} = Decode(X),
+    case Errors of
+        [] -> list(Xs, Decode, PushPath, Index + 1, [Out | Acc]);
+        _ -> PushPath({[], Errors}, integer_to_binary(Index))
+    end;
+list(Unexpected, _, _, _, []) ->
+    Found = gleam@dynamic:classify(Unexpected),
+    Error = {decode_error, <<"List"/utf8>>, Found, []},
+    {[], [Error]};
+list(_, _, _, _, Acc) ->
+    {lists:reverse(Acc), []}.
+
+dict(#{} = Data) -> {ok, Data};
+dict(_) -> {error, nil}.
+
+int(I) when is_integer(I) -> {ok, I};
+int(_) -> {error, 0}.
+
+float(F) when is_float(F) -> {ok, F};
+float(_) -> {error, 0.0}.
+
+bit_array(B) when is_bitstring(B) -> {ok, B};
+bit_array(_) -> {error, <<>>}.
+
+is_null(X) ->
+    X =:= undefined orelse X =:= null orelse X =:= nil.

@@ -6,9 +6,9 @@
 ///
 /// ## `Option` and `Result`
 ///
-/// In other languages failible functions may return either `Result` or
+/// In other languages fallible functions may return either `Result` or
 /// `Option` depending on whether there is more information to be given about the
-/// failure. In Gleam all failible functions return `Result`, and `Nil` is used
+/// failure. In Gleam all fallible functions return `Result`, and `Nil` is used
 /// as the error if there is no extra detail to give. This consistency removes
 /// the boilerplate that would otherwise be needed to convert between `Option`
 /// and `Result` types, and makes APIs more predictable.
@@ -23,7 +23,7 @@ pub type Option(a) {
 
 /// Combines a list of `Option`s into a single `Option`.
 /// If all elements in the list are `Some` then returns a `Some` holding the list of values.
-/// If any element is `None` then returns`None`.
+/// If any element is `None` then returns `None`.
 ///
 /// ## Examples
 ///
@@ -43,16 +43,23 @@ pub fn all(list: List(Option(a))) -> Option(List(a)) {
 
 fn all_loop(list: List(Option(a)), acc: List(a)) -> Option(List(a)) {
   case list {
-    [] -> Some(acc)
-    [first, ..rest] -> {
-      let accumulate = fn(acc, item) {
-        case acc, item {
-          Some(values), Some(value) -> Some([value, ..values])
-          _, _ -> None
-        }
-      }
-      accumulate(all_loop(rest, acc), first)
-    }
+    [] -> Some(reverse(acc))
+    [None, ..] -> None
+    [Some(first), ..rest] -> all_loop(rest, [first, ..acc])
+  }
+}
+
+// This is copied from the list module and not imported as importing it would
+// result in a circular dependency!
+@external(erlang, "lists", "reverse")
+fn reverse(list: List(a)) -> List(a) {
+  reverse_and_prepend(list, [])
+}
+
+fn reverse_and_prepend(list prefix: List(a), to suffix: List(a)) -> List(a) {
+  case prefix {
+    [] -> suffix
+    [first, ..rest] -> reverse_and_prepend(list: rest, to: [first, ..suffix])
   }
 }
 
@@ -344,15 +351,8 @@ pub fn values(options: List(Option(a))) -> List(a) {
 
 fn values_loop(list: List(Option(a)), acc: List(a)) -> List(a) {
   case list {
-    [] -> acc
-    [first, ..rest] -> {
-      let accumulate = fn(acc, item) {
-        case item {
-          Some(value) -> [value, ..acc]
-          None -> acc
-        }
-      }
-      accumulate(values_loop(rest, acc), first)
-    }
+    [] -> reverse(acc)
+    [None, ..rest] -> values_loop(rest, acc)
+    [Some(first), ..rest] -> values_loop(rest, [first, ..acc])
   }
 }

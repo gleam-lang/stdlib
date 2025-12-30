@@ -1,251 +1,143 @@
 import gleam/list
 import gleam/result
-import gleam/should
 
 pub fn is_ok_test() {
-  result.is_ok(Ok(1))
-  |> should.be_true
+  assert result.is_ok(Ok(1))
 
-  result.is_ok(Error(1))
-  |> should.be_false
+  assert !result.is_ok(Error(1))
 }
 
 pub fn is_error_test() {
-  result.is_error(Ok(1))
-  |> should.be_false
+  assert !result.is_error(Ok(1))
 
-  result.is_error(Error(1))
-  |> should.be_true
+  assert result.is_error(Error(1))
 }
 
 pub fn map_test() {
-  Ok(1)
-  |> result.map(fn(x) { x + 1 })
-  |> should.equal(Ok(2))
+  assert result.map(Ok(1), fn(x) { x + 1 }) == Ok(2)
 
-  Ok(1)
-  |> result.map(fn(_) { "2" })
-  |> should.equal(Ok("2"))
+  assert result.map(Ok(1), fn(_) { "2" }) == Ok("2")
 
-  Error(1)
-  |> result.map(fn(x) { x + 1 })
-  |> should.equal(Error(1))
+  assert result.map(Error(1), fn(x) { x + 1 }) == Error(1)
 }
 
 pub fn map_error_test() {
-  Ok(1)
-  |> result.map_error(fn(x) { x + 1 })
-  |> should.equal(Ok(1))
+  assert result.map_error(Ok(1), fn(x) { x + 1 }) == Ok(1)
 
-  Error(1)
-  |> result.map_error(fn(x) { #("ok", x + 1) })
-  |> should.equal(Error(#("ok", 2)))
+  assert result.map_error(Error(1), fn(x) { #("ok", x + 1) })
+    == Error(#("ok", 2))
 }
 
 pub fn flatten_test() {
-  Ok(Ok(1))
-  |> result.flatten
-  |> should.equal(Ok(1))
+  assert result.flatten(Ok(Ok(1))) == Ok(1)
 
-  Ok(Error(1))
-  |> result.flatten
-  |> should.equal(Error(1))
+  assert result.flatten(Ok(Error(1))) == Error(1)
 
-  Error(1)
-  |> result.flatten
-  |> should.equal(Error(1))
+  assert result.flatten(Error(1)) == Error(1)
 
-  Error(Error(1))
-  |> result.flatten
-  |> should.equal(Error(Error(1)))
+  assert result.flatten(Error(Error(1))) == Error(Error(1))
 }
 
 pub fn try_test() {
-  Error(1)
-  |> result.try(fn(x) { Ok(x + 1) })
-  |> should.equal(Error(1))
+  assert result.try(Error(1), fn(x) { Ok(x + 1) }) == Error(1)
 
-  Ok(1)
-  |> result.try(fn(x) { Ok(x + 1) })
-  |> should.equal(Ok(2))
+  assert result.try(Ok(1), fn(x) { Ok(x + 1) }) == Ok(2)
 
-  Ok(1)
-  |> result.try(fn(_) { Ok("type change") })
-  |> should.equal(Ok("type change"))
+  assert result.try(Ok(1), fn(_) { Ok("type change") }) == Ok("type change")
 
-  Ok(1)
-  |> result.try(fn(_) { Error(1) })
-  |> should.equal(Error(1))
-}
-
-pub fn then_test() {
-  Error(1)
-  |> result.then(fn(x) { Ok(x + 1) })
-  |> should.equal(Error(1))
-
-  Ok(1)
-  |> result.then(fn(x) { Ok(x + 1) })
-  |> should.equal(Ok(2))
-
-  Ok(1)
-  |> result.then(fn(_) { Ok("type change") })
-  |> should.equal(Ok("type change"))
-
-  Ok(1)
-  |> result.then(fn(_) { Error(1) })
-  |> should.equal(Error(1))
+  assert result.try(Ok(1), fn(_) { Error(1) }) == Error(1)
 }
 
 pub fn unwrap_test() {
-  Ok(1)
-  |> result.unwrap(50)
-  |> should.equal(1)
+  assert result.unwrap(Ok(1), 50) == 1
 
-  Error("nope")
-  |> result.unwrap(50)
-  |> should.equal(50)
+  assert result.unwrap(Error("nope"), 50) == 50
 }
 
 pub fn unwrap_error_test() {
-  Error(1)
-  |> result.unwrap_error(50)
-  |> should.equal(1)
+  assert result.unwrap_error(Error(1), 50) == 1
 
-  Ok("nope")
-  |> result.unwrap_error(50)
-  |> should.equal(50)
-}
-
-pub fn unwrap_both_test() {
-  Error(1)
-  |> result.unwrap_both
-  |> should.equal(1)
-
-  Ok("yup")
-  |> result.unwrap_both
-  |> should.equal("yup")
+  assert result.unwrap_error(Ok("nope"), 50) == 50
 }
 
 pub fn lazy_unwrap_test() {
-  Ok(1)
-  |> result.lazy_unwrap(fn() { 50 })
-  |> should.equal(1)
+  assert result.lazy_unwrap(Ok(1), fn() { 50 }) == 1
 
-  Error("nope")
-  |> result.lazy_unwrap(fn() { 50 })
-  |> should.equal(50)
+  assert result.lazy_unwrap(Error("nope"), fn() { 50 }) == 50
 }
 
 pub fn or_test() {
-  Ok(1)
-  |> result.or(Ok(2))
-  |> should.equal(Ok(1))
+  assert result.or(Ok(1), Ok(2)) == Ok(1)
 
-  Ok(1)
-  |> result.or(Error("Error 2"))
-  |> should.equal(Ok(1))
+  assert result.or(Ok(1), Error("Error 2")) == Ok(1)
 
-  Error("Error 1")
-  |> result.or(Ok(2))
-  |> should.equal(Ok(2))
+  assert result.or(Error("Error 1"), Ok(2)) == Ok(2)
 
-  Error("Error 1")
-  |> result.or(Error("Error 2"))
-  |> should.equal(Error("Error 2"))
+  assert result.or(Error("Error 1"), Error("Error 2")) == Error("Error 2")
 }
 
 pub fn lazy_or_test() {
-  Ok(1)
-  |> result.lazy_or(fn() { Ok(2) })
-  |> should.equal(Ok(1))
+  assert result.lazy_or(Ok(1), fn() { Ok(2) }) == Ok(1)
 
-  Ok(1)
-  |> result.lazy_or(fn() { Error("Error 2") })
-  |> should.equal(Ok(1))
+  assert result.lazy_or(Ok(1), fn() { Error("Error 2") }) == Ok(1)
 
-  Error("Error 1")
-  |> result.lazy_or(fn() { Ok(2) })
-  |> should.equal(Ok(2))
+  assert result.lazy_or(Error("Error 1"), fn() { Ok(2) }) == Ok(2)
 
-  Error("Error 1")
-  |> result.lazy_or(fn() { Error("Error 2") })
-  |> should.equal(Error("Error 2"))
+  assert result.lazy_or(Error("Error 1"), fn() { Error("Error 2") })
+    == Error("Error 2")
 }
 
 pub fn all_test() {
-  [Ok(1), Ok(2), Ok(3)]
-  |> result.all
-  |> should.equal(Ok([1, 2, 3]))
+  assert result.all([Ok(1), Ok(2), Ok(3)]) == Ok([1, 2, 3])
 
-  [Ok(1), Error("a"), Error("b"), Ok(3)]
-  |> result.all
-  |> should.equal(Error("a"))
+  assert result.all([Ok(1), Error("a"), Error("b"), Ok(3)]) == Error("a")
 }
 
 pub fn partition_test() {
-  []
-  |> result.partition
-  |> should.equal(#([], []))
+  assert result.partition([]) == #([], [])
 
-  [Ok(1), Ok(2), Ok(3)]
-  |> result.partition
-  |> should.equal(#([3, 2, 1], []))
+  assert result.partition([Ok(1), Ok(2), Ok(3)]) == #([3, 2, 1], [])
 
-  [Error("a"), Error("b"), Error("c")]
-  |> result.partition
-  |> should.equal(#([], ["c", "b", "a"]))
+  assert result.partition([Error("a"), Error("b"), Error("c")])
+    == #([], ["c", "b", "a"])
 
-  [Ok(1), Error("a"), Ok(2), Error("b"), Error("c")]
-  |> result.partition
-  |> should.equal(#([2, 1], ["c", "b", "a"]))
+  assert result.partition([Ok(1), Error("a"), Ok(2), Error("b"), Error("c")])
+    == #([2, 1], ["c", "b", "a"])
 
   // TCO test
-  list.repeat(Ok(1), 1_000_000)
-  |> result.partition
+  let _ =
+    list.repeat(Ok(1), 1_000_000)
+    |> result.partition
 
   list.repeat(Error("a"), 1_000_000)
   |> result.partition
 }
 
 pub fn replace_error_test() {
-  Error(Nil)
-  |> result.replace_error("Invalid")
-  |> should.equal(Error("Invalid"))
+  assert result.replace_error(Error(Nil), "Invalid") == Error("Invalid")
 }
 
 pub fn replace_error_with_ok_test() {
-  Ok(Nil)
-  |> result.replace_error("Invalid")
-  |> should.equal(Ok(Nil))
+  assert result.replace_error(Ok(Nil), "Invalid") == Ok(Nil)
 }
 
 pub fn replace_test() {
-  Ok(Nil)
-  |> result.replace("OK")
-  |> should.equal(Ok("OK"))
+  assert result.replace(Ok(Nil), "OK") == Ok("OK")
 }
 
 pub fn replace_with_ok_test() {
-  Error(Nil)
-  |> result.replace("Invalid")
-  |> should.equal(Error(Nil))
+  assert result.replace(Error(Nil), "Invalid") == Error(Nil)
 }
 
 pub fn values_test() {
-  result.values([Ok(1), Error(""), Ok(3)])
-  |> should.equal([1, 3])
+  assert result.values([Ok(1), Error(""), Ok(3)]) == [1, 3]
 }
 
 pub fn try_recover_test() {
-  Ok(1)
-  |> result.try_recover(fn(_) { panic })
-  |> should.equal(Ok(1))
+  assert result.try_recover(Ok(1), fn(_) { panic }) == Ok(1)
 
-  Error(1)
-  |> result.try_recover(fn(n) { Ok(n + 1) })
-  |> should.equal(Ok(2))
+  assert result.try_recover(Error(1), fn(n) { Ok(n + 1) }) == Ok(2)
 
-  Error(1)
-  |> result.try_recover(fn(_) { Error("failed to recover") })
-  |> should.equal(Error("failed to recover"))
+  assert result.try_recover(Error(1), fn(_) { Error("failed to recover") })
+    == Error("failed to recover")
 }

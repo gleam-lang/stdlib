@@ -63,7 +63,12 @@ pub fn parse(string: String) -> Result(Float, Nil)
 @external(javascript, "../gleam_stdlib.mjs", "float_to_string")
 pub fn to_string(x: Float) -> String
 
-/// Restricts a `Float` between a lower and upper bound.
+/// Restricts a float between two bounds.
+///
+/// Note: If the `min` argument is larger than the `max` argument then they
+/// will be swapped, so the minimum bound is always lower than the maximum
+/// bound.
+///
 ///
 /// ## Examples
 ///
@@ -72,10 +77,16 @@ pub fn to_string(x: Float) -> String
 /// // -> 1.4
 /// ```
 ///
+/// ```gleam
+/// clamp(1.2, min: 1.4, max: 0.6)
+/// // -> 1.2
+/// ```
+///
 pub fn clamp(x: Float, min min_bound: Float, max max_bound: Float) -> Float {
-  x
-  |> min(max_bound)
-  |> max(min_bound)
+  case min_bound >=. max_bound {
+    True -> x |> min(min_bound) |> max(max_bound)
+    False -> x |> min(max_bound) |> max(min_bound)
+  }
 }
 
 /// Compares two `Float`s, returning an `Order`:
@@ -135,7 +146,7 @@ pub fn loosely_compare(
 }
 
 /// Checks for equality of two `Float`s within a tolerance,
-/// returning an `Bool`.
+/// returning a `Bool`.
 ///
 /// This function allows Float comparison while handling
 /// [Floating Point Imprecision](https://en.wikipedia.org/wiki/Floating-point_arithmetic#Accuracy_problems).
@@ -315,7 +326,7 @@ pub fn absolute_value(x: Float) -> Float {
   }
 }
 
-/// Returns the results of the base being raised to the power of the
+/// Returns the result of the base being raised to the power of the
 /// exponent, as a `Float`.
 ///
 /// ## Examples
@@ -451,10 +462,12 @@ fn product_loop(numbers: List(Float), initial: Float) -> Float {
 @external(javascript, "../gleam_stdlib.mjs", "random_uniform")
 pub fn random() -> Float
 
-/// Computes the modulo of an float division of inputs as a `Result`.
+/// Computes the modulo of a float division of inputs as a `Result`.
 ///
 /// Returns division of the inputs as a `Result`: If the given divisor equals
 /// `0`, this function returns an `Error`.
+///
+/// The computed value will always have the same sign as the `divisor`.
 ///
 /// ## Examples
 ///
@@ -595,7 +608,7 @@ pub fn subtract(a: Float, b: Float) -> Float {
   a -. b
 }
 
-/// Returns the natural logarithm (base e) of the given as a `Result`. If the
+/// Returns the natural logarithm (base e) of the given `Float` as a `Result`. If the
 /// input is less than or equal to 0, returns `Error(Nil)`.
 ///
 /// ## Examples

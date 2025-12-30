@@ -165,15 +165,6 @@ pub fn try(
   }
 }
 
-/// An alias for `try`. See the documentation for that function for more information.
-///
-pub fn then(
-  result: Result(a, e),
-  apply fun: fn(a) -> Result(b, e),
-) -> Result(b, e) {
-  try(result, fun)
-}
-
 /// Extracts the `Ok` value from a result, returning a default value if the result
 /// is an `Error`.
 ///
@@ -237,28 +228,6 @@ pub fn unwrap_error(result: Result(a, e), or default: e) -> e {
   case result {
     Ok(_) -> default
     Error(e) -> e
-  }
-}
-
-/// Extracts the inner value from a result. Both the value and error must be of
-/// the same type.
-///
-/// ## Examples
-///
-/// ```gleam
-/// unwrap_both(Error(1))
-/// // -> 1
-/// ```
-///
-/// ```gleam
-/// unwrap_both(Ok(2))
-/// // -> 2
-/// ```
-///
-pub fn unwrap_both(result: Result(a, a)) -> a {
-  case result {
-    Ok(a) -> a
-    Error(a) -> a
   }
 }
 
@@ -346,7 +315,7 @@ pub fn lazy_or(
 /// ```
 ///
 pub fn all(results: List(Result(a, e))) -> Result(List(a), e) {
-  list.try_map(results, fn(x) { x })
+  list.try_map(results, fn(result) { result })
 }
 
 /// Given a list of results, returns a pair where the first element is a list
@@ -425,7 +394,7 @@ pub fn replace_error(result: Result(a, e), error: f) -> Result(a, f) {
 /// ```
 ///
 pub fn values(results: List(Result(a, e))) -> List(a) {
-  list.filter_map(results, fn(r) { r })
+  list.filter_map(results, fn(result) { result })
 }
 
 /// Updates a value held within the `Error` of a result by calling a given function

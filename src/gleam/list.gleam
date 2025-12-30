@@ -26,7 +26,6 @@ import gleam/dict.{type Dict}
 import gleam/float
 import gleam/int
 import gleam/order.{type Order}
-import gleam/pair
 
 /// Counts the number of elements in a given list.
 ///
@@ -88,12 +87,18 @@ fn length_loop(list: List(a), count: Int) -> Int {
 /// ```
 ///
 pub fn count(list: List(a), where predicate: fn(a) -> Bool) -> Int {
-  fold(list, 0, fn(acc, value) {
-    case predicate(value) {
-      True -> acc + 1
-      False -> acc
-    }
-  })
+  count_loop(list, predicate, 0)
+}
+
+fn count_loop(list: List(a), predicate: fn(a) -> Bool, acc: Int) -> Int {
+  case list {
+    [] -> acc
+    [first, ..rest] ->
+      case predicate(first) {
+        True -> count_loop(rest, predicate, acc + 1)
+        False -> count_loop(rest, predicate, acc)
+      }
+  }
 }
 
 /// Creates a new list from a given list containing the same elements but in the
@@ -127,7 +132,11 @@ pub fn reverse(list: List(a)) -> List(a) {
   reverse_and_prepend(list, [])
 }
 
-// Reverses a list and prepends it to another list
+/// Reverses a list and prepends it to another list.
+/// This function runs in linear time, proportional to the length of the list
+/// to prepend.
+///
+@external(erlang, "lists", "reverse")
 fn reverse_and_prepend(list prefix: List(a), to suffix: List(a)) -> List(a) {
   case prefix {
     [] -> suffix
@@ -287,16 +296,7 @@ pub fn rest(list: List(a)) -> Result(List(a), Nil) {
 /// ```
 ///
 pub fn group(list: List(v), by key: fn(v) -> k) -> Dict(k, List(v)) {
-  fold(list, dict.new(), update_group(key))
-}
-
-fn update_group(f: fn(a) -> k) -> fn(Dict(k, List(a)), a) -> Dict(k, List(a)) {
-  fn(groups, elem) {
-    case dict.get(groups, f(elem)) {
-      Ok(existing) -> dict.insert(groups, f(elem), [elem, ..existing])
-      Error(_) -> dict.insert(groups, f(elem), [elem])
-    }
-  }
+  dict.group(key, list)
 }
 
 /// Returns a new list containing only the elements from the first list for
@@ -367,8 +367,7 @@ fn filter_map_loop(
   }
 }
 
-/// Returns a new list containing only the elements of the first list after the
-/// function has been applied to each one.
+/// Returns a new list containing the results of applying the supplied function to each element.
 ///
 /// ## Examples
 ///
@@ -390,7 +389,7 @@ fn map_loop(list: List(a), fun: fn(a) -> b, acc: List(b)) -> List(b) {
 
 /// Combines two lists into a single list using the given function.
 ///
-/// If a list is longer than the other the extra elements are dropped.
+/// If a list is longer than the other, the extra elements are dropped.
 ///
 /// ## Examples
 ///
@@ -438,16 +437,26 @@ pub fn map_fold(
   from initial: acc,
   with fun: fn(acc, a) -> #(acc, b),
 ) -> #(acc, List(b)) {
-  fold(over: list, from: #(initial, []), with: fn(acc, item) {
-    let #(current_acc, items) = acc
-    let #(next_acc, next_item) = fun(current_acc, item)
-    #(next_acc, [next_item, ..items])
-  })
-  |> pair.map_second(reverse)
+  map_fold_loop(list, fun, initial, [])
 }
 
-/// Returns a new list containing only the elements of the first list after the
-/// function has been applied to each one and their index.
+fn map_fold_loop(
+  list: List(a),
+  fun: fn(acc, a) -> #(acc, b),
+  acc: acc,
+  list_acc: List(b),
+) -> #(acc, List(b)) {
+  case list {
+    [] -> #(acc, reverse(list_acc))
+    [first, ..rest] -> {
+      let #(acc, first) = fun(acc, first)
+      map_fold_loop(rest, fun, acc, [first, ..list_acc])
+    }
+  }
+}
+
+/// Similar to `map`, but the supplied function will also be passed the index
+/// of the element being mapped as an additional argument.
 ///
 /// The index starts at 0, so the first element is 0, the second is 1, and so
 /// on.
@@ -535,7 +544,7 @@ fn try_map_loop(
 /// Returns a list that is the given list with up to the given number of
 /// elements removed from the front of the list.
 ///
-/// If the element has less than the number of elements an empty list is
+/// If the list has less than the number of elements an empty list is
 /// returned.
 ///
 /// This function runs in linear time but does not copy the list.
@@ -566,7 +575,7 @@ pub fn drop(from list: List(a), up_to n: Int) -> List(a) {
 /// Returns a list containing the first given number of elements from the given
 /// list.
 ///
-/// If the element has less than the number of elements then the full list is
+/// If the list has less than the number of elements then the full list is
 /// returned.
 ///
 /// This function runs in linear time.
@@ -656,7 +665,7 @@ fn append_loop(first: List(a), second: List(a)) -> List(a) {
 }
 
 /// Prefixes an item to a list. This can also be done using the dedicated
-/// syntax instead
+/// syntax instead.
 ///
 /// ```gleam
 /// let existing_list = [2, 3, 4]
@@ -672,18 +681,10 @@ pub fn prepend(to list: List(a), this item: a) -> List(a) {
   [item, ..list]
 }
 
-fn flatten_loop(lists: List(List(a)), acc: List(a)) -> List(a) {
-  case lists {
-    [] -> reverse(acc)
-    [list, ..further_lists] ->
-      flatten_loop(further_lists, reverse_and_prepend(list: list, to: acc))
-  }
-}
-
-/// This is the same as `concat`: it joins a list of lists into a single
-/// list.
+/// Joins a list of lists into a single list.
 ///
-/// This function traverses all elements twice.
+/// This function traverses all elements twice on the JavaScript target.
+/// This function traverses all elements once on the Erlang target.
 ///
 /// ## Examples
 ///
@@ -692,8 +693,17 @@ fn flatten_loop(lists: List(List(a)), acc: List(a)) -> List(a) {
 /// // -> [1, 2, 3]
 /// ```
 ///
+@external(erlang, "lists", "append")
 pub fn flatten(lists: List(List(a))) -> List(a) {
   flatten_loop(lists, [])
+}
+
+fn flatten_loop(lists: List(List(a)), acc: List(a)) -> List(a) {
+  case lists {
+    [] -> reverse(acc)
+    [list, ..further_lists] ->
+      flatten_loop(further_lists, reverse_and_prepend(list, to: acc))
+  }
 }
 
 /// Maps the list with the given function into a list of lists, and then flattens it.
@@ -706,8 +716,7 @@ pub fn flatten(lists: List(List(a))) -> List(a) {
 /// ```
 ///
 pub fn flat_map(over list: List(a), with fun: fn(a) -> List(b)) -> List(b) {
-  map(list, fun)
-  |> flatten
+  flatten(map(list, fun))
 }
 
 /// Reduces a list of elements into a single value by calling a given function
@@ -751,13 +760,22 @@ pub fn fold_right(
   }
 }
 
-/// Like fold but the folding function also receives the index of the current element.
+/// Like `fold` but the folding function also receives the index of the current element.
 ///
 /// ## Examples
 ///
 /// ```gleam
 /// ["a", "b", "c"]
-/// |> index_fold([], fn(acc, item, index) { ... })
+/// |> index_fold("", fn(acc, item, index) {
+///    acc <> int.to_string(index) <> ":" <> item <> " "
+/// })
+/// // -> "0:a 1:b 2:c"
+/// ```
+///
+/// ```gleam
+/// [10, 20, 30]
+/// |> index_fold(0, fn(acc, item, index) { acc + item * index })
+/// // -> 80
 /// ```
 ///
 pub fn index_fold(
@@ -1636,91 +1654,6 @@ pub fn key_filter(
   })
 }
 
-/// Removes the first element in a given list for which the predicate function returns `True`.
-///
-/// Returns `Error(Nil)` if no such element is found.
-///
-/// ## Examples
-///
-/// ```gleam
-/// pop([1, 2, 3], fn(x) { x > 2 })
-/// // -> Ok(#(3, [1, 2]))
-/// ```
-///
-/// ```gleam
-/// pop([1, 2, 3], fn(x) { x > 4 })
-/// // -> Error(Nil)
-/// ```
-///
-/// ```gleam
-/// pop([], fn(_) { True })
-/// // -> Error(Nil)
-/// ```
-///
-@deprecated("This function will be removed in the next gleam_stdlib version")
-pub fn pop(
-  in list: List(a),
-  one_that is_desired: fn(a) -> Bool,
-) -> Result(#(a, List(a)), Nil) {
-  pop_loop(list, is_desired, [])
-}
-
-fn pop_loop(haystack, predicate, checked) {
-  case haystack {
-    [] -> Error(Nil)
-    [first, ..rest] ->
-      case predicate(first) {
-        True -> Ok(#(first, append(reverse(checked), rest)))
-        False -> pop_loop(rest, predicate, [first, ..checked])
-      }
-  }
-}
-
-/// Removes the first element in a given list for which the given function returns
-/// `Ok(new_value)`, then returns the wrapped `new_value` as well as list with the value removed.
-///
-/// Returns `Error(Nil)` if no such element is found.
-///
-/// ## Examples
-///
-/// ```gleam
-/// pop_map([[], [2], [3]], first)
-/// // -> Ok(#(2, [[], [3]]))
-/// ```
-///
-/// ```gleam
-/// pop_map([[], []], first)
-/// // -> Error(Nil)
-/// ```
-///
-/// ```gleam
-/// pop_map([], first)
-/// // -> Error(Nil)
-/// ```
-///
-@deprecated("This function will be removed in the next gleam_stdlib version")
-pub fn pop_map(
-  in haystack: List(a),
-  one_that is_desired: fn(a) -> Result(b, c),
-) -> Result(#(b, List(a)), Nil) {
-  pop_map_loop(haystack, is_desired, [])
-}
-
-fn pop_map_loop(
-  list: List(a),
-  mapper: fn(a) -> Result(b, e),
-  checked: List(a),
-) -> Result(#(b, List(a)), Nil) {
-  case list {
-    [] -> Error(Nil)
-    [first, ..rest] ->
-      case mapper(first) {
-        Ok(mapped) -> Ok(#(mapped, append(reverse(checked), rest)))
-        Error(_) -> pop_map_loop(rest, mapper, [first, ..checked])
-      }
-  }
-}
-
 /// Given a list of 2-element tuples, finds the first tuple that has a given
 /// key as the first element. This function will return the second element
 /// of the found tuple and list with tuple removed.
@@ -1892,19 +1825,39 @@ fn partition_loop(list, categorise, trues, falses) {
 pub fn permutations(list: List(a)) -> List(List(a)) {
   case list {
     [] -> [[]]
-    [_, ..] ->
-      index_map(list, fn(i, i_idx) {
-        index_fold(list, [], fn(acc, j, j_idx) {
-          case i_idx == j_idx {
-            True -> acc
-            False -> [j, ..acc]
-          }
-        })
-        |> reverse
-        |> permutations
-        |> map(fn(permutation) { [i, ..permutation] })
-      })
-      |> flatten
+    l -> permutation_zip(l, [], [])
+  }
+}
+
+fn permutation_zip(
+  list: List(a),
+  rest: List(a),
+  acc: List(List(a)),
+) -> List(List(a)) {
+  case list {
+    [] -> reverse(acc)
+    [head, ..tail] ->
+      permutation_prepend(
+        head,
+        permutations(reverse_and_prepend(rest, tail)),
+        tail,
+        [head, ..rest],
+        acc,
+      )
+  }
+}
+
+fn permutation_prepend(
+  el: a,
+  permutations: List(List(a)),
+  list_1: List(a),
+  list_2: List(a),
+  acc: List(List(a)),
+) -> List(List(a)) {
+  case permutations {
+    [] -> permutation_zip(list_1, list_2, acc)
+    [head, ..tail] ->
+      permutation_prepend(el, tail, list_1, list_2, [[el, ..head], ..acc])
   }
 }
 
@@ -2174,7 +2127,11 @@ fn scan_loop(
 /// ```
 ///
 pub fn last(list: List(a)) -> Result(a, Nil) {
-  reduce(list, fn(_, elem) { elem })
+  case list {
+    [] -> Error(Nil)
+    [last] -> Ok(last)
+    [_, ..rest] -> last(rest)
+  }
 }
 
 /// Return unique combinations of elements in the list.
@@ -2192,24 +2149,19 @@ pub fn last(list: List(a)) -> Result(a, Nil) {
 /// ```
 ///
 pub fn combinations(items: List(a), by n: Int) -> List(List(a)) {
-  case n {
-    0 -> [[]]
-    _ ->
-      case items {
-        [] -> []
-        [first, ..rest] -> {
-          let first_combinations =
-            map(combinations(rest, n - 1), with: fn(com) { [first, ..com] })
-            |> reverse
-          fold(first_combinations, combinations(rest, n), fn(acc, c) {
-            [c, ..acc]
-          })
-        }
-      }
+  case n, items {
+    0, _ -> [[]]
+    _, [] -> []
+    _, [first, ..rest] ->
+      rest
+      |> combinations(n - 1)
+      |> map(fn(combination) { [first, ..combination] })
+      |> reverse
+      |> fold(combinations(rest, n), fn(acc, c) { [c, ..acc] })
   }
 }
 
-/// Return unique pair combinations of elements in the list
+/// Return unique pair combinations of elements in the list.
 ///
 /// ## Examples
 ///
@@ -2219,16 +2171,16 @@ pub fn combinations(items: List(a), by n: Int) -> List(List(a)) {
 /// ```
 ///
 pub fn combination_pairs(items: List(a)) -> List(#(a, a)) {
-  combination_pairs_loop(items)
-  |> flatten
+  combination_pairs_loop(items, [])
 }
 
-fn combination_pairs_loop(items: List(a)) -> List(List(#(a, a))) {
+fn combination_pairs_loop(items: List(a), acc: List(#(a, a))) -> List(#(a, a)) {
   case items {
-    [] -> []
+    [] -> reverse(acc)
     [first, ..rest] -> {
       let first_combinations = map(rest, with: fn(other) { #(first, other) })
-      [first_combinations, ..combination_pairs_loop(rest)]
+      let acc = reverse_and_prepend(first_combinations, acc)
+      combination_pairs_loop(rest, acc)
     }
   }
 }
@@ -2243,7 +2195,8 @@ fn combination_pairs_loop(items: List(a)) -> List(List(#(a, a))) {
 /// ```
 ///
 pub fn interleave(list: List(List(a))) -> List(a) {
-  transpose(list)
+  list
+  |> transpose
   |> flatten
 }
 
@@ -2251,7 +2204,7 @@ pub fn interleave(list: List(List(a))) -> List(a) {
 ///
 /// Notice: This function is not tail recursive,
 /// and thus may exceed stack size if called,
-/// with large lists (on target JavaScript).
+/// with large lists (on the JavaScript target).
 ///
 /// ## Examples
 ///
@@ -2260,25 +2213,34 @@ pub fn interleave(list: List(List(a))) -> List(a) {
 /// // -> [[1, 101], [2, 102], [3, 103]]
 /// ```
 ///
-pub fn transpose(list_of_list: List(List(a))) -> List(List(a)) {
-  let take_first = fn(list) {
-    case list {
-      [] -> []
-      [first] -> [first]
-      [first, ..] -> [first]
+pub fn transpose(list_of_lists: List(List(a))) -> List(List(a)) {
+  transpose_loop(list_of_lists, [])
+}
+
+fn transpose_loop(rows: List(List(a)), columns: List(List(a))) -> List(List(a)) {
+  case rows {
+    [] -> reverse(columns)
+    _ -> {
+      let #(column, rest) = take_firsts(rows, [], [])
+      case column {
+        [_, ..] -> transpose_loop(rest, [column, ..columns])
+        [] -> transpose_loop(rest, columns)
+      }
     }
   }
+}
 
-  case list_of_list {
-    [] -> []
-    [[], ..rest] -> transpose(rest)
-    rows -> {
-      let firsts =
-        rows
-        |> map(take_first)
-        |> flatten
-      let rest = transpose(map(rows, drop(_, 1)))
-      [firsts, ..rest]
+fn take_firsts(
+  rows: List(List(a)),
+  column: List(a),
+  remaining_rows: List(List(a)),
+) -> #(List(a), List(List(a))) {
+  case rows {
+    [] -> #(reverse(column), reverse(remaining_rows))
+    [[], ..rest] -> take_firsts(rest, column, remaining_rows)
+    [[first, ..remaining_row], ..rest_rows] -> {
+      let remaining_rows = [remaining_row, ..remaining_rows]
+      take_firsts(rest_rows, [first, ..column], remaining_rows)
     }
   }
 }
@@ -2319,8 +2281,7 @@ fn do_shuffle_by_pair_indexes(
 
 /// Takes a list and a comparator, and returns the maximum element in the list
 ///
-///
-/// ## Example
+/// ## Examples
 ///
 /// ```gleam
 /// range(1, 10) |> list.max(int.compare)
@@ -2331,20 +2292,31 @@ fn do_shuffle_by_pair_indexes(
 /// ["a", "c", "b"] |> list.max(string.compare)
 /// // -> Ok("c")
 /// ```
+///
 pub fn max(
   over list: List(a),
   with compare: fn(a, a) -> Order,
 ) -> Result(a, Nil) {
-  reduce(over: list, with: fn(acc, other) {
-    case compare(acc, other) {
-      order.Gt -> acc
-      order.Lt | order.Eq -> other
-    }
-  })
+  case list {
+    [] -> Error(Nil)
+    [first, ..rest] -> Ok(max_loop(rest, compare, first))
+  }
 }
 
-/// Take a random sample of k elements from a list using reservoir sampling via
-/// Algo L. Returns an empty list if the sample size is less than or equal to 0.
+fn max_loop(list, compare, max) {
+  case list {
+    [] -> max
+    [first, ..rest] ->
+      case compare(first, max) {
+        order.Gt -> max_loop(rest, compare, first)
+        order.Lt | order.Eq -> max_loop(rest, compare, max)
+      }
+  }
+}
+
+/// Returns a random sample of up to n elements from a list using reservoir
+/// sampling via [Algorithm L](https://en.wikipedia.org/wiki/Reservoir_sampling#Optimal:_Algorithm_L).
+/// Returns an empty list if the sample size is less than or equal to 0.
 ///
 /// Order is not random, only selection is.
 ///
@@ -2355,55 +2327,81 @@ pub fn max(
 /// // -> [2, 4, 5]  // A random sample of 3 items
 /// ```
 ///
-pub fn sample(list: List(a), k: Int) -> List(a) {
-  case k <= 0 {
+pub fn sample(from list: List(a), up_to n: Int) -> List(a) {
+  let #(reservoir, rest) = build_reservoir(from: list, sized: n)
+
+  case dict.is_empty(reservoir) {
+    // If the reservoire is empty that means we were asking to sample 0 or
+    // less items. That doesn't make much sense, so we just return an empty
+    // list.
     True -> []
+
+    // Otherwise we keep looping over the remaining part of the list replacing
+    // random elements in the reservoir.
     False -> {
-      let #(reservoir, list) = split(list, k)
-
-      case length(reservoir) < k {
-        True -> reservoir
-        False -> {
-          let reservoir =
-            reservoir
-            |> map2(range(0, k - 1), _, fn(a, b) { #(a, b) })
-            |> dict.from_list
-
-          let w = float.exponential(log_random() /. int.to_float(k))
-
-          sample_loop(list, reservoir, k, k, w) |> dict.values
-        }
-      }
+      let w = float.exponential(log_random() /. int.to_float(n))
+      dict.values(sample_loop(rest, reservoir, n, w))
     }
   }
 }
 
 fn sample_loop(
-  list,
+  list: List(a),
   reservoir: Dict(Int, a),
-  k,
-  index: Int,
+  n: Int,
   w: Float,
 ) -> Dict(Int, a) {
   let skip = {
-    let assert Ok(log_result) = float.logarithm(1.0 -. w)
-    log_random() /. log_result |> float.floor |> float.round
+    let assert Ok(log) = float.logarithm(1.0 -. w)
+    float.round(float.floor(log_random() /. log))
   }
-
-  let index = index + skip + 1
 
   case drop(list, skip) {
     [] -> reservoir
     [first, ..rest] -> {
-      let reservoir = dict.insert(reservoir, int.random(k), first)
-      let w = w *. float.exponential(log_random() /. int.to_float(k))
-      sample_loop(rest, reservoir, k, index, w)
+      let reservoir = dict.insert(reservoir, int.random(n), first)
+      let w = w *. float.exponential(log_random() /. int.to_float(n))
+      sample_loop(rest, reservoir, n, w)
     }
   }
 }
 
+const min_positive = 2.2250738585072014e-308
+
 fn log_random() -> Float {
-  let min_positive = 2.2250738585072014e-308
   let assert Ok(random) = float.logarithm(float.random() +. min_positive)
   random
+}
+
+/// Builds the initial reservoir used by Algorithm L.
+/// This is a dictionary with keys ranging from `0` up to `n - 1` where each
+/// value is the corresponding element at that position in `list`.
+///
+/// This also returns the remaining elements of `list` that didn't end up in
+/// the reservoir.
+///
+fn build_reservoir(from list: List(a), sized n: Int) -> #(Dict(Int, a), List(a)) {
+  build_reservoir_loop(list, n, dict.new())
+}
+
+fn build_reservoir_loop(
+  list: List(a),
+  size: Int,
+  reservoir: Dict(Int, a),
+) -> #(Dict(Int, a), List(a)) {
+  let reservoir_size = dict.size(reservoir)
+  case reservoir_size >= size {
+    // The reservoir already has the size we wanted.
+    True -> #(reservoir, list)
+
+    // Otherwise we add another element from the list to the reservoir
+    False ->
+      case list {
+        [] -> #(reservoir, [])
+        [first, ..rest] -> {
+          let reservoir = dict.insert(reservoir, reservoir_size, first)
+          build_reservoir_loop(rest, size, reservoir)
+        }
+      }
+  }
 }
