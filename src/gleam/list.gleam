@@ -2314,6 +2314,27 @@ fn max_loop(list, compare, max) {
   }
 }
 
+/// Takes a list and a comparator, and returns the minimum element in the list
+///
+/// ## Examples
+///
+/// ```gleam
+/// range(1, 10) |> list.max(int.compare)
+/// // -> Ok(1)
+/// ```
+///
+/// ```gleam
+/// ["a", "c", "b"] |> list.max(string.compare)
+/// // -> Ok("a")
+/// ```
+///
+pub fn min(
+  over list: List(a),
+  with compare: fn(a, a) -> Order,
+) -> Result(a, Nil) {
+  max(over: list, with: order.reverse(compare))
+}
+
 /// Returns a random sample of up to n elements from a list using reservoir
 /// sampling via [Algorithm L](https://en.wikipedia.org/wiki/Reservoir_sampling#Optimal:_Algorithm_L).
 /// Returns an empty list if the sample size is less than or equal to 0.

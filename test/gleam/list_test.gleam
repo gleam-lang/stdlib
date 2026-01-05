@@ -966,6 +966,20 @@ pub fn max_test() {
   assert list.max([-1.0, 1.2, 1.104], float.compare) == Ok(1.2)
 
   assert list.max(["a", "c", "b"], string.compare) == Ok("c")
+
+  assert list.max([1, 1], int.compare) == Ok(1)
+}
+
+pub fn min_test() {
+  assert list.min([], int.compare) == Error(Nil)
+
+  assert list.min([1, 3, 2], int.compare) == Ok(1)
+
+  assert list.min([-1.0, 1.2, 1.104], float.compare) == Ok(-1.0)
+
+  assert list.min(["a", "c", "b"], string.compare) == Ok("a")
+
+  assert list.min([1, 1], int.compare) == Ok(1)
 }
 
 pub fn sample_test() {
