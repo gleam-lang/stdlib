@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.68.0 - Unreleased
+## v0.68.0 - 2026-01-08
 
 - The dict implementation has been rewritten implementing the CHAMP (Compressed
   Hash Array Mapped Prefix-trees) data structure as described by M.J. Steindorfer
