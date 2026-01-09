@@ -668,6 +668,13 @@ fn decode_bool(data: Dynamic) -> #(Bool, List(DecodeError)) {
 
 /// A decoder that decodes `Int` values.
 ///
+/// This will not coerse float values into int values, so on platforms with
+/// distinct runtime int and float types (Erlang, not JavaScript) it will fail,
+/// even if the float is a whole number (e.g. 1.0).
+///
+/// If you want to decode both ints and floats you may want to use the `one_of`
+/// function.
+///
 /// ## Examples
 ///
 /// ```gleam
@@ -686,6 +693,13 @@ fn decode_int(data: Dynamic) -> #(Int, List(DecodeError)) {
 fn dynamic_int(data: Dynamic) -> Result(Int, Int)
 
 /// A decoder that decodes `Float` values.
+///
+/// This will not coerse int values into float values, so on platforms with
+/// distinct runtime int and float types (Erlang, not JavaScript) it will fail
+/// for ints. One time this may happen is when decoding JSON data.
+///
+/// If you want to decode both ints and floats you may want to use the `one_of`
+/// function.
 ///
 /// ## Examples
 ///
