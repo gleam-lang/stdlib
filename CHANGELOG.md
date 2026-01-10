@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.68.1 - 2026-01-10
+
+- Fixed a bug in the dict implementation where using variants without fields
+  as keys could cause a crash.
+
 ## v0.68.0 - 2026-01-08
 
 - The dict implementation has been rewritten implementing the CHAMP (Compressed
