@@ -417,7 +417,9 @@ function nextGeneration(dict) {
     node[generationKey] = 0;
 
     // queue all other referenced nodes
-    const nodeStart = Math.imul(popcount(node.datamap), 2);
+    // We need to query the length from the nodemap, as we don't know if this
+    //  is an overflow node or not! if it is, it will never have datamap set!
+    const nodeStart = data.length - popcount(node.nodemap);
     for (let i = nodeStart; i < node.data.length; ++i) {
       queue.push(node.data[i]);
     }
@@ -521,7 +523,7 @@ function insertIntoNode(transient, node, key, value, hash, shift) {
   const childShift = shift + bits;
 
   let child = emptyNode;
-  child = insertIntoNode(transient, emptyNode, key, value, hash, childShift);
+  child = insertIntoNode(transient, child, key, value, hash, childShift);
 
   const key2 = data[dataidx];
   const value2 = data[dataidx + 1];
@@ -638,7 +640,9 @@ export function map(dict, fun) {
     const node = queue.pop();
     const data = node.data;
     // every node contains popcount(datamap) direct entries
-    const edgesStart = Math.imul(popcount(node.datamap), 2);
+    // We need to query the length from the nodemap, as we don't know if this
+    //  is an overflow node or not! if it is, it will never have datamap set!
+    const edgesStart = data.length - popcount(node.nodemap);
     for (let i = 0; i < edgesStart; i += 2) {
       // we copied the node while queueing it, so direct mutation here is safe.
       data[i + 1] = fun(data[i], data[i + 1]);
@@ -662,7 +666,9 @@ export function fold(dict, state, fun) {
     const node = queue.pop();
     const data = node.data;
     // every node contains popcount(datamap) direct entries
-    const edgesStart = Math.imul(popcount(node.datamap), 2);
+    // We need to query the length from the nodemap, as we don't know if this
+    //  is an overflow node or not! if it is, it will never have datamap set!
+    const edgesStart = data.length - popcount(node.nodemap);
     for (let i = 0; i < edgesStart; i += 2) {
       state = fun(state, data[i], data[i + 1]);
     }

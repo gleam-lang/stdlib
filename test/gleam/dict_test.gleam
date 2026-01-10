@@ -417,6 +417,70 @@ pub fn hash_collision_overflow_test() {
   assert dict.get(d, CollidingKey2) == Ok(2)
 }
 
+type Colour {
+  Red
+  Green
+  Blue
+}
+
+pub fn hash_collision_fold_test() {
+  let colours =
+    dict.from_list([
+      #(Red, "red"),
+      #(Green, "green"),
+      #(Blue, "blue"),
+    ])
+
+  let str =
+    dict.fold(colours, "", fn(acc, _color, name) { acc <> name <> "\n" })
+  assert string.contains(str, "green\n")
+  assert string.contains(str, "red\n")
+  assert string.contains(str, "blue\n")
+}
+
+pub fn hash_collision_map_test() {
+  let colours =
+    dict.from_list([
+      #(Red, "red"),
+      #(Green, "green"),
+      #(Blue, "blue"),
+    ])
+
+  let uppercase =
+    dict.map_values(colours, fn(_colour, name) { string.uppercase(name) })
+
+  assert dict.size(uppercase) == 3
+  assert dict.get(uppercase, Red) == Ok("RED")
+  assert dict.get(uppercase, Green) == Ok("GREEN")
+  assert dict.get(uppercase, Blue) == Ok("BLUE")
+}
+
+pub fn hash_collision_values_test() {
+  let colours =
+    dict.from_list([
+      #(Red, "red"),
+      #(Green, "green"),
+      #(Blue, "blue"),
+    ])
+
+  assert list.sort(dict.values(colours), string.compare)
+    == ["blue", "green", "red"]
+}
+
+pub fn hash_collision_keys_test() {
+  let colours =
+    dict.from_list([
+      #(Red, "red"),
+      #(Green, "green"),
+      #(Blue, "blue"),
+    ])
+
+  assert dict.keys(colours)
+    |> list.filter_map(dict.get(colours, _))
+    |> list.sort(string.compare)
+    == ["blue", "green", "red"]
+}
+
 fn test_random_operations(
   initial_seed: Int,
   num_ops: Int,
