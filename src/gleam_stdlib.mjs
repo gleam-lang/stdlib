@@ -1,21 +1,28 @@
 import {
   BitArray,
-  Error,
-  List,
-  Ok,
-  Result,
+  List$Empty,
+  List$NonEmpty,
+  List$isEmpty,
+  List$isNonEmpty,
+  Result$Ok,
+  Result$Error,
+  Result$isOk,
+  Result$isError,
   UtfCodepoint,
   stringBits,
   toBitArray,
   bitArraySlice,
-  NonEmpty,
-  Empty,
   CustomType,
 } from "./gleam.mjs";
 import { Some, None } from "./gleam/option.mjs";
-import { default as Dict, fold as dict_fold, get as dict_get, from as dict_from_iterable } from "./dict.mjs";
+import {
+  default as Dict,
+  fold as dict_fold,
+  get as dict_get,
+  from as dict_from_iterable,
+} from "./dict.mjs";
 import { classify } from "./gleam/dynamic.mjs";
-import { DecodeError } from "./gleam/dynamic/decode.mjs";
+import { DecodeError$DecodeError } from "./gleam/dynamic/decode.mjs";
 
 const Nil = undefined;
 
@@ -25,17 +32,17 @@ export function identity(x) {
 
 export function parse_int(value) {
   if (/^[-+]?(\d+)$/.test(value)) {
-    return new Ok(parseInt(value));
+    return Result$Ok(parseInt(value));
   } else {
-    return new Error(Nil);
+    return Result$Error(Nil);
   }
 }
 
 export function parse_float(value) {
   if (/^[-+]?(\d+)\.(\d+)([eE][-+]?\d+)?$/.test(value)) {
-    return new Ok(parseFloat(value));
+    return Result$Ok(parseFloat(value));
   } else {
-    return new Error(Nil);
+    return Result$Error(Nil);
   }
 }
 
@@ -87,16 +94,16 @@ const int_base_patterns = {
 
 export function int_from_base_string(string, base) {
   if (int_base_patterns[base].test(string.replace(/^-/, "").toLowerCase())) {
-    return new Error(Nil);
+    return Result$Error(Nil);
   }
 
   const result = parseInt(string, base);
 
   if (isNaN(result)) {
-    return new Error(Nil);
+    return Result$Error(Nil);
   }
 
-  return new Ok(result);
+  return Result$Ok(result);
 }
 
 export function string_replace(string, target, substitute) {
@@ -126,9 +133,9 @@ export function string_length(string) {
 export function graphemes(string) {
   const iterator = graphemes_iterator(string);
   if (iterator) {
-    return List.fromArray(Array.from(iterator).map((item) => item.segment));
+    return arrayToList(Array.from(iterator).map((item) => item.segment));
   } else {
-    return List.fromArray(string.match(/./gsu));
+    return arrayToList(string.match(/./gsu));
   }
 }
 
@@ -150,9 +157,9 @@ export function pop_grapheme(string) {
     first = string.match(/./su)?.[0];
   }
   if (first) {
-    return new Ok([first, string.slice(first.length)]);
+    return Result$Ok([first, string.slice(first.length)]);
   } else {
-    return new Error(Nil);
+    return Result$Error(Nil);
   }
 }
 
@@ -177,7 +184,7 @@ export function add(a, b) {
 }
 
 export function split(xs, pattern) {
-  return List.fromArray(xs.split(pattern));
+  return arrayToList(xs.split(pattern));
 }
 
 export function concat(xs) {
@@ -251,9 +258,9 @@ export function split_once(haystack, needle) {
   if (index >= 0) {
     const before = haystack.slice(0, index);
     const after = haystack.slice(index + needle.length);
-    return new Ok([before, after]);
+    return Result$Ok([before, after]);
   } else {
-    return new Error(Nil);
+    return Result$Error(Nil);
   }
 }
 
@@ -347,14 +354,14 @@ export function crash(message) {
 export function bit_array_to_string(bit_array) {
   // If the bit array isn't a whole number of bytes then return an error
   if (bit_array.bitSize % 8 !== 0) {
-    return new Error(Nil);
+    return Result$Error(Nil);
   }
 
   try {
     const decoder = new TextDecoder("utf-8", { fatal: true });
 
     if (bit_array.bitOffset === 0) {
-      return new Ok(decoder.decode(bit_array.rawBuffer));
+      return Result$Ok(decoder.decode(bit_array.rawBuffer));
     } else {
       // The input data isn't aligned, so copy it into a new aligned buffer so
       // that TextDecoder can be used
@@ -362,10 +369,10 @@ export function bit_array_to_string(bit_array) {
       for (let i = 0; i < buffer.length; i++) {
         buffer[i] = bit_array.byteAt(i);
       }
-      return new Ok(decoder.decode(buffer));
+      return Result$Ok(decoder.decode(buffer));
     }
   } catch {
-    return new Error(Nil);
+    return Result$Error(Nil);
   }
 }
 
@@ -445,10 +452,10 @@ export function bit_array_slice(bits, position, length) {
   const end = Math.max(position, position + length);
 
   if (start < 0 || end * 8 > bits.bitSize) {
-    return new Error(Nil);
+    return Result$Error(Nil);
   }
 
-  return new Ok(bitArraySlice(bits, start * 8, end * 8));
+  return Result$Ok(bitArraySlice(bits, start * 8, end * 8));
 }
 
 export function codepoint(int) {
@@ -456,7 +463,7 @@ export function codepoint(int) {
 }
 
 export function string_to_codepoint_integer_list(string) {
-  return List.fromArray(Array.from(string).map((item) => item.codePointAt(0)));
+  return arrayToList(Array.from(string).map((item) => item.codePointAt(0)));
 }
 
 export function utf_codepoint_list_to_string(utf_codepoint_integer_list) {
@@ -480,9 +487,9 @@ function unsafe_percent_decode_query(string) {
 
 export function percent_decode(string) {
   try {
-    return new Ok(unsafe_percent_decode(string));
+    return Result$Ok(unsafe_percent_decode(string));
   } catch {
-    return new Error(Nil);
+    return Result$Error(Nil);
   }
 }
 
@@ -501,9 +508,9 @@ export function parse_query(query) {
       const decodedValue = unsafe_percent_decode_query(value);
       pairs.push([decodedKey, decodedValue]);
     }
-    return new Ok(List.fromArray(pairs));
+    return Result$Ok(arrayToList(pairs));
   } catch {
-    return new Error(Nil);
+    return Result$Error(Nil);
   }
 }
 
@@ -562,9 +569,9 @@ export function base64_decode(sBase64) {
     for (let i = 0; i < length; i++) {
       array[i] = binString.charCodeAt(i);
     }
-    return new Ok(new BitArray(array));
+    return Result$Ok(new BitArray(array));
   } catch {
-    return new Error(Nil);
+    return Result$Error(Nil);
   }
 }
 
@@ -573,9 +580,9 @@ export function classify_dynamic(data) {
     return "String";
   } else if (typeof data === "boolean") {
     return "Bool";
-  } else if (data instanceof Result) {
+  } else if (isResult(data)) {
     return "Result";
-  } else if (data instanceof List) {
+  } else if (isList(data)) {
     return "List";
   } else if (data instanceof BitArray) {
     return "BitArray";
@@ -679,7 +686,7 @@ class Inspector {
     let printed;
     if (Array.isArray(v)) {
       printed = `#(${v.map((v) => this.inspect(v)).join(", ")})`;
-    } else if (v instanceof List) {
+    } else if (isList(v)) {
       printed = this.#list(v);
     } else if (v instanceof CustomType) {
       printed = this.#customType(v);
@@ -731,7 +738,7 @@ class Inspector {
   }
 
   #list(list) {
-    if (list instanceof Empty) {
+    if (List$isEmpty(list)) {
       return "[]";
     }
 
@@ -739,7 +746,7 @@ class Inspector {
     let list_out = "[";
 
     let current = list;
-    while (current instanceof NonEmpty) {
+    while (List$isNonEmpty(current)) {
       let element = current.head;
       current = current.tail;
 
@@ -855,10 +862,10 @@ export function base16_decode(string) {
   for (let i = 0; i < string.length; i += 2) {
     const a = parseInt(string[i], 16);
     const b = parseInt(string[i + 1], 16);
-    if (isNaN(a) || isNaN(b)) return new Error(Nil);
+    if (isNaN(a) || isNaN(b)) return Result$Error(Nil);
     bytes[i / 2] = a * 16 + b;
   }
-  return new Ok(new BitArray(bytes));
+  return Result$Ok(new BitArray(bytes));
 }
 
 export function bit_array_to_int_and_size(bits) {
@@ -911,7 +918,7 @@ export function exp(x) {
 export function list_to_array(list) {
   let current = list;
   let array = [];
-  while (current instanceof NonEmpty) {
+  while (List$isNonEmpty(current)) {
     array.push(current.head);
     current = current.tail;
   }
@@ -922,26 +929,26 @@ export function index(data, key) {
   // Dictionaries and dictionary-like objects can be indexed
   if (data instanceof Dict) {
     const result = dict_get(data, key);
-    return new Ok(result.isOk() ? new Some(result[0]) : new None());
+    return Result$Ok(result.isOk() ? new Some(result[0]) : new None());
   }
 
   if (data instanceof WeakMap || data instanceof Map) {
     const token = {};
     const entry = data.get(key, token);
-    if (entry === token) return new Ok(new None());
-    return new Ok(new Some(entry));
+    if (entry === token) return Result$Ok(new None());
+    return Result$Ok(new Some(entry));
   }
 
   const key_is_int = Number.isInteger(key);
 
   // Only elements 0-7 of lists can be indexed, negative indices are not allowed
-  if (key_is_int && key >= 0 && key < 8 && data instanceof List) {
+  if (key_is_int && key >= 0 && key < 8 && isList(data)) {
     let i = 0;
     for (const value of data) {
-      if (i === key) return new Ok(new Some(value));
+      if (i === key) return Result$Ok(new Some(value));
       i++;
     }
-    return new Error("Indexable");
+    return Result$Error("Indexable");
   }
 
   // Arrays and objects can be indexed
@@ -950,17 +957,17 @@ export function index(data, key) {
     (data && typeof data === "object") ||
     (data && Object.getPrototypeOf(data) === Object.prototype)
   ) {
-    if (key in data) return new Ok(new Some(data[key]));
-    return new Ok(new None());
+    if (key in data) return Result$Ok(new Some(data[key]));
+    return Result$Ok(new None());
   }
 
-  return new Error(key_is_int ? "Indexable" : "Dict");
+  return Result$Error(key_is_int ? "Indexable" : "Dict");
 }
 
 export function list(data, decode, pushPath, index, emptyList) {
-  if (!(data instanceof List || Array.isArray(data))) {
-    const error = new DecodeError("List", classify(data), emptyList);
-    return [emptyList, List.fromArray([error])];
+  if (!(isList(data) || Array.isArray(data))) {
+    const error = DecodeError$DecodeError("List", classify(data), emptyList);
+    return [emptyList, arrayToList([error])];
   }
 
   const decoded = [];
@@ -969,7 +976,7 @@ export function list(data, decode, pushPath, index, emptyList) {
     const layer = decode(element);
     const [out, errors] = layer;
 
-    if (errors instanceof NonEmpty) {
+    if (List$isNonEmpty(errors)) {
       const [_, errors] = pushPath(layer, index.toString());
       return [emptyList, errors];
     }
@@ -977,50 +984,67 @@ export function list(data, decode, pushPath, index, emptyList) {
     index++;
   }
 
-  return [List.fromArray(decoded), emptyList];
+  return [arrayToList(decoded), emptyList];
 }
 
 export function dict(data) {
   if (data instanceof Dict) {
-    return new Ok(data);
+    return Result$Ok(data);
   }
   if (data instanceof Map || data instanceof WeakMap) {
-    return new Ok(dict_from_iterable(data));
+    return Result$Ok(dict_from_iterable(data));
   }
   if (data == null) {
-    return new Error("Dict");
+    return Result$Error("Dict");
   }
   if (typeof data !== "object") {
-    return new Error("Dict");
+    return Result$Error("Dict");
   }
   const proto = Object.getPrototypeOf(data);
   if (proto === Object.prototype || proto === null) {
-    return new Ok(dict_from_iterable(Object.entries(data)));
+    return Result$Ok(dict_from_iterable(Object.entries(data)));
   }
-  return new Error("Dict");
+  return Result$Error("Dict");
 }
 
 export function bit_array(data) {
-  if (data instanceof BitArray) return new Ok(data);
-  if (data instanceof Uint8Array) return new Ok(new BitArray(data));
-  return new Error(new BitArray(new Uint8Array()));
+  if (data instanceof BitArray) return Result$Ok(data);
+  if (data instanceof Uint8Array) return Result$Ok(new BitArray(data));
+  return Result$Error(new BitArray(new Uint8Array()));
 }
 
 export function float(data) {
-  if (typeof data === "number") return new Ok(data);
-  return new Error(0.0);
+  if (typeof data === "number") return Result$Ok(data);
+  return Result$Error(0.0);
 }
 
 export function int(data) {
-  if (Number.isInteger(data)) return new Ok(data);
-  return new Error(0);
+  if (Number.isInteger(data)) return Result$Ok(data);
+  return Result$Error(0);
 }
 
 export function string(data) {
-  if (typeof data === "string") return new Ok(data);
-  return new Error("");
+  if (typeof data === "string") return Result$Ok(data);
+  return Result$Error("");
 }
 
 export function is_null(data) {
   return data === null || data === undefined;
+}
+
+function arrayToList(array) {
+  let list = List$Empty();
+  let i = array.length;
+  while (i--) {
+    list = List$NonEmpty(array[i], list);
+  }
+  return list;
+}
+
+function isList(data) {
+  return List$isEmpty(data) || List$isNonEmpty(data);
+}
+
+function isResult(data) {
+  return Result$isOk(data) || Result$isError(data);
 }
