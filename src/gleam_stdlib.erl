@@ -63,12 +63,7 @@ classify_dynamic(X) when is_tuple(X) -> <<"Array">>;
 classify_dynamic(X) when is_reference(X) -> <<"Reference">>;
 classify_dynamic(X) when is_pid(X) -> <<"Pid">>;
 classify_dynamic(X) when is_port(X) -> <<"Port">>;
-classify_dynamic(X) when
-    is_function(X, 0) orelse is_function(X, 1) orelse is_function(X, 2) orelse
-    is_function(X, 3) orelse is_function(X, 4) orelse is_function(X, 5) orelse
-    is_function(X, 6) orelse is_function(X, 7) orelse is_function(X, 8) orelse
-    is_function(X, 9) orelse is_function(X, 10) orelse is_function(X, 11) orelse
-    is_function(X, 12) -> <<"Function">>;
+classify_dynamic(X) when is_function(X) -> <<"Function">>;
 classify_dynamic(_) -> <<"Unknown">>.
 
 tuple_get(_tup, Index) when Index < 0 -> {error, nil};
