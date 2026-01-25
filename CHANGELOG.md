@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.68.2 - 2026-01-25
+
+- Fix docs for float.to_precision() to remove the labelled argument.
+
 ## v0.68.1 - 2026-01-10
 
 - Fixed a bug in the dict implementation where using variants without fields
