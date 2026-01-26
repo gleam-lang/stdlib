@@ -27,7 +27,7 @@ pub fn length_test() {
   assert list.length([1, 1, 1]) == 3
 
   // TCO test
-  list.range(0, recursion_test_cycles)
+  int.range(from: recursion_test_cycles, to: -1, with: [], run: list.prepend)
   |> list.length()
 }
 
@@ -54,7 +54,7 @@ pub fn reverse_test() {
   assert list.reverse([1, 2, 3, 4, 5]) == [5, 4, 3, 2, 1]
 
   // TCO test
-  list.range(0, recursion_test_cycles)
+  int.range(from: recursion_test_cycles, to: -1, with: [], run: list.prepend)
   |> list.reverse
 }
 
@@ -118,7 +118,7 @@ pub fn filter_test() {
   assert list.filter([0, 4, 5, 7, 3], fn(x) { x < 4 }) == [0, 3]
 
   // TCO test
-  list.range(0, recursion_test_cycles)
+  int.range(from: recursion_test_cycles, to: -1, with: [], run: list.prepend)
   |> list.filter(fn(x) { x == -1 })
 }
 
@@ -244,7 +244,7 @@ pub fn append_test() {
   assert list.append([], []) == []
 
   // TCO test
-  list.range(0, recursion_test_cycles)
+  int.range(from: recursion_test_cycles, to: -1, with: [], run: list.prepend)
   |> list.append([1])
 }
 
@@ -267,7 +267,7 @@ pub fn fold_test() {
   assert list.fold([1, 2, 3], [], fn(acc, x) { [x, ..acc] }) == [3, 2, 1]
 
   // TCO test
-  list.range(0, recursion_test_cycles)
+  int.range(from: recursion_test_cycles, to: -1, with: [], run: list.prepend)
   |> list.fold([], fn(acc, x) { [x, ..acc] })
 }
 
@@ -283,7 +283,7 @@ pub fn index_fold_test() {
     == [#(2, "c"), #(1, "b"), #(0, "a")]
 
   // TCO test
-  list.range(0, recursion_test_cycles)
+  int.range(from: recursion_test_cycles, to: -1, with: [], run: list.prepend)
   |> list.index_fold([], fn(acc, i, ix) { [#(ix, i), ..acc] })
 }
 
@@ -297,7 +297,7 @@ pub fn fold_until_test() {
     == 6
 
   // TCO test
-  list.range(0, recursion_test_cycles)
+  int.range(from: recursion_test_cycles, to: -1, with: [], run: list.prepend)
   |> list.fold_until(from: 0, with: fn(acc, n) {
     case n < recursion_test_cycles {
       True -> list.Continue(acc + n)
@@ -324,7 +324,7 @@ pub fn try_fold_test() {
     == Error(Nil)
 
   // TCO test
-  list.range(0, recursion_test_cycles)
+  int.range(from: recursion_test_cycles, to: -1, with: [], run: list.prepend)
   |> list.try_fold(0, fn(acc, i) {
     case i < recursion_test_cycles {
       True -> Ok(acc + i)
@@ -348,7 +348,7 @@ pub fn find_map_test() {
   assert list.find_map([1, 3], with: f) == Error(Nil)
 
   // TCO test
-  list.range(0, recursion_test_cycles)
+  int.range(from: recursion_test_cycles, to: -1, with: [], run: list.prepend)
   |> list.find_map(with: fn(x) {
     case x == recursion_test_cycles {
       True -> Ok(recursion_test_cycles)
@@ -367,7 +367,7 @@ pub fn find_test() {
   assert list.find([1, 3], one_that: is_two) == Error(Nil)
 
   // TCO test
-  list.range(0, recursion_test_cycles)
+  int.range(from: recursion_test_cycles, to: -1, with: [], run: list.prepend)
   |> list.find(one_that: fn(x) { x == recursion_test_cycles })
 }
 
@@ -416,7 +416,7 @@ pub fn any_test() {
   })
 
   // TCO test
-  list.range(0, recursion_test_cycles)
+  int.range(from: recursion_test_cycles, to: -1, with: [], run: list.prepend)
   |> list.any(fn(x) { x == recursion_test_cycles })
 }
 
@@ -432,7 +432,8 @@ pub fn zip_test() {
   assert list.zip([5, 6, 7], [1, 2]) == [#(5, 1), #(6, 2)]
 
   // TCO test
-  let recursion_test_cycles_list = list.range(0, recursion_test_cycles)
+  let recursion_test_cycles_list =
+    int.range(from: recursion_test_cycles, to: -1, with: [], run: list.prepend)
   list.zip(recursion_test_cycles_list, recursion_test_cycles_list)
 }
 
@@ -455,7 +456,8 @@ pub fn unzip_test() {
   assert list.unzip([]) == #([], [])
 
   // TCO test
-  let recursion_test_cycles_list = list.range(0, recursion_test_cycles)
+  let recursion_test_cycles_list =
+    int.range(from: recursion_test_cycles, to: -1, with: [], run: list.prepend)
   list.zip(recursion_test_cycles_list, recursion_test_cycles_list)
   |> list.unzip()
 }
@@ -466,7 +468,7 @@ pub fn intersperse_test() {
   assert list.intersperse([], 2) == []
 
   // TCO test
-  list.range(0, recursion_test_cycles)
+  int.range(from: recursion_test_cycles, to: -1, with: [], run: list.prepend)
   |> list.intersperse(0)
 }
 
@@ -480,7 +482,12 @@ pub fn unique_test() {
   assert list.unique([]) == []
 
   // TCO test
-  list.range(0, recursion_test_cycles / 100)
+  int.range(
+    from: recursion_test_cycles / 100,
+    to: -1,
+    with: [],
+    run: list.prepend,
+  )
   |> list.unique()
 }
 
@@ -545,7 +552,7 @@ pub fn sort_test() {
     == sorted_cards
 
   // TCO test
-  list.range(0, recursion_test_cycles)
+  int.range(from: recursion_test_cycles, to: -1, with: [], run: list.prepend)
   |> list.reverse
   |> list.sort(int.compare)
 }
@@ -588,7 +595,12 @@ pub fn split_test() {
   assert list.split([0, 1, 2, 3, 4], 9) == #([0, 1, 2, 3, 4], [])
 
   // TCO test
-  list.repeat(0, recursion_test_cycles + 10)
+  int.range(
+    from: recursion_test_cycles + 10,
+    to: -1,
+    with: [],
+    run: list.prepend,
+  )
   |> list.split(recursion_test_cycles + 1)
 }
 
@@ -608,7 +620,12 @@ pub fn split_while_test() {
     == #([], [1, 2, 3, 4, 5])
 
   // TCO test
-  list.repeat(0, recursion_test_cycles + 10)
+  int.range(
+    from: recursion_test_cycles + 10,
+    to: -1,
+    with: [],
+    run: list.prepend,
+  )
   |> list.split_while(fn(x) { x <= recursion_test_cycles + 1 })
 }
 
@@ -649,7 +666,8 @@ pub fn key_set_test() {
     == [#(5, 0), #(4, 1), #(1, 100)]
 
   // TCO test
-  let recursion_test_cycles_list = list.range(0, recursion_test_cycles)
+  let recursion_test_cycles_list =
+    int.range(from: recursion_test_cycles, to: -1, with: [], run: list.prepend)
   list.zip(recursion_test_cycles_list, recursion_test_cycles_list)
   |> list.key_set(0, 0)
 }
@@ -691,7 +709,7 @@ pub fn partition_test() {
     == #([1, 3, 5, 7], [2, 4, 6])
 
   // TCO test
-  list.range(0, recursion_test_cycles)
+  int.range(from: recursion_test_cycles, to: -1, with: [], run: list.prepend)
   |> list.partition(int.is_even)
 }
 
@@ -782,7 +800,7 @@ pub fn window_test() {
   assert list.window([1, 2, 3], -1) == []
 
   // TCO test
-  list.range(0, recursion_test_cycles)
+  int.range(from: recursion_test_cycles, to: -1, with: [], run: list.prepend)
   |> list.window(2)
 }
 
@@ -796,7 +814,12 @@ pub fn drop_while_test() {
   assert list.drop_while([1, 2, 3, 4], fn(x) { x < 3 }) == [3, 4]
 
   // TCO test
-  list.range(0, recursion_test_cycles + 10)
+  int.range(
+    from: recursion_test_cycles + 10,
+    to: -1,
+    with: [],
+    run: list.prepend,
+  )
   |> list.drop_while(fn(x) { x < recursion_test_cycles + 1 })
 }
 
@@ -804,7 +827,12 @@ pub fn take_while_test() {
   assert list.take_while([1, 2, 3, 2, 4], fn(x) { x < 3 }) == [1, 2]
 
   // TCO test
-  list.range(0, recursion_test_cycles + 10)
+  int.range(
+    from: recursion_test_cycles + 10,
+    to: -1,
+    with: [],
+    run: list.prepend,
+  )
   |> list.take_while(fn(x) { x < recursion_test_cycles + 1 })
 }
 
@@ -815,7 +843,7 @@ pub fn chunk_test() {
     == [[1], [2, 2], [3], [4, 4, 6], [7, 7]]
 
   // TCO test
-  list.range(0, recursion_test_cycles)
+  int.range(from: recursion_test_cycles, to: -1, with: [], run: list.prepend)
   |> list.chunk(by: fn(n) { n % 2 })
 }
 
@@ -827,7 +855,12 @@ pub fn sized_chunk_test() {
     == [[1, 2, 3], [4, 5, 6], [7, 8]]
 
   // TCO test
-  list.range(0, recursion_test_cycles * 3)
+  int.range(
+    from: recursion_test_cycles * 3,
+    to: -1,
+    with: [],
+    run: list.prepend,
+  )
   |> list.sized_chunk(into: 3)
 }
 
@@ -857,7 +890,7 @@ pub fn scan_test() {
     ]
 
   // TCO test
-  list.range(0, recursion_test_cycles)
+  int.range(from: recursion_test_cycles, to: -1, with: [], run: list.prepend)
   |> list.scan(from: 0, with: fn(acc, i) { i + acc })
 }
 
@@ -893,7 +926,7 @@ pub fn combination_pairs_test() {
     == [#(1, 2), #(1, 3), #(1, 4), #(2, 3), #(2, 4), #(3, 4)]
 
   // TCO test
-  list.range(0, 200)
+  int.range(from: 200, to: -1, with: [], run: list.prepend)
   |> list.combination_pairs()
 }
 
@@ -931,13 +964,14 @@ pub fn shuffle_test() {
 
   assert list.shuffle([1, 1, 1]) == [1, 1, 1]
 
-  assert list.range(1, 100)
+  let one_to_hundred = int.range(from: 100, to: 0, with: [], run: list.prepend)
+  assert one_to_hundred
     |> list.shuffle
     |> list.sort(int.compare)
-    == list.range(1, 100)
+    == one_to_hundred
 
   // TCO test
-  list.range(0, recursion_test_cycles)
+  int.range(from: recursion_test_cycles, to: -1, with: [], run: list.prepend)
   |> list.shuffle()
 }
 
@@ -959,7 +993,7 @@ pub fn sample_test() {
   assert list.sample([1], 1) == [1]
 
   assert 10
-    == list.range(1, 100)
+    == int.range(from: 100, to: 0, with: [], run: list.prepend)
     |> list.sample(10)
     |> list.unique
     |> list.length
@@ -970,7 +1004,7 @@ pub fn sample_test() {
 
   // Some tests on a bigger sample.
   let sample =
-    list.range(1, 1000)
+    int.range(from: 1000, to: 0, with: [], run: list.prepend)
     |> list.sample(100)
 
   assert sample

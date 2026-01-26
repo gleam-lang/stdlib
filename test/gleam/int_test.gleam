@@ -237,7 +237,7 @@ pub fn product_test() {
 }
 
 pub fn random_test() {
-  use _ <- list.each(list.range(0, 100))
+  use _, _ <- int.range(from: 0, to: 101, with: Nil)
 
   assert int.random(0) == 0
 
@@ -248,6 +248,8 @@ pub fn random_test() {
   assert list.contains([0, 1], int.random(2))
 
   assert list.contains([0, 1, 2], int.random(3))
+
+  Nil
 }
 
 pub fn divide_test() {
