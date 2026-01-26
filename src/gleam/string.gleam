@@ -11,13 +11,11 @@ import gleam/string_tree.{type StringTree}
 /// ## Examples
 ///
 /// ```gleam
-/// is_empty("")
-/// // -> True
+/// assert is_empty("")
 /// ```
 ///
 /// ```gleam
-/// is_empty("the world")
-/// // -> False
+/// assert !is_empty("the world")
 /// ```
 ///
 pub fn is_empty(str: String) -> Bool {
@@ -32,18 +30,15 @@ pub fn is_empty(str: String) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// length("Gleam")
-/// // -> 5
+/// assert length("Gleam") == 5
 /// ```
 ///
 /// ```gleam
-/// length("ß↑e̊")
-/// // -> 3
+/// assert length("ß↑e̊") == 3
 /// ```
 ///
 /// ```gleam
-/// length("")
-/// // -> 0
+/// assert length("") == 0
 /// ```
 ///
 @external(erlang, "string", "length")
@@ -58,8 +53,7 @@ pub fn length(string: String) -> Int
 /// ## Examples
 ///
 /// ```gleam
-/// reverse("stressed")
-/// // -> "desserts"
+/// assert reverse("stressed") == "desserts"
 /// ```
 ///
 pub fn reverse(string: String) -> String {
@@ -74,13 +68,11 @@ pub fn reverse(string: String) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// replace("www.example.com", each: ".", with: "-")
-/// // -> "www-example-com"
+/// assert replace("www.example.com", each: ".", with: "-") == "www-example-com"
 /// ```
 ///
 /// ```gleam
-/// replace("a,b,c,d,e", each: ",", with: "/")
-/// // -> "a/b/c/d/e"
+/// assert replace("a,b,c,d,e", each: ",", with: "/") == "a/b/c/d/e"
 /// ```
 ///
 pub fn replace(
@@ -102,8 +94,7 @@ pub fn replace(
 /// ## Examples
 ///
 /// ```gleam
-/// lowercase("X-FILES")
-/// // -> "x-files"
+/// assert lowercase("X-FILES") == "x-files"
 /// ```
 ///
 @external(erlang, "string", "lowercase")
@@ -118,8 +109,7 @@ pub fn lowercase(string: String) -> String
 /// ## Examples
 ///
 /// ```gleam
-/// uppercase("skinner")
-/// // -> "SKINNER"
+/// assert uppercase("skinner") == "SKINNER"
 /// ```
 ///
 @external(erlang, "string", "uppercase")
@@ -133,13 +123,15 @@ pub fn uppercase(string: String) -> String
 /// ## Examples
 ///
 /// ```gleam
-/// compare("Anthony", "Anthony")
-/// // -> order.Eq
+/// import gleam/order
+///
+/// assert compare("Anthony", "Anthony") == order.Eq
 /// ```
 ///
 /// ```gleam
-/// compare("A", "B")
-/// // -> order.Lt
+/// import gleam/order
+///
+/// assert compare("A", "B") == order.Lt
 /// ```
 ///
 pub fn compare(a: String, b: String) -> order.Order {
@@ -167,28 +159,23 @@ fn less_than(a: String, b: String) -> Bool
 /// ## Examples
 ///
 /// ```gleam
-/// slice(from: "gleam", at_index: 1, length: 2)
-/// // -> "le"
+/// assert slice(from: "gleam", at_index: 1, length: 2) == le
 /// ```
 ///
 /// ```gleam
-/// slice(from: "gleam", at_index: 1, length: 10)
-/// // -> "leam"
+/// assert slice(from: "gleam", at_index: 1, length: 10) == "leam"
 /// ```
 ///
 /// ```gleam
-/// slice(from: "gleam", at_index: 10, length: 3)
-/// // -> ""
+/// assert slice(from: "gleam", at_index: 10, length: 3) == ""
 /// ```
 ///
 /// ```gleam
-/// slice(from: "gleam", at_index: -2, length: 2)
-/// // -> "am"
+/// assert slice(from: "gleam", at_index: -2, length: 2) == "am"
 /// ```
 ///
 /// ```gleam
-/// slice(from: "gleam", at_index: -12, length: 2)
-/// // -> ""
+/// assert slice(from: "gleam", at_index: -12, length: 2) == ""
 /// ```
 ///
 pub fn slice(from string: String, at_index idx: Int, length len: Int) -> String {
@@ -223,8 +210,7 @@ fn unsafe_byte_slice(string: String, index: Int, length: Int) -> String
 /// ## Examples
 ///
 /// ```gleam
-/// crop(from: "The Lone Gunmen", before: "Lone")
-/// // -> "Lone Gunmen"
+/// assert crop(from: "The Lone Gunmen", before: "Lone") == "Lone Gunmen"
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "crop_string")
@@ -238,8 +224,7 @@ pub fn crop(from string: String, before substring: String) -> String
 /// ## Examples
 ///
 /// ```gleam
-/// drop_start(from: "The Lone Gunmen", up_to: 2)
-/// // -> "e Lone Gunmen"
+/// assert drop_start(from: "The Lone Gunmen", up_to: 2) == "e Lone Gunmen"
 /// ```
 ///
 pub fn drop_start(from string: String, up_to num_graphemes: Int) -> String {
@@ -261,8 +246,8 @@ pub fn drop_start(from string: String, up_to num_graphemes: Int) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// drop_end(from: "Cigarette Smoking Man", up_to: 2)
-/// // -> "Cigarette Smoking M"
+/// assert drop_end(from: "Cigarette Smoking Man", up_to: 2)
+///   == "Cigarette Smoking M"
 /// ```
 ///
 pub fn drop_end(from string: String, up_to num_graphemes: Int) -> String {
@@ -277,18 +262,15 @@ pub fn drop_end(from string: String, up_to num_graphemes: Int) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// contains(does: "theory", contain: "ory")
-/// // -> True
+/// assert contains(does: "theory", contain: "ory")
 /// ```
 ///
 /// ```gleam
-/// contains(does: "theory", contain: "the")
-/// // -> True
+/// assert contains(does: "theory", contain: "the")
 /// ```
 ///
 /// ```gleam
-/// contains(does: "theory", contain: "THE")
-/// // -> False
+/// assert !contains(does: "theory", contain: "THE")
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "contains_string")
@@ -300,8 +282,7 @@ pub fn contains(does haystack: String, contain needle: String) -> Bool
 /// ## Examples
 ///
 /// ```gleam
-/// starts_with("theory", "ory")
-/// // -> False
+/// assert !starts_with("theory", "ory")
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "string_starts_with")
@@ -313,8 +294,7 @@ pub fn starts_with(string: String, prefix: String) -> Bool
 /// ## Examples
 ///
 /// ```gleam
-/// ends_with("theory", "ory")
-/// // -> True
+/// assert ends_with("theory", "ory")
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "string_ends_with")
@@ -326,8 +306,8 @@ pub fn ends_with(string: String, suffix: String) -> Bool
 /// ## Examples
 ///
 /// ```gleam
-/// split("home/gleam/desktop/", on: "/")
-/// // -> ["home", "gleam", "desktop", ""]
+/// assert split("home/gleam/desktop/", on: "/")
+///   == ["home", "gleam", "desktop", ""]
 /// ```
 ///
 pub fn split(x: String, on substring: String) -> List(String) {
@@ -348,13 +328,12 @@ pub fn split(x: String, on substring: String) -> List(String) {
 /// ## Examples
 ///
 /// ```gleam
-/// split_once("home/gleam/desktop/", on: "/")
-/// // -> Ok(#("home", "gleam/desktop/"))
+/// assert split_once("home/gleam/desktop/", on: "/")
+///   == Ok(#("home", "gleam/desktop/"))
 /// ```
 ///
 /// ```gleam
-/// split_once("home/gleam/desktop/", on: "?")
-/// // -> Error(Nil)
+/// assert split_once("home/gleam/desktop/", on: "?") == Error(Nil)
 /// ```
 ///
 @external(javascript, "../gleam_stdlib.mjs", "split_once")
@@ -385,8 +364,7 @@ fn erl_split(a: String, b: String) -> List(String)
 /// ## Examples
 ///
 /// ```gleam
-/// append(to: "butter", suffix: "fly")
-/// // -> "butterfly"
+/// assert append(to: "butter", suffix: "fly") == "butterfly"
 /// ```
 ///
 pub fn append(to first: String, suffix second: String) -> String {
@@ -400,8 +378,7 @@ pub fn append(to first: String, suffix second: String) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// concat(["never", "the", "less"])
-/// // -> "nevertheless"
+/// assert concat(["never", "the", "less"]) == "nevertheless"
 /// ```
 ///
 @external(erlang, "erlang", "list_to_binary")
@@ -423,8 +400,7 @@ fn concat_loop(strings: List(String), accumulator: String) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// repeat("ha", times: 3)
-/// // -> "hahaha"
+/// assert repeat("ha", times: 3) == "hahaha"
 /// ```
 ///
 pub fn repeat(string: String, times times: Int) -> String {
@@ -453,8 +429,7 @@ fn repeat_loop(times: Int, doubling_acc: String, acc: String) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// join(["home","evan","Desktop"], with: "/")
-/// // -> "home/evan/Desktop"
+/// assert join(["home","evan","Desktop"], with: "/") == "home/evan/Desktop"
 /// ```
 ///
 pub fn join(strings: List(String), with separator: String) -> String {
@@ -481,18 +456,15 @@ fn join_loop(
 /// ## Examples
 ///
 /// ```gleam
-/// pad_start("121", to: 5, with: ".")
-/// // -> "..121"
+/// assert pad_start("121", to: 5, with: ".") == "..121"
 /// ```
 ///
 /// ```gleam
-/// pad_start("121", to: 3, with: ".")
-/// // -> "121"
+/// assert pad_start("121", to: 3, with: ".") == "121"
 /// ```
 ///
 /// ```gleam
-/// pad_start("121", to: 2, with: ".")
-/// // -> "121"
+/// assert pad_start("121", to: 2, with: ".") == "121"
 /// ```
 ///
 pub fn pad_start(
@@ -514,18 +486,15 @@ pub fn pad_start(
 /// ## Examples
 ///
 /// ```gleam
-/// pad_end("123", to: 5, with: ".")
-/// // -> "123.."
+/// assert pad_end("123", to: 5, with: ".") == "123.."
 /// ```
 ///
 /// ```gleam
-/// pad_end("123", to: 3, with: ".")
-/// // -> "123"
+/// assert pad_end("123", to: 3, with: ".") == "123"
 /// ```
 ///
 /// ```gleam
-/// pad_end("123", to: 2, with: ".")
-/// // -> "123"
+/// assert pad_end("123", to: 2, with: ".") == "123"
 /// ```
 ///
 pub fn pad_end(
@@ -560,8 +529,7 @@ fn padding(size: Int, pad_string: String) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// trim("  hats  \n")
-/// // -> "hats"
+/// assert trim("  hats  \n") == "hats"
 /// ```
 ///
 pub fn trim(string: String) -> String {
@@ -581,8 +549,7 @@ type Direction {
 /// ## Examples
 ///
 /// ```gleam
-/// trim_start("  hats  \n")
-/// // -> "hats  \n"
+/// assert trim_start("  hats  \n") == "hats  \n"
 /// ```
 ///
 @external(javascript, "../gleam_stdlib.mjs", "trim_start")
@@ -595,8 +562,7 @@ pub fn trim_start(string: String) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// trim_end("  hats  \n")
-/// // -> "  hats"
+/// assert trim_end("  hats  \n") == "  hats"
 /// ```
 ///
 @external(javascript, "../gleam_stdlib.mjs", "trim_end")
@@ -616,13 +582,11 @@ pub fn trim_end(string: String) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// pop_grapheme("gleam")
-/// // -> Ok(#("g", "leam"))
+/// assert pop_grapheme("gleam") == Ok(#("g", "leam"))
 /// ```
 ///
 /// ```gleam
-/// pop_grapheme("")
-/// // -> Error(Nil)
+/// assert pop_grapheme("") == Error(Nil)
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "string_pop_grapheme")
@@ -633,8 +597,7 @@ pub fn pop_grapheme(string: String) -> Result(#(String, String), Nil)
 /// [graphemes](https://en.wikipedia.org/wiki/Grapheme).
 ///
 /// ```gleam
-/// to_graphemes("abc")
-/// // -> ["a", "b", "c"]
+/// assert to_graphemes("abc") == ["a", "b", "c"]
 /// ```
 ///
 @external(javascript, "../gleam_stdlib.mjs", "graphemes")
@@ -664,21 +627,20 @@ fn unsafe_int_to_utf_codepoint(a: Int) -> UtfCodepoint
 /// ## Examples
 ///
 /// ```gleam
-/// "a" |> to_utf_codepoints
-/// // -> [UtfCodepoint(97)]
+/// assert "a" |> to_utf_codepoints == [UtfCodepoint(97)]
 /// ```
 ///
 /// ```gleam
 /// // Semantically the same as:
 /// // ["🏳", "️", "‍", "🌈"] or:
 /// // [waving_white_flag, variant_selector_16, zero_width_joiner, rainbow]
-/// "🏳️‍🌈" |> to_utf_codepoints
-/// // -> [
-/// //   UtfCodepoint(127987),
-/// //   UtfCodepoint(65039),
-/// //   UtfCodepoint(8205),
-/// //   UtfCodepoint(127752),
-/// // ]
+/// assert "🏳️‍🌈" |> to_utf_codepoints
+///   == [
+///     UtfCodepoint(127987),
+///     UtfCodepoint(65039),
+///     UtfCodepoint(8205),
+///     UtfCodepoint(127752),
+///   ]
 /// ```
 ///
 pub fn to_utf_codepoints(string: String) -> List(UtfCodepoint) {
@@ -725,8 +687,7 @@ fn string_to_codepoint_integer_list(string: String) -> List(Int)
 /// let assert Ok(a) = utf_codepoint(97)
 /// let assert Ok(b) = utf_codepoint(98)
 /// let assert Ok(c) = utf_codepoint(99)
-/// from_utf_codepoints([a, b, c])
-/// // -> "abc"
+/// assert from_utf_codepoints([a, b, c]) == "abc"
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "utf_codepoint_list_to_string")
@@ -752,8 +713,7 @@ pub fn utf_codepoint(value: Int) -> Result(UtfCodepoint, Nil) {
 ///
 /// ```gleam
 /// let assert [utf_codepoint, ..] = to_utf_codepoints("💜")
-/// utf_codepoint_to_int(utf_codepoint)
-/// // -> 128156
+/// assert utf_codepoint_to_int(utf_codepoint) == 128156
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "identity")
@@ -766,13 +726,11 @@ pub fn utf_codepoint_to_int(cp: UtfCodepoint) -> Int
 /// ## Examples
 ///
 /// ```gleam
-/// to_option("")
-/// // -> None
+/// assert to_option("") == None
 /// ```
 ///
 /// ```gleam
-/// to_option("hats")
-/// // -> Some("hats")
+/// assert to_option("hats") == Some("hats")
 /// ```
 ///
 pub fn to_option(string: String) -> Option(String) {
@@ -789,13 +747,11 @@ pub fn to_option(string: String) -> Option(String) {
 /// ## Examples
 ///
 /// ```gleam
-/// first("")
-/// // -> Error(Nil)
+/// assert first("") == Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// first("icecream")
-/// // -> Ok("i")
+/// assert first("icecream") == Ok("i")
 /// ```
 ///
 pub fn first(string: String) -> Result(String, Nil) {
@@ -815,13 +771,11 @@ pub fn first(string: String) -> Result(String, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// last("")
-/// // -> Error(Nil)
+/// assert last("") == Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// last("icecream")
-/// // -> Ok("m")
+/// assert last("icecream") == Ok("m")
 /// ```
 ///
 pub fn last(string: String) -> Result(String, Nil) {
@@ -838,8 +792,7 @@ pub fn last(string: String) -> Result(String, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// capitalise("mamouna")
-/// // -> "Mamouna"
+/// assert capitalise("mamouna") == "Mamouna"
 /// ```
 ///
 pub fn capitalise(string: String) -> String {
@@ -891,8 +844,7 @@ fn do_inspect(term: anything) -> StringTree
 /// ## Examples
 ///
 /// ```gleam
-/// byte_size("🏳️‍⚧️🏳️‍🌈👩🏾‍❤️‍👨🏻")
-/// // -> 58
+/// assert byte_size("🏳️‍⚧️🏳️‍🌈👩🏾‍❤️‍👨🏻") == 58
 /// ```
 ///
 @external(erlang, "erlang", "byte_size")

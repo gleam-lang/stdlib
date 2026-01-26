@@ -33,16 +33,16 @@ pub type Uri {
 /// ## Examples
 ///
 /// ```gleam
-/// let uri = Uri(..empty, scheme: Some("https"), host: Some("example.com"))
-/// // -> Uri(
-/// //   scheme: Some("https"),
-/// //   userinfo: None,
-/// //   host: Some("example.com"),
-/// //   port: None,
-/// //   path: "",
-/// //   query: None,
-/// //   fragment: None,
-/// // )
+/// assert Uri(..empty, scheme: Some("https"), host: Some("example.com"))
+///   == Uri(
+///     scheme: Some("https"),
+///     userinfo: None,
+///     host: Some("example.com"),
+///     port: None,
+///     path: "",
+///     query: None,
+///     fragment: None,
+///   )
 /// ```
 ///
 pub const empty = Uri(
@@ -63,18 +63,18 @@ pub const empty = Uri(
 /// ## Examples
 ///
 /// ```gleam
-/// parse("https://example.com:1234/a/b?query=true#fragment")
-/// // -> Ok(
-/// //   Uri(
-/// //     scheme: Some("https"),
-/// //     userinfo: None,
-/// //     host: Some("example.com"),
-/// //     port: Some(1234),
-/// //     path: "/a/b",
-/// //     query: Some("query=true"),
-/// //     fragment: Some("fragment")
-/// //   )
-/// // )
+/// assert parse("https://example.com:1234/a/b?query=true#fragment")
+///   == Ok(
+///     Uri(
+///       scheme: Some("https"),
+///       userinfo: None,
+///       host: Some("example.com"),
+///       port: Some(1234),
+///       path: "/a/b",
+///       query: Some("query=true"),
+///       fragment: Some("fragment")
+///     )
+///   )
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "uri_parse")
@@ -528,8 +528,7 @@ fn codeunit_slice(str: String, at_index from: Int, length length: Int) -> String
 /// ## Examples
 ///
 /// ```gleam
-/// parse_query("a=1&b=2")
-/// // -> Ok([#("a", "1"), #("b", "2")])
+/// assert parse_query("a=1&b=2") == Ok([#("a", "1"), #("b", "2")])
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "parse_query")
@@ -543,8 +542,7 @@ pub fn parse_query(query: String) -> Result(List(#(String, String)), Nil)
 /// ## Examples
 ///
 /// ```gleam
-/// query_to_string([#("a", "1"), #("b", "2")])
-/// // -> "a=1&b=2"
+/// assert query_to_string([#("a", "1"), #("b", "2")]) == "a=1&b=2"
 /// ```
 ///
 pub fn query_to_string(query: List(#(String, String))) -> String {
@@ -570,8 +568,7 @@ fn percent_encode_query(part: String) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// percent_encode("100% great")
-/// // -> "100%25%20great"
+/// assert percent_encode("100% great") == "100%25%20great"
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "percent_encode")
@@ -583,8 +580,7 @@ pub fn percent_encode(value: String) -> String
 /// ## Examples
 ///
 /// ```gleam
-/// percent_decode("100%25%20great+fun")
-/// // -> Ok("100% great+fun")
+/// assert percent_decode("100%25%20great+fun") == Ok("100% great+fun")
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "percent_decode")
@@ -599,8 +595,7 @@ pub fn percent_decode(value: String) -> Result(String, Nil)
 /// ## Examples
 ///
 /// ```gleam
-/// path_segments("/users/1")
-/// // -> ["users" ,"1"]
+/// assert path_segments("/users/1") == ["users" ,"1"]
 /// ```
 ///
 pub fn path_segments(path: String) -> List(String) {
@@ -638,8 +633,7 @@ fn remove_dot_segments_loop(
 ///
 /// ```gleam
 /// let uri = Uri(..empty, scheme: Some("https"), host: Some("example.com"))
-/// to_string(uri)
-/// // -> "https://example.com"
+/// assert to_string(uri) == "https://example.com"
 /// ```
 ///
 pub fn to_string(uri: Uri) -> String {
@@ -682,8 +676,7 @@ pub fn to_string(uri: Uri) -> String {
 ///
 /// ```gleam
 /// let assert Ok(uri) = parse("https://example.com/path?foo#bar")
-/// origin(uri)
-/// // -> Ok("https://example.com")
+/// assert origin(uri) == Ok("https://example.com")
 /// ```
 ///
 pub fn origin(uri: Uri) -> Result(String, Nil) {

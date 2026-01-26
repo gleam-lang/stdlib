@@ -21,8 +21,7 @@ pub type Dynamic
 /// `gleam/dynamic/decode` module.
 ///
 /// ```gleam
-/// classify(string("Hello"))
-/// // -> "String"
+/// assert classify(string("Hello")) == "String"
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "classify_dynamic")
