@@ -40,11 +40,11 @@ pub fn new() -> Set(member) {
 /// ## Examples
 ///
 /// ```gleam
-/// new()
-/// |> insert(1)
-/// |> insert(2)
-/// |> size
-/// // -> 2
+/// assert new()
+///   |> insert(1)
+///   |> insert(2)
+///   |> size
+///   == 2
 /// ```
 ///
 pub fn size(set: Set(member)) -> Int {
@@ -56,13 +56,11 @@ pub fn size(set: Set(member)) -> Int {
 /// ## Examples
 ///
 /// ```gleam
-/// new() |> is_empty
-/// // -> True
+/// assert new() |> is_empty
 /// ```
 ///
 /// ```gleam
-/// new() |> insert(1) |> is_empty
-/// // -> False
+/// assert !{ new() |> insert(1) |> is_empty }
 /// ```
 ///
 pub fn is_empty(set: Set(member)) -> Bool {
@@ -76,11 +74,11 @@ pub fn is_empty(set: Set(member)) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// new()
-/// |> insert(1)
-/// |> insert(2)
-/// |> size
-/// // -> 2
+/// assert new()
+///   |> insert(1)
+///   |> insert(2)
+///   |> size
+///   == 2
 /// ```
 ///
 pub fn insert(into set: Set(member), this member: member) -> Set(member) {
@@ -94,17 +92,17 @@ pub fn insert(into set: Set(member), this member: member) -> Set(member) {
 /// ## Examples
 ///
 /// ```gleam
-/// new()
-/// |> insert(2)
-/// |> contains(2)
-/// // -> True
+/// assert new()
+///   |> insert(2)
+///   |> contains(2)
 /// ```
 ///
 /// ```gleam
-/// new()
-/// |> insert(2)
-/// |> contains(1)
-/// // -> False
+/// assert !{
+///   new()
+///   |> insert(2)
+///   |> contains(1)
+/// }
 /// ```
 ///
 pub fn contains(in set: Set(member), this member: member) -> Bool {
@@ -121,11 +119,12 @@ pub fn contains(in set: Set(member), this member: member) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// new()
-/// |> insert(2)
-/// |> delete(2)
-/// |> contains(1)
-/// // -> False
+/// assert !{
+///   new()
+///   |> insert(2)
+///   |> delete(2)
+///   |> contains(1)
+/// }
 /// ```
 ///
 pub fn delete(from set: Set(member), this member: member) -> Set(member) {
@@ -142,8 +141,7 @@ pub fn delete(from set: Set(member), this member: member) -> Set(member) {
 /// ## Examples
 ///
 /// ```gleam
-/// new() |> insert(2) |> to_list
-/// // -> [2]
+/// assert new() |> insert(2) |> to_list == [2]
 /// ```
 ///
 pub fn to_list(set: Set(member)) -> List(member) {
@@ -160,8 +158,11 @@ pub fn to_list(set: Set(member)) -> List(member) {
 /// import gleam/int
 /// import gleam/list
 ///
-/// [1, 1, 2, 4, 3, 2] |> from_list |> to_list |> list.sort(by: int.compare)
-/// // -> [1, 2, 3, 4]
+/// assert [1, 1, 2, 4, 3, 2]
+///   |> from_list
+///   |> to_list
+///   |> list.sort(by: int.compare)
+///   == [1, 2, 3, 4]
 /// ```
 ///
 pub fn from_list(members: List(member)) -> Set(member) {
@@ -182,9 +183,9 @@ pub fn from_list(members: List(member)) -> Set(member) {
 /// ## Examples
 ///
 /// ```gleam
-/// from_list([1, 3, 9])
-/// |> fold(0, fn(accumulator, member) { accumulator + member })
-/// // -> 13
+/// assert from_list([1, 3, 9])
+///   |> fold(0, fn(accumulator, member) { accumulator + member })
+///   == 13
 /// ```
 ///
 pub fn fold(
@@ -205,10 +206,10 @@ pub fn fold(
 /// ```gleam
 /// import gleam/int
 ///
-/// from_list([1, 4, 6, 3, 675, 44, 67])
-/// |> filter(keeping: int.is_even)
-/// |> to_list
-/// // -> [4, 6, 44]
+/// assert from_list([1, 4, 6, 3, 675, 44, 67])
+///   |> filter(keeping: int.is_even)
+///   |> to_list
+///   == [4, 6, 44]
 /// ```
 ///
 pub fn filter(
@@ -224,10 +225,10 @@ pub fn filter(
 /// ## Examples
 ///
 /// ```gleam
-/// from_list([1, 2, 3, 4])
-/// |> map(with: fn(x) { x * 2 })
-/// |> to_list
-/// // -> [2, 4, 6, 8]
+/// assert from_list([1, 2, 3, 4])
+///   |> map(with: fn(x) { x * 2 })
+///   |> to_list
+///   == [2, 4, 6, 8]
 /// ```
 ///
 pub fn map(set: Set(member), with fun: fn(member) -> mapped) -> Set(mapped) {
@@ -242,10 +243,10 @@ pub fn map(set: Set(member), with fun: fn(member) -> mapped) -> Set(mapped) {
 /// ## Examples
 ///
 /// ```gleam
-/// from_list([1, 2, 3, 4])
-/// |> drop([1, 3])
-/// |> to_list
-/// // -> [2, 4]
+/// assert from_list([1, 2, 3, 4])
+///   |> drop([1, 3])
+///   |> to_list
+///   == [2, 4]
 /// ```
 ///
 pub fn drop(from set: Set(member), drop disallowed: List(member)) -> Set(member) {
@@ -260,10 +261,10 @@ pub fn drop(from set: Set(member), drop disallowed: List(member)) -> Set(member)
 /// ## Examples
 ///
 /// ```gleam
-/// from_list([1, 2, 3])
-/// |> take([1, 3, 5])
-/// |> to_list
-/// // -> [1, 3]
+/// assert from_list([1, 2, 3])
+///   |> take([1, 3, 5])
+///   |> to_list
+///   == [1, 3]
 /// ```
 ///
 pub fn take(from set: Set(member), keeping desired: List(member)) -> Set(member) {
@@ -277,8 +278,8 @@ pub fn take(from set: Set(member), keeping desired: List(member)) -> Set(member)
 /// ## Examples
 ///
 /// ```gleam
-/// union(from_list([1, 2]), from_list([2, 3])) |> to_list
-/// // -> [1, 2, 3]
+/// assert union(from_list([1, 2]), from_list([2, 3])) |> to_list
+///   == [1, 2, 3]
 /// ```
 ///
 pub fn union(of first: Set(member), and second: Set(member)) -> Set(member) {
@@ -300,8 +301,8 @@ fn order(first: Set(member), second: Set(member)) -> #(Set(member), Set(member))
 /// ## Examples
 ///
 /// ```gleam
-/// intersection(from_list([1, 2]), from_list([2, 3])) |> to_list
-/// // -> [2]
+/// assert intersection(from_list([1, 2]), from_list([2, 3])) |> to_list
+///   == [2]
 /// ```
 ///
 pub fn intersection(
@@ -318,8 +319,8 @@ pub fn intersection(
 /// ## Examples
 ///
 /// ```gleam
-/// difference(from_list([1, 2]), from_list([2, 3, 4])) |> to_list
-/// // -> [1]
+/// assert difference(from_list([1, 2]), from_list([2, 3, 4])) |> to_list
+///   == [1]
 /// ```
 ///
 pub fn difference(
@@ -334,13 +335,11 @@ pub fn difference(
 /// ## Examples
 ///
 /// ```gleam
-/// is_subset(from_list([1]), from_list([1, 2]))
-/// // -> True
+/// assert is_subset(from_list([1]), from_list([1, 2]))
 /// ```
 ///
 /// ```gleam
-/// is_subset(from_list([1, 2, 3]), from_list([3, 4, 5]))
-/// // -> False
+/// assert !is_subset(from_list([1, 2, 3]), from_list([3, 4, 5]))
 /// ```
 ///
 pub fn is_subset(first: Set(member), of second: Set(member)) -> Bool {
@@ -352,13 +351,11 @@ pub fn is_subset(first: Set(member), of second: Set(member)) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// is_disjoint(from_list([1, 2, 3]), from_list([4, 5, 6]))
-/// // -> True
+/// assert is_disjoint(from_list([1, 2, 3]), from_list([4, 5, 6]))
 /// ```
 ///
 /// ```gleam
-/// is_disjoint(from_list([1, 2, 3]), from_list([3, 4, 5]))
-/// // -> False
+/// assert !is_disjoint(from_list([1, 2, 3]), from_list([3, 4, 5]))
 /// ```
 ///
 pub fn is_disjoint(first: Set(member), from second: Set(member)) -> Bool {
@@ -371,8 +368,9 @@ pub fn is_disjoint(first: Set(member), from second: Set(member)) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// symmetric_difference(from_list([1, 2, 3]), from_list([3, 4])) |> to_list
-/// // -> [1, 2, 4]
+/// assert symmetric_difference(from_list([1, 2, 3]), from_list([3, 4]))
+///   |> to_list
+///   == [1, 2, 4]
 /// ```
 ///
 pub fn symmetric_difference(
@@ -398,8 +396,7 @@ pub fn symmetric_difference(
 /// ```gleam
 /// let set = from_list(["apple", "banana", "cherry"])
 ///
-/// each(set, io.println)
-/// // -> Nil
+/// assert each(set, io.println) == Nil
 /// // apple
 /// // banana
 /// // cherry

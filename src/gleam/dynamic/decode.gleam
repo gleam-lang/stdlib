@@ -379,14 +379,13 @@ pub fn run(data: Dynamic, decoder: Decoder(t)) -> Result(t, List(DecodeError)) {
 ///   ]),
 /// ])
 ///
-/// decode.run(data, decoder)
-/// // -> Ok(1000)
+/// assert decode.run(data, decoder) == Ok(1000)
 /// ```
 ///
 /// ```gleam
-/// dynamic.nil()
-/// |> decode.run(decode.optional(decode.int))
-/// // -> Ok(option.None)
+/// assert dynamic.nil()
+///   |> decode.run(decode.optional(decode.int))
+///   == Ok(option.None)
 /// ```
 ///
 pub fn at(path: List(segment), inner: Decoder(a)) -> Decoder(a) {
@@ -590,8 +589,7 @@ pub fn optional_field(
 ///   #(dynamic.string("one"), dynamic.properties([])),
 /// ])
 ///
-/// decode.run(data, decoder)
-/// // -> Ok(100)
+/// assert decode.run(data, decoder) == Ok(100)
 /// ```
 ///
 pub fn optionally_at(
@@ -959,8 +957,7 @@ pub fn then(decoder: Decoder(a), next: fn(a) -> Decoder(b)) -> Decoder(b) {
 ///   decode.int |> decode.map(int.to_string),
 ///   decode.float |> decode.map(float.to_string),
 /// ])
-/// decode.run(dynamic.int(1000), decoder)
-/// // -> Ok("1000")
+/// assert decode.run(dynamic.int(1000), decoder) == Ok("1000")
 /// ```
 ///
 pub fn one_of(

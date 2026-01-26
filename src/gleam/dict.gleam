@@ -41,13 +41,11 @@ fn from_transient(transient: TransientDict(key, value)) -> Dict(key, value)
 /// ## Examples
 ///
 /// ```gleam
-/// new() |> size
-/// // -> 0
+/// assert new() |> size == 0
 /// ```
 ///
 /// ```gleam
-/// new() |> insert("key", "value") |> size
-/// // -> 1
+/// assert new() |> insert("key", "value") |> size == 1
 /// ```
 ///
 @external(erlang, "maps", "size")
@@ -59,13 +57,11 @@ pub fn size(dict: Dict(k, v)) -> Int
 /// ## Examples
 ///
 /// ```gleam
-/// new() |> is_empty
-/// // -> True
+/// assert new() |> is_empty
 /// ```
 ///
 /// ```gleam
-/// new() |> insert("b", 1) |> is_empty
-/// // -> False
+/// assert !{ new() |> insert("b", 1) |> is_empty }
 /// ```
 ///
 pub fn is_empty(dict: Dict(k, v)) -> Bool {
@@ -82,16 +78,19 @@ pub fn is_empty(dict: Dict(k, v)) -> Bool {
 /// Calling `to_list` on an empty `dict` returns an empty list.
 ///
 /// ```gleam
-/// new() |> to_list
-/// // -> []
+/// assert new() |> to_list == []
 /// ```
 ///
 /// The ordering of elements in the resulting list is an implementation detail
 /// that should not be relied upon.
 ///
 /// ```gleam
-/// new() |> insert("b", 1) |> insert("a", 0) |> insert("c", 2) |> to_list
-/// // -> [#("a", 0), #("b", 1), #("c", 2)]
+/// assert new()
+///   |> insert("b", 1)
+///   |> insert("a", 0)
+///   |> insert("c", 2)
+///   |> to_list
+///   == [#("a", 0), #("b", 1), #("c", 2)]
 /// ```
 ///
 @external(erlang, "maps", "to_list")
@@ -125,13 +124,11 @@ fn from_list_loop(
 /// ## Examples
 ///
 /// ```gleam
-/// new() |> insert("a", 0) |> has_key("a")
-/// // -> True
+/// assert new() |> insert("a", 0) |> has_key("a")
 /// ```
 ///
 /// ```gleam
-/// new() |> insert("a", 0) |> has_key("b")
-/// // -> False
+/// assert !{ new() |> insert("a", 0) |> has_key("b") }
 /// ```
 ///
 @external(javascript, "../dict.mjs", "has")
@@ -156,13 +153,11 @@ pub fn new() -> Dict(k, v)
 /// ## Examples
 ///
 /// ```gleam
-/// new() |> insert("a", 0) |> get("a")
-/// // -> Ok(0)
+/// assert new() |> insert("a", 0) |> get("a") == Ok(0)
 /// ```
 ///
 /// ```gleam
-/// new() |> insert("a", 0) |> get("b")
-/// // -> Error(Nil)
+/// assert new() |> insert("a", 0) |> get("b") == Error(Nil)
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "map_get")
@@ -177,13 +172,11 @@ pub fn get(from: Dict(k, v), get: k) -> Result(v, Nil)
 /// ## Examples
 ///
 /// ```gleam
-/// new() |> insert("a", 0)
-/// // -> from_list([#("a", 0)])
+/// assert new() |> insert("a", 0) == from_list([#("a", 0)])
 /// ```
 ///
 /// ```gleam
-/// new() |> insert("a", 0) |> insert("a", 5)
-/// // -> from_list([#("a", 5)])
+/// assert new() |> insert("a", 0) |> insert("a", 5) == from_list([#("a", 5)])
 /// ```
 ///
 @external(javascript, "../dict.mjs", "insert")
@@ -208,9 +201,9 @@ fn transient_insert(
 /// ## Examples
 ///
 /// ```gleam
-/// from_list([#(3, 3), #(2, 4)])
-/// |> map_values(fn(key, value) { key * value })
-/// // -> from_list([#(3, 9), #(2, 8)])
+/// assert from_list([#(3, 3), #(2, 4)])
+///   |> map_values(fn(key, value) { key * value })
+///   == from_list([#(3, 9), #(2, 8)])
 /// ```
 ///
 @external(javascript, "../dict.mjs", "map")
@@ -230,8 +223,7 @@ fn do_map_values(f: fn(k, v) -> a, dict: Dict(k, v)) -> Dict(k, a)
 /// ## Examples
 ///
 /// ```gleam
-/// from_list([#("a", 0), #("b", 1)]) |> keys
-/// // -> ["a", "b"]
+/// assert from_list([#("a", 0), #("b", 1)]) |> keys == ["a", "b"]
 /// ```
 ///
 @external(erlang, "maps", "keys")
@@ -248,8 +240,7 @@ pub fn keys(dict: Dict(k, v)) -> List(k) {
 /// ## Examples
 ///
 /// ```gleam
-/// from_list([#("a", 0), #("b", 1)]) |> values
-/// // -> [0, 1]
+/// assert from_list([#("a", 0), #("b", 1)]) |> values == [0, 1]
 /// ```
 ///
 @external(erlang, "maps", "values")
@@ -263,15 +254,15 @@ pub fn values(dict: Dict(k, v)) -> List(v) {
 /// ## Examples
 ///
 /// ```gleam
-/// from_list([#("a", 0), #("b", 1)])
-/// |> filter(fn(key, value) { value != 0 })
-/// // -> from_list([#("b", 1)])
+/// assert from_list([#("a", 0), #("b", 1)])
+///   |> filter(fn(key, value) { value != 0 })
+///   == from_list([#("b", 1)])
 /// ```
 ///
 /// ```gleam
-/// from_list([#("a", 0), #("b", 1)])
-/// |> filter(fn(key, value) { True })
-/// // -> from_list([#("a", 0), #("b", 1)])
+/// assert from_list([#("a", 0), #("b", 1)])
+///   |> filter(fn(key, value) { True })
+///   == from_list([#("a", 0), #("b", 1)])
 /// ```
 ///
 pub fn filter(
@@ -299,15 +290,15 @@ fn do_filter(f: fn(k, v) -> Bool, dict: Dict(k, v)) -> Dict(k, v) {
 /// ## Examples
 ///
 /// ```gleam
-/// from_list([#("a", 0), #("b", 1)])
-/// |> take(["b"])
-/// // -> from_list([#("b", 1)])
+/// assert from_list([#("a", 0), #("b", 1)])
+///   |> take(["b"])
+///   == from_list([#("b", 1)])
 /// ```
 ///
 /// ```gleam
-/// from_list([#("a", 0), #("b", 1)])
-/// |> take(["a", "b", "c"])
-/// // -> from_list([#("a", 0), #("b", 1)])
+/// assert from_list([#("a", 0), #("b", 1)])
+///   |> take(["a", "b", "c"])
+///   == from_list([#("a", 0), #("b", 1)])
 /// ```
 ///
 pub fn take(from dict: Dict(k, v), keeping desired_keys: List(k)) -> Dict(k, v) {
@@ -344,8 +335,7 @@ fn do_take_loop(
 /// ```gleam
 /// let a = from_list([#("a", 0), #("b", 1)])
 /// let b = from_list([#("b", 2), #("c", 3)])
-/// merge(a, b)
-/// // -> from_list([#("a", 0), #("b", 2), #("c", 3)])
+/// assert merge(a, b) == from_list([#("a", 0), #("b", 2), #("c", 3)])
 /// ```
 ///
 @external(erlang, "maps", "merge")
@@ -359,13 +349,13 @@ pub fn merge(into dict: Dict(k, v), from new_entries: Dict(k, v)) -> Dict(k, v) 
 /// ## Examples
 ///
 /// ```gleam
-/// from_list([#("a", 0), #("b", 1)]) |> delete("a")
-/// // -> from_list([#("b", 1)])
+/// assert from_list([#("a", 0), #("b", 1)]) |> delete("a")
+///   == from_list([#("b", 1)])
 /// ```
 ///
 /// ```gleam
-/// from_list([#("a", 0), #("b", 1)]) |> delete("c")
-/// // -> from_list([#("a", 0), #("b", 1)])
+/// assert from_list([#("a", 0), #("b", 1)]) |> delete("c")
+///   == from_list([#("a", 0), #("b", 1)])
 /// ```
 ///
 pub fn delete(from dict: Dict(k, v), delete key: k) -> Dict(k, v) {
@@ -382,18 +372,18 @@ fn transient_delete(a: k, b: TransientDict(k, v)) -> TransientDict(k, v)
 /// ## Examples
 ///
 /// ```gleam
-/// from_list([#("a", 0), #("b", 1)]) |> drop(["a"])
-/// // -> from_list([#("b", 1)])
+/// assert from_list([#("a", 0), #("b", 1)]) |> drop(["a"])
+///   == from_list([#("b", 1)])
 /// ```
 ///
 /// ```gleam
-/// from_list([#("a", 0), #("b", 1)]) |> drop(["c"])
-/// // -> from_list([#("a", 0), #("b", 1)])
+/// assert from_list([#("a", 0), #("b", 1)]) |> drop(["c"])
+///   == from_list([#("a", 0), #("b", 1)])
 /// ```
 ///
 /// ```gleam
-/// from_list([#("a", 0), #("b", 1)]) |> drop(["a", "b", "c"])
-/// // -> from_list([])
+/// assert from_list([#("a", 0), #("b", 1)]) |> drop(["a", "b", "c"])
+///   == from_list([])
 /// ```
 ///
 pub fn drop(from dict: Dict(k, v), drop disallowed_keys: List(k)) -> Dict(k, v) {
@@ -431,11 +421,11 @@ fn drop_loop(
 ///   }
 /// }
 ///
-/// upsert(dict, "a", increment)
-/// // -> from_list([#("a", 1)])
+/// assert upsert(dict, "a", increment) == from_list([#("a", 1)])
+/// ```
 ///
-/// upsert(dict, "b", increment)
-/// // -> from_list([#("a", 0), #("b", 0)])
+/// ```gleam
+/// assert upsert(dict, "b", increment) == from_list([#("a", 0), #("b", 0)])
 /// ```
 ///
 pub fn upsert(
@@ -460,18 +450,19 @@ pub fn upsert(
 ///
 /// ```gleam
 /// let dict = from_list([#("a", 1), #("b", 3), #("c", 9)])
-/// fold(dict, 0, fn(accumulator, key, value) { accumulator + value })
-/// // -> 13
+/// assert fold(dict, 0, fn(accumulator, key, value) { accumulator + value })
+///   == 13
 /// ```
 ///
 /// ```gleam
 /// import gleam/string
 ///
 /// let dict = from_list([#("a", 1), #("b", 3), #("c", 9)])
-/// fold(dict, "", fn(accumulator, key, value) {
-///   string.append(accumulator, key)
-/// })
-/// // -> "abc"
+/// assert
+///   fold(dict, "", fn(accumulator, key, value) {
+///     string.append(accumulator, key)
+///   })
+///   == "abc"
 /// ```
 ///
 @external(javascript, "../dict.mjs", "fold")
@@ -497,10 +488,11 @@ fn do_fold(fun: fn(k, v, acc) -> acc, initial: acc, dict: Dict(k, v)) -> acc
 ///
 /// let dict = from_list([#("a", "apple"), #("b", "banana"), #("c", "cherry")])
 ///
-/// each(dict, fn(k, v) {
-///   io.println(key <> " => " <> value)
-/// })
-/// // -> Nil
+/// assert
+///   each(dict, fn(k, v) {
+///     io.println(key <> " => " <> value)
+///   })
+///   == Nil
 /// // a => apple
 /// // b => banana
 /// // c => cherry
@@ -526,8 +518,8 @@ pub fn each(dict: Dict(k, v), fun: fn(k, v) -> a) -> Nil {
 /// ```gleam
 /// let a = from_list([#("a", 0), #("b", 1)])
 /// let b = from_list([#("a", 2), #("c", 3)])
-/// combine(a, b, fn(one, other) { one + other })
-/// // -> from_list([#("a", 2), #("b", 1), #("c", 3)])
+/// assert combine(a, b, fn(one, other) { one + other })
+///   == from_list([#("a", 2), #("b", 1), #("c", 3)])
 /// ```
 ///
 pub fn combine(

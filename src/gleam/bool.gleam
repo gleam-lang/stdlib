@@ -14,18 +14,19 @@
 /// ## Examples
 ///
 /// ```gleam
-/// and(True, True)
-/// // -> True
+/// assert and(True, True)
 /// ```
 ///
 /// ```gleam
-/// and(False, True)
-/// // -> False
+/// assert !and(False, True)
 /// ```
 ///
 /// ```gleam
-/// False |> and(True)
-/// // -> False
+/// assert !and(False, True)
+/// ```
+///
+/// ```gleam
+/// assert !and(False, False)
 /// ```
 ///
 pub fn and(a: Bool, b: Bool) -> Bool {
@@ -40,18 +41,19 @@ pub fn and(a: Bool, b: Bool) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// or(True, True)
-/// // -> True
+/// assert or(True, True)
 /// ```
 ///
 /// ```gleam
-/// or(False, True)
-/// // -> True
+/// assert or(False, True)
 /// ```
 ///
 /// ```gleam
-/// False |> or(True)
-/// // -> True
+/// assert or(False, True)
+/// ```
+///
+/// ```gleam
+/// assert !or(False, False)
 /// ```
 ///
 pub fn or(a: Bool, b: Bool) -> Bool {
@@ -65,13 +67,11 @@ pub fn or(a: Bool, b: Bool) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// negate(True)
-/// // -> False
+/// assert !negate(True)
 /// ```
 ///
 /// ```gleam
-/// negate(False)
-/// // -> True
+/// assert negate(False)
 /// ```
 ///
 pub fn negate(bool: Bool) -> Bool {
@@ -83,23 +83,19 @@ pub fn negate(bool: Bool) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// nor(False, False)
-/// // -> True
+/// assert nor(False, False)
 /// ```
 ///
 /// ```gleam
-/// nor(False, True)
-/// // -> False
+/// assert !nor(False, True)
 /// ```
 ///
 /// ```gleam
-/// nor(True, False)
-/// // -> False
+/// assert !nor(True, False)
 /// ```
 ///
 /// ```gleam
-/// nor(True, True)
-/// // -> False
+/// assert !nor(True, True)
 /// ```
 ///
 pub fn nor(a: Bool, b: Bool) -> Bool {
@@ -111,23 +107,19 @@ pub fn nor(a: Bool, b: Bool) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// nand(False, False)
-/// // -> True
+/// assert nand(False, False)
 /// ```
 ///
 /// ```gleam
-/// nand(False, True)
-/// // -> True
+/// assert nand(False, True)
 /// ```
 ///
 /// ```gleam
-/// nand(True, False)
-/// // -> True
+/// assert nand(True, False)
 /// ```
 ///
 /// ```gleam
-/// nand(True, True)
-/// // -> False
+/// assert !nand(True, True)
 /// ```
 ///
 pub fn nand(a: Bool, b: Bool) -> Bool {
@@ -139,23 +131,19 @@ pub fn nand(a: Bool, b: Bool) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// exclusive_or(False, False)
-/// // -> False
+/// assert !exclusive_or(False, False)
 /// ```
 ///
 /// ```gleam
-/// exclusive_or(False, True)
-/// // -> True
+/// assert exclusive_or(False, True)
 /// ```
 ///
 /// ```gleam
-/// exclusive_or(True, False)
-/// // -> True
+/// assert exclusive_or(True, False)
 /// ```
 ///
 /// ```gleam
-/// exclusive_or(True, True)
-/// // -> False
+/// assert !exclusive_or(True, True)
 /// ```
 ///
 pub fn exclusive_or(a: Bool, b: Bool) -> Bool {
@@ -167,23 +155,19 @@ pub fn exclusive_or(a: Bool, b: Bool) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// exclusive_nor(False, False)
-/// // -> True
+/// assert exclusive_nor(False, False)
 /// ```
 ///
 /// ```gleam
-/// exclusive_nor(False, True)
-/// // -> False
+/// assert !exclusive_nor(False, True)
 /// ```
 ///
 /// ```gleam
-/// exclusive_nor(True, False)
-/// // -> False
+/// assert !exclusive_nor(True, False)
 /// ```
 ///
 /// ```gleam
-/// exclusive_nor(True, True)
-/// // -> True
+/// assert exclusive_nor(True, True)
 /// ```
 ///
 pub fn exclusive_nor(a: Bool, b: Bool) -> Bool {
@@ -195,13 +179,11 @@ pub fn exclusive_nor(a: Bool, b: Bool) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// to_string(True)
-/// // -> "True"
+/// assert to_string(True) == "True"
 /// ```
 ///
 /// ```gleam
-/// to_string(False)
-/// // -> "False"
+/// assert to_string(False) == "False"
 /// ```
 ///
 pub fn to_string(bool: Bool) -> String {

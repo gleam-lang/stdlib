@@ -5,8 +5,7 @@
 /// ## Example
 ///
 /// ```gleam
-/// io.print("Hi mum")
-/// // -> Nil
+/// assert io.print("Hi mum") == Nil
 /// // Hi mum
 /// ```
 ///
@@ -21,8 +20,7 @@ pub fn print(string: String) -> Nil
 /// ## Example
 ///
 /// ```gleam
-/// io.print_error("Hi pop")
-/// // -> Nil
+/// assert io.print_error("Hi pop") == Nil
 /// // Hi pop
 /// ```
 ///
@@ -35,8 +33,7 @@ pub fn print_error(string: String) -> Nil
 /// ## Example
 ///
 /// ```gleam
-/// io.println("Hi mum")
-/// // -> Nil
+/// assert io.println("Hi mum") == Nil
 /// // Hi mum
 /// ```
 ///
@@ -49,8 +46,7 @@ pub fn println(string: String) -> Nil
 /// ## Example
 ///
 /// ```gleam
-/// io.println_error("Hi pop")
-/// // -> Nil
+/// assert io.println_error("Hi pop") == Nil
 /// // Hi pop
 /// ```
 ///
