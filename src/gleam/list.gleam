@@ -2139,7 +2139,7 @@ fn take_firsts(
 /// ## Example
 ///
 /// ```gleam
-/// range(1, 10) |> shuffle()
+/// [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] |> shuffle
 /// // -> [1, 6, 9, 10, 3, 8, 4, 2, 7, 5]
 /// ```
 ///
@@ -2171,7 +2171,7 @@ fn do_shuffle_by_pair_indexes(
 /// ## Examples
 ///
 /// ```gleam
-/// assert range(1, 10) |> list.max(int.compare) == Ok(10)
+/// assert [1, 2, 3, 4, 5] |> list.max(int.compare) == Ok(5)
 /// ```
 ///
 /// ```gleam
