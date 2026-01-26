@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.69.0 - 2026-01-26
 
 - The `int.range` function has been added.
 - The `list.range` function has been deprecated.
