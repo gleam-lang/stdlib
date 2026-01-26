@@ -826,7 +826,7 @@ pub fn bitwise_shift_right(x: Int, y: Int) -> Int
 ///
 /// ```gleam
 /// range(from: 1, to: -2, with: [], run: list.prepend)
-/// // -> [-2, -1, 0, 1]
+/// // -> [-1, 0, 1]
 /// ```
 ///
 pub fn range(
