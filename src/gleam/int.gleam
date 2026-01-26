@@ -811,30 +811,28 @@ pub fn bitwise_shift_left(x: Int, y: Int) -> Int
 @external(javascript, "../gleam_stdlib.mjs", "bitwise_shift_right")
 pub fn bitwise_shift_right(x: Int, y: Int) -> Int
 
-/// Run a function for each int between an inclusive `from` and exclusive `to`
-/// pair of ints.
+/// Run a function for each int between ints `from` and `to`.
+///
+/// `from` is inclusive, and `to` is exclusive.
 ///
 /// ## Examples
 ///
 /// ```gleam
-/// range(0, 0)
-/// // -> [0]
-/// ```
-///
-/// ```gleam
-/// range(0, 3, "", fn(acc, i) { acc <> to_string(i) })
+/// range(from: 0, to: 3, with: "", run: fn(acc, i) {
+///   acc <> to_string(i)
+/// })
 /// // -> "012"
 /// ```
 ///
 /// ```gleam
-/// range(1, -2, [], list.prepend)
+/// range(from: 1, to: -2, with: [], run: list.prepend)
 /// // -> [-2, -1, 0, 1]
 /// ```
 ///
 pub fn range(
   from start: Int,
   to stop: Int,
-  initial acc: acc,
+  with acc: acc,
   run reducer: fn(acc, Int) -> acc,
 ) -> acc {
   let increment = case start < stop {
@@ -854,8 +852,8 @@ fn range_loop(
   case current == stop {
     True -> acc
     False -> {
-      let current = current + increment
       let acc = reducer(acc, current)
+      let current = current + increment
       range_loop(current, stop, increment, acc, reducer)
     }
   }

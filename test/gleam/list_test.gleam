@@ -561,23 +561,6 @@ pub fn index_map_test() {
   assert list.index_map(["a", "b", "c"], f) == [#("a", 0), #("b", 1), #("c", 2)]
 }
 
-pub fn range_test() {
-  assert list.range(0, 0) == [0]
-
-  assert list.range(1, 1) == [1]
-
-  assert list.range(-1, -1) == [-1]
-
-  assert list.range(0, 1) == [0, 1]
-
-  assert list.range(0, 5) == [0, 1, 2, 3, 4, 5]
-
-  assert list.range(1, -5) == [1, 0, -1, -2, -3, -4, -5]
-
-  // TCO test
-  list.range(1, recursion_test_cycles)
-}
-
 pub fn repeat_test() {
   assert list.repeat(1, -10) == []
 

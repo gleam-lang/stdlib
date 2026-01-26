@@ -1452,7 +1452,7 @@ fn merge_descendings(
   }
 }
 
-@deprecated("Use int.range or function.loop instead")
+@deprecated("Use int.range instead")
 pub fn range(from start: Int, to stop: Int) -> List(Int) {
   range_loop(start, stop, [])
 }

@@ -383,3 +383,41 @@ pub fn shift_right_test() {
 
   assert int.bitwise_shift_right(-1, -2) == -4
 }
+
+pub fn range_ascending_test() {
+  assert int.range(from: 0, to: 3, with: "", run: fn(acc, i) {
+      acc <> int.to_string(i)
+    })
+    == "012"
+}
+
+pub fn range_descending_test() {
+  assert int.range(from: 3, to: 0, with: "", run: fn(acc, i) {
+      acc <> int.to_string(i)
+    })
+    == "321"
+}
+
+pub fn range_empty_test() {
+  assert int.range(from: 5, to: 5, with: "", run: fn(acc, i) {
+      acc <> int.to_string(i)
+    })
+    == ""
+}
+
+pub fn range_with_list_prepend_test() {
+  assert int.range(from: 1, to: -2, with: [], run: list.prepend) == [-1, 0, 1]
+}
+
+pub fn range_negative_to_positive_test() {
+  assert int.range(from: -2, to: 2, with: [], run: fn(acc, i) { [i, ..acc] })
+    == [1, 0, -1, -2]
+}
+
+pub fn range_single_element_test() {
+  assert int.range(from: 0, to: 1, with: [], run: list.prepend) == [0]
+}
+
+pub fn range_sum_test() {
+  assert int.range(from: 1, to: 5, with: 0, run: int.add) == 10
+}
