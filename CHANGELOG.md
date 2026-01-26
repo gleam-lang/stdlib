@@ -1,8 +1,11 @@
 # Changelog
 
-## v0.68.2 - 2026-01-25
+## Unreleased
 
-- Fix docs for float.to_precision() to remove the labelled argument.
+- The `int.range` function has been added.
+- The `list.range` function has been deprecated.
+- Fixed a bug where `dynamic.classify` would fail to identify functions with
+  many parameters.
 
 ## v0.68.1 - 2026-01-10
 
