@@ -599,7 +599,7 @@ pub fn random_operations_large_test() {
 }
 
 fn range_dict(size) {
-  list.range(1, size)
+  int.range(from: size, to: 0, with: [], run: list.prepend)
   |> list.map(fn(x) { #(x, x) })
   |> dict.from_list
 }
