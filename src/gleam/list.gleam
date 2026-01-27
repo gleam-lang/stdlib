@@ -2305,7 +2305,7 @@ fn max_loop(list, compare, max) {
 /// ## Examples
 ///
 /// ```gleam
-/// reservoir_sample([1, 2, 3, 4, 5], 3)
+/// sample([1, 2, 3, 4, 5], 3)
 /// // -> [2, 4, 5]  // A random sample of 3 items
 /// ```
 ///
