@@ -458,6 +458,80 @@ export function bit_array_slice(bits, position, length) {
   return Result$Ok(bitArraySlice(bits, start * 8, end * 8));
 }
 
+export function bit_array_split_once(bits, pattern) {
+  try {
+    const patternEmpty = pattern.buffer.length < 1
+    const patternLongerThanBits = pattern.buffer.length >= bits.buffer.length
+    const incorrectArguments = !(bits instanceof BitArray) || !(pattern instanceof BitArray)
+    if (incorrectArguments || patternEmpty || patternLongerThanBits) {
+      return new Error(Nil);
+    }
+
+    const n = bits.buffer.length - pattern.buffer.length + 1;
+    find: for (let i = 0; i < n; i++) {
+      for (let j = 0; j < pattern.buffer.length; j++) {
+        if (bits.buffer[i + j] !== pattern.buffer[j]) {
+          continue find;
+        }
+      }
+      const before = bits.buffer.slice(0, i);
+      const after = bits.buffer.slice(i + pattern.buffer.length);
+      return new Ok([new BitArray(before), new BitArray(after)]);
+    }
+
+    return new Error(Nil);
+  } catch (e) {
+    return new Error(Nil);
+  }
+}
+
+export function bit_array_split(bits, pattern) {
+  try {
+    const patternEmpty = pattern.buffer.length < 1
+    const incorrectArguments = !(bits instanceof BitArray) || !(pattern instanceof BitArray)
+    if (incorrectArguments || patternEmpty) {
+      return new Error(Nil);
+    }
+
+    const bitsShorter = bits.buffer.length < pattern.buffer.length
+    if (bitsShorter) {
+      return new Ok(List.fromArray([bits]))
+    }
+
+    const results = [];
+    let lastIndex = 0;
+    const n = bits.buffer.length - pattern.buffer.length + 1;
+
+    find: for (let i = 0; i < n; i++) {
+      for (let j = 0; j < pattern.buffer.length; j++) {
+        if (bits.buffer[i + j] !== pattern.buffer[j]) {
+          continue find;
+        }
+      }
+
+      const bitsEqualsPattern = bits.buffer.length === pattern.buffer.length
+      if (bitsEqualsPattern) {
+        return new Ok(List.fromArray([]));
+      }
+
+      if (i > lastIndex) {
+        results.push(new BitArray(bits.buffer.slice(lastIndex, i)));
+      }
+
+      lastIndex = i + pattern.buffer.length;
+      i = lastIndex - 1;
+    }
+
+    if (lastIndex < bits.buffer.length) {
+      results.push(new BitArray(bits.buffer.slice(lastIndex)));
+    }
+
+    return new Ok(List.fromArray(results))
+  } catch (e) {
+    return new Error(Nil);
+  }
+}
+
 export function codepoint(int) {
   return new UtfCodepoint(int);
 }
