@@ -2,15 +2,19 @@ import gleam/int
 import gleam/list
 import gleam/set
 
-pub fn size_test() {
+pub fn size_empty_test() {
   assert set.size(set.new()) == 0
+}
 
+pub fn size_with_elements_test() {
   assert set.new()
     |> set.insert(1)
     |> set.insert(2)
     |> set.size
     == 2
+}
 
+pub fn size_with_duplicates_test() {
   assert set.new()
     |> set.insert(1)
     |> set.insert(1)
@@ -19,26 +23,32 @@ pub fn size_test() {
     == 2
 }
 
-pub fn is_empty_test() {
+pub fn is_empty_new_test() {
   assert set.is_empty(set.new())
+}
 
+pub fn is_empty_with_element_test() {
   assert !{
     set.new()
     |> set.insert(1)
     |> set.is_empty()
   }
+}
 
+pub fn is_empty_after_delete_test() {
   assert set.new()
     |> set.insert(1)
     |> set.delete(1)
     |> set.is_empty()
 }
 
-pub fn contains_test() {
+pub fn contains_present_test() {
   assert set.new()
     |> set.insert(1)
     |> set.contains(this: 1)
+}
 
+pub fn contains_absent_test() {
   assert !set.contains(set.new(), this: 1)
 }
 
@@ -129,19 +139,27 @@ pub fn difference_test() {
     == [1]
 }
 
-pub fn is_subset_test() {
+pub fn is_subset_false_superset_test() {
   assert !set.is_subset(set.from_list([1, 2, 3, 4]), set.from_list([2, 4]))
+}
 
+pub fn is_subset_true_test() {
   assert set.is_subset(set.from_list([2, 4]), set.from_list([1, 2, 3, 4]))
+}
 
+pub fn is_subset_disjoint_test() {
   assert !set.is_subset(set.from_list([1, 2, 3]), set.from_list([4, 5, 6]))
+}
 
+pub fn is_subset_partial_overlap_test() {
   assert !set.is_subset(set.from_list([1, 2]), set.from_list([2, 3, 4]))
 }
 
-pub fn is_disjoint_test() {
+pub fn is_disjoint_true_test() {
   assert set.is_disjoint(set.from_list([1, 2, 3]), set.from_list([4, 5, 6]))
+}
 
+pub fn is_disjoint_false_test() {
   assert !set.is_disjoint(set.from_list([1, 2]), set.from_list([2, 3, 4]))
 }
 

@@ -5,37 +5,115 @@ import gleam/option.{None, Some}
 import gleam/string
 import gleam/uri
 
-pub fn full_parse_test() {
+pub fn full_parse_scheme_test() {
   let assert Ok(parsed) =
     uri.parse("https://weebl:bob@example.com:1234/path?query=true#fragment")
   assert parsed.scheme == Some("https")
+}
+
+pub fn full_parse_userinfo_test() {
+  let assert Ok(parsed) =
+    uri.parse("https://weebl:bob@example.com:1234/path?query=true#fragment")
   assert parsed.userinfo == Some("weebl:bob")
+}
+
+pub fn full_parse_host_test() {
+  let assert Ok(parsed) =
+    uri.parse("https://weebl:bob@example.com:1234/path?query=true#fragment")
   assert parsed.host == Some("example.com")
+}
+
+pub fn full_parse_port_test() {
+  let assert Ok(parsed) =
+    uri.parse("https://weebl:bob@example.com:1234/path?query=true#fragment")
   assert parsed.port == Some(1234)
+}
+
+pub fn full_parse_path_test() {
+  let assert Ok(parsed) =
+    uri.parse("https://weebl:bob@example.com:1234/path?query=true#fragment")
   assert parsed.path == "/path"
+}
+
+pub fn full_parse_query_test() {
+  let assert Ok(parsed) =
+    uri.parse("https://weebl:bob@example.com:1234/path?query=true#fragment")
   assert parsed.query == Some("query=true")
+}
+
+pub fn full_parse_fragment_test() {
+  let assert Ok(parsed) =
+    uri.parse("https://weebl:bob@example.com:1234/path?query=true#fragment")
   assert parsed.fragment == Some("fragment")
 }
 
-pub fn parse_only_path_test() {
+pub fn parse_only_path_scheme_test() {
   let assert Ok(parsed) = uri.parse("")
   assert parsed.scheme == None
+}
+
+pub fn parse_only_path_userinfo_test() {
+  let assert Ok(parsed) = uri.parse("")
   assert parsed.userinfo == None
+}
+
+pub fn parse_only_path_host_test() {
+  let assert Ok(parsed) = uri.parse("")
   assert parsed.host == None
+}
+
+pub fn parse_only_path_port_test() {
+  let assert Ok(parsed) = uri.parse("")
   assert parsed.port == None
+}
+
+pub fn parse_only_path_path_test() {
+  let assert Ok(parsed) = uri.parse("")
   assert parsed.path == ""
+}
+
+pub fn parse_only_path_query_test() {
+  let assert Ok(parsed) = uri.parse("")
   assert parsed.query == None
+}
+
+pub fn parse_only_path_fragment_test() {
+  let assert Ok(parsed) = uri.parse("")
   assert parsed.fragment == None
 }
 
-pub fn parse_only_host_test() {
+pub fn parse_only_host_scheme_test() {
   let assert Ok(parsed) = uri.parse("//")
   assert parsed.scheme == None
+}
+
+pub fn parse_only_host_userinfo_test() {
+  let assert Ok(parsed) = uri.parse("//")
   assert parsed.userinfo == None
+}
+
+pub fn parse_only_host_host_test() {
+  let assert Ok(parsed) = uri.parse("//")
   assert parsed.host == Some("")
+}
+
+pub fn parse_only_host_port_test() {
+  let assert Ok(parsed) = uri.parse("//")
   assert parsed.port == None
+}
+
+pub fn parse_only_host_path_test() {
+  let assert Ok(parsed) = uri.parse("//")
   assert parsed.path == ""
+}
+
+pub fn parse_only_host_query_test() {
+  let assert Ok(parsed) = uri.parse("//")
   assert parsed.query == None
+}
+
+pub fn parse_only_host_fragment_test() {
+  let assert Ok(parsed) = uri.parse("//")
   assert parsed.fragment == None
 }
 
@@ -162,21 +240,37 @@ fn assert_parse(s) {
 //   assert "https" = uri.parse("https").path
 // }
 
-pub fn parse_downcases_scheme() {
+pub fn parse_downcases_scheme_test() {
   let assert Ok(uri) = uri.parse("HTTPS://EXAMPLE.COM")
   let assert Some("https") = uri.scheme
+}
+
+pub fn parse_preserves_host_case_test() {
+  let assert Ok(uri) = uri.parse("HTTPS://EXAMPLE.COM")
   let assert Some("EXAMPLE.COM") = uri.host
 }
 
-pub fn parse_empty_fragments_test() {
+pub fn parse_empty_fragment_1_test() {
   let assert Some("") = assert_parse("http://example.com#").fragment
+}
+
+pub fn parse_empty_fragment_2_test() {
   let assert Some("") = assert_parse("http://example.com/#").fragment
+}
+
+pub fn parse_empty_fragment_3_test() {
   let assert Some("") = assert_parse("http://example.com/test#").fragment
 }
 
-pub fn parse_empty_queries_test() {
+pub fn parse_empty_query_1_test() {
   let assert Some("") = assert_parse("http://example.com?").query
+}
+
+pub fn parse_empty_query_2_test() {
   let assert Some("") = assert_parse("http://example.com/?").query
+}
+
+pub fn parse_empty_query_3_test() {
   let assert Some("") = assert_parse("http://example.com/test?").query
 }
 
@@ -195,12 +289,16 @@ pub fn full_uri_to_string_test() {
     == "https://weebl:bob@example.com:1234/path?query=true#fragment"
 }
 
-pub fn path_only_uri_to_string_test() {
+pub fn path_only_uri_to_string_slash_test() {
   assert uri.to_string(uri.Uri(None, None, None, None, "/", None, None)) == "/"
+}
 
+pub fn path_only_uri_to_string_teapot_test() {
   assert uri.to_string(uri.Uri(None, None, None, None, "/teapot", None, None))
     == "/teapot"
+}
 
+pub fn path_only_uri_to_string_userinfo_ignored_test() {
   assert uri.to_string(uri.Uri(
       None,
       Some("user"),
@@ -211,11 +309,13 @@ pub fn path_only_uri_to_string_test() {
       None,
     ))
     == "/teapot"
+}
 
+pub fn path_only_uri_to_string_empty_test() {
   assert uri.to_string(uri.Uri(None, None, None, None, "", None, None)) == ""
 }
 
-pub fn scheme_to_string_test() {
+pub fn scheme_to_string_with_path_test() {
   assert uri.to_string(uri.Uri(
       Some("ftp"),
       None,
@@ -226,10 +326,14 @@ pub fn scheme_to_string_test() {
       None,
     ))
     == "ftp:thing.txt"
+}
 
+pub fn scheme_to_string_empty_path_test() {
   assert uri.to_string(uri.Uri(Some("ftp"), None, None, None, "", None, None))
     == "ftp:"
+}
 
+pub fn scheme_to_string_userinfo_ignored_test() {
   assert uri.to_string(uri.Uri(
       Some("ftp"),
       Some("ignored"),
@@ -240,7 +344,9 @@ pub fn scheme_to_string_test() {
       None,
     ))
     == "ftp:"
+}
 
+pub fn scheme_to_string_leading_slash_test() {
   assert uri.to_string(uri.Uri(
       Some("https"),
       None,
@@ -251,7 +357,9 @@ pub fn scheme_to_string_test() {
       None,
     ))
     == "https:/one/two"
+}
 
+pub fn scheme_to_string_fragment_test() {
   assert uri.to_string(uri.Uri(
       None,
       None,
@@ -264,7 +372,7 @@ pub fn scheme_to_string_test() {
     == "noslash#frag"
 }
 
-pub fn host_to_string_test() {
+pub fn host_to_string_with_scheme_test() {
   assert uri.to_string(uri.Uri(
       Some("ftp"),
       None,
@@ -275,7 +383,9 @@ pub fn host_to_string_test() {
       None,
     ))
     == "ftp://example.com/"
+}
 
+pub fn host_to_string_no_scheme_test() {
   assert uri.to_string(uri.Uri(
       None,
       None,
@@ -286,7 +396,9 @@ pub fn host_to_string_test() {
       None,
     ))
     == "//example.com/"
+}
 
+pub fn host_to_string_with_slash_path_test() {
   assert uri.to_string(uri.Uri(
       None,
       None,
@@ -297,7 +409,9 @@ pub fn host_to_string_test() {
       None,
     ))
     == "//example.com/slash"
+}
 
+pub fn host_to_string_noslash_path_test() {
   assert uri.to_string(uri.Uri(
       None,
       None,
@@ -308,10 +422,14 @@ pub fn host_to_string_test() {
       None,
     ))
     == "//example.com/noslash"
+}
 
+pub fn host_to_string_empty_host_test() {
   assert uri.to_string(uri.Uri(None, None, Some(""), None, "", None, None))
     == "//"
+}
 
+pub fn host_to_string_with_fragment_test() {
   assert uri.to_string(uri.Uri(
       None,
       None,
@@ -322,12 +440,14 @@ pub fn host_to_string_test() {
       Some("ok"),
     ))
     == "//example.com/noslash#ok"
+}
 
+pub fn host_to_string_empty_with_fragment_test() {
   assert uri.to_string(uri.Uri(None, None, Some(""), None, "", None, Some("ok")))
     == "//#ok"
 }
 
-pub fn port_to_string_test() {
+pub fn port_to_string_with_scheme_test() {
   assert uri.to_string(uri.Uri(
       Some("ftp"),
       None,
@@ -338,7 +458,9 @@ pub fn port_to_string_test() {
       None,
     ))
     == "ftp://example.com:80/"
+}
 
+pub fn port_to_string_no_scheme_test() {
   assert uri.to_string(uri.Uri(
       None,
       None,
@@ -349,7 +471,9 @@ pub fn port_to_string_test() {
       None,
     ))
     == "//example.com:40/"
+}
 
+pub fn port_to_string_with_slash_path_test() {
   assert uri.to_string(uri.Uri(
       None,
       None,
@@ -360,7 +484,9 @@ pub fn port_to_string_test() {
       None,
     ))
     == "//example.com:80/slash"
+}
 
+pub fn port_to_string_noslash_path_test() {
   assert uri.to_string(uri.Uri(
       None,
       None,
@@ -371,7 +497,9 @@ pub fn port_to_string_test() {
       None,
     ))
     == "//example.com:81/noslash"
+}
 
+pub fn port_to_string_no_host_test() {
   assert uri.to_string(uri.Uri(
       None,
       None,
@@ -384,10 +512,12 @@ pub fn port_to_string_test() {
     == "noslash"
 }
 
-pub fn parse_query_string_test() {
+pub fn parse_query_string_basic_test() {
   let assert Ok(parsed) = uri.parse_query("weebl+bob=1&city=%C3%B6rebro")
   assert parsed == [#("weebl bob", "1"), #("city", "örebro")]
+}
 
+pub fn parse_query_string_duplicates_test() {
   // Duplicates keys not overridden
   let assert Ok(parsed) = uri.parse_query("a[]=1&a[]=2")
 
@@ -549,17 +679,39 @@ pub fn percent_decode_consistency_test() {
   assert parsed == [#(decoded_key, decoded_value)]
 }
 
-pub fn parse_segments_test() {
+pub fn parse_segments_slash_test() {
   assert uri.path_segments("/") == []
+}
+
+pub fn parse_segments_basic_test() {
   assert uri.path_segments("/weebl/bob") == ["weebl", "bob"]
+}
+
+pub fn parse_segments_multiple_slashes_test() {
   assert uri.path_segments("////") == []
+}
+
+pub fn parse_segments_double_slash_test() {
   assert uri.path_segments("/weebl//bob") == ["weebl", "bob"]
+}
 
+pub fn parse_segments_dot_test() {
   assert uri.path_segments("/.") == []
-  assert uri.path_segments("/.weebl") == [".weebl"]
+}
 
+pub fn parse_segments_dot_prefix_test() {
+  assert uri.path_segments("/.weebl") == [".weebl"]
+}
+
+pub fn parse_segments_dotdot_test() {
   assert uri.path_segments("/../bob") == ["bob"]
+}
+
+pub fn parse_segments_dotdot_relative_test() {
   assert uri.path_segments("../bob") == ["bob"]
+}
+
+pub fn parse_segments_dotdot_middle_test() {
   assert uri.path_segments("/weebl/../bob") == ["bob"]
 }
 

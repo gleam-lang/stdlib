@@ -231,7 +231,7 @@ uri_parse(String) ->
                 catch _:_ -> none
                 end,
             {ok, {uri,
-                maps_get_optional(Uri, scheme),
+                maps_get_optional_lowercase(Uri, scheme),
                 maps_get_optional(Uri, userinfo),
                 maps_get_optional(Uri, host),
                 Port,
@@ -239,6 +239,11 @@ uri_parse(String) ->
                 maps_get_optional(Uri, query),
                 maps_get_optional(Uri, fragment)
             }}
+    end.
+
+maps_get_optional_lowercase(Map, Key) ->
+    try {some, string:lowercase(maps:get(Key, Map))}
+    catch _:_ -> none
     end.
 
 maps_get_optional(Map, Key) ->
