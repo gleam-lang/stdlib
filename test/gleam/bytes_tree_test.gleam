@@ -1,7 +1,7 @@
 import gleam/bytes_tree
 import gleam/string_tree
 
-pub fn tree_test() {
+pub fn tree_to_bit_array_test() {
   let data =
     bytes_tree.from_bit_array(<<1>>)
     |> bytes_tree.append(<<2>>)
@@ -9,11 +9,19 @@ pub fn tree_test() {
     |> bytes_tree.prepend(<<0>>)
 
   assert bytes_tree.to_bit_array(data) == <<0, 1, 2, 3>>
+}
+
+pub fn tree_byte_size_test() {
+  let data =
+    bytes_tree.from_bit_array(<<1>>)
+    |> bytes_tree.append(<<2>>)
+    |> bytes_tree.append(<<3>>)
+    |> bytes_tree.prepend(<<0>>)
 
   assert bytes_tree.byte_size(data) == 4
 }
 
-pub fn tree_unaligned_bit_arrays_test() {
+pub fn tree_unaligned_to_bit_array_test() {
   let data =
     bytes_tree.from_bit_array(<<-1:5>>)
     |> bytes_tree.append(<<-1:3>>)
@@ -22,11 +30,19 @@ pub fn tree_unaligned_bit_arrays_test() {
 
   assert bytes_tree.to_bit_array(data)
     == <<-1:4, 0:4, -1:5, 0:3, -1:3, 0:5, -2:2, 0:6>>
+}
+
+pub fn tree_unaligned_byte_size_test() {
+  let data =
+    bytes_tree.from_bit_array(<<-1:5>>)
+    |> bytes_tree.append(<<-1:3>>)
+    |> bytes_tree.append(<<-2:2>>)
+    |> bytes_tree.prepend(<<-1:4>>)
 
   assert bytes_tree.byte_size(data) == 4
 }
 
-pub fn tree_with_strings_test() {
+pub fn tree_with_strings_to_bit_array_test() {
   let data =
     bytes_tree.from_bit_array(<<1>>)
     |> bytes_tree.append_string("2")
@@ -34,11 +50,19 @@ pub fn tree_with_strings_test() {
     |> bytes_tree.prepend_string("0")
 
   assert bytes_tree.to_bit_array(data) == <<"0":utf8, 1, "2":utf8, "3":utf8>>
+}
+
+pub fn tree_with_strings_byte_size_test() {
+  let data =
+    bytes_tree.from_bit_array(<<1>>)
+    |> bytes_tree.append_string("2")
+    |> bytes_tree.append_string("3")
+    |> bytes_tree.prepend_string("0")
 
   assert bytes_tree.byte_size(data) == 4
 }
 
-pub fn tree_with_trees_test() {
+pub fn tree_with_trees_to_bit_array_test() {
   let data =
     bytes_tree.from_bit_array(<<1>>)
     |> bytes_tree.append_tree(bytes_tree.from_bit_array(<<2>>))
@@ -46,6 +70,14 @@ pub fn tree_with_trees_test() {
     |> bytes_tree.prepend_tree(bytes_tree.from_bit_array(<<0>>))
 
   assert bytes_tree.to_bit_array(data) == <<0, 1, 2, 3>>
+}
+
+pub fn tree_with_trees_byte_size_test() {
+  let data =
+    bytes_tree.from_bit_array(<<1>>)
+    |> bytes_tree.append_tree(bytes_tree.from_bit_array(<<2>>))
+    |> bytes_tree.append_tree(bytes_tree.from_bit_array(<<3>>))
+    |> bytes_tree.prepend_tree(bytes_tree.from_bit_array(<<0>>))
 
   assert bytes_tree.byte_size(data) == 4
 }
@@ -75,12 +107,12 @@ pub fn concat_unaligned_bit_arrays_test() {
     == <<-1:4, 0:4, -1:5, 0:3, -1:3, 0:5, -2:2, 0:6>>
 }
 
-pub fn from_bit_array() {
+pub fn from_bit_array_empty_test() {
   // Regression test: no additional modification of the tree
   assert bytes_tree.to_bit_array(bytes_tree.from_bit_array(<<>>)) == <<>>
 }
 
-pub fn from_string_test() {
+pub fn from_string_empty_test() {
   // Regression test: no additional modification of the tree
   assert bytes_tree.to_bit_array(bytes_tree.from_string("")) == <<>>
 }
