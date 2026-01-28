@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Fixed a bug where `uri.parse` would incorrectly handle uppercase schemes on
+  Erlang.
+
 ## v0.69.0 - 2026-01-26
 
 - The `int.range` function has been added.
