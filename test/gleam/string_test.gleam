@@ -1329,3 +1329,35 @@ pub fn trim_suffix_test() {
 
   assert string.trim_suffix("🦑", "🦑") == ""
 }
+
+pub fn strip_prefix_test() {
+  assert string.strip_prefix("gleamlucy", "gleam") == Ok("lucy")
+
+  assert string.strip_prefix("lucygleam", "gleam") == Error(Nil)
+
+  assert string.strip_prefix("lucygleam", "") == Ok("lucygleam")
+
+  assert string.strip_prefix("", "gleam") == Error(Nil)
+
+  assert string.strip_prefix("gleam", "gleam") == Ok("")
+
+  assert string.strip_prefix("🦑lucy", "🦑") == Ok("lucy")
+
+  assert string.strip_prefix("🦑", "🦑") == Ok("")
+}
+
+pub fn strip_suffix_test() {
+  assert string.strip_suffix("lucygleam", "gleam") == Ok("lucy")
+
+  assert string.strip_suffix("gleamlucy", "gleam") == Error(Nil)
+
+  assert string.strip_suffix("lucygleam", "") == Ok("lucygleam")
+
+  assert string.strip_suffix("", "gleam") == Error(Nil)
+
+  assert string.strip_suffix("gleam", "gleam") == Ok("")
+
+  assert string.strip_suffix("lucy🦑", "🦑") == Ok("lucy")
+
+  assert string.strip_suffix("🦑", "🦑") == Ok("")
+}

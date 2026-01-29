@@ -1080,3 +1080,35 @@ export function string_trim_suffix(str, suffix) {
 
   return str;
 }
+
+export function string_strip_prefix(str, prefix) {
+  if (prefix == "") {
+    return Result$Ok(str);
+  }
+
+  if (str == "" && prefix.length != 0) {
+    return Result$Error(undefined);
+  }
+
+  if (str.startsWith(prefix)) {
+    return Result$Ok(str.substring(prefix.length));
+  }
+
+  return Result$Error(undefined);
+}
+
+export function string_strip_suffix(str, suffix) {
+  if (suffix == "") {
+    return Result$Ok(str);
+  }
+
+  if (str == "" && suffix.length != 0) {
+    return Result$Error(undefined);
+  }
+
+  if (str.endsWith(suffix)) {
+    return Result$Ok(str.substring(0, str.length - suffix.length));
+  }
+
+  return Result$Error(undefined);
+}
