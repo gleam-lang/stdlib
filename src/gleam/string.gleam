@@ -888,3 +888,45 @@ pub fn trim_prefix(string: String, prefix prefix: String) -> String
 @external(erlang, "gleam_stdlib", "string_trim_suffix")
 @external(javascript, "../gleam_stdlib.mjs", "string_trim_suffix")
 pub fn trim_suffix(string: String, suffix suffix: String) -> String
+
+/// Removes the given prefix from the start of a `String` if present, and returns an `Ok(String)`.
+///
+/// If the `String` does not start with the given prefix, it is returned as an `Error(Nil)`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// assert strip_prefix("gleamlucy", "gleam") == Ok("lucy")
+/// ```
+///
+/// ```gleam
+/// assert strip_prefix("lucygleam", "gleam") == Error(Nil)
+/// ```
+///
+@external(erlang, "gleam_stdlib", "string_strip_prefix")
+@external(javascript, "../gleam_stdlib.mjs", "string_strip_prefix")
+pub fn strip_prefix(
+  string: String,
+  prefix prefix: String,
+) -> Result(String, Nil)
+
+/// Removes the given suffix from the end of a `String` if present, and returns an `Ok(String)`.
+///
+/// If the `String` does not end with the given suffix, it is returned as an `Error(Nil)`.
+///
+/// ## Examples
+///
+/// ```gleam
+/// assert strip_suffix("lucygleam", "gleam") == Ok("lucy")
+/// ```
+///
+/// ```gleam
+/// assert strip_suffix("gleamlucy", "gleam") == Error(Nil)
+/// ```
+///
+@external(erlang, "gleam_stdlib", "string_strip_suffix")
+@external(javascript, "../gleam_stdlib.mjs", "string_strip_suffix")
+pub fn strip_suffix(
+  string: String,
+  suffix suffix: String,
+) -> Result(String, Nil)
