@@ -1048,3 +1048,35 @@ function isList(data) {
 function isResult(data) {
   return Result$isOk(data) || Result$isError(data);
 }
+
+export function string_trim_prefix(str, prefix) {
+  if (prefix == "") {
+    return str;
+  }
+
+  if (str == "" && prefix.length != 0) {
+    return str;
+  }
+
+  if (str.startsWith(prefix)) {
+    return str.substring(prefix.length);
+  }
+
+  return str;
+}
+
+export function string_trim_suffix(str, suffix) {
+  if (suffix == "") {
+    return str;
+  }
+
+  if (str == "" && suffix.length != 0) {
+    return str;
+  }
+
+  if (str.endsWith(suffix)) {
+    return str.substring(0, str.length - suffix.length);
+  }
+
+  return str;
+}

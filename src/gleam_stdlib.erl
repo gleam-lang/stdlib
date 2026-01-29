@@ -11,7 +11,8 @@
     int_from_base_string/2, utf_codepoint_list_to_string/1, contains_string/2,
     crop_string/2, base16_encode/1, base16_decode/1, string_replace/3, slice/3,
     bit_array_to_int_and_size/1, bit_array_pad_to_bytes/1, index/2, list/5,
-    dict/1, int/1, float/1, bit_array/1, is_null/1
+    dict/1, int/1, float/1, bit_array/1, is_null/1, string_trim_prefix/2,
+    string_trim_suffix/2
 ]).
 
 %% Taken from OTP's uri_string module
@@ -527,3 +528,26 @@ bit_array(_) -> {error, <<>>}.
 
 is_null(X) ->
     X =:= undefined orelse X =:= null orelse X =:= nil.
+
+string_trim_prefix(String, <<>>) ->
+    String;
+string_trim_prefix(String, Prefix) when byte_size(Prefix) > byte_size(String) ->
+    String;
+string_trim_prefix(String, Prefix) ->
+    PrefixSize = byte_size(Prefix),
+    case Prefix == binary_part(String, 0, PrefixSize) of
+        true  -> binary_part(String, PrefixSize, byte_size(String) - PrefixSize);
+        false -> String
+    end.
+
+string_trim_suffix(String, <<>>) ->
+    String;
+string_trim_suffix(String, Suffix) when byte_size(Suffix) > byte_size(String) ->
+    String;
+string_trim_suffix(String, Suffix) ->
+    SuffixSize = byte_size(Suffix),
+    Size = byte_size(String),
+    case Suffix == binary_part(String, Size - SuffixSize, SuffixSize) of
+        true  -> binary_part(String, 0, Size - SuffixSize);
+        false -> String
+    end.

@@ -1297,3 +1297,35 @@ pub fn inspect_map_test() {
   assert string.inspect(dict.from_list([#("a", 1), #("b", 2)]))
     == "dict.from_list([#(\"a\", 1), #(\"b\", 2)])"
 }
+
+pub fn trim_prefix_test() {
+  assert string.trim_prefix("gleamlucy", "gleam") == "lucy"
+
+  assert string.trim_prefix("lucygleam", "gleam") == "lucygleam"
+
+  assert string.trim_prefix("lucygleam", "") == "lucygleam"
+
+  assert string.trim_prefix("", "gleam") == ""
+
+  assert string.trim_prefix("gleam", "gleam") == ""
+
+  assert string.trim_prefix("🦑lucy", "🦑") == "lucy"
+
+  assert string.trim_prefix("🦑", "🦑") == ""
+}
+
+pub fn trim_suffix_test() {
+  assert string.trim_suffix("lucygleam", "gleam") == "lucy"
+
+  assert string.trim_suffix("gleamlucy", "gleam") == "gleamlucy"
+
+  assert string.trim_suffix("lucygleam", "") == "lucygleam"
+
+  assert string.trim_suffix("", "gleam") == ""
+
+  assert string.trim_suffix("gleam", "gleam") == ""
+
+  assert string.trim_suffix("lucy🦑", "🦑") == "lucy"
+
+  assert string.trim_suffix("🦑", "🦑") == ""
+}
