@@ -159,7 +159,7 @@ fn less_than(a: String, b: String) -> Bool
 /// ## Examples
 ///
 /// ```gleam
-/// assert slice(from: "gleam", at_index: 1, length: 2) == le
+/// assert slice(from: "gleam", at_index: 1, length: 2) == "le"
 /// ```
 ///
 /// ```gleam
