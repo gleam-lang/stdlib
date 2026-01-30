@@ -49,7 +49,7 @@ pub fn and(a: Bool, b: Bool) -> Bool {
 /// ```
 ///
 /// ```gleam
-/// assert or(False, True)
+/// assert or(True, False)
 /// ```
 ///
 /// ```gleam
