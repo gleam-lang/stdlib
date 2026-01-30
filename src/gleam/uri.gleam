@@ -104,7 +104,7 @@ fn parse_scheme_loop(
       parse_authority_with_slashes(uri_string, pieces)
     }
 
-    // `?` is not allowed to appear in a schemem, in an authority, or in a path;
+    // `?` is not allowed to appear in a scheme, in an authority, or in a path;
     // so if we see it we know it marks the beginning of the query part.
     "?" <> rest if size == 0 -> parse_query_with_question_mark(rest, pieces)
     "?" <> rest -> {
