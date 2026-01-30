@@ -490,7 +490,7 @@ fn do_fold(fun: fn(k, v, acc) -> acc, initial: acc, dict: Dict(k, v)) -> acc
 ///
 /// assert
 ///   each(dict, fn(k, v) {
-///     io.println(key <> " => " <> value)
+///     io.println(k <> " => " <> v)
 ///   })
 ///   == Nil
 /// // a => apple
