@@ -123,7 +123,7 @@ pub fn contains(in set: Set(member), this member: member) -> Bool {
 ///   new()
 ///   |> insert(2)
 ///   |> delete(2)
-///   |> contains(1)
+///   |> contains(2)
 /// }
 /// ```
 ///
