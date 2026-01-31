@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- The `bit_array` module gains the `to_string_lossy` function.
+
 ## v0.69.0 - 2026-01-26
 
 - The `int.range` function has been added.
