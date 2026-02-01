@@ -57,6 +57,52 @@ pub fn slice(
   take length: Int,
 ) -> Result(BitArray, Nil)
 
+/// Splits a bit array into two parts at the location of the pattern.
+/// 
+/// The result will not include the pattern, and returns an error if the
+/// pattern is not found.
+/// 
+/// This function runs in linear time.
+///
+/// ## Examples
+/// 
+/// ```gleam
+/// split_once(from: <<1, 2, 3>>, on: <<2>>)
+/// // -> Ok(#(<<1>>, <<3>>))
+/// 
+/// split_once(from: <<0>>, on: <<1>>)
+/// // -> Error(Nil)
+/// ```
+@external(erlang, "gleam_stdlib", "bit_array_split_once")
+@external(javascript, "../gleam_stdlib.mjs", "bit_array_split_once")
+pub fn split_once(
+  from bits: BitArray,
+  on pattern: BitArray,
+) -> Result(#(BitArray, BitArray), Nil)
+
+/// Splits a bit array into parts at the locations of the pattern.
+///
+/// The result will not include the pattern, and returns the input
+/// as is if the pattern is not found.
+///
+/// This function runs in linear time.
+///
+/// ## Examples
+///
+/// ```gleam
+/// split(from: <<0, 1, 0, 2, 0, 3>>, on: <<0>>)
+/// // -> Ok([<<1>>, <<2>>, <<3>>])
+/// 
+/// split(from: <<0>>, on: <<1>>)
+/// // -> Ok([<<0>>])
+/// ```
+@external(erlang, "gleam_stdlib", "bit_array_split")
+@external(javascript, "../gleam_stdlib.mjs", "bit_array_split")
+pub fn split(
+  from bits: BitArray,
+  on pattern: BitArray,
+) -> Result(List(BitArray), Nil)
+
 /// Tests to see whether a bit array is valid UTF-8.
 ///
 pub fn is_utf8(bits: BitArray) -> Bool {
