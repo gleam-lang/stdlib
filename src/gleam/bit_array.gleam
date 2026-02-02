@@ -95,6 +95,46 @@ pub fn to_string(bits: BitArray) -> Result(String, Nil) {
 @external(erlang, "gleam_stdlib", "identity")
 fn unsafe_to_string(a: BitArray) -> String
 
+/// Converts a bit array to a string. Invalid bits are passed to the provided
+/// callback and its result is included in the final string in place of the
+/// invalid data.
+///
+/// ## Examples
+///
+/// ```gleam
+/// to_string_lossy(<<"A":utf8, 0x80, "1":utf8, 0:size(5)>>, fn(_) { "�" })
+/// // -> "A�1�"
+/// ```
+/// 
+pub fn to_string_lossy(
+  bits: BitArray,
+  map_invalid_bits: fn(BitArray) -> String,
+) -> String {
+  to_string_lossy_impl(bits, map_invalid_bits, "")
+}
+
+fn to_string_lossy_impl(
+  bits: BitArray,
+  map_invalid_bits: fn(BitArray) -> String,
+  acc: String,
+) -> String {
+  case bits {
+    <<>> -> acc
+
+    <<x:utf8_codepoint, rest:bits>> ->
+      to_string_lossy_impl(
+        rest,
+        map_invalid_bits,
+        acc <> string.from_utf_codepoints([x]),
+      )
+
+    <<x:bytes-1, rest:bits>> ->
+      to_string_lossy_impl(rest, map_invalid_bits, acc <> map_invalid_bits(x))
+
+    _ -> acc <> map_invalid_bits(bits)
+  }
+}
+
 /// Creates a new bit array by joining multiple binaries.
 ///
 /// ## Examples
