@@ -13,11 +13,15 @@ import gleam/result
 @target(javascript)
 import gleam/dynamic.{type Dynamic}
 
-pub fn length_test() {
+pub fn length_unicode_test() {
   assert string.length("ß↑e̊") == 3
+}
 
+pub fn length_basic_test() {
   assert string.length("Gleam") == 5
+}
 
+pub fn length_empty_test() {
   assert string.length("") == 0
 }
 
@@ -29,42 +33,62 @@ pub fn uppercase_test() {
   assert string.uppercase("Gleam") == "GLEAM"
 }
 
-pub fn reverse_test() {
+pub fn reverse_basic_test() {
   assert string.reverse("Gleam") == "maelG"
+}
 
+pub fn reverse_with_space_test() {
   assert string.reverse(" Gleam") == "maelG "
+}
 
+pub fn reverse_emoji_test() {
   assert string.reverse("👍 OK") == "KO 👍"
+}
 
+pub fn reverse_single_emoji_test() {
   assert string.reverse("👍") == "👍"
+}
 
+pub fn reverse_unicode_test() {
   assert string.reverse("ÅÄÖ") == "ÖÄÅ"
+}
 
+pub fn reverse_skin_tone_emoji_test() {
   assert string.reverse("👶🏿") == "👶🏿"
+}
 
+pub fn reverse_skin_tone_roundtrip_test() {
   assert "👶🏿"
     |> string.reverse
     |> string.reverse
     == "👶🏿"
 }
 
-pub fn split_test() {
+pub fn split_comma_test() {
   assert string.split("Gleam,Erlang,Elixir", ",")
     == ["Gleam", "Erlang", "Elixir"]
+}
 
+pub fn split_comma_space_test() {
   assert string.split("Gleam, Erlang,Elixir", ", ")
     == ["Gleam", "Erlang,Elixir"]
+}
 
+pub fn split_empty_test() {
   assert string.split("Gleam On Beam", "")
     == ["G", "l", "e", "a", "m", " ", "O", "n", " ", "B", "e", "a", "m"]
 }
 
-pub fn split_once_test() {
+pub fn split_once_ok_test() {
   assert string.split_once("Gleam,Erlang,Elixir", ",")
     == Ok(#("Gleam", "Erlang,Elixir"))
+}
 
+pub fn split_once_not_found_test() {
   assert string.split_once("Gleam", ",") == Error(Nil)
+}
 
+pub fn split_once_empty_test() {
   assert string.split_once("", ",") == Error(Nil)
 }
 
@@ -77,23 +101,35 @@ pub fn append_test() {
   assert string.append("Test", " Me") == "Test Me"
 }
 
-pub fn compare_test() {
+pub fn compare_equal_test() {
   assert string.compare("", "") == order.Eq
+}
 
+pub fn compare_a_gt_empty_test() {
   assert string.compare("a", "") == order.Gt
+}
 
+pub fn compare_lowercase_a_gt_uppercase_a_test() {
   assert string.compare("a", "A") == order.Gt
+}
 
+pub fn compare_uppercase_a_lt_uppercase_b_test() {
   assert string.compare("A", "B") == order.Lt
+}
 
+pub fn compare_t_gt_uppercase_abc_test() {
   assert string.compare("t", "ABC") == order.Gt
 }
 
-pub fn contains_test() {
+pub fn contains_present_test() {
   assert string.contains("gleam", "ea")
+}
 
+pub fn contains_absent_test() {
   assert !string.contains("gleam", "x")
+}
 
+pub fn contains_labelled_test() {
   assert string.contains(does: "bellwether", contain: "bell")
 }
 
@@ -105,42 +141,60 @@ pub fn concat_emoji_test() {
   assert string.concat(["💃🏿", "💇🏼‍♀️", "🧔‍♂️", "🧑‍🦼‍➡️"]) == "💃🏿💇🏼‍♀️🧔‍♂️🧑‍🦼‍➡️"
 }
 
-pub fn repeat_test() {
+pub fn repeat_one_test() {
   assert string.repeat("hi", times: 1) == "hi"
+}
 
+pub fn repeat_two_test() {
   assert string.repeat("hi", times: 2) == "hihi"
+}
 
+pub fn repeat_three_test() {
   assert string.repeat("hi", times: 3) == "hihihi"
+}
 
+pub fn repeat_large_test() {
   assert string.repeat("a", times: 10_001) |> string.length == 10_001
+}
 
+pub fn repeat_zero_test() {
   assert string.repeat("hi", 0) == ""
+}
 
+pub fn repeat_negative_test() {
   assert string.repeat("hi", -1) == ""
 }
 
 pub fn join_0_test() {
   assert string.join([], with: ", ") == ""
+}
 
+pub fn join_0_dash_test() {
   assert string.join([], with: "-") == ""
 }
 
 pub fn join_1_test() {
   assert string.join(["Hello"], with: ", ") == "Hello"
+}
 
+pub fn join_1_dash_test() {
   assert string.join(["Hello"], with: "-") == "Hello"
 }
 
 pub fn join_2_test() {
   assert string.join(["Hello", "world!"], with: ", ") == "Hello, world!"
+}
 
+pub fn join_2_dash_test() {
   assert string.join(["Hello", "world!"], with: "-") == "Hello-world!"
 }
 
 pub fn join_3_test() {
   assert string.join(["Hello", "there", "world!"], with: ", ")
     == "Hello, there, world!"
+}
 
+pub fn join_3_dash_test() {
   assert string.join(["Hello", "there", "world!"], with: "-")
     == "Hello-there-world!"
 }
@@ -165,13 +219,23 @@ pub fn trim_end_test() {
   assert string.trim_end("  hats  \n") == "  hats"
 }
 
-pub fn trim_whole_string_test() {
+pub fn trim_whole_string_start_test() {
   let s =
     "\u{0020}\u{0009}\u{000A}\u{000B}\u{000C}\u{000D}\u{0085}\u{2028}\u{2029}"
 
   assert string.trim_start(s) == ""
+}
+
+pub fn trim_whole_string_end_test() {
+  let s =
+    "\u{0020}\u{0009}\u{000A}\u{000B}\u{000C}\u{000D}\u{0085}\u{2028}\u{2029}"
 
   assert string.trim_end(s) == ""
+}
+
+pub fn trim_whole_string_test() {
+  let s =
+    "\u{0020}\u{0009}\u{000A}\u{000B}\u{000C}\u{000D}\u{0085}\u{2028}\u{2029}"
 
   assert string.trim(s) == ""
 }
@@ -302,63 +366,103 @@ pub fn trim_comma_test() {
   assert string.trim("hats,") == "hats,"
 }
 
-pub fn starts_with_test() {
+pub fn starts_with_empty_test() {
   assert string.starts_with("theory", "")
+}
 
+pub fn starts_with_match_test() {
   assert string.starts_with("theory", "the")
+}
 
+pub fn starts_with_no_match_test() {
   assert !string.starts_with("theory", "ory")
+}
 
+pub fn starts_with_longer_test() {
   assert !string.starts_with("theory", "theory2")
 }
 
-pub fn ends_with_test() {
+pub fn ends_with_empty_test() {
   assert string.ends_with("theory", "")
+}
 
+pub fn ends_with_match_test() {
   assert string.ends_with("theory", "ory")
+}
 
+pub fn ends_with_no_match_test() {
   assert !string.ends_with("theory", "the")
+}
 
+pub fn ends_with_longer_test() {
   assert !string.ends_with("theory", "theory2")
 }
 
-pub fn slice_test() {
+pub fn slice_basic_test() {
   assert string.slice("gleam", at_index: 1, length: 2) == "le"
+}
 
+pub fn slice_beyond_length_test() {
   assert string.slice("gleam", at_index: 1, length: 10) == "leam"
+}
 
+pub fn slice_beyond_string_test() {
   assert string.slice("gleam", at_index: 10, length: 3) == ""
+}
 
+pub fn slice_negative_index_test() {
   assert string.slice("gleam", at_index: -2, length: 2) == "am"
+}
 
+pub fn slice_negative_beyond_test() {
   assert string.slice("gleam", at_index: -12, length: 2) == ""
+}
 
+pub fn slice_negative_length_test() {
   assert string.slice("gleam", at_index: 2, length: -3) == ""
+}
 
+pub fn slice_zero_length_test() {
   assert string.slice("gleam", at_index: 2, length: 0) == ""
+}
 
+pub fn slice_emoji_test() {
   assert string.slice("👶🏿", at_index: 0, length: 3) == "👶🏿"
 }
 
-pub fn crop_test() {
+pub fn crop_start_test() {
   assert string.crop("gleam", "gl") == "gleam"
+}
 
+pub fn crop_middle_test() {
   assert string.crop("gleam", "le") == "leam"
+}
 
+pub fn crop_labelled_test() {
   assert string.crop(from: "gleam", before: "ea") == "eam"
+}
 
+pub fn crop_empty_test() {
   assert string.crop("gleam", "") == "gleam"
+}
 
+pub fn crop_not_found_test() {
   assert string.crop("gleam", "!") == "gleam"
 }
 
-pub fn drop_start_test() {
+pub fn drop_start_basic_test() {
   assert string.drop_start("gleam", up_to: 2) == "eam"
+}
 
+pub fn drop_start_beyond_length_test() {
   assert string.drop_start("gleam", up_to: 6) == ""
+}
 
+pub fn drop_start_negative_test() {
   assert string.drop_start("gleam", up_to: -2) == "gleam"
+}
 
+pub fn drop_start_zero_test() {
   assert string.drop_start("gleam", up_to: 0) == "gleam"
 }
 
@@ -367,79 +471,131 @@ pub fn drop_start_3499_test() {
   assert string.drop_start("\r]", 1) == "]"
 }
 
-pub fn drop_end_test() {
+pub fn drop_end_basic_test() {
   assert string.drop_end("gleam", up_to: 2) == "gle"
+}
 
+pub fn drop_end_all_test() {
   assert string.drop_end("gleam", up_to: 5) == ""
+}
 
+pub fn drop_end_negative_test() {
   assert string.drop_end("gleam", up_to: -2) == "gleam"
+}
 
+pub fn drop_end_zero_test() {
   assert string.drop_end("gleam", up_to: 0) == "gleam"
 }
 
-pub fn pad_start_test() {
+pub fn pad_start_basic_test() {
   assert string.pad_start("121", to: 5, with: ".") == "..121"
+}
 
+pub fn pad_start_exact_test() {
   assert string.pad_start("121", to: 3, with: ".") == "121"
+}
 
+pub fn pad_start_shorter_test() {
   assert string.pad_start("121", to: 2, with: ".") == "121"
+}
 
+pub fn pad_start_partial_multi_test() {
   assert string.pad_start("121", to: 4, with: "XY") == "X121"
+}
 
+pub fn pad_start_exact_multi_test() {
   assert string.pad_start("121", to: 5, with: "XY") == "XY121"
+}
 
+pub fn pad_start_extra_multi_test() {
   assert string.pad_start("121", to: 6, with: "XY") == "XYX121"
 }
 
-pub fn pad_end_test() {
+pub fn pad_end_basic_test() {
   assert string.pad_end("121", to: 5, with: ".") == "121.."
+}
 
+pub fn pad_end_exact_test() {
   assert string.pad_end("121", to: 3, with: ".") == "121"
+}
 
+pub fn pad_end_shorter_test() {
   assert string.pad_end("121", to: 2, with: ".") == "121"
+}
 
+pub fn pad_end_partial_multi_test() {
   assert string.pad_end("121", to: 4, with: "XY") == "121X"
+}
 
+pub fn pad_end_exact_multi_test() {
   assert string.pad_end("121", to: 5, with: "XY") == "121XY"
+}
 
+pub fn pad_end_extra_multi_test() {
   assert string.pad_end("121", to: 6, with: "XY") == "121XYX"
 }
 
-pub fn pop_grapheme_test() {
+pub fn pop_grapheme_ok_test() {
   assert string.pop_grapheme("gleam") == Ok(#("g", "leam"))
+}
 
+pub fn pop_grapheme_single_test() {
   assert string.pop_grapheme("g") == Ok(#("g", ""))
+}
 
+pub fn pop_grapheme_empty_test() {
   assert string.pop_grapheme("") == Error(Nil)
 }
 
-pub fn to_graphemes_test() {
+pub fn to_graphemes_empty_test() {
   assert string.to_graphemes("") == []
+}
 
+pub fn to_graphemes_escape_chars_test() {
   assert string.to_graphemes("\n\t\r\"\\") == ["\n", "\t", "\r", "\"", "\\"]
+}
 
+pub fn to_graphemes_single_test() {
   assert string.to_graphemes("a") == ["a"]
+}
 
+pub fn to_graphemes_basic_test() {
   assert string.to_graphemes("abc") == ["a", "b", "c"]
+}
 
+pub fn to_graphemes_emoji_test() {
   assert string.to_graphemes("🌷🎁💩😜👍🏳️‍🌈") == ["🌷", "🎁", "💩", "😜", "👍", "🏳️‍🌈"]
+}
 
+pub fn to_graphemes_combining_test() {
   assert string.to_graphemes("Ĺo͂řȩm̅") == ["Ĺ", "o͂", "ř", "ȩ", "m̅"]
+}
 
+pub fn to_graphemes_korean_test() {
   assert string.to_graphemes("뎌쉐") == ["뎌", "쉐"]
+}
 
+pub fn to_graphemes_family_emoji_test() {
   assert string.to_graphemes("👨‍👩‍👦‍👦") == ["👨‍👩‍👦‍👦"]
+}
 
-  assert string.to_graphemes("ごん゙に゙ぢば") == ["ご", "ん゙", "に゙", "ぢ", "ば"]
+pub fn to_graphemes_japanese_test() {
+  assert string.to_graphemes("ごん゙に゙ぢば") == ["ご", "ん゙", "に゙", "ぢ", "ば"]
+}
 
-  assert string.to_graphemes("パピプペポ") == ["パ", "ピ", "プ", "ペ", "ポ"]
+pub fn to_graphemes_katakana_test() {
+  assert string.to_graphemes("パピプペポ") == ["パ", "ピ", "プ", "ペ", "ポ"]
+}
 
+pub fn to_graphemes_zalgo_test() {
   assert string.to_graphemes("Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍A̴̵̜̰͔ͫ͗͢L̠ͨͧͩ͘G̴̻͈͍͔̹̑͗̎̅͛́Ǫ̵̹̻̝̳͂̌̌͘!͖̬̰̙̗̿̋ͥͥ̂ͣ̐́́͜͞") == ["Z͑ͫ̓ͪ̂ͫ̽͏̴̙̤̞͉͚̯̞̠͍", "A̴̵̜̰͔ͫ͗͢", "L̠ͨͧͩ͘", "G̴̻͈͍͔̹̑͗̎̅͛́", "Ǫ̵̹̻̝̳͂̌̌͘", "!͖̬̰̙̗̿̋ͥͥ̂ͣ̐́́͜͞"]
 }
 
-pub fn to_utf_codepoints_test() {
+pub fn to_utf_codepoints_empty_test() {
   assert string.to_utf_codepoints("") == []
+}
 
+pub fn to_utf_codepoints_basic_test() {
   assert string.to_utf_codepoints("gleam")
     == {
       let assert #(Ok(g), Ok(l), Ok(e), Ok(a), Ok(m)) = #(
@@ -451,7 +607,9 @@ pub fn to_utf_codepoints_test() {
       )
       [g, l, e, a, m]
     }
+}
 
+pub fn to_utf_codepoints_rainbow_flag_test() {
   // ["🏳", "️", "‍", "🌈"]
   let expected = {
     let assert #(
@@ -471,22 +629,28 @@ pub fn to_utf_codepoints_test() {
   assert string.to_utf_codepoints("🏳️‍🌈") == expected
 }
 
-pub fn from_utf_codepoints_test() {
+pub fn from_utf_codepoints_empty_test() {
   assert ""
     |> string.to_utf_codepoints
     |> string.from_utf_codepoints
     == ""
+}
 
+pub fn from_utf_codepoints_basic_test() {
   assert "gleam"
     |> string.to_utf_codepoints
     |> string.from_utf_codepoints
     == "gleam"
+}
 
+pub fn from_utf_codepoints_emoji_test() {
   assert "🏳️‍🌈"
     |> string.to_utf_codepoints
     |> string.from_utf_codepoints
     == "🏳️‍🌈"
+}
 
+pub fn from_utf_codepoints_abc_test() {
   assert string.from_utf_codepoints({
       let assert #(Ok(a), Ok(b), Ok(c)) = #(
         string.utf_codepoint(97),
@@ -498,32 +662,51 @@ pub fn from_utf_codepoints_test() {
     == "abc"
 }
 
-pub fn utf_codepoint_test() {
+pub fn utf_codepoint_negative_test() {
   // Less than the lower bound on valid codepoints
   let assert Error(_) = string.utf_codepoint(-1)
+}
 
+pub fn utf_codepoint_zero_test() {
   // The lower bound on valid codepoints
   let assert Ok(_) = string.utf_codepoint(0)
+}
 
+pub fn utf_codepoint_max_test() {
   // The upper bound for valid code points
   let assert Ok(_) = string.utf_codepoint(1_114_111)
+}
 
+pub fn utf_codepoint_above_max_test() {
   // Greater than the upper bound on valid codepoints
   let assert Error(_) = string.utf_codepoint(1_114_112)
+}
 
+pub fn utf_codepoint_nonchar_fffe_test() {
   // Non-characters U+FFFE and U+FFFF are valid codepoints.  See (#778).
   let assert Ok(_) = string.utf_codepoint(65_534)
-  let assert Ok(_) = string.utf_codepoint(65_535)
+}
 
+pub fn utf_codepoint_nonchar_ffff_test() {
+  let assert Ok(_) = string.utf_codepoint(65_535)
+}
+
+pub fn utf_codepoint_below_high_surrogate_test() {
   // One less than the lowest "High-surrogate code point"
   let assert Ok(_) = string.utf_codepoint(55_295)
+}
 
+pub fn utf_codepoint_high_surrogate_test() {
   // Lowest value of the "High-surrogate code point" (U+D800 to U+DBFF)
   let assert Error(_) = string.utf_codepoint(55_296)
+}
 
+pub fn utf_codepoint_low_surrogate_test() {
   // Highest value of the "Low-surrogate code point" (U+DC00 to U+DFFF)
   let assert Error(_) = string.utf_codepoint(57_343)
+}
 
+pub fn utf_codepoint_above_low_surrogate_test() {
   // One greater than the highest "Low-surrogate code point"
   let assert Ok(_) = string.utf_codepoint(57_344)
 }
@@ -542,49 +725,79 @@ pub fn utf_codepoint_to_int_test() {
     == 128_013
 }
 
-pub fn to_option_test() {
+pub fn to_option_empty_test() {
   assert string.to_option("") == None
+}
 
+pub fn to_option_non_empty_test() {
   assert string.to_option("ok") == Some("ok")
 }
 
-pub fn first_test() {
+pub fn first_empty_test() {
   let assert Error(_) = string.first("")
+}
 
+pub fn first_basic_test() {
   assert string.first("gleam") == Ok("g")
+}
 
+pub fn first_emoji_test() {
   assert string.first("⭐️ Gleam") == Ok("⭐️")
+}
 
+pub fn first_single_test() {
   assert string.first("a") == Ok("a")
 }
 
-pub fn last_test() {
+pub fn last_empty_test() {
   let assert Error(_) = string.last("")
+}
 
+pub fn last_basic_test() {
   assert string.last("gleam") == Ok("m")
+}
 
+pub fn last_with_space_test() {
   assert string.last("gleam ") == Ok(" ")
+}
 
-  assert string.last("եոգլի") == Ok("ի")
+pub fn last_unicode_test() {
+  assert string.last("եdelays") == Ok("s")
+}
 
+pub fn last_single_test() {
   assert string.last("a") == Ok("a")
 }
 
-pub fn capitalise_test() {
+pub fn capitalise_empty_test() {
   assert string.capitalise("") == ""
+}
 
+pub fn capitalise_lowercase_test() {
   assert string.capitalise("gleam") == "Gleam"
+}
 
+pub fn capitalise_uppercase_test() {
   assert string.capitalise("GLEAM") == "Gleam"
+}
 
+pub fn capitalise_with_spaces_test() {
   assert string.capitalise("g l e a m") == "G l e a m"
+}
 
+pub fn capitalise_leading_number_test() {
   assert string.capitalise("1GLEAM") == "1gleam"
+}
 
+pub fn capitalise_leading_underscore_test() {
   assert string.capitalise("_gLeAm1") == "_gleam1"
+}
 
+pub fn capitalise_leading_space_test() {
   assert string.capitalise(" gLeAm1") == " gleam1"
+}
 
+pub fn capitalise_unicode_test() {
   assert string.capitalise("る") == "る"
 }
 
@@ -1062,34 +1275,47 @@ pub fn inspect_charlist_test() {
 }
 
 @target(javascript)
-pub fn target_inspect_test() {
+pub fn target_inspect_tuple_test() {
   // Due to Erlang's internal representation, on Erlang this passes, instead:
   // string.inspect(#(InspectTypeZero, InspectTypeZero))
   // |> should.equal("InspectTypeZero(InspectTypeZero)")
   assert string.inspect(#(InspectTypeZero, InspectTypeZero))
     == "#(InspectTypeZero, InspectTypeZero)"
+}
 
+@target(javascript)
+pub fn target_inspect_float_negative_test() {
   // Due to JavaScript's `Number` type `Float`s without digits return as
   // `Int`s.
   assert string.inspect(-1.0) == "-1"
+}
 
+@target(javascript)
+pub fn target_inspect_float_zero_test() {
   assert string.inspect(0.0) == "0"
+}
 
+@target(javascript)
+pub fn target_inspect_float_positive_test() {
   assert string.inspect(1.0) == "1"
+}
 
+@target(javascript)
+pub fn target_inspect_float_list_test() {
   assert string.inspect([1.0]) == "[1]"
+}
 
+@target(javascript)
+pub fn target_inspect_float_tuple_test() {
   assert string.inspect(#(1.0)) == "#(1)"
+}
 
+@target(javascript)
+pub fn target_inspect_bit_array_test() {
   // Unlike on Erlang, on JavaScript `BitArray` and `String` do have a
   // different runtime representation.
   assert string.inspect(<<"abc":utf8>>) == "<<97, 98, 99>>"
 }
-
-@target(erlang)
-import gleam/dynamic.{type Dynamic}
-
-// Test inspect on Erlang atoms valid and invalid in Gleam
 
 @target(erlang)
 @external(erlang, "erlang", "self")
@@ -1100,32 +1326,56 @@ fn create_erlang_pid() -> String
 fn create_erlang_reference() -> String
 
 @target(erlang)
-pub fn target_inspect_test() {
+pub fn target_inspect_tuple_test() {
   // Erlang's internal representation does not allow a correct
   // differentiation at runtime and thus this does not pass:
   // string.inspect(#(InspectTypeZero, InspectTypeZero))
   // |> should.equal("#(InspectTypeZero, InspectTypeZero)")
   assert string.inspect(#(InspectTypeZero, InspectTypeZero))
     == "InspectTypeZero(InspectTypeZero)"
+}
 
+@target(erlang)
+pub fn target_inspect_float_negative_test() {
   // Unlike JavaScript, Erlang correctly differentiates between `1` and `1.0`
   // at runtime.
   assert string.inspect(-1.0) == "-1.0"
+}
 
+@target(erlang)
+pub fn target_inspect_float_zero_test() {
   assert string.inspect(0.0) == "0.0"
+}
 
+@target(erlang)
+pub fn target_inspect_float_positive_test() {
   assert string.inspect(1.0) == "1.0"
+}
 
+@target(erlang)
+pub fn target_inspect_float_list_test() {
   assert string.inspect([1.0]) == "[1.0]"
+}
 
+@target(erlang)
+pub fn target_inspect_float_tuple_test() {
   assert string.inspect(#(1.0)) == "#(1.0)"
+}
 
+@target(erlang)
+pub fn target_inspect_pid_test() {
   // Looks like `//erl(<0.83.0>)`.
   assert looks_like_pid(string.inspect(create_erlang_pid()))
+}
 
+@target(erlang)
+pub fn target_inspect_ref_test() {
   // Looks like: `//erl(#Ref<0.1809744150.4035444737.100468>)`.
   assert looks_like_ref(string.inspect(create_erlang_reference()))
+}
 
+@target(erlang)
+pub fn target_inspect_bit_array_test() {
   // On Erlang the representation between `String` and `BitArray` is
   // indistinguishable at runtime.
   assert string.inspect(<<"abc":utf8>>) == "\"abc\""
@@ -1189,11 +1439,20 @@ fn improper_list_append(
 fn string_to_erlang_atom(a: String) -> Dynamic
 
 @target(erlang)
-pub fn inspect_erlang_atom_is_valid_in_gleam_test() {
+import gleam/dynamic.{type Dynamic}
+
+@target(erlang)
+pub fn inspect_erlang_atom_one_two_test() {
   assert string.inspect(string_to_erlang_atom("one_two")) == "OneTwo"
+}
 
+@target(erlang)
+pub fn inspect_erlang_atom_one1_two_test() {
   assert string.inspect(string_to_erlang_atom("one1_two")) == "One1Two"
+}
 
+@target(erlang)
+pub fn inspect_erlang_atom_one1two_test() {
   assert string.inspect(string_to_erlang_atom("one1two")) == "One1two"
 }
 
@@ -1238,10 +1497,13 @@ pub fn inspect_erlang_atom_tag_tuple_test() {
 }
 
 @target(erlang)
-pub fn inspect_erlang_atom_with_leading_digit_invalid_in_gleam_test() {
+pub fn inspect_erlang_atom_with_leading_digit_1_ok_test() {
   assert string.inspect(string_to_erlang_atom("1_ok"))
     == "atom.create(\"1_ok\")"
+}
 
+@target(erlang)
+pub fn inspect_erlang_atom_with_leading_digit_1_ok_camelcase_test() {
   assert string.inspect(string_to_erlang_atom("1Ok")) == "atom.create(\"1Ok\")"
 }
 
@@ -1279,17 +1541,40 @@ pub fn inspect_js_error_test() {
   assert string.inspect(js_error()) == "//js(SomeError: Oh no!)"
 }
 
-pub fn byte_size_test() {
+pub fn byte_size_empty_test() {
   let assert 0 = string.byte_size("")
-  let assert 1 = string.byte_size("a")
-  let assert 2 = string.byte_size("ab")
-  let assert 3 = string.byte_size("abc")
+}
 
+pub fn byte_size_one_test() {
+  let assert 1 = string.byte_size("a")
+}
+
+pub fn byte_size_two_test() {
+  let assert 2 = string.byte_size("ab")
+}
+
+pub fn byte_size_three_test() {
+  let assert 3 = string.byte_size("abc")
+}
+
+pub fn byte_size_unicode_a_test() {
   // Unicode graphemes. These will be multiple bytes.
   let assert 1 = string.byte_size("a")
+}
+
+pub fn byte_size_unicode_umlaut_test() {
   let assert 2 = string.byte_size("ä")
+}
+
+pub fn byte_size_unicode_emoji_test() {
   let assert 4 = string.byte_size("👩")
+}
+
+pub fn byte_size_unicode_skin_tone_test() {
   let assert 8 = string.byte_size("👩🏾")
+}
+
+pub fn byte_size_unicode_complex_test() {
   let assert 15 = string.byte_size("👩🏾‍🦰")
 }
 
