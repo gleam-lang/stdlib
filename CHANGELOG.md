@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add `describe_decode_error` function to the decode module.
 - Fixed a bug where `uri.parse` would incorrectly handle uppercase schemes on
   Erlang.
 
