@@ -303,7 +303,7 @@ pub fn describe_decode_error(decode_error: DecodeError) -> String {
 
 /// Returns a string representation of multiple `DecodeError`s. Since
 /// `run` returns a `List(DecodeError)`, this function makes converting the
-/// error case of decoding to a `String` (like when using the snag package) easier.
+/// error case of decoding to an error string (like when using the snag package) easier.
 /// 
 pub fn describe_decode_errors(errors: List(DecodeError)) -> String {
   let err_block = list.map(errors, describe_decode_error) |> string.join("\n")
