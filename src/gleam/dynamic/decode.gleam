@@ -270,6 +270,7 @@ import gleam/dynamic
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
+import gleam/string
 
 /// `Dynamic` data is data that we don't know the type of yet, originating from
 /// external untyped systems.
@@ -283,6 +284,21 @@ pub type Dynamic =
 ///
 pub type DecodeError {
   DecodeError(expected: String, found: String, path: List(String))
+}
+
+/// Returns a string representation of a `DecodeError`.
+/// 
+pub fn describe_decode_error(decode_error: DecodeError) -> String {
+  let path_prefix = case decode_error.path {
+    [] -> ""
+    _ -> "at path " <> string.join(decode_error.path, "->") <> ", "
+  }
+
+  path_prefix
+  <> "expected "
+  <> decode_error.expected
+  <> ", got "
+  <> decode_error.found
 }
 
 /// A decoder is a value that can be used to turn dynamically typed `Dynamic`

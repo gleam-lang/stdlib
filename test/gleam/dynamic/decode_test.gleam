@@ -134,6 +134,33 @@ pub fn subfield_not_found_error_test() {
   assert value == [DecodeError("Dict", "Int", [])]
 }
 
+pub fn describe_decode_error_test() {
+  // No path
+  let assert Error([value]) = decode.run(dynamic.int(123), decode.string)
+  assert value == DecodeError("String", "Int", [])
+  assert decode.describe_decode_error(value) == "expected String, got Int"
+
+  // With path
+  let obj =
+    dynamic.properties([
+      #(
+        dynamic.string("wibble"),
+        dynamic.properties([
+          #(dynamic.string("wobble"), dynamic.int(42)),
+        ]),
+      ),
+    ])
+
+  let decoder = {
+    use answer <- decode.subfield(["wibble", "wobble"], decode.string)
+    decode.success(answer)
+  }
+
+  let assert Error([value]) = decode.run(obj, decoder)
+  assert decode.describe_decode_error(value)
+    == "at path wibble->wobble, expected String, got Int"
+}
+
 pub fn field_not_found_error_test() {
   let decoder = {
     use name <- decode.subfield(["name"], decode.string)
