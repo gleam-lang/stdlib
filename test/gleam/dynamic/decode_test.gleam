@@ -159,6 +159,16 @@ pub fn describe_decode_error_test() {
   let assert Error([value]) = decode.run(obj, decoder)
   assert decode.describe_decode_error(value)
     == "at path wibble->wobble, expected String, got Int"
+
+  // With path in decoder
+  let decoder = {
+    use wibble <- decode.field("wibble", decode.string)
+    decode.success(wibble)
+  }
+
+  let assert Error([value]) = decode.run(obj, decoder)
+  assert decode.describe_decode_error(value)
+    == "at path wibble, expected String, got Dict"
 }
 
 pub fn field_not_found_error_test() {
