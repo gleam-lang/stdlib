@@ -171,6 +171,25 @@ pub fn describe_decode_error_test() {
     == "at path wibble, expected String, got Dict"
 }
 
+pub fn describe_decode_errors_test() {
+  let obj =
+    dynamic.properties([
+      #(dynamic.string("wibble"), dynamic.int(42)),
+      #(dynamic.string("wobble"), dynamic.bool(True)),
+    ])
+
+  let decoder = {
+    use wibble <- decode.field("wibble", decode.string)
+    use wobble <- decode.field("wobble", decode.string)
+    decode.success(#(wibble, wobble))
+  }
+
+  let assert Error(errs) = decode.run(obj, decoder)
+  let err_txt = decode.describe_decode_errors(errs)
+  assert err_txt
+    == "encountered decode errors:\nat path wibble, expected String, got Int\nat path wobble, expected String, got Bool"
+}
+
 pub fn field_not_found_error_test() {
   let decoder = {
     use name <- decode.subfield(["name"], decode.string)

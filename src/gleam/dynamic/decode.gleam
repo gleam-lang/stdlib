@@ -301,6 +301,15 @@ pub fn describe_decode_error(decode_error: DecodeError) -> String {
   <> decode_error.found
 }
 
+/// Returns a string representation of multiple `DecodeError`s. Since
+/// `run` returns a `List(DecodeError)`, this function makes converting the
+/// error case of decoding to a `String` (like when using the snag package) easier.
+/// 
+pub fn describe_decode_errors(errors: List(DecodeError)) -> String {
+  let err_block = list.map(errors, describe_decode_error) |> string.join("\n")
+  "encountered decode errors:\n" <> err_block
+}
+
 /// A decoder is a value that can be used to turn dynamically typed `Dynamic`
 /// data into typed data using the `run` function.
 ///
