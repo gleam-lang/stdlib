@@ -825,15 +825,21 @@ fn fold_dict(
 ) -> #(Dict(k, v), List(DecodeError)) {
   // First we decode the key.
   case key_decoder(key) {
-    #(key, []) ->
+    #(key_decoded, []) ->
       // Then we decode the value.
       case value_decoder(value) {
         #(value, []) -> {
           // It worked! Insert the new key-value pair so we can move onto the next.
-          let dict = dict.insert(acc.0, key, value)
+          let dict = dict.insert(acc.0, key_decoded, value)
           #(dict, acc.1)
         }
-        #(_, errors) -> push_path(#(dict.new(), errors), ["values"])
+        #(_, errors) -> {
+          let key_identifier = case run(key, one_of(string, [])) {
+            Ok(key) -> key
+            Error(_) -> "values"
+          }
+          push_path(#(dict.new(), errors), [key_identifier])
+        }
       }
     #(_, errors) -> push_path(#(dict.new(), errors), ["keys"])
   }

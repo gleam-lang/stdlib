@@ -385,6 +385,18 @@ pub fn dict_value_error_test() {
   assert value == [DecodeError("String", "Int", ["values"])]
 }
 
+pub fn dict_value_error_string_key_test() {
+  let assert Error(value) =
+    decode.run(
+      dynamic.properties([
+        #(dynamic.string("a"), dynamic.string("first")),
+        #(dynamic.string("b"), dynamic.int(2)),
+      ]),
+      decode.dict(decode.string, decode.string),
+    )
+  assert value == [DecodeError("String", "Int", ["b"])]
+}
+
 pub fn dict_key_error_test() {
   let assert Error(value) =
     decode.run(
