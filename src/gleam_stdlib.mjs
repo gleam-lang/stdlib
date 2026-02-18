@@ -613,28 +613,63 @@ export function byte_size(string) {
 // To get around this problem and get consistent results use BigInt and then
 // downcast the value back to a Number value.
 
-export function bitwise_and(x, y) {
-  return Number(BigInt(x) & BigInt(y));
-}
+const MIN_I32 = -(2 ** 31); // -2147483648
+const MAX_I32 = 2 ** 31 - 1; //  2147483647
+const U32 = 2 ** 32;
+const MAX_SAFE = Number.MAX_SAFE_INTEGER;
+const MIN_SAFE = Number.MIN_SAFE_INTEGER;
 
-export function bitwise_not(x) {
-  return Number(~BigInt(x));
+export function bitwise_and(x, y) {
+  if (x >= MIN_I32 && x <= MAX_I32 && y >= MIN_I32 && y <= MAX_I32) return x & y;
+  if (x < MIN_SAFE || x > MAX_SAFE || y < MIN_SAFE || y > MAX_SAFE)
+    return Number(BigInt(x) & BigInt(y));
+
+  return (Math.floor(x / U32) & Math.floor(y / U32)) * U32 + ((x & y) >>> 0);
 }
 
 export function bitwise_or(x, y) {
-  return Number(BigInt(x) | BigInt(y));
+  if (x >= MIN_I32 && x <= MAX_I32 && y >= MIN_I32 && y <= MAX_I32) return x | y;
+  if (x < MIN_SAFE || x > MAX_SAFE || y < MIN_SAFE || y > MAX_SAFE)
+    return Number(BigInt(x) | BigInt(y));
+
+  return (Math.floor(x / U32) | Math.floor(y / U32)) * U32 + ((x | y) >>> 0);
 }
 
 export function bitwise_exclusive_or(x, y) {
-  return Number(BigInt(x) ^ BigInt(y));
+  if (x >= MIN_I32 && x <= MAX_I32 && y >= MIN_I32 && y <= MAX_I32) return x ^ y;
+  if (x < MIN_SAFE || x > MAX_SAFE || y < MIN_SAFE || y > MAX_SAFE)
+    return Number(BigInt(x) ^ BigInt(y));
+
+  return (Math.floor(x / U32) ^ Math.floor(y / U32)) * U32 + ((x ^ y) >>> 0);
 }
 
-export function bitwise_shift_left(x, y) {
-  return Number(BigInt(x) << BigInt(y));
+export function bitwise_not(x) {
+  if (x >= MIN_I32 && x <= MAX_I32) return ~x;
+  if (x < MIN_SAFE || x > MAX_SAFE) return Number(~BigInt(x));
+
+  return ~Math.floor(x / U32) * U32 + (~x >>> 0);
 }
 
 export function bitwise_shift_right(x, y) {
-  return Number(BigInt(x) >> BigInt(y));
+  if (y === 0) return x;
+  if (y < 0) return bitwise_shift_left(x, -y);
+  if (y <= 31 && x >= MIN_I32 && x <= MAX_I32) return x >> y;
+  if (x < MIN_SAFE || x > MAX_SAFE) return Number(BigInt(x) >> BigInt(y));
+
+  const ahi = Math.floor(x / U32);
+
+  if (y < 32) {
+    return (ahi >> y) * U32 + (((x >>> y) | (ahi << (32 - y))) >>> 0);
+  } else {
+    return ahi >> (y - 32);
+  }
+}
+
+export function bitwise_shift_left(x, y) {
+  if (y === 0) return x;
+  if (y < 0) return bitwise_shift_right(x, -y);
+  if (x < MIN_SAFE || x > MAX_SAFE) return Number(BigInt(x) << BigInt(y));
+  return x * 2 ** y;
 }
 
 export function inspect(v) {

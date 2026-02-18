@@ -604,6 +604,116 @@ pub fn bitwise_shift_right_both_negative_test() {
   assert int.bitwise_shift_right(-1, -2) == -4
 }
 
+pub fn bitwise_and_zero_test() {
+  assert int.bitwise_and(0, 0) == 0
+}
+
+pub fn bitwise_and_identity_test() {
+  assert int.bitwise_and(0xFF, 0xFF) == 0xFF
+}
+
+pub fn bitwise_and_clear_test() {
+  assert int.bitwise_and(0xFF, 0) == 0
+}
+
+pub fn bitwise_and_large_numbers_test() {
+  // Test with numbers larger than 32 bits
+  assert int.bitwise_and(0x123456789, 0xFFFF) == 0x6789
+}
+
+pub fn bitwise_or_zero_test() {
+  assert int.bitwise_or(0, 0) == 0
+}
+
+pub fn bitwise_or_identity_test() {
+  assert int.bitwise_or(0xFF, 0) == 0xFF
+}
+
+pub fn bitwise_or_combine_test() {
+  assert int.bitwise_or(0xF0, 0x0F) == 0xFF
+}
+
+pub fn bitwise_or_large_numbers_test() {
+  // Test with numbers larger than 32 bits
+  assert int.bitwise_or(0x100000000, 0xFF) == 0x1000000FF
+}
+
+pub fn bitwise_exclusive_or_zero_test() {
+  assert int.bitwise_exclusive_or(0, 0) == 0
+}
+
+pub fn bitwise_exclusive_or_identity_test() {
+  assert int.bitwise_exclusive_or(0xFF, 0) == 0xFF
+}
+
+pub fn bitwise_exclusive_or_invert_test() {
+  assert int.bitwise_exclusive_or(0xF0, 0x0F) == 0xFF
+}
+
+pub fn bitwise_exclusive_or_self_test() {
+  assert int.bitwise_exclusive_or(0xAB, 0xAB) == 0
+}
+
+pub fn bitwise_not_zero_test() {
+  assert int.bitwise_not(0) == -1
+}
+
+pub fn bitwise_not_negative_one_test() {
+  assert int.bitwise_not(-1) == 0
+}
+
+pub fn bitwise_not_large_number_test() {
+  // Test with number larger than 32 bits
+  assert int.bitwise_not(0x123456789) == -4_886_718_346
+}
+
+pub fn bitwise_shift_left_zero_shift_test() {
+  assert int.bitwise_shift_left(0xFF, 0) == 0xFF
+}
+
+pub fn bitwise_shift_left_large_shift_test() {
+  assert int.bitwise_shift_left(1, 32) == 4_294_967_296
+}
+
+pub fn bitwise_shift_left_large_number_test() {
+  assert int.bitwise_shift_left(0x1000, 4) == 0x10000
+}
+
+pub fn bitwise_shift_right_zero_shift_test() {
+  assert int.bitwise_shift_right(0xFF, 0) == 0xFF
+}
+
+pub fn bitwise_shift_right_large_shift_test() {
+  assert int.bitwise_shift_right(0xFFFFFFFF, 16) == 0xFFFF
+}
+
+pub fn bitwise_shift_right_preserves_sign_test() {
+  assert int.bitwise_shift_right(-1, 16) == -1
+}
+
+pub fn bitwise_shift_right_large_number_test() {
+  assert int.bitwise_shift_right(0x123456789, 16) == 0x12345
+}
+
+pub fn bitwise_operations_with_max_safe_integer_test() {
+  // Test with maximum safe integer
+  assert int.bitwise_and(9_007_199_254_740_991, 0xFFFF) == 65_535
+}
+
+pub fn bitwise_operations_with_boundary_values_test() {
+  // Test around 32-bit boundaries
+  assert int.bitwise_or(2_147_483_647, 1) == 2_147_483_647
+  // MAX_INT32 | 1 = MAX_INT32
+  assert int.bitwise_and(2_147_483_648, 4_294_967_295) == 2_147_483_648
+  // 2^31 & 0xFFFFFFFF = 2^31
+}
+
+pub fn bitwise_shift_edge_cases_test() {
+  // Test edge cases for shifts
+  assert int.bitwise_shift_left(1, 63) == 9_223_372_036_854_775_808
+  assert int.bitwise_shift_right(9_223_372_036_854_775_808, 63) == 1
+}
+
 pub fn range_ascending_test() {
   assert int.range(from: 0, to: 3, with: "", run: fn(acc, i) {
       acc <> int.to_string(i)
