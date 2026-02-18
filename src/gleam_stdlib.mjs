@@ -653,22 +653,19 @@ export function bitwise_not(x) {
 export function bitwise_shift_right(x, y) {
   if (y === 0) return x;
   if (y < 0) return bitwise_shift_left(x, -y);
-  if (y <= 31 && x >= MIN_I32 && x <= MAX_I32) return x >> y;
+  if (y < 32 && x >= MIN_I32 && x <= MAX_I32) return x >> y;
   if (x < MIN_SAFE || x > MAX_SAFE) return Number(BigInt(x) >> BigInt(y));
 
   const ahi = Math.floor(x / U32);
 
-  if (y < 32) {
-    return (ahi >> y) * U32 + (((x >>> y) | (ahi << (32 - y))) >>> 0);
-  } else {
-    return ahi >> (y - 32);
-  }
+  if (y < 32) return (ahi >> y) * U32 + (((x >>> y) | (ahi << (32 - y))) >>> 0);
+  return ahi >> (y - 32);
 }
 
 export function bitwise_shift_left(x, y) {
   if (y === 0) return x;
   if (y < 0) return bitwise_shift_right(x, -y);
-  if (x < MIN_SAFE || x > MAX_SAFE) return Number(BigInt(x) << BigInt(y));
+  if (y < 31) return x * (1 << y);
   return x * 2 ** y;
 }
 
