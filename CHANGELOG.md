@@ -4,6 +4,7 @@
 
 - Fixed a bug where `uri.parse` would incorrectly handle uppercase schemes on
   Erlang.
+- The performance of the `int/bitwise_*` functions has been improved.
 
 ## v0.69.0 - 2026-01-26
 
