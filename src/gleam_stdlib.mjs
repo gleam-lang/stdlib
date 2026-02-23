@@ -608,11 +608,40 @@ export function byte_size(string) {
   return new TextEncoder().encode(string).length;
 }
 
-// In JavaScript bitwise operations convert numbers to a sequence of 32 bits
-// while Erlang uses arbitrary precision.
-// To get around this problem and get consistent results use BigInt and then
-// downcast the value back to a Number value.
-
+// In JavaScript, bitwise operations convert numbers to a sequence of 32 bits,
+// while Erlang uses arbitrary precision integers.
+//
+// To get around this, every function here follows this pattern:
+//
+// 1. If both values fit in the 32-bit signed integer range, use the standard
+//    JavaScript bitwise operators directly.
+//
+//    Note: For bitwise_shift_left, the result also needs to fit in 32 bits,
+//    so we use floating-point multiplication instead.
+//
+// 2. If either value falls outside the safe integer range (-2^53, 2^53),
+//    fall back to BigInt arithmetic, then downcast the result back to a Number.
+//
+// 3. Otherwise (safe integers outside the 32-bit range), we split the operation
+//    across the high 21 bits and low 32 bits individually:
+//
+//        x1 $ x2 = (hi(x1) $ hi(x2)) << 32 + (lo(x1) $ lo(x2))
+//
+//    where `$` is a bitwise operator, hi(x) = Math.floor(x / 2^32) extracts
+//    the upper 21 bits, and lo(x) = (x >>> 0) the lower 32 bits.
+//
+//    This works because bitwise operators are distributive across bit ranges:
+//
+//        x1 $ x2 = (hi(x1) $ hi(x2)) << 32 | (lo(x1) $ lo(x2))
+//                = (hi(x1) $ hi(x2)) * 2^32 + (lo(x1) $ lo(x2))
+//
+//    JavaScript bitwise operators truncate inputs to signed 32-bit integers,
+//    so `x1 $ x2` already computes `lo(x1) $ lo(x2)` — we just need to
+//    reinterpret the signed result as unsigned using `>>> 0`:
+//
+//        lo(x1) $ lo(x2) = (x1 $ x2) >>> 0 = lo(x1 $ x2)
+//        => x1 $ x2 = (hi(x1) $ hi(x2)) * 2^32 + lo(x1 $ x2).
+//
 const MIN_I32 = -(2 ** 31); // -2147483648
 const MAX_I32 = 2 ** 31 - 1; //  2147483647
 const U32 = 2 ** 32;
@@ -658,7 +687,18 @@ export function bitwise_shift_right(x, y) {
 
   const ahi = Math.floor(x / U32);
 
+  // Shifting right by y < 32 moves bits across the hi/lo boundary:
+  //
+  //   before: [ hi (21 bits) | lo (32 bits) ]
+  //   after:  [ hi >> y      | (hi's low y bits) ++ (lo >> y) ]
+  //
+  // The new low word has two sources:
+  //   - lo's bits shifted down:        x >>> y   (>>> treats x as unsigned 32-bit)
+  //   - hi's bottom y bits shifted up: ahi << (32 - y).
   if (y < 32) return (ahi >> y) * U32 + (((x >>> y) | (ahi << (32 - y))) >>> 0);
+
+  // Shifting by >= 32 wipes out the entire low word. The result is just the
+  // high word shifted right by the remaining amount.
   return ahi >> (y - 32);
 }
 
