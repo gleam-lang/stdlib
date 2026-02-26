@@ -625,10 +625,21 @@ export function byte_size(string) {
 // 3. Otherwise (safe integers outside the 32-bit range), we split the operation
 //    across the high 21 bits and low 32 bits individually:
 //
-//        x1 $ x2 = (hi(x1) $ hi(x2)) << 32 + (lo(x1) $ lo(x2))
+//        x1 $ x2 = ((hi(x1) $ hi(x2)) << 32) | (lo(x1) $ lo(x2))
 //
-//    where `$` is a bitwise operator, hi(x) = Math.floor(x / 2^32) extracts
-//    the upper 21 bits, and lo(x) = (x >>> 0) the lower 32 bits.
+//    where `$` is a bitwise operator.
+//
+//    We split both values into a `hi` and a `lo` part:
+//
+//        hi(x) = Math.floor(x / 2^32)    the upper 21 bits
+//        lo(x) = x >>> 0                 the lower 32 bits (as unsigned)
+//
+//    For `hi`, we use that shifts are equal to multiplication/division with
+//    powers of two to get around the 32-bit range limitation. Math.floor is
+//    used instead of truncation since arithmetic right shift fills with the
+//    sign bit. For negative numbers, the discarded bits were non-zero
+//    (representing a positive fractional part), so discarding them makes the
+//    result strictly more negative, i.e. rounding away from 0.
 //
 //    This works because bitwise operators are distributive across bit ranges:
 //
