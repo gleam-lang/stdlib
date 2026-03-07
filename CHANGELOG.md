@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.70.0 - 2026-03-07
 
 - Fixed a bug where `uri.parse` would incorrectly handle uppercase schemes on
   Erlang.
