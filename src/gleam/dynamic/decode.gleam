@@ -267,6 +267,7 @@
 import gleam/bit_array
 import gleam/dict.{type Dict}
 import gleam/dynamic
+import gleam/float
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
@@ -438,20 +439,24 @@ fn push_path(
   layer: #(t, List(DecodeError)),
   path: List(key),
 ) -> #(t, List(DecodeError)) {
-  let decoder = one_of(string, [int |> map(int.to_string)])
-  let path =
-    list.map(path, fn(key) {
-      let key = cast(key)
-      case run(key, decoder) {
-        Ok(key) -> key
-        Error(_) -> "<" <> dynamic.classify(key) <> ">"
-      }
-    })
+  let path = list.map(path, fn(key) { key |> cast |> path_segment_to_string })
   let errors =
     list.map(layer.1, fn(error) {
       DecodeError(..error, path: list.append(path, error.path))
     })
   #(layer.0, errors)
+}
+
+fn path_segment_to_string(key: Dynamic) -> String {
+  let decoder =
+    one_of(string, [
+      int |> map(int.to_string),
+      float |> map(float.to_string),
+    ])
+  case run(key, decoder) {
+    Ok(key) -> key
+    Error(_) -> "<" <> dynamic.classify(key) <> ">"
+  }
 }
 
 /// Finalise a decoder having successfully extracted a value.
@@ -834,10 +839,7 @@ fn fold_dict(
           #(dict, acc.1)
         }
         #(_, errors) -> {
-          let key_identifier = case run(key, one_of(string, [])) {
-            Ok(key) -> key
-            Error(_) -> "values"
-          }
+          let key_identifier = path_segment_to_string(key)
           push_path(#(dict.new(), errors), [key_identifier])
         }
       }

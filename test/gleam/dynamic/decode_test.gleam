@@ -373,7 +373,7 @@ pub fn dict_ok_test() {
   assert value == dict.from_list([#("first", 1), #("second", 2)])
 }
 
-pub fn dict_value_error_test() {
+pub fn dict_value_error_float_key_test() {
   let assert Error(value) =
     decode.run(
       dynamic.properties([
@@ -382,7 +382,7 @@ pub fn dict_value_error_test() {
       ]),
       decode.dict(decode.float, decode.string),
     )
-  assert value == [DecodeError("String", "Int", ["values"])]
+  assert value == [DecodeError("String", "Int", ["1.1"])]
 }
 
 pub fn dict_value_error_string_key_test() {
@@ -395,6 +395,30 @@ pub fn dict_value_error_string_key_test() {
       decode.dict(decode.string, decode.string),
     )
   assert value == [DecodeError("String", "Int", ["b"])]
+}
+
+pub fn dict_value_error_int_key_test() {
+  let assert Error(value) =
+    decode.run(
+      dynamic.properties([
+        #(dynamic.int(1), dynamic.string("first")),
+        #(dynamic.int(2), dynamic.int(2)),
+      ]),
+      decode.dict(decode.int, decode.string),
+    )
+  assert value == [DecodeError("String", "Int", ["2"])]
+}
+
+pub fn dict_value_error_bit_array_key_test() {
+  let assert Error(value) =
+    decode.run(
+      dynamic.properties([
+        #(dynamic.bit_array(<<0:5>>), dynamic.string("first")),
+        #(dynamic.bit_array(<<1:5>>), dynamic.int(2)),
+      ]),
+      decode.dict(decode.bit_array, decode.string),
+    )
+  assert value == [DecodeError("String", "Int", ["<BitArray>"])]
 }
 
 pub fn dict_key_error_test() {

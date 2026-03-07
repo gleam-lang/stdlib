@@ -5,6 +5,8 @@
 - Fixed a bug where `uri.parse` would incorrectly handle uppercase schemes on
   Erlang.
 - The performance of the `int/bitwise_*` functions has been improved.
+- When the `decode.dict` function returns an error it now uses the key value in
+  the error path if it is a string, a float, or an int.
 
 ## v0.69.0 - 2026-01-26
 
