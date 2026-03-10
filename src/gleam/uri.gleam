@@ -268,12 +268,13 @@ fn parse_host_within_brackets_loop(
 }
 
 fn is_valid_host_within_brackets_char(char: Int) -> Bool {
+  // Valid IPv6 hosts are only [0-9A-Fa-f:.].
   // [0-9]
   { 48 <= char && char <= 57 }
-  // [A-Z]
-  || { 65 <= char && char <= 90 }
-  // [a-z]
-  || { 97 <= char && char <= 122 }
+  // [A-F]
+  || { 65 <= char && char <= 70 }
+  // [a-f]
+  || { 97 <= char && char <= 102 }
   // :
   || char == 58
   // .

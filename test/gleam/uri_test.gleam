@@ -345,6 +345,33 @@ pub fn parse_malformed_slash_within_bracket_host_test() {
   assert uri.parse("http://[::1/bad]/") == Error(Nil)
 }
 
+pub fn ipv6_uppercase_test() {
+  // ensure A–F upper case are accepted
+  let assert Ok(parsed) = uri.parse("http://[2001:DB8::1]")
+  assert parsed.host == Some("[2001:DB8::1]")
+  assert uri.to_string(parsed) == "http://[2001:DB8::1]/"
+}
+
+pub fn ipv6_mixedcase_test() {
+  let assert Ok(parsed) = uri.parse("http://[2001:dB8:ABcd::]")
+  assert parsed.host == Some("[2001:dB8:ABcd::]")
+}
+
+pub fn parse_ipv6_with_invalid_char_test() {
+  // 'g' is not a hex digit
+  assert uri.parse("http://[::g]/") == Error(Nil)
+  assert uri.parse("http://[::G]/") == Error(Nil)
+}
+
+pub fn parse_bracket_followed_by_text_error_test() {
+  // characters immediately after closing bracket and before slash should error
+  assert uri.parse("http://[::1]foo") == Error(Nil)
+}
+
+pub fn parse_double_closing_bracket_test() {
+  assert uri.parse("http://[::1]]/") == Error(Nil)
+}
+
 pub fn full_uri_to_string_test() {
   let test_uri =
     uri.Uri(
