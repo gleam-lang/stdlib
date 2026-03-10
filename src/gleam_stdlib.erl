@@ -233,7 +233,7 @@ uri_parse(String) ->
             {ok, {uri,
                 maps_get_optional_lowercase(Uri, scheme),
                 maps_get_optional(Uri, userinfo),
-                maps_get_optional(Uri, host),
+                maps_get_optional_host(Uri),
                 Port,
                 maps_get_or(Uri, path, <<>>),
                 maps_get_optional(Uri, query),
@@ -250,6 +250,23 @@ maps_get_optional(Map, Key) ->
     try {some, maps:get(Key, Map)}
     catch _:_ -> none
     end.
+
+maps_get_optional_host(Map) ->
+    try {some, bracket_ipv6_host(maps:get(host, Map))}
+    catch _:_ -> none
+    end.
+
+bracket_ipv6_host(Host) when is_binary(Host) ->
+    case binary:match(Host, <<":">>) of
+        nomatch -> Host;
+        _ ->
+            case Host of
+                <<"[", _/binary>> -> Host;
+                _ -> <<"[", Host/binary, "]">>
+            end
+    end;
+bracket_ipv6_host(Host) ->
+    Host.
 
 maps_get_or(Map, Key, Default) ->
     try maps:get(Key, Map)
