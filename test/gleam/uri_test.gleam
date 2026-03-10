@@ -274,6 +274,46 @@ pub fn parse_empty_query_3_test() {
   let assert Some("") = assert_parse("http://example.com/test?").query
 }
 
+pub fn parse_ipv6_host_preserves_brackets_test() {
+  let assert Ok(parsed) =
+    uri.parse("http://[2600:1406:bc00:53::b81e:94c8]/wobble")
+  assert parsed.host == Some("[2600:1406:bc00:53::b81e:94c8]")
+}
+
+pub fn parse_ipv6_host_with_port_preserves_brackets_test() {
+  let assert Ok(parsed) =
+    uri.parse("http://[2600:1406:bc00:53::b81e:94c8]:8080/wobble")
+  assert parsed.host == Some("[2600:1406:bc00:53::b81e:94c8]")
+  assert parsed.port == Some(8080)
+}
+
+pub fn parse_ipv6_host_roundtrip_to_string_test() {
+  let assert Ok(parsed) = uri.parse("http://[2600:1406:bc00:53::b81e:94c8]")
+  assert uri.to_string(parsed) == "http://[2600:1406:bc00:53::b81e:94c8]/"
+}
+
+pub fn parse_ipv6_compact_loopback_preserves_brackets_test() {
+  let assert Ok(parsed) = uri.parse("http://[::1]/wobble")
+  assert parsed.host == Some("[::1]")
+  assert parsed.path == "/wobble"
+}
+
+pub fn parse_ipv6_compact_loopback_with_port_test() {
+  let assert Ok(parsed) = uri.parse("http://[::1]:443/wobble")
+  assert parsed.host == Some("[::1]")
+  assert parsed.port == Some(443)
+}
+
+pub fn parse_ipv6_collapsed_middle_preserves_brackets_test() {
+  let assert Ok(parsed) = uri.parse("http://[2001:db8::2:1]/wobble")
+  assert parsed.host == Some("[2001:db8::2:1]")
+}
+
+pub fn parse_ipv6_collapsed_roundtrip_to_string_test() {
+  let assert Ok(parsed) = uri.parse("http://[2001:db8::2:1]")
+  assert uri.to_string(parsed) == "http://[2001:db8::2:1]/"
+}
+
 pub fn full_uri_to_string_test() {
   let test_uri =
     uri.Uri(
