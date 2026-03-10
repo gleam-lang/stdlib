@@ -314,6 +314,37 @@ pub fn parse_ipv6_collapsed_roundtrip_to_string_test() {
   assert uri.to_string(parsed) == "http://[2001:db8::2:1]/"
 }
 
+pub fn parse_ipv6_host_with_path_query_fragment_test() {
+  let assert Ok(parsed) = uri.parse("http://[2001:db8::2:1]/foo/bar?baz=bif#blah")
+  assert parsed.scheme == Some("http")
+  assert parsed.host == Some("[2001:db8::2:1]")
+  assert parsed.path == "/foo/bar"
+  assert parsed.query == Some("baz=bif")
+  assert parsed.fragment == Some("blah")
+  assert parsed.port == None
+  assert parsed.userinfo == None
+}
+
+pub fn parse_malformed_many_opening_brackets_in_host_test() {
+  assert uri.parse("http://[[[[[[[[[[]/") == Error(Nil)
+}
+
+pub fn parse_malformed_nested_opening_bracket_in_host_test() {
+  assert uri.parse("http://[[::1]/") == Error(Nil)
+}
+
+pub fn parse_malformed_unclosed_bracket_host_test() {
+  assert uri.parse("http://[::1[/") == Error(Nil)
+}
+
+pub fn parse_malformed_question_mark_within_bracket_host_test() {
+  assert uri.parse("http://[::1?bad]/") == Error(Nil)
+}
+
+pub fn parse_malformed_slash_within_bracket_host_test() {
+  assert uri.parse("http://[::1/bad]/") == Error(Nil)
+}
+
 pub fn full_uri_to_string_test() {
   let test_uri =
     uri.Uri(
