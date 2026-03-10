@@ -287,12 +287,14 @@ fn parse_host_within_brackets_loop(
 }
 
 fn is_valid_host_within_brackets_char(char: Int) -> Bool {
+  // [
+  char == 91
   // [0-9]
-  { 48 >= char && char <= 57 }
+  || { 48 <= char && char <= 57 }
   // [A-Z]
-  || { 65 >= char && char <= 90 }
+  || { 65 <= char && char <= 90 }
   // [a-z]
-  || { 97 >= char && char <= 122 }
+  || { 97 <= char && char <= 122 }
   // :
   || char == 58
   // .
