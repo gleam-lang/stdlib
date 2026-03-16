@@ -243,16 +243,6 @@ fn parse_host_within_brackets_loop(
       let pieces = Uri(..pieces, host: Some(host))
       parse_port(rest, pieces)
     }
-
-    // Delimiters before a closing `]` are invalid.
-    "/" <> _ -> Error(Nil)
-
-    // Delimiters before a closing `]` are invalid.
-    "?" <> _ -> Error(Nil)
-
-    // Delimiters before a closing `]` are invalid.
-    "#" <> _ -> Error(Nil)
-
     // In all other cases we just keep iterating.
     _ -> {
       let #(char, rest) = pop_codeunit(uri_string)
