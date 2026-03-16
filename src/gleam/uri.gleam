@@ -239,7 +239,7 @@ fn parse_host_within_brackets_loop(
     // A `]` marks the end of the host and the start of the port part.
     "]" <> _ if size == 0 -> Error(Nil)
     "]" <> rest -> {
-      let host = "[" <> codeunit_slice(original, at_index: 0, length: size) <> "]"
+      let host = "[" <> codeunit_slice(original, at_index: 0, length: size + 1)
       let pieces = Uri(..pieces, host: Some(host))
       parse_port(rest, pieces)
     }
