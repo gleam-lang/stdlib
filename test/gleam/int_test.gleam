@@ -1,602 +1,753 @@
 import gleam/int
 import gleam/list
 import gleam/order
-import gleam/should
 
-pub fn absolute_value_test() {
-  123
-  |> int.absolute_value
-  |> should.equal(123)
-
-  -123
-  |> int.absolute_value
-  |> should.equal(123)
+pub fn absolute_value_positive_test() {
+  assert int.absolute_value(123) == 123
 }
 
-pub fn clamp_test() {
-  int.clamp(40, min: 30, max: 50)
-  |> should.equal(40)
-
-  int.clamp(20, min: 30, max: 50)
-  |> should.equal(30)
-
-  int.clamp(60, min: 30, max: 50)
-  |> should.equal(50)
-
-  // If the bounds are reversed we return the min
-  int.clamp(100, min: 50, max: 30)
-  |> should.equal(50)
+pub fn absolute_value_negative_test() {
+  assert int.absolute_value(-123) == 123
 }
 
-pub fn to_string_test() {
-  123
-  |> int.to_string
-  |> should.equal("123")
-
-  -123
-  |> int.to_string
-  |> should.equal("-123")
-
-  123
-  |> int.to_string
-  |> should.equal("123")
+pub fn clamp_within_range_test() {
+  assert int.clamp(40, min: 30, max: 50) == 40
 }
 
-pub fn parse_test() {
-  "123"
-  |> int.parse
-  |> should.equal(Ok(123))
-
-  "-123"
-  |> int.parse
-  |> should.equal(Ok(-123))
-
-  "0123"
-  |> int.parse
-  |> should.equal(Ok(123))
-
-  ""
-  |> int.parse
-  |> should.equal(Error(Nil))
-
-  "what"
-  |> int.parse
-  |> should.equal(Error(Nil))
-
-  "1.23"
-  |> int.parse
-  |> should.equal(Error(Nil))
+pub fn clamp_below_min_test() {
+  assert int.clamp(20, min: 30, max: 50) == 30
 }
 
-pub fn base_parse_test() {
-  "100"
-  |> int.base_parse(16)
-  |> should.equal(Ok(256))
-
-  "-100"
-  |> int.base_parse(16)
-  |> should.equal(Ok(-256))
-
-  "100"
-  |> int.base_parse(1)
-  |> should.equal(Error(Nil))
-
-  "100"
-  |> int.base_parse(37)
-  |> should.equal(Error(Nil))
-
-  "AG"
-  |> int.base_parse(16)
-  |> should.equal(Error(Nil))
+pub fn clamp_above_max_test() {
+  assert int.clamp(60, min: 30, max: 50) == 50
 }
 
-pub fn to_base_string_test() {
-  100
-  |> int.to_base_string(16)
-  |> should.equal(Ok("64"))
-
-  -100
-  |> int.to_base_string(16)
-  |> should.equal(Ok("-64"))
-
-  100
-  |> int.to_base_string(1)
-  |> should.equal(Error(Nil))
-
-  100
-  |> int.to_base_string(37)
-  |> should.equal(Error(Nil))
+pub fn clamp_inverted_range_above_test() {
+  assert int.clamp(100, min: 50, max: 30) == 50
 }
 
-pub fn to_base2_test() {
-  100
-  |> int.to_base2()
-  |> should.equal("1100100")
-
-  -100
-  |> int.to_base2()
-  |> should.equal("-1100100")
+pub fn clamp_inverted_range_within_test() {
+  assert int.clamp(40, min: 50, max: 30) == 40
 }
 
-pub fn to_base8_test() {
-  100
-  |> int.to_base8()
-  |> should.equal("144")
-
-  -100
-  |> int.to_base8()
-  |> should.equal("-144")
+pub fn to_string_positive_test() {
+  assert int.to_string(123) == "123"
 }
 
-pub fn to_base16_test() {
-  100
-  |> int.to_base16()
-  |> should.equal("64")
-
-  -100
-  |> int.to_base16()
-  |> should.equal("-64")
-
-  43_981
-  |> int.to_base16()
-  |> should.equal("ABCD")
-
-  -43_981
-  |> int.to_base16()
-  |> should.equal("-ABCD")
+pub fn to_string_negative_test() {
+  assert int.to_string(-123) == "-123"
 }
 
-pub fn to_base36_test() {
-  100
-  |> int.to_base36()
-  |> should.equal("2S")
-
-  -100
-  |> int.to_base36()
-  |> should.equal("-2S")
+pub fn to_string_positive_2_test() {
+  assert int.to_string(123) == "123"
 }
 
-pub fn to_float_test() {
-  int.to_float(1)
-  |> should.equal(1.0)
-
-  int.to_float(5)
-  |> should.equal(5.0)
-
-  int.to_float(0)
-  |> should.equal(0.0)
-
-  int.to_float(-5)
-  |> should.equal(-5.0)
+pub fn parse_positive_test() {
+  assert int.parse("123") == Ok(123)
 }
 
-pub fn compare_test() {
-  int.compare(0, 0)
-  |> should.equal(order.Eq)
-
-  int.compare(1, 1)
-  |> should.equal(order.Eq)
-
-  int.compare(0, 1)
-  |> should.equal(order.Lt)
-
-  int.compare(-2, -1)
-  |> should.equal(order.Lt)
-
-  int.compare(2, 1)
-  |> should.equal(order.Gt)
-
-  int.compare(-1, -2)
-  |> should.equal(order.Gt)
+pub fn parse_negative_test() {
+  assert int.parse("-123") == Ok(-123)
 }
 
-pub fn min_test() {
-  int.min(0, 0)
-  |> should.equal(0)
-
-  int.min(0, 1)
-  |> should.equal(0)
-
-  int.min(1, 0)
-  |> should.equal(0)
-
-  int.min(-1, 2)
-  |> should.equal(-1)
-
-  int.min(2, -2)
-  |> should.equal(-2)
-
-  int.min(-1, -1)
-  |> should.equal(-1)
+pub fn parse_leading_zero_test() {
+  assert int.parse("0123") == Ok(123)
 }
 
-pub fn max_test() {
-  int.max(0, 0)
-  |> should.equal(0)
-
-  int.max(0, 1)
-  |> should.equal(1)
-
-  int.max(1, 0)
-  |> should.equal(1)
-
-  int.max(-1, 2)
-  |> should.equal(2)
-
-  int.max(2, -2)
-  |> should.equal(2)
-
-  int.max(-1, -1)
-  |> should.equal(-1)
+pub fn parse_empty_test() {
+  assert int.parse("") == Error(Nil)
 }
 
-pub fn is_even_test() {
-  int.is_even(0)
-  |> should.be_true
-
-  int.is_even(2)
-  |> should.be_true
-
-  int.is_even(-2)
-  |> should.be_true
-
-  int.is_even(10_006)
-  |> should.be_true
-
-  int.is_even(1)
-  |> should.be_false
-
-  int.is_even(-3)
-  |> should.be_false
-
-  int.is_even(10_005)
-  |> should.be_false
+pub fn parse_invalid_test() {
+  assert int.parse("what") == Error(Nil)
 }
 
-pub fn is_odd_test() {
-  int.is_odd(0)
-  |> should.be_false
-
-  int.is_odd(2)
-  |> should.be_false
-
-  int.is_odd(-2)
-  |> should.be_false
-
-  int.is_odd(10_006)
-  |> should.be_false
-
-  int.is_odd(1)
-  |> should.be_true
-
-  int.is_odd(-3)
-  |> should.be_true
-
-  int.is_odd(10_005)
-  |> should.be_true
+pub fn parse_float_test() {
+  assert int.parse("1.23") == Error(Nil)
 }
 
-pub fn power_test() {
-  int.power(2, 2.0)
-  |> should.equal(Ok(4.0))
+pub fn base_parse_hex_test() {
+  assert int.base_parse("100", 16) == Ok(256)
+}
 
-  int.power(-5, 3.0)
-  |> should.equal(Ok(-125.0))
+pub fn base_parse_hex_negative_test() {
+  assert int.base_parse("-100", 16) == Ok(-256)
+}
 
-  int.power(10, 0.0)
-  |> should.equal(Ok(1.0))
+pub fn base_parse_base_1_test() {
+  assert int.base_parse("100", 1) == Error(Nil)
+}
 
-  int.power(16, 0.5)
-  |> should.equal(Ok(4.0))
+pub fn base_parse_base_37_test() {
+  assert int.base_parse("100", 37) == Error(Nil)
+}
 
-  int.power(2, -1.0)
-  |> should.equal(Ok(0.5))
+pub fn base_parse_invalid_hex_test() {
+  assert int.base_parse("AG", 16) == Error(Nil)
+}
 
+pub fn to_base_string_hex_test() {
+  assert int.to_base_string(100, 16) == Ok("64")
+}
+
+pub fn to_base_string_hex_negative_test() {
+  assert int.to_base_string(-100, 16) == Ok("-64")
+}
+
+pub fn to_base_string_base_1_test() {
+  assert int.to_base_string(100, 1) == Error(Nil)
+}
+
+pub fn to_base_string_base_37_test() {
+  assert int.to_base_string(100, 37) == Error(Nil)
+}
+
+pub fn to_base2_positive_test() {
+  assert int.to_base2(100) == "1100100"
+}
+
+pub fn to_base2_negative_test() {
+  assert int.to_base2(-100) == "-1100100"
+}
+
+pub fn to_base8_positive_test() {
+  assert int.to_base8(100) == "144"
+}
+
+pub fn to_base8_negative_test() {
+  assert int.to_base8(-100) == "-144"
+}
+
+pub fn to_base16_positive_test() {
+  assert int.to_base16(100) == "64"
+}
+
+pub fn to_base16_negative_test() {
+  assert int.to_base16(-100) == "-64"
+}
+
+pub fn to_base16_large_test() {
+  assert int.to_base16(43_981) == "ABCD"
+}
+
+pub fn to_base16_large_negative_test() {
+  assert int.to_base16(-43_981) == "-ABCD"
+}
+
+pub fn to_base36_positive_test() {
+  assert int.to_base36(100) == "2S"
+}
+
+pub fn to_base36_negative_test() {
+  assert int.to_base36(-100) == "-2S"
+}
+
+pub fn to_float_one_test() {
+  assert int.to_float(1) == 1.0
+}
+
+pub fn to_float_five_test() {
+  assert int.to_float(5) == 5.0
+}
+
+pub fn to_float_zero_test() {
+  assert int.to_float(0) == 0.0
+}
+
+pub fn to_float_negative_test() {
+  assert int.to_float(-5) == -5.0
+}
+
+pub fn compare_equal_zero_test() {
+  assert int.compare(0, 0) == order.Eq
+}
+
+pub fn compare_equal_one_test() {
+  assert int.compare(1, 1) == order.Eq
+}
+
+pub fn compare_lt_test() {
+  assert int.compare(0, 1) == order.Lt
+}
+
+pub fn compare_negative_lt_test() {
+  assert int.compare(-2, -1) == order.Lt
+}
+
+pub fn compare_gt_test() {
+  assert int.compare(2, 1) == order.Gt
+}
+
+pub fn compare_negative_gt_test() {
+  assert int.compare(-1, -2) == order.Gt
+}
+
+pub fn min_equal_test() {
+  assert int.min(0, 0) == 0
+}
+
+pub fn min_first_smaller_test() {
+  assert int.min(0, 1) == 0
+}
+
+pub fn min_second_smaller_test() {
+  assert int.min(1, 0) == 0
+}
+
+pub fn min_negative_smaller_test() {
+  assert int.min(-1, 2) == -1
+}
+
+pub fn min_both_mixed_test() {
+  assert int.min(2, -2) == -2
+}
+
+pub fn min_both_negative_test() {
+  assert int.min(-1, -1) == -1
+}
+
+pub fn max_equal_test() {
+  assert int.max(0, 0) == 0
+}
+
+pub fn max_second_larger_test() {
+  assert int.max(0, 1) == 1
+}
+
+pub fn max_first_larger_test() {
+  assert int.max(1, 0) == 1
+}
+
+pub fn max_positive_larger_test() {
+  assert int.max(-1, 2) == 2
+}
+
+pub fn max_mixed_test() {
+  assert int.max(2, -2) == 2
+}
+
+pub fn max_both_negative_test() {
+  assert int.max(-1, -1) == -1
+}
+
+pub fn is_even_zero_test() {
+  assert int.is_even(0)
+}
+
+pub fn is_even_two_test() {
+  assert int.is_even(2)
+}
+
+pub fn is_even_negative_two_test() {
+  assert int.is_even(-2)
+}
+
+pub fn is_even_large_test() {
+  assert int.is_even(10_006)
+}
+
+pub fn is_even_one_false_test() {
+  assert !int.is_even(1)
+}
+
+pub fn is_even_negative_three_false_test() {
+  assert !int.is_even(-3)
+}
+
+pub fn is_even_large_odd_false_test() {
+  assert !int.is_even(10_005)
+}
+
+pub fn is_odd_zero_false_test() {
+  assert !int.is_odd(0)
+}
+
+pub fn is_odd_two_false_test() {
+  assert !int.is_odd(2)
+}
+
+pub fn is_odd_negative_two_false_test() {
+  assert !int.is_odd(-2)
+}
+
+pub fn is_odd_large_even_false_test() {
+  assert !int.is_odd(10_006)
+}
+
+pub fn is_odd_one_test() {
+  assert int.is_odd(1)
+}
+
+pub fn is_odd_negative_three_test() {
+  assert int.is_odd(-3)
+}
+
+pub fn is_odd_large_test() {
+  assert int.is_odd(10_005)
+}
+
+pub fn power_two_squared_test() {
+  assert int.power(2, 2.0) == Ok(4.0)
+}
+
+pub fn power_negative_cubed_test() {
+  assert int.power(-5, 3.0) == Ok(-125.0)
+}
+
+pub fn power_zero_exponent_test() {
+  assert int.power(10, 0.0) == Ok(1.0)
+}
+
+pub fn power_fractional_exponent_test() {
+  assert int.power(16, 0.5) == Ok(4.0)
+}
+
+pub fn power_negative_exponent_test() {
+  assert int.power(2, -1.0) == Ok(0.5)
+}
+
+pub fn power_negative_base_fractional_exponent_error_test() {
   // int.power(-1, 0.5) is equivalent to int.square_root(-1) and should
   // return an error as an imaginary number would otherwise have to be
   // returned
-  int.power(-1, 0.5)
-  |> should.equal(Error(Nil))
+  assert int.power(-1, 0.5) == Error(Nil)
+}
 
+pub fn power_negative_base_fractional_exponent_error_2_test() {
   // Check another case with a negative base and fractional exponent
-  int.power(-1, 1.5)
-  |> should.equal(Error(Nil))
+  assert int.power(-1, 1.5) == Error(Nil)
+}
 
+pub fn power_zero_base_negative_exponent_error_test() {
   // float.power(0, -1) is equivalent to 1 / 0 and is expected
   // to be an error
-  int.power(0, -1.0)
-  |> should.equal(Error(Nil))
+  assert int.power(0, -1.0) == Error(Nil)
+}
 
+pub fn power_negative_base_negative_exponent_test() {
   // Check that a negative base and exponent is fine as long as the
   // exponent is not fractional
-  int.power(-2, -1.0)
-  |> should.equal(Ok(-0.5))
+  assert int.power(-2, -1.0) == Ok(-0.5)
 }
 
-pub fn square_root_test() {
-  int.square_root(4)
-  |> should.equal(Ok(2.0))
-
-  int.square_root(16)
-  |> should.equal(Ok(4.0))
-
-  int.square_root(0)
-  |> should.equal(Ok(0.0))
-
-  int.square_root(-4)
-  |> should.equal(Error(Nil))
+pub fn square_root_four_test() {
+  assert int.square_root(4) == Ok(2.0)
 }
 
-pub fn negate_test() {
-  int.negate(-1)
-  |> should.equal(1)
-
-  int.negate(2)
-  |> should.equal(-2)
-
-  int.negate(0)
-  |> should.equal(0)
+pub fn square_root_sixteen_test() {
+  assert int.square_root(16) == Ok(4.0)
 }
 
-pub fn sum_test() {
-  int.sum([])
-  |> should.equal(0)
-
-  int.sum([1, 2, 3])
-  |> should.equal(6)
+pub fn square_root_zero_test() {
+  assert int.square_root(0) == Ok(0.0)
 }
 
-pub fn product_test() {
-  int.product([])
-  |> should.equal(1)
-
-  int.product([4])
-  |> should.equal(4)
-
-  int.product([1, 2, 3])
-  |> should.equal(6)
+pub fn square_root_negative_error_test() {
+  assert int.square_root(-4) == Error(Nil)
 }
 
-pub fn digits_test() {
-  int.digits(123, 10)
-  |> should.equal(Ok([1, 2, 3]))
-
-  int.digits(-123, 10)
-  |> should.equal(Ok([-1, -2, -3]))
-
-  int.digits(123, 2)
-  |> should.equal(Ok([1, 1, 1, 1, 0, 1, 1]))
-
-  int.digits(123, 1)
-  |> should.equal(Error(Nil))
+pub fn negate_negative_test() {
+  assert int.negate(-1) == 1
 }
 
-pub fn undigits_test() {
-  int.undigits([], 10)
-  |> should.equal(Ok(0))
+pub fn negate_positive_test() {
+  assert int.negate(2) == -2
+}
 
-  int.undigits([1, 2, 3], 10)
-  |> should.equal(Ok(123))
+pub fn negate_zero_test() {
+  assert int.negate(0) == 0
+}
 
-  int.undigits([-1, -2, -3], 10)
-  |> should.equal(Ok(-123))
+pub fn sum_empty_test() {
+  assert int.sum([]) == 0
+}
 
-  int.undigits([1, 1, 1, 1, 0, 1, 1], 2)
-  |> should.equal(Ok(123))
+pub fn sum_non_empty_test() {
+  assert int.sum([1, 2, 3]) == 6
+}
 
-  int.undigits([1, 2, 3], 1)
-  |> should.equal(Error(Nil))
+pub fn product_empty_test() {
+  assert int.product([]) == 1
+}
 
-  int.undigits([1, 1, 2], 2)
-  |> should.equal(Error(Nil))
+pub fn product_single_test() {
+  assert int.product([4]) == 4
+}
+
+pub fn product_multiple_test() {
+  assert int.product([1, 2, 3]) == 6
 }
 
 pub fn random_test() {
-  use _ <- list.each(list.range(0, 100))
+  use _, _ <- int.range(from: 0, to: 101, with: Nil)
 
-  int.random(0)
-  |> should.equal(0)
+  assert int.random(0) == 0
 
-  int.random(1)
-  |> should.equal(0)
+  assert int.random(1) == 0
 
-  int.random(-1)
-  |> should.equal(-1)
+  assert int.random(-1) == -1
 
-  int.random(2)
-  |> list.contains([0, 1], _)
-  |> should.be_true
+  assert list.contains([0, 1], int.random(2))
 
-  int.random(3)
-  |> list.contains([0, 1, 2], _)
-  |> should.be_true
+  assert list.contains([0, 1, 2], int.random(3))
+
+  Nil
 }
 
-pub fn divide_test() {
-  int.divide(1, 1)
-  |> should.equal(Ok(1))
-
-  int.divide(1, 0)
-  |> should.equal(Error(Nil))
-
-  int.divide(0, by: 1)
-  |> should.equal(Ok(0))
-
-  int.divide(1, by: 0)
-  |> should.equal(Error(Nil))
-
-  int.divide(5, by: 2)
-  |> should.equal(Ok(2))
-
-  int.divide(-99, by: 2)
-  |> should.equal(Ok(-49))
+pub fn divide_by_self_test() {
+  assert int.divide(1, 1) == Ok(1)
 }
 
-pub fn remainder_test() {
-  int.remainder(3, 2)
-  |> should.equal(Ok(1))
-
-  int.remainder(1, 0)
-  |> should.equal(Error(Nil))
-
-  int.remainder(10, -1)
-  |> should.equal(Ok(0))
-
-  int.remainder(13, by: 3)
-  |> should.equal(Ok(1))
-
-  int.remainder(-13, by: 3)
-  |> should.equal(Ok(-1))
-
-  int.remainder(13, by: -3)
-  |> should.equal(Ok(1))
-
-  int.remainder(-13, by: -3)
-  |> should.equal(Ok(-1))
+pub fn divide_by_zero_test() {
+  assert int.divide(1, 0) == Error(Nil)
 }
 
-pub fn modulo_test() {
-  int.modulo(3, 2)
-  |> should.equal(Ok(1))
-
-  int.modulo(1, 0)
-  |> should.equal(Error(Nil))
-
-  int.modulo(10, -1)
-  |> should.equal(Ok(0))
-
-  int.modulo(13, by: 3)
-  |> should.equal(Ok(1))
-
-  int.modulo(-13, by: 3)
-  |> should.equal(Ok(2))
-
-  int.modulo(13, by: -3)
-  |> should.equal(Ok(-2))
-
-  int.modulo(-13, by: -3)
-  |> should.equal(Ok(-1))
+pub fn divide_zero_by_one_test() {
+  assert int.divide(0, by: 1) == Ok(0)
 }
 
-pub fn floor_divide_test() {
-  int.floor_divide(1, 1)
-  |> should.equal(Ok(1))
+pub fn divide_one_by_zero_test() {
+  assert int.divide(1, by: 0) == Error(Nil)
+}
 
-  int.floor_divide(1, 0)
-  |> should.equal(Error(Nil))
+pub fn divide_truncates_test() {
+  assert int.divide(5, by: 2) == Ok(2)
+}
 
-  int.floor_divide(0, by: 1)
-  |> should.equal(Ok(0))
+pub fn divide_negative_test() {
+  assert int.divide(-99, by: 2) == Ok(-49)
+}
 
-  int.floor_divide(1, by: 0)
-  |> should.equal(Error(Nil))
+pub fn remainder_basic_test() {
+  assert int.remainder(3, 2) == Ok(1)
+}
 
-  int.floor_divide(5, by: 2)
-  |> should.equal(Ok(2))
+pub fn remainder_by_zero_test() {
+  assert int.remainder(1, 0) == Error(Nil)
+}
 
-  int.floor_divide(6, by: -4)
-  |> should.equal(Ok(-2))
+pub fn remainder_negative_divisor_test() {
+  assert int.remainder(10, -1) == Ok(0)
+}
 
-  int.floor_divide(-99, by: 2)
-  |> should.equal(Ok(-50))
+pub fn remainder_positive_test() {
+  assert int.remainder(13, by: 3) == Ok(1)
+}
 
-  int.floor_divide(-1, by: 2)
-  |> should.equal(Ok(-1))
+pub fn remainder_negative_dividend_test() {
+  assert int.remainder(-13, by: 3) == Ok(-1)
+}
+
+pub fn remainder_positive_by_negative_test() {
+  assert int.remainder(13, by: -3) == Ok(1)
+}
+
+pub fn remainder_both_negative_test() {
+  assert int.remainder(-13, by: -3) == Ok(-1)
+}
+
+pub fn modulo_basic_test() {
+  assert int.modulo(3, 2) == Ok(1)
+}
+
+pub fn modulo_by_zero_test() {
+  assert int.modulo(1, 0) == Error(Nil)
+}
+
+pub fn modulo_negative_divisor_test() {
+  assert int.modulo(10, -1) == Ok(0)
+}
+
+pub fn modulo_positive_test() {
+  assert int.modulo(13, by: 3) == Ok(1)
+}
+
+pub fn modulo_negative_dividend_test() {
+  assert int.modulo(-13, by: 3) == Ok(2)
+}
+
+pub fn modulo_positive_by_negative_test() {
+  assert int.modulo(13, by: -3) == Ok(-2)
+}
+
+pub fn modulo_both_negative_test() {
+  assert int.modulo(-13, by: -3) == Ok(-1)
+}
+
+pub fn floor_divide_by_self_test() {
+  assert int.floor_divide(1, 1) == Ok(1)
+}
+
+pub fn floor_divide_by_zero_test() {
+  assert int.floor_divide(1, 0) == Error(Nil)
+}
+
+pub fn floor_divide_zero_by_one_test() {
+  assert int.floor_divide(0, by: 1) == Ok(0)
+}
+
+pub fn floor_divide_one_by_zero_test() {
+  assert int.floor_divide(1, by: 0) == Error(Nil)
+}
+
+pub fn floor_divide_truncates_test() {
+  assert int.floor_divide(5, by: 2) == Ok(2)
+}
+
+pub fn floor_divide_negative_divisor_test() {
+  assert int.floor_divide(6, by: -4) == Ok(-2)
+}
+
+pub fn floor_divide_negative_dividend_test() {
+  assert int.floor_divide(-99, by: 2) == Ok(-50)
+}
+
+pub fn floor_divide_negative_small_test() {
+  assert int.floor_divide(-1, by: 2) == Ok(-1)
 }
 
 pub fn add_test() {
-  int.add(1, 2)
-  |> should.equal(3)
+  assert int.add(1, 2) == 3
+}
 
-  3
-  |> int.add(2)
-  |> should.equal(5)
+pub fn add_larger_test() {
+  assert int.add(3, 2) == 5
 }
 
 pub fn multiply_test() {
-  int.multiply(2, 4)
-  |> should.equal(8)
+  assert int.multiply(2, 4) == 8
+}
 
-  3
-  |> int.multiply(2)
-  |> should.equal(6)
+pub fn multiply_larger_test() {
+  assert int.multiply(3, 2) == 6
 }
 
 pub fn subtract_test() {
-  int.subtract(3, 1)
-  |> should.equal(2)
-
-  3
-  |> int.subtract(2)
-  |> should.equal(1)
-
-  3
-  |> int.subtract(2, _)
-  |> should.equal(-1)
+  assert int.subtract(3, 1) == 2
 }
 
-pub fn and_test() {
-  int.bitwise_and(9, 3)
-  |> should.equal(1)
+pub fn subtract_smaller_test() {
+  assert int.subtract(3, 2) == 1
+}
 
+pub fn subtract_negative_result_test() {
+  assert int.subtract(2, 3) == -1
+}
+
+pub fn bitwise_and_test() {
+  assert int.bitwise_and(9, 3) == 1
+}
+
+pub fn bitwise_and_32bit_test() {
   // To check compatibility with JavaScript, try a 32 bit unsigned integer
   // (signed integers are in the range -2147483648 to +2147483647, while
   //  32 bit unsigned integers are in the range 0 to +4294967295).
-  int.bitwise_and(2_147_483_648, 2_147_483_648)
-  |> should.equal(2_147_483_648)
+  assert int.bitwise_and(2_147_483_648, 2_147_483_648) == 2_147_483_648
 }
 
-pub fn not_test() {
-  int.bitwise_not(2)
-  |> should.equal(-3)
+pub fn bitwise_not_test() {
+  assert int.bitwise_not(2) == -3
+}
 
+pub fn bitwise_not_32bit_test() {
   // To check compatibility with JavaScript, try a 32 bit unsigned integer.
-  int.bitwise_not(2_147_483_648)
-  |> should.equal(-2_147_483_649)
+  assert int.bitwise_not(2_147_483_648) == -2_147_483_649
 }
 
-pub fn or_test() {
-  int.bitwise_or(9, 3)
-  |> should.equal(11)
+pub fn bitwise_or_test() {
+  assert int.bitwise_or(9, 3) == 11
+}
 
+pub fn bitwise_or_32bit_test() {
   // To check compatibility with JavaScript, try a 32 bit unsigned integer.
-  int.bitwise_or(1, 2_147_483_648)
-  |> should.equal(2_147_483_649)
+  assert int.bitwise_or(1, 2_147_483_648) == 2_147_483_649
 }
 
-pub fn exclusive_or_test() {
-  int.bitwise_exclusive_or(9, 3)
-  |> should.equal(10)
+pub fn bitwise_exclusive_or_test() {
+  assert int.bitwise_exclusive_or(9, 3) == 10
+}
 
+pub fn bitwise_exclusive_or_32bit_test() {
   // To check compatibility with JavaScript, try a 32 bit unsigned integer.
-  int.bitwise_exclusive_or(0, 2_147_483_648)
-  |> should.equal(2_147_483_648)
+  assert int.bitwise_exclusive_or(0, 2_147_483_648) == 2_147_483_648
 }
 
-pub fn shift_left_test() {
-  int.bitwise_shift_left(1, 2)
-  |> should.equal(4)
-
-  int.bitwise_shift_left(1, -2)
-  |> should.equal(0)
-
-  int.bitwise_shift_left(-1, 2)
-  |> should.equal(-4)
-
-  int.bitwise_shift_left(-1, -2)
-  |> should.equal(-1)
+pub fn bitwise_shift_left_positive_test() {
+  assert int.bitwise_shift_left(1, 2) == 4
 }
 
-pub fn shift_right_test() {
-  int.bitwise_shift_right(1, 2)
-  |> should.equal(0)
+pub fn bitwise_shift_left_negative_shift_test() {
+  assert int.bitwise_shift_left(1, -2) == 0
+}
 
-  int.bitwise_shift_right(1, -2)
-  |> should.equal(4)
+pub fn bitwise_shift_left_negative_value_test() {
+  assert int.bitwise_shift_left(-1, 2) == -4
+}
 
-  int.bitwise_shift_right(-1, 2)
-  |> should.equal(-1)
+pub fn bitwise_shift_left_both_negative_test() {
+  assert int.bitwise_shift_left(-1, -2) == -1
+}
 
-  int.bitwise_shift_right(-1, -2)
-  |> should.equal(-4)
+pub fn bitwise_shift_right_positive_test() {
+  assert int.bitwise_shift_right(1, 2) == 0
+}
+
+pub fn bitwise_shift_right_negative_shift_test() {
+  assert int.bitwise_shift_right(1, -2) == 4
+}
+
+pub fn bitwise_shift_right_negative_value_test() {
+  assert int.bitwise_shift_right(-1, 2) == -1
+}
+
+pub fn bitwise_shift_right_both_negative_test() {
+  assert int.bitwise_shift_right(-1, -2) == -4
+}
+
+pub fn bitwise_and_zero_test() {
+  assert int.bitwise_and(0, 0) == 0
+}
+
+pub fn bitwise_and_identity_test() {
+  assert int.bitwise_and(0xFF, 0xFF) == 0xFF
+}
+
+pub fn bitwise_and_clear_test() {
+  assert int.bitwise_and(0xFF, 0) == 0
+}
+
+pub fn bitwise_and_large_numbers_test() {
+  // Test with numbers larger than 32 bits
+  assert int.bitwise_and(0x123456789, 0xFFFF) == 0x6789
+}
+
+pub fn bitwise_or_zero_test() {
+  assert int.bitwise_or(0, 0) == 0
+}
+
+pub fn bitwise_or_identity_test() {
+  assert int.bitwise_or(0xFF, 0) == 0xFF
+}
+
+pub fn bitwise_or_combine_test() {
+  assert int.bitwise_or(0xF0, 0x0F) == 0xFF
+}
+
+pub fn bitwise_or_large_numbers_test() {
+  // Test with numbers larger than 32 bits
+  assert int.bitwise_or(0x100000000, 0xFF) == 0x1000000FF
+}
+
+pub fn bitwise_exclusive_or_zero_test() {
+  assert int.bitwise_exclusive_or(0, 0) == 0
+}
+
+pub fn bitwise_exclusive_or_identity_test() {
+  assert int.bitwise_exclusive_or(0xFF, 0) == 0xFF
+}
+
+pub fn bitwise_exclusive_or_invert_test() {
+  assert int.bitwise_exclusive_or(0xF0, 0x0F) == 0xFF
+}
+
+pub fn bitwise_exclusive_or_self_test() {
+  assert int.bitwise_exclusive_or(0xAB, 0xAB) == 0
+}
+
+pub fn bitwise_not_zero_test() {
+  assert int.bitwise_not(0) == -1
+}
+
+pub fn bitwise_not_negative_one_test() {
+  assert int.bitwise_not(-1) == 0
+}
+
+pub fn bitwise_not_large_number_test() {
+  // Test with number larger than 32 bits
+  assert int.bitwise_not(0x123456789) == -4_886_718_346
+}
+
+pub fn bitwise_shift_left_zero_shift_test() {
+  assert int.bitwise_shift_left(0xFF, 0) == 0xFF
+}
+
+pub fn bitwise_shift_left_large_shift_test() {
+  assert int.bitwise_shift_left(1, 32) == 4_294_967_296
+}
+
+pub fn bitwise_shift_left_large_number_test() {
+  assert int.bitwise_shift_left(0x1000, 4) == 0x10000
+}
+
+pub fn bitwise_shift_right_zero_shift_test() {
+  assert int.bitwise_shift_right(0xFF, 0) == 0xFF
+}
+
+pub fn bitwise_shift_right_large_shift_test() {
+  assert int.bitwise_shift_right(0xFFFFFFFF, 16) == 0xFFFF
+}
+
+pub fn bitwise_shift_right_preserves_sign_test() {
+  assert int.bitwise_shift_right(-1, 16) == -1
+}
+
+pub fn bitwise_shift_right_large_number_test() {
+  assert int.bitwise_shift_right(0x123456789, 16) == 0x12345
+}
+
+pub fn bitwise_operations_with_max_safe_integer_test() {
+  // Test with maximum safe integer
+  assert int.bitwise_and(9_007_199_254_740_991, 0xFFFF) == 65_535
+}
+
+pub fn bitwise_operations_with_boundary_values_test() {
+  // Test around 32-bit boundaries
+  assert int.bitwise_or(2_147_483_647, 1) == 2_147_483_647
+  // MAX_INT32 | 1 = MAX_INT32
+  assert int.bitwise_and(2_147_483_648, 4_294_967_295) == 2_147_483_648
+  // 2^31 & 0xFFFFFFFF = 2^31
+}
+
+pub fn bitwise_shift_edge_cases_test() {
+  // Test edge cases for shifts
+  assert int.bitwise_shift_left(1, 63) == 9_223_372_036_854_775_808
+  assert int.bitwise_shift_right(9_223_372_036_854_775_808, 63) == 1
+}
+
+pub fn range_ascending_test() {
+  assert int.range(from: 0, to: 3, with: "", run: fn(acc, i) {
+      acc <> int.to_string(i)
+    })
+    == "012"
+}
+
+pub fn range_descending_test() {
+  assert int.range(from: 3, to: 0, with: "", run: fn(acc, i) {
+      acc <> int.to_string(i)
+    })
+    == "321"
+}
+
+pub fn range_empty_test() {
+  assert int.range(from: 5, to: 5, with: "", run: fn(acc, i) {
+      acc <> int.to_string(i)
+    })
+    == ""
+}
+
+pub fn range_with_list_prepend_test() {
+  assert int.range(from: 1, to: -2, with: [], run: list.prepend) == [-1, 0, 1]
+}
+
+pub fn range_negative_to_positive_test() {
+  assert int.range(from: -2, to: 2, with: [], run: fn(acc, i) { [i, ..acc] })
+    == [1, 0, -1, -2]
+}
+
+pub fn range_single_element_test() {
+  assert int.range(from: 0, to: 1, with: [], run: list.prepend) == [0]
+}
+
+pub fn range_sum_test() {
+  assert int.range(from: 1, to: 5, with: 0, run: int.add) == 10
 }

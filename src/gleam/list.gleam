@@ -26,7 +26,6 @@ import gleam/dict.{type Dict}
 import gleam/float
 import gleam/int
 import gleam/order.{type Order}
-import gleam/pair
 
 /// Counts the number of elements in a given list.
 ///
@@ -39,18 +38,15 @@ import gleam/pair
 /// ## Examples
 ///
 /// ```gleam
-/// length([])
-/// // -> 0
+/// assert length([]) == 0
 /// ```
 ///
 /// ```gleam
-/// length([1])
-/// // -> 1
+/// assert length([1]) == 1
 /// ```
 ///
 /// ```gleam
-/// length([1, 2])
-/// // -> 2
+/// assert length([1, 2]) == 2
 /// ```
 ///
 @external(erlang, "erlang", "length")
@@ -73,27 +69,30 @@ fn length_loop(list: List(a), count: Int) -> Int {
 /// ## Examples
 ///
 /// ```gleam
-/// count([], fn(a) { a > 0 })
-/// // -> 0
+/// assert count([], fn(a) { a > 0 }) == 0
 /// ```
 ///
 /// ```gleam
-/// count([1], fn(a) { a > 0 })
-/// // -> 1
+/// assert count([1], fn(a) { a > 0 }) == 1
 /// ```
 ///
 /// ```gleam
-/// count([1, 2, 3], int.is_odd)
-/// // -> 2
+/// assert count([1, 2, 3], int.is_odd) == 2
 /// ```
 ///
 pub fn count(list: List(a), where predicate: fn(a) -> Bool) -> Int {
-  fold(list, 0, fn(acc, value) {
-    case predicate(value) {
-      True -> acc + 1
-      False -> acc
-    }
-  })
+  count_loop(list, predicate, 0)
+}
+
+fn count_loop(list: List(a), predicate: fn(a) -> Bool, acc: Int) -> Int {
+  case list {
+    [] -> acc
+    [first, ..rest] ->
+      case predicate(first) {
+        True -> count_loop(rest, predicate, acc + 1)
+        False -> count_loop(rest, predicate, acc)
+      }
+  }
 }
 
 /// Creates a new list from a given list containing the same elements but in the
@@ -108,18 +107,15 @@ pub fn count(list: List(a), where predicate: fn(a) -> Bool) -> Int {
 /// ## Examples
 ///
 /// ```gleam
-/// reverse([])
-/// // -> []
+/// assert reverse([]) == []
 /// ```
 ///
 /// ```gleam
-/// reverse([1])
-/// // -> [1]
+/// assert reverse([1]) == [1]
 /// ```
 ///
 /// ```gleam
-/// reverse([1, 2])
-/// // -> [2, 1]
+/// assert reverse([1, 2]) == [2, 1]
 /// ```
 ///
 @external(erlang, "lists", "reverse")
@@ -127,7 +123,11 @@ pub fn reverse(list: List(a)) -> List(a) {
   reverse_and_prepend(list, [])
 }
 
-// Reverses a list and prepends it to another list
+/// Reverses a list and prepends it to another list.
+/// This function runs in linear time, proportional to the length of the list
+/// to prepend.
+///
+@external(erlang, "lists", "reverse")
 fn reverse_and_prepend(list prefix: List(a), to suffix: List(a)) -> List(a) {
   case prefix {
     [] -> suffix
@@ -142,18 +142,15 @@ fn reverse_and_prepend(list prefix: List(a), to suffix: List(a)) -> List(a) {
 /// ## Examples
 ///
 /// ```gleam
-/// is_empty([])
-/// // -> True
+/// assert is_empty([])
 /// ```
 ///
 /// ```gleam
-/// is_empty([1])
-/// // -> False
+/// assert !is_empty([1])
 /// ```
 ///
 /// ```gleam
-/// is_empty([1, 1])
-/// // -> False
+/// assert !is_empty([1, 1])
 /// ```
 ///
 pub fn is_empty(list: List(a)) -> Bool {
@@ -168,28 +165,23 @@ pub fn is_empty(list: List(a)) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// [] |> contains(any: 0)
-/// // -> False
+/// assert !contains([], any: 0)
 /// ```
 ///
 /// ```gleam
-/// [0] |> contains(any: 0)
-/// // -> True
+/// assert [0] |> contains(any: 0)
 /// ```
 ///
 /// ```gleam
-/// [1] |> contains(any: 0)
-/// // -> False
+/// assert !contains([1], any: 0)
 /// ```
 ///
 /// ```gleam
-/// [1, 1] |> contains(any: 0)
-/// // -> False
+/// assert !contains([1, 1], any: 0)
 /// ```
 ///
 /// ```gleam
-/// [1, 0] |> contains(any: 0)
-/// // -> True
+/// assert [1, 0] |> contains(any: 0)
 /// ```
 ///
 pub fn contains(list: List(a), any elem: a) -> Bool {
@@ -205,18 +197,15 @@ pub fn contains(list: List(a), any elem: a) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// first([])
-/// // -> Error(Nil)
+/// assert first([]) == Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// first([0])
-/// // -> Ok(0)
+/// assert first([0]) == Ok(0)
 /// ```
 ///
 /// ```gleam
-/// first([1, 2])
-/// // -> Ok(1)
+/// assert first([1, 2]) == Ok(1)
 /// ```
 ///
 pub fn first(list: List(a)) -> Result(a, Nil) {
@@ -234,18 +223,15 @@ pub fn first(list: List(a)) -> Result(a, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// rest([])
-/// // -> Error(Nil)
+/// assert rest([]) == Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// rest([0])
-/// // -> Ok([])
+/// assert rest([0]) == Ok([])
 /// ```
 ///
 /// ```gleam
-/// rest([1, 2])
-/// // -> Ok([2])
+/// assert rest([1, 2]) == Ok([2])
 /// ```
 ///
 pub fn rest(list: List(a)) -> Result(List(a), Nil) {
@@ -264,39 +250,31 @@ pub fn rest(list: List(a)) -> Result(List(a), Nil) {
 /// ```gleam
 /// import gleam/dict
 ///
-/// [Ok(3), Error("Wrong"), Ok(200), Ok(73)]
-/// |> group(by: fn(i) {
-///   case i {
-///     Ok(_) -> "Successful"
-///     Error(_) -> "Failed"
-///   }
-/// })
-/// |> dict.to_list
-/// // -> [
-/// //   #("Failed", [Error("Wrong")]),
-/// //   #("Successful", [Ok(73), Ok(200), Ok(3)])
-/// // ]
+/// assert
+///   [Ok(3), Error("Wrong"), Ok(200), Ok(73)]
+///   |> group(by: fn(i) {
+///     case i {
+///       Ok(_) -> "Successful"
+///       Error(_) -> "Failed"
+///     }
+///   })
+///   |> dict.to_list
+///   == [
+///     #("Failed", [Error("Wrong")]),
+///     #("Successful", [Ok(73), Ok(200), Ok(3)])
+///   ]
 /// ```
 ///
 /// ```gleam
 /// import gleam/dict
 ///
-/// group([1,2,3,4,5], by: fn(i) { i - i / 3 * 3 })
-/// |> dict.to_list
-/// // -> [#(0, [3]), #(1, [4, 1]), #(2, [5, 2])]
+/// assert group([1,2,3,4,5], by: fn(i) { i - i / 3 * 3 })
+///   |> dict.to_list
+///   == [#(0, [3]), #(1, [4, 1]), #(2, [5, 2])]
 /// ```
 ///
 pub fn group(list: List(v), by key: fn(v) -> k) -> Dict(k, List(v)) {
-  fold(list, dict.new(), update_group(key))
-}
-
-fn update_group(f: fn(a) -> k) -> fn(Dict(k, List(a)), a) -> Dict(k, List(a)) {
-  fn(groups, elem) {
-    case dict.get(groups, f(elem)) {
-      Ok(existing) -> dict.insert(groups, f(elem), [elem, ..existing])
-      Error(_) -> dict.insert(groups, f(elem), [elem])
-    }
-  }
+  dict.group(key, list)
 }
 
 /// Returns a new list containing only the elements from the first list for
@@ -305,13 +283,11 @@ fn update_group(f: fn(a) -> k) -> fn(Dict(k, List(a)), a) -> Dict(k, List(a)) {
 /// ## Examples
 ///
 /// ```gleam
-/// filter([2, 4, 6, 1], fn(x) { x > 2 })
-/// // -> [4, 6]
+/// assert filter([2, 4, 6, 1], fn(x) { x > 2 }) == [4, 6]
 /// ```
 ///
 /// ```gleam
-/// filter([2, 4, 6, 1], fn(x) { x > 6 })
-/// // -> []
+/// assert filter([2, 4, 6, 1], fn(x) { x > 6 }) == []
 /// ```
 ///
 pub fn filter(list: List(a), keeping predicate: fn(a) -> Bool) -> List(a) {
@@ -337,13 +313,11 @@ fn filter_loop(list: List(a), fun: fn(a) -> Bool, acc: List(a)) -> List(a) {
 /// ## Examples
 ///
 /// ```gleam
-/// filter_map([2, 4, 6, 1], Error)
-/// // -> []
+/// assert filter_map([2, 4, 6, 1], Error) == []
 /// ```
 ///
 /// ```gleam
-/// filter_map([2, 4, 6, 1], fn(x) { Ok(x + 1) })
-/// // -> [3, 5, 7, 2]
+/// assert filter_map([2, 4, 6, 1], fn(x) { Ok(x + 1) }) == [3, 5, 7, 2]
 /// ```
 ///
 pub fn filter_map(list: List(a), with fun: fn(a) -> Result(b, e)) -> List(b) {
@@ -367,14 +341,12 @@ fn filter_map_loop(
   }
 }
 
-/// Returns a new list containing only the elements of the first list after the
-/// function has been applied to each one.
+/// Returns a new list containing the results of applying the supplied function to each element.
 ///
 /// ## Examples
 ///
 /// ```gleam
-/// map([2, 4, 6], fn(x) { x * 2 })
-/// // -> [4, 8, 12]
+/// assert map([2, 4, 6], fn(x) { x * 2 }) == [4, 8, 12]
 /// ```
 ///
 pub fn map(list: List(a), with fun: fn(a) -> b) -> List(b) {
@@ -390,18 +362,17 @@ fn map_loop(list: List(a), fun: fn(a) -> b, acc: List(b)) -> List(b) {
 
 /// Combines two lists into a single list using the given function.
 ///
-/// If a list is longer than the other the extra elements are dropped.
+/// If a list is longer than the other, the extra elements are dropped.
 ///
 /// ## Examples
 ///
 /// ```gleam
-/// map2([1, 2, 3], [4, 5, 6], fn(x, y) { x + y })
-/// // -> [5, 7, 9]
+/// assert map2([1, 2, 3], [4, 5, 6], fn(x, y) { x + y }) == [5, 7, 9]
 /// ```
 ///
 /// ```gleam
-/// map2([1, 2], ["a", "b", "c"], fn(i, x) { #(i, x) })
-/// // -> [#(1, "a"), #(2, "b")]
+/// assert map2([1, 2], ["a", "b", "c"], fn(i, x) { #(i, x) })
+///   == [#(1, "a"), #(2, "b")]
 /// ```
 ///
 pub fn map2(list1: List(a), list2: List(b), with fun: fn(a, b) -> c) -> List(c) {
@@ -425,12 +396,13 @@ fn map2_loop(
 /// ## Examples
 ///
 /// ```gleam
-/// map_fold(
-///   over: [1, 2, 3],
-///   from: 100,
-///   with: fn(memo, i) { #(memo + i, i * 2) }
-/// )
-/// // -> #(106, [2, 4, 6])
+/// assert
+///   map_fold(
+///     over: [1, 2, 3],
+///     from: 100,
+///     with: fn(memo, i) { #(memo + i, i * 2) }
+///   )
+///   == #(106, [2, 4, 6])
 /// ```
 ///
 pub fn map_fold(
@@ -438,16 +410,26 @@ pub fn map_fold(
   from initial: acc,
   with fun: fn(acc, a) -> #(acc, b),
 ) -> #(acc, List(b)) {
-  fold(over: list, from: #(initial, []), with: fn(acc, item) {
-    let #(current_acc, items) = acc
-    let #(next_acc, next_item) = fun(current_acc, item)
-    #(next_acc, [next_item, ..items])
-  })
-  |> pair.map_second(reverse)
+  map_fold_loop(list, fun, initial, [])
 }
 
-/// Returns a new list containing only the elements of the first list after the
-/// function has been applied to each one and their index.
+fn map_fold_loop(
+  list: List(a),
+  fun: fn(acc, a) -> #(acc, b),
+  acc: acc,
+  list_acc: List(b),
+) -> #(acc, List(b)) {
+  case list {
+    [] -> #(acc, reverse(list_acc))
+    [first, ..rest] -> {
+      let #(acc, first) = fun(acc, first)
+      map_fold_loop(rest, fun, acc, [first, ..list_acc])
+    }
+  }
+}
+
+/// Similar to `map`, but the supplied function will also be passed the index
+/// of the element being mapped as an additional argument.
 ///
 /// The index starts at 0, so the first element is 0, the second is 1, and so
 /// on.
@@ -455,8 +437,7 @@ pub fn map_fold(
 /// ## Examples
 ///
 /// ```gleam
-/// index_map(["a", "b"], fn(x, i) { #(i, x) })
-/// // -> [#(0, "a"), #(1, "b")]
+/// assert index_map(["a", "b"], fn(x, i) { #(i, x) }) == [#(0, "a"), #(1, "b")]
 /// ```
 ///
 pub fn index_map(list: List(a), with fun: fn(a, Int) -> b) -> List(b) {
@@ -491,23 +472,19 @@ fn index_map_loop(
 /// ## Examples
 ///
 /// ```gleam
-/// try_map([1, 2, 3], fn(x) { Ok(x + 2) })
-/// // -> Ok([3, 4, 5])
+/// assert try_map([1, 2, 3], fn(x) { Ok(x + 2) }) == Ok([3, 4, 5])
 /// ```
 ///
 /// ```gleam
-/// try_map([1, 2, 3], fn(_) { Error(0) })
-/// // -> Error(0)
+/// assert try_map([1, 2, 3], fn(_) { Error(0) }) == Error(0)
 /// ```
 ///
 /// ```gleam
-/// try_map([[1], [2, 3]], first)
-/// // -> Ok([1, 2])
+/// assert try_map([[1], [2, 3]], first) == Ok([1, 2])
 /// ```
 ///
 /// ```gleam
-/// try_map([[1], [], [2]], first)
-/// // -> Error(Nil)
+/// assert try_map([[1], [], [2]], first) == Error(Nil)
 /// ```
 ///
 pub fn try_map(
@@ -535,7 +512,7 @@ fn try_map_loop(
 /// Returns a list that is the given list with up to the given number of
 /// elements removed from the front of the list.
 ///
-/// If the element has less than the number of elements an empty list is
+/// If the list has less than the number of elements an empty list is
 /// returned.
 ///
 /// This function runs in linear time but does not copy the list.
@@ -543,13 +520,11 @@ fn try_map_loop(
 /// ## Examples
 ///
 /// ```gleam
-/// drop([1, 2, 3, 4], 2)
-/// // -> [3, 4]
+/// assert drop([1, 2, 3, 4], 2) == [3, 4]
 /// ```
 ///
 /// ```gleam
-/// drop([1, 2, 3, 4], 9)
-/// // -> []
+/// assert drop([1, 2, 3, 4], 9) == []
 /// ```
 ///
 pub fn drop(from list: List(a), up_to n: Int) -> List(a) {
@@ -566,7 +541,7 @@ pub fn drop(from list: List(a), up_to n: Int) -> List(a) {
 /// Returns a list containing the first given number of elements from the given
 /// list.
 ///
-/// If the element has less than the number of elements then the full list is
+/// If the list has less than the number of elements then the full list is
 /// returned.
 ///
 /// This function runs in linear time.
@@ -574,13 +549,11 @@ pub fn drop(from list: List(a), up_to n: Int) -> List(a) {
 /// ## Examples
 ///
 /// ```gleam
-/// take([1, 2, 3, 4], 2)
-/// // -> [1, 2]
+/// assert take([1, 2, 3, 4], 2) == [1, 2]
 /// ```
 ///
 /// ```gleam
-/// take([1, 2, 3, 4], 9)
-/// // -> [1, 2, 3, 4]
+/// assert take([1, 2, 3, 4], 9) == [1, 2, 3, 4]
 /// ```
 ///
 pub fn take(from list: List(a), up_to n: Int) -> List(a) {
@@ -603,8 +576,7 @@ fn take_loop(list: List(a), n: Int, acc: List(a)) -> List(a) {
 /// ## Examples
 ///
 /// ```gleam
-/// new()
-/// // -> []
+/// assert new() == []
 /// ```
 ///
 pub fn new() -> List(a) {
@@ -616,14 +588,15 @@ pub fn new() -> List(a) {
 /// ## Examples
 ///
 /// ```gleam
-/// wrap(1)
-/// // -> [1]
+/// assert wrap(1) == [1]
+/// ```
 ///
-/// wrap(["a", "b", "c"])
-/// // -> [["a", "b", "c"]]
+/// ```gleam
+/// assert wrap(["a", "b", "c"]) == [["a", "b", "c"]]
+/// ```
 ///
-/// wrap([[]])
-/// // -> [[[]]]
+/// ```gleam
+/// assert wrap([[]]) == [[[]]]
 /// ```
 ///
 ///
@@ -639,8 +612,7 @@ pub fn wrap(item: a) -> List(a) {
 /// ## Examples
 ///
 /// ```gleam
-/// append([1, 2], [3])
-/// // -> [1, 2, 3]
+/// assert append([1, 2], [3]) == [1, 2, 3]
 /// ```
 ///
 @external(erlang, "lists", "append")
@@ -656,44 +628,44 @@ fn append_loop(first: List(a), second: List(a)) -> List(a) {
 }
 
 /// Prefixes an item to a list. This can also be done using the dedicated
-/// syntax instead
+/// syntax instead.
 ///
 /// ```gleam
 /// let existing_list = [2, 3, 4]
+/// assert [1, ..existing_list] == [1, 2, 3, 4]
+/// ```
 ///
-/// [1, ..existing_list]
-/// // -> [1, 2, 3, 4]
-///
-/// prepend(to: existing_list, this: 1)
-/// // -> [1, 2, 3, 4]
+/// ```gleam
+/// let existing_list = [2, 3, 4]
+/// assert prepend(to: existing_list, this: 1) == [1, 2, 3, 4]
 /// ```
 ///
 pub fn prepend(to list: List(a), this item: a) -> List(a) {
   [item, ..list]
 }
 
-fn flatten_loop(lists: List(List(a)), acc: List(a)) -> List(a) {
-  case lists {
-    [] -> reverse(acc)
-    [list, ..further_lists] ->
-      flatten_loop(further_lists, reverse_and_prepend(list: list, to: acc))
-  }
-}
-
-/// This is the same as `concat`: it joins a list of lists into a single
-/// list.
+/// Joins a list of lists into a single list.
 ///
-/// This function traverses all elements twice.
+/// This function traverses all elements twice on the JavaScript target.
+/// This function traverses all elements once on the Erlang target.
 ///
 /// ## Examples
 ///
 /// ```gleam
-/// flatten([[1], [2, 3], []])
-/// // -> [1, 2, 3]
+/// assert flatten([[1], [2, 3], []]) == [1, 2, 3]
 /// ```
 ///
+@external(erlang, "lists", "append")
 pub fn flatten(lists: List(List(a))) -> List(a) {
   flatten_loop(lists, [])
+}
+
+fn flatten_loop(lists: List(List(a)), acc: List(a)) -> List(a) {
+  case lists {
+    [] -> reverse(acc)
+    [list, ..further_lists] ->
+      flatten_loop(further_lists, reverse_and_prepend(list, to: acc))
+  }
 }
 
 /// Maps the list with the given function into a list of lists, and then flattens it.
@@ -701,13 +673,11 @@ pub fn flatten(lists: List(List(a))) -> List(a) {
 /// ## Examples
 ///
 /// ```gleam
-/// flat_map([2, 4, 6], fn(x) { [x, x + 1] })
-/// // -> [2, 3, 4, 5, 6, 7]
+/// assert flat_map([2, 4, 6], fn(x) { [x, x + 1] }) == [2, 3, 4, 5, 6, 7]
 /// ```
 ///
 pub fn flat_map(over list: List(a), with fun: fn(a) -> List(b)) -> List(b) {
-  map(list, fun)
-  |> flatten
+  flatten(map(list, fun))
 }
 
 /// Reduces a list of elements into a single value by calling a given function
@@ -751,13 +721,22 @@ pub fn fold_right(
   }
 }
 
-/// Like fold but the folding function also receives the index of the current element.
+/// Like `fold` but the folding function also receives the index of the current element.
 ///
 /// ## Examples
 ///
 /// ```gleam
-/// ["a", "b", "c"]
-/// |> index_fold([], fn(acc, item, index) { ... })
+/// assert ["a", "b", "c"]
+///   |> index_fold("", fn(acc, item, index) {
+///     acc <> int.to_string(index) <> ":" <> item <> " "
+///   })
+///   == "0:a 1:b 2:c"
+/// ```
+///
+/// ```gleam
+/// assert [10, 20, 30]
+///   |> index_fold(0, fn(acc, item, index) { acc + item * index })
+///   == 80
 /// ```
 ///
 pub fn index_fold(
@@ -790,14 +769,14 @@ fn index_fold_loop(
 /// ## Examples
 ///
 /// ```gleam
-/// [1, 2, 3, 4]
-/// |> try_fold(0, fn(acc, i) {
-///   case i < 3 {
-///     True -> Ok(acc + i)
-///     False -> Error(Nil)
-///   }
-/// })
-/// // -> Error(Nil)
+/// assert [1, 2, 3, 4]
+///   |> try_fold(0, fn(acc, i) {
+///     case i < 3 {
+///       True -> Ok(acc + i)
+///       False -> Error(Nil)
+///     }
+///   })
+///   == Error(Nil)
 /// ```
 ///
 pub fn try_fold(
@@ -829,14 +808,14 @@ pub type ContinueOrStop(a) {
 /// ## Examples
 ///
 /// ```gleam
-/// [1, 2, 3, 4]
-/// |> fold_until(0, fn(acc, i) {
-///   case i < 3 {
-///     True -> Continue(acc + i)
-///     False -> Stop(acc)
-///   }
-/// })
-/// // -> 3
+/// assert [1, 2, 3, 4]
+///   |> fold_until(0, fn(acc, i) {
+///     case i < 3 {
+///       True -> Continue(acc + i)
+///       False -> Stop(acc)
+///     }
+///   })
+///   == 3
 /// ```
 ///
 pub fn fold_until(
@@ -862,18 +841,15 @@ pub fn fold_until(
 /// ## Examples
 ///
 /// ```gleam
-/// find([1, 2, 3], fn(x) { x > 2 })
-/// // -> Ok(3)
+/// assert find([1, 2, 3], fn(x) { x > 2 }) == Ok(3)
 /// ```
 ///
 /// ```gleam
-/// find([1, 2, 3], fn(x) { x > 4 })
-/// // -> Error(Nil)
+/// assert find([1, 2, 3], fn(x) { x > 4 }) == Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// find([], fn(_) { True })
-/// // -> Error(Nil)
+/// assert find([], fn(_) { True }) == Error(Nil)
 /// ```
 ///
 pub fn find(
@@ -898,18 +874,15 @@ pub fn find(
 /// ## Examples
 ///
 /// ```gleam
-/// find_map([[], [2], [3]], first)
-/// // -> Ok(2)
+/// assert find_map([[], [2], [3]], first) == Ok(2)
 /// ```
 ///
 /// ```gleam
-/// find_map([[], []], first)
-/// // -> Error(Nil)
+/// assert find_map([[], []], first) == Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// find_map([], first)
-/// // -> Error(Nil)
+/// assert find_map([], first) == Error(Nil)
 /// ```
 ///
 pub fn find_map(
@@ -933,18 +906,15 @@ pub fn find_map(
 /// ## Examples
 ///
 /// ```gleam
-/// all([], fn(x) { x > 3 })
-/// // -> True
+/// assert all([], fn(x) { x > 3 })
 /// ```
 ///
 /// ```gleam
-/// all([4, 5], fn(x) { x > 3 })
-/// // -> True
+/// assert all([4, 5], fn(x) { x > 3 })
 /// ```
 ///
 /// ```gleam
-/// all([4, 3], fn(x) { x > 3 })
-/// // -> False
+/// assert !all([4, 3], fn(x) { x > 3 })
 /// ```
 ///
 pub fn all(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
@@ -965,23 +935,19 @@ pub fn all(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// any([], fn(x) { x > 3 })
-/// // -> False
+/// assert !any([], fn(x) { x > 3 })
 /// ```
 ///
 /// ```gleam
-/// any([4, 5], fn(x) { x > 3 })
-/// // -> True
+/// assert any([4, 5], fn(x) { x > 3 })
 /// ```
 ///
 /// ```gleam
-/// any([4, 3], fn(x) { x > 4 })
-/// // -> False
+/// assert any([4, 3], fn(x) { x > 4 })
 /// ```
 ///
 /// ```gleam
-/// any([3, 4], fn(x) { x > 3 })
-/// // -> True
+/// assert any([3, 4], fn(x) { x > 3 })
 /// ```
 ///
 pub fn any(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
@@ -1003,23 +969,19 @@ pub fn any(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// zip([], [])
-/// // -> []
+/// assert zip([], []) == []
 /// ```
 ///
 /// ```gleam
-/// zip([1, 2], [3])
-/// // -> [#(1, 3)]
+/// assert zip([1, 2], [3]) == [#(1, 3)]
 /// ```
 ///
 /// ```gleam
-/// zip([1], [3, 4])
-/// // -> [#(1, 3)]
+/// assert zip([1], [3, 4]) == [#(1, 3)]
 /// ```
 ///
 /// ```gleam
-/// zip([1, 2], [3, 4])
-/// // -> [#(1, 3), #(2, 4)]
+/// assert zip([1, 2], [3, 4]) == [#(1, 3), #(2, 4)]
 /// ```
 ///
 pub fn zip(list: List(a), with other: List(b)) -> List(#(a, b)) {
@@ -1041,23 +1003,19 @@ fn zip_loop(one: List(a), other: List(b), acc: List(#(a, b))) -> List(#(a, b)) {
 /// ## Examples
 ///
 /// ```gleam
-/// strict_zip([], [])
-/// // -> Ok([])
+/// assert strict_zip([], []) == Ok([])
 /// ```
 ///
 /// ```gleam
-/// strict_zip([1, 2], [3])
-/// // -> Error(Nil)
+/// assert strict_zip([1, 2], [3]) == Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// strict_zip([1], [3, 4])
-/// // -> Error(Nil)
+/// assert strict_zip([1], [3, 4]) == Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// strict_zip([1, 2], [3, 4])
-/// // -> Ok([#(1, 3), #(2, 4)])
+/// assert strict_zip([1, 2], [3, 4]) == Ok([#(1, 3), #(2, 4)])
 /// ```
 ///
 pub fn strict_zip(
@@ -1085,13 +1043,11 @@ fn strict_zip_loop(
 /// ## Examples
 ///
 /// ```gleam
-/// unzip([#(1, 2), #(3, 4)])
-/// // -> #([1, 3], [2, 4])
+/// assert unzip([#(1, 2), #(3, 4)]) == #([1, 3], [2, 4])
 /// ```
 ///
 /// ```gleam
-/// unzip([])
-/// // -> #([], [])
+/// assert unzip([]) == #([], [])
 /// ```
 ///
 pub fn unzip(input: List(#(a, b))) -> #(List(a), List(b)) {
@@ -1117,13 +1073,11 @@ fn unzip_loop(
 /// ## Examples
 ///
 /// ```gleam
-/// intersperse([1, 1, 1], 2)
-/// // -> [1, 2, 1, 2, 1]
+/// assert intersperse([1, 1, 1], 2) == [1, 2, 1, 2, 1]
 /// ```
 ///
 /// ```gleam
-/// intersperse([], 2)
-/// // -> []
+/// assert intersperse([], 2) == []
 /// ```
 ///
 pub fn intersperse(list: List(a), with elem: a) -> List(a) {
@@ -1148,8 +1102,7 @@ fn intersperse_loop(list: List(a), separator: a, acc: List(a)) -> List(a) {
 /// ## Examples
 ///
 /// ```gleam
-/// unique([1, 1, 1, 4, 7, 3, 3, 4])
-/// // -> [1, 4, 7, 3]
+/// assert unique([1, 1, 1, 4, 7, 3, 3, 4]) == [1, 4, 7, 3]
 /// ```
 ///
 pub fn unique(list: List(a)) -> List(a) {
@@ -1176,8 +1129,7 @@ fn unique_loop(list: List(a), seen: Dict(a, Nil), acc: List(a)) -> List(a) {
 /// ```gleam
 /// import gleam/int
 ///
-/// sort([4, 3, 6, 5, 4, 1, 2], by: int.compare)
-/// // -> [1, 2, 3, 4, 4, 5, 6]
+/// assert sort([4, 3, 6, 5, 4, 1, 2], by: int.compare) == [1, 2, 3, 4, 4, 5, 6]
 /// ```
 ///
 pub fn sort(list: List(a), by compare: fn(a, a) -> Order) -> List(a) {
@@ -1434,25 +1386,7 @@ fn merge_descendings(
   }
 }
 
-/// Creates a list of ints ranging from a given start and finish.
-///
-/// ## Examples
-///
-/// ```gleam
-/// range(0, 0)
-/// // -> [0]
-/// ```
-///
-/// ```gleam
-/// range(0, 5)
-/// // -> [0, 1, 2, 3, 4, 5]
-/// ```
-///
-/// ```gleam
-/// range(1, -5)
-/// // -> [1, 0, -1, -2, -3, -4, -5]
-/// ```
-///
+@deprecated("Use int.range instead")
 pub fn range(from start: Int, to stop: Int) -> List(Int) {
   range_loop(start, stop, [])
 }
@@ -1470,13 +1404,11 @@ fn range_loop(start: Int, stop: Int, acc: List(Int)) -> List(Int) {
 /// ## Examples
 ///
 /// ```gleam
-/// repeat("a", times: 0)
-/// // -> []
+/// assert repeat("a", times: 0) == []
 /// ```
 ///
 /// ```gleam
-/// repeat("a", times: 5)
-/// // -> ["a", "a", "a", "a", "a"]
+/// assert repeat("a", times: 5) == ["a", "a", "a", "a", "a"]
 /// ```
 ///
 pub fn repeat(item a: a, times times: Int) -> List(a) {
@@ -1498,18 +1430,15 @@ fn repeat_loop(item: a, times: Int, acc: List(a)) -> List(a) {
 /// ## Examples
 ///
 /// ```gleam
-/// split([6, 7, 8, 9], 0)
-/// // -> #([], [6, 7, 8, 9])
+/// assert split([6, 7, 8, 9], 0) == #([], [6, 7, 8, 9])
 /// ```
 ///
 /// ```gleam
-/// split([6, 7, 8, 9], 2)
-/// // -> #([6, 7], [8, 9])
+/// assert split([6, 7, 8, 9], 2) == #([6, 7], [8, 9])
 /// ```
 ///
 /// ```gleam
-/// split([6, 7, 8, 9], 4)
-/// // -> #([6, 7, 8, 9], [])
+/// assert split([6, 7, 8, 9], 4) == #([6, 7, 8, 9], [])
 /// ```
 ///
 pub fn split(list list: List(a), at index: Int) -> #(List(a), List(a)) {
@@ -1536,13 +1465,13 @@ fn split_loop(list: List(a), n: Int, taken: List(a)) -> #(List(a), List(a)) {
 /// ## Examples
 ///
 /// ```gleam
-/// split_while([1, 2, 3, 4, 5], fn(x) { x <= 3 })
-/// // -> #([1, 2, 3], [4, 5])
+/// assert split_while([1, 2, 3, 4, 5], fn(x) { x <= 3 })
+///   == #([1, 2, 3], [4, 5])
 /// ```
 ///
 /// ```gleam
-/// split_while([1, 2, 3, 4, 5], fn(x) { x <= 5 })
-/// // -> #([1, 2, 3, 4, 5], [])
+/// assert split_while([1, 2, 3, 4, 5], fn(x) { x <= 5 })
+///   == #([1, 2, 3, 4, 5], [])
 /// ```
 ///
 pub fn split_while(
@@ -1578,18 +1507,15 @@ fn split_while_loop(
 /// ## Examples
 ///
 /// ```gleam
-/// key_find([#("a", 0), #("b", 1)], "a")
-/// // -> Ok(0)
+/// assert key_find([#("a", 0), #("b", 1)], "a") == Ok(0)
 /// ```
 ///
 /// ```gleam
-/// key_find([#("a", 0), #("b", 1)], "b")
-/// // -> Ok(1)
+/// assert key_find([#("a", 0), #("b", 1)], "b") == Ok(1)
 /// ```
 ///
 /// ```gleam
-/// key_find([#("a", 0), #("b", 1)], "c")
-/// // -> Error(Nil)
+/// assert key_find([#("a", 0), #("b", 1)], "c") == Error(Nil)
 /// ```
 ///
 pub fn key_find(
@@ -1614,13 +1540,11 @@ pub fn key_find(
 /// ## Examples
 ///
 /// ```gleam
-/// key_filter([#("a", 0), #("b", 1), #("a", 2)], "a")
-/// // -> [0, 2]
+/// assert key_filter([#("a", 0), #("b", 1), #("a", 2)], "a") == [0, 2]
 /// ```
 ///
 /// ```gleam
-/// key_filter([#("a", 0), #("b", 1)], "c")
-/// // -> []
+/// assert key_filter([#("a", 0), #("b", 1)], "c") == []
 /// ```
 ///
 pub fn key_filter(
@@ -1636,91 +1560,6 @@ pub fn key_filter(
   })
 }
 
-/// Removes the first element in a given list for which the predicate function returns `True`.
-///
-/// Returns `Error(Nil)` if no such element is found.
-///
-/// ## Examples
-///
-/// ```gleam
-/// pop([1, 2, 3], fn(x) { x > 2 })
-/// // -> Ok(#(3, [1, 2]))
-/// ```
-///
-/// ```gleam
-/// pop([1, 2, 3], fn(x) { x > 4 })
-/// // -> Error(Nil)
-/// ```
-///
-/// ```gleam
-/// pop([], fn(_) { True })
-/// // -> Error(Nil)
-/// ```
-///
-@deprecated("This function will be removed in the next gleam_stdlib version")
-pub fn pop(
-  in list: List(a),
-  one_that is_desired: fn(a) -> Bool,
-) -> Result(#(a, List(a)), Nil) {
-  pop_loop(list, is_desired, [])
-}
-
-fn pop_loop(haystack, predicate, checked) {
-  case haystack {
-    [] -> Error(Nil)
-    [first, ..rest] ->
-      case predicate(first) {
-        True -> Ok(#(first, append(reverse(checked), rest)))
-        False -> pop_loop(rest, predicate, [first, ..checked])
-      }
-  }
-}
-
-/// Removes the first element in a given list for which the given function returns
-/// `Ok(new_value)`, then returns the wrapped `new_value` as well as list with the value removed.
-///
-/// Returns `Error(Nil)` if no such element is found.
-///
-/// ## Examples
-///
-/// ```gleam
-/// pop_map([[], [2], [3]], first)
-/// // -> Ok(#(2, [[], [3]]))
-/// ```
-///
-/// ```gleam
-/// pop_map([[], []], first)
-/// // -> Error(Nil)
-/// ```
-///
-/// ```gleam
-/// pop_map([], first)
-/// // -> Error(Nil)
-/// ```
-///
-@deprecated("This function will be removed in the next gleam_stdlib version")
-pub fn pop_map(
-  in haystack: List(a),
-  one_that is_desired: fn(a) -> Result(b, c),
-) -> Result(#(b, List(a)), Nil) {
-  pop_map_loop(haystack, is_desired, [])
-}
-
-fn pop_map_loop(
-  list: List(a),
-  mapper: fn(a) -> Result(b, e),
-  checked: List(a),
-) -> Result(#(b, List(a)), Nil) {
-  case list {
-    [] -> Error(Nil)
-    [first, ..rest] ->
-      case mapper(first) {
-        Ok(mapped) -> Ok(#(mapped, append(reverse(checked), rest)))
-        Error(_) -> pop_map_loop(rest, mapper, [first, ..checked])
-      }
-  }
-}
-
 /// Given a list of 2-element tuples, finds the first tuple that has a given
 /// key as the first element. This function will return the second element
 /// of the found tuple and list with tuple removed.
@@ -1730,18 +1569,15 @@ fn pop_map_loop(
 /// ## Examples
 ///
 /// ```gleam
-/// key_pop([#("a", 0), #("b", 1)], "a")
-/// // -> Ok(#(0, [#("b", 1)]))
+/// assert key_pop([#("a", 0), #("b", 1)], "a") == Ok(#(0, [#("b", 1)]))
 /// ```
 ///
 /// ```gleam
-/// key_pop([#("a", 0), #("b", 1)], "b")
-/// // -> Ok(#(1, [#("a", 0)]))
+/// assert key_pop([#("a", 0), #("b", 1)], "b") == Ok(#(1, [#("a", 0)]))
 /// ```
 ///
 /// ```gleam
-/// key_pop([#("a", 0), #("b", 1)], "c")
-/// // -> Error(Nil)
+/// assert key_pop([#("a", 0), #("b", 1)], "c") == Error(Nil)
 /// ```
 ///
 pub fn key_pop(list: List(#(k, v)), key: k) -> Result(#(v, List(#(k, v))), Nil) {
@@ -1769,13 +1605,11 @@ fn key_pop_loop(
 /// ## Examples
 ///
 /// ```gleam
-/// key_set([#(5, 0), #(4, 1)], 4, 100)
-/// // -> [#(5, 0), #(4, 100)]
+/// assert key_set([#(5, 0), #(4, 1)], 4, 100) == [#(5, 0), #(4, 100)]
 /// ```
 ///
 /// ```gleam
-/// key_set([#(5, 0), #(4, 1)], 1, 100)
-/// // -> [#(5, 0), #(4, 1), #(1, 100)]
+/// assert key_set([#(5, 0), #(4, 1)], 1, 100) == [#(5, 0), #(4, 1), #(1, 100)]
 /// ```
 ///
 pub fn key_set(list: List(#(k, v)), key: k, value: v) -> List(#(k, v)) {
@@ -1803,8 +1637,7 @@ fn key_set_loop(
 /// ```gleam
 /// import gleam/io
 ///
-/// each(["1", "2", "3"], io.println)
-/// // -> Nil
+/// assert each(["1", "2", "3"], io.println) == Nil
 /// // 1
 /// // 2
 /// // 3
@@ -1829,11 +1662,12 @@ pub fn each(list: List(a), f: fn(a) -> b) -> Nil {
 /// ## Examples
 ///
 /// ```gleam
-/// try_each(
-///   over: [1, 2, 3],
-///   with: function_that_might_fail,
-/// )
-/// // -> Ok(Nil)
+/// assert
+///   try_each(
+///     over: [1, 2, 3],
+///     with: function_that_might_fail,
+///   )
+///   == Ok(Nil)
 /// ```
 ///
 pub fn try_each(
@@ -1858,8 +1692,7 @@ pub fn try_each(
 /// ```gleam
 /// import gleam/int
 ///
-/// [1, 2, 3, 4, 5] |> partition(int.is_odd)
-/// // -> #([1, 3, 5], [2, 4])
+/// assert [1, 2, 3, 4, 5] |> partition(int.is_odd) == #([1, 3, 5], [2, 4])
 /// ```
 ///
 pub fn partition(
@@ -1885,26 +1718,45 @@ fn partition_loop(list, categorise, trues, falses) {
 /// ## Examples
 ///
 /// ```gleam
-/// permutations([1, 2])
-/// // -> [[1, 2], [2, 1]]
+/// assert permutations([1, 2]) == [[1, 2], [2, 1]]
 /// ```
 ///
 pub fn permutations(list: List(a)) -> List(List(a)) {
   case list {
     [] -> [[]]
-    [_, ..] ->
-      index_map(list, fn(i, i_idx) {
-        index_fold(list, [], fn(acc, j, j_idx) {
-          case i_idx == j_idx {
-            True -> acc
-            False -> [j, ..acc]
-          }
-        })
-        |> reverse
-        |> permutations
-        |> map(fn(permutation) { [i, ..permutation] })
-      })
-      |> flatten
+    l -> permutation_zip(l, [], [])
+  }
+}
+
+fn permutation_zip(
+  list: List(a),
+  rest: List(a),
+  acc: List(List(a)),
+) -> List(List(a)) {
+  case list {
+    [] -> reverse(acc)
+    [head, ..tail] ->
+      permutation_prepend(
+        head,
+        permutations(reverse_and_prepend(rest, tail)),
+        tail,
+        [head, ..rest],
+        acc,
+      )
+  }
+}
+
+fn permutation_prepend(
+  el: a,
+  permutations: List(List(a)),
+  list_1: List(a),
+  list_2: List(a),
+  acc: List(List(a)),
+) -> List(List(a)) {
+  case permutations {
+    [] -> permutation_zip(list_1, list_2, acc)
+    [head, ..tail] ->
+      permutation_prepend(el, tail, list_1, list_2, [[el, ..head], ..acc])
   }
 }
 
@@ -1913,13 +1765,11 @@ pub fn permutations(list: List(a)) -> List(List(a)) {
 /// ## Examples
 ///
 /// ```gleam
-/// window([1,2,3,4,5], 3)
-/// // -> [[1, 2, 3], [2, 3, 4], [3, 4, 5]]
+/// assert window([1,2,3,4,5], 3) == [[1, 2, 3], [2, 3, 4], [3, 4, 5]]
 /// ```
 ///
 /// ```gleam
-/// window([1, 2], 4)
-/// // -> []
+/// assert window([1, 2], 4) == []
 /// ```
 ///
 pub fn window(list: List(a), by n: Int) -> List(List(a)) {
@@ -1943,13 +1793,11 @@ fn window_loop(acc: List(List(a)), list: List(a), n: Int) -> List(List(a)) {
 /// ## Examples
 ///
 /// ```gleam
-/// window_by_2([1,2,3,4])
-/// // -> [#(1, 2), #(2, 3), #(3, 4)]
+/// assert window_by_2([1,2,3,4]) == [#(1, 2), #(2, 3), #(3, 4)]
 /// ```
 ///
 /// ```gleam
-/// window_by_2([1])
-/// // -> []
+/// assert window_by_2([1]) == []
 /// ```
 ///
 pub fn window_by_2(list: List(a)) -> List(#(a, a)) {
@@ -1961,8 +1809,7 @@ pub fn window_by_2(list: List(a)) -> List(#(a, a)) {
 /// ## Examples
 ///
 /// ```gleam
-/// drop_while([1, 2, 3, 4], fn (x) { x < 3 })
-/// // -> [3, 4]
+/// assert drop_while([1, 2, 3, 4], fn (x) { x < 3 }) == [3, 4]
 /// ```
 ///
 pub fn drop_while(
@@ -1984,8 +1831,7 @@ pub fn drop_while(
 /// ## Examples
 ///
 /// ```gleam
-/// take_while([1, 2, 3, 2, 4], fn (x) { x < 3 })
-/// // -> [1, 2]
+/// assert take_while([1, 2, 3, 2, 4], fn (x) { x < 3 }) == [1, 2]
 /// ```
 ///
 pub fn take_while(
@@ -2016,8 +1862,8 @@ fn take_while_loop(
 /// ## Examples
 ///
 /// ```gleam
-/// [1, 2, 2, 3, 4, 4, 6, 7, 7] |> chunk(by: fn(n) { n % 2 })
-/// // -> [[1], [2, 2], [3], [4, 4, 6], [7, 7]]
+/// assert [1, 2, 2, 3, 4, 4, 6, 7, 7] |> chunk(by: fn(n) { n % 2 })
+///   == [[1], [2, 2], [3], [4, 4, 6], [7, 7]]
 /// ```
 ///
 pub fn chunk(in list: List(a), by f: fn(a) -> k) -> List(List(a)) {
@@ -2059,13 +1905,13 @@ fn chunk_loop(
 /// ## Examples
 ///
 /// ```gleam
-/// [1, 2, 3, 4, 5, 6] |> sized_chunk(into: 2)
-/// // -> [[1, 2], [3, 4], [5, 6]]
+/// assert [1, 2, 3, 4, 5, 6] |> sized_chunk(into: 2)
+///   == [[1, 2], [3, 4], [5, 6]]
 /// ```
 ///
 /// ```gleam
-/// [1, 2, 3, 4, 5, 6, 7, 8] |> sized_chunk(into: 3)
-/// // -> [[1, 2, 3], [4, 5, 6], [7, 8]]
+/// assert [1, 2, 3, 4, 5, 6, 7, 8] |> sized_chunk(into: 3)
+///   == [[1, 2, 3], [4, 5, 6], [7, 8]]
 /// ```
 ///
 pub fn sized_chunk(in list: List(a), into count: Int) -> List(List(a)) {
@@ -2107,13 +1953,11 @@ fn sized_chunk_loop(
 /// ## Examples
 ///
 /// ```gleam
-/// [] |> reduce(fn(acc, x) { acc + x })
-/// // -> Error(Nil)
+/// assert [] |> reduce(fn(acc, x) { acc + x }) == Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// [1, 2, 3, 4, 5] |> reduce(fn(acc, x) { acc + x })
-/// // -> Ok(15)
+/// assert [1, 2, 3, 4, 5] |> reduce(fn(acc, x) { acc + x }) == Ok(15)
 /// ```
 ///
 pub fn reduce(over list: List(a), with fun: fn(a, a) -> a) -> Result(a, Nil) {
@@ -2128,8 +1972,8 @@ pub fn reduce(over list: List(a), with fun: fn(a, a) -> a) -> Result(a, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// scan(over: [1, 2, 3], from: 100, with: fn(acc, i) { acc + i })
-/// // -> [101, 103, 106]
+/// assert scan(over: [1, 2, 3], from: 100, with: fn(acc, i) { acc + i })
+///   == [101, 103, 106]
 /// ```
 ///
 pub fn scan(
@@ -2164,17 +2008,19 @@ fn scan_loop(
 /// ## Examples
 ///
 /// ```gleam
-/// last([])
-/// // -> Error(Nil)
+/// assert last([]) == Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// last([1, 2, 3, 4, 5])
-/// // -> Ok(5)
+/// assert last([1, 2, 3, 4, 5]) == Ok(5)
 /// ```
 ///
 pub fn last(list: List(a)) -> Result(a, Nil) {
-  reduce(list, fn(_, elem) { elem })
+  case list {
+    [] -> Error(Nil)
+    [last] -> Ok(last)
+    [_, ..rest] -> last(rest)
+  }
 }
 
 /// Return unique combinations of elements in the list.
@@ -2182,53 +2028,46 @@ pub fn last(list: List(a)) -> Result(a, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// combinations([1, 2, 3], 2)
-/// // -> [[1, 2], [1, 3], [2, 3]]
+/// assert combinations([1, 2, 3], 2) == [[1, 2], [1, 3], [2, 3]]
 /// ```
 ///
 /// ```gleam
-/// combinations([1, 2, 3, 4], 3)
-/// // -> [[1, 2, 3], [1, 2, 4], [1, 3, 4], [2, 3, 4]]
+/// assert combinations([1, 2, 3, 4], 3)
+///   == [[1, 2, 3], [1, 2, 4], [1, 3, 4], [2, 3, 4]]
 /// ```
 ///
 pub fn combinations(items: List(a), by n: Int) -> List(List(a)) {
-  case n {
-    0 -> [[]]
-    _ ->
-      case items {
-        [] -> []
-        [first, ..rest] -> {
-          let first_combinations =
-            map(combinations(rest, n - 1), with: fn(com) { [first, ..com] })
-            |> reverse
-          fold(first_combinations, combinations(rest, n), fn(acc, c) {
-            [c, ..acc]
-          })
-        }
-      }
+  case n, items {
+    0, _ -> [[]]
+    _, [] -> []
+    _, [first, ..rest] ->
+      rest
+      |> combinations(n - 1)
+      |> map(fn(combination) { [first, ..combination] })
+      |> reverse
+      |> fold(combinations(rest, n), fn(acc, c) { [c, ..acc] })
   }
 }
 
-/// Return unique pair combinations of elements in the list
+/// Return unique pair combinations of elements in the list.
 ///
 /// ## Examples
 ///
 /// ```gleam
-/// combination_pairs([1, 2, 3])
-/// // -> [#(1, 2), #(1, 3), #(2, 3)]
+/// assert combination_pairs([1, 2, 3]) == [#(1, 2), #(1, 3), #(2, 3)]
 /// ```
 ///
 pub fn combination_pairs(items: List(a)) -> List(#(a, a)) {
-  combination_pairs_loop(items)
-  |> flatten
+  combination_pairs_loop(items, [])
 }
 
-fn combination_pairs_loop(items: List(a)) -> List(List(#(a, a))) {
+fn combination_pairs_loop(items: List(a), acc: List(#(a, a))) -> List(#(a, a)) {
   case items {
-    [] -> []
+    [] -> reverse(acc)
     [first, ..rest] -> {
       let first_combinations = map(rest, with: fn(other) { #(first, other) })
-      [first_combinations, ..combination_pairs_loop(rest)]
+      let acc = reverse_and_prepend(first_combinations, acc)
+      combination_pairs_loop(rest, acc)
     }
   }
 }
@@ -2238,12 +2077,13 @@ fn combination_pairs_loop(items: List(a)) -> List(List(#(a, a))) {
 /// ## Examples
 ///
 /// ```gleam
-/// interleave([[1, 2], [101, 102], [201, 202]])
-/// // -> [1, 101, 201, 2, 102, 202]
+/// assert interleave([[1, 2], [101, 102], [201, 202]])
+///   == [1, 101, 201, 2, 102, 202]
 /// ```
 ///
 pub fn interleave(list: List(List(a))) -> List(a) {
-  transpose(list)
+  list
+  |> transpose
   |> flatten
 }
 
@@ -2251,34 +2091,43 @@ pub fn interleave(list: List(List(a))) -> List(a) {
 ///
 /// Notice: This function is not tail recursive,
 /// and thus may exceed stack size if called,
-/// with large lists (on target JavaScript).
+/// with large lists (on the JavaScript target).
 ///
 /// ## Examples
 ///
 /// ```gleam
-/// transpose([[1, 2, 3], [101, 102, 103]])
-/// // -> [[1, 101], [2, 102], [3, 103]]
+/// assert transpose([[1, 2, 3], [101, 102, 103]])
+///   == [[1, 101], [2, 102], [3, 103]]
 /// ```
 ///
-pub fn transpose(list_of_list: List(List(a))) -> List(List(a)) {
-  let take_first = fn(list) {
-    case list {
-      [] -> []
-      [first] -> [first]
-      [first, ..] -> [first]
+pub fn transpose(list_of_lists: List(List(a))) -> List(List(a)) {
+  transpose_loop(list_of_lists, [])
+}
+
+fn transpose_loop(rows: List(List(a)), columns: List(List(a))) -> List(List(a)) {
+  case rows {
+    [] -> reverse(columns)
+    _ -> {
+      let #(column, rest) = take_firsts(rows, [], [])
+      case column {
+        [_, ..] -> transpose_loop(rest, [column, ..columns])
+        [] -> transpose_loop(rest, columns)
+      }
     }
   }
+}
 
-  case list_of_list {
-    [] -> []
-    [[], ..rest] -> transpose(rest)
-    rows -> {
-      let firsts =
-        rows
-        |> map(take_first)
-        |> flatten
-      let rest = transpose(map(rows, drop(_, 1)))
-      [firsts, ..rest]
+fn take_firsts(
+  rows: List(List(a)),
+  column: List(a),
+  remaining_rows: List(List(a)),
+) -> #(List(a), List(List(a))) {
+  case rows {
+    [] -> #(reverse(column), reverse(remaining_rows))
+    [[], ..rest] -> take_firsts(rest, column, remaining_rows)
+    [[first, ..remaining_row], ..rest_rows] -> {
+      let remaining_rows = [remaining_row, ..remaining_rows]
+      take_firsts(rest_rows, [first, ..column], remaining_rows)
     }
   }
 }
@@ -2290,7 +2139,7 @@ pub fn transpose(list_of_list: List(List(a))) -> List(List(a)) {
 /// ## Example
 ///
 /// ```gleam
-/// range(1, 10) |> shuffle()
+/// [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] |> shuffle
 /// // -> [1, 6, 9, 10, 3, 8, 4, 2, 7, 5]
 /// ```
 ///
@@ -2319,91 +2168,125 @@ fn do_shuffle_by_pair_indexes(
 
 /// Takes a list and a comparator, and returns the maximum element in the list
 ///
-///
-/// ## Example
+/// ## Examples
 ///
 /// ```gleam
-/// range(1, 10) |> list.max(int.compare)
-/// // -> Ok(10)
+/// assert [1, 2, 3, 4, 5] |> list.max(int.compare) == Ok(5)
 /// ```
 ///
 /// ```gleam
-/// ["a", "c", "b"] |> list.max(string.compare)
-/// // -> Ok("c")
+/// assert ["a", "c", "b"] |> list.max(string.compare) == Ok("c")
 /// ```
+///
 pub fn max(
   over list: List(a),
   with compare: fn(a, a) -> Order,
 ) -> Result(a, Nil) {
-  reduce(over: list, with: fn(acc, other) {
-    case compare(acc, other) {
-      order.Gt -> acc
-      order.Lt | order.Eq -> other
-    }
-  })
+  case list {
+    [] -> Error(Nil)
+    [first, ..rest] -> Ok(max_loop(rest, compare, first))
+  }
 }
 
-/// Take a random sample of k elements from a list using reservoir sampling via
-/// Algo L. Returns an empty list if the sample size is less than or equal to 0.
+fn max_loop(list, compare, max) {
+  case list {
+    [] -> max
+    [first, ..rest] ->
+      case compare(first, max) {
+        order.Gt -> max_loop(rest, compare, first)
+        order.Lt | order.Eq -> max_loop(rest, compare, max)
+      }
+  }
+}
+
+/// Returns a random sample of up to n elements from a list using reservoir
+/// sampling via [Algorithm L](https://en.wikipedia.org/wiki/Reservoir_sampling#Optimal:_Algorithm_L).
+/// Returns an empty list if the sample size is less than or equal to 0.
 ///
 /// Order is not random, only selection is.
 ///
 /// ## Examples
 ///
 /// ```gleam
-/// reservoir_sample([1, 2, 3, 4, 5], 3)
+/// sample([1, 2, 3, 4, 5], 3)
 /// // -> [2, 4, 5]  // A random sample of 3 items
 /// ```
 ///
-pub fn sample(list: List(a), k: Int) -> List(a) {
-  case k <= 0 {
+pub fn sample(from list: List(a), up_to n: Int) -> List(a) {
+  let #(reservoir, rest) = build_reservoir(from: list, sized: n)
+
+  case dict.is_empty(reservoir) {
+    // If the reservoire is empty that means we were asking to sample 0 or
+    // less items. That doesn't make much sense, so we just return an empty
+    // list.
     True -> []
+
+    // Otherwise we keep looping over the remaining part of the list replacing
+    // random elements in the reservoir.
     False -> {
-      let #(reservoir, list) = split(list, k)
-
-      case length(reservoir) < k {
-        True -> reservoir
-        False -> {
-          let reservoir =
-            reservoir
-            |> map2(range(0, k - 1), _, fn(a, b) { #(a, b) })
-            |> dict.from_list
-
-          let w = float.exponential(log_random() /. int.to_float(k))
-
-          sample_loop(list, reservoir, k, k, w) |> dict.values
-        }
-      }
+      let w = float.exponential(log_random() /. int.to_float(n))
+      dict.values(sample_loop(rest, reservoir, n, w))
     }
   }
 }
 
 fn sample_loop(
-  list,
+  list: List(a),
   reservoir: Dict(Int, a),
-  k,
-  index: Int,
+  n: Int,
   w: Float,
 ) -> Dict(Int, a) {
   let skip = {
-    let assert Ok(log_result) = float.logarithm(1.0 -. w)
-    log_random() /. log_result |> float.floor |> float.round
+    let assert Ok(log) = float.logarithm(1.0 -. w)
+    float.round(float.floor(log_random() /. log))
   }
-
-  let index = index + skip + 1
 
   case drop(list, skip) {
     [] -> reservoir
     [first, ..rest] -> {
-      let reservoir = dict.insert(reservoir, int.random(k), first)
-      let w = w *. float.exponential(log_random() /. int.to_float(k))
-      sample_loop(rest, reservoir, k, index, w)
+      let reservoir = dict.insert(reservoir, int.random(n), first)
+      let w = w *. float.exponential(log_random() /. int.to_float(n))
+      sample_loop(rest, reservoir, n, w)
     }
   }
 }
 
+const min_positive = 2.2250738585072014e-308
+
 fn log_random() -> Float {
-  let min_positive = 2.2250738585072014e-308
   let assert Ok(random) = float.logarithm(float.random() +. min_positive)
   random
+}
+
+/// Builds the initial reservoir used by Algorithm L.
+/// This is a dictionary with keys ranging from `0` up to `n - 1` where each
+/// value is the corresponding element at that position in `list`.
+///
+/// This also returns the remaining elements of `list` that didn't end up in
+/// the reservoir.
+///
+fn build_reservoir(from list: List(a), sized n: Int) -> #(Dict(Int, a), List(a)) {
+  build_reservoir_loop(list, n, dict.new())
+}
+
+fn build_reservoir_loop(
+  list: List(a),
+  size: Int,
+  reservoir: Dict(Int, a),
+) -> #(Dict(Int, a), List(a)) {
+  let reservoir_size = dict.size(reservoir)
+  case reservoir_size >= size {
+    // The reservoir already has the size we wanted.
+    True -> #(reservoir, list)
+
+    // Otherwise we add another element from the list to the reservoir
+    False ->
+      case list {
+        [] -> #(reservoir, [])
+        [first, ..rest] -> {
+          let reservoir = dict.insert(reservoir, reservoir_size, first)
+          build_reservoir_loop(rest, size, reservoir)
+        }
+      }
+  }
 }

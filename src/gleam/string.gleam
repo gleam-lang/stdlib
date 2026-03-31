@@ -11,13 +11,11 @@ import gleam/string_tree.{type StringTree}
 /// ## Examples
 ///
 /// ```gleam
-/// is_empty("")
-/// // -> True
+/// assert is_empty("")
 /// ```
 ///
 /// ```gleam
-/// is_empty("the world")
-/// // -> False
+/// assert !is_empty("the world")
 /// ```
 ///
 pub fn is_empty(str: String) -> Bool {
@@ -27,23 +25,20 @@ pub fn is_empty(str: String) -> Bool {
 /// Gets the number of grapheme clusters in a given `String`.
 ///
 /// This function has to iterate across the whole string to count the number of
-/// graphemes, so it runs in linear time.
+/// graphemes, so it runs in linear time. Avoid using this in a loop.
 ///
 /// ## Examples
 ///
 /// ```gleam
-/// length("Gleam")
-/// // -> 5
+/// assert length("Gleam") == 5
 /// ```
 ///
 /// ```gleam
-/// length("ß↑e̊")
-/// // -> 3
+/// assert length("ß↑e̊") == 3
 /// ```
 ///
 /// ```gleam
-/// length("")
-/// // -> 0
+/// assert length("") == 0
 /// ```
 ///
 @external(erlang, "string", "length")
@@ -53,13 +48,12 @@ pub fn length(string: String) -> Int
 /// Reverses a `String`.
 ///
 /// This function has to iterate across the whole `String` so it runs in linear
-/// time.
+/// time. Avoid using this in a loop.
 ///
 /// ## Examples
 ///
 /// ```gleam
-/// reverse("stressed")
-/// // -> "desserts"
+/// assert reverse("stressed") == "desserts"
 /// ```
 ///
 pub fn reverse(string: String) -> String {
@@ -74,13 +68,11 @@ pub fn reverse(string: String) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// replace("www.example.com", each: ".", with: "-")
-/// // -> "www-example-com"
+/// assert replace("www.example.com", each: ".", with: "-") == "www-example-com"
 /// ```
 ///
 /// ```gleam
-/// replace("a,b,c,d,e", each: ",", with: "/")
-/// // -> "a/b/c/d/e"
+/// assert replace("a,b,c,d,e", each: ",", with: "/") == "a/b/c/d/e"
 /// ```
 ///
 pub fn replace(
@@ -102,8 +94,7 @@ pub fn replace(
 /// ## Examples
 ///
 /// ```gleam
-/// lowercase("X-FILES")
-/// // -> "x-files"
+/// assert lowercase("X-FILES") == "x-files"
 /// ```
 ///
 @external(erlang, "string", "lowercase")
@@ -118,8 +109,7 @@ pub fn lowercase(string: String) -> String
 /// ## Examples
 ///
 /// ```gleam
-/// uppercase("skinner")
-/// // -> "SKINNER"
+/// assert uppercase("skinner") == "SKINNER"
 /// ```
 ///
 @external(erlang, "string", "uppercase")
@@ -133,13 +123,15 @@ pub fn uppercase(string: String) -> String
 /// ## Examples
 ///
 /// ```gleam
-/// compare("Anthony", "Anthony")
-/// // -> order.Eq
+/// import gleam/order
+///
+/// assert compare("Anthony", "Anthony") == order.Eq
 /// ```
 ///
 /// ```gleam
-/// compare("A", "B")
-/// // -> order.Lt
+/// import gleam/order
+///
+/// assert compare("A", "B") == order.Lt
 /// ```
 ///
 pub fn compare(a: String, b: String) -> order.Order {
@@ -158,37 +150,36 @@ pub fn compare(a: String, b: String) -> order.Order {
 fn less_than(a: String, b: String) -> Bool
 
 /// Takes a substring given a start grapheme index and a length. Negative indexes
-/// are taken starting from the *end* of the list.
+/// are taken starting from the *end* of the string.
+///
+/// This function runs in linear time with the size of the index and the
+/// length. Negative indexes are linear with the size of the input string in
+/// addition to the other costs.
 ///
 /// ## Examples
 ///
 /// ```gleam
-/// slice(from: "gleam", at_index: 1, length: 2)
-/// // -> "le"
+/// assert slice(from: "gleam", at_index: 1, length: 2) == "le"
 /// ```
 ///
 /// ```gleam
-/// slice(from: "gleam", at_index: 1, length: 10)
-/// // -> "leam"
+/// assert slice(from: "gleam", at_index: 1, length: 10) == "leam"
 /// ```
 ///
 /// ```gleam
-/// slice(from: "gleam", at_index: 10, length: 3)
-/// // -> ""
+/// assert slice(from: "gleam", at_index: 10, length: 3) == ""
 /// ```
 ///
 /// ```gleam
-/// slice(from: "gleam", at_index: -2, length: 2)
-/// // -> "am"
+/// assert slice(from: "gleam", at_index: -2, length: 2) == "am"
 /// ```
 ///
 /// ```gleam
-/// slice(from: "gleam", at_index: -12, length: 2)
-/// // -> ""
+/// assert slice(from: "gleam", at_index: -12, length: 2) == ""
 /// ```
 ///
 pub fn slice(from string: String, at_index idx: Int, length len: Int) -> String {
-  case len < 0 {
+  case len <= 0 {
     True -> ""
     False ->
       case idx < 0 {
@@ -196,26 +187,30 @@ pub fn slice(from string: String, at_index idx: Int, length len: Int) -> String 
           let translated_idx = length(string) + idx
           case translated_idx < 0 {
             True -> ""
-            False -> do_slice(string, translated_idx, len)
+            False -> grapheme_slice(string, translated_idx, len)
           }
         }
-        False -> do_slice(string, idx, len)
+        False -> grapheme_slice(string, idx, len)
       }
   }
 }
 
 @external(erlang, "gleam_stdlib", "slice")
-@external(javascript, "../gleam_stdlib.mjs", "string_slice")
-fn do_slice(string: String, idx: Int, len: Int) -> String
+@external(javascript, "../gleam_stdlib.mjs", "string_grapheme_slice")
+fn grapheme_slice(string: String, index: Int, length: Int) -> String
+
+@external(erlang, "binary", "part")
+@external(javascript, "../gleam_stdlib.mjs", "string_byte_slice")
+fn unsafe_byte_slice(string: String, index: Int, length: Int) -> String
 
 /// Drops contents of the first `String` that occur before the second `String`.
-/// If the `from` string does not contain the `before` string, `from` is returned unchanged.
+/// If the `from` string does not contain the `before` string, `from` is
+/// returned unchanged.
 ///
 /// ## Examples
 ///
 /// ```gleam
-/// crop(from: "The Lone Gunmen", before: "Lone")
-/// // -> "Lone Gunmen"
+/// assert crop(from: "The Lone Gunmen", before: "Lone") == "Lone Gunmen"
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "crop_string")
@@ -224,35 +219,39 @@ pub fn crop(from string: String, before substring: String) -> String
 
 /// Drops *n* graphemes from the start of a `String`.
 ///
+/// This function runs in linear time with the number of graphemes to drop.
+///
 /// ## Examples
 ///
 /// ```gleam
-/// drop_start(from: "The Lone Gunmen", up_to: 2)
-/// // -> "e Lone Gunmen"
+/// assert drop_start(from: "The Lone Gunmen", up_to: 2) == "e Lone Gunmen"
 /// ```
 ///
 pub fn drop_start(from string: String, up_to num_graphemes: Int) -> String {
-  case num_graphemes > 0 {
-    False -> string
-    True ->
-      case pop_grapheme(string) {
-        Ok(#(_, string)) -> drop_start(string, num_graphemes - 1)
-        Error(Nil) -> string
-      }
+  case num_graphemes <= 0 {
+    True -> string
+    False -> {
+      let prefix = grapheme_slice(string, 0, num_graphemes)
+      let prefix_size = byte_size(prefix)
+      unsafe_byte_slice(string, prefix_size, byte_size(string) - prefix_size)
+    }
   }
 }
 
 /// Drops *n* graphemes from the end of a `String`.
 ///
+/// This function traverses the full string, so it runs in linear time with the
+/// size of the string. Avoid using this in a loop.
+///
 /// ## Examples
 ///
 /// ```gleam
-/// drop_end(from: "Cigarette Smoking Man", up_to: 2)
-/// // -> "Cigarette Smoking M"
+/// assert drop_end(from: "Cigarette Smoking Man", up_to: 2)
+///   == "Cigarette Smoking M"
 /// ```
 ///
 pub fn drop_end(from string: String, up_to num_graphemes: Int) -> String {
-  case num_graphemes < 0 {
+  case num_graphemes <= 0 {
     True -> string
     False -> slice(string, 0, length(string) - num_graphemes)
   }
@@ -263,18 +262,15 @@ pub fn drop_end(from string: String, up_to num_graphemes: Int) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// contains(does: "theory", contain: "ory")
-/// // -> True
+/// assert contains(does: "theory", contain: "ory")
 /// ```
 ///
 /// ```gleam
-/// contains(does: "theory", contain: "the")
-/// // -> True
+/// assert contains(does: "theory", contain: "the")
 /// ```
 ///
 /// ```gleam
-/// contains(does: "theory", contain: "THE")
-/// // -> False
+/// assert !contains(does: "theory", contain: "THE")
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "contains_string")
@@ -286,8 +282,7 @@ pub fn contains(does haystack: String, contain needle: String) -> Bool
 /// ## Examples
 ///
 /// ```gleam
-/// starts_with("theory", "ory")
-/// // -> False
+/// assert !starts_with("theory", "ory")
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "string_starts_with")
@@ -299,8 +294,7 @@ pub fn starts_with(string: String, prefix: String) -> Bool
 /// ## Examples
 ///
 /// ```gleam
-/// ends_with("theory", "ory")
-/// // -> True
+/// assert ends_with("theory", "ory")
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "string_ends_with")
@@ -312,8 +306,8 @@ pub fn ends_with(string: String, suffix: String) -> Bool
 /// ## Examples
 ///
 /// ```gleam
-/// split("home/gleam/desktop/", on: "/")
-/// // -> ["home", "gleam", "desktop", ""]
+/// assert split("home/gleam/desktop/", on: "/")
+///   == ["home", "gleam", "desktop", ""]
 /// ```
 ///
 pub fn split(x: String, on substring: String) -> List(String) {
@@ -334,13 +328,12 @@ pub fn split(x: String, on substring: String) -> List(String) {
 /// ## Examples
 ///
 /// ```gleam
-/// split_once("home/gleam/desktop/", on: "/")
-/// // -> Ok(#("home", "gleam/desktop/"))
+/// assert split_once("home/gleam/desktop/", on: "/")
+///   == Ok(#("home", "gleam/desktop/"))
 /// ```
 ///
 /// ```gleam
-/// split_once("home/gleam/desktop/", on: "?")
-/// // -> Error(Nil)
+/// assert split_once("home/gleam/desktop/", on: "?") == Error(Nil)
 /// ```
 ///
 @external(javascript, "../gleam_stdlib.mjs", "split_once")
@@ -359,62 +352,73 @@ fn erl_split(a: String, b: String) -> List(String)
 
 /// Creates a new `String` by joining two `String`s together.
 ///
-/// This function copies both `String`s and runs in linear time. If you find
-/// yourself joining `String`s frequently consider using the [`string_tree`](../gleam/string_tree.html)
-/// module as it can append `String`s much faster!
+/// This function typically copies both `String`s and runs in linear time, but
+/// the exact behaviour will depend on how the runtime you are using optimises
+/// your code. Benchmark and profile your code if you need to understand its
+/// performance better.
+///
+/// If you are joining together large string and want to avoid copying any data
+/// you may want to investigate using the [`string_tree`](../gleam/string_tree.html)
+/// module.
 ///
 /// ## Examples
 ///
 /// ```gleam
-/// append(to: "butter", suffix: "fly")
-/// // -> "butterfly"
+/// assert append(to: "butter", suffix: "fly") == "butterfly"
 /// ```
 ///
 pub fn append(to first: String, suffix second: String) -> String {
-  first
-  |> string_tree.from_string
-  |> string_tree.append(second)
-  |> string_tree.to_string
+  first <> second
 }
 
 /// Creates a new `String` by joining many `String`s together.
 ///
-/// This function copies both `String`s and runs in linear time. If you find
-/// yourself joining `String`s frequently consider using the [`string_tree`](../gleam/string_tree.html)
-/// module as it can append `String`s much faster!
+/// This function copies all the `String`s and runs in linear time.
 ///
 /// ## Examples
 ///
 /// ```gleam
-/// concat(["never", "the", "less"])
-/// // -> "nevertheless"
+/// assert concat(["never", "the", "less"]) == "nevertheless"
 /// ```
 ///
+@external(erlang, "erlang", "list_to_binary")
 pub fn concat(strings: List(String)) -> String {
-  strings
-  |> string_tree.from_strings
-  |> string_tree.to_string
+  concat_loop(strings, "")
+}
+
+fn concat_loop(strings: List(String), accumulator: String) -> String {
+  case strings {
+    [string, ..strings] -> concat_loop(strings, accumulator <> string)
+    [] -> accumulator
+  }
 }
 
 /// Creates a new `String` by repeating a `String` a given number of times.
 ///
-/// This function runs in linear time.
+/// This function runs in loglinear time.
 ///
 /// ## Examples
 ///
 /// ```gleam
-/// repeat("ha", times: 3)
-/// // -> "hahaha"
+/// assert repeat("ha", times: 3) == "hahaha"
 /// ```
 ///
 pub fn repeat(string: String, times times: Int) -> String {
-  repeat_loop(string, times, "")
+  case times <= 0 {
+    True -> ""
+    False -> repeat_loop(times, string, "")
+  }
 }
 
-fn repeat_loop(string: String, times: Int, acc: String) -> String {
+fn repeat_loop(times: Int, doubling_acc: String, acc: String) -> String {
+  let acc = case times % 2 {
+    0 -> acc
+    _ -> acc <> doubling_acc
+  }
+  let times = times / 2
   case times <= 0 {
     True -> acc
-    False -> repeat_loop(string, times - 1, acc <> string)
+    False -> repeat_loop(times, doubling_acc <> doubling_acc, acc)
   }
 }
 
@@ -425,15 +429,26 @@ fn repeat_loop(string: String, times: Int, acc: String) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// join(["home","evan","Desktop"], with: "/")
-/// // -> "home/evan/Desktop"
+/// assert join(["home","evan","Desktop"], with: "/") == "home/evan/Desktop"
 /// ```
 ///
-@external(javascript, "../gleam_stdlib.mjs", "join")
 pub fn join(strings: List(String), with separator: String) -> String {
-  strings
-  |> list.intersperse(with: separator)
-  |> concat
+  case strings {
+    [] -> ""
+    [first, ..rest] -> join_loop(rest, separator, first)
+  }
+}
+
+fn join_loop(
+  strings: List(String),
+  separator: String,
+  accumulator: String,
+) -> String {
+  case strings {
+    [] -> accumulator
+    [string, ..strings] ->
+      join_loop(strings, separator, accumulator <> separator <> string)
+  }
 }
 
 /// Pads the start of a `String` until it has a given length.
@@ -441,18 +456,15 @@ pub fn join(strings: List(String), with separator: String) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// pad_start("121", to: 5, with: ".")
-/// // -> "..121"
+/// assert pad_start("121", to: 5, with: ".") == "..121"
 /// ```
 ///
 /// ```gleam
-/// pad_start("121", to: 3, with: ".")
-/// // -> "121"
+/// assert pad_start("121", to: 3, with: ".") == "121"
 /// ```
 ///
 /// ```gleam
-/// pad_start("121", to: 2, with: ".")
-/// // -> "121"
+/// assert pad_start("121", to: 2, with: ".") == "121"
 /// ```
 ///
 pub fn pad_start(
@@ -474,18 +486,15 @@ pub fn pad_start(
 /// ## Examples
 ///
 /// ```gleam
-/// pad_end("123", to: 5, with: ".")
-/// // -> "123.."
+/// assert pad_end("123", to: 5, with: ".") == "123.."
 /// ```
 ///
 /// ```gleam
-/// pad_end("123", to: 3, with: ".")
-/// // -> "123"
+/// assert pad_end("123", to: 3, with: ".") == "123"
 /// ```
 ///
 /// ```gleam
-/// pad_end("123", to: 2, with: ".")
-/// // -> "123"
+/// assert pad_end("123", to: 2, with: ".") == "123"
 /// ```
 ///
 pub fn pad_end(
@@ -520,8 +529,7 @@ fn padding(size: Int, pad_string: String) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// trim("  hats  \n")
-/// // -> "hats"
+/// assert trim("  hats  \n") == "hats"
 /// ```
 ///
 pub fn trim(string: String) -> String {
@@ -541,8 +549,7 @@ type Direction {
 /// ## Examples
 ///
 /// ```gleam
-/// trim_start("  hats  \n")
-/// // -> "hats  \n"
+/// assert trim_start("  hats  \n") == "hats  \n"
 /// ```
 ///
 @external(javascript, "../gleam_stdlib.mjs", "trim_start")
@@ -555,8 +562,7 @@ pub fn trim_start(string: String) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// trim_end("  hats  \n")
-/// // -> "  hats"
+/// assert trim_end("  hats  \n") == "  hats"
 /// ```
 ///
 @external(javascript, "../gleam_stdlib.mjs", "trim_end")
@@ -567,20 +573,20 @@ pub fn trim_end(string: String) -> String {
 /// Splits a non-empty `String` into its first element (head) and rest (tail).
 /// This lets you pattern match on `String`s exactly as you would with lists.
 ///
-/// Note on JavaScript using the function to iterate over a string will likely
-/// be slower than using `to_graphemes` due to string slicing being more
-/// expensive on JavaScript than Erlang.
+/// ## Performance
+///
+/// There is a notable overhead to using this function, so you may not want to
+/// use it in a tight loop. If you wish to efficiently parse a string you may
+/// want to use alternatives such as the [splitter package](https://hex.pm/packages/splitter).
 ///
 /// ## Examples
 ///
 /// ```gleam
-/// pop_grapheme("gleam")
-/// // -> Ok(#("g", "leam"))
+/// assert pop_grapheme("gleam") == Ok(#("g", "leam"))
 /// ```
 ///
 /// ```gleam
-/// pop_grapheme("")
-/// // -> Error(Nil)
+/// assert pop_grapheme("") == Error(Nil)
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "string_pop_grapheme")
@@ -591,13 +597,13 @@ pub fn pop_grapheme(string: String) -> Result(#(String, String), Nil)
 /// [graphemes](https://en.wikipedia.org/wiki/Grapheme).
 ///
 /// ```gleam
-/// to_graphemes("abc")
-/// // -> ["a", "b", "c"]
+/// assert to_graphemes("abc") == ["a", "b", "c"]
 /// ```
 ///
 @external(javascript, "../gleam_stdlib.mjs", "graphemes")
 pub fn to_graphemes(string: String) -> List(String) {
-  to_graphemes_loop(string, [])
+  string
+  |> to_graphemes_loop([])
   |> list.reverse
 }
 
@@ -621,21 +627,20 @@ fn unsafe_int_to_utf_codepoint(a: Int) -> UtfCodepoint
 /// ## Examples
 ///
 /// ```gleam
-/// "a" |> to_utf_codepoints
-/// // -> [UtfCodepoint(97)]
+/// assert "a" |> to_utf_codepoints == [UtfCodepoint(97)]
 /// ```
 ///
 /// ```gleam
 /// // Semantically the same as:
 /// // ["🏳", "️", "‍", "🌈"] or:
 /// // [waving_white_flag, variant_selector_16, zero_width_joiner, rainbow]
-/// "🏳️‍🌈" |> to_utf_codepoints
-/// // -> [
-/// //   UtfCodepoint(127987),
-/// //   UtfCodepoint(65039),
-/// //   UtfCodepoint(8205),
-/// //   UtfCodepoint(127752),
-/// // ]
+/// assert "🏳️‍🌈" |> to_utf_codepoints
+///   == [
+///     UtfCodepoint(127987),
+///     UtfCodepoint(65039),
+///     UtfCodepoint(8205),
+///     UtfCodepoint(127752),
+///   ]
 /// ```
 ///
 pub fn to_utf_codepoints(string: String) -> List(UtfCodepoint) {
@@ -682,8 +687,7 @@ fn string_to_codepoint_integer_list(string: String) -> List(Int)
 /// let assert Ok(a) = utf_codepoint(97)
 /// let assert Ok(b) = utf_codepoint(98)
 /// let assert Ok(c) = utf_codepoint(99)
-/// from_utf_codepoints([a, b, c])
-/// // -> "abc"
+/// assert from_utf_codepoints([a, b, c]) == "abc"
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "utf_codepoint_list_to_string")
@@ -703,14 +707,13 @@ pub fn utf_codepoint(value: Int) -> Result(UtfCodepoint, Nil) {
   }
 }
 
-/// Converts an UtfCodepoint to its ordinal code point value.
+/// Converts a `UtfCodepoint` to its ordinal code point value.
 ///
 /// ## Examples
 ///
 /// ```gleam
 /// let assert [utf_codepoint, ..] = to_utf_codepoints("💜")
-/// utf_codepoint_to_int(utf_codepoint)
-/// // -> 128156
+/// assert utf_codepoint_to_int(utf_codepoint) == 128156
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "identity")
@@ -723,13 +726,11 @@ pub fn utf_codepoint_to_int(cp: UtfCodepoint) -> Int
 /// ## Examples
 ///
 /// ```gleam
-/// to_option("")
-/// // -> None
+/// assert to_option("") == None
 /// ```
 ///
 /// ```gleam
-/// to_option("hats")
-/// // -> Some("hats")
+/// assert to_option("hats") == Some("hats")
 /// ```
 ///
 pub fn to_option(string: String) -> Option(String) {
@@ -746,13 +747,11 @@ pub fn to_option(string: String) -> Option(String) {
 /// ## Examples
 ///
 /// ```gleam
-/// first("")
-/// // -> Error(Nil)
+/// assert first("") == Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// first("icecream")
-/// // -> Ok("i")
+/// assert first("icecream") == Ok("i")
 /// ```
 ///
 pub fn first(string: String) -> Result(String, Nil) {
@@ -766,16 +765,17 @@ pub fn first(string: String) -> Result(String, Nil) {
 /// `Result(String, Nil)`. If the `String` is empty, it returns `Error(Nil)`.
 /// Otherwise, it returns `Ok(String)`.
 ///
+/// This function traverses the full string, so it runs in linear time with the
+/// length of the string. Avoid using this in a loop.
+///
 /// ## Examples
 ///
 /// ```gleam
-/// last("")
-/// // -> Error(Nil)
+/// assert last("") == Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// last("icecream")
-/// // -> Ok("m")
+/// assert last("icecream") == Ok("m")
 /// ```
 ///
 pub fn last(string: String) -> Result(String, Nil) {
@@ -792,8 +792,7 @@ pub fn last(string: String) -> Result(String, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// capitalise("mamouna")
-/// // -> "Mamouna"
+/// assert capitalise("mamouna") == "Mamouna"
 /// ```
 ///
 pub fn capitalise(string: String) -> String {
@@ -805,8 +804,31 @@ pub fn capitalise(string: String) -> String {
 
 /// Returns a `String` representation of a term in Gleam syntax.
 ///
+/// This may be occasionally useful for quick-and-dirty printing of values in
+/// scripts. For error reporting and other uses prefer constructing strings by
+/// pattern matching on the values.
+///
+/// ## Limitations
+///
+/// The output format of this function is not stable and could change at any
+/// time. The output is not suitable for parsing.
+///
+/// This function works using runtime reflection, so the output may not be
+/// perfectly accurate for data structures where the runtime structure doesn't
+/// hold enough information to determine the original syntax. For example,
+/// tuples with an Erlang atom in the first position will be mistaken for Gleam
+/// records.
+///
+/// ## Security and safety
+///
+/// There is no limit to how large the strings that this function can produce.
+/// Be careful not to call this function with large data structures or you
+/// could use very large amounts of memory, potentially causing runtime
+/// problems.
+///
 pub fn inspect(term: anything) -> String {
-  do_inspect(term)
+  term
+  |> do_inspect
   |> string_tree.to_string
 }
 
@@ -822,8 +844,7 @@ fn do_inspect(term: anything) -> StringTree
 /// ## Examples
 ///
 /// ```gleam
-/// byte_size("🏳️‍⚧️🏳️‍🌈👩🏾‍❤️‍👨🏻")
-/// // -> 58
+/// assert byte_size("🏳️‍⚧️🏳️‍🌈👩🏾‍❤️‍👨🏻") == 58
 /// ```
 ///
 @external(erlang, "erlang", "byte_size")

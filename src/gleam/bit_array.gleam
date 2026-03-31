@@ -13,30 +13,28 @@ pub fn from_string(x: String) -> BitArray
 /// Returns an integer which is the number of bits in the bit array.
 ///
 @external(erlang, "erlang", "bit_size")
-pub fn bit_size(x: BitArray) -> Int {
-  byte_size(x) * 8
-}
+@external(javascript, "../gleam_stdlib.mjs", "bit_array_bit_size")
+pub fn bit_size(x: BitArray) -> Int
 
 /// Returns an integer which is the number of bytes in the bit array.
 ///
 @external(erlang, "erlang", "byte_size")
-@external(javascript, "../gleam_stdlib.mjs", "length")
+@external(javascript, "../gleam_stdlib.mjs", "bit_array_byte_size")
 pub fn byte_size(x: BitArray) -> Int
 
 /// Pads a bit array with zeros so that it is a whole number of bytes.
 ///
 @external(erlang, "gleam_stdlib", "bit_array_pad_to_bytes")
-pub fn pad_to_bytes(x: BitArray) -> BitArray {
-  x
-}
+@external(javascript, "../gleam_stdlib.mjs", "bit_array_pad_to_bytes")
+pub fn pad_to_bytes(x: BitArray) -> BitArray
 
 /// Creates a new bit array by joining two bit arrays.
 ///
 /// ## Examples
 ///
 /// ```gleam
-/// append(to: from_string("butter"), suffix: from_string("fly"))
-/// // -> from_string("butterfly")
+/// assert append(to: from_string("butter"), suffix: from_string("fly"))
+///   == from_string("butterfly")
 /// ```
 ///
 pub fn append(to first: BitArray, suffix second: BitArray) -> BitArray {
@@ -148,8 +146,8 @@ fn unsafe_to_string(a: BitArray) -> String
 /// ## Examples
 ///
 /// ```gleam
-/// concat([from_string("butter"), from_string("fly")])
-/// // -> from_string("butterfly")
+/// assert concat([from_string("butter"), from_string("fly")])
+///   == from_string("butterfly")
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "bit_array_concat")
@@ -161,8 +159,8 @@ pub fn concat(bit_arrays: List(BitArray)) -> BitArray
 /// If the bit array does not contain a whole number of bytes then it is padded
 /// with zero bits prior to being encoded.
 ///
-@external(erlang, "gleam_stdlib", "bit_array_base64_encode")
-@external(javascript, "../gleam_stdlib.mjs", "encode64")
+@external(erlang, "gleam_stdlib", "base64_encode")
+@external(javascript, "../gleam_stdlib.mjs", "base64_encode")
 pub fn base64_encode(input: BitArray, padding: Bool) -> String
 
 /// Decodes a base 64 encoded string into a `BitArray`.
@@ -175,8 +173,8 @@ pub fn base64_decode(encoded: String) -> Result(BitArray, Nil) {
   decode64(padded)
 }
 
-@external(erlang, "gleam_stdlib", "base_decode64")
-@external(javascript, "../gleam_stdlib.mjs", "decode64")
+@external(erlang, "gleam_stdlib", "base64_decode")
+@external(javascript, "../gleam_stdlib.mjs", "base64_decode")
 fn decode64(a: String) -> Result(BitArray, Nil)
 
 /// Encodes a `BitArray` into a base 64 encoded string with URL and filename
@@ -186,7 +184,8 @@ fn decode64(a: String) -> Result(BitArray, Nil)
 /// with zero bits prior to being encoded.
 ///
 pub fn base64_url_encode(input: BitArray, padding: Bool) -> String {
-  base64_encode(input, padding)
+  input
+  |> base64_encode(padding)
   |> string.replace("+", "-")
   |> string.replace("/", "_")
 }
@@ -218,21 +217,23 @@ pub fn base16_decode(input: String) -> Result(BitArray, Nil)
 
 /// Converts a bit array to a string containing the decimal value of each byte.
 ///
+/// Use this over `string.inspect` when you have a bit array you want printed
+/// in the array syntax even if it is valid UTF-8.
+///
 /// ## Examples
 ///
 /// ```gleam
-/// inspect(<<0, 20, 0x20, 255>>)
-/// // -> "<<0, 20, 32, 255>>"
+/// assert inspect(<<0, 20, 0x20, 255>>) == "<<0, 20, 32, 255>>"
+/// ```
 ///
-/// inspect(<<100, 5:3>>)
-/// // -> "<<100, 5:size(3)>>"
+/// ```gleam
+/// assert inspect(<<100, 5:3>>) == "<<100, 5:size(3)>>"
 /// ```
 ///
 pub fn inspect(input: BitArray) -> String {
   inspect_loop(input, "<<") <> ">>"
 }
 
-@external(javascript, "../gleam_stdlib.mjs", "bit_array_inspect")
 fn inspect_loop(input: BitArray, accumulator: String) -> String {
   case input {
     <<>> -> accumulator
@@ -264,17 +265,17 @@ fn inspect_loop(input: BitArray, accumulator: String) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// compare(<<1>>, <<2>>)
-/// // -> Lt
-///
-/// compare(<<"AB":utf8>>, <<"AA":utf8>>)
-/// // -> Gt
-///
-/// compare(<<1, 2:size(2)>>, with: <<1, 2:size(2)>>)
-/// // -> Eq
+/// assert compare(<<1>>, <<2>>) == Lt
 /// ```
 ///
-@external(javascript, "../gleam_stdlib.mjs", "bit_array_compare")
+/// ```gleam
+/// assert compare(<<"AB":utf8>>, <<"AA":utf8>>) == Gt
+/// ```
+///
+/// ```gleam
+/// assert compare(<<1, 2:size(2)>>, with: <<1, 2:size(2)>>) == Eq
+/// ```
+///
 pub fn compare(a: BitArray, with b: BitArray) -> order.Order {
   case a, b {
     <<first_byte, first_rest:bits>>, <<second_byte, second_rest:bits>> ->
@@ -303,6 +304,7 @@ pub fn compare(a: BitArray, with b: BitArray) -> order.Order {
 }
 
 @external(erlang, "gleam_stdlib", "bit_array_to_int_and_size")
+@external(javascript, "../gleam_stdlib.mjs", "bit_array_to_int_and_size")
 fn bit_array_to_int_and_size(a: BitArray) -> #(Int, Int)
 
 /// Checks whether the first `BitArray` starts with the second one.
@@ -310,8 +312,7 @@ fn bit_array_to_int_and_size(a: BitArray) -> #(Int, Int)
 /// ## Examples
 ///
 /// ```gleam
-/// starts_with(<<1, 2, 3, 4>>, <<1, 2>>)
-/// // -> True
+/// assert starts_with(<<1, 2, 3, 4>>, <<1, 2>>)
 /// ```
 ///
 @external(javascript, "../gleam_stdlib.mjs", "bit_array_starts_with")

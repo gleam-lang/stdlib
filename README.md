@@ -14,16 +14,11 @@ Add `gleam_stdlib` to your Gleam project.
 ```sh
 gleam add gleam_stdlib
 ```
-
-## Usage
-
-Import the modules you want to use and write some code!
-
 ```gleam
-import gleam/string
+import gleam/io
 
-pub fn greet(name: String) -> String {
-  string.concat(["Hello ", name, "!"])
+pub fn greet(name: String) -> Nil {
+  io.println("Hello " <> name <> "!")
 }
 ```
 

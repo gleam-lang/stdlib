@@ -60,7 +60,7 @@
 //// ## Options
 ////
 //// The [`optional`](#optional) decoder is used to decode values that may or may not
-//// be present. In other environment these might be called "nullable" values.
+//// be present. In other environments these might be called "nullable" values.
 ////
 //// Like the `list` decoder, the `optional` decoder takes another decoder,
 //// which is used to decode the value if it is present.
@@ -183,14 +183,14 @@
 ////     "grass" -> decode.success(Grass)
 ////     "electric" -> decode.success(Electric)
 ////     // Return a failing decoder for any other strings
-////     _ -> decode.failure(Fire, "PocketMonsterType")
+////     _ -> decode.failure(Fire, expected: "PocketMonsterType")
 ////   }
 //// }
 ////
-//// let result = decode.run(dynamic.from("water"), decoder)
+//// let result = decode.run(dynamic.string("water"), decoder)
 //// assert result == Ok(Water)
 ////
-//// let result = decode.run(dynamic.from("wobble"), decoder)
+//// let result = decode.run(dynamic.string("wobble"), decoder)
 //// assert result == Error([DecodeError("PocketMonsterType", "String", [])])
 //// ```
 ////
@@ -232,7 +232,7 @@
 ////   use name <- decode.field("name", decode.string)
 ////   use badge_count <- decode.field("badge-count", decode.int)
 ////   decode.success(Trainer(name, badge_count))
-//// })
+//// }
 ////
 //// let gym_leader_decoder = {
 ////   use name <- decode.field("name", decode.string)
@@ -242,9 +242,16 @@
 //// ```
 ////
 //// A third decoder can be used to extract and decode the `"type"` field, and the
-//// `then` function then returns whichever decoder is suitable for the document.
+//// expression can evaluate to whichever decoder is suitable for the document.
 ////
 //// ```gleam
+//// // Data:
+//// // {
+//// //   "type" -> "gym-leader",
+//// //   "name" -> "Misty",
+//// //   "speciality" -> "water",
+//// // }
+////
 //// let decoder = {
 ////   use tag <- decode.field("type", decode.string)
 ////   case tag {
@@ -253,12 +260,14 @@
 ////   }
 //// }
 ////
-//// decode.run(data, decoder)
+//// let result = decode.run(data, decoder)
+//// assert result == Ok(GymLeader("Misty", Water))
 //// ```
 
 import gleam/bit_array
 import gleam/dict.{type Dict}
 import gleam/dynamic
+import gleam/float
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
@@ -292,17 +301,17 @@ pub opaque type Decoder(t) {
 ///
 /// This function will index into dictionaries with any key type, and if the key is
 /// an int then it'll also index into Erlang tuples and JavaScript arrays, and
-/// the first two elements of Gleam lists.
+/// the first eight elements of Gleam lists.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
-/// let data = dynamic.from(dict.from_list([
-///   #("data", dict.from_list([
-///     #("email", "lucy@example.com"),
-///     #("name", "Lucy"),
-///   ]))
-/// ]))
+/// let data = dynamic.properties([
+///   #(dynamic.string("data"), dynamic.properties([
+///     #(dynamic.string("email"), dynamic.string("lucy@example.com")),
+///     #(dynamic.string("name"), dynamic.string("Lucy")),
+///   ])
+/// ])
 ///
 /// let decoder = {
 ///   use name <- decode.subfield(["data", "name"], decode.string)
@@ -333,12 +342,12 @@ pub fn subfield(
 /// Run a decoder on a `Dynamic` value, decoding the value if it is of the
 /// desired type, or returning errors.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
 /// let decoder = {
-///   use name <- decode.field("email", decode.string)
-///   use email <- decode.field("password", decode.string)
+///   use name <- decode.field("name", decode.string)
+///   use email <- decode.field("email", decode.string)
 ///   decode.success(SignUp(name: name, email: email))
 /// }
 ///
@@ -358,28 +367,26 @@ pub fn run(data: Dynamic, decoder: Decoder(t)) -> Result(t, List(DecodeError)) {
 ///
 /// This function will index into dictionaries with any key type, and if the key is
 /// an int then it'll also index into Erlang tuples and JavaScript arrays, and
-/// the first two elements of Gleam lists.
+/// the first eight elements of Gleam lists.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
 /// let decoder = decode.at(["one", "two"], decode.int)
 ///
-/// let data = dynamic.from(dict.from_list([
-///   #("one", dict.from_list([
-///     #("two", 1000),
-///   ])),
-/// ]))
+/// let data = dynamic.properties([
+///   #(dynamic.string("one"), dynamic.properties([
+///     #(dynamic.string("two"), dynamic.int(1000)),
+///   ]),
+/// ])
 ///
-///
-/// decode.run(data, decoder)
-/// // -> Ok(1000)
+/// assert decode.run(data, decoder) == Ok(1000)
 /// ```
 ///
 /// ```gleam
-/// dynamic.from(Nil)
-/// |> decode.run(decode.optional(decode.int))
-/// // -> Ok(option.None)
+/// assert dynamic.nil()
+///   |> decode.run(decode.optional(decode.int))
+///   == Ok(option.None)
 /// ```
 ///
 pub fn at(path: List(segment), inner: Decoder(a)) -> Decoder(a) {
@@ -401,7 +408,8 @@ fn index(
 ) -> #(b, List(DecodeError)) {
   case path {
     [] -> {
-      inner(data)
+      data
+      |> inner
       |> push_path(list.reverse(position))
     }
 
@@ -423,23 +431,15 @@ fn index(
   }
 }
 
-@external(erlang, "gleam_stdlib_decode_ffi", "index")
-@external(javascript, "../../gleam_stdlib_decode_ffi.mjs", "index")
+@external(erlang, "gleam_stdlib", "index")
+@external(javascript, "../../gleam_stdlib.mjs", "index")
 fn bare_index(data: Dynamic, key: anything) -> Result(Option(Dynamic), String)
 
 fn push_path(
   layer: #(t, List(DecodeError)),
   path: List(key),
 ) -> #(t, List(DecodeError)) {
-  let decoder = one_of(string, [int |> map(int.to_string)])
-  let path =
-    list.map(path, fn(key) {
-      let key = cast(key)
-      case run(key, decoder) {
-        Ok(key) -> key
-        Error(_) -> "<" <> dynamic.classify(key) <> ">"
-      }
-    })
+  let path = list.map(path, fn(key) { key |> cast |> path_segment_to_string })
   let errors =
     list.map(layer.1, fn(error) {
       DecodeError(..error, path: list.append(path, error.path))
@@ -447,15 +447,27 @@ fn push_path(
   #(layer.0, errors)
 }
 
+fn path_segment_to_string(key: Dynamic) -> String {
+  let decoder =
+    one_of(string, [
+      int |> map(int.to_string),
+      float |> map(float.to_string),
+    ])
+  case run(key, decoder) {
+    Ok(key) -> key
+    Error(_) -> "<" <> dynamic.classify(key) <> ">"
+  }
+}
+
 /// Finalise a decoder having successfully extracted a value.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
-/// let data = dynamic.from(dict.from_list([
-///   #("email", "lucy@example.com"),
-///   #("name", "Lucy"),
-/// ]))
+/// let data = dynamic.properties([
+///   #(dynamic.string("email"), dynamic.string("lucy@example.com")),
+///   #(dynamic.string("name"), dynamic.string("Lucy")),
+/// ])
 ///
 /// let decoder = {
 ///   use name <- decode.field("name", string)
@@ -486,15 +498,15 @@ pub fn decode_error(
 ///
 /// This function will index into dictionaries with any key type, and if the key is
 /// an int then it'll also index into Erlang tuples and JavaScript arrays, and
-/// the first two elements of Gleam lists.
+/// the first eight elements of Gleam lists.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
-/// let data = dynamic.from(dict.from_list([
-///   #("email", "lucy@example.com"),
-///   #("name", "Lucy"),
-/// ]))
+/// let data = dynamic.properties([
+///   #(dynamic.string("email"), dynamic.string("lucy@example.com")),
+///   #(dynamic.string("name"), dynamic.string("Lucy")),
+/// ])
 ///
 /// let decoder = {
 ///   use name <- decode.field("name", string)
@@ -526,14 +538,14 @@ pub fn field(
 ///
 /// This function will index into dictionaries with any key type, and if the key is
 /// an int then it'll also index into Erlang tuples and JavaScript arrays, and
-/// the first two elements of Gleam lists.
+/// the first eight elements of Gleam lists.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
-/// let data = dynamic.from(dict.from_list([
-///   #("name", "Lucy"),
-/// ]))
+/// let data = dynamic.properties([
+///   #(dynamic.string("name"), dynamic.string("Lucy")),
+/// ])
 ///
 /// let decoder = {
 ///   use name <- decode.field("name", string)
@@ -552,14 +564,15 @@ pub fn optional_field(
   next: fn(t) -> Decoder(final),
 ) -> Decoder(final) {
   Decoder(function: fn(data) {
-    let #(out, errors1) = case bare_index(data, key) {
-      Ok(Some(data)) -> field_decoder.function(data)
-      Ok(None) -> #(default, [])
-      Error(kind) -> {
-        #(default, [DecodeError(kind, dynamic.classify(data), [])])
-        |> push_path([key])
+    let #(out, errors1) =
+      case bare_index(data, key) {
+        Ok(Some(data)) -> field_decoder.function(data)
+        Ok(None) -> #(default, [])
+        Error(kind) -> #(default, [
+          DecodeError(kind, dynamic.classify(data), []),
+        ])
       }
-    }
+      |> push_path([key])
     let #(out, errors2) = next(out).function(data)
     #(out, list.append(errors1, errors2))
   })
@@ -570,20 +583,18 @@ pub fn optional_field(
 ///
 /// This function will index into dictionaries with any key type, and if the key is
 /// an int then it'll also index into Erlang tuples and JavaScript arrays, and
-/// the first two elements of Gleam lists.
+/// the first eight elements of Gleam lists.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
 /// let decoder = decode.optionally_at(["one", "two"], 100, decode.int)
 ///
-/// let data = dynamic.from(dict.from_list([
-///   #("one", dict.from_list([])),
-/// ]))
+/// let data = dynamic.properties([
+///   #(dynamic.string("one"), dynamic.properties([])),
+/// ])
 ///
-///
-/// decode.run(data, decoder)
-/// // -> Ok(100)
+/// assert decode.run(data, decoder) == Ok(100)
 /// ```
 ///
 pub fn optionally_at(
@@ -603,16 +614,18 @@ fn run_dynamic_function(
 ) -> #(t, List(DecodeError)) {
   case f(data) {
     Ok(data) -> #(data, [])
-    Error(zero) -> #(zero, [DecodeError(name, dynamic.classify(data), [])])
+    Error(placeholder) -> #(placeholder, [
+      DecodeError(name, dynamic.classify(data), []),
+    ])
   }
 }
 
 /// A decoder that decodes `String` values.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
-/// let result = decode.run(dynamic.from("Hello!"), decode.string)
+/// let result = decode.run(dynamic.string("Hello!"), decode.string)
 /// assert result == Ok("Hello!")
 /// ```
 ///
@@ -622,7 +635,7 @@ fn decode_string(data: Dynamic) -> #(String, List(DecodeError)) {
   run_dynamic_function(data, "String", dynamic_string)
 }
 
-@external(javascript, "../../gleam_stdlib_decode_ffi.mjs", "string")
+@external(javascript, "../../gleam_stdlib.mjs", "string")
 fn dynamic_string(from data: Dynamic) -> Result(String, String) {
   case dynamic_bit_array(data) {
     Ok(data) ->
@@ -636,10 +649,10 @@ fn dynamic_string(from data: Dynamic) -> Result(String, String) {
 
 /// A decoder that decodes `Bool` values.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
-/// let result = decode.run(dynamic.from(True), decode.bool)
+/// let result = decode.run(dynamic.bool(True), decode.bool)
 /// assert result == Ok(True)
 /// ```
 ///
@@ -658,10 +671,17 @@ fn decode_bool(data: Dynamic) -> #(Bool, List(DecodeError)) {
 
 /// A decoder that decodes `Int` values.
 ///
-/// # Examples
+/// This will not coerse float values into int values, so on platforms with
+/// distinct runtime int and float types (Erlang, not JavaScript) it will fail,
+/// even if the float is a whole number (e.g. 1.0).
+///
+/// If you want to decode both ints and floats you may want to use the `one_of`
+/// function.
+///
+/// ## Examples
 ///
 /// ```gleam
-/// let result = decode.run(dynamic.from(147), decode.int)
+/// let result = decode.run(dynamic.int(147), decode.int)
 /// assert result == Ok(147)
 /// ```
 ///
@@ -671,16 +691,23 @@ fn decode_int(data: Dynamic) -> #(Int, List(DecodeError)) {
   run_dynamic_function(data, "Int", dynamic_int)
 }
 
-@external(erlang, "gleam_stdlib_decode_ffi", "int")
-@external(javascript, "../../gleam_stdlib_decode_ffi.mjs", "int")
+@external(erlang, "gleam_stdlib", "int")
+@external(javascript, "../../gleam_stdlib.mjs", "int")
 fn dynamic_int(data: Dynamic) -> Result(Int, Int)
 
 /// A decoder that decodes `Float` values.
 ///
-/// # Examples
+/// This will not coerse int values into float values, so on platforms with
+/// distinct runtime int and float types (Erlang, not JavaScript) it will fail
+/// for ints. One time this may happen is when decoding JSON data.
+///
+/// If you want to decode both ints and floats you may want to use the `one_of`
+/// function.
+///
+/// ## Examples
 ///
 /// ```gleam
-/// let result = decode.run(dynamic.from(3.14), decode.float)
+/// let result = decode.run(dynamic.float(3.14), decode.float)
 /// assert result == Ok(3.14)
 /// ```
 ///
@@ -690,17 +717,17 @@ fn decode_float(data: Dynamic) -> #(Float, List(DecodeError)) {
   run_dynamic_function(data, "Float", dynamic_float)
 }
 
-@external(erlang, "gleam_stdlib_decode_ffi", "float")
-@external(javascript, "../../gleam_stdlib_decode_ffi.mjs", "float")
+@external(erlang, "gleam_stdlib", "float")
+@external(javascript, "../../gleam_stdlib.mjs", "float")
 fn dynamic_float(data: Dynamic) -> Result(Float, Float)
 
 /// A decoder that decodes `Dynamic` values. This decoder never returns an error.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
-/// let result = decode.run(dynamic.from(3.14), decode.dynamic)
-/// assert result == Ok(dynamic.from(3.14))
+/// let result = decode.run(dynamic.float(3.14), decode.dynamic)
+/// assert result == Ok(dynamic.float(3.14))
 /// ```
 ///
 pub const dynamic: Decoder(Dynamic) = Decoder(decode_dynamic)
@@ -711,10 +738,10 @@ fn decode_dynamic(data: Dynamic) -> #(Dynamic, List(DecodeError)) {
 
 /// A decoder that decodes `BitArray` values. This decoder never returns an error.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
-/// let result = decode.run(dynamic.from(<<5, 7>>), decode.bit_array)
+/// let result = decode.run(dynamic.bit_array(<<5, 7>>), decode.bit_array)
 /// assert result == Ok(<<5, 7>>)
 /// ```
 ///
@@ -724,18 +751,21 @@ fn decode_bit_array(data: Dynamic) -> #(BitArray, List(DecodeError)) {
   run_dynamic_function(data, "BitArray", dynamic_bit_array)
 }
 
-@external(erlang, "gleam_stdlib_decode_ffi", "bit_array")
-@external(javascript, "../../gleam_stdlib_decode_ffi.mjs", "bit_array")
+@external(erlang, "gleam_stdlib", "bit_array")
+@external(javascript, "../../gleam_stdlib.mjs", "bit_array")
 fn dynamic_bit_array(data: Dynamic) -> Result(BitArray, BitArray)
 
 /// A decoder that decodes lists where all elements are decoded with a given
 /// decoder.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
 /// let result =
-///   decode.run(dynamic.from([1, 2, 3]), decode.list(of: decode.int))
+///   [1, 2, 3]
+///   |> list.map(dynamic.int)
+///   |> dynamic.list
+///   |> decode.run(decode.list(of: decode.int))
 /// assert result == Ok([1, 2, 3])
 /// ```
 ///
@@ -745,8 +775,8 @@ pub fn list(of inner: Decoder(a)) -> Decoder(List(a)) {
   })
 }
 
-@external(erlang, "gleam_stdlib_decode_ffi", "list")
-@external(javascript, "../../gleam_stdlib_decode_ffi.mjs", "list")
+@external(erlang, "gleam_stdlib", "list")
+@external(javascript, "../../gleam_stdlib.mjs", "list")
 fn decode_list(
   data: Dynamic,
   item: fn(Dynamic) -> #(t, List(DecodeError)),
@@ -755,19 +785,19 @@ fn decode_list(
   acc: List(t),
 ) -> #(List(t), List(DecodeError))
 
-/// A decoder that decodes dicts where all keys and vales are decoded with
+/// A decoder that decodes dicts where all keys and values are decoded with
 /// given decoders.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
-/// let values = dict.from_list([
-///   #("one", 1),
-///   #("two", 2),
+/// let values = dynamic.properties([
+///   #(dynamic.string("one"), dynamic.int(1)),
+///   #(dynamic.string("two"), dynamic.int(2)),
 /// ])
 ///
 /// let result =
-///   decode.run(dynamic.from(values), decode.dict(decode.string, decode.int))
+///   decode.run(values, decode.dict(decode.string, decode.int))
 /// assert result == Ok(values)
 /// ```
 ///
@@ -800,22 +830,25 @@ fn fold_dict(
 ) -> #(Dict(k, v), List(DecodeError)) {
   // First we decode the key.
   case key_decoder(key) {
-    #(key, []) ->
+    #(key_decoded, []) ->
       // Then we decode the value.
       case value_decoder(value) {
         #(value, []) -> {
           // It worked! Insert the new key-value pair so we can move onto the next.
-          let dict = dict.insert(acc.0, key, value)
+          let dict = dict.insert(acc.0, key_decoded, value)
           #(dict, acc.1)
         }
-        #(_, errors) -> push_path(#(dict.new(), errors), ["values"])
+        #(_, errors) -> {
+          let key_identifier = path_segment_to_string(key)
+          push_path(#(dict.new(), errors), [key_identifier])
+        }
       }
     #(_, errors) -> push_path(#(dict.new(), errors), ["keys"])
   }
 }
 
-@external(erlang, "gleam_stdlib_decode_ffi", "dict")
-@external(javascript, "../../gleam_stdlib_decode_ffi.mjs", "dict")
+@external(erlang, "gleam_stdlib", "dict")
+@external(javascript, "../../gleam_stdlib.mjs", "dict")
 fn decode_dict(data: Dynamic) -> Result(Dict(Dynamic, Dynamic), Nil)
 
 /// A decoder that decodes nullable values of a type decoded by with a given
@@ -825,15 +858,15 @@ fn decode_dict(data: Dynamic) -> Result(Dict(Dynamic, Dynamic), Nil)
 /// `nil`, `null`, and `undefined` on Erlang, and `undefined` and `null` on
 /// JavaScript.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
-/// let result = decode.run(dynamic.from(100), decode.optional(decode.int))
+/// let result = decode.run(dynamic.int(100), decode.optional(decode.int))
 /// assert result == Ok(option.Some(100))
 /// ```
 ///
 /// ```gleam
-/// let result = decode.run(dynamic.from(Nil), decode.optional(decode.int))
+/// let result = decode.run(dynamic.nil(), decode.optional(decode.int))
 /// assert result == Ok(option.None)
 /// ```
 ///
@@ -851,11 +884,11 @@ pub fn optional(inner: Decoder(a)) -> Decoder(Option(a)) {
 
 /// Apply a transformation function to any value decoded by the decoder.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
 /// let decoder = decode.int |> decode.map(int.to_string)
-/// let result = decode.run(dynamic.from(1000), decoder)
+/// let result = decode.run(dynamic.int(1000), decoder)
 /// assert result == Ok("1000")
 /// ```
 ///
@@ -884,11 +917,11 @@ pub fn map_errors(
 /// This function may be useful if you wish to simplify errors before
 /// presenting them to a user, particularly when using the `one_of` function.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
 /// let decoder = decode.string |> decode.collapse_errors("MyThing")
-/// let result = decode.run(dynamic.from(1000), decoder)
+/// let result = decode.run(dynamic.int(1000), decoder)
 /// assert result == Error([DecodeError("MyThing", "Int", [])])
 /// ```
 ///
@@ -921,19 +954,18 @@ pub fn then(decoder: Decoder(a), next: fn(a) -> Decoder(b)) -> Decoder(b) {
 /// Create a new decoder from several other decoders. Each of the inner
 /// decoders is run in turn, and the value from the first to succeed is used.
 ///
-/// If no decoder succeeds then the errors from the first decoder is used.
+/// If no decoder succeeds then the errors from the first decoder are used.
 /// If you wish for different errors then you may wish to use the
 /// `collapse_errors` or `map_errors` functions.
 ///
-/// # Examples
+/// ## Examples
 ///
 /// ```gleam
 /// let decoder = decode.one_of(decode.string, or: [
 ///   decode.int |> decode.map(int.to_string),
 ///   decode.float |> decode.map(float.to_string),
 /// ])
-/// decode.run(dynamic.from(1000), decoder)
-/// // -> Ok("1000")
+/// assert decode.run(dynamic.int(1000), decoder) == Ok("1000")
 /// ```
 ///
 pub fn one_of(
@@ -967,11 +999,23 @@ fn run_decoders(
   }
 }
 
-/// Define a decoder that always fails. The parameter for this function is the
-/// name of the type that has failed to decode.
+/// Define a decoder that always fails.
 ///
-pub fn failure(zero: a, expected: String) -> Decoder(a) {
-  Decoder(function: fn(d) { #(zero, decode_error(expected, d)) })
+/// The first parameter is a "placeholder" value, which is some default value that the
+/// decoder uses internally in place of the value that would have been produced
+/// if the decoder was successful. It doesn't matter what this value is, it is
+/// never returned by the decoder or shown to the user, so pick some arbitrary
+/// value. If it is an int you might pick `0`, if it is a list you might pick
+/// `[]`.
+///
+/// The second parameter is the name of the type that has failed to decode.
+///
+/// ```gleam
+/// decode.failure(User(name: "", score: 0, tags: []), expected: "User")
+/// ```
+///
+pub fn failure(placeholder: a, expected name: String) -> Decoder(a) {
+  Decoder(function: fn(d) { #(placeholder, decode_error(name, d)) })
 }
 
 /// Create a decoder for a new data type from a decoding function.
@@ -979,24 +1023,36 @@ pub fn failure(zero: a, expected: String) -> Decoder(a) {
 /// This function is used for new primitive types. For example, you might
 /// define a decoder for Erlang's pid type.
 ///
-/// A default "zero" value is also required to make a decoder. When this
-/// decoder is used as part of a larger decoder this zero value used as
-/// a placeholder so that the rest of the decoder can continue to run and
-/// collect all decoding errors.
+/// A default "placeholder" value is also required to make a decoder. When this
+/// decoder is used as part of a larger decoder this placeholder value is used
+/// so that the rest of the decoder can continue to run and
+/// collect all decoding errors. It doesn't matter what this value is, it is
+/// never returned by the decoder or shown to the user, so pick some arbitrary
+/// value. If it is an int you might pick `0`, if it is a list you might pick
+/// `[]`.
 ///
-/// If you were to make a decoder for the `String` type (rather than using the
-/// build-in `string` decoder) you would define it like so:
+/// If you were to make a decoder for the `Int` type (rather than using the
+/// build-in `Int` decoder) you would define it like so:
 ///
 /// ```gleam
-/// pub fn string_decoder() -> decode.Decoder(String) {
+/// pub fn int_decoder() -> decode.Decoder(Int) {
 ///   let default = ""
-///   decode.new_primitive_decoder("String", fn(data) {
-///     case dynamic.string(data) {
-///       Ok(x) -> Ok(x)
-///       Error(_) -> Error(default)
-///     }
-///   })
+///   decode.new_primitive_decoder("Int", int_from_dynamic)
 /// }
+///
+/// @external(erlang, "my_module", "int_from_dynamic")
+/// fn int_from_dynamic(data: Int) -> Result(Int, Int)
+/// ```
+///
+/// ```erlang
+/// -module(my_module).
+/// -export([int_from_dynamic/1]).
+///
+/// int_from_dynamic(Data) ->
+///     case is_integer(Data) of
+///         true -> {ok, Data};
+///         false -> {error, 0}
+///     end.
 /// ```
 ///
 pub fn new_primitive_decoder(
@@ -1006,7 +1062,9 @@ pub fn new_primitive_decoder(
   Decoder(function: fn(d) {
     case decoding_function(d) {
       Ok(t) -> #(t, [])
-      Error(zero) -> #(zero, [DecodeError(name, dynamic.classify(d), [])])
+      Error(placeholder) -> #(placeholder, [
+        DecodeError(name, dynamic.classify(d), []),
+      ])
     }
   })
 }
@@ -1017,6 +1075,8 @@ pub fn new_primitive_decoder(
 /// Attempting to create a recursive decoder without this function could result
 /// in an infinite loop. If you are using `field` or other `use`able functions
 /// then you may not need to use this function.
+///
+/// ## Examples
 ///
 /// ```gleam
 /// type Nested {
@@ -1043,6 +1103,6 @@ pub fn recursive(inner: fn() -> Decoder(a)) -> Decoder(a) {
 @external(javascript, "../../gleam_stdlib.mjs", "identity")
 fn cast(a: anything) -> Dynamic
 
-@external(erlang, "gleam_stdlib_decode_ffi", "is_null")
-@external(javascript, "../../gleam_stdlib_decode_ffi.mjs", "is_null")
+@external(erlang, "gleam_stdlib", "is_null")
+@external(javascript, "../../gleam_stdlib.mjs", "is_null")
 fn is_null(a: Dynamic) -> Bool

@@ -1,4 +1,14 @@
-// This file is a verbatim copy of gleeunit 0.10.0's <https://github.com/lpil/gleeunit/blob/main/src/gleeunit_ffi.mjs>
+import { readFileSync } from "node:fs";
+import { Ok, Error as GleamError } from "./gleam.mjs";
+import * as reporting from "./gleeunit/internal/reporting.mjs";
+
+export function read_file(path) {
+  try {
+    return new Ok(readFileSync(path));
+  } catch {
+    return new GleamError(undefined);
+  }
+}
 
 async function* gleamFiles(directory) {
   for (let entry of await read_dir(directory)) {
@@ -16,7 +26,7 @@ async function* gleamFiles(directory) {
 }
 
 async function readRootPackageName() {
-  let toml = await read_file("gleam.toml", "utf-8");
+  let toml = await async_read_file("gleam.toml", "utf-8");
   for (let line of toml.split("\n")) {
     let matches = line.match(/\s*name\s*=\s*"([a-z][a-z0-9_]*)"/); // Match regexp in compiler-cli/src/new.rs in validate_name()
     if (matches) return matches[1];
@@ -25,8 +35,7 @@ async function readRootPackageName() {
 }
 
 export async function main() {
-  let passes = 0;
-  let failures = 0;
+  let state = reporting.new_state();
 
   let packageName = await readRootPackageName();
   let dist = `../${packageName}/`;
@@ -38,32 +47,20 @@ export async function main() {
       if (!fnName.endsWith("_test")) continue;
       try {
         await module[fnName]();
-        write(`\u001b[32m.\u001b[0m`);
-        passes++;
+        state = reporting.test_passed(state);
       } catch (error) {
-        let moduleName = "\n" + js_path.slice(0, -4);
-        let line = error.line ? `:${error.line}` : "";
-        write(`\n❌ ${moduleName}.${fnName}${line}: ${error}\n`);
-        failures++;
+        let moduleName = js_path.slice(0, -4);
+        state = reporting.test_failed(state, moduleName, fnName, error);
       }
     }
   }
 
-  console.log(`
-${passes + failures} tests, ${failures} failures`);
-  exit(failures ? 1 : 0);
+  const status = reporting.finished(state);
+  exit(status);
 }
 
 export function crash(message) {
   throw new Error(message);
-}
-
-function write(message) {
-  if (globalThis.Deno) {
-    Deno.stdout.writeSync(new TextEncoder().encode(message));
-  } else {
-    process.stdout.write(message);
-  }
 }
 
 function exit(code) {
@@ -82,7 +79,7 @@ async function read_dir(path) {
     }
     return items;
   } else {
-    let { readdir } = await import("fs/promises");
+    let { readdir } = await import("node:fs/promises");
     return readdir(path);
   }
 }
@@ -92,11 +89,11 @@ function join_path(a, b) {
   return a + "/" + b;
 }
 
-async function read_file(path) {
+async function async_read_file(path) {
   if (globalThis.Deno) {
     return Deno.readTextFile(path);
   } else {
-    let { readFile } = await import("fs/promises");
+    let { readFile } = await import("node:fs/promises");
     let contents = await readFile(path);
     return contents.toString();
   }

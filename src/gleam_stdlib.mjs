@@ -1,22 +1,30 @@
 import {
   BitArray,
-  Error,
-  List,
-  Ok,
-  Result,
+  List$Empty,
+  List$NonEmpty,
+  List$isEmpty,
+  List$isNonEmpty,
+  Result$Ok,
+  Result$Error,
+  Result$isOk,
+  Result$isError,
   UtfCodepoint,
   stringBits,
   toBitArray,
-  NonEmpty,
+  bitArraySlice,
   CustomType,
 } from "./gleam.mjs";
-import { DecodeError } from "./gleam/dynamic.mjs";
 import { Some, None } from "./gleam/option.mjs";
-import { Eq, Gt, Lt } from "./gleam/order.mjs";
-import Dict from "./dict.mjs";
+import {
+  default as Dict,
+  fold as dict_fold,
+  get as dict_get,
+  from as dict_from_iterable,
+} from "./dict.mjs";
+import { classify } from "./gleam/dynamic.mjs";
+import { DecodeError$DecodeError } from "./gleam/dynamic/decode.mjs";
 
 const Nil = undefined;
-const NOT_FOUND = {};
 
 export function identity(x) {
   return x;
@@ -24,36 +32,22 @@ export function identity(x) {
 
 export function parse_int(value) {
   if (/^[-+]?(\d+)$/.test(value)) {
-    return new Ok(parseInt(value));
+    return Result$Ok(parseInt(value));
   } else {
-    return new Error(Nil);
+    return Result$Error(Nil);
   }
 }
 
 export function parse_float(value) {
   if (/^[-+]?(\d+)\.(\d+)([eE][-+]?\d+)?$/.test(value)) {
-    return new Ok(parseFloat(value));
+    return Result$Ok(parseFloat(value));
   } else {
-    return new Error(Nil);
+    return Result$Error(Nil);
   }
 }
 
 export function to_string(term) {
   return term.toString();
-}
-
-export function float_to_string(float) {
-  const string = float.toString().replace("+", "");
-  if (string.indexOf(".") >= 0) {
-    return string;
-  } else {
-    const index = string.indexOf("e");
-    if (index >= 0) {
-      return string.slice(0, index) + ".0" + string.slice(index);
-    } else {
-      return string + ".0";
-    }
-  }
 }
 
 export function int_to_base_string(int, base) {
@@ -100,32 +94,20 @@ const int_base_patterns = {
 
 export function int_from_base_string(string, base) {
   if (int_base_patterns[base].test(string.replace(/^-/, "").toLowerCase())) {
-    return new Error(Nil);
+    return Result$Error(Nil);
   }
 
   const result = parseInt(string, base);
 
   if (isNaN(result)) {
-    return new Error(Nil);
+    return Result$Error(Nil);
   }
 
-  return new Ok(result);
+  return Result$Ok(result);
 }
 
 export function string_replace(string, target, substitute) {
-  if (typeof string.replaceAll !== "undefined") {
-    return string.replaceAll(target, substitute);
-  }
-  // Fallback for older Node.js versions:
-  // 1. <https://stackoverflow.com/a/1144788>
-  // 2. <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#escaping>
-  // TODO: This fallback could be remove once Node.js 14 is EOL
-  // aka <https://nodejs.org/en/about/releases/> on or after 2024-04-30
-  return string.replace(
-    // $& means the whole matched string
-    new RegExp(target.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g"),
-    substitute,
-  );
+  return string.replaceAll(target, substitute);
 }
 
 export function string_reverse(string) {
@@ -151,9 +133,9 @@ export function string_length(string) {
 export function graphemes(string) {
   const iterator = graphemes_iterator(string);
   if (iterator) {
-    return List.fromArray(Array.from(iterator).map((item) => item.segment));
+    return arrayToList(Array.from(iterator).map((item) => item.segment));
   } else {
-    return List.fromArray(string.match(/./gsu));
+    return arrayToList(string.match(/./gsu));
   }
 }
 
@@ -175,9 +157,9 @@ export function pop_grapheme(string) {
     first = string.match(/./su)?.[0];
   }
   if (first) {
-    return new Ok([first, string.slice(first.length)]);
+    return Result$Ok([first, string.slice(first.length)]);
   } else {
-    return new Error(Nil);
+    return Result$Error(Nil);
   }
 }
 
@@ -202,18 +184,7 @@ export function add(a, b) {
 }
 
 export function split(xs, pattern) {
-  return List.fromArray(xs.split(pattern));
-}
-
-export function join(xs, separator) {
-  const iterator = xs[Symbol.iterator]();
-  let result = iterator.next().value || "";
-  let current = iterator.next();
-  while (!current.done) {
-    result = result + separator + current.value;
-    current = iterator.next();
-  }
-  return result;
+  return arrayToList(xs.split(pattern));
 }
 
 export function concat(xs) {
@@ -228,7 +199,11 @@ export function length(data) {
   return data.length;
 }
 
-export function string_slice(string, idx, len) {
+export function string_byte_slice(string, index, length) {
+  return string.slice(index, index + length);
+}
+
+export function string_grapheme_slice(string, idx, len) {
   if (len <= 0 || idx >= string.length) {
     return "";
   }
@@ -283,9 +258,9 @@ export function split_once(haystack, needle) {
   if (index >= 0) {
     const before = haystack.slice(0, index);
     const after = haystack.slice(index + needle.length);
-    return new Ok([before, after]);
+    return Result$Ok([before, after]);
   } else {
-    return new Error(Nil);
+    return Result$Error(Nil);
   }
 }
 
@@ -301,8 +276,10 @@ const unicode_whitespaces = [
   "\u2029", // Paragraph separator
 ].join("");
 
-const trim_start_regex = new RegExp(`^[${unicode_whitespaces}]*`);
-const trim_end_regex = new RegExp(`[${unicode_whitespaces}]*$`);
+const trim_start_regex = /* @__PURE__ */ new RegExp(
+  `^[${unicode_whitespaces}]*`,
+);
+const trim_end_regex = /* @__PURE__ */ new RegExp(`[${unicode_whitespaces}]*$`);
 
 export function trim_start(string) {
   return string.replace(trim_start_regex, "");
@@ -316,8 +293,50 @@ export function bit_array_from_string(string) {
   return toBitArray([stringBits(string)]);
 }
 
+export function bit_array_bit_size(bit_array) {
+  return bit_array.bitSize;
+}
+
+export function bit_array_byte_size(bit_array) {
+  return bit_array.byteSize;
+}
+
+export function bit_array_pad_to_bytes(bit_array) {
+  const trailingBitsCount = bit_array.bitSize % 8;
+
+  // If the bit array is a whole number of bytes it can be returned unchanged
+  if (trailingBitsCount === 0) {
+    return bit_array;
+  }
+
+  const finalByte = bit_array.byteAt(bit_array.byteSize - 1);
+
+  // The required final byte has its unused trailing bits set to zero
+  const unusedBitsCount = 8 - trailingBitsCount;
+  const correctFinalByte = (finalByte >> unusedBitsCount) << unusedBitsCount;
+
+  // If the unused bits in the final byte are already set to zero then the
+  // existing buffer can be re-used, avoiding a copy
+  if (finalByte === correctFinalByte) {
+    return new BitArray(
+      bit_array.rawBuffer,
+      bit_array.byteSize * 8,
+      bit_array.bitOffset,
+    );
+  }
+
+  // Copy the bit array into a new aligned buffer and set the correct final byte
+  const buffer = new Uint8Array(bit_array.byteSize);
+  for (let i = 0; i < buffer.length - 1; i++) {
+    buffer[i] = bit_array.byteAt(i);
+  }
+  buffer[buffer.length - 1] = correctFinalByte;
+
+  return new BitArray(buffer);
+}
+
 export function bit_array_concat(bit_arrays) {
-  return toBitArray(bit_arrays.toArray().map((b) => b.buffer));
+  return toBitArray(bit_arrays.toArray());
 }
 
 export function console_log(term) {
@@ -333,11 +352,27 @@ export function crash(message) {
 }
 
 export function bit_array_to_string(bit_array) {
+  // If the bit array isn't a whole number of bytes then return an error
+  if (bit_array.bitSize % 8 !== 0) {
+    return Result$Error(Nil);
+  }
+
   try {
     const decoder = new TextDecoder("utf-8", { fatal: true });
-    return new Ok(decoder.decode(bit_array.buffer));
+
+    if (bit_array.bitOffset === 0) {
+      return Result$Ok(decoder.decode(bit_array.rawBuffer));
+    } else {
+      // The input data isn't aligned, so copy it into a new aligned buffer so
+      // that TextDecoder can be used
+      const buffer = new Uint8Array(bit_array.byteSize);
+      for (let i = 0; i < buffer.length; i++) {
+        buffer[i] = bit_array.byteAt(i);
+      }
+      return Result$Ok(decoder.decode(buffer));
+    }
   } catch {
-    return new Error(Nil);
+    return Result$Error(Nil);
   }
 }
 
@@ -415,14 +450,12 @@ export function random_uniform() {
 export function bit_array_slice(bits, position, length) {
   const start = Math.min(position, position + length);
   const end = Math.max(position, position + length);
-  if (start < 0 || end > bits.length) return new Error(Nil);
-  const byteOffset = bits.buffer.byteOffset + start;
-  const buffer = new Uint8Array(
-    bits.buffer.buffer,
-    byteOffset,
-    Math.abs(length),
-  );
-  return new Ok(new BitArray(buffer));
+
+  if (start < 0 || end * 8 > bits.bitSize) {
+    return Result$Error(Nil);
+  }
+
+  return Result$Ok(bitArraySlice(bits, start * 8, end * 8));
 }
 
 export function bit_array_split_once(bits, pattern) {
@@ -504,7 +537,7 @@ export function codepoint(int) {
 }
 
 export function string_to_codepoint_integer_list(string) {
-  return List.fromArray(Array.from(string).map((item) => item.codePointAt(0)));
+  return arrayToList(Array.from(string).map((item) => item.codePointAt(0)));
 }
 
 export function utf_codepoint_list_to_string(utf_codepoint_integer_list) {
@@ -518,34 +551,6 @@ export function utf_codepoint_to_int(utf_codepoint) {
   return utf_codepoint.value;
 }
 
-export function new_map() {
-  return Dict.new();
-}
-
-export function map_size(map) {
-  return map.size;
-}
-
-export function map_to_list(map) {
-  return List.fromArray(map.entries());
-}
-
-export function map_remove(key, map) {
-  return map.delete(key);
-}
-
-export function map_get(map, key) {
-  const value = map.get(key, NOT_FOUND);
-  if (value === NOT_FOUND) {
-    return new Error(Nil);
-  }
-  return new Ok(value);
-}
-
-export function map_insert(key, value, map) {
-  return map.set(key, value);
-}
-
 function unsafe_percent_decode(string) {
   return decodeURIComponent(string || "");
 }
@@ -556,9 +561,9 @@ function unsafe_percent_decode_query(string) {
 
 export function percent_decode(string) {
   try {
-    return new Ok(unsafe_percent_decode(string));
+    return Result$Ok(unsafe_percent_decode(string));
   } catch {
-    return new Error(Nil);
+    return Result$Error(Nil);
   }
 }
 
@@ -577,9 +582,9 @@ export function parse_query(query) {
       const decodedValue = unsafe_percent_decode_query(value);
       pairs.push([decodedKey, decodedValue]);
     }
-    return new Ok(List.fromArray(pairs));
+    return Result$Ok(arrayToList(pairs));
   } catch {
-    return new Error(Nil);
+    return Result$Error(Nil);
   }
 }
 
@@ -593,19 +598,23 @@ const b64EncodeLookup = [
 let b64TextDecoder;
 
 // Implementation based on https://github.com/mitschabaude/fast-base64/blob/main/js.js
-export function encode64(bit_array, padding) {
+export function base64_encode(bit_array, padding) {
   b64TextDecoder ??= new TextDecoder();
 
-  const bytes = bit_array.buffer;
+  bit_array = bit_array_pad_to_bytes(bit_array);
 
-  const m = bytes.length;
+  const m = bit_array.byteSize;
   const k = m % 3;
   const n = Math.floor(m / 3) * 4 + (k && k + 1);
   const N = Math.ceil(m / 3) * 4;
   const encoded = new Uint8Array(N);
 
   for (let i = 0, j = 0; j < m; i += 4, j += 3) {
-    const y = (bytes[j] << 16) + (bytes[j + 1] << 8) + (bytes[j + 2] | 0);
+    const y =
+      (bit_array.byteAt(j) << 16) +
+      (bit_array.byteAt(j + 1) << 8) +
+      (bit_array.byteAt(j + 2) | 0);
+
     encoded[i] = b64EncodeLookup[y >> 18];
     encoded[i + 1] = b64EncodeLookup[(y >> 12) & 0x3f];
     encoded[i + 2] = b64EncodeLookup[(y >> 6) & 0x3f];
@@ -626,7 +635,7 @@ export function encode64(bit_array, padding) {
 }
 
 // From https://developer.mozilla.org/en-US/docs/Glossary/Base64
-export function decode64(sBase64) {
+export function base64_decode(sBase64) {
   try {
     const binString = atob(sBase64);
     const length = binString.length;
@@ -634,9 +643,9 @@ export function decode64(sBase64) {
     for (let i = 0; i < length; i++) {
       array[i] = binString.charCodeAt(i);
     }
-    return new Ok(new BitArray(array));
+    return Result$Ok(new BitArray(array));
   } catch {
-    return new Error(Nil);
+    return Result$Error(Nil);
   }
 }
 
@@ -645,9 +654,9 @@ export function classify_dynamic(data) {
     return "String";
   } else if (typeof data === "boolean") {
     return "Bool";
-  } else if (data instanceof Result) {
+  } else if (isResult(data)) {
     return "Result";
-  } else if (data instanceof List) {
+  } else if (isList(data)) {
     return "List";
   } else if (data instanceof BitArray) {
     return "BitArray";
@@ -656,11 +665,11 @@ export function classify_dynamic(data) {
   } else if (Number.isInteger(data)) {
     return "Int";
   } else if (Array.isArray(data)) {
-    return `Tuple of ${data.length} elements`;
+    return `Array`;
   } else if (typeof data === "number") {
     return "Float";
   } else if (data === null) {
-    return "Null";
+    return "Nil";
   } else if (data === undefined) {
     return "Nil";
   } else {
@@ -669,319 +678,339 @@ export function classify_dynamic(data) {
   }
 }
 
-function decoder_error(expected, got) {
-  return decoder_error_no_classify(expected, classify_dynamic(got));
-}
-
-function decoder_error_no_classify(expected, got) {
-  return new Error(
-    List.fromArray([new DecodeError(expected, got, List.fromArray([]))]),
-  );
-}
-
-export function decode_string(data) {
-  return typeof data === "string"
-    ? new Ok(data)
-    : decoder_error("String", data);
-}
-
-export function decode_int(data) {
-  return Number.isInteger(data) ? new Ok(data) : decoder_error("Int", data);
-}
-
-export function decode_float(data) {
-  return typeof data === "number" ? new Ok(data) : decoder_error("Float", data);
-}
-
-export function decode_bool(data) {
-  return typeof data === "boolean" ? new Ok(data) : decoder_error("Bool", data);
-}
-
-export function decode_bit_array(data) {
-  if (data instanceof BitArray) {
-    return new Ok(data);
-  }
-  if (data instanceof Uint8Array) {
-    return new Ok(new BitArray(data));
-  }
-  return decoder_error("BitArray", data);
-}
-
-export function decode_tuple(data) {
-  return Array.isArray(data) ? new Ok(data) : decoder_error("Tuple", data);
-}
-
-export function decode_tuple2(data) {
-  return decode_tupleN(data, 2);
-}
-
-export function decode_tuple3(data) {
-  return decode_tupleN(data, 3);
-}
-
-export function decode_tuple4(data) {
-  return decode_tupleN(data, 4);
-}
-
-export function decode_tuple5(data) {
-  return decode_tupleN(data, 5);
-}
-
-export function decode_tuple6(data) {
-  return decode_tupleN(data, 6);
-}
-
-function decode_tupleN(data, n) {
-  if (Array.isArray(data) && data.length == n) {
-    return new Ok(data);
-  }
-
-  const list = decode_exact_length_list(data, n);
-  if (list) return new Ok(list);
-
-  return decoder_error(`Tuple of ${n} elements`, data);
-}
-
-function decode_exact_length_list(data, n) {
-  if (!(data instanceof List)) return;
-
-  const elements = [];
-  let current = data;
-
-  for (let i = 0; i < n; i++) {
-    if (!(current instanceof NonEmpty)) break;
-    elements.push(current.head);
-    current = current.tail;
-  }
-
-  if (elements.length === n && !(current instanceof NonEmpty)) return elements;
-}
-
-export function tuple_get(data, index) {
-  return index >= 0 && data.length > index
-    ? new Ok(data[index])
-    : new Error(Nil);
-}
-
-export function decode_list(data) {
-  if (Array.isArray(data)) {
-    return new Ok(List.fromArray(data));
-  }
-  return data instanceof List ? new Ok(data) : decoder_error("List", data);
-}
-
-export function decode_result(data) {
-  return data instanceof Result ? new Ok(data) : decoder_error("Result", data);
-}
-
-export function decode_map(data) {
-  if (data instanceof Dict) {
-    return new Ok(data);
-  }
-  if (data instanceof Map || data instanceof WeakMap) {
-    return new Ok(Dict.fromMap(data));
-  }
-  if (data == null) {
-    return decoder_error("Dict", data);
-  }
-  if (typeof data !== "object") {
-    return decoder_error("Dict", data);
-  }
-  const proto = Object.getPrototypeOf(data);
-  if (proto === Object.prototype || proto === null) {
-    return new Ok(Dict.fromObject(data));
-  }
-  return decoder_error("Dict", data);
-}
-
-export function decode_option(data, decoder) {
-  if (data === null || data === undefined || data instanceof None)
-    return new Ok(new None());
-  if (data instanceof Some) data = data[0];
-  const result = decoder(data);
-  if (result.isOk()) {
-    return new Ok(new Some(result[0]));
-  } else {
-    return result;
-  }
-}
-
-export function decode_field(value, name) {
-  const not_a_map_error = () => decoder_error("Dict", value);
-
-  if (
-    value instanceof Dict ||
-    value instanceof WeakMap ||
-    value instanceof Map
-  ) {
-    const entry = map_get(value, name);
-    return new Ok(entry.isOk() ? new Some(entry[0]) : new None());
-  } else if (value === null) {
-    return not_a_map_error();
-  } else if (Object.getPrototypeOf(value) == Object.prototype) {
-    return try_get_field(value, name, () => new Ok(new None()));
-  } else {
-    return try_get_field(value, name, not_a_map_error);
-  }
-}
-
-function try_get_field(value, field, or_else) {
-  try {
-    return field in value ? new Ok(new Some(value[field])) : or_else();
-  } catch {
-    return or_else();
-  }
-}
-
 export function byte_size(string) {
   return new TextEncoder().encode(string).length;
 }
 
-// In Javascript bitwise operations convert numbers to a sequence of 32 bits
-// while Erlang uses arbitrary precision.
-// To get around this problem and get consistent results use BigInt and then
-// downcast the value back to a Number value.
+// In JavaScript, bitwise operations convert numbers to a sequence of 32 bits,
+// while Erlang uses arbitrary precision integers.
+//
+// To get around this, every function here follows this pattern:
+//
+// 1. If both values fit in the 32-bit signed integer range, use the standard
+//    JavaScript bitwise operators directly.
+//
+//    Note: For bitwise_shift_left, the result also needs to fit in 32 bits,
+//    so we use floating-point multiplication instead.
+//
+// 2. If either value falls outside the safe integer range (-2^53, 2^53),
+//    fall back to BigInt arithmetic, then downcast the result back to a Number.
+//
+// 3. Otherwise (safe integers outside the 32-bit range), we split the operation
+//    across the high 21 bits and low 32 bits individually:
+//
+//        x1 $ x2 = ((hi(x1) $ hi(x2)) << 32) | (lo(x1) $ lo(x2))
+//
+//    where `$` is a bitwise operator.
+//
+//    We split both values into a `hi` and a `lo` part:
+//
+//        hi(x) = Math.floor(x / 2^32)    the upper 21 bits
+//        lo(x) = x >>> 0                 the lower 32 bits (as unsigned)
+//
+//    For `hi`, we use that shifts are equal to multiplication/division with
+//    powers of two to get around the 32-bit range limitation. Math.floor is
+//    used instead of truncation since arithmetic right shift fills with the
+//    sign bit. For negative numbers, the discarded bits were non-zero
+//    (representing a positive fractional part), so discarding them makes the
+//    result strictly more negative, i.e. rounding away from 0.
+//
+//    This works because bitwise operators are distributive across bit ranges:
+//
+//        x1 $ x2 = (hi(x1) $ hi(x2)) << 32 | (lo(x1) $ lo(x2))
+//                = (hi(x1) $ hi(x2)) * 2^32 + (lo(x1) $ lo(x2))
+//
+//    JavaScript bitwise operators truncate inputs to signed 32-bit integers,
+//    so `x1 $ x2` already computes `lo(x1) $ lo(x2)` — we just need to
+//    reinterpret the signed result as unsigned using `>>> 0`:
+//
+//        lo(x1) $ lo(x2) = (x1 $ x2) >>> 0 = lo(x1 $ x2)
+//        => x1 $ x2 = (hi(x1) $ hi(x2)) * 2^32 + lo(x1 $ x2).
+//
+const MIN_I32 = -(2 ** 31); // -2147483648
+const MAX_I32 = 2 ** 31 - 1; //  2147483647
+const U32 = 2 ** 32;
+const MAX_SAFE = Number.MAX_SAFE_INTEGER;
+const MIN_SAFE = Number.MIN_SAFE_INTEGER;
 
 export function bitwise_and(x, y) {
-  return Number(BigInt(x) & BigInt(y));
-}
+  if (x >= MIN_I32 && x <= MAX_I32 && y >= MIN_I32 && y <= MAX_I32) return x & y;
+  if (x < MIN_SAFE || x > MAX_SAFE || y < MIN_SAFE || y > MAX_SAFE)
+    return Number(BigInt(x) & BigInt(y));
 
-export function bitwise_not(x) {
-  return Number(~BigInt(x));
+  return (Math.floor(x / U32) & Math.floor(y / U32)) * U32 + ((x & y) >>> 0);
 }
 
 export function bitwise_or(x, y) {
-  return Number(BigInt(x) | BigInt(y));
+  if (x >= MIN_I32 && x <= MAX_I32 && y >= MIN_I32 && y <= MAX_I32) return x | y;
+  if (x < MIN_SAFE || x > MAX_SAFE || y < MIN_SAFE || y > MAX_SAFE)
+    return Number(BigInt(x) | BigInt(y));
+
+  return (Math.floor(x / U32) | Math.floor(y / U32)) * U32 + ((x | y) >>> 0);
 }
 
 export function bitwise_exclusive_or(x, y) {
-  return Number(BigInt(x) ^ BigInt(y));
+  if (x >= MIN_I32 && x <= MAX_I32 && y >= MIN_I32 && y <= MAX_I32) return x ^ y;
+  if (x < MIN_SAFE || x > MAX_SAFE || y < MIN_SAFE || y > MAX_SAFE)
+    return Number(BigInt(x) ^ BigInt(y));
+
+  return (Math.floor(x / U32) ^ Math.floor(y / U32)) * U32 + ((x ^ y) >>> 0);
 }
 
-export function bitwise_shift_left(x, y) {
-  return Number(BigInt(x) << BigInt(y));
+export function bitwise_not(x) {
+  if (x >= MIN_I32 && x <= MAX_I32) return ~x;
+  if (x < MIN_SAFE || x > MAX_SAFE) return Number(~BigInt(x));
+
+  return ~Math.floor(x / U32) * U32 + (~x >>> 0);
 }
 
 export function bitwise_shift_right(x, y) {
-  return Number(BigInt(x) >> BigInt(y));
+  if (y === 0) return x;
+  if (y < 0) return bitwise_shift_left(x, -y);
+  if (y < 32 && x >= MIN_I32 && x <= MAX_I32) return x >> y;
+  if (x < MIN_SAFE || x > MAX_SAFE) return Number(BigInt(x) >> BigInt(y));
+
+  const ahi = Math.floor(x / U32);
+
+  // Shifting right by y < 32 moves bits across the hi/lo boundary:
+  //
+  //   before: [ hi (21 bits) | lo (32 bits) ]
+  //   after:  [ hi >> y      | (hi's low y bits) ++ (lo >> y) ]
+  //
+  // The new low word has two sources:
+  //   - lo's bits shifted down:        x >>> y   (>>> treats x as unsigned 32-bit)
+  //   - hi's bottom y bits shifted up: ahi << (32 - y).
+  if (y < 32) return (ahi >> y) * U32 + (((x >>> y) | (ahi << (32 - y))) >>> 0);
+
+  // Shifting by >= 32 wipes out the entire low word. The result is just the
+  // high word shifted right by the remaining amount.
+  return ahi >> (y - 32);
+}
+
+export function bitwise_shift_left(x, y) {
+  if (y === 0) return x;
+  if (y < 0) return bitwise_shift_right(x, -y);
+  if (y < 31) return x * (1 << y);
+  return x * 2 ** y;
 }
 
 export function inspect(v) {
-  const t = typeof v;
-  if (v === true) return "True";
-  if (v === false) return "False";
-  if (v === null) return "//js(null)";
-  if (v === undefined) return "Nil";
-  if (t === "string") return inspectString(v);
-  if (t === "bigint" || Number.isInteger(v)) return v.toString();
-  if (t === "number") return float_to_string(v);
-  if (Array.isArray(v)) return `#(${v.map(inspect).join(", ")})`;
-  if (v instanceof List) return inspectList(v);
-  if (v instanceof UtfCodepoint) return inspectUtfCodepoint(v);
-  if (v instanceof BitArray) return inspectBitArray(v);
-  if (v instanceof CustomType) return inspectCustomType(v);
-  if (v instanceof Dict) return inspectDict(v);
-  if (v instanceof Set) return `//js(Set(${[...v].map(inspect).join(", ")}))`;
-  if (v instanceof RegExp) return `//js(${v})`;
-  if (v instanceof Date) return `//js(Date("${v.toISOString()}"))`;
-  if (v instanceof Function) {
-    const args = [];
-    for (const i of Array(v.length).keys())
-      args.push(String.fromCharCode(i + 97));
-    return `//fn(${args.join(", ")}) { ... }`;
-  }
-  return inspectObject(v);
+  return new Inspector().inspect(v);
 }
 
-function inspectString(str) {
-  let new_str = '"';
-  for (let i = 0; i < str.length; i++) {
-    let char = str[i];
-    switch (char) {
-      case "\n":
-        new_str += "\\n";
-        break;
-      case "\r":
-        new_str += "\\r";
-        break;
-      case "\t":
-        new_str += "\\t";
-        break;
-      case "\f":
-        new_str += "\\f";
-        break;
-      case "\\":
-        new_str += "\\\\";
-        break;
-      case '"':
-        new_str += '\\"';
-        break;
-      default:
-        if (char < " " || (char > "~" && char < "\u{00A0}")) {
-          new_str +=
-            "\\u{" +
-            char.charCodeAt(0).toString(16).toUpperCase().padStart(4, "0") +
-            "}";
-        } else {
-          new_str += char;
-        }
+export function float_to_string(float) {
+  const string = float.toString().replace("+", "");
+  if (string.indexOf(".") >= 0) {
+    return string;
+  } else {
+    const index = string.indexOf("e");
+    if (index >= 0) {
+      return string.slice(0, index) + ".0" + string.slice(index);
+    } else {
+      return string + ".0";
     }
   }
-  new_str += '"';
-  return new_str;
 }
 
-function inspectDict(map) {
-  let body = "dict.from_list([";
-  let first = true;
-  map.forEach((value, key) => {
-    if (!first) body = body + ", ";
-    body = body + "#(" + inspect(key) + ", " + inspect(value) + ")";
-    first = false;
-  });
-  return body + "])";
-}
+class Inspector {
+  #references = new Set();
 
-function inspectObject(v) {
-  const name = Object.getPrototypeOf(v)?.constructor?.name || "Object";
-  const props = [];
-  for (const k of Object.keys(v)) {
-    props.push(`${inspect(k)}: ${inspect(v[k])}`);
+  inspect(v) {
+    const t = typeof v;
+    if (v === true) return "True";
+    if (v === false) return "False";
+    if (v === null) return "//js(null)";
+    if (v === undefined) return "Nil";
+    if (t === "string") return this.#string(v);
+    if (t === "bigint" || Number.isInteger(v)) return v.toString();
+    if (t === "number") return float_to_string(v);
+    if (v instanceof UtfCodepoint) return this.#utfCodepoint(v);
+    if (v instanceof BitArray) return this.#bit_array(v);
+    if (v instanceof RegExp) return `//js(${v})`;
+    if (v instanceof Date) return `//js(Date("${v.toISOString()}"))`;
+    if (v instanceof globalThis.Error) return `//js(${v.toString()})`;
+    if (v instanceof Function) {
+      const args = [];
+      for (const i of Array(v.length).keys())
+        args.push(String.fromCharCode(i + 97));
+      return `//fn(${args.join(", ")}) { ... }`;
+    }
+
+    if (this.#references.size === this.#references.add(v).size) {
+      return "//js(circular reference)";
+    }
+
+    let printed;
+    if (Array.isArray(v)) {
+      printed = `#(${v.map((v) => this.inspect(v)).join(", ")})`;
+    } else if (isList(v)) {
+      printed = this.#list(v);
+    } else if (v instanceof CustomType) {
+      printed = this.#customType(v);
+    } else if (v instanceof Dict) {
+      printed = this.#dict(v);
+    } else if (v instanceof Set) {
+      return `//js(Set(${[...v].map((v) => this.inspect(v)).join(", ")}))`;
+    } else {
+      printed = this.#object(v);
+    }
+    this.#references.delete(v);
+    return printed;
   }
-  const body = props.length ? " " + props.join(", ") + " " : "";
-  const head = name === "Object" ? "" : name + " ";
-  return `//js(${head}{${body}})`;
-}
 
-function inspectCustomType(record) {
-  const props = Object.keys(record)
-    .map((label) => {
-      const value = inspect(record[label]);
-      return isNaN(parseInt(label)) ? `${label}: ${value}` : value;
-    })
-    .join(", ");
-  return props
-    ? `${record.constructor.name}(${props})`
-    : record.constructor.name;
-}
+  #object(v) {
+    const name = Object.getPrototypeOf(v)?.constructor?.name || "Object";
+    const props = [];
+    for (const k of Object.keys(v)) {
+      props.push(`${this.inspect(k)}: ${this.inspect(v[k])}`);
+    }
+    const body = props.length ? " " + props.join(", ") + " " : "";
+    const head = name === "Object" ? "" : name + " ";
+    return `//js(${head}{${body}})`;
+  }
 
-export function inspectList(list) {
-  return `[${list.toArray().map(inspect).join(", ")}]`;
-}
+  #dict(map) {
+    let body = "dict.from_list([";
+    let first = true;
 
-export function inspectBitArray(bits) {
-  return `<<${Array.from(bits.buffer).join(", ")}>>`;
-}
+    body = dict_fold(map, body, (body, key, value) => {
+      if (!first) body = body + ", ";
+      first = false;
+      return body + "#(" + this.inspect(key) + ", " + this.inspect(value) + ")";
+    });
 
-export function inspectUtfCodepoint(codepoint) {
-  return `//utfcodepoint(${String.fromCodePoint(codepoint.value)})`;
+    return body + "])";
+  }
+
+  #customType(record) {
+    const props = Object.keys(record)
+      .map((label) => {
+        const value = this.inspect(record[label]);
+        return isNaN(parseInt(label)) ? `${label}: ${value}` : value;
+      })
+      .join(", ");
+    return props
+      ? `${record.constructor.name}(${props})`
+      : record.constructor.name;
+  }
+
+  #list(list) {
+    if (List$isEmpty(list)) {
+      return "[]";
+    }
+
+    let char_out = 'charlist.from_string("';
+    let list_out = "[";
+
+    let current = list;
+    while (List$isNonEmpty(current)) {
+      let element = current.head;
+      current = current.tail;
+
+      if (list_out !== "[") {
+        list_out += ", ";
+      }
+      list_out += this.inspect(element);
+
+      if (char_out) {
+        if (Number.isInteger(element) && element >= 32 && element <= 126) {
+          char_out += String.fromCharCode(element);
+        } else {
+          char_out = null;
+        }
+      }
+    }
+
+    if (char_out) {
+      return char_out + '")';
+    } else {
+      return list_out + "]";
+    }
+  }
+
+  #string(str) {
+    let new_str = '"';
+    for (let i = 0; i < str.length; i++) {
+      const char = str[i];
+      switch (char) {
+        case "\n":
+          new_str += "\\n";
+          break;
+        case "\r":
+          new_str += "\\r";
+          break;
+        case "\t":
+          new_str += "\\t";
+          break;
+        case "\f":
+          new_str += "\\f";
+          break;
+        case "\\":
+          new_str += "\\\\";
+          break;
+        case '"':
+          new_str += '\\"';
+          break;
+        default:
+          if (char < " " || (char > "~" && char < "\u{00A0}")) {
+            new_str +=
+              "\\u{" +
+              char.charCodeAt(0).toString(16).toUpperCase().padStart(4, "0") +
+              "}";
+          } else {
+            new_str += char;
+          }
+      }
+    }
+    new_str += '"';
+    return new_str;
+  }
+
+  #utfCodepoint(codepoint) {
+    return `//utfcodepoint(${String.fromCodePoint(codepoint.value)})`;
+  }
+
+  #bit_array(bits) {
+    if (bits.bitSize === 0) {
+      return "<<>>";
+    }
+
+    let acc = "<<";
+
+    for (let i = 0; i < bits.byteSize - 1; i++) {
+      acc += bits.byteAt(i).toString();
+      acc += ", ";
+    }
+
+    if (bits.byteSize * 8 === bits.bitSize) {
+      acc += bits.byteAt(bits.byteSize - 1).toString();
+    } else {
+      const trailingBitsCount = bits.bitSize % 8;
+      acc += bits.byteAt(bits.byteSize - 1) >> (8 - trailingBitsCount);
+      acc += `:size(${trailingBitsCount})`;
+    }
+
+    acc += ">>";
+    return acc;
+  }
 }
 
 export function base16_encode(bit_array) {
+  const trailingBitsCount = bit_array.bitSize % 8;
+
   let result = "";
-  for (const byte of bit_array.buffer) {
+
+  for (let i = 0; i < bit_array.byteSize; i++) {
+    let byte = bit_array.byteAt(i);
+
+    if (i === bit_array.byteSize - 1 && trailingBitsCount !== 0) {
+      const unusedBitsCount = 8 - trailingBitsCount;
+      byte = (byte >> unusedBitsCount) << unusedBitsCount;
+    }
+
     result += byte.toString(16).padStart(2, "0").toUpperCase();
   }
+
   return result;
 }
 
@@ -990,45 +1019,39 @@ export function base16_decode(string) {
   for (let i = 0; i < string.length; i += 2) {
     const a = parseInt(string[i], 16);
     const b = parseInt(string[i + 1], 16);
-    if (isNaN(a) || isNaN(b)) return new Error(Nil);
+    if (isNaN(a) || isNaN(b)) return Result$Error(Nil);
     bytes[i / 2] = a * 16 + b;
   }
-  return new Ok(new BitArray(bytes));
+  return Result$Ok(new BitArray(bytes));
 }
 
-export function bit_array_inspect(bits, acc) {
-  return `${acc}${[...bits.buffer].join(", ")}`;
-}
+export function bit_array_to_int_and_size(bits) {
+  const trailingBitsCount = bits.bitSize % 8;
+  const unusedBitsCount = trailingBitsCount === 0 ? 0 : 8 - trailingBitsCount;
 
-export function bit_array_compare(first, second) {
-  for (let i = 0; i < first.length; i++) {
-    if (i >= second.length) {
-      return new Gt(); // first has more items
-    }
-    const f = first.buffer[i];
-    const s = second.buffer[i];
-    if (f > s) {
-      return new Gt();
-    }
-    if (f < s) {
-      return new Lt();
-    }
-  }
-  // This means that either first did not have any items
-  // or all items in first were equal to second.
-  if (first.length === second.length) {
-    return new Eq();
-  }
-  return new Lt(); // second has more items
+  return [bits.byteAt(0) >> unusedBitsCount, bits.bitSize];
 }
 
 export function bit_array_starts_with(bits, prefix) {
-  if (prefix.length > bits.length) {
+  if (prefix.bitSize > bits.bitSize) {
     return false;
   }
 
-  for (let i = 0; i < prefix.length; i++) {
-    if (bits.buffer[i] !== prefix.buffer[i]) {
+  // Check any whole bytes
+  const byteCount = Math.trunc(prefix.bitSize / 8);
+  for (let i = 0; i < byteCount; i++) {
+    if (bits.byteAt(i) !== prefix.byteAt(i)) {
+      return false;
+    }
+  }
+
+  // Check any trailing bits at the end of the prefix
+  if (prefix.bitSize % 8 !== 0) {
+    const unusedBitsCount = 8 - (prefix.bitSize % 8);
+    if (
+      bits.byteAt(byteCount) >> unusedBitsCount !==
+      prefix.byteAt(byteCount) >> unusedBitsCount
+    ) {
       return false;
     }
   }
@@ -1047,4 +1070,138 @@ export function log(x) {
 
 export function exp(x) {
   return Math.exp(x);
+}
+
+export function list_to_array(list) {
+  let current = list;
+  let array = [];
+  while (List$isNonEmpty(current)) {
+    array.push(current.head);
+    current = current.tail;
+  }
+  return array;
+}
+
+export function index(data, key) {
+  // Dictionaries and dictionary-like objects can be indexed
+  if (data instanceof Dict) {
+    const result = dict_get(data, key);
+    return Result$Ok(result.isOk() ? new Some(result[0]) : new None());
+  }
+
+  if (data instanceof WeakMap || data instanceof Map) {
+    const token = {};
+    const entry = data.get(key, token);
+    if (entry === token) return Result$Ok(new None());
+    return Result$Ok(new Some(entry));
+  }
+
+  const key_is_int = Number.isInteger(key);
+
+  // Only elements 0-7 of lists can be indexed, negative indices are not allowed
+  if (key_is_int && key >= 0 && key < 8 && isList(data)) {
+    let i = 0;
+    for (const value of data) {
+      if (i === key) return Result$Ok(new Some(value));
+      i++;
+    }
+    return Result$Error("Indexable");
+  }
+
+  // Arrays and objects can be indexed
+  if (
+    (key_is_int && Array.isArray(data)) ||
+    (data && typeof data === "object") ||
+    (data && Object.getPrototypeOf(data) === Object.prototype)
+  ) {
+    if (key in data) return Result$Ok(new Some(data[key]));
+    return Result$Ok(new None());
+  }
+
+  return Result$Error(key_is_int ? "Indexable" : "Dict");
+}
+
+export function list(data, decode, pushPath, index, emptyList) {
+  if (!(isList(data) || Array.isArray(data))) {
+    const error = DecodeError$DecodeError("List", classify(data), emptyList);
+    return [emptyList, arrayToList([error])];
+  }
+
+  const decoded = [];
+
+  for (const element of data) {
+    const layer = decode(element);
+    const [out, errors] = layer;
+
+    if (List$isNonEmpty(errors)) {
+      const [_, errors] = pushPath(layer, index.toString());
+      return [emptyList, errors];
+    }
+    decoded.push(out);
+    index++;
+  }
+
+  return [arrayToList(decoded), emptyList];
+}
+
+export function dict(data) {
+  if (data instanceof Dict) {
+    return Result$Ok(data);
+  }
+  if (data instanceof Map || data instanceof WeakMap) {
+    return Result$Ok(dict_from_iterable(data));
+  }
+  if (data == null) {
+    return Result$Error("Dict");
+  }
+  if (typeof data !== "object") {
+    return Result$Error("Dict");
+  }
+  const proto = Object.getPrototypeOf(data);
+  if (proto === Object.prototype || proto === null) {
+    return Result$Ok(dict_from_iterable(Object.entries(data)));
+  }
+  return Result$Error("Dict");
+}
+
+export function bit_array(data) {
+  if (data instanceof BitArray) return Result$Ok(data);
+  if (data instanceof Uint8Array) return Result$Ok(new BitArray(data));
+  return Result$Error(new BitArray(new Uint8Array()));
+}
+
+export function float(data) {
+  if (typeof data === "number") return Result$Ok(data);
+  return Result$Error(0.0);
+}
+
+export function int(data) {
+  if (Number.isInteger(data)) return Result$Ok(data);
+  return Result$Error(0);
+}
+
+export function string(data) {
+  if (typeof data === "string") return Result$Ok(data);
+  return Result$Error("");
+}
+
+export function is_null(data) {
+  return data === null || data === undefined;
+}
+
+function arrayToList(array) {
+  let list = List$Empty();
+  let i = array.length;
+  while (i--) {
+    list = List$NonEmpty(array[i], list);
+  }
+  return list;
+}
+
+function isList(data) {
+  return List$isEmpty(data) || List$isNonEmpty(data);
+}
+
+function isResult(data) {
+  return Result$isOk(data) || Result$isError(data);
 }

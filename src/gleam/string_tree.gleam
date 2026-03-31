@@ -1,7 +1,7 @@
 import gleam/list
 
 /// `StringTree` is a type used for efficiently building text content to be
-/// written to a file or a socket. Internally it is represented as tree so to
+/// written to a file or a socket. Internally it is represented as a tree so to
 /// append or prepend to a string tree is a constant time operation that
 /// allocates a new node in the tree without copying any of the content. When
 /// writing to an output stream the tree is traversed and the content is sent
@@ -84,7 +84,7 @@ pub fn concat(trees: List(StringTree)) -> StringTree
 @external(javascript, "../gleam_stdlib.mjs", "identity")
 pub fn from_string(string: String) -> StringTree
 
-/// Turns a `StringTree` into a `String`
+/// Turns a `StringTree` into a `String`.
 ///
 /// This function is implemented natively by the virtual machine and is highly
 /// optimised.
@@ -169,13 +169,11 @@ pub fn replace(
 /// ## Examples
 ///
 /// ```gleam
-/// from_strings(["a", "b"]) == from_string("ab")
-/// // -> False
+/// assert from_strings(["a", "b"]) != from_string("ab")
 /// ```
 ///
 /// ```gleam
-/// is_equal(from_strings(["a", "b"]), from_string("ab"))
-/// // -> True
+/// assert is_equal(from_strings(["a", "b"]), from_string("ab"))
 /// ```
 ///
 @external(erlang, "string", "equal")
@@ -188,18 +186,15 @@ pub fn is_equal(a: StringTree, b: StringTree) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// from_string("ok") |> is_empty
-/// // -> False
+/// assert !{ from_string("ok") |> is_empty }
 /// ```
 ///
 /// ```gleam
-/// from_string("") |> is_empty
-/// // -> True
+/// assert from_string("") |> is_empty
 /// ```
 ///
 /// ```gleam
-/// from_strings([]) |> is_empty
-/// // -> True
+/// assert from_strings([]) |> is_empty
 /// ```
 ///
 @external(erlang, "string", "is_empty")
