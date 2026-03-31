@@ -188,6 +188,120 @@ pub fn slice_large_error_test() {
     == Error(Nil)
 }
 
+pub fn split_once_middle_test() {
+  assert <<0, 1, 2>>
+    |> bit_array.split_once(<<1>>)
+    == Ok(#(<<0>>, <<2>>))
+}
+
+pub fn split_once_beginning_test() {
+  assert <<0, 1, 2>>
+    |> bit_array.split_once(<<0>>)
+    == Ok(#(<<>>, <<1, 2>>))
+}
+
+pub fn split_once_end_test() {
+  assert <<0, 1, 2>>
+    |> bit_array.split_once(<<2>>)
+    == Ok(#(<<0, 1>>, <<>>))
+}
+
+pub fn split_once_multi_byte_separator_test() {
+  assert <<0, 1, 0, 2, 0, 3>>
+    |> bit_array.split_once(<<0, 2>>)
+    == Ok(#(<<0, 1>>, <<0, 3>>))
+}
+
+pub fn split_once_empty_haystack_test() {
+  assert <<>>
+    |> bit_array.split_once(<<1>>)
+    == Error(Nil)
+}
+
+pub fn split_once_empty_separator_test() {
+  assert <<0, 1, 2, 0, 3, 4, 5>>
+    |> bit_array.split_once(<<>>)
+    == Error(Nil)
+}
+
+pub fn split_once_separator_equals_haystack_test() {
+  assert <<1>>
+    |> bit_array.split_once(<<1>>)
+    == Error(Nil)
+}
+
+pub fn split_once_no_match_test() {
+  assert <<0>>
+    |> bit_array.split_once(<<1>>)
+    == Error(Nil)
+}
+
+// This test is target specific since it's using non byte-aligned BitArrays
+// and those are not supported on the JavaScript target.
+@target(erlang)
+pub fn split_once_unaligned_test() {
+  assert <<0, 1, 2:7>>
+    |> bit_array.split_once(<<1>>)
+    == Error(Nil)
+}
+
+pub fn split_string_test() {
+  assert <<"hello":utf8>>
+    |> bit_array.split(<<"l":utf8>>)
+    == Ok([<<"he":utf8>>, <<"o":utf8>>])
+}
+
+pub fn split_multiple_matches_test() {
+  assert <<0, 1, 0, 2, 0, 3>>
+    |> bit_array.split(<<0>>)
+    == Ok([<<1>>, <<2>>, <<3>>])
+}
+
+pub fn split_multi_byte_separator_test() {
+  assert <<0, 1, 0, 2, 0, 3>>
+    |> bit_array.split(<<0, 2>>)
+    == Ok([<<0, 1>>, <<0, 3>>])
+}
+
+pub fn split_trailing_separator_test() {
+  assert <<1, 0>>
+    |> bit_array.split(<<0>>)
+    == Ok([<<1>>])
+}
+
+pub fn split_leading_separator_test() {
+  assert <<1, 0>>
+    |> bit_array.split(<<1>>)
+    == Ok([<<0>>])
+}
+
+pub fn split_no_match_test() {
+  assert <<1>>
+    |> bit_array.split(<<0>>)
+    == Ok([<<1>>])
+}
+
+pub fn split_separator_equals_haystack_test() {
+  assert <<1, 2>>
+    |> bit_array.split(<<1, 2>>)
+    == Ok([])
+}
+
+pub fn split_empty_separator_test() {
+  assert <<0, 1, 2, 0, 3, 4, 5>>
+    |> bit_array.split(<<>>)
+    == Error(Nil)
+}
+
+// This test is target specific since it's using non byte-aligned BitArrays
+// and those are not supported on the JavaScript target.
+@target(erlang)
+pub fn split_unaligned_test() {
+  assert <<0, 1, 2:7>>
+    |> bit_array.split(<<1>>)
+    == Error(Nil)
+}
+
 pub fn to_string_empty_test() {
   assert bit_array.to_string(<<>>) == Ok("")
 }

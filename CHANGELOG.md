@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.71.0 - Unreleased
+
+- The `bit_array` module gains the `split` and `split_once` functions.
+
 ## v0.70.0 - 2026-03-07
 
 - Fixed a bug where `uri.parse` would incorrectly handle uppercase schemes on
