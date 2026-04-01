@@ -859,16 +859,16 @@ pub fn byte_size(string: String) -> Int
 /// ## Examples
 ///
 /// ```gleam
-/// assert trim_prefix("gleamlucy", "gleam") == "lucy"
+/// assert remove_prefix("gleamlucy", "gleam") == "lucy"
 /// ```
 ///
 /// ```gleam
-/// assert trim_prefix("lucygleam", "gleam") == "lucygleam"
+/// assert remove_prefix("lucygleam", "gleam") == "lucygleam"
 /// ```
 ///
-@external(erlang, "gleam_stdlib", "string_trim_prefix")
-@external(javascript, "../gleam_stdlib.mjs", "string_trim_prefix")
-pub fn trim_prefix(string: String, prefix prefix: String) -> String
+@external(erlang, "gleam_stdlib", "string_remove_prefix")
+@external(javascript, "../gleam_stdlib.mjs", "string_remove_prefix")
+pub fn remove_prefix(string: String, prefix prefix: String) -> String
 
 /// Removes the given suffix from the end of a `String`, if present.
 ///
@@ -878,13 +878,13 @@ pub fn trim_prefix(string: String, prefix prefix: String) -> String
 /// ## Examples
 ///
 /// ```gleam
-/// assert trim_suffix("lucygleam", "gleam") == "lucy"
+/// assert remove_suffix("lucygleam", "gleam") == "lucy"
 /// ```
 ///
 /// ```gleam
-/// assert trim_suffix("gleamlucy", "gleam") == "gleamlucy"
+/// assert remove_suffix("gleamlucy", "gleam") == "gleamlucy"
 /// ```
 ///
-@external(erlang, "gleam_stdlib", "string_trim_suffix")
-@external(javascript, "../gleam_stdlib.mjs", "string_trim_suffix")
-pub fn trim_suffix(string: String, suffix suffix: String) -> String
+@external(erlang, "gleam_stdlib", "string_remove_suffix")
+@external(javascript, "../gleam_stdlib.mjs", "string_remove_suffix")
+pub fn remove_suffix(string: String, suffix suffix: String) -> String

@@ -2,7 +2,7 @@
 
 ## v0.71.0 - 2026-04-01
 
-- The `string` module gains the `trim_prefix` and `trim_suffix` functions.
+- The `string` module gains the `remove_prefix` and `remove_suffix` functions.
 
 ## v0.70.0 - 2026-03-07
 

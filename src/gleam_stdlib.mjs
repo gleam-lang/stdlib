@@ -1135,14 +1135,14 @@ function isResult(data) {
   return Result$isOk(data) || Result$isError(data);
 }
 
-export function string_trim_prefix(string, prefix) {
+export function string_remove_prefix(string, prefix) {
   if (string.startsWith(prefix)) {
     return string.slice(prefix.length);
   }
   return string;
 }
 
-export function string_trim_suffix(string, suffix) {
+export function string_remove_suffix(string, suffix) {
   if (string.endsWith(suffix)) {
     return string.slice(0, string.length - suffix.length);
   }

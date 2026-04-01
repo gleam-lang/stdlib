@@ -11,8 +11,8 @@
     int_from_base_string/2, utf_codepoint_list_to_string/1, contains_string/2,
     crop_string/2, base16_encode/1, base16_decode/1, string_replace/3, slice/3,
     bit_array_to_int_and_size/1, bit_array_pad_to_bytes/1, index/2, list/5,
-    dict/1, int/1, float/1, bit_array/1, is_null/1, string_trim_prefix/2,
-    string_trim_suffix/2
+    dict/1, int/1, float/1, bit_array/1, is_null/1, string_remove_prefix/2,
+    string_remove_suffix/2
 ]).
 
 %% Taken from OTP's uri_string module
@@ -534,14 +534,14 @@ bit_array(_) -> {error, <<>>}.
 is_null(X) ->
     X =:= undefined orelse X =:= null orelse X =:= nil.
 
-string_trim_prefix(String, Prefix) ->
+string_remove_prefix(String, Prefix) ->
     PrefixSize = byte_size(Prefix),
     case String of
         <<Prefix:PrefixSize/binary, Suffix/binary>> -> Suffix;
         _ -> String
     end.
 
-string_trim_suffix(String, Suffix) ->
+string_remove_suffix(String, Suffix) ->
     StringSize = byte_size(String),
     SuffixSize = byte_size(Suffix),
     Offset = StringSize - SuffixSize,

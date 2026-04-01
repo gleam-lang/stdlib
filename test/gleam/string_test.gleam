@@ -1583,23 +1583,23 @@ pub fn inspect_map_test() {
     == "dict.from_list([#(\"a\", 1), #(\"b\", 2)])"
 }
 
-pub fn trim_prefix_test() {
-  assert string.trim_prefix("gleamlucy", "gleam") == "lucy"
-  assert string.trim_prefix("lucygleam", "gleam") == "lucygleam"
-  assert string.trim_prefix("lucygleam", "") == "lucygleam"
-  assert string.trim_prefix("", "gleam") == ""
-  assert string.trim_prefix("gleam", "gleam") == ""
-  assert string.trim_prefix("🦑lucy", "🦑") == "lucy"
-  assert string.trim_suffix("🦑🦑", "🦑") == "🦑"
-  assert string.trim_suffix("abc", "abcde") == "abc"
+pub fn remove_prefix_test() {
+  assert string.remove_prefix("gleamlucy", "gleam") == "lucy"
+  assert string.remove_prefix("lucygleam", "gleam") == "lucygleam"
+  assert string.remove_prefix("lucygleam", "") == "lucygleam"
+  assert string.remove_prefix("", "gleam") == ""
+  assert string.remove_prefix("gleam", "gleam") == ""
+  assert string.remove_prefix("🦑lucy", "🦑") == "lucy"
+  assert string.remove_suffix("🦑🦑", "🦑") == "🦑"
+  assert string.remove_suffix("abc", "abcde") == "abc"
 }
 
-pub fn trim_suffix_test() {
-  assert string.trim_suffix("lucygleam", "gleam") == "lucy"
-  assert string.trim_suffix("gleamlucy", "gleam") == "gleamlucy"
-  assert string.trim_suffix("lucygleam", "") == "lucygleam"
-  assert string.trim_suffix("", "gleam") == ""
-  assert string.trim_suffix("gleam", "gleam") == ""
-  assert string.trim_suffix("lucy🦑", "🦑") == "lucy"
-  assert string.trim_suffix("🦑🦑", "🦑") == "🦑"
+pub fn remove_suffix_test() {
+  assert string.remove_suffix("lucygleam", "gleam") == "lucy"
+  assert string.remove_suffix("gleamlucy", "gleam") == "gleamlucy"
+  assert string.remove_suffix("lucygleam", "") == "lucygleam"
+  assert string.remove_suffix("", "gleam") == ""
+  assert string.remove_suffix("gleam", "gleam") == ""
+  assert string.remove_suffix("lucy🦑", "🦑") == "lucy"
+  assert string.remove_suffix("🦑🦑", "🦑") == "🦑"
 }
