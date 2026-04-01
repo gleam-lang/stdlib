@@ -20,6 +20,13 @@
 //// [Toy](https://github.com/Hackder/toy), Go's `encoding/json`, and Elm's
 //// `Json.Decode`. Thank you to them!
 ////
+//// # Generating decoders
+////
+//// The language server has the "generate dynamic decoder" code action, which
+//// will generate a decoder function when run on a custom type definition.
+//// This generated decoder function can be a convenient shortcut when creating
+//// your own decoders, and you can edit the generated function to suit your needs.
+////
 //// # Examples
 ////
 //// Dynamic data may come from various sources and so many different syntaxes could
