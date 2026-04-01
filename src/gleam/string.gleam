@@ -853,17 +853,17 @@ pub fn byte_size(string: String) -> Int
 
 /// Removes the given prefix from the start of a `String`, if present.
 ///
-/// If the `String` does not start with the given prefix, it is returned
+/// If the `String` does not start with the given prefix the string is returned
 /// unchanged.
 ///
 /// ## Examples
 ///
 /// ```gleam
-/// assert remove_prefix("gleamlucy", "gleam") == "lucy"
+/// assert remove_prefix("@lpil", "@") == "lpil"
 /// ```
 ///
 /// ```gleam
-/// assert remove_prefix("lucygleam", "gleam") == "lucygleam"
+/// assert remove_prefix("hello!", "@") == "hello!"
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "string_remove_prefix")
@@ -872,17 +872,17 @@ pub fn remove_prefix(string: String, prefix prefix: String) -> String
 
 /// Removes the given suffix from the end of a `String`, if present.
 ///
-/// If the `String` does not end with the given suffix, it is returned
+/// If the `String` does not end with the given suffix the string is returned
 /// unchanged.
 ///
 /// ## Examples
 ///
 /// ```gleam
-/// assert remove_suffix("lucygleam", "gleam") == "lucy"
+/// assert remove_suffix("Hello!", "!") == "Hello"
 /// ```
 ///
 /// ```gleam
-/// assert remove_suffix("gleamlucy", "gleam") == "gleamlucy"
+/// assert remove_suffix("Hello!?", "!") == "Hello!?"
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "string_remove_suffix")
