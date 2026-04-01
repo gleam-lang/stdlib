@@ -868,7 +868,7 @@ pub fn byte_size(string: String) -> Int
 ///
 @external(erlang, "gleam_stdlib", "string_remove_prefix")
 @external(javascript, "../gleam_stdlib.mjs", "string_remove_prefix")
-pub fn remove_prefix(string: String, prefix prefix: String) -> String
+pub fn remove_prefix(from string: String, matching prefix: String) -> String
 
 /// Removes the given suffix from the end of a `String`, if present.
 ///
@@ -887,4 +887,4 @@ pub fn remove_prefix(string: String, prefix prefix: String) -> String
 ///
 @external(erlang, "gleam_stdlib", "string_remove_suffix")
 @external(javascript, "../gleam_stdlib.mjs", "string_remove_suffix")
-pub fn remove_suffix(string: String, suffix suffix: String) -> String
+pub fn remove_suffix(from string: String, matching suffix: String) -> String
