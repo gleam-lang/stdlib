@@ -660,7 +660,8 @@ const MAX_SAFE = Number.MAX_SAFE_INTEGER;
 const MIN_SAFE = Number.MIN_SAFE_INTEGER;
 
 export function bitwise_and(x, y) {
-  if (x >= MIN_I32 && x <= MAX_I32 && y >= MIN_I32 && y <= MAX_I32) return x & y;
+  if (x >= MIN_I32 && x <= MAX_I32 && y >= MIN_I32 && y <= MAX_I32)
+    return x & y;
   if (x < MIN_SAFE || x > MAX_SAFE || y < MIN_SAFE || y > MAX_SAFE)
     return Number(BigInt(x) & BigInt(y));
 
@@ -668,7 +669,8 @@ export function bitwise_and(x, y) {
 }
 
 export function bitwise_or(x, y) {
-  if (x >= MIN_I32 && x <= MAX_I32 && y >= MIN_I32 && y <= MAX_I32) return x | y;
+  if (x >= MIN_I32 && x <= MAX_I32 && y >= MIN_I32 && y <= MAX_I32)
+    return x | y;
   if (x < MIN_SAFE || x > MAX_SAFE || y < MIN_SAFE || y > MAX_SAFE)
     return Number(BigInt(x) | BigInt(y));
 
@@ -676,7 +678,8 @@ export function bitwise_or(x, y) {
 }
 
 export function bitwise_exclusive_or(x, y) {
-  if (x >= MIN_I32 && x <= MAX_I32 && y >= MIN_I32 && y <= MAX_I32) return x ^ y;
+  if (x >= MIN_I32 && x <= MAX_I32 && y >= MIN_I32 && y <= MAX_I32)
+    return x ^ y;
   if (x < MIN_SAFE || x > MAX_SAFE || y < MIN_SAFE || y > MAX_SAFE)
     return Number(BigInt(x) ^ BigInt(y));
 
@@ -1132,66 +1135,16 @@ function isResult(data) {
   return Result$isOk(data) || Result$isError(data);
 }
 
-export function string_trim_prefix(str, prefix) {
-  if (prefix == "") {
-    return str;
+export function string_trim_prefix(string, prefix) {
+  if (string.startsWith(prefix)) {
+    return string.slice(prefix.length);
   }
-
-  if (str == "" && prefix.length != 0) {
-    return str;
-  }
-
-  if (str.startsWith(prefix)) {
-    return str.substring(prefix.length);
-  }
-
-  return str;
+  return string;
 }
 
-export function string_trim_suffix(str, suffix) {
-  if (suffix == "") {
-    return str;
+export function string_trim_suffix(string, suffix) {
+  if (string.endsWith(suffix)) {
+    return string.slice(0, string.length - suffix.length);
   }
-
-  if (str == "" && suffix.length != 0) {
-    return str;
-  }
-
-  if (str.endsWith(suffix)) {
-    return str.substring(0, str.length - suffix.length);
-  }
-
-  return str;
-}
-
-export function string_strip_prefix(str, prefix) {
-  if (prefix == "") {
-    return Result$Ok(str);
-  }
-
-  if (str == "" && prefix.length != 0) {
-    return Result$Error(undefined);
-  }
-
-  if (str.startsWith(prefix)) {
-    return Result$Ok(str.substring(prefix.length));
-  }
-
-  return Result$Error(undefined);
-}
-
-export function string_strip_suffix(str, suffix) {
-  if (suffix == "") {
-    return Result$Ok(str);
-  }
-
-  if (str == "" && suffix.length != 0) {
-    return Result$Error(undefined);
-  }
-
-  if (str.endsWith(suffix)) {
-    return Result$Ok(str.substring(0, str.length - suffix.length));
-  }
-
-  return Result$Error(undefined);
+  return string;
 }
