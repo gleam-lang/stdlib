@@ -1590,8 +1590,9 @@ pub fn remove_prefix_test() {
   assert string.remove_prefix("", "gleam") == ""
   assert string.remove_prefix("gleam", "gleam") == ""
   assert string.remove_prefix("🦑lucy", "🦑") == "lucy"
-  assert string.remove_suffix("🦑🦑", "🦑") == "🦑"
-  assert string.remove_suffix("abc", "abcde") == "abc"
+  assert string.remove_prefix("🦑🦑", "🦑") == "🦑"
+  assert string.remove_prefix("abc", "abcde") == "abc"
+  assert string.remove_prefix(from: "abc", matching: "ab") == "c"
 }
 
 pub fn remove_suffix_test() {
@@ -1602,4 +1603,5 @@ pub fn remove_suffix_test() {
   assert string.remove_suffix("gleam", "gleam") == ""
   assert string.remove_suffix("lucy🦑", "🦑") == "lucy"
   assert string.remove_suffix("🦑🦑", "🦑") == "🦑"
+  assert string.remove_suffix(from: "abc", matching: "bc") == "a"
 }

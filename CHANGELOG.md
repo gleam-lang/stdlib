@@ -3,6 +3,7 @@
 ## v0.71.0 - 2026-04-01
 
 - The `string` module gains the `remove_prefix` and `remove_suffix` functions.
+- The deprecated `list.range` function has been removed.
 
 ## v0.70.0 - 2026-03-07
 

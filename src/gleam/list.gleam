@@ -1386,19 +1386,6 @@ fn merge_descendings(
   }
 }
 
-@deprecated("Use int.range instead")
-pub fn range(from start: Int, to stop: Int) -> List(Int) {
-  range_loop(start, stop, [])
-}
-
-fn range_loop(start: Int, stop: Int, acc: List(Int)) -> List(Int) {
-  case int.compare(start, stop) {
-    order.Eq -> [stop, ..acc]
-    order.Gt -> range_loop(start, stop + 1, [stop, ..acc])
-    order.Lt -> range_loop(start, stop - 1, [stop, ..acc])
-  }
-}
-
 /// Builds a list of a given value a given number of times.
 ///
 /// ## Examples
