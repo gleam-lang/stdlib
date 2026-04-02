@@ -13,7 +13,7 @@
 - When the `decode.dict` function returns an error it now uses the key value in
   the error path if it is a string, a float, or an int.
 
-## v0.69.0 - 2026-01-26
+## v0.69.0 - 2026-02-11
 
 - The `int.range` function has been added.
 - The `list.range` function has been deprecated.
