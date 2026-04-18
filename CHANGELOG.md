@@ -11,6 +11,7 @@ The long awaited version one release!
 
 ## v0.70.0 - 2026-03-07
 
+- Add `describe_decode_error` and `describe_decode_errors` function to the decode module.
 - Fixed a bug where `uri.parse` would incorrectly handle uppercase schemes on
   Erlang.
 - The performance of the `int/bitwise_*` functions has been improved.
