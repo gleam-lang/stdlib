@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.0 - 2026-04-18
+
+The long awaited version one release!
+
 ## v0.71.0 - 2026-04-01
 
 - The `string` module gains the `remove_prefix` and `remove_suffix` functions.

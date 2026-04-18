@@ -12,7 +12,7 @@ Documentation available on [HexDocs](https://hexdocs.pm/gleam_stdlib/).
 Add `gleam_stdlib` to your Gleam project.
 
 ```sh
-gleam add gleam_stdlib
+gleam add gleam_stdlib@1
 ```
 ```gleam
 import gleam/io
