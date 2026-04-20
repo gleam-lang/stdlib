@@ -274,6 +274,104 @@ pub fn parse_empty_query_3_test() {
   let assert Some("") = assert_parse("http://example.com/test?").query
 }
 
+pub fn parse_ipv6_host_preserves_brackets_test() {
+  let assert Ok(parsed) =
+    uri.parse("http://[2600:1406:bc00:53::b81e:94c8]/wobble")
+  assert parsed.host == Some("[2600:1406:bc00:53::b81e:94c8]")
+}
+
+pub fn parse_ipv6_host_with_port_preserves_brackets_test() {
+  let assert Ok(parsed) =
+    uri.parse("http://[2600:1406:bc00:53::b81e:94c8]:8080/wobble")
+  assert parsed.host == Some("[2600:1406:bc00:53::b81e:94c8]")
+  assert parsed.port == Some(8080)
+}
+
+pub fn parse_ipv6_host_roundtrip_to_string_test() {
+  let assert Ok(parsed) = uri.parse("http://[2600:1406:bc00:53::b81e:94c8]")
+  assert uri.to_string(parsed) == "http://[2600:1406:bc00:53::b81e:94c8]/"
+}
+
+pub fn parse_ipv6_compact_loopback_preserves_brackets_test() {
+  let assert Ok(parsed) = uri.parse("http://[::1]/wobble")
+  assert parsed.host == Some("[::1]")
+  assert parsed.path == "/wobble"
+}
+
+pub fn parse_ipv6_compact_loopback_with_port_test() {
+  let assert Ok(parsed) = uri.parse("http://[::1]:443/wobble")
+  assert parsed.host == Some("[::1]")
+  assert parsed.port == Some(443)
+}
+
+pub fn parse_ipv6_collapsed_middle_preserves_brackets_test() {
+  let assert Ok(parsed) = uri.parse("http://[2001:db8::2:1]/wobble")
+  assert parsed.host == Some("[2001:db8::2:1]")
+}
+
+pub fn parse_ipv6_collapsed_roundtrip_to_string_test() {
+  let assert Ok(parsed) = uri.parse("http://[2001:db8::2:1]")
+  assert uri.to_string(parsed) == "http://[2001:db8::2:1]/"
+}
+
+pub fn parse_ipv6_host_with_path_query_fragment_test() {
+  let assert Ok(parsed) = uri.parse("http://[2001:db8::2:1]/foo/bar?baz=bif#blah")
+  assert parsed.scheme == Some("http")
+  assert parsed.host == Some("[2001:db8::2:1]")
+  assert parsed.path == "/foo/bar"
+  assert parsed.query == Some("baz=bif")
+  assert parsed.fragment == Some("blah")
+  assert parsed.port == None
+  assert parsed.userinfo == None
+}
+
+pub fn parse_malformed_many_opening_brackets_in_host_test() {
+  assert uri.parse("http://[[[[[[[[[[]/") == Error(Nil)
+}
+
+pub fn parse_malformed_nested_opening_bracket_in_host_test() {
+  assert uri.parse("http://[[::1]/") == Error(Nil)
+}
+
+pub fn parse_malformed_unclosed_bracket_host_test() {
+  assert uri.parse("http://[::1[/") == Error(Nil)
+}
+
+pub fn parse_malformed_question_mark_within_bracket_host_test() {
+  assert uri.parse("http://[::1?bad]/") == Error(Nil)
+}
+
+pub fn parse_malformed_slash_within_bracket_host_test() {
+  assert uri.parse("http://[::1/bad]/") == Error(Nil)
+}
+
+pub fn ipv6_uppercase_test() {
+  // ensure A–F upper case are accepted
+  let assert Ok(parsed) = uri.parse("http://[2001:DB8::1]")
+  assert parsed.host == Some("[2001:DB8::1]")
+  assert uri.to_string(parsed) == "http://[2001:DB8::1]/"
+}
+
+pub fn ipv6_mixedcase_test() {
+  let assert Ok(parsed) = uri.parse("http://[2001:dB8:ABcd::]")
+  assert parsed.host == Some("[2001:dB8:ABcd::]")
+}
+
+pub fn parse_ipv6_with_invalid_char_test() {
+  // 'g' is not a hex digit
+  assert uri.parse("http://[::g]/") == Error(Nil)
+  assert uri.parse("http://[::G]/") == Error(Nil)
+}
+
+pub fn parse_bracket_followed_by_text_error_test() {
+  // characters immediately after closing bracket and before slash should error
+  assert uri.parse("http://[::1]foo") == Error(Nil)
+}
+
+pub fn parse_double_closing_bracket_test() {
+  assert uri.parse("http://[::1]]/") == Error(Nil)
+}
+
 pub fn full_uri_to_string_test() {
   let test_uri =
     uri.Uri(
