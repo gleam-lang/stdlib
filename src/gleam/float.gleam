@@ -605,15 +605,15 @@ fn do_log(x: Float) -> Float
 /// ## Examples
 ///
 /// ```gleam
-/// assert exponential(0.0) == Ok(1.0)
+/// assert exponential(0.0) == 1.0
 /// ```
 ///
 /// ```gleam
-/// assert exponential(1.0) == Ok(2.718281828459045)
+/// assert exponential(1.0) == 2.718281828459045
 /// ```
 ///
 /// ```gleam
-/// assert exponential(-1.0) == Ok(0.36787944117144233)
+/// assert exponential(-1.0) == 0.36787944117144233
 /// ```
 ///
 @external(erlang, "math", "exp")
