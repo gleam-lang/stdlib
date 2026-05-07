@@ -482,7 +482,7 @@ function unsafe_percent_decode(string) {
 }
 
 function unsafe_percent_decode_query(string) {
-  return decodeURIComponent((string || "").replace("+", " "));
+  return decodeURIComponent((string || "").replaceAll("+", " "));
 }
 
 export function percent_decode(string) {

@@ -517,6 +517,11 @@ pub fn parse_query_string_basic_test() {
   assert parsed == [#("weebl bob", "1"), #("city", "örebro")]
 }
 
+pub fn parse_query_string_multiple_spaces_test() {
+  let assert Ok(parsed) = uri.parse_query("one+two+three=four+five+six")
+  assert parsed == [#("one two three", "four five six")]
+}
+
 pub fn parse_query_string_duplicates_test() {
   // Duplicates keys not overridden
   let assert Ok(parsed) = uri.parse_query("a[]=1&a[]=2")
