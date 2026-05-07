@@ -1039,7 +1039,7 @@ pub fn failure(placeholder: a, expected name: String) -> Decoder(a) {
 /// `[]`.
 ///
 /// If you were to make a decoder for the `Int` type (rather than using the
-/// build-in `Int` decoder) you would define it like so:
+/// built-in `Int` decoder) you would define it like so:
 ///
 /// ```gleam
 /// pub fn int_decoder() -> decode.Decoder(Int) {

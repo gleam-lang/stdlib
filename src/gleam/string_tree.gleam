@@ -163,7 +163,7 @@ pub fn replace(
 /// content.
 ///
 /// Comparing two string trees using the `==` operator may return `False` even
-/// if they have the same content as they may have been build in different ways,
+/// if they have the same content as they may have been built in different ways,
 /// so using this function is often preferred.
 ///
 /// ## Examples
