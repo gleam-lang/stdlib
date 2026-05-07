@@ -13,7 +13,7 @@ import gleam/option.{type Option, None, Some}
 import gleam/string
 import gleam/string_tree.{type StringTree}
 
-/// Type representing the parsed components of an URI.
+/// Type representing the parsed components of a URI.
 /// All components of a URI are optional, except the path.
 ///
 pub type Uri {
