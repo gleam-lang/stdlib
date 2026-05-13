@@ -72,21 +72,24 @@ tuple_get(Data, Index) when Index >= tuple_size(Data) -> {error, nil};
 tuple_get(Data, Index) -> {ok, element(Index + 1, Data)}.
 
 int_from_base_string(String, Base) ->
-    case catch binary_to_integer(String, Base) of
+    try binary_to_integer(String, Base) of
         Int when is_integer(Int) -> {ok, Int};
         _ -> {error, nil}
+    catch _:_ -> {error, nil}
     end.
 
 parse_int(String) ->
-    case catch binary_to_integer(String) of
+    try binary_to_integer(String) of
         Int when is_integer(Int) -> {ok, Int};
         _ -> {error, nil}
+    catch _:_ -> {error, nil}
     end.
 
 parse_float(String) ->
-    case catch binary_to_float(String) of
+    try binary_to_float(String) of
         Float when is_float(Float) -> {ok, Float};
         _ -> {error, nil}
+    catch _:_ -> {error, nil}
     end.
 
 less_than(Lhs, Rhs) ->
