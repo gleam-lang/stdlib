@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Fixed deprecation warnings when using OTP 29
+
 ## v1.0.1 - 2026-05-14
 
 - Fixed a bug where `uri.parse_query` would not correctly decode all `+`
