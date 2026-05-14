@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.0.1 - 2026-05-14
+
+- Fixed a bug where `uri.parse_query` would not correctly decode all `+`
+  characters on JavaScript.
+
 ## v1.0.0 - 2026-04-18
 
 The long awaited version one release!
