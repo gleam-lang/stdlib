@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        erlang_version: ["27", "28"]
+        erlang_version: ["28", "29"]
     steps:
       - uses: actions/checkout@v4
       - uses: erlef/setup-beam@v1
@@ -38,7 +38,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node_version: ["18.20", "20.16", "22.5"]
+        node_version: ["22.x", "24.x", "26.x"]
     steps:
       - uses: actions/checkout@v4
       - uses: erlef/setup-beam@v1
@@ -56,12 +56,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        bun_version: ["1.1"]
+        bun_version: ["1.x"]
     steps:
       - uses: actions/checkout@v4
       - uses: erlef/setup-beam@v1
         with:
-          otp-version: "28"
+          otp-version: "29"
           gleam-version: "1.14.0"
       - uses: oven-sh/setup-bun@v2
         with:
@@ -74,12 +74,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        deno_version: ["1.45"]
+        deno_version: ["2.x"]
     steps:
       - uses: actions/checkout@v4
       - uses: erlef/setup-beam@v1
         with:
-          otp-version: "28"
+          otp-version: "29"
           gleam-version: "1.14.0"
       - uses: denoland/setup-deno@v1
         with:
