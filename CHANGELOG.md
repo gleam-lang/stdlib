@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Fixed a bug where `string.drop_start` would return incorrect results on
+  JavaScript when the string contained multi-byte characters.
+
 ## v1.0.2 - 2026-05-14
 
 - Fixed deprecation warnings when using OTP 29

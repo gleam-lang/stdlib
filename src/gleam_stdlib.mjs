@@ -200,7 +200,8 @@ export function length(data) {
 }
 
 export function string_byte_slice(string, index, length) {
-  return string.slice(index, index + length);
+  const bytes = new TextEncoder().encode(string);
+  return new TextDecoder().decode(bytes.subarray(index, index + length));
 }
 
 export function string_grapheme_slice(string, idx, len) {
