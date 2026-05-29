@@ -173,21 +173,8 @@ const mask = (1 << bits) - 1;
 /// This symbol is used internally to avoid constructing results.
 const noElementMarker = Symbol();
 
-/// This symbol is used to store the "generation" on a node.
-/// Using a symbol makes the property not enumerable, which means the generation
-/// will be ignored during equality checks.
-const generationKey = Symbol();
-
-// Some commonly used constants throughout the code.
-const emptyNode = /* @__PURE__ */ newNode(0);
-const emptyDict = /* @__PURE__ */ new Dict(0, emptyNode);
-const errorNil = /* @__PURE__ */ Result$Error(undefined);
-
-function makeNode(generation, datamap, nodemap, data) {
-  // The order of fields is important, as they define the order `isEqual` will
-  // compare our fields. Putting the bitmaps first means that equality can
-  // early-out if the bitmaps are not equal.
-  return {
+class Node {
+  constructor(generation, datamap, nodemap, data) {
     // A node is a high-arity (32 in practice) hybrid tree node.
     // Hybrid means that it stores data directly as well as pointers to child nodes.
     //
@@ -201,8 +188,9 @@ function makeNode(generation, datamap, nodemap, data) {
     // suffix (least significant bits first) encoding.
     // For example, if the last 5 bits of the hash are 1101, the bit to check for
     // that value is the 13th bit.
-    datamap,
-    nodemap,
+    this.datamap = datamap;
+    this.nodemap = nodemap;
+
     // The slots itself are stored in a single contiguous array that contains
     // both direct k/v-pairs and child nodes.
     //
@@ -220,15 +208,83 @@ function makeNode(generation, datamap, nodemap, data) {
     //
     // Children are stored in reverse order to avoid having to store or calculate an
     // "offset" value to skip over the direct children.
-    data,
+    this.data = data;
+
     // The generation is used to track which nodes need to be copied during transient updates.
-    // Using a symbol here makes `isEqual` ignore this field.
-    [generationKey]: generation,
-  };
+    this.generation = generation;
+  }
+
+  equals(other) {
+    if (this === other) return true;
+    if (!(other instanceof Node)) return false;
+    if (this.datamap !== other.datamap || this.nodemap !== other.nodemap) {
+      return false;
+    }
+
+    const leftData = this.data;
+    const rightData = other.data;
+    if (leftData.length !== rightData.length) return false;
+
+    // No bitmap slots means any entries in this node are overflow entries.
+    if (this.datamap === 0 && this.nodemap === 0) {
+      return this.#equalsOverflowEntries(rightData);
+    }
+
+    const edgesStart = leftData.length - popcount(this.nodemap);
+    for (let i = 0; i < edgesStart; i += 2) {
+      if (
+        !isEqual(leftData[i], rightData[i]) ||
+        !isEqual(leftData[i + 1], rightData[i + 1])
+      ) {
+        return false;
+      }
+    }
+
+    for (let i = edgesStart; i < leftData.length; ++i) {
+      if (!leftData[i].equals(rightData[i])) return false;
+    }
+
+    return true;
+  }
+
+  #equalsOverflowEntries(otherData) {
+    const data = this.data;
+    entries: for (let i = 0; i < data.length; i += 2) {
+      for (let j = 0; j < otherData.length; j += 2) {
+        if (isEqual(data[i], otherData[j])) {
+          if (!isEqual(data[i + 1], otherData[j + 1])) return false;
+          continue entries;
+        }
+      }
+      return false;
+    }
+
+    return true;
+  }
+
+  hashCode() {
+    const data = this.data;
+    const edgesStart = data.length - popcount(this.nodemap);
+    let hash = 0;
+    for (let i = 0; i < edgesStart; i += 2) {
+      hash = (hash + hashMerge(getHash(data[i + 1]), getHash(data[i]))) | 0;
+    }
+
+    for (let i = edgesStart; i < data.length; ++i) {
+      hash = (hash + data[i].hashCode()) | 0;
+    }
+
+    return hash;
+  }
 }
 
+// Some commonly used constants throughout the code.
+const emptyNode = /* @__PURE__ */ newNode(0);
+const emptyDict = /* @__PURE__ */ new Dict(0, emptyNode);
+const errorNil = /* @__PURE__ */ Result$Error(undefined);
+
 function newNode(generation) {
-  return makeNode(generation, 0, 0, []);
+  return new Node(generation, 0, 0, []);
 }
 
 /**
@@ -236,12 +292,12 @@ function newNode(generation) {
  * to mutate the node.
  */
 function copyNode(node, generation) {
-  if (node[generationKey] === generation) {
+  if (node.generation === generation) {
     return node;
   }
 
   const newData = node.data.slice(0);
-  return makeNode(generation, node.datamap, node.nodemap, newData);
+  return new Node(generation, node.datamap, node.nodemap, newData);
 }
 
 /**
@@ -276,7 +332,7 @@ function copyAndInsertPair(node, generation, bit, idx, key, val) {
   newData[writeIndex++] = val;
   while (readIndex < length) newData[writeIndex++] = data[readIndex++];
 
-  return makeNode(generation, node.datamap | bit, node.nodemap, newData);
+  return new Node(generation, node.datamap | bit, node.nodemap, newData);
 }
 
 function copyAndRemovePair(node, generation, bit, idx) {
@@ -399,8 +455,8 @@ export function fromTransient(transient) {
  */
 function nextGeneration(dict) {
   const root = dict.root;
-  if (root[generationKey] < Number.MAX_SAFE_INTEGER) {
-    return root[generationKey] + 1;
+  if (root.generation < Number.MAX_SAFE_INTEGER) {
+    return root.generation + 1;
   }
 
   // we have reached MAX_SAFE_INTEGER generations -
@@ -414,12 +470,12 @@ function nextGeneration(dict) {
     const node = queue.pop();
 
     // reset the generation to 0
-    node[generationKey] = 0;
+    node.generation = 0;
 
     // queue all other referenced nodes
     // We need to query the length from the nodemap, as we don't know if this
     //  is an overflow node or not! if it is, it will never have datamap set!
-    const nodeStart = data.length - popcount(node.nodemap);
+    const nodeStart = node.data.length - popcount(node.nodemap);
     for (let i = nodeStart; i < node.data.length; ++i) {
       queue.push(node.data[i]);
     }
@@ -551,7 +607,7 @@ function insertIntoNode(transient, node, key, value, hash, shift) {
   newData[writeIndex++] = child;
   while (readIndex < length) newData[writeIndex++] = data[readIndex++];
 
-  return makeNode(generation, node.datamap ^ bit, node.nodemap | bit, newData);
+  return new Node(generation, node.datamap ^ bit, node.nodemap | bit, newData);
 }
 
 /**
@@ -600,7 +656,7 @@ function deleteFromNode(transient, node, key, hash, shift) {
     // this node only has a single data (k/v-pair) child.
     // to restore the CHAMP invariant, we "pull" that pair up into ourselves.
     // this ensures that every tree stays in its single optimal representation,
-    // and allows dicts to be structurally compared.
+    // and keeps the tree in its compact representation.
     const length = data.length;
     const newData = new Array(length + 1);
 
@@ -614,7 +670,7 @@ function deleteFromNode(transient, node, key, hash, shift) {
     readIndex++;
     while (readIndex < length) newData[writeIndex++] = data[readIndex++];
 
-    return makeNode(generation, node.datamap | bit, node.nodemap ^ bit, newData);
+    return new Node(generation, node.datamap | bit, node.nodemap ^ bit, newData);
   }
 
   // 3. Data Node
