@@ -684,6 +684,10 @@ pub fn percent_decode_consistency_test() {
   assert parsed == [#(decoded_key, decoded_value)]
 }
 
+pub fn percent_encode_multiple_plus_test() {
+  assert uri.percent_encode("+++") == "+++"
+}
+
 pub fn parse_segments_slash_test() {
   assert uri.path_segments("/") == []
 }

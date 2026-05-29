@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.3 - 2026-05-29
+
+- Fixed deprecation warnings when using OTP 29
+
 ## v1.0.2 - 2026-05-14
 
 - Fixed deprecation warnings when using OTP 29

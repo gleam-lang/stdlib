@@ -494,7 +494,7 @@ export function percent_decode(string) {
 }
 
 export function percent_encode(string) {
-  return encodeURIComponent(string).replace("%2B", "+");
+  return encodeURIComponent(string).replaceAll("%2B", "+");
 }
 
 export function parse_query(query) {
