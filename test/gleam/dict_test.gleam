@@ -563,6 +563,26 @@ pub fn hash_collision_get_second_test() {
   assert dict.get(d, CollidingKey2) == Ok(2)
 }
 
+pub fn hash_collision_equality_insert_order_test() {
+  let d1 = dict.from_list([#(CollidingKey1, 1), #(CollidingKey2, 2)])
+  let d2 = dict.from_list([#(CollidingKey2, 2), #(CollidingKey1, 1)])
+
+  assert d1 == d2
+}
+
+pub fn hash_collision_map_as_key_test() {
+  let d1 = dict.from_list([#(CollidingKey1, 1), #(CollidingKey2, 2)])
+  let d2 = dict.from_list([#(CollidingKey2, 2), #(CollidingKey1, 1)])
+  let d3 = dict.from_list([#(CollidingKey1, -20), #(CollidingKey2, 15)])
+
+  let outer =
+    dict.new()
+    |> dict.insert(d1, "inner")
+    |> dict.insert(d3, "other")
+
+  assert dict.get(outer, d2) == Ok("inner")
+}
+
 pub fn hash_collision_after_delete_size_test() {
   let d =
     dict.new() |> dict.insert(CollidingKey1, 1) |> dict.insert(CollidingKey2, 2)
