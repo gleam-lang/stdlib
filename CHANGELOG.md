@@ -1,8 +1,9 @@
 # Changelog
 
-## Unreleased
+## v1.0.4 - 2026-05-30
 
-- Fix a bug where dicts and sets with hash collisions but equal entries would not be equal.
+- Fix a bug where dicts and sets with hash collisions but equal entries would
+  not be equal.
 - The performance of dict and set equality has been improved.
 
 ## v1.0.3 - 2026-05-29
