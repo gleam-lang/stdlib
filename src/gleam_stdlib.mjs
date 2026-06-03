@@ -199,8 +199,13 @@ export function length(data) {
   return data.length;
 }
 
-export function string_byte_slice(string, index, length) {
-  return string.slice(index, index + length);
+export function string_drop_start(string, num_graphemes) {
+  if (num_graphemes <= 0) {
+    return string;
+  }
+
+  const prefix = string_grapheme_slice(string, 0, num_graphemes);
+  return string.slice(prefix.length);
 }
 
 export function string_grapheme_slice(string, idx, len) {
