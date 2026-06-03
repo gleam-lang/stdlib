@@ -200,12 +200,38 @@ export function length(data) {
 }
 
 export function string_drop_start(string, num_graphemes) {
-  if (num_graphemes <= 0) {
+  if (num_graphemes <= 0 || string === "") {
     return string;
   }
 
-  const prefix = string_grapheme_slice(string, 0, num_graphemes);
-  return string.slice(prefix.length);
+  const iterator = graphemes_iterator(string);
+  if (iterator) {
+    let offset = 0;
+
+    while (num_graphemes-- > 0) {
+      const v = iterator.next().value;
+      if (v === undefined) {
+        return "";
+      }
+
+      offset += v.segment.length;
+    }
+
+    return string.slice(offset);
+  } else {
+    const codepoints = string.match(/./gsu);
+    if (num_graphemes >= codepoints.length) {
+      return "";
+    }
+
+    let offset = 0;
+
+    for (let i = 0; i < num_graphemes; i++) {
+      offset += codepoints[i].length;
+    }
+
+    return string.slice(offset);
+  }
 }
 
 export function string_grapheme_slice(string, idx, len) {
