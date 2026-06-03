@@ -8,6 +8,8 @@
   print NaN and Infinity.
 - The performance of the `to_string` function from the `float` module has been
   improved on the Erlang target.
+- Fixed a bug where `string.drop_start` would return incorrect results on
+  JavaScript when the string contained multibyte characters.
 
 ## v1.0.5 - 2026-08-06
 
