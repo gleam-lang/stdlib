@@ -202,7 +202,7 @@ fn parse_host(uri_string: String, pieces: Uri) -> Result(Uri, Nil) {
   // - [^:]
   case uri_string {
     // If we find an opening bracket we know it's the first format.
-    "[" <> _ -> parse_host_within_brackets(uri_string, pieces)
+    "[" <> rest -> parse_host_within_brackets(rest, pieces)
 
     // A `:` marks the beginning of the port part of the authority string.
     ":" <> _ -> {
@@ -233,66 +233,38 @@ fn parse_host_within_brackets_loop(
   size: Int,
 ) -> Result(Uri, Nil) {
   case uri_string {
-    // If the string is over the entire string we were iterating through is the
-    // host part.
-    "" -> Ok(Uri(..pieces, host: Some(uri_string)))
+    // We reached the end without finding a closing `]`.
+    "" -> Error(Nil)
 
     // A `]` marks the end of the host and the start of the port part.
-    "]" <> rest if size == 0 -> parse_port(rest, pieces)
+    "]" <> _ if size == 0 -> Error(Nil)
     "]" <> rest -> {
-      let host = codeunit_slice(original, at_index: 0, length: size + 1)
+      let host = "[" <> codeunit_slice(original, at_index: 0, length: size + 1)
       let pieces = Uri(..pieces, host: Some(host))
       parse_port(rest, pieces)
     }
-
-    // `/` marks the beginning of a path.
-    "/" <> _ if size == 0 -> parse_path(uri_string, pieces)
-    "/" <> _ -> {
-      let host = codeunit_slice(original, at_index: 0, length: size)
-      let pieces = Uri(..pieces, host: Some(host))
-      parse_path(uri_string, pieces)
-    }
-
-    // `?` marks the beginning of the query with question mark.
-    "?" <> rest if size == 0 -> parse_query_with_question_mark(rest, pieces)
-    "?" <> rest -> {
-      let host = codeunit_slice(original, at_index: 0, length: size)
-      let pieces = Uri(..pieces, host: Some(host))
-      parse_query_with_question_mark(rest, pieces)
-    }
-
-    // `#` marks the beginning of the fragment part.
-    "#" <> rest if size == 0 -> parse_fragment(rest, pieces)
-    "#" <> rest -> {
-      let host = codeunit_slice(original, at_index: 0, length: size)
-      let pieces = Uri(..pieces, host: Some(host))
-      parse_fragment(rest, pieces)
-    }
-
     // In all other cases we just keep iterating.
     _ -> {
       let #(char, rest) = pop_codeunit(uri_string)
-      // Inside `[...]` there can only be some characters, if we find a special
-      // one then we know that we're actually parsing the other format for the
-      // host and we switch to that!
+      // Inside `[...]` there can only be some characters.
       case is_valid_host_within_brackets_char(char) {
         True ->
           parse_host_within_brackets_loop(original, rest, pieces, size + 1)
 
-        False ->
-          parse_host_outside_of_brackets_loop(original, original, pieces, 0)
+        False -> Error(Nil)
       }
     }
   }
 }
 
 fn is_valid_host_within_brackets_char(char: Int) -> Bool {
+  // Valid IPv6 hosts are only [0-9A-Fa-f:.].
   // [0-9]
-  { 48 >= char && char <= 57 }
-  // [A-Z]
-  || { 65 >= char && char <= 90 }
-  // [a-z]
-  || { 97 >= char && char <= 122 }
+  { 48 <= char && char <= 57 }
+  // [A-F]
+  || { 65 <= char && char <= 70 }
+  // [a-f]
+  || { 97 <= char && char <= 102 }
   // :
   || char == 58
   // .
