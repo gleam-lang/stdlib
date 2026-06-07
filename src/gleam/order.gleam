@@ -136,7 +136,10 @@ pub fn break_tie(in order: Order, with other: Order) -> Order {
 /// assert lazy_break_tie(in: int.compare(1, 0), with: fn() { Eq }) == Gt
 /// ```
 ///
-pub fn lazy_break_tie(in order: Order, with comparison: fn() -> Order) -> Order {
+pub fn lazy_break_tie(
+  in order: Order,
+  with comparison: fn() -> Order,
+) -> Order {
   case order {
     Lt | Gt -> order
     Eq -> comparison()

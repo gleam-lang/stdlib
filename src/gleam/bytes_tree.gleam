@@ -56,7 +56,10 @@ pub fn append(to first: BytesTree, suffix second: BitArray) -> BytesTree {
 ///
 /// Runs in constant time.
 ///
-pub fn prepend_tree(to second: BytesTree, prefix first: BytesTree) -> BytesTree {
+pub fn prepend_tree(
+  to second: BytesTree,
+  prefix first: BytesTree,
+) -> BytesTree {
   append_tree(first, second)
 }
 
@@ -159,7 +162,10 @@ pub fn to_bit_array(tree: BytesTree) -> BitArray {
   |> bit_array.concat
 }
 
-fn to_list(stack: List(List(BytesTree)), acc: List(BitArray)) -> List(BitArray) {
+fn to_list(
+  stack: List(List(BytesTree)),
+  acc: List(BitArray),
+) -> List(BitArray) {
   case stack {
     [] -> acc
 

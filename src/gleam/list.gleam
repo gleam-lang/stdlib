@@ -375,7 +375,11 @@ fn map_loop(list: List(a), fun: fn(a) -> b, acc: List(b)) -> List(b) {
 ///   == [#(1, "a"), #(2, "b")]
 /// ```
 ///
-pub fn map2(list1: List(a), list2: List(b), with fun: fn(a, b) -> c) -> List(c) {
+pub fn map2(
+  list1: List(a),
+  list2: List(b),
+  with fun: fn(a, b) -> c,
+) -> List(c) {
   map2_loop(list1, list2, fun, [])
 }
 
@@ -1567,7 +1571,10 @@ pub fn key_filter(
 /// assert key_pop([#("a", 0), #("b", 1)], "c") == Error(Nil)
 /// ```
 ///
-pub fn key_pop(list: List(#(k, v)), key: k) -> Result(#(v, List(#(k, v))), Nil) {
+pub fn key_pop(
+  list: List(#(k, v)),
+  key: k,
+) -> Result(#(v, List(#(k, v))), Nil) {
   key_pop_loop(list, key, [])
 }
 
@@ -2091,7 +2098,10 @@ pub fn transpose(list_of_lists: List(List(a))) -> List(List(a)) {
   transpose_loop(list_of_lists, [])
 }
 
-fn transpose_loop(rows: List(List(a)), columns: List(List(a))) -> List(List(a)) {
+fn transpose_loop(
+  rows: List(List(a)),
+  columns: List(List(a)),
+) -> List(List(a)) {
   case rows {
     [] -> reverse(columns)
     _ -> {
@@ -2252,7 +2262,10 @@ fn log_random() -> Float {
 /// This also returns the remaining elements of `list` that didn't end up in
 /// the reservoir.
 ///
-fn build_reservoir(from list: List(a), sized n: Int) -> #(Dict(Int, a), List(a)) {
+fn build_reservoir(
+  from list: List(a),
+  sized n: Int,
+) -> #(Dict(Int, a), List(a)) {
   build_reservoir_loop(list, n, dict.new())
 }
 

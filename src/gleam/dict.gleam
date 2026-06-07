@@ -180,7 +180,11 @@ pub fn get(from: Dict(k, v), get: k) -> Result(v, Nil)
 /// ```
 ///
 @external(javascript, "../dict.mjs", "insert")
-pub fn insert(into dict: Dict(k, v), for key: k, insert value: v) -> Dict(k, v) {
+pub fn insert(
+  into dict: Dict(k, v),
+  for key: k,
+  insert value: v,
+) -> Dict(k, v) {
   do_insert(key, value, dict)
 }
 
@@ -301,7 +305,10 @@ fn do_filter(f: fn(k, v) -> Bool, dict: Dict(k, v)) -> Dict(k, v) {
 ///   == from_list([#("a", 0), #("b", 1)])
 /// ```
 ///
-pub fn take(from dict: Dict(k, v), keeping desired_keys: List(k)) -> Dict(k, v) {
+pub fn take(
+  from dict: Dict(k, v),
+  keeping desired_keys: List(k),
+) -> Dict(k, v) {
   do_take(desired_keys, dict)
 }
 
@@ -339,7 +346,10 @@ fn do_take_loop(
 /// ```
 ///
 @external(erlang, "maps", "merge")
-pub fn merge(into dict: Dict(k, v), from new_entries: Dict(k, v)) -> Dict(k, v) {
+pub fn merge(
+  into dict: Dict(k, v),
+  from new_entries: Dict(k, v),
+) -> Dict(k, v) {
   combine(dict, new_entries, fn(_, new_entry) { new_entry })
 }
 
@@ -386,7 +396,10 @@ fn transient_delete(a: k, b: TransientDict(k, v)) -> TransientDict(k, v)
 ///   == from_list([])
 /// ```
 ///
-pub fn drop(from dict: Dict(k, v), drop disallowed_keys: List(k)) -> Dict(k, v) {
+pub fn drop(
+  from dict: Dict(k, v),
+  drop disallowed_keys: List(k),
+) -> Dict(k, v) {
   do_drop(disallowed_keys, dict)
 }
 

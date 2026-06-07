@@ -249,7 +249,10 @@ pub fn map(set: Set(member), with fun: fn(member) -> mapped) -> Set(mapped) {
 ///   == [2, 4]
 /// ```
 ///
-pub fn drop(from set: Set(member), drop disallowed: List(member)) -> Set(member) {
+pub fn drop(
+  from set: Set(member),
+  drop disallowed: List(member),
+) -> Set(member) {
   list.fold(over: disallowed, from: set, with: delete)
 }
 
@@ -267,7 +270,10 @@ pub fn drop(from set: Set(member), drop disallowed: List(member)) -> Set(member)
 ///   == [1, 3]
 /// ```
 ///
-pub fn take(from set: Set(member), keeping desired: List(member)) -> Set(member) {
+pub fn take(
+  from set: Set(member),
+  keeping desired: List(member),
+) -> Set(member) {
   Set(dict.take(from: set.dict, keeping: desired))
 }
 
@@ -287,7 +293,10 @@ pub fn union(of first: Set(member), and second: Set(member)) -> Set(member) {
   fold(over: smaller, from: larger, with: insert)
 }
 
-fn order(first: Set(member), second: Set(member)) -> #(Set(member), Set(member)) {
+fn order(
+  first: Set(member),
+  second: Set(member),
+) -> #(Set(member), Set(member)) {
   case dict.size(first.dict) > dict.size(second.dict) {
     True -> #(first, second)
     False -> #(second, first)
