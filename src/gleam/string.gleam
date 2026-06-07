@@ -1,5 +1,5 @@
-//// Strings in Gleam are UTF-8 binaries. They can be written in your code as
-//// text surrounded by `"double quotes"`.
+//// Strings in Gleam are unicode binaries, using the encoding of the target
+//// platform: UTF8 for Erlang, UTF16 for JavaScript.
 
 import gleam/list
 import gleam/option.{type Option, None, Some}
@@ -178,7 +178,11 @@ fn less_than(a: String, b: String) -> Bool
 /// assert slice(from: "gleam", at_index: -12, length: 2) == ""
 /// ```
 ///
-pub fn slice(from string: String, at_index idx: Int, length len: Int) -> String {
+pub fn slice(
+  from string: String,
+  at_index idx: Int,
+  length len: Int,
+) -> String {
   case len <= 0 {
     True -> ""
     False ->
