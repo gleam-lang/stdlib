@@ -4,7 +4,10 @@ import gleam/int
 import gleam/order
 import gleam/string
 
-/// Converts a UTF-8 `String` type into a `BitArray`.
+/// Converts a string type into a bit array of UTF8 encoded data.
+///
+/// This function runs in constant time on Erlang and in linear time on
+/// JavaScript.
 ///
 @external(erlang, "gleam_stdlib", "identity")
 @external(javascript, "../gleam_stdlib.mjs", "bit_array_from_string")
