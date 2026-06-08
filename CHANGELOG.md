@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Fixed a bug where `string.drop_start` would return incorrect results on
+  JavaScript when the string contained multi-byte characters.
+
 ## v1.0.4 - 2026-05-30
 
 - Fix a bug where dicts and sets with hash collisions but equal entries would

@@ -204,7 +204,6 @@ pub fn slice(
 fn grapheme_slice(string: String, index: Int, length: Int) -> String
 
 @external(erlang, "binary", "part")
-@external(javascript, "../gleam_stdlib.mjs", "string_byte_slice")
 fn unsafe_byte_slice(string: String, index: Int, length: Int) -> String
 
 /// Drops contents of the first `String` that occur before the second `String`.
@@ -231,6 +230,7 @@ pub fn crop(from string: String, before substring: String) -> String
 /// assert drop_start(from: "The Lone Gunmen", up_to: 2) == "e Lone Gunmen"
 /// ```
 ///
+@external(javascript, "../gleam_stdlib.mjs", "string_drop_start")
 pub fn drop_start(from string: String, up_to num_graphemes: Int) -> String {
   case num_graphemes <= 0 {
     True -> string

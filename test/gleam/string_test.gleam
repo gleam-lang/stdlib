@@ -471,6 +471,19 @@ pub fn drop_start_3499_test() {
   assert string.drop_start("\r]", 1) == "]"
 }
 
+pub fn drop_start_multibyte_test() {
+  // https://github.com/gleam-lang/stdlib/issues/924
+  assert string.drop_start("广州abcdefghijklmn", 0) == "广州abcdefghijklmn"
+  assert string.drop_start("广州abcdefghijklmn", 1) == "州abcdefghijklmn"
+  assert string.drop_start("广州abcdefghijklmn", 2) == "abcdefghijklmn"
+  assert string.drop_start("广州abcdefghijklmn", 3) == "bcdefghijklmn"
+}
+
+pub fn drop_start_grapheme_cluster_test() {
+  assert string.drop_start("👶🏿abc", 1) == "abc"
+  assert string.drop_start("e\u{0301}abc", 1) == "abc"
+}
+
 pub fn drop_end_basic_test() {
   assert string.drop_end("gleam", up_to: 2) == "gle"
 }

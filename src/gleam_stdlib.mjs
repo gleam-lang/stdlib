@@ -199,8 +199,39 @@ export function length(data) {
   return data.length;
 }
 
-export function string_byte_slice(string, index, length) {
-  return string.slice(index, index + length);
+export function string_drop_start(string, num_graphemes) {
+  if (num_graphemes <= 0 || string === "") {
+    return string;
+  }
+
+  const iterator = graphemes_iterator(string);
+  if (iterator) {
+    let offset = 0;
+
+    while (num_graphemes-- > 0) {
+      const v = iterator.next().value;
+      if (v === undefined) {
+        return "";
+      }
+
+      offset += v.segment.length;
+    }
+
+    return string.slice(offset);
+  } else {
+    const codepoints = string.match(/./gsu);
+    if (num_graphemes >= codepoints.length) {
+      return "";
+    }
+
+    let offset = 0;
+
+    for (let i = 0; i < num_graphemes; i++) {
+      offset += codepoints[i].length;
+    }
+
+    return string.slice(offset);
+  }
 }
 
 export function string_grapheme_slice(string, idx, len) {
