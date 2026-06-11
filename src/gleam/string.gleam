@@ -1,5 +1,21 @@
-//// Strings in Gleam are unicode binaries, using the encoding of the target
-//// platform: UTF8 for Erlang, UTF16 for JavaScript.
+//// Strings are Gleam's text type, written in code using double quotes,
+//// `"like this"`.
+////
+//// Two strings can be joined together using the concatenation operator: `<>`.
+////
+//// Strings use the native string type of the compilation target. On Erlang
+//// they are UTF8 encoded binary strings, and on JavaScript they are UTF16
+//// encoded strings.
+////
+//// Several escape sequences can be used in strings:
+////
+////    `\"` - Double quote
+////    `\\` - Backslash
+////    `\f` - Form feed
+////    `\n` - Newline
+////    `\r` - Carriage return
+////    `\t` - Tab
+////    `\u{xxxxxx}` - Unicode codepoint, where each `x` is a digit 0-9.
 
 import gleam/list
 import gleam/option.{type Option, None, Some}
@@ -19,6 +35,7 @@ import gleam/string_tree.{type StringTree}
 /// ```
 ///
 pub fn is_empty(str: String) -> Bool {
+  "\e"
   str == ""
 }
 
