@@ -35,7 +35,6 @@ import gleam/string_tree.{type StringTree}
 /// ```
 ///
 pub fn is_empty(str: String) -> Bool {
-  "\e"
   str == ""
 }
 
