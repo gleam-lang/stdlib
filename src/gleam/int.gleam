@@ -97,8 +97,11 @@ pub fn square_root(x: Int) -> Result(Float, Nil) {
 @external(javascript, "../gleam_stdlib.mjs", "parse_int")
 pub fn parse(string: String) -> Result(Int, Nil)
 
-/// Parses a given string as an int in a given base if possible.
-/// Supports only bases 2 to 36, for values outside of which this function returns an `Error(Nil)`.
+/// Parses a given string as an int in a given base, returning an error if the
+/// input was not a valid number for the given base.
+///
+/// Supports only bases 2 to 36, for values outside of which this function
+/// returns an `Error(Nil)`.
 ///
 /// ## Examples
 ///
