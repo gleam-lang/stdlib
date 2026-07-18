@@ -169,11 +169,14 @@ pub fn replace(
 /// ## Examples
 ///
 /// ```gleam
-/// assert from_strings(["a", "b"]) != from_string("ab")
+/// assert string_tree.from_strings(["a", "b"]) != string_tree.from_string("ab")
 /// ```
 ///
 /// ```gleam
-/// assert is_equal(from_strings(["a", "b"]), from_string("ab"))
+/// assert string_tree.is_equal(
+///   string_tree.from_strings(["a", "b"]),
+///   string_tree.from_string("ab"),
+/// )
 /// ```
 ///
 @external(erlang, "string", "equal")
@@ -186,15 +189,15 @@ pub fn is_equal(a: StringTree, b: StringTree) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// assert !{ from_string("ok") |> is_empty }
+/// assert !{ string_tree.from_string("ok") |> string_tree.is_empty }
 /// ```
 ///
 /// ```gleam
-/// assert from_string("") |> is_empty
+/// assert string_tree.from_string("") |> string_tree.is_empty
 /// ```
 ///
 /// ```gleam
-/// assert from_strings([]) |> is_empty
+/// assert string_tree.from_strings([]) |> string_tree.is_empty
 /// ```
 ///
 @external(erlang, "string", "is_empty")

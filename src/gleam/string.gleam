@@ -27,11 +27,11 @@ import gleam/string_tree.{type StringTree}
 /// ## Examples
 ///
 /// ```gleam
-/// assert is_empty("")
+/// assert string.is_empty("")
 /// ```
 ///
 /// ```gleam
-/// assert !is_empty("the world")
+/// assert !string.is_empty("the world")
 /// ```
 ///
 pub fn is_empty(str: String) -> Bool {
@@ -46,15 +46,15 @@ pub fn is_empty(str: String) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// assert length("Gleam") == 5
+/// assert string.length("Gleam") == 5
 /// ```
 ///
 /// ```gleam
-/// assert length("ß↑e̊") == 3
+/// assert string.length("ß↑e̊") == 3
 /// ```
 ///
 /// ```gleam
-/// assert length("") == 0
+/// assert string.length("") == 0
 /// ```
 ///
 @external(erlang, "string", "length")
@@ -69,7 +69,7 @@ pub fn length(string: String) -> Int
 /// ## Examples
 ///
 /// ```gleam
-/// assert reverse("stressed") == "desserts"
+/// assert string.reverse("stressed") == "desserts"
 /// ```
 ///
 pub fn reverse(string: String) -> String {
@@ -84,11 +84,12 @@ pub fn reverse(string: String) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// assert replace("www.example.com", each: ".", with: "-") == "www-example-com"
+/// assert string.replace("www.example.com", each: ".", with: "-")
+///   == "www-example-com"
 /// ```
 ///
 /// ```gleam
-/// assert replace("a,b,c,d,e", each: ",", with: "/") == "a/b/c/d/e"
+/// assert string.replace("a,b,c,d,e", each: ",", with: "/") == "a/b/c/d/e"
 /// ```
 ///
 pub fn replace(
@@ -110,7 +111,7 @@ pub fn replace(
 /// ## Examples
 ///
 /// ```gleam
-/// assert lowercase("X-FILES") == "x-files"
+/// assert string.lowercase("X-FILES") == "x-files"
 /// ```
 ///
 @external(erlang, "string", "lowercase")
@@ -125,7 +126,7 @@ pub fn lowercase(string: String) -> String
 /// ## Examples
 ///
 /// ```gleam
-/// assert uppercase("skinner") == "SKINNER"
+/// assert string.uppercase("skinner") == "SKINNER"
 /// ```
 ///
 @external(erlang, "string", "uppercase")
@@ -141,13 +142,13 @@ pub fn uppercase(string: String) -> String
 /// ```gleam
 /// import gleam/order
 ///
-/// assert compare("Anthony", "Anthony") == order.Eq
+/// assert string.compare("Anthony", "Anthony") == order.Eq
 /// ```
 ///
 /// ```gleam
 /// import gleam/order
 ///
-/// assert compare("A", "B") == order.Lt
+/// assert string.compare("A", "B") == order.Lt
 /// ```
 ///
 pub fn compare(a: String, b: String) -> order.Order {
@@ -175,23 +176,23 @@ fn less_than(a: String, b: String) -> Bool
 /// ## Examples
 ///
 /// ```gleam
-/// assert slice(from: "gleam", at_index: 1, length: 2) == "le"
+/// assert string.slice(from: "gleam", at_index: 1, length: 2) == "le"
 /// ```
 ///
 /// ```gleam
-/// assert slice(from: "gleam", at_index: 1, length: 10) == "leam"
+/// assert string.slice(from: "gleam", at_index: 1, length: 10) == "leam"
 /// ```
 ///
 /// ```gleam
-/// assert slice(from: "gleam", at_index: 10, length: 3) == ""
+/// assert string.slice(from: "gleam", at_index: 10, length: 3) == ""
 /// ```
 ///
 /// ```gleam
-/// assert slice(from: "gleam", at_index: -2, length: 2) == "am"
+/// assert string.slice(from: "gleam", at_index: -2, length: 2) == "am"
 /// ```
 ///
 /// ```gleam
-/// assert slice(from: "gleam", at_index: -12, length: 2) == ""
+/// assert string.slice(from: "gleam", at_index: -12, length: 2) == ""
 /// ```
 ///
 pub fn slice(
@@ -230,7 +231,7 @@ fn unsafe_byte_slice(string: String, index: Int, length: Int) -> String
 /// ## Examples
 ///
 /// ```gleam
-/// assert crop(from: "The Lone Gunmen", before: "Lone") == "Lone Gunmen"
+/// assert string.crop(from: "The Lone Gunmen", before: "Lone") == "Lone Gunmen"
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "crop_string")
@@ -244,7 +245,7 @@ pub fn crop(from string: String, before substring: String) -> String
 /// ## Examples
 ///
 /// ```gleam
-/// assert drop_start(from: "The Lone Gunmen", up_to: 2) == "e Lone Gunmen"
+/// assert string.drop_start(from: "The Lone Gunmen", up_to: 2) == "e Lone Gunmen"
 /// ```
 ///
 pub fn drop_start(from string: String, up_to num_graphemes: Int) -> String {
@@ -266,7 +267,7 @@ pub fn drop_start(from string: String, up_to num_graphemes: Int) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// assert drop_end(from: "Cigarette Smoking Man", up_to: 2)
+/// assert string.drop_end(from: "Cigarette Smoking Man", up_to: 2)
 ///   == "Cigarette Smoking M"
 /// ```
 ///
@@ -282,15 +283,15 @@ pub fn drop_end(from string: String, up_to num_graphemes: Int) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// assert contains(does: "theory", contain: "ory")
+/// assert string.contains(does: "theory", contain: "ory")
 /// ```
 ///
 /// ```gleam
-/// assert contains(does: "theory", contain: "the")
+/// assert string.contains(does: "theory", contain: "the")
 /// ```
 ///
 /// ```gleam
-/// assert !contains(does: "theory", contain: "THE")
+/// assert !string.contains(does: "theory", contain: "THE")
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "contains_string")
@@ -302,7 +303,7 @@ pub fn contains(does haystack: String, contain needle: String) -> Bool
 /// ## Examples
 ///
 /// ```gleam
-/// assert !starts_with("theory", "ory")
+/// assert !string.starts_with("theory", "ory")
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "string_starts_with")
@@ -314,7 +315,7 @@ pub fn starts_with(string: String, prefix: String) -> Bool
 /// ## Examples
 ///
 /// ```gleam
-/// assert ends_with("theory", "ory")
+/// assert string.ends_with("theory", "ory")
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "string_ends_with")
@@ -326,7 +327,7 @@ pub fn ends_with(string: String, suffix: String) -> Bool
 /// ## Examples
 ///
 /// ```gleam
-/// assert split("home/gleam/desktop/", on: "/")
+/// assert string.split("home/gleam/desktop/", on: "/")
 ///   == ["home", "gleam", "desktop", ""]
 /// ```
 ///
@@ -348,12 +349,12 @@ pub fn split(x: String, on substring: String) -> List(String) {
 /// ## Examples
 ///
 /// ```gleam
-/// assert split_once("home/gleam/desktop/", on: "/")
+/// assert string.split_once("home/gleam/desktop/", on: "/")
 ///   == Ok(#("home", "gleam/desktop/"))
 /// ```
 ///
 /// ```gleam
-/// assert split_once("home/gleam/desktop/", on: "?") == Error(Nil)
+/// assert string.split_once("home/gleam/desktop/", on: "?") == Error(Nil)
 /// ```
 ///
 @external(javascript, "../gleam_stdlib.mjs", "split_once")
@@ -384,7 +385,7 @@ fn erl_split(a: String, b: String) -> List(String)
 /// ## Examples
 ///
 /// ```gleam
-/// assert append(to: "butter", suffix: "fly") == "butterfly"
+/// assert string.append(to: "butter", suffix: "fly") == "butterfly"
 /// ```
 ///
 pub fn append(to first: String, suffix second: String) -> String {
@@ -398,7 +399,7 @@ pub fn append(to first: String, suffix second: String) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// assert concat(["never", "the", "less"]) == "nevertheless"
+/// assert string.concat(["never", "the", "less"]) == "nevertheless"
 /// ```
 ///
 @external(erlang, "erlang", "list_to_binary")
@@ -420,7 +421,7 @@ fn concat_loop(strings: List(String), accumulator: String) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// assert repeat("ha", times: 3) == "hahaha"
+/// assert string.repeat("ha", times: 3) == "hahaha"
 /// ```
 ///
 pub fn repeat(string: String, times times: Int) -> String {
@@ -449,7 +450,8 @@ fn repeat_loop(times: Int, doubling_acc: String, acc: String) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// assert join(["home","evan","Desktop"], with: "/") == "home/evan/Desktop"
+/// assert string.join(["home", "evan", "Desktop"], with: "/")
+///   == "home/evan/Desktop"
 /// ```
 ///
 pub fn join(strings: List(String), with separator: String) -> String {
@@ -476,15 +478,15 @@ fn join_loop(
 /// ## Examples
 ///
 /// ```gleam
-/// assert pad_start("121", to: 5, with: ".") == "..121"
+/// assert string.pad_start("121", to: 5, with: ".") == "..121"
 /// ```
 ///
 /// ```gleam
-/// assert pad_start("121", to: 3, with: ".") == "121"
+/// assert string.pad_start("121", to: 3, with: ".") == "121"
 /// ```
 ///
 /// ```gleam
-/// assert pad_start("121", to: 2, with: ".") == "121"
+/// assert string.pad_start("121", to: 2, with: ".") == "121"
 /// ```
 ///
 pub fn pad_start(
@@ -506,15 +508,15 @@ pub fn pad_start(
 /// ## Examples
 ///
 /// ```gleam
-/// assert pad_end("123", to: 5, with: ".") == "123.."
+/// assert string.pad_end("123", to: 5, with: ".") == "123.."
 /// ```
 ///
 /// ```gleam
-/// assert pad_end("123", to: 3, with: ".") == "123"
+/// assert string.pad_end("123", to: 3, with: ".") == "123"
 /// ```
 ///
 /// ```gleam
-/// assert pad_end("123", to: 2, with: ".") == "123"
+/// assert string.pad_end("123", to: 2, with: ".") == "123"
 /// ```
 ///
 pub fn pad_end(
@@ -549,7 +551,7 @@ fn padding(size: Int, pad_string: String) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// assert trim("  hats  \n") == "hats"
+/// assert string.trim("  hats  \n") == "hats"
 /// ```
 ///
 pub fn trim(string: String) -> String {
@@ -569,7 +571,7 @@ type Direction {
 /// ## Examples
 ///
 /// ```gleam
-/// assert trim_start("  hats  \n") == "hats  \n"
+/// assert string.trim_start("  hats  \n") == "hats  \n"
 /// ```
 ///
 @external(javascript, "../gleam_stdlib.mjs", "trim_start")
@@ -582,7 +584,7 @@ pub fn trim_start(string: String) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// assert trim_end("  hats  \n") == "  hats"
+/// assert string.trim_end("  hats  \n") == "  hats"
 /// ```
 ///
 @external(javascript, "../gleam_stdlib.mjs", "trim_end")
@@ -602,11 +604,11 @@ pub fn trim_end(string: String) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// assert pop_grapheme("gleam") == Ok(#("g", "leam"))
+/// assert string.pop_grapheme("gleam") == Ok(#("g", "leam"))
 /// ```
 ///
 /// ```gleam
-/// assert pop_grapheme("") == Error(Nil)
+/// assert string.pop_grapheme("") == Error(Nil)
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "string_pop_grapheme")
@@ -617,7 +619,7 @@ pub fn pop_grapheme(string: String) -> Result(#(String, String), Nil)
 /// [graphemes](https://en.wikipedia.org/wiki/Grapheme).
 ///
 /// ```gleam
-/// assert to_graphemes("abc") == ["a", "b", "c"]
+/// assert string.to_graphemes("abc") == ["a", "b", "c"]
 /// ```
 ///
 @external(javascript, "../gleam_stdlib.mjs", "graphemes")
@@ -647,19 +649,19 @@ fn unsafe_int_to_utf_codepoint(a: Int) -> UtfCodepoint
 /// ## Examples
 ///
 /// ```gleam
-/// assert "a" |> to_utf_codepoints == [UtfCodepoint(97)]
+/// assert "a" |> string.to_utf_codepoints == [UtfCodepoint(97)]
 /// ```
 ///
 /// ```gleam
 /// // Semantically the same as:
 /// // ["🏳", "️", "‍", "🌈"] or:
 /// // [waving_white_flag, variant_selector_16, zero_width_joiner, rainbow]
-/// assert "🏳️‍🌈" |> to_utf_codepoints
+/// assert "🏳️‍🌈" |> string.to_utf_codepoints
 ///   == [
-///     UtfCodepoint(127987),
-///     UtfCodepoint(65039),
+///     UtfCodepoint(127_987),
+///     UtfCodepoint(65_039),
 ///     UtfCodepoint(8205),
-///     UtfCodepoint(127752),
+///     UtfCodepoint(127_752),
 ///   ]
 /// ```
 ///
@@ -704,10 +706,10 @@ fn string_to_codepoint_integer_list(string: String) -> List(Int)
 /// ## Examples
 ///
 /// ```gleam
-/// let assert Ok(a) = utf_codepoint(97)
-/// let assert Ok(b) = utf_codepoint(98)
-/// let assert Ok(c) = utf_codepoint(99)
-/// assert from_utf_codepoints([a, b, c]) == "abc"
+/// let assert Ok(a) = string.utf_codepoint(97)
+/// let assert Ok(b) = string.utf_codepoint(98)
+/// let assert Ok(c) = string.utf_codepoint(99)
+/// assert string.from_utf_codepoints([a, b, c]) == "abc"
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "utf_codepoint_list_to_string")
@@ -732,8 +734,8 @@ pub fn utf_codepoint(value: Int) -> Result(UtfCodepoint, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// let assert [utf_codepoint, ..] = to_utf_codepoints("💜")
-/// assert utf_codepoint_to_int(utf_codepoint) == 128156
+/// let assert [utf_codepoint, ..] = string.to_utf_codepoints("💜")
+/// assert string.utf_codepoint_to_int(utf_codepoint) == 128_156
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "identity")
@@ -746,11 +748,11 @@ pub fn utf_codepoint_to_int(cp: UtfCodepoint) -> Int
 /// ## Examples
 ///
 /// ```gleam
-/// assert to_option("") == None
+/// assert string.to_option("") == None
 /// ```
 ///
 /// ```gleam
-/// assert to_option("hats") == Some("hats")
+/// assert string.to_option("hats") == Some("hats")
 /// ```
 ///
 pub fn to_option(string: String) -> Option(String) {
@@ -767,11 +769,11 @@ pub fn to_option(string: String) -> Option(String) {
 /// ## Examples
 ///
 /// ```gleam
-/// assert first("") == Error(Nil)
+/// assert string.first("") == Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// assert first("icecream") == Ok("i")
+/// assert string.first("icecream") == Ok("i")
 /// ```
 ///
 pub fn first(string: String) -> Result(String, Nil) {
@@ -791,11 +793,11 @@ pub fn first(string: String) -> Result(String, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// assert last("") == Error(Nil)
+/// assert string.last("") == Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// assert last("icecream") == Ok("m")
+/// assert string.last("icecream") == Ok("m")
 /// ```
 ///
 pub fn last(string: String) -> Result(String, Nil) {
@@ -812,7 +814,7 @@ pub fn last(string: String) -> Result(String, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// assert capitalise("mamouna") == "Mamouna"
+/// assert string.capitalise("mamouna") == "Mamouna"
 /// ```
 ///
 pub fn capitalise(string: String) -> String {
@@ -864,7 +866,7 @@ fn do_inspect(term: anything) -> StringTree
 /// ## Examples
 ///
 /// ```gleam
-/// assert byte_size("🏳️‍⚧️🏳️‍🌈👩🏾‍❤️‍👨🏻") == 58
+/// assert string.byte_size("🏳️‍⚧️🏳️‍🌈👩🏾‍❤️‍👨🏻") == 58
 /// ```
 ///
 @external(erlang, "erlang", "byte_size")
@@ -879,11 +881,11 @@ pub fn byte_size(string: String) -> Int
 /// ## Examples
 ///
 /// ```gleam
-/// assert remove_prefix("@lpil", "@") == "lpil"
+/// assert string.remove_prefix("@lpil", "@") == "lpil"
 /// ```
 ///
 /// ```gleam
-/// assert remove_prefix("hello!", "@") == "hello!"
+/// assert string.remove_prefix("hello!", "@") == "hello!"
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "string_remove_prefix")
@@ -898,11 +900,11 @@ pub fn remove_prefix(from string: String, matching prefix: String) -> String
 /// ## Examples
 ///
 /// ```gleam
-/// assert remove_suffix("Hello!", "!") == "Hello"
+/// assert string.remove_suffix("Hello!", "!") == "Hello"
 /// ```
 ///
 /// ```gleam
-/// assert remove_suffix("Hello!?", "!") == "Hello!?"
+/// assert string.remove_suffix("Hello!?", "!") == "Hello!?"
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "string_remove_suffix")

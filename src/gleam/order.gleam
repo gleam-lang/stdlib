@@ -18,15 +18,15 @@ pub type Order {
 /// ## Examples
 ///
 /// ```gleam
-/// assert negate(Lt) == Gt
+/// assert order.negate(Lt) == Gt
 /// ```
 ///
 /// ```gleam
-/// assert negate(Eq) == Eq
+/// assert order.negate(Eq) == Eq
 /// ```
 ///
 /// ```gleam
-/// assert negate(Gt) == Lt
+/// assert order.negate(Gt) == Lt
 /// ```
 ///
 pub fn negate(order: Order) -> Order {
@@ -42,15 +42,15 @@ pub fn negate(order: Order) -> Order {
 /// ## Examples
 ///
 /// ```gleam
-/// assert to_int(Lt) == -1
+/// assert order.to_int(Lt) == -1
 /// ```
 ///
 /// ```gleam
-/// assert to_int(Eq) == 0
+/// assert order.to_int(Eq) == 0
 /// ```
 ///
 /// ```gleam
-/// assert to_int(Gt) == 1
+/// assert order.to_int(Gt) == 1
 /// ```
 ///
 pub fn to_int(order: Order) -> Int {
@@ -66,7 +66,7 @@ pub fn to_int(order: Order) -> Int {
 /// ## Examples
 ///
 /// ```gleam
-/// assert compare(Eq, with: Lt) == Gt
+/// assert order.compare(Eq, with: Lt) == Gt
 /// ```
 ///
 pub fn compare(a: Order, with b: Order) -> Order {
@@ -86,7 +86,7 @@ pub fn compare(a: Order, with b: Order) -> Order {
 /// import gleam/int
 /// import gleam/list
 ///
-/// assert list.sort([1, 5, 4], by: reverse(int.compare)) == [5, 4, 1]
+/// assert list.sort([1, 5, 4], by: order.reverse(int.compare)) == [5, 4, 1]
 /// ```
 ///
 pub fn reverse(orderer: fn(a, a) -> Order) -> fn(a, a) -> Order {
@@ -100,13 +100,13 @@ pub fn reverse(orderer: fn(a, a) -> Order) -> fn(a, a) -> Order {
 /// ```gleam
 /// import gleam/int
 ///
-/// assert break_tie(in: int.compare(1, 1), with: Lt) == Lt
+/// assert order.break_tie(in: int.compare(1, 1), with: Lt) == Lt
 /// ```
 ///
 /// ```gleam
 /// import gleam/int
 ///
-/// assert break_tie(in: int.compare(1, 0), with: Eq) == Gt
+/// assert order.break_tie(in: int.compare(1, 0), with: Eq) == Gt
 /// ```
 ///
 pub fn break_tie(in order: Order, with other: Order) -> Order {
@@ -127,13 +127,13 @@ pub fn break_tie(in order: Order, with other: Order) -> Order {
 /// ```gleam
 /// import gleam/int
 ///
-/// assert lazy_break_tie(in: int.compare(1, 1), with: fn() { Lt }) == Lt
+/// assert order.lazy_break_tie(in: int.compare(1, 1), with: fn() { Lt }) == Lt
 /// ```
 ///
 /// ```gleam
 /// import gleam/int
 ///
-/// assert lazy_break_tie(in: int.compare(1, 0), with: fn() { Eq }) == Gt
+/// assert order.lazy_break_tie(in: int.compare(1, 0), with: fn() { Eq }) == Gt
 /// ```
 ///
 pub fn lazy_break_tie(

@@ -36,8 +36,11 @@ pub fn pad_to_bytes(x: BitArray) -> BitArray
 /// ## Examples
 ///
 /// ```gleam
-/// assert append(to: from_string("butter"), suffix: from_string("fly"))
-///   == from_string("butterfly")
+/// assert bit_array.append(
+///     to: bit_array.from_string("butter"),
+///     suffix: bit_array.from_string("fly"),
+///   )
+///   == bit_array.from_string("butterfly")
 /// ```
 ///
 pub fn append(to first: BitArray, suffix second: BitArray) -> BitArray {
@@ -103,8 +106,11 @@ fn unsafe_to_string(a: BitArray) -> String
 /// ## Examples
 ///
 /// ```gleam
-/// assert concat([from_string("butter"), from_string("fly")])
-///   == from_string("butterfly")
+/// assert bit_array.concat([
+///     bit_array.from_string("butter"),
+///     bit_array.from_string("fly"),
+///   ])
+///   == bit_array.from_string("butterfly")
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "bit_array_concat")
@@ -180,11 +186,11 @@ pub fn base16_decode(input: String) -> Result(BitArray, Nil)
 /// ## Examples
 ///
 /// ```gleam
-/// assert inspect(<<0, 20, 0x20, 255>>) == "<<0, 20, 32, 255>>"
+/// assert bit_array.inspect(<<0, 20, 0x20, 255>>) == "<<0, 20, 32, 255>>"
 /// ```
 ///
 /// ```gleam
-/// assert inspect(<<100, 5:3>>) == "<<100, 5:size(3)>>"
+/// assert bit_array.inspect(<<100, 5:3>>) == "<<100, 5:size(3)>>"
 /// ```
 ///
 pub fn inspect(input: BitArray) -> String {
@@ -222,15 +228,15 @@ fn inspect_loop(input: BitArray, accumulator: String) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// assert compare(<<1>>, <<2>>) == Lt
+/// assert bit_array.compare(<<1>>, <<2>>) == Lt
 /// ```
 ///
 /// ```gleam
-/// assert compare(<<"AB":utf8>>, <<"AA":utf8>>) == Gt
+/// assert bit_array.compare(<<"AB":utf8>>, <<"AA":utf8>>) == Gt
 /// ```
 ///
 /// ```gleam
-/// assert compare(<<1, 2:size(2)>>, with: <<1, 2:size(2)>>) == Eq
+/// assert bit_array.compare(<<1, 2:size(2)>>, with: <<1, 2:size(2)>>) == Eq
 /// ```
 ///
 pub fn compare(a: BitArray, with b: BitArray) -> order.Order {
@@ -269,7 +275,7 @@ fn bit_array_to_int_and_size(a: BitArray) -> #(Int, Int)
 /// ## Examples
 ///
 /// ```gleam
-/// assert starts_with(<<1, 2, 3, 4>>, <<1, 2>>)
+/// assert bit_array.starts_with(<<1, 2, 3, 4>>, <<1, 2>>)
 /// ```
 ///
 @external(javascript, "../gleam_stdlib.mjs", "bit_array_starts_with")

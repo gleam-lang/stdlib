@@ -18,11 +18,11 @@ import gleam/order.{type Order}
 /// ## Examples
 ///
 /// ```gleam
-/// assert absolute_value(-12) == 12
+/// assert int.absolute_value(-12) == 12
 /// ```
 ///
 /// ```gleam
-/// assert absolute_value(10) == 10
+/// assert int.absolute_value(10) == 10
 /// ```
 ///
 pub fn absolute_value(x: Int) -> Int {
@@ -38,23 +38,23 @@ pub fn absolute_value(x: Int) -> Int {
 /// ## Examples
 ///
 /// ```gleam
-/// assert power(2, -1.0) == Ok(0.5)
+/// assert int.power(2, -1.0) == Ok(0.5)
 /// ```
 ///
 /// ```gleam
-/// assert power(2, 2.0) == Ok(4.0)
+/// assert int.power(2, 2.0) == Ok(4.0)
 /// ```
 ///
 /// ```gleam
-/// assert power(8, 1.5) == Ok(22.627416997969522)
+/// assert int.power(8, 1.5) == Ok(22.627416997969522)
 /// ```
 ///
 /// ```gleam
-/// assert 4 |> power(of: 2.0) == Ok(16.0)
+/// assert 4 |> int.power(of: 2.0) == Ok(16.0)
 /// ```
 ///
 /// ```gleam
-/// assert power(-1, 0.5) == Error(Nil)
+/// assert int.power(-1, 0.5) == Error(Nil)
 /// ```
 ///
 pub fn power(base: Int, of exponent: Float) -> Result(Float, Nil) {
@@ -68,11 +68,11 @@ pub fn power(base: Int, of exponent: Float) -> Result(Float, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// assert square_root(4) == Ok(2.0)
+/// assert int.square_root(4) == Ok(2.0)
 /// ```
 ///
 /// ```gleam
-/// assert square_root(-16) == Error(Nil)
+/// assert int.square_root(-16) == Error(Nil)
 /// ```
 ///
 pub fn square_root(x: Int) -> Result(Float, Nil) {
@@ -86,11 +86,11 @@ pub fn square_root(x: Int) -> Result(Float, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// assert parse("2") == Ok(2)
+/// assert int.parse("2") == Ok(2)
 /// ```
 ///
 /// ```gleam
-/// assert parse("ABC") == Error(Nil)
+/// assert int.parse("ABC") == Error(Nil)
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "parse_int")
@@ -106,23 +106,23 @@ pub fn parse(string: String) -> Result(Int, Nil)
 /// ## Examples
 ///
 /// ```gleam
-/// assert base_parse("10", 2) == Ok(2)
+/// assert int.base_parse("10", 2) == Ok(2)
 /// ```
 ///
 /// ```gleam
-/// assert base_parse("30", 16) == Ok(48)
+/// assert int.base_parse("30", 16) == Ok(48)
 /// ```
 ///
 /// ```gleam
-/// assert base_parse("1C", 36) == Ok(48)
+/// assert int.base_parse("1C", 36) == Ok(48)
 /// ```
 ///
 /// ```gleam
-/// assert base_parse("48", 1) == Error(Nil)
+/// assert int.base_parse("48", 1) == Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// assert base_parse("48", 37) == Error(Nil)
+/// assert int.base_parse("48", 37) == Error(Nil)
 /// ```
 ///
 pub fn base_parse(string: String, base: Int) -> Result(Int, Nil) {
@@ -141,7 +141,7 @@ fn do_base_parse(a: String, b: Int) -> Result(Int, Nil)
 /// ## Examples
 ///
 /// ```gleam
-/// assert to_string(2) == "2"
+/// assert int.to_string(2) == "2"
 /// ```
 ///
 @external(erlang, "erlang", "integer_to_binary")
@@ -155,23 +155,23 @@ pub fn to_string(x: Int) -> String
 /// ## Examples
 ///
 /// ```gleam
-/// assert to_base_string(2, 2) == Ok("10")
+/// assert int.to_base_string(2, 2) == Ok("10")
 /// ```
 ///
 /// ```gleam
-/// assert to_base_string(48, 16) == Ok("30")
+/// assert int.to_base_string(48, 16) == Ok("30")
 /// ```
 ///
 /// ```gleam
-/// assert to_base_string(48, 36) == Ok("1C")
+/// assert int.to_base_string(48, 36) == Ok("1C")
 /// ```
 ///
 /// ```gleam
-/// assert to_base_string(48, 1) == Error(Nil)
+/// assert int.to_base_string(48, 1) == Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// assert to_base_string(48, 37) == Error(Nil)
+/// assert int.to_base_string(48, 37) == Error(Nil)
 /// ```
 ///
 pub fn to_base_string(x: Int, base: Int) -> Result(String, Nil) {
@@ -190,7 +190,7 @@ fn do_to_base_string(a: Int, b: Int) -> String
 /// ## Examples
 ///
 /// ```gleam
-/// assert to_base2(2) == "10"
+/// assert int.to_base2(2) == "10"
 /// ```
 ///
 pub fn to_base2(x: Int) -> String {
@@ -202,7 +202,7 @@ pub fn to_base2(x: Int) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// assert to_base8(15) == "17"
+/// assert int.to_base8(15) == "17"
 /// ```
 ///
 pub fn to_base8(x: Int) -> String {
@@ -214,7 +214,7 @@ pub fn to_base8(x: Int) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// assert to_base16(48) == "30"
+/// assert int.to_base16(48) == "30"
 /// ```
 ///
 pub fn to_base16(x: Int) -> String {
@@ -226,7 +226,7 @@ pub fn to_base16(x: Int) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// assert to_base36(48) == "1C"
+/// assert int.to_base36(48) == "1C"
 /// ```
 ///
 pub fn to_base36(x: Int) -> String {
@@ -238,15 +238,15 @@ pub fn to_base36(x: Int) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// assert to_float(5) == 5.0
+/// assert int.to_float(5) == 5.0
 /// ```
 ///
 /// ```gleam
-/// assert to_float(0) == 0.0
+/// assert int.to_float(0) == 0.0
 /// ```
 ///
 /// ```gleam
-/// assert to_float(-3) == -3.0
+/// assert int.to_float(-3) == -3.0
 /// ```
 ///
 @external(erlang, "erlang", "float")
@@ -262,11 +262,11 @@ pub fn to_float(x: Int) -> Float
 /// ## Examples
 ///
 /// ```gleam
-/// assert clamp(40, min: 50, max: 60) == 50
+/// assert int.clamp(40, min: 50, max: 60) == 50
 /// ```
 ///
 /// ```gleam
-/// assert clamp(40, min: 50, max: 30) == 40
+/// assert int.clamp(40, min: 50, max: 30) == 40
 /// ```
 ///
 pub fn clamp(x: Int, min min_bound: Int, max max_bound: Int) -> Int {
@@ -281,15 +281,15 @@ pub fn clamp(x: Int, min min_bound: Int, max max_bound: Int) -> Int {
 /// ## Examples
 ///
 /// ```gleam
-/// assert compare(2, 3) == Lt
+/// assert int.compare(2, 3) == Lt
 /// ```
 ///
 /// ```gleam
-/// assert compare(4, 3) == Gt
+/// assert int.compare(4, 3) == Gt
 /// ```
 ///
 /// ```gleam
-/// assert compare(3, 3) == Eq
+/// assert int.compare(3, 3) == Eq
 /// ```
 ///
 pub fn compare(a: Int, with b: Int) -> Order {
@@ -308,7 +308,7 @@ pub fn compare(a: Int, with b: Int) -> Order {
 /// ## Examples
 ///
 /// ```gleam
-/// assert min(2, 3) == 2
+/// assert int.min(2, 3) == 2
 /// ```
 ///
 pub fn min(a: Int, b: Int) -> Int {
@@ -323,7 +323,7 @@ pub fn min(a: Int, b: Int) -> Int {
 /// ## Examples
 ///
 /// ```gleam
-/// assert max(2, 3) == 3
+/// assert int.max(2, 3) == 3
 /// ```
 ///
 pub fn max(a: Int, b: Int) -> Int {
@@ -338,11 +338,11 @@ pub fn max(a: Int, b: Int) -> Int {
 /// ## Examples
 ///
 /// ```gleam
-/// assert is_even(2)
+/// assert int.is_even(2)
 /// ```
 ///
 /// ```gleam
-/// assert !is_even(3)
+/// assert !int.is_even(3)
 /// ```
 ///
 pub fn is_even(x: Int) -> Bool {
@@ -354,11 +354,11 @@ pub fn is_even(x: Int) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// assert is_odd(3)
+/// assert int.is_odd(3)
 /// ```
 ///
 /// ```gleam
-/// assert !is_odd(2)
+/// assert !int.is_odd(2)
 /// ```
 ///
 pub fn is_odd(x: Int) -> Bool {
@@ -370,7 +370,7 @@ pub fn is_odd(x: Int) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// assert negate(1) == -1
+/// assert int.negate(1) == -1
 /// ```
 ///
 pub fn negate(x: Int) -> Int {
@@ -382,7 +382,7 @@ pub fn negate(x: Int) -> Int {
 /// ## Example
 ///
 /// ```gleam
-/// assert sum([1, 2, 3]) == 6
+/// assert int.sum([1, 2, 3]) == 6
 /// ```
 ///
 pub fn sum(numbers: List(Int)) -> Int {
@@ -401,7 +401,7 @@ fn sum_loop(numbers: List(Int), initial: Int) -> Int {
 /// ## Example
 ///
 /// ```gleam
-/// assert product([2, 3, 4]) == 24
+/// assert int.product([2, 3, 4]) == 24
 /// ```
 ///
 pub fn product(numbers: List(Int)) -> Int {
@@ -422,17 +422,17 @@ fn product_loop(numbers: List(Int), initial: Int) -> Int {
 /// ## Examples
 ///
 /// ```gleam
-/// random(10)
+/// int.random(10)
 /// // -> 4
 /// ```
 ///
 /// ```gleam
-/// random(1)
+/// int.random(1)
 /// // -> 0
 /// ```
 ///
 /// ```gleam
-/// random(-1)
+/// int.random(-1)
 /// // -> -1
 /// ```
 ///
@@ -450,19 +450,19 @@ pub fn random(max: Int) -> Int {
 /// ## Examples
 ///
 /// ```gleam
-/// assert divide(0, 1) == Ok(0)
+/// assert int.divide(0, 1) == Ok(0)
 /// ```
 ///
 /// ```gleam
-/// assert divide(1, 0) == Error(Nil)
+/// assert int.divide(1, 0) == Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// assert divide(5, 2) == Ok(2)
+/// assert int.divide(5, 2) == Ok(2)
 /// ```
 ///
 /// ```gleam
-/// assert divide(-99, 2) == Ok(-49)
+/// assert int.divide(-99, 2) == Ok(-49)
 /// ```
 ///
 pub fn divide(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
@@ -483,31 +483,31 @@ pub fn divide(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// assert remainder(3, 2) == Ok(1)
+/// assert int.remainder(3, 2) == Ok(1)
 /// ```
 ///
 /// ```gleam
-/// assert remainder(1, 0) == Error(Nil)
+/// assert int.remainder(1, 0) == Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// assert remainder(10, -1) == Ok(0)
+/// assert int.remainder(10, -1) == Ok(0)
 /// ```
 ///
 /// ```gleam
-/// assert remainder(13, by: 3) == Ok(1)
+/// assert int.remainder(13, by: 3) == Ok(1)
 /// ```
 ///
 /// ```gleam
-/// assert remainder(-13, by: 3) == Ok(-1)
+/// assert int.remainder(-13, by: 3) == Ok(-1)
 /// ```
 ///
 /// ```gleam
-/// assert remainder(13, by: -3) == Ok(1)
+/// assert int.remainder(13, by: -3) == Ok(1)
 /// ```
 ///
 /// ```gleam
-/// assert remainder(-13, by: -3) == Ok(-1)
+/// assert int.remainder(-13, by: -3) == Ok(-1)
 /// ```
 ///
 pub fn remainder(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
@@ -528,27 +528,27 @@ pub fn remainder(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// assert modulo(3, 2) == Ok(1)
+/// assert int.modulo(3, 2) == Ok(1)
 /// ```
 ///
 /// ```gleam
-/// assert modulo(1, 0) == Error(Nil)
+/// assert int.modulo(1, 0) == Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// assert modulo(10, -1) == Ok(0)
+/// assert int.modulo(10, -1) == Ok(0)
 /// ```
 ///
 /// ```gleam
-/// assert modulo(13, by: 3) == Ok(1)
+/// assert int.modulo(13, by: 3) == Ok(1)
 /// ```
 ///
 /// ```gleam
-/// assert modulo(-13, by: 3) == Ok(2)
+/// assert int.modulo(-13, by: 3) == Ok(2)
 /// ```
 ///
 /// ```gleam
-/// assert modulo(13, by: -3) == Ok(-2)
+/// assert int.modulo(13, by: -3) == Ok(-2)
 /// ```
 ///
 pub fn modulo(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
@@ -576,19 +576,19 @@ pub fn modulo(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// assert floor_divide(1, 0) == Error(Nil)
+/// assert int.floor_divide(1, 0) == Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// assert floor_divide(5, 2) == Ok(2)
+/// assert int.floor_divide(5, 2) == Ok(2)
 /// ```
 ///
 /// ```gleam
-/// assert floor_divide(6, -4) == Ok(-2)
+/// assert int.floor_divide(6, -4) == Ok(-2)
 /// ```
 ///
 /// ```gleam
-/// assert floor_divide(-99, 2) == Ok(-50)
+/// assert int.floor_divide(-99, 2) == Ok(-50)
 /// ```
 ///
 pub fn floor_divide(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
@@ -610,16 +610,17 @@ pub fn floor_divide(dividend: Int, by divisor: Int) -> Result(Int, Nil) {
 /// ## Examples
 ///
 /// ```gleam
-/// assert add(1, 2) == 3
+/// assert int.add(1, 2) == 3
 /// ```
 ///
 /// ```gleam
 /// import gleam/list
-/// assert list.fold([1, 2, 3], 0, add) == 6
+///
+/// assert list.fold([1, 2, 3], 0, int.add) == 6
 /// ```
 ///
 /// ```gleam
-/// assert 3 |> add(2) == 5
+/// assert 3 |> int.add(2) == 5
 /// ```
 ///
 pub fn add(a: Int, b: Int) -> Int {
@@ -634,17 +635,17 @@ pub fn add(a: Int, b: Int) -> Int {
 /// ## Examples
 ///
 /// ```gleam
-/// assert multiply(2, 4) == 8
+/// assert int.multiply(2, 4) == 8
 /// ```
 ///
 /// ```gleam
 /// import gleam/list
 ///
-/// assert list.fold([2, 3, 4], 1, multiply) == 24
+/// assert list.fold([2, 3, 4], 1, int.multiply) == 24
 /// ```
 ///
 /// ```gleam
-/// assert 3 |> multiply(2) == 6
+/// assert 3 |> int.multiply(2) == 6
 /// ```
 ///
 pub fn multiply(a: Int, b: Int) -> Int {
@@ -659,21 +660,21 @@ pub fn multiply(a: Int, b: Int) -> Int {
 /// ## Examples
 ///
 /// ```gleam
-/// assert subtract(3, 1) == 2
+/// assert int.subtract(3, 1) == 2
 /// ```
 ///
 /// ```gleam
 /// import gleam/list
 ///
-/// assert list.fold([1, 2, 3], 10, subtract) == 4
+/// assert list.fold([1, 2, 3], 10, int.subtract) == 4
 /// ```
 ///
 /// ```gleam
-/// assert 3 |> subtract(2) == 1
+/// assert 3 |> int.subtract(2) == 1
 /// ```
 ///
 /// ```gleam
-/// assert 3 |> subtract(2, _) == -1
+/// assert 3 |> int.subtract(2, _) == -1
 /// ```
 ///
 pub fn subtract(a: Int, b: Int) -> Int {
@@ -789,15 +790,14 @@ pub fn bitwise_shift_right(x: Int, y: Int) -> Int
 /// ## Examples
 ///
 /// ```gleam
-/// assert
-///   range(from: 0, to: 3, with: "", run: fn(acc, i) {
-///     acc <> to_string(i)
+/// assert int.range(from: 0, to: 3, with: "", run: fn(acc, i) {
+///     acc <> int.to_string(i)
 ///   })
 ///   == "012"
 /// ```
 ///
 /// ```gleam
-/// assert range(from: 1, to: -2, with: [], run: list.prepend) == [-1, 0, 1]
+/// assert int.range(from: 1, to: -2, with: [], run: list.prepend) == [-1, 0, 1]
 /// ```
 ///
 pub fn range(

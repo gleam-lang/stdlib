@@ -8,11 +8,11 @@ import gleam/list
 /// ## Examples
 ///
 /// ```gleam
-/// assert is_ok(Ok(1))
+/// assert result.is_ok(Ok(1))
 /// ```
 ///
 /// ```gleam
-/// assert !is_ok(Error(Nil))
+/// assert !result.is_ok(Error(Nil))
 /// ```
 ///
 pub fn is_ok(result: Result(a, e)) -> Bool {
@@ -27,11 +27,11 @@ pub fn is_ok(result: Result(a, e)) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// assert !is_error(Ok(1))
+/// assert !result.is_error(Ok(1))
 /// ```
 ///
 /// ```gleam
-/// assert is_error(Error(Nil))
+/// assert result.is_error(Error(Nil))
 /// ```
 ///
 pub fn is_error(result: Result(a, e)) -> Bool {
@@ -50,11 +50,11 @@ pub fn is_error(result: Result(a, e)) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// assert map(over: Ok(1), with: fn(x) { x + 1 }) == Ok(2)
+/// assert result.map(over: Ok(1), with: fn(x) { x + 1 }) == Ok(2)
 /// ```
 ///
 /// ```gleam
-/// assert map(over: Error(1), with: fn(x) { x + 1 }) == Error(1)
+/// assert result.map(over: Error(1), with: fn(x) { x + 1 }) == Error(1)
 /// ```
 ///
 pub fn map(over result: Result(a, e), with fun: fn(a) -> b) -> Result(b, e) {
@@ -73,11 +73,11 @@ pub fn map(over result: Result(a, e), with fun: fn(a) -> b) -> Result(b, e) {
 /// ## Examples
 ///
 /// ```gleam
-/// assert map_error(over: Error(1), with: fn(x) { x + 1 }) == Error(2)
+/// assert result.map_error(over: Error(1), with: fn(x) { x + 1 }) == Error(2)
 /// ```
 ///
 /// ```gleam
-/// assert map_error(over: Ok(1), with: fn(x) { x + 1 }) == Ok(1)
+/// assert result.map_error(over: Ok(1), with: fn(x) { x + 1 }) == Ok(1)
 /// ```
 ///
 pub fn map_error(
@@ -95,15 +95,15 @@ pub fn map_error(
 /// ## Examples
 ///
 /// ```gleam
-/// assert flatten(Ok(Ok(1))) == Ok(1)
+/// assert result.flatten(Ok(Ok(1))) == Ok(1)
 /// ```
 ///
 /// ```gleam
-/// assert flatten(Ok(Error(""))) == Error("")
+/// assert result.flatten(Ok(Error(""))) == Error("")
 /// ```
 ///
 /// ```gleam
-/// assert flatten(Error(Nil)) == Error(Nil)
+/// assert result.flatten(Error(Nil)) == Error(Nil)
 /// ```
 ///
 pub fn flatten(result: Result(Result(a, e), e)) -> Result(a, e) {
@@ -125,19 +125,19 @@ pub fn flatten(result: Result(Result(a, e), e)) -> Result(a, e) {
 /// ## Examples
 ///
 /// ```gleam
-/// assert try(Ok(1), fn(x) { Ok(x + 1) }) == Ok(2)
+/// assert result.try(Ok(1), fn(x) { Ok(x + 1) }) == Ok(2)
 /// ```
 ///
 /// ```gleam
-/// assert try(Ok(1), fn(x) { Ok(#("a", x)) }) == Ok(#("a", 1))
+/// assert result.try(Ok(1), fn(x) { Ok(#("a", x)) }) == Ok(#("a", 1))
 /// ```
 ///
 /// ```gleam
-/// assert try(Ok(1), fn(_) { Error("Oh no") }) == Error("Oh no")
+/// assert result.try(Ok(1), fn(_) { Error("Oh no") }) == Error("Oh no")
 /// ```
 ///
 /// ```gleam
-/// assert try(Error(Nil), fn(x) { Ok(x + 1) }) == Error(Nil)
+/// assert result.try(Error(Nil), fn(x) { Ok(x + 1) }) == Error(Nil)
 /// ```
 ///
 pub fn try(
@@ -156,11 +156,11 @@ pub fn try(
 /// ## Examples
 ///
 /// ```gleam
-/// assert unwrap(Ok(1), 0) == 1
+/// assert result.unwrap(Ok(1), 0) == 1
 /// ```
 ///
 /// ```gleam
-/// assert unwrap(Error(""), 0) == 0
+/// assert result.unwrap(Error(""), 0) == 0
 /// ```
 ///
 pub fn unwrap(result: Result(a, e), or default: a) -> a {
@@ -176,11 +176,11 @@ pub fn unwrap(result: Result(a, e), or default: a) -> a {
 /// ## Examples
 ///
 /// ```gleam
-/// assert lazy_unwrap(Ok(1), fn() { 0 }) == 1
+/// assert result.lazy_unwrap(Ok(1), fn() { 0 }) == 1
 /// ```
 ///
 /// ```gleam
-/// assert lazy_unwrap(Error(""), fn() { 0 }) == 0
+/// assert result.lazy_unwrap(Error(""), fn() { 0 }) == 0
 /// ```
 ///
 pub fn lazy_unwrap(result: Result(a, e), or default: fn() -> a) -> a {
@@ -196,11 +196,11 @@ pub fn lazy_unwrap(result: Result(a, e), or default: fn() -> a) -> a {
 /// ## Examples
 ///
 /// ```gleam
-/// assert unwrap_error(Error(1), 0) == 1
+/// assert result.unwrap_error(Error(1), 0) == 1
 /// ```
 ///
 /// ```gleam
-/// assert unwrap_error(Ok(""), 0) == 0
+/// assert result.unwrap_error(Ok(""), 0) == 0
 /// ```
 ///
 pub fn unwrap_error(result: Result(a, e), or default: e) -> e {
@@ -215,19 +215,19 @@ pub fn unwrap_error(result: Result(a, e), or default: e) -> e {
 /// ## Examples
 ///
 /// ```gleam
-/// assert or(Ok(1), Ok(2)) == Ok(1)
+/// assert result.or(Ok(1), Ok(2)) == Ok(1)
 /// ```
 ///
 /// ```gleam
-/// assert or(Ok(1), Error("Error 2")) == Ok(1)
+/// assert result.or(Ok(1), Error("Error 2")) == Ok(1)
 /// ```
 ///
 /// ```gleam
-/// assert or(Error("Error 1"), Ok(2)) == Ok(2)
+/// assert result.or(Error("Error 1"), Ok(2)) == Ok(2)
 /// ```
 ///
 /// ```gleam
-/// assert or(Error("Error 1"), Error("Error 2")) == Error("Error 2")
+/// assert result.or(Error("Error 1"), Error("Error 2")) == Error("Error 2")
 /// ```
 ///
 pub fn or(first: Result(a, e), second: Result(a, e)) -> Result(a, e) {
@@ -244,19 +244,19 @@ pub fn or(first: Result(a, e), second: Result(a, e)) -> Result(a, e) {
 /// ## Examples
 ///
 /// ```gleam
-/// assert lazy_or(Ok(1), fn() { Ok(2) }) == Ok(1)
+/// assert result.lazy_or(Ok(1), fn() { Ok(2) }) == Ok(1)
 /// ```
 ///
 /// ```gleam
-/// assert lazy_or(Ok(1), fn() { Error("Error 2") }) == Ok(1)
+/// assert result.lazy_or(Ok(1), fn() { Error("Error 2") }) == Ok(1)
 /// ```
 ///
 /// ```gleam
-/// assert lazy_or(Error("Error 1"), fn() { Ok(2) }) == Ok(2)
+/// assert result.lazy_or(Error("Error 1"), fn() { Ok(2) }) == Ok(2)
 /// ```
 ///
 /// ```gleam
-/// assert lazy_or(Error("Error 1"), fn() { Error("Error 2") })
+/// assert result.lazy_or(Error("Error 1"), fn() { Error("Error 2") })
 ///   == Error("Error 2")
 /// ```
 ///
@@ -277,11 +277,11 @@ pub fn lazy_or(
 /// ## Examples
 ///
 /// ```gleam
-/// assert all([Ok(1), Ok(2)]) == Ok([1, 2])
+/// assert result.all([Ok(1), Ok(2)]) == Ok([1, 2])
 /// ```
 ///
 /// ```gleam
-/// assert all([Ok(1), Error("e")]) == Error("e")
+/// assert result.all([Ok(1), Error("e")]) == Error("e")
 /// ```
 ///
 pub fn all(results: List(Result(a, e))) -> Result(List(a), e) {
@@ -296,7 +296,7 @@ pub fn all(results: List(Result(a, e))) -> Result(List(a), e) {
 /// ## Examples
 ///
 /// ```gleam
-/// assert partition([Ok(1), Error("a"), Error("b"), Ok(2)])
+/// assert result.partition([Ok(1), Error("a"), Error("b"), Ok(2)])
 ///   == #([2, 1], ["b", "a"])
 /// ```
 ///
@@ -317,11 +317,11 @@ fn partition_loop(results: List(Result(a, e)), oks: List(a), errors: List(e)) {
 /// ## Examples
 ///
 /// ```gleam
-/// assert replace(Ok(1), Nil) == Ok(Nil)
+/// assert result.replace(Ok(1), Nil) == Ok(Nil)
 /// ```
 ///
 /// ```gleam
-/// assert replace(Error(1), Nil) == Error(1)
+/// assert result.replace(Error(1), Nil) == Error(1)
 /// ```
 ///
 pub fn replace(result: Result(a, e), value: b) -> Result(b, e) {
@@ -336,11 +336,11 @@ pub fn replace(result: Result(a, e), value: b) -> Result(b, e) {
 /// ## Examples
 ///
 /// ```gleam
-/// assert replace_error(Error(1), Nil) == Error(Nil)
+/// assert result.replace_error(Error(1), Nil) == Error(Nil)
 /// ```
 ///
 /// ```gleam
-/// assert replace_error(Ok(1), Nil) == Ok(1)
+/// assert result.replace_error(Ok(1), Nil) == Ok(1)
 /// ```
 ///
 pub fn replace_error(result: Result(a, e), error: f) -> Result(a, f) {
@@ -355,7 +355,7 @@ pub fn replace_error(result: Result(a, e), error: f) -> Result(a, f) {
 /// ## Examples
 ///
 /// ```gleam
-/// assert values([Ok(1), Error("a"), Ok(3)]) == [1, 3]
+/// assert result.values([Ok(1), Error("a"), Ok(3)]) == [1, 3]
 /// ```
 ///
 pub fn values(results: List(Result(a, e))) -> List(a) {
@@ -378,19 +378,19 @@ pub fn values(results: List(Result(a, e))) -> List(a) {
 ///
 /// ```gleam
 /// assert Ok(1)
-///   |> try_recover(with: fn(_) { Error("failed to recover") })
+///   |> result.try_recover(with: fn(_) { Error("failed to recover") })
 ///   == Ok(1)
 /// ```
 ///
 /// ```gleam
 /// assert Error(1)
-///   |> try_recover(with: fn(error) { Ok(error + 1) })
+///   |> result.try_recover(with: fn(error) { Ok(error + 1) })
 ///   == Ok(2)
 /// ```
 ///
 /// ```gleam
 /// assert Error(1)
-///   |> try_recover(with: fn(error) { Error("failed to recover") })
+///   |> result.try_recover(with: fn(error) { Error("failed to recover") })
 ///   == Error("failed to recover")
 /// ```
 ///

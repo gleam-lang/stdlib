@@ -28,11 +28,11 @@ pub type Option(a) {
 /// ## Examples
 ///
 /// ```gleam
-/// assert all([Some(1), Some(2)]) == Some([1, 2])
+/// assert option.all([Some(1), Some(2)]) == Some([1, 2])
 /// ```
 ///
 /// ```gleam
-/// assert all([Some(1), None]) == None
+/// assert option.all([Some(1), None]) == None
 /// ```
 ///
 pub fn all(list: List(Option(a))) -> Option(List(a)) {
@@ -66,11 +66,11 @@ fn reverse_and_prepend(list prefix: List(a), to suffix: List(a)) -> List(a) {
 /// ## Examples
 ///
 /// ```gleam
-/// assert is_some(Some(1))
+/// assert option.is_some(Some(1))
 /// ```
 ///
 /// ```gleam
-/// assert !is_some(None)
+/// assert !option.is_some(None)
 /// ```
 ///
 pub fn is_some(option: Option(a)) -> Bool {
@@ -82,11 +82,11 @@ pub fn is_some(option: Option(a)) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// assert !is_none(Some(1))
+/// assert !option.is_none(Some(1))
 /// ```
 ///
 /// ```gleam
-/// assert is_none(None)
+/// assert option.is_none(None)
 /// ```
 ///
 pub fn is_none(option: Option(a)) -> Bool {
@@ -98,11 +98,11 @@ pub fn is_none(option: Option(a)) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// assert to_result(Some(1), "some_error") == Ok(1)
+/// assert option.to_result(Some(1), "some_error") == Ok(1)
 /// ```
 ///
 /// ```gleam
-/// assert to_result(None, "some_error") == Error("some_error")
+/// assert option.to_result(None, "some_error") == Error("some_error")
 /// ```
 ///
 pub fn to_result(option: Option(a), e) -> Result(a, e) {
@@ -117,11 +117,11 @@ pub fn to_result(option: Option(a), e) -> Result(a, e) {
 /// ## Examples
 ///
 /// ```gleam
-/// assert from_result(Ok(1)) == Some(1)
+/// assert option.from_result(Ok(1)) == Some(1)
 /// ```
 ///
 /// ```gleam
-/// assert from_result(Error("some_error")) == None
+/// assert option.from_result(Error("some_error")) == None
 /// ```
 ///
 pub fn from_result(result: Result(a, e)) -> Option(a) {
@@ -136,11 +136,11 @@ pub fn from_result(result: Result(a, e)) -> Option(a) {
 /// ## Examples
 ///
 /// ```gleam
-/// assert unwrap(Some(1), 0) == 1
+/// assert option.unwrap(Some(1), 0) == 1
 /// ```
 ///
 /// ```gleam
-/// assert unwrap(None, 0) == 0
+/// assert option.unwrap(None, 0) == 0
 /// ```
 ///
 pub fn unwrap(option: Option(a), or default: a) -> a {
@@ -155,11 +155,11 @@ pub fn unwrap(option: Option(a), or default: a) -> a {
 /// ## Examples
 ///
 /// ```gleam
-/// assert lazy_unwrap(Some(1), fn() { 0 }) == 1
+/// assert option.lazy_unwrap(Some(1), fn() { 0 }) == 1
 /// ```
 ///
 /// ```gleam
-/// assert lazy_unwrap(None, fn() { 0 }) == 0
+/// assert option.lazy_unwrap(None, fn() { 0 }) == 0
 /// ```
 ///
 pub fn lazy_unwrap(option: Option(a), or default: fn() -> a) -> a {
@@ -178,11 +178,11 @@ pub fn lazy_unwrap(option: Option(a), or default: fn() -> a) -> a {
 /// ## Examples
 ///
 /// ```gleam
-/// assert map(over: Some(1), with: fn(x) { x + 1 }) == Some(2)
+/// assert option.map(over: Some(1), with: fn(x) { x + 1 }) == Some(2)
 /// ```
 ///
 /// ```gleam
-/// assert map(over: None, with: fn(x) { x + 1 }) == None
+/// assert option.map(over: None, with: fn(x) { x + 1 }) == None
 /// ```
 ///
 pub fn map(over option: Option(a), with fun: fn(a) -> b) -> Option(b) {
@@ -197,15 +197,15 @@ pub fn map(over option: Option(a), with fun: fn(a) -> b) -> Option(b) {
 /// ## Examples
 ///
 /// ```gleam
-/// assert flatten(Some(Some(1))) == Some(1)
+/// assert option.flatten(Some(Some(1))) == Some(1)
 /// ```
 ///
 /// ```gleam
-/// assert flatten(Some(None)) == None
+/// assert option.flatten(Some(None)) == None
 /// ```
 ///
 /// ```gleam
-/// assert flatten(None) == None
+/// assert option.flatten(None) == None
 /// ```
 ///
 pub fn flatten(option: Option(Option(a))) -> Option(a) {
@@ -228,19 +228,19 @@ pub fn flatten(option: Option(Option(a))) -> Option(a) {
 /// ## Examples
 ///
 /// ```gleam
-/// assert then(Some(1), fn(x) { Some(x + 1) }) == Some(2)
+/// assert option.then(Some(1), fn(x) { Some(x + 1) }) == Some(2)
 /// ```
 ///
 /// ```gleam
-/// assert then(Some(1), fn(x) { Some(#("a", x)) }) == Some(#("a", 1))
+/// assert option.then(Some(1), fn(x) { Some(#("a", x)) }) == Some(#("a", 1))
 /// ```
 ///
 /// ```gleam
-/// assert then(Some(1), fn(_) { None }) == None
+/// assert option.then(Some(1), fn(_) { None }) == None
 /// ```
 ///
 /// ```gleam
-/// assert then(None, fn(x) { Some(x + 1) }) == None
+/// assert option.then(None, fn(x) { Some(x + 1) }) == None
 /// ```
 ///
 pub fn then(option: Option(a), apply fun: fn(a) -> Option(b)) -> Option(b) {
@@ -255,19 +255,19 @@ pub fn then(option: Option(a), apply fun: fn(a) -> Option(b)) -> Option(b) {
 /// ## Examples
 ///
 /// ```gleam
-/// assert or(Some(1), Some(2)) == Some(1)
+/// assert option.or(Some(1), Some(2)) == Some(1)
 /// ```
 ///
 /// ```gleam
-/// assert or(Some(1), None) == Some(1)
+/// assert option.or(Some(1), None) == Some(1)
 /// ```
 ///
 /// ```gleam
-/// assert or(None, Some(2)) == Some(2)
+/// assert option.or(None, Some(2)) == Some(2)
 /// ```
 ///
 /// ```gleam
-/// assert or(None, None) == None
+/// assert option.or(None, None) == None
 /// ```
 ///
 pub fn or(first: Option(a), second: Option(a)) -> Option(a) {
@@ -282,19 +282,19 @@ pub fn or(first: Option(a), second: Option(a)) -> Option(a) {
 /// ## Examples
 ///
 /// ```gleam
-/// assert lazy_or(Some(1), fn() { Some(2) }) == Some(1)
+/// assert option.lazy_or(Some(1), fn() { Some(2) }) == Some(1)
 /// ```
 ///
 /// ```gleam
-/// assert lazy_or(Some(1), fn() { None }) == Some(1)
+/// assert option.lazy_or(Some(1), fn() { None }) == Some(1)
 /// ```
 ///
 /// ```gleam
-/// assert lazy_or(None, fn() { Some(2) }) == Some(2)
+/// assert option.lazy_or(None, fn() { Some(2) }) == Some(2)
 /// ```
 ///
 /// ```gleam
-/// assert lazy_or(None, fn() { None }) == None
+/// assert option.lazy_or(None, fn() { None }) == None
 /// ```
 ///
 pub fn lazy_or(first: Option(a), second: fn() -> Option(a)) -> Option(a) {
@@ -310,7 +310,7 @@ pub fn lazy_or(first: Option(a), second: fn() -> Option(a)) -> Option(a) {
 /// ## Examples
 ///
 /// ```gleam
-/// assert values([Some(1), None, Some(3)]) == [1, 3]
+/// assert option.values([Some(1), None, Some(3)]) == [1, 3]
 /// ```
 ///
 pub fn values(options: List(Option(a))) -> List(a) {

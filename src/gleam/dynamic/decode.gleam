@@ -100,10 +100,13 @@
 //// // { "Lucy" -> 10, "Nubi" -> 20 }
 ////
 //// let result = decode.run(data, decode.dict(decode.string, decode.int))
-//// assert result == Ok(dict.from_list([
-////   #("Lucy", 10),
-////   #("Nubi", 20),
-//// ]))
+//// assert result
+////   == Ok(
+////     dict.from_list([
+////       #("Lucy", 10),
+////       #("Nubi", 20),
+////     ]),
+////   )
 //// ```
 ////
 //// ## Indexing objects
@@ -313,12 +316,16 @@ pub opaque type Decoder(t) {
 /// ## Examples
 ///
 /// ```gleam
-/// let data = dynamic.properties([
-///   #(dynamic.string("data"), dynamic.properties([
-///     #(dynamic.string("email"), dynamic.string("lucy@example.com")),
-///     #(dynamic.string("name"), dynamic.string("Lucy")),
+/// let data =
+///   dynamic.properties([
+///     #(
+///       dynamic.string("data"),
+///       dynamic.properties([
+///         #(dynamic.string("email"), dynamic.string("lucy@example.com")),
+///         #(dynamic.string("name"), dynamic.string("Lucy")),
+///       ]),
+///     ),
 ///   ])
-/// ])
 ///
 /// let decoder = {
 ///   use name <- decode.subfield(["data", "name"], decode.string)
@@ -381,11 +388,15 @@ pub fn run(data: Dynamic, decoder: Decoder(t)) -> Result(t, List(DecodeError)) {
 /// ```gleam
 /// let decoder = decode.at(["one", "two"], decode.int)
 ///
-/// let data = dynamic.properties([
-///   #(dynamic.string("one"), dynamic.properties([
-///     #(dynamic.string("two"), dynamic.int(1000)),
-///   ]),
-/// ])
+/// let data =
+///   dynamic.properties([
+///     #(
+///       dynamic.string("one"),
+///       dynamic.properties([
+///         #(dynamic.string("two"), dynamic.int(1000)),
+///       ]),
+///     ),
+///   ])
 ///
 /// assert decode.run(data, decoder) == Ok(1000)
 /// ```
@@ -471,10 +482,11 @@ fn path_segment_to_string(key: Dynamic) -> String {
 /// ## Examples
 ///
 /// ```gleam
-/// let data = dynamic.properties([
-///   #(dynamic.string("email"), dynamic.string("lucy@example.com")),
-///   #(dynamic.string("name"), dynamic.string("Lucy")),
-/// ])
+/// let data =
+///   dynamic.properties([
+///     #(dynamic.string("email"), dynamic.string("lucy@example.com")),
+///     #(dynamic.string("name"), dynamic.string("Lucy")),
+///   ])
 ///
 /// let decoder = {
 ///   use name <- decode.field("name", string)
@@ -510,10 +522,11 @@ pub fn decode_error(
 /// ## Examples
 ///
 /// ```gleam
-/// let data = dynamic.properties([
-///   #(dynamic.string("email"), dynamic.string("lucy@example.com")),
-///   #(dynamic.string("name"), dynamic.string("Lucy")),
-/// ])
+/// let data =
+///   dynamic.properties([
+///     #(dynamic.string("email"), dynamic.string("lucy@example.com")),
+///     #(dynamic.string("name"), dynamic.string("Lucy")),
+///   ])
 ///
 /// let decoder = {
 ///   use name <- decode.field("name", string)
@@ -550,9 +563,10 @@ pub fn field(
 /// ## Examples
 ///
 /// ```gleam
-/// let data = dynamic.properties([
-///   #(dynamic.string("name"), dynamic.string("Lucy")),
-/// ])
+/// let data =
+///   dynamic.properties([
+///     #(dynamic.string("name"), dynamic.string("Lucy")),
+///   ])
 ///
 /// let decoder = {
 ///   use name <- decode.field("name", string)
@@ -597,9 +611,10 @@ pub fn optional_field(
 /// ```gleam
 /// let decoder = decode.optionally_at(["one", "two"], 100, decode.int)
 ///
-/// let data = dynamic.properties([
-///   #(dynamic.string("one"), dynamic.properties([])),
-/// ])
+/// let data =
+///   dynamic.properties([
+///     #(dynamic.string("one"), dynamic.properties([])),
+///   ])
 ///
 /// assert decode.run(data, decoder) == Ok(100)
 /// ```
@@ -798,13 +813,13 @@ fn decode_list(
 /// ## Examples
 ///
 /// ```gleam
-/// let values = dynamic.properties([
-///   #(dynamic.string("one"), dynamic.int(1)),
-///   #(dynamic.string("two"), dynamic.int(2)),
-/// ])
+/// let values =
+///   dynamic.properties([
+///     #(dynamic.string("one"), dynamic.int(1)),
+///     #(dynamic.string("two"), dynamic.int(2)),
+///   ])
 ///
-/// let result =
-///   decode.run(values, decode.dict(decode.string, decode.int))
+/// let result = decode.run(values, decode.dict(decode.string, decode.int))
 /// assert result == Ok(values)
 /// ```
 ///
@@ -968,10 +983,11 @@ pub fn then(decoder: Decoder(a), next: fn(a) -> Decoder(b)) -> Decoder(b) {
 /// ## Examples
 ///
 /// ```gleam
-/// let decoder = decode.one_of(decode.string, or: [
-///   decode.int |> decode.map(int.to_string),
-///   decode.float |> decode.map(float.to_string),
-/// ])
+/// let decoder =
+///   decode.one_of(decode.string, or: [
+///     decode.int |> decode.map(int.to_string),
+///     decode.float |> decode.map(float.to_string),
+///   ])
 /// assert decode.run(dynamic.int(1000), decoder) == Ok("1000")
 /// ```
 ///

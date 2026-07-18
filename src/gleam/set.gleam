@@ -40,10 +40,10 @@ pub fn new() -> Set(member) {
 /// ## Examples
 ///
 /// ```gleam
-/// assert new()
-///   |> insert(1)
-///   |> insert(2)
-///   |> size
+/// assert set.new()
+///   |> set.insert(1)
+///   |> set.insert(2)
+///   |> set.size
 ///   == 2
 /// ```
 ///
@@ -56,11 +56,11 @@ pub fn size(set: Set(member)) -> Int {
 /// ## Examples
 ///
 /// ```gleam
-/// assert new() |> is_empty
+/// assert set.new() |> set.is_empty
 /// ```
 ///
 /// ```gleam
-/// assert !{ new() |> insert(1) |> is_empty }
+/// assert !{ set.new() |> set.insert(1) |> set.is_empty }
 /// ```
 ///
 pub fn is_empty(set: Set(member)) -> Bool {
@@ -74,10 +74,10 @@ pub fn is_empty(set: Set(member)) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// assert new()
-///   |> insert(1)
-///   |> insert(2)
-///   |> size
+/// assert set.new()
+///   |> set.insert(1)
+///   |> set.insert(2)
+///   |> set.size
 ///   == 2
 /// ```
 ///
@@ -92,16 +92,16 @@ pub fn insert(into set: Set(member), this member: member) -> Set(member) {
 /// ## Examples
 ///
 /// ```gleam
-/// assert new()
-///   |> insert(2)
-///   |> contains(2)
+/// assert set.new()
+///   |> set.insert(2)
+///   |> set.contains(2)
 /// ```
 ///
 /// ```gleam
 /// assert !{
-///   new()
-///   |> insert(2)
-///   |> contains(1)
+///   set.new()
+///   |> set.insert(2)
+///   |> set.contains(1)
 /// }
 /// ```
 ///
@@ -120,10 +120,10 @@ pub fn contains(in set: Set(member), this member: member) -> Bool {
 ///
 /// ```gleam
 /// assert !{
-///   new()
-///   |> insert(2)
-///   |> delete(2)
-///   |> contains(2)
+///   set.new()
+///   |> set.insert(2)
+///   |> set.delete(2)
+///   |> set.contains(2)
 /// }
 /// ```
 ///
@@ -141,7 +141,7 @@ pub fn delete(from set: Set(member), this member: member) -> Set(member) {
 /// ## Examples
 ///
 /// ```gleam
-/// assert new() |> insert(2) |> to_list == [2]
+/// assert set.new() |> set.insert(2) |> set.to_list == [2]
 /// ```
 ///
 pub fn to_list(set: Set(member)) -> List(member) {
@@ -159,8 +159,8 @@ pub fn to_list(set: Set(member)) -> List(member) {
 /// import gleam/list
 ///
 /// assert [1, 1, 2, 4, 3, 2]
-///   |> from_list
-///   |> to_list
+///   |> set.from_list
+///   |> set.to_list
 ///   |> list.sort(by: int.compare)
 ///   == [1, 2, 3, 4]
 /// ```
@@ -183,8 +183,8 @@ pub fn from_list(members: List(member)) -> Set(member) {
 /// ## Examples
 ///
 /// ```gleam
-/// assert from_list([1, 3, 9])
-///   |> fold(0, fn(accumulator, member) { accumulator + member })
+/// assert set.from_list([1, 3, 9])
+///   |> set.fold(0, fn(accumulator, member) { accumulator + member })
 ///   == 13
 /// ```
 ///
@@ -206,9 +206,9 @@ pub fn fold(
 /// ```gleam
 /// import gleam/int
 ///
-/// assert from_list([1, 4, 6, 3, 675, 44, 67])
-///   |> filter(keeping: int.is_even)
-///   |> to_list
+/// assert set.from_list([1, 4, 6, 3, 675, 44, 67])
+///   |> set.filter(keeping: int.is_even)
+///   |> set.to_list
 ///   == [4, 6, 44]
 /// ```
 ///
@@ -225,9 +225,9 @@ pub fn filter(
 /// ## Examples
 ///
 /// ```gleam
-/// assert from_list([1, 2, 3, 4])
-///   |> map(with: fn(x) { x * 2 })
-///   |> to_list
+/// assert set.from_list([1, 2, 3, 4])
+///   |> set.map(with: fn(x) { x * 2 })
+///   |> set.to_list
 ///   == [2, 4, 6, 8]
 /// ```
 ///
@@ -243,9 +243,9 @@ pub fn map(set: Set(member), with fun: fn(member) -> mapped) -> Set(mapped) {
 /// ## Examples
 ///
 /// ```gleam
-/// assert from_list([1, 2, 3, 4])
-///   |> drop([1, 3])
-///   |> to_list
+/// assert set.from_list([1, 2, 3, 4])
+///   |> set.drop([1, 3])
+///   |> set.to_list
 ///   == [2, 4]
 /// ```
 ///
@@ -264,9 +264,9 @@ pub fn drop(
 /// ## Examples
 ///
 /// ```gleam
-/// assert from_list([1, 2, 3])
-///   |> take([1, 3, 5])
-///   |> to_list
+/// assert set.from_list([1, 2, 3])
+///   |> set.take([1, 3, 5])
+///   |> set.to_list
 ///   == [1, 3]
 /// ```
 ///
@@ -284,7 +284,7 @@ pub fn take(
 /// ## Examples
 ///
 /// ```gleam
-/// assert union(from_list([1, 2]), from_list([2, 3])) |> to_list
+/// assert set.union(set.from_list([1, 2]), set.from_list([2, 3])) |> set.to_list
 ///   == [1, 2, 3]
 /// ```
 ///
@@ -310,7 +310,8 @@ fn order(
 /// ## Examples
 ///
 /// ```gleam
-/// assert intersection(from_list([1, 2]), from_list([2, 3])) |> to_list
+/// assert set.intersection(set.from_list([1, 2]), set.from_list([2, 3]))
+///   |> set.to_list
 ///   == [2]
 /// ```
 ///
@@ -328,7 +329,8 @@ pub fn intersection(
 /// ## Examples
 ///
 /// ```gleam
-/// assert difference(from_list([1, 2]), from_list([2, 3, 4])) |> to_list
+/// assert set.difference(set.from_list([1, 2]), set.from_list([2, 3, 4]))
+///   |> set.to_list
 ///   == [1]
 /// ```
 ///
@@ -344,11 +346,11 @@ pub fn difference(
 /// ## Examples
 ///
 /// ```gleam
-/// assert is_subset(from_list([1]), from_list([1, 2]))
+/// assert set.is_subset(set.from_list([1]), set.from_list([1, 2]))
 /// ```
 ///
 /// ```gleam
-/// assert !is_subset(from_list([1, 2, 3]), from_list([3, 4, 5]))
+/// assert !set.is_subset(set.from_list([1, 2, 3]), set.from_list([3, 4, 5]))
 /// ```
 ///
 pub fn is_subset(first: Set(member), of second: Set(member)) -> Bool {
@@ -360,11 +362,11 @@ pub fn is_subset(first: Set(member), of second: Set(member)) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// assert is_disjoint(from_list([1, 2, 3]), from_list([4, 5, 6]))
+/// assert set.is_disjoint(set.from_list([1, 2, 3]), set.from_list([4, 5, 6]))
 /// ```
 ///
 /// ```gleam
-/// assert !is_disjoint(from_list([1, 2, 3]), from_list([3, 4, 5]))
+/// assert !set.is_disjoint(set.from_list([1, 2, 3]), set.from_list([3, 4, 5]))
 /// ```
 ///
 pub fn is_disjoint(first: Set(member), from second: Set(member)) -> Bool {
@@ -377,8 +379,11 @@ pub fn is_disjoint(first: Set(member), from second: Set(member)) -> Bool {
 /// ## Examples
 ///
 /// ```gleam
-/// assert symmetric_difference(from_list([1, 2, 3]), from_list([3, 4]))
-///   |> to_list
+/// assert set.symmetric_difference(
+///     set.from_list([1, 2, 3]),
+///     set.from_list([3, 4]),
+///   )
+///   |> set.to_list
 ///   == [1, 2, 4]
 /// ```
 ///
@@ -403,9 +408,9 @@ pub fn symmetric_difference(
 /// ## Examples
 ///
 /// ```gleam
-/// let set = from_list(["apple", "banana", "cherry"])
+/// let set = set.from_list(["apple", "banana", "cherry"])
 ///
-/// assert each(set, io.println) == Nil
+/// assert set.each(set, io.println) == Nil
 /// // apple
 /// // banana
 /// // cherry
