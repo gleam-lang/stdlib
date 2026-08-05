@@ -10,7 +10,7 @@
     println/1, print_error/1, println_error/1, inspect/1, float_to_string/1,
     int_from_base_string/2, utf_codepoint_list_to_string/1, contains_string/2,
     crop_string/2, base16_encode/1, base16_decode/1, string_replace/3, slice/3,
-    bit_array_to_int_and_size/1, bit_array_pad_to_bytes/1, index/2, list/5,
+    bit_array_to_int_and_size/1, index/2, list/5,
     dict/1, int/1, float/1, bit_array/1, is_null/1, string_remove_prefix/2,
     string_remove_suffix/2
 ]).
@@ -128,20 +128,12 @@ string_pop_grapheme(String) ->
 string_pop_codeunit(<<Cp/integer, Rest/binary>>) -> {Cp, Rest};
 string_pop_codeunit(Binary) -> {0, Binary}.
 
-bit_array_pad_to_bytes(Bin) ->
-    case erlang:bit_size(Bin) rem 8 of
-        0 -> Bin;
-        TrailingBits ->
-            PaddingBits = 8 - TrailingBits,
-            <<Bin/bits, 0:PaddingBits>>
-    end.
-
 bit_array_concat(BitArrays) ->
     list_to_bitstring(BitArrays).
 
 -if(?OTP_RELEASE >= 26).
 base64_encode(Bin, Padding) ->
-    PaddedBin = bit_array_pad_to_bytes(Bin),
+    PaddedBin = gleam@bit_array:pad_to_bytes(Bin),
     base64:encode(PaddedBin, #{padding => Padding}).
 -else.
 base64_encode(_Bin, _Padding) ->
@@ -453,7 +445,7 @@ contains_string(String, Substring) ->
     is_bitstring(string:find(String, Substring)).
 
 base16_encode(Bin) ->
-    PaddedBin = bit_array_pad_to_bytes(Bin),
+    PaddedBin = gleam@bit_array:pad_to_bytes(Bin),
     binary:encode_hex(PaddedBin).
 
 base16_decode(String) ->

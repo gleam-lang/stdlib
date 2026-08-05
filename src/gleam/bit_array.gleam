@@ -27,9 +27,15 @@ pub fn byte_size(x: BitArray) -> Int
 
 /// Pads a bit array with zeros so that it is a whole number of bytes.
 ///
-@external(erlang, "gleam_stdlib", "bit_array_pad_to_bytes")
-@external(javascript, "../gleam_stdlib.mjs", "bit_array_pad_to_bytes")
-pub fn pad_to_bytes(x: BitArray) -> BitArray
+pub fn pad_to_bytes(data: BitArray) -> BitArray {
+  case bit_size(data) % 8 {
+    0 -> data
+    trailing_bit_count -> {
+      let padding_bits = 8 - trailing_bit_count
+      <<data:bits, 0:size(padding_bits)>>
+    }
+  }
+}
 
 /// Creates a new bit array by joining two bit arrays.
 ///

@@ -76,6 +76,12 @@ pub fn pad_to_bytes_slice_test() {
   assert bit_array.pad_to_bytes(a) == <<0xAB, 0xF0>>
 }
 
+// https://github.com/gleam-lang/stdlib/issues/934
+pub fn pad_to_bytes_crash_test() {
+  let assert <<_:3, rest:bits>> = <<0xAB, 0xB0>>
+  assert bit_array.pad_to_bytes(rest) == <<93, 128>>
+}
+
 pub fn not_equal_test() {
   assert bit_array.from_string("test") != bit_array.from_string("asdf")
 }

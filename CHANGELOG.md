@@ -1,8 +1,12 @@
 # Changelog
 
+## v1.0.5 - 2026-08-05
+
+- Fix a bug where `bit_array.pad_to_bytes` could crash.
+
 ## v1.0.4 - 2026-05-30
 
-- Fix a bug where dicts and sets with hash collisions but equal entries would
+- Fixed a bug where dicts and sets with hash collisions but equal entries would
   not be equal.
 - The performance of dict and set equality has been improved.
 

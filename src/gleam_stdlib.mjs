@@ -15,6 +15,7 @@ import {
   CustomType,
 } from "./gleam.mjs";
 import { Some, None } from "./gleam/option.mjs";
+import { pad_to_bytes as bits_pad_to_bytes } from "./gleam/bit_array.mjs";
 import {
   default as Dict,
   fold as dict_fold,
@@ -301,40 +302,6 @@ export function bit_array_byte_size(bit_array) {
   return bit_array.byteSize;
 }
 
-export function bit_array_pad_to_bytes(bit_array) {
-  const trailingBitsCount = bit_array.bitSize % 8;
-
-  // If the bit array is a whole number of bytes it can be returned unchanged
-  if (trailingBitsCount === 0) {
-    return bit_array;
-  }
-
-  const finalByte = bit_array.byteAt(bit_array.byteSize - 1);
-
-  // The required final byte has its unused trailing bits set to zero
-  const unusedBitsCount = 8 - trailingBitsCount;
-  const correctFinalByte = (finalByte >> unusedBitsCount) << unusedBitsCount;
-
-  // If the unused bits in the final byte are already set to zero then the
-  // existing buffer can be re-used, avoiding a copy
-  if (finalByte === correctFinalByte) {
-    return new BitArray(
-      bit_array.rawBuffer,
-      bit_array.byteSize * 8,
-      bit_array.bitOffset,
-    );
-  }
-
-  // Copy the bit array into a new aligned buffer and set the correct final byte
-  const buffer = new Uint8Array(bit_array.byteSize);
-  for (let i = 0; i < buffer.length - 1; i++) {
-    buffer[i] = bit_array.byteAt(i);
-  }
-  buffer[buffer.length - 1] = correctFinalByte;
-
-  return new BitArray(buffer);
-}
-
 export function bit_array_concat(bit_arrays) {
   return toBitArray(bit_arrays.toArray());
 }
@@ -527,7 +494,7 @@ let b64TextDecoder;
 export function base64_encode(bit_array, padding) {
   b64TextDecoder ??= new TextDecoder();
 
-  bit_array = bit_array_pad_to_bytes(bit_array);
+  bit_array = bits_pad_to_bytes(bit_array);
 
   const m = bit_array.byteSize;
   const k = m % 3;
