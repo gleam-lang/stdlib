@@ -1325,6 +1325,19 @@ pub fn target_inspect_bit_array_test() {
   assert string.inspect(<<"abc":utf8>>) == "<<97, 98, 99>>"
 }
 
+@target(javascript)
+pub fn target_inspect_nan_test() {
+  let infinity = 1.0e300 *. 1.0e300
+  let nan = infinity /. infinity
+  assert string.inspect(nan) == "//js(NaN)"
+}
+
+@target(javascript)
+pub fn target_inspect_infinity_test() {
+  let infinity = 1.0e300 *. 1.0e300
+  assert string.inspect(infinity) == "//js(Infinity)"
+}
+
 @target(erlang)
 @external(erlang, "erlang", "self")
 fn create_erlang_pid() -> String
