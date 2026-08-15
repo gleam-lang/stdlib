@@ -1262,6 +1262,14 @@ pub fn inspect_451_test() {
   assert string.inspect(<<255, 2, 0>>) == "<<255, 2, 0>>"
 }
 
+pub fn inspect_456_test() {
+  assert string.inspect(1.0e300) == "1.0e300"
+}
+
+pub fn inspect_461_test() {
+  assert string.inspect(1.0e-300) == "1.0e-300"
+}
+
 pub fn inspect_charlist_test() {
   let list = [
     70, 97, 105, 108, 101, 100, 32, 116, 111, 32, 108, 111, 97, 100, 32, 78, 73,
