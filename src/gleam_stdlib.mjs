@@ -702,8 +702,11 @@ export function float_to_string(float) {
     const index = string.indexOf("e");
     if (index >= 0) {
       return string.slice(0, index) + ".0" + string.slice(index);
-    } else {
+    } else if (globalThis.Number.isInteger(float)) {
       return string + ".0";
+    } else {
+      // For NaN and Infinity we return it as JS representation.
+      return "//js(" + string + ")";
     }
   }
 }
