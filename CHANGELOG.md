@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Fixed a bug where `string.inspect` on the JavaScript target would incorrectly
+  print numbers like `1.0e300`.
+
 ## v1.0.5 - 2026-08-06
 
 - Fixed a bug where `bit_array.pad_to_bytes` could crash.
