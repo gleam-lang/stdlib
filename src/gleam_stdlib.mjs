@@ -718,7 +718,7 @@ class Inspector {
     if (v === null) return "//js(null)";
     if (v === undefined) return "Nil";
     if (t === "string") return this.#string(v);
-    if (t === "bigint" || Number.isInteger(v)) return v.toString();
+    if (t === "bigint" || Number.isSafeInteger(v)) return v.toString();
     if (t === "number") return float_to_string(v);
     if (v instanceof UtfCodepoint) return this.#utfCodepoint(v);
     if (v instanceof BitArray) return this.#bit_array(v);
