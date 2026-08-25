@@ -510,10 +510,12 @@ fn parse_fragment(rest: String, pieces: Uri) -> Result(Uri, Nil) {
 // Alternatively, we could rewrite the entire code to use a single
 // `fold_codeunits`-style loop and a state machine.
 @external(erlang, "gleam_stdlib", "string_pop_codeunit")
+@external(native, "runtime", "gleam_native_string_pop_char")
 @external(javascript, "../gleam_stdlib.mjs", "pop_codeunit")
 fn pop_codeunit(str: String) -> #(Int, String)
 
 @external(erlang, "binary", "part")
+@external(native, "runtime", "gleam_native_string_char_slice")
 @external(javascript, "../gleam_stdlib.mjs", "string_codeunit_slice")
 fn codeunit_slice(str: String, at_index from: Int, length length: Int) -> String
 
@@ -529,6 +531,7 @@ fn codeunit_slice(str: String, at_index from: Int, length length: Int) -> String
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "parse_query")
+@external(native, "runtime", "gleam_native_uri_parse_query")
 @external(javascript, "../gleam_stdlib.mjs", "parse_query")
 pub fn parse_query(query: String) -> Result(List(#(String, String)), Nil)
 
@@ -566,6 +569,7 @@ fn percent_encode_query(part: String) -> String {
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "percent_encode")
+@external(native, "runtime", "gleam_native_percent_encode")
 @external(javascript, "../gleam_stdlib.mjs", "percent_encode")
 pub fn percent_encode(value: String) -> String
 
@@ -578,6 +582,7 @@ pub fn percent_encode(value: String) -> String
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "percent_decode")
+@external(native, "runtime", "gleam_native_percent_decode")
 @external(javascript, "../gleam_stdlib.mjs", "percent_decode")
 pub fn percent_decode(value: String) -> Result(String, Nil)
 

@@ -57,6 +57,7 @@ pub fn prepend_tree(
 /// Runs in constant time.
 ///
 @external(erlang, "gleam_stdlib", "iodata_append")
+@external(native, "runtime", "gleam_native_tree_append")
 @external(javascript, "../gleam_stdlib.mjs", "add")
 pub fn append_tree(to tree: StringTree, suffix suffix: StringTree) -> StringTree
 
@@ -65,6 +66,7 @@ pub fn append_tree(to tree: StringTree, suffix suffix: StringTree) -> StringTree
 /// Runs in constant time.
 ///
 @external(erlang, "gleam_stdlib", "identity")
+@external(native, "runtime", "gleam_native_identity")
 @external(javascript, "../gleam_stdlib.mjs", "concat")
 pub fn from_strings(strings: List(String)) -> StringTree
 
@@ -73,6 +75,7 @@ pub fn from_strings(strings: List(String)) -> StringTree
 /// Runs in constant time.
 ///
 @external(erlang, "gleam_stdlib", "identity")
+@external(native, "runtime", "gleam_native_identity")
 @external(javascript, "../gleam_stdlib.mjs", "concat")
 pub fn concat(trees: List(StringTree)) -> StringTree
 
@@ -81,6 +84,7 @@ pub fn concat(trees: List(StringTree)) -> StringTree
 /// Runs in constant time.
 ///
 @external(erlang, "gleam_stdlib", "identity")
+@external(native, "runtime", "gleam_native_identity")
 @external(javascript, "../gleam_stdlib.mjs", "identity")
 pub fn from_string(string: String) -> StringTree
 
@@ -90,12 +94,14 @@ pub fn from_string(string: String) -> StringTree
 /// optimised.
 ///
 @external(erlang, "unicode", "characters_to_binary")
+@external(native, "runtime", "gleam_native_tree_to_string")
 @external(javascript, "../gleam_stdlib.mjs", "identity")
 pub fn to_string(tree: StringTree) -> String
 
 /// Returns the size of the `StringTree` in bytes.
 ///
 @external(erlang, "erlang", "iolist_size")
+@external(native, "runtime", "gleam_native_tree_byte_size")
 @external(javascript, "../gleam_stdlib.mjs", "length")
 pub fn byte_size(tree: StringTree) -> Int
 
@@ -111,6 +117,7 @@ pub fn join(trees: List(StringTree), with sep: String) -> StringTree {
 /// lowercased.
 ///
 @external(erlang, "string", "lowercase")
+@external(native, "runtime", "gleam_native_tree_lowercase")
 @external(javascript, "../gleam_stdlib.mjs", "lowercase")
 pub fn lowercase(tree: StringTree) -> StringTree
 
@@ -118,6 +125,7 @@ pub fn lowercase(tree: StringTree) -> StringTree
 /// uppercased.
 ///
 @external(erlang, "string", "uppercase")
+@external(native, "runtime", "gleam_native_tree_uppercase")
 @external(javascript, "../gleam_stdlib.mjs", "uppercase")
 pub fn uppercase(tree: StringTree) -> StringTree
 
@@ -133,6 +141,7 @@ pub fn reverse(tree: StringTree) -> StringTree {
 }
 
 @external(javascript, "../gleam_stdlib.mjs", "graphemes")
+@external(native, "runtime", "gleam_native_string_graphemes")
 fn do_to_graphemes(string: String) -> List(String)
 
 type Direction {
@@ -142,6 +151,7 @@ type Direction {
 /// Splits a `StringTree` on a given pattern into a list of trees.
 ///
 @external(javascript, "../gleam_stdlib.mjs", "split")
+@external(native, "runtime", "gleam_native_tree_split")
 pub fn split(tree: StringTree, on pattern: String) -> List(StringTree) {
   erl_split(tree, pattern, All)
 }
@@ -152,6 +162,7 @@ fn erl_split(a: StringTree, b: String, c: Direction) -> List(StringTree)
 /// Replaces all instances of a pattern with a given string substitute.
 ///
 @external(erlang, "gleam_stdlib", "string_replace")
+@external(native, "runtime", "gleam_native_tree_replace")
 @external(javascript, "../gleam_stdlib.mjs", "string_replace")
 pub fn replace(
   in tree: StringTree,
@@ -180,6 +191,7 @@ pub fn replace(
 /// ```
 ///
 @external(erlang, "string", "equal")
+@external(native, "runtime", "gleam_native_tree_is_equal")
 pub fn is_equal(a: StringTree, b: StringTree) -> Bool {
   a == b
 }
@@ -201,6 +213,7 @@ pub fn is_equal(a: StringTree, b: StringTree) -> Bool {
 /// ```
 ///
 @external(erlang, "string", "is_empty")
+@external(native, "runtime", "gleam_native_tree_is_empty")
 pub fn is_empty(tree: StringTree) -> Bool {
   from_string("") == tree
 }

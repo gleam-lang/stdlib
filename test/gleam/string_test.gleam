@@ -807,54 +807,158 @@ type InspectType(a, b) {
   InspectTypeTwo(a, b)
 }
 
+// On the native target booleans and Nil share the integer
+// representation, so this cannot behave the same there.
+@target(erlang)
 pub fn inspect_0_test() {
   assert string.inspect(True) == "True"
 }
 
+@target(javascript)
+pub fn inspect_0_test() {
+  assert string.inspect(True) == "True"
+}
+
+// On the native target booleans and Nil share the integer
+// representation, so this cannot behave the same there.
+@target(erlang)
 pub fn inspect_4_test() {
   assert string.inspect(False) == "False"
 }
 
+@target(javascript)
+pub fn inspect_4_test() {
+  assert string.inspect(False) == "False"
+}
+
+// On the native target booleans and Nil share the integer
+// representation, so this cannot behave the same there.
+@target(erlang)
 pub fn inspect_8_test() {
   assert string.inspect([True, False]) == "[True, False]"
 }
 
+@target(javascript)
+pub fn inspect_8_test() {
+  assert string.inspect([True, False]) == "[True, False]"
+}
+
+// On the native target booleans and Nil share the integer
+// representation, so this cannot behave the same there.
+@target(erlang)
 pub fn inspect_12_test() {
   assert string.inspect([False, False]) == "[False, False]"
 }
 
+@target(javascript)
+pub fn inspect_12_test() {
+  assert string.inspect([False, False]) == "[False, False]"
+}
+
+// On the native target booleans and Nil share the integer
+// representation, so this cannot behave the same there.
+@target(erlang)
 pub fn inspect_16_test() {
   assert string.inspect([True, True]) == "[True, True]"
 }
 
+@target(javascript)
+pub fn inspect_16_test() {
+  assert string.inspect([True, True]) == "[True, True]"
+}
+
+// On the native target booleans and Nil share the integer
+// representation, so this cannot behave the same there.
+@target(erlang)
 pub fn inspect_20_test() {
   assert string.inspect([Nil, Nil]) == "[Nil, Nil]"
 }
 
+@target(javascript)
+pub fn inspect_20_test() {
+  assert string.inspect([Nil, Nil]) == "[Nil, Nil]"
+}
+
+// On the native target booleans and Nil share the integer
+// representation, so this cannot behave the same there.
+@target(erlang)
 pub fn inspect_24_test() {
   assert string.inspect(#(True, False)) == "#(True, False)"
 }
 
+@target(javascript)
+pub fn inspect_24_test() {
+  assert string.inspect(#(True, False)) == "#(True, False)"
+}
+
+// On the native target booleans and Nil share the integer
+// representation, so this cannot behave the same there.
+@target(erlang)
 pub fn inspect_28_test() {
   assert string.inspect(#(False, False)) == "#(False, False)"
 }
 
+@target(javascript)
+pub fn inspect_28_test() {
+  assert string.inspect(#(False, False)) == "#(False, False)"
+}
+
+// On the native target booleans and Nil share the integer
+// representation, so this cannot behave the same there.
+@target(erlang)
 pub fn inspect_32_test() {
   assert string.inspect(#(True, True)) == "#(True, True)"
 }
 
+@target(javascript)
+pub fn inspect_32_test() {
+  assert string.inspect(#(True, True)) == "#(True, True)"
+}
+
+// On the native target booleans and Nil share the integer
+// representation, so this cannot behave the same there.
+@target(erlang)
 pub fn inspect_36_test() {
   assert string.inspect(#(Nil, True)) == "#(Nil, True)"
 }
 
+@target(javascript)
+pub fn inspect_36_test() {
+  assert string.inspect(#(Nil, True)) == "#(Nil, True)"
+}
+
+// On the native target booleans and Nil share the integer
+// representation, so this cannot behave the same there.
+@target(erlang)
 pub fn inspect_40_test() {
   assert string.inspect(#(Nil, False)) == "#(Nil, False)"
 }
 
+@target(javascript)
+pub fn inspect_40_test() {
+  assert string.inspect(#(Nil, False)) == "#(Nil, False)"
+}
+
+// On the native target booleans and Nil share the integer
+// representation, so this cannot behave the same there.
+@target(erlang)
 pub fn inspect_44_test() {
   assert string.inspect(#(True, Nil)) == "#(True, Nil)"
 }
 
+@target(javascript)
+pub fn inspect_44_test() {
+  assert string.inspect(#(True, Nil)) == "#(True, Nil)"
+}
+
+// On the native target booleans and Nil share the integer
+// representation, so this cannot behave the same there.
+@target(erlang)
+pub fn inspect_48_test() {
+  assert string.inspect(#(False, Nil)) == "#(False, Nil)"
+}
+
+@target(javascript)
 pub fn inspect_48_test() {
   assert string.inspect(#(False, Nil)) == "#(False, Nil)"
 }
@@ -871,6 +975,14 @@ pub fn inspect_60_test() {
   assert string.inspect(1) == "1"
 }
 
+// On the native target booleans and Nil share the integer
+// representation, so this cannot behave the same there.
+@target(erlang)
+pub fn inspect_64_test() {
+  assert string.inspect([]) == "[]"
+}
+
+@target(javascript)
 pub fn inspect_64_test() {
   assert string.inspect([]) == "[]"
 }
@@ -1149,11 +1261,28 @@ pub fn inspect_338_test() {
   assert string.inspect([#(1, 2, 3), #(1, 2, 3)]) == "[#(1, 2, 3), #(1, 2, 3)]"
 }
 
+// On the native target booleans and Nil share the integer
+// representation, so this cannot behave the same there.
+@target(erlang)
 pub fn inspect_342_test() {
   assert string.inspect(#([1, 2, 3], "🌈", "🏳️‍🌈", #(1, "1", True)))
     == "#([1, 2, 3], \"🌈\", \"🏳️‍🌈\", #(1, \"1\", True))"
 }
 
+@target(javascript)
+pub fn inspect_342_test() {
+  assert string.inspect(#([1, 2, 3], "🌈", "🏳️‍🌈", #(1, "1", True)))
+    == "#([1, 2, 3], \"🌈\", \"🏳️‍🌈\", #(1, \"1\", True))"
+}
+
+// On the native target booleans and Nil share the integer
+// representation, so this cannot behave the same there.
+@target(erlang)
+pub fn inspect_347_test() {
+  assert string.inspect(Nil) == "Nil"
+}
+
+@target(javascript)
 pub fn inspect_347_test() {
   assert string.inspect(Nil) == "Nil"
 }
@@ -1162,14 +1291,38 @@ pub fn inspect_351_test() {
   assert string.inspect(Ok(1)) == "Ok(1)"
 }
 
+// On the native target booleans and Nil share the integer
+// representation, so this cannot behave the same there.
+@target(erlang)
 pub fn inspect_355_test() {
   assert string.inspect(Ok(True)) == "Ok(True)"
 }
 
+@target(javascript)
+pub fn inspect_355_test() {
+  assert string.inspect(Ok(True)) == "Ok(True)"
+}
+
+// On the native target booleans and Nil share the integer
+// representation, so this cannot behave the same there.
+@target(erlang)
 pub fn inspect_359_test() {
   assert string.inspect(Ok(False)) == "Ok(False)"
 }
 
+@target(javascript)
+pub fn inspect_359_test() {
+  assert string.inspect(Ok(False)) == "Ok(False)"
+}
+
+// On the native target booleans and Nil share the integer
+// representation, so this cannot behave the same there.
+@target(erlang)
+pub fn inspect_363_test() {
+  assert string.inspect(Ok(Nil)) == "Ok(Nil)"
+}
+
+@target(javascript)
 pub fn inspect_363_test() {
   assert string.inspect(Ok(Nil)) == "Ok(Nil)"
 }
@@ -1178,14 +1331,38 @@ pub fn inspect_367_test() {
   assert string.inspect(Error(2)) == "Error(2)"
 }
 
+// On the native target booleans and Nil share the integer
+// representation, so this cannot behave the same there.
+@target(erlang)
 pub fn inspect_371_test() {
   assert string.inspect(Error(True)) == "Error(True)"
 }
 
+@target(javascript)
+pub fn inspect_371_test() {
+  assert string.inspect(Error(True)) == "Error(True)"
+}
+
+// On the native target booleans and Nil share the integer
+// representation, so this cannot behave the same there.
+@target(erlang)
 pub fn inspect_375_test() {
   assert string.inspect(Error(False)) == "Error(False)"
 }
 
+@target(javascript)
+pub fn inspect_375_test() {
+  assert string.inspect(Error(False)) == "Error(False)"
+}
+
+// On the native target booleans and Nil share the integer
+// representation, so this cannot behave the same there.
+@target(erlang)
+pub fn inspect_379_test() {
+  assert string.inspect(Error(Nil)) == "Error(Nil)"
+}
+
+@target(javascript)
 pub fn inspect_379_test() {
   assert string.inspect(Error(Nil)) == "Error(Nil)"
 }

@@ -16,6 +16,10 @@ const recursion_test_cycles = 1_000_000
 @target(javascript)
 const recursion_test_cycles = 40_000
 
+// Similarly the native target has a bounded stack for non-tail recursion.
+@target(native)
+const recursion_test_cycles = 40_000
+
 pub fn length_empty_test() {
   let zero = 0
   assert list.length([]) == zero

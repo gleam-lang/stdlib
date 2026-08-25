@@ -58,6 +58,7 @@ pub fn is_empty(str: String) -> Bool {
 /// ```
 ///
 @external(erlang, "string", "length")
+@external(native, "runtime", "gleam_native_string_length")
 @external(javascript, "../gleam_stdlib.mjs", "string_length")
 pub fn length(string: String) -> Int
 
@@ -115,6 +116,7 @@ pub fn replace(
 /// ```
 ///
 @external(erlang, "string", "lowercase")
+@external(native, "runtime", "gleam_native_string_lowercase")
 @external(javascript, "../gleam_stdlib.mjs", "lowercase")
 pub fn lowercase(string: String) -> String
 
@@ -130,6 +132,7 @@ pub fn lowercase(string: String) -> String
 /// ```
 ///
 @external(erlang, "string", "uppercase")
+@external(native, "runtime", "gleam_native_string_uppercase")
 @external(javascript, "../gleam_stdlib.mjs", "uppercase")
 pub fn uppercase(string: String) -> String
 
@@ -163,6 +166,7 @@ pub fn compare(a: String, b: String) -> order.Order {
 }
 
 @external(erlang, "gleam_stdlib", "less_than")
+@external(native, "runtime", "gleam_native_string_less_than")
 @external(javascript, "../gleam_stdlib.mjs", "less_than")
 fn less_than(a: String, b: String) -> Bool
 
@@ -217,10 +221,12 @@ pub fn slice(
 }
 
 @external(erlang, "gleam_stdlib", "slice")
+@external(native, "runtime", "gleam_native_string_slice")
 @external(javascript, "../gleam_stdlib.mjs", "string_grapheme_slice")
 fn grapheme_slice(string: String, index: Int, length: Int) -> String
 
 @external(erlang, "binary", "part")
+@external(native, "runtime", "gleam_native_string_byte_slice")
 @external(javascript, "../gleam_stdlib.mjs", "string_byte_slice")
 fn unsafe_byte_slice(string: String, index: Int, length: Int) -> String
 
@@ -235,6 +241,7 @@ fn unsafe_byte_slice(string: String, index: Int, length: Int) -> String
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "crop_string")
+@external(native, "runtime", "gleam_native_string_crop")
 @external(javascript, "../gleam_stdlib.mjs", "crop_string")
 pub fn crop(from string: String, before substring: String) -> String
 
@@ -295,6 +302,7 @@ pub fn drop_end(from string: String, up_to num_graphemes: Int) -> String {
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "contains_string")
+@external(native, "runtime", "gleam_native_string_contains")
 @external(javascript, "../gleam_stdlib.mjs", "contains_string")
 pub fn contains(does haystack: String, contain needle: String) -> Bool
 
@@ -307,6 +315,7 @@ pub fn contains(does haystack: String, contain needle: String) -> Bool
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "string_starts_with")
+@external(native, "runtime", "gleam_native_string_has_prefix")
 @external(javascript, "../gleam_stdlib.mjs", "starts_with")
 pub fn starts_with(string: String, prefix: String) -> Bool
 
@@ -319,6 +328,7 @@ pub fn starts_with(string: String, prefix: String) -> Bool
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "string_ends_with")
+@external(native, "runtime", "gleam_native_string_ends_with")
 @external(javascript, "../gleam_stdlib.mjs", "ends_with")
 pub fn ends_with(string: String, suffix: String) -> Bool
 
@@ -361,6 +371,7 @@ pub fn split(x: String, on substring: String) -> List(String) {
 /// ```
 ///
 @external(javascript, "../gleam_stdlib.mjs", "split_once")
+@external(native, "runtime", "gleam_native_string_split_once")
 pub fn split_once(
   string: String,
   on substring: String,
@@ -578,6 +589,7 @@ type Direction {
 /// ```
 ///
 @external(javascript, "../gleam_stdlib.mjs", "trim_start")
+@external(native, "runtime", "gleam_native_string_trim_start")
 pub fn trim_start(string: String) -> String {
   erl_trim(string, Leading)
 }
@@ -591,6 +603,7 @@ pub fn trim_start(string: String) -> String {
 /// ```
 ///
 @external(javascript, "../gleam_stdlib.mjs", "trim_end")
+@external(native, "runtime", "gleam_native_string_trim_end")
 pub fn trim_end(string: String) -> String {
   erl_trim(string, Trailing)
 }
@@ -614,6 +627,7 @@ pub fn trim_end(string: String) -> String {
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "string_pop_grapheme")
+@external(native, "runtime", "gleam_native_string_pop_grapheme")
 @external(javascript, "../gleam_stdlib.mjs", "pop_grapheme")
 pub fn pop_grapheme(string: String) -> Result(#(String, String), Nil)
 
@@ -643,6 +657,7 @@ fn to_graphemes_loop(string: String, acc: List(String)) -> List(String) {
 
 @external(erlang, "gleam_stdlib", "identity")
 @external(javascript, "../gleam_stdlib.mjs", "codepoint")
+@external(native, "runtime", "gleam_native_identity")
 fn unsafe_int_to_utf_codepoint(a: Int) -> UtfCodepoint
 
 /// Converts a `String` to a `List` of `UtfCodepoint`.
@@ -691,6 +706,10 @@ fn to_utf_codepoints_loop(
   }
 }
 
+@target(native)
+@external(native, "runtime", "gleam_native_string_to_codepoints")
+fn do_to_utf_codepoints(string: String) -> List(UtfCodepoint)
+
 @target(javascript)
 fn do_to_utf_codepoints(string: String) -> List(UtfCodepoint) {
   string
@@ -718,6 +737,7 @@ fn string_to_codepoint_integer_list(string: String) -> List(Int)
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "utf_codepoint_list_to_string")
+@external(native, "runtime", "gleam_native_string_from_codepoints")
 @external(javascript, "../gleam_stdlib.mjs", "utf_codepoint_list_to_string")
 pub fn from_utf_codepoints(utf_codepoints: List(UtfCodepoint)) -> String
 
@@ -745,6 +765,7 @@ pub fn utf_codepoint(value: Int) -> Result(UtfCodepoint, Nil) {
 ///
 @external(erlang, "gleam_stdlib", "identity")
 @external(javascript, "../gleam_stdlib.mjs", "utf_codepoint_to_int")
+@external(native, "runtime", "gleam_native_identity")
 pub fn utf_codepoint_to_int(cp: UtfCodepoint) -> Int
 
 /// Converts a `String` into `Option(String)` where an empty `String` becomes
@@ -860,6 +881,7 @@ pub fn inspect(term: anything) -> String {
 }
 
 @external(erlang, "gleam_stdlib", "inspect")
+@external(native, "runtime", "gleam_native_inspect_value")
 @external(javascript, "../gleam_stdlib.mjs", "inspect")
 fn do_inspect(term: anything) -> StringTree
 
@@ -875,6 +897,7 @@ fn do_inspect(term: anything) -> StringTree
 /// ```
 ///
 @external(erlang, "erlang", "byte_size")
+@external(native, "runtime", "gleam_native_string_byte_size")
 @external(javascript, "../gleam_stdlib.mjs", "byte_size")
 pub fn byte_size(string: String) -> Int
 
@@ -894,6 +917,7 @@ pub fn byte_size(string: String) -> Int
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "string_remove_prefix")
+@external(native, "runtime", "gleam_native_string_remove_prefix")
 @external(javascript, "../gleam_stdlib.mjs", "string_remove_prefix")
 pub fn remove_prefix(from string: String, matching prefix: String) -> String
 
@@ -913,5 +937,6 @@ pub fn remove_prefix(from string: String, matching prefix: String) -> String
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "string_remove_suffix")
+@external(native, "runtime", "gleam_native_string_remove_suffix")
 @external(javascript, "../gleam_stdlib.mjs", "string_remove_suffix")
 pub fn remove_suffix(from string: String, matching suffix: String) -> String

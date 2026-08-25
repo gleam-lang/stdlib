@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Experimental native target support
 - Fixed a bug where `string.inspect` on the JavaScript target would incorrectly
   print numbers like `1.0e300`.
 - Fixed a bug where `stting.inspect` on the JavaScript target would incorrectly

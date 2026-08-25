@@ -25,12 +25,14 @@ pub type Dynamic
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "classify_dynamic")
+@external(native, "runtime", "gleam_native_classify")
 @external(javascript, "../gleam_stdlib.mjs", "classify_dynamic")
 pub fn classify(data: Dynamic) -> String
 
 /// Create a dynamic value from a bool.
 ///
 @external(erlang, "gleam_stdlib", "identity")
+@external(native, "runtime", "gleam_native_identity")
 @external(javascript, "../gleam_stdlib.mjs", "identity")
 pub fn bool(a: Bool) -> Dynamic
 
@@ -39,30 +41,35 @@ pub fn bool(a: Bool) -> Dynamic
 /// On Erlang this will be a binary string rather than a character list.
 ///
 @external(erlang, "gleam_stdlib", "identity")
+@external(native, "runtime", "gleam_native_identity")
 @external(javascript, "../gleam_stdlib.mjs", "identity")
 pub fn string(a: String) -> Dynamic
 
 /// Create a dynamic value from a float.
 ///
 @external(erlang, "gleam_stdlib", "identity")
+@external(native, "runtime", "gleam_native_identity")
 @external(javascript, "../gleam_stdlib.mjs", "identity")
 pub fn float(a: Float) -> Dynamic
 
 /// Create a dynamic value from an int.
 ///
 @external(erlang, "gleam_stdlib", "identity")
+@external(native, "runtime", "gleam_native_identity")
 @external(javascript, "../gleam_stdlib.mjs", "identity")
 pub fn int(a: Int) -> Dynamic
 
 /// Create a dynamic value from a bit array.
 ///
 @external(erlang, "gleam_stdlib", "identity")
+@external(native, "runtime", "gleam_native_identity")
 @external(javascript, "../gleam_stdlib.mjs", "identity")
 pub fn bit_array(a: BitArray) -> Dynamic
 
 /// Create a dynamic value from a list.
 ///
 @external(erlang, "gleam_stdlib", "identity")
+@external(native, "runtime", "gleam_native_identity")
 @external(javascript, "../gleam_stdlib.mjs", "identity")
 pub fn list(a: List(Dynamic)) -> Dynamic
 
@@ -72,6 +79,7 @@ pub fn list(a: List(Dynamic)) -> Dynamic
 /// On Erlang this will be a tuple, on JavaScript this will be an array.
 ///
 @external(erlang, "erlang", "list_to_tuple")
+@external(native, "runtime", "gleam_native_list_to_tuple")
 @external(javascript, "../gleam_stdlib.mjs", "list_to_array")
 pub fn array(a: List(Dynamic)) -> Dynamic
 
@@ -95,5 +103,6 @@ pub fn nil() -> Dynamic {
 }
 
 @external(erlang, "gleam_stdlib", "identity")
+@external(native, "runtime", "gleam_native_identity")
 @external(javascript, "../gleam_stdlib.mjs", "identity")
 fn cast(a: anything) -> Dynamic

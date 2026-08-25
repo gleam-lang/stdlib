@@ -11,6 +11,13 @@ type Token =
 @target(erlang)
 const token = []
 
+@target(native)
+type Token =
+  Nil
+
+@target(native)
+const token = Nil
+
 @target(javascript)
 type Token =
   Nil

@@ -11,17 +11,20 @@ import gleam/string
 ///
 @external(erlang, "gleam_stdlib", "identity")
 @external(javascript, "../gleam_stdlib.mjs", "bit_array_from_string")
+@external(native, "runtime", "gleam_native_bitarray_from_string")
 pub fn from_string(x: String) -> BitArray
 
 /// Returns an integer which is the number of bits in the bit array.
 ///
 @external(erlang, "erlang", "bit_size")
+@external(native, "runtime", "gleam_native_bitarray_bit_size")
 @external(javascript, "../gleam_stdlib.mjs", "bit_array_bit_size")
 pub fn bit_size(x: BitArray) -> Int
 
 /// Returns an integer which is the number of bytes in the bit array.
 ///
 @external(erlang, "erlang", "byte_size")
+@external(native, "runtime", "gleam_native_bitarray_byte_size")
 @external(javascript, "../gleam_stdlib.mjs", "bit_array_byte_size")
 pub fn byte_size(x: BitArray) -> Int
 
@@ -62,6 +65,7 @@ pub fn append(to first: BitArray, suffix second: BitArray) -> BitArray {
 /// This function runs in constant time.
 ///
 @external(erlang, "gleam_stdlib", "bit_array_slice")
+@external(native, "runtime", "gleam_native_bitarray_byte_slice")
 @external(javascript, "../gleam_stdlib.mjs", "bit_array_slice")
 pub fn slice(
   from string: BitArray,
@@ -84,6 +88,10 @@ fn is_utf8_loop(bits: BitArray) -> Bool {
   }
 }
 
+@target(native)
+@external(native, "runtime", "gleam_native_bitarray_is_utf8")
+fn is_utf8_loop(bits: BitArray) -> Bool
+
 @target(javascript)
 fn is_utf8_loop(bits: BitArray) -> Bool {
   case to_string(bits) {
@@ -105,6 +113,7 @@ pub fn to_string(bits: BitArray) -> Result(String, Nil) {
 }
 
 @external(erlang, "gleam_stdlib", "identity")
+@external(native, "runtime", "gleam_native_bitarray_unsafe_to_string")
 fn unsafe_to_string(a: BitArray) -> String
 
 /// Creates a new bit array by joining multiple binaries.
@@ -120,6 +129,7 @@ fn unsafe_to_string(a: BitArray) -> String
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "bit_array_concat")
+@external(native, "runtime", "gleam_native_bitarray_concat")
 @external(javascript, "../gleam_stdlib.mjs", "bit_array_concat")
 pub fn concat(bit_arrays: List(BitArray)) -> BitArray
 
@@ -129,6 +139,7 @@ pub fn concat(bit_arrays: List(BitArray)) -> BitArray
 /// with zero bits prior to being encoded.
 ///
 @external(erlang, "gleam_stdlib", "base64_encode")
+@external(native, "runtime", "gleam_native_bitarray_base64_encode")
 @external(javascript, "../gleam_stdlib.mjs", "base64_encode")
 pub fn base64_encode(input: BitArray, padding: Bool) -> String
 
@@ -143,6 +154,7 @@ pub fn base64_decode(encoded: String) -> Result(BitArray, Nil) {
 }
 
 @external(erlang, "gleam_stdlib", "base64_decode")
+@external(native, "runtime", "gleam_native_bitarray_base64_decode")
 @external(javascript, "../gleam_stdlib.mjs", "base64_decode")
 fn decode64(a: String) -> Result(BitArray, Nil)
 
@@ -175,12 +187,14 @@ pub fn base64_url_decode(encoded: String) -> Result(BitArray, Nil) {
 /// with zero bits prior to being encoded.
 ///
 @external(erlang, "gleam_stdlib", "base16_encode")
+@external(native, "runtime", "gleam_native_bitarray_base16_encode")
 @external(javascript, "../gleam_stdlib.mjs", "base16_encode")
 pub fn base16_encode(input: BitArray) -> String
 
 /// Decodes a base 16 encoded string into a `BitArray`.
 ///
 @external(erlang, "gleam_stdlib", "base16_decode")
+@external(native, "runtime", "gleam_native_bitarray_base16_decode")
 @external(javascript, "../gleam_stdlib.mjs", "base16_decode")
 pub fn base16_decode(input: String) -> Result(BitArray, Nil)
 
@@ -273,6 +287,7 @@ pub fn compare(a: BitArray, with b: BitArray) -> order.Order {
 }
 
 @external(erlang, "gleam_stdlib", "bit_array_to_int_and_size")
+@external(native, "runtime", "gleam_native_bitarray_to_int_and_size")
 @external(javascript, "../gleam_stdlib.mjs", "bit_array_to_int_and_size")
 fn bit_array_to_int_and_size(a: BitArray) -> #(Int, Int)
 

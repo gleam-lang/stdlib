@@ -46,4 +46,8 @@ pub type ExpressionKind {
 
 @external(erlang, "gleeunit_gleam_panic_ffi", "from_dynamic")
 @external(javascript, "./gleeunit_gleam_panic_ffi.mjs", "from_dynamic")
-pub fn from_dynamic(data: dynamic.Dynamic) -> Result(GleamPanic, Nil)
+pub fn from_dynamic(data: dynamic.Dynamic) -> Result(GleamPanic, Nil) {
+  // The native target has no panic payloads to decode.
+  let _ = data
+  Error(Nil)
+}

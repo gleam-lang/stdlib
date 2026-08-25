@@ -27,12 +27,14 @@ type TransientDict(key, value)
 /// A transient dict is a mutable copy of the original.
 @external(erlang, "gleam_stdlib", "identity")
 @external(javascript, "../dict.mjs", "toTransient")
+@external(native, "runtime", "gleam_native_dict_to_transient")
 fn to_transient(dict: Dict(key, value)) -> TransientDict(key, value)
 
 /// Convert a transient dict back into a normal dict, freezing its contents.
 /// Using the transient after this point is highly unsafe and leads to undefined behavior.
 @external(erlang, "gleam_stdlib", "identity")
 @external(javascript, "../dict.mjs", "fromTransient")
+@external(native, "runtime", "gleam_native_dict_from_transient")
 fn from_transient(transient: TransientDict(key, value)) -> Dict(key, value)
 
 /// Determines the number of key-value pairs in the dict.
@@ -49,6 +51,7 @@ fn from_transient(transient: TransientDict(key, value)) -> Dict(key, value)
 /// ```
 ///
 @external(erlang, "maps", "size")
+@external(native, "runtime", "gleam_native_dict_size")
 @external(javascript, "../dict.mjs", "size")
 pub fn size(dict: Dict(k, v)) -> Int
 
@@ -137,11 +140,13 @@ pub fn has_key(dict: Dict(k, v), key: k) -> Bool {
 }
 
 @external(erlang, "maps", "is_key")
+@external(native, "runtime", "gleam_native_dict_has_key")
 fn do_has_key(key: k, dict: Dict(k, v)) -> Bool
 
 /// Creates a fresh dict that contains no values.
 ///
 @external(erlang, "maps", "new")
+@external(native, "runtime", "gleam_native_dict_new")
 @external(javascript, "../dict.mjs", "make")
 pub fn new() -> Dict(k, v)
 
@@ -161,6 +166,7 @@ pub fn new() -> Dict(k, v)
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "map_get")
+@external(native, "runtime", "gleam_native_dict_get")
 @external(javascript, "../dict.mjs", "get")
 pub fn get(from: Dict(k, v), get: k) -> Result(v, Nil)
 
@@ -190,10 +196,12 @@ pub fn insert(
 }
 
 @external(erlang, "maps", "put")
+@external(native, "runtime", "gleam_native_dict_insert")
 fn do_insert(key: k, value: v, dict: Dict(k, v)) -> Dict(k, v)
 
 @external(erlang, "maps", "put")
 @external(javascript, "../dict.mjs", "destructiveTransientInsert")
+@external(native, "runtime", "gleam_native_dict_transient_insert")
 fn transient_insert(
   key: k,
   value: v,
@@ -217,7 +225,12 @@ pub fn map_values(in dict: Dict(k, v), with fun: fn(k, v) -> a) -> Dict(k, a) {
 }
 
 @external(erlang, "maps", "map")
-fn do_map_values(f: fn(k, v) -> a, dict: Dict(k, v)) -> Dict(k, a)
+fn do_map_values(f: fn(k, v) -> a, dict: Dict(k, v)) -> Dict(k, a) {
+  fold(dict, to_transient(new()), fn(transient, key, value) {
+    transient_insert(key, f(key, value), transient)
+  })
+  |> from_transient
+}
 
 /// Gets a list of all keys in a given dict.
 ///
@@ -374,6 +387,7 @@ pub fn delete(from dict: Dict(k, v), delete key: k) -> Dict(k, v) {
 }
 
 @external(erlang, "maps", "remove")
+@external(native, "runtime", "gleam_native_dict_transient_delete")
 @external(javascript, "../dict.mjs", "destructiveTransientDelete")
 fn transient_delete(a: k, b: TransientDict(k, v)) -> TransientDict(k, v)
 
@@ -490,7 +504,25 @@ pub fn fold(
 }
 
 @external(erlang, "maps", "fold")
-fn do_fold(fun: fn(k, v, acc) -> acc, initial: acc, dict: Dict(k, v)) -> acc
+fn do_fold(fun: fn(k, v, acc) -> acc, initial: acc, dict: Dict(k, v)) -> acc {
+  do_fold_loop(native_to_list(dict), initial, fun)
+}
+
+fn do_fold_loop(
+  list: List(#(k, v)),
+  acc: acc,
+  fun: fn(k, v, acc) -> acc,
+) -> acc {
+  case list {
+    [] -> acc
+    [#(key, value), ..rest] -> do_fold_loop(rest, fun(key, value, acc), fun)
+  }
+}
+
+@external(native, "runtime", "gleam_native_dict_to_list")
+fn native_to_list(dict: Dict(k, v)) -> List(#(k, v)) {
+  to_list(dict)
+}
 
 /// Calls a function for each key and value in a dict, discarding the return
 /// value.
@@ -567,7 +599,15 @@ fn transient_update_with(
   fun: fn(v) -> v,
   init: v,
   transient: TransientDict(k, v),
-) -> TransientDict(k, v)
+) -> TransientDict(k, v) {
+  case transient_get(transient, key) {
+    Ok(existing) -> transient_insert(key, fun(existing), transient)
+    Error(_) -> transient_insert(key, init, transient)
+  }
+}
+
+@external(native, "runtime", "gleam_native_dict_get")
+fn transient_get(transient: TransientDict(k, v), key: k) -> Result(v, Nil)
 
 @internal
 pub fn group(key: fn(v) -> k, list: List(v)) -> Dict(k, List(v)) {

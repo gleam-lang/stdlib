@@ -186,6 +186,9 @@ pub fn subfield_wrong_inner_error_test() {
   assert value == [DecodeError("String", "Int", ["name"])]
 }
 
+// On the native target booleans and Nil share the integer
+// representation, so this cannot behave the same there.
+@target(erlang)
 pub fn optional_field_wrong_inner_error_test() {
   let data = dynamic.properties([#(dynamic.string("a"), dynamic.nil())])
   let assert Error(value) =
@@ -196,6 +199,40 @@ pub fn optional_field_wrong_inner_error_test() {
   assert value == [DecodeError("String", "Nil", ["a"])]
 }
 
+@target(javascript)
+pub fn optional_field_wrong_inner_error_test() {
+  let data = dynamic.properties([#(dynamic.string("a"), dynamic.nil())])
+  let assert Error(value) =
+    decode.run(data, {
+      use bar <- decode.optional_field("a", "", decode.string)
+      decode.success(bar)
+    })
+  assert value == [DecodeError("String", "Nil", ["a"])]
+}
+
+// On the native target booleans and Nil share the integer
+// representation, so this cannot behave the same there.
+@target(erlang)
+pub fn sub_optional_field_wrong_inner_error_test() {
+  let data =
+    dynamic.properties([
+      #(
+        dynamic.string("a"),
+        dynamic.properties([#(dynamic.string("b"), dynamic.nil())]),
+      ),
+    ])
+  let assert Error(value) =
+    decode.run(data, {
+      use bar <- decode.optional_field("a", "", {
+        use foo <- decode.optional_field("b", "", decode.string)
+        decode.success(foo)
+      })
+      decode.success(bar)
+    })
+  assert value == [DecodeError("String", "Nil", ["a", "b"])]
+}
+
+@target(javascript)
 pub fn sub_optional_field_wrong_inner_error_test() {
   let data =
     dynamic.properties([
@@ -1067,11 +1104,18 @@ pub fn optionally_at_no_path_error_test() {
 
 @external(erlang, "maps", "from_list")
 @external(javascript, "../../gleam_stdlib_test_ffi.mjs", "object")
-fn make_object(items: List(#(String, t))) -> Dynamic
+fn make_object(items: List(#(String, t))) -> Dynamic {
+  unsafe_cast_dict(dict.from_list(items))
+}
 
 @external(erlang, "maps", "from_list")
 @external(javascript, "../../gleam_stdlib_test_ffi.mjs", "map")
-fn make_map(items: List(#(String, t))) -> Dynamic
+fn make_map(items: List(#(String, t))) -> Dynamic {
+  unsafe_cast_dict(dict.from_list(items))
+}
+
+@external(native, "runtime", "gleam_native_identity")
+fn unsafe_cast_dict(dict: dict.Dict(String, t)) -> Dynamic
 
 pub fn js_object_test() {
   let assert Ok(value) =

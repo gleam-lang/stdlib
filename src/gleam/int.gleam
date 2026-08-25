@@ -94,6 +94,7 @@ pub fn square_root(x: Int) -> Result(Float, Nil) {
 /// ```
 ///
 @external(erlang, "gleam_stdlib", "parse_int")
+@external(native, "runtime", "gleam_native_int_parse")
 @external(javascript, "../gleam_stdlib.mjs", "parse_int")
 pub fn parse(string: String) -> Result(Int, Nil)
 
@@ -133,6 +134,7 @@ pub fn base_parse(string: String, base: Int) -> Result(Int, Nil) {
 }
 
 @external(erlang, "gleam_stdlib", "int_from_base_string")
+@external(native, "runtime", "gleam_native_int_base_parse")
 @external(javascript, "../gleam_stdlib.mjs", "int_from_base_string")
 fn do_base_parse(a: String, b: Int) -> Result(Int, Nil)
 
@@ -146,6 +148,7 @@ fn do_base_parse(a: String, b: Int) -> Result(Int, Nil)
 ///
 @external(erlang, "erlang", "integer_to_binary")
 @external(javascript, "../gleam_stdlib.mjs", "to_string")
+@external(native, "runtime", "gleam_native_int_to_string")
 pub fn to_string(x: Int) -> String
 
 /// Prints a given int to a string using the base number provided.
@@ -183,6 +186,7 @@ pub fn to_base_string(x: Int, base: Int) -> Result(String, Nil) {
 
 @external(erlang, "erlang", "integer_to_binary")
 @external(javascript, "../gleam_stdlib.mjs", "int_to_base_string")
+@external(native, "runtime", "gleam_native_int_to_base_string")
 fn do_to_base_string(a: Int, b: Int) -> String
 
 /// Prints a given int to a string using base-2.
@@ -250,6 +254,7 @@ pub fn to_base36(x: Int) -> String {
 /// ```
 ///
 @external(erlang, "erlang", "float")
+@external(native, "runtime", "gleam_native_int_to_float")
 @external(javascript, "../gleam_stdlib.mjs", "identity")
 pub fn to_float(x: Int) -> Float
 
@@ -695,6 +700,7 @@ pub fn subtract(a: Int, b: Int) -> Int {
 /// provides faster bitwise operations.
 ///
 @external(erlang, "erlang", "band")
+@external(native, "runtime", "gleam_native_int_bitwise_and")
 @external(javascript, "../gleam_stdlib.mjs", "bitwise_and")
 pub fn bitwise_and(x: Int, y: Int) -> Int
 
@@ -712,6 +718,7 @@ pub fn bitwise_and(x: Int, y: Int) -> Int
 /// provides faster bitwise operations.
 ///
 @external(erlang, "erlang", "bnot")
+@external(native, "runtime", "gleam_native_int_bitwise_not")
 @external(javascript, "../gleam_stdlib.mjs", "bitwise_not")
 pub fn bitwise_not(x: Int) -> Int
 
@@ -729,6 +736,7 @@ pub fn bitwise_not(x: Int) -> Int
 /// provides faster bitwise operations.
 ///
 @external(erlang, "erlang", "bor")
+@external(native, "runtime", "gleam_native_int_bitwise_or")
 @external(javascript, "../gleam_stdlib.mjs", "bitwise_or")
 pub fn bitwise_or(x: Int, y: Int) -> Int
 
@@ -746,6 +754,7 @@ pub fn bitwise_or(x: Int, y: Int) -> Int
 /// provides faster bitwise operations.
 ///
 @external(erlang, "erlang", "bxor")
+@external(native, "runtime", "gleam_native_int_bitwise_exclusive_or")
 @external(javascript, "../gleam_stdlib.mjs", "bitwise_exclusive_or")
 pub fn bitwise_exclusive_or(x: Int, y: Int) -> Int
 
@@ -763,6 +772,7 @@ pub fn bitwise_exclusive_or(x: Int, y: Int) -> Int
 /// provides faster bitwise operations.
 ///
 @external(erlang, "erlang", "bsl")
+@external(native, "runtime", "gleam_native_int_bitwise_shift_left")
 @external(javascript, "../gleam_stdlib.mjs", "bitwise_shift_left")
 pub fn bitwise_shift_left(x: Int, y: Int) -> Int
 
@@ -780,6 +790,7 @@ pub fn bitwise_shift_left(x: Int, y: Int) -> Int
 /// provides faster bitwise operations.
 ///
 @external(erlang, "erlang", "bsr")
+@external(native, "runtime", "gleam_native_int_bitwise_shift_right")
 @external(javascript, "../gleam_stdlib.mjs", "bitwise_shift_right")
 pub fn bitwise_shift_right(x: Int, y: Int) -> Int
 

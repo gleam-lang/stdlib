@@ -10,11 +10,28 @@ import gleam/string
 ///
 /// A test that panics is considered a failure.
 ///
+@target(erlang)
 pub fn main() -> Nil {
   do_main()
 }
 
+@target(javascript)
+pub fn main() -> Nil {
+  do_main()
+}
+
+// The native target's `gleam test` discovers and runs test functions itself,
+// so there is nothing for gleeunit to do.
+@target(native)
+pub fn main() -> Nil {
+  Nil
+}
+
+@target(javascript)
 @external(javascript, "./gleeunit_ffi.mjs", "main")
+fn do_main() -> Nil
+
+@target(erlang)
 fn do_main() -> Nil {
   let options = [Verbose, NoTty, Report(#(GleeunitProgress, [Colored(True)]))]
 
