@@ -100,12 +100,21 @@ pub fn clamp(x: Float, min min_bound: Float, max max_bound: Float) -> Float {
 /// you may use [`loosely_compare`](#loosely_compare) instead.
 ///
 pub fn compare(a: Float, with b: Float) -> Order {
+  case do_compare(a, b) {
+    -1 -> order.Lt
+    0 -> order.Eq
+    _ -> order.Gt
+  }
+}
+
+@external(native, "runtime", "gleam_native_float_compare")
+fn do_compare(a: Float, b: Float) -> Int {
   case a == b {
-    True -> order.Eq
+    True -> 0
     False ->
       case a <. b {
-        True -> order.Lt
-        False -> order.Gt
+        True -> -1
+        False -> 1
       }
   }
 }
