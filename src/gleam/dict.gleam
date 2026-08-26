@@ -225,6 +225,7 @@ pub fn map_values(in dict: Dict(k, v), with fun: fn(k, v) -> a) -> Dict(k, a) {
 }
 
 @external(erlang, "maps", "map")
+@external(native, "runtime", "gleam_native_dict_map_values")
 fn do_map_values(f: fn(k, v) -> a, dict: Dict(k, v)) -> Dict(k, a) {
   fold(dict, to_transient(new()), fn(transient, key, value) {
     transient_insert(key, f(key, value), transient)
@@ -504,6 +505,7 @@ pub fn fold(
 }
 
 @external(erlang, "maps", "fold")
+@external(native, "runtime", "gleam_native_dict_fold")
 fn do_fold(fun: fn(k, v, acc) -> acc, initial: acc, dict: Dict(k, v)) -> acc {
   do_fold_loop(native_to_list(dict), initial, fun)
 }
@@ -610,6 +612,7 @@ fn transient_update_with(
 fn transient_get(transient: TransientDict(k, v), key: k) -> Result(v, Nil)
 
 @internal
+@external(native, "runtime", "gleam_native_dict_group")
 pub fn group(key: fn(v) -> k, list: List(v)) -> Dict(k, List(v)) {
   group_loop(to_transient(new()), key, list)
 }

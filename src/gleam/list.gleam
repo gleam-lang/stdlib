@@ -1134,6 +1134,7 @@ fn unique_loop(list: List(a), seen: Dict(a, Nil), acc: List(a)) -> List(a) {
 ///   == [1, 2, 3, 4, 4, 5, 6]
 /// ```
 ///
+@external(native, "runtime", "gleam_native_list_sort")
 pub fn sort(list: List(a), by compare: fn(a, a) -> Order) -> List(a) {
   // This is a natural, tail recursive, stable merge sort:
   // - natural: it is very efficient if you call it on a list that is already
