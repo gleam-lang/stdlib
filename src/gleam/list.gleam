@@ -617,6 +617,7 @@ pub fn wrap(item: a) -> List(a) {
 /// ```
 ///
 @external(erlang, "lists", "append")
+@external(native, "runtime", "gleam_native_list_append")
 pub fn append(first: List(a), second: List(a)) -> List(a) {
   append_loop(reverse(first), second)
 }
