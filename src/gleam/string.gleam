@@ -648,7 +648,7 @@ fn unsafe_int_to_utf_codepoint(a: Int) -> UtfCodepoint
 /// Converts a `String` to a `List` of `UtfCodepoint`.
 ///
 /// See <https://en.wikipedia.org/wiki/Code_point> and
-/// <https://en.wikipedia.org/wiki/Unicode#Codespace_and_Code_Points> for an
+/// <https://en.wikipedia.org/wiki/Unicode#Codespace_and_code_points> for an
 /// explanation on code points.
 ///
 /// ## Examples
@@ -705,7 +705,7 @@ fn string_to_codepoint_integer_list(string: String) -> List(Int)
 /// Converts a `List` of `UtfCodepoint`s to a `String`.
 ///
 /// See <https://en.wikipedia.org/wiki/Code_point> and
-/// <https://en.wikipedia.org/wiki/Unicode#Codespace_and_Code_Points> for an
+/// <https://en.wikipedia.org/wiki/Unicode#Codespace_and_code_points> for an
 /// explanation on code points.
 ///
 /// ## Examples
