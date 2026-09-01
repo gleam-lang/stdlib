@@ -2192,7 +2192,7 @@ fn max_loop(list, compare, max) {
 }
 
 /// Returns a random sample of up to n elements from a list using reservoir
-/// sampling via [Algorithm L](https://en.wikipedia.org/wiki/Reservoir_sampling#Optimal:_Algorithm_L).
+/// sampling via [Algorithm L](https://en.wikipedia.org/wiki/Reservoir_sampling#Optimizing_running_time_by_skipping_elements).
 /// Returns an empty list if the sample size is less than or equal to 0.
 ///
 /// Order is not random, only selection is.
