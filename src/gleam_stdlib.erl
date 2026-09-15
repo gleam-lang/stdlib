@@ -427,7 +427,7 @@ convert_to_u(Code) ->
     list_to_binary(io_lib:format("\\u{~4.16.0B}", [Code])).
 
 float_to_string(Float) when is_float(Float) ->
-    erlang:iolist_to_binary(io_lib_format:fwrite_g(Float)).
+    erlang:float_to_binary(Float, [short]).
 
 utf_codepoint_list_to_string(List) ->
     case unicode:characters_to_binary(List) of

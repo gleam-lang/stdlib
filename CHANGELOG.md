@@ -6,6 +6,8 @@
   print numbers like `1.0e300`.
 - Fixed a bug where `stting.inspect` on the JavaScript target would incorrectly
   print NaN and Infinity.
+- The performance of the `to_string` function from the `float` module has been
+  improved on the Erlang target.
 
 ## v1.0.5 - 2026-08-06
 
