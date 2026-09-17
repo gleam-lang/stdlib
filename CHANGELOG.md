@@ -8,6 +8,8 @@
   print NaN and Infinity.
 - The performance of the `to_string` function from the `float` module has been
   improved on the Erlang target.
+- The performance of the `inspect` function from the `string` module for floats
+  has been improved on the Erlang target.
 
 ## v1.0.5 - 2026-08-06
 
