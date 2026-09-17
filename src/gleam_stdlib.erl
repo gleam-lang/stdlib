@@ -285,7 +285,7 @@ inspect(Atom) when is_atom(Atom) ->
 inspect(Any) when is_integer(Any) ->
     erlang:integer_to_list(Any);
 inspect(Any) when is_float(Any) ->
-    io_lib_format:fwrite_g(Any);
+    erlang:float_to_binary(Any, [short]);
 inspect(Binary) when is_binary(Binary) ->
     case inspect_maybe_utf8_string(Binary, <<>>) of
         {ok, InspectedUtf8String} -> InspectedUtf8String;
