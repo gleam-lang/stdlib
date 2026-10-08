@@ -944,7 +944,7 @@ pub fn all(in list: List(a), satisfying predicate: fn(a) -> Bool) -> Bool {
 /// ```
 ///
 /// ```gleam
-/// assert list.any([4, 3], fn(x) { x > 4 })
+/// assert !list.any([4, 3], fn(x) { x > 4 })
 /// ```
 ///
 /// ```gleam
