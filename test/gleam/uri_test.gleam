@@ -227,6 +227,45 @@ pub fn parse_ldap_2_scheme_test() {
     ))
 }
 
+pub fn parse_relative_path_test() {
+  assert uri.parse("foo/bar")
+    == Ok(uri.Uri(
+      scheme: None,
+      host: None,
+      userinfo: None,
+      path: "foo/bar",
+      query: None,
+      fragment: None,
+      port: None,
+    ))
+}
+
+pub fn parse_relative_path_with_query_test() {
+  assert uri.parse("foo?bar")
+    == Ok(uri.Uri(
+      scheme: None,
+      host: None,
+      userinfo: None,
+      path: "foo",
+      query: Some("bar"),
+      fragment: None,
+      port: None,
+    ))
+}
+
+pub fn parse_relative_path_with_fragment_test() {
+  assert uri.parse("foo#bar")
+    == Ok(uri.Uri(
+      scheme: None,
+      host: None,
+      userinfo: None,
+      path: "foo",
+      query: None,
+      fragment: Some("bar"),
+      port: None,
+    ))
+}
+
 fn assert_parse(s) {
   let assert Ok(u) = uri.parse(s)
   u
