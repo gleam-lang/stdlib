@@ -95,30 +95,19 @@ fn parse_scheme_loop(
     // `/` is not allowed to appear in a scheme so we know it's over and we can
     // start parsing the authority with slashes.
     "/" <> _ if size == 0 -> parse_authority_with_slashes(uri_string, pieces)
-    "/" <> _ -> {
-      let scheme = codeunit_slice(original, at_index: 0, length: size)
-      let pieces = Uri(..pieces, scheme: Some(string.lowercase(scheme)))
-      parse_authority_with_slashes(uri_string, pieces)
-    }
 
     // `?` is not allowed to appear in a scheme, in an authority, or in a path;
     // so if we see it we know it marks the beginning of the query part.
     "?" <> rest if size == 0 -> parse_query_with_question_mark(rest, pieces)
-    "?" <> rest -> {
-      let scheme = codeunit_slice(original, at_index: 0, length: size)
-      let pieces = Uri(..pieces, scheme: Some(string.lowercase(scheme)))
-      parse_query_with_question_mark(rest, pieces)
-    }
 
     // `#` is not allowed to appear in a scheme, in an authority, in a path or
     // in a query; so if we see it we know it marks the beginning of the final
     // fragment.
     "#" <> rest if size == 0 -> parse_fragment(rest, pieces)
-    "#" <> rest -> {
-      let scheme = codeunit_slice(original, at_index: 0, length: size)
-      let pieces = Uri(..pieces, scheme: Some(string.lowercase(scheme)))
-      parse_fragment(rest, pieces)
-    }
+
+    // Having already munched some characters, meeting one of these here means
+    // there is no scheme after all, so it's the beginning of the path.
+    "/" <> _ | "?" <> _ | "#" <> _ if size != 0 -> parse_path(original, pieces)
 
     // A colon marks the end of a uri scheme, but if it is not preceded by any
     // character then it's not a valid URI.

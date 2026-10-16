@@ -13,6 +13,8 @@
 - Fixed a bug where `string.trim`, `string.trim_start` and `string.trim_end` on
   the JavaScript target would not remove the left-to-right mark (U+200E) and
   the right-to-left mark (U+200F).
+- Fixed a bug where `uri.parse` on the JavaScript target would parse the start
+  of a relative reference as a scheme.
 
 ## v1.0.5 - 2026-08-06
 
