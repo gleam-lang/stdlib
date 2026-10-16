@@ -15,6 +15,8 @@
   the right-to-left mark (U+200F).
 - Fixed a bug where `uri.parse` on the JavaScript target would parse the start
   of a relative reference as a scheme.
+- Fixed a bug where `uri.merge` would drop the trailing `/` from the resolved
+  path.
 
 ## v1.0.5 - 2026-08-06
 
