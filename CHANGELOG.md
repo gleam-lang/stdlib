@@ -10,6 +10,8 @@
   improved on the Erlang target.
 - The performance of the `inspect` function from the `string` module for floats
   has been improved on the Erlang target.
+- Fixed a bug where `uri.merge` would drop the trailing `/` from the resolved
+  path.
 
 ## v1.0.5 - 2026-08-06
 

@@ -865,3 +865,39 @@ pub fn merge15_test() {
   let assert Ok(b) = uri.parse("")
   assert uri.merge(a, b) == uri.parse("http://example.com/weebl/bob?query")
 }
+
+pub fn merge16_test() {
+  let assert Ok(a) = uri.parse("http://example.com/weebl/")
+  let assert Ok(b) = uri.parse("foo/")
+  assert uri.merge(a, b) == uri.parse("http://example.com/weebl/foo/")
+}
+
+pub fn merge17_test() {
+  let assert Ok(a) = uri.parse("http://example.com/weebl/bob")
+  let assert Ok(b) = uri.parse(".")
+  assert uri.merge(a, b) == uri.parse("http://example.com/weebl/")
+}
+
+pub fn merge18_test() {
+  let assert Ok(a) = uri.parse("http://example.com/weebl/bob")
+  let assert Ok(b) = uri.parse("..")
+  assert uri.merge(a, b) == uri.parse("http://example.com/")
+}
+
+pub fn merge19_test() {
+  let assert Ok(a) = uri.parse("http://example.com/weebl/bob")
+  let assert Ok(b) = uri.parse("baz/.")
+  assert uri.merge(a, b) == uri.parse("http://example.com/weebl/baz/")
+}
+
+pub fn merge20_test() {
+  let assert Ok(a) = uri.parse("http://example.com/weebl/bob")
+  let assert Ok(b) = uri.parse("baz/..")
+  assert uri.merge(a, b) == uri.parse("http://example.com/weebl/")
+}
+
+pub fn merge21_test() {
+  let assert Ok(a) = uri.parse("http://google.com/weebl")
+  let assert Ok(b) = uri.parse("//example.com")
+  assert uri.merge(a, b) == uri.parse("http://example.com")
+}

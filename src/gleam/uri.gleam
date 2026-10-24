@@ -593,11 +593,18 @@ pub fn percent_decode(value: String) -> Result(String, Nil)
 /// ```
 ///
 pub fn path_segments(path: String) -> List(String) {
-  remove_dot_segments(string.split(path, "/"))
+  path
+  |> string.split("/")
+  |> remove_dot_segments()
+  |> list.filter(fn(segment) { segment != "" })
 }
 
 fn remove_dot_segments(input: List(String)) -> List(String) {
-  remove_dot_segments_loop(input, [])
+  case input {
+    // Splitting the empty path gives `[""]`, which must not resolve to "/".
+    [""] -> []
+    _ -> remove_dot_segments_loop(input, [])
+  }
 }
 
 fn remove_dot_segments_loop(
@@ -613,6 +620,12 @@ fn remove_dot_segments_loop(
         "..", [] -> []
         "..", [_, ..accumulator] -> accumulator
         segment, accumulator -> [segment, ..accumulator]
+      }
+      // A path ending in an empty, "." or ".." segment resolves to one ending
+      // in a separator. https://www.rfc-editor.org/rfc/rfc3986#section-5.2.4
+      let accumulator = case rest, segment {
+        [], "" | [], "." | [], ".." -> ["", ..accumulator]
+        _, _ -> accumulator
       }
       remove_dot_segments_loop(rest, accumulator)
     }
