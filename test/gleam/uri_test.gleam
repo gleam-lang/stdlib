@@ -940,3 +940,21 @@ pub fn merge21_test() {
   let assert Ok(b) = uri.parse("//example.com")
   assert uri.merge(a, b) == uri.parse("http://example.com")
 }
+
+pub fn merge_relative_with_scheme_test() {
+  let assert Ok(a) = uri.parse("http://example.com")
+  let assert Ok(b) = uri.parse("mailto:foo@bar.com")
+  assert uri.merge(a, b) == uri.parse("mailto:foo@bar.com")
+}
+
+pub fn merge_relative_with_scheme_removes_dot_segments_test() {
+  let assert Ok(a) = uri.parse("http://example.com")
+  let assert Ok(b) = uri.parse("urn:a/./b/../c")
+  assert uri.merge(a, b) == uri.parse("urn:a/c")
+}
+
+pub fn merge_relative_with_scheme_and_rooted_path_test() {
+  let assert Ok(a) = uri.parse("http://example.com")
+  let assert Ok(b) = uri.parse("urn:/a/./b/../c")
+  assert uri.merge(a, b) == uri.parse("urn:/a/c")
+}
