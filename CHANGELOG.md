@@ -10,6 +10,8 @@
   improved on the Erlang target.
 - The performance of the `inspect` function from the `string` module for floats
   has been improved on the Erlang target.
+- Fixed a bug where a relative path with a scheme in `uri.merge` would be merged
+  with the base url
 
 ## v1.0.5 - 2026-08-06
 
