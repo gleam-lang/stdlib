@@ -717,19 +717,19 @@ pub fn merge(base: Uri, relative: Uri) -> Result(Uri, Nil) {
   case base {
     Uri(scheme: Some(_), host: Some(_), ..) ->
       case relative {
+        // if relative has a scheme it's not merged with base
+        Uri(scheme: Some(_), ..) -> {
+          let resolved = Uri(..relative, path: normalize_path(relative.path))
+          Ok(resolved)
+        }
         Uri(host: Some(_), ..) -> {
-          let path =
-            relative.path
-            |> string.split("/")
-            |> remove_dot_segments()
-            |> join_segments()
           let resolved =
             Uri(
               option.or(relative.scheme, base.scheme),
               None,
               relative.host,
               option.or(relative.port, base.port),
-              path,
+              normalize_path(relative.path),
               relative.query,
               relative.fragment,
             )
@@ -768,6 +768,14 @@ pub fn merge(base: Uri, relative: Uri) -> Result(Uri, Nil) {
         }
       }
     _ -> Error(Nil)
+  }
+}
+
+fn normalize_path(path: String) -> String {
+  let segments = path |> string.split("/") |> remove_dot_segments()
+  case string.starts_with(path, "/") {
+    True -> join_segments(segments)
+    False -> string.join(segments, "/")
   }
 }
 
