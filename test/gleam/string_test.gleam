@@ -221,21 +221,21 @@ pub fn trim_end_test() {
 
 pub fn trim_whole_string_start_test() {
   let s =
-    "\u{0020}\u{0009}\u{000A}\u{000B}\u{000C}\u{000D}\u{0085}\u{2028}\u{2029}"
+    "\u{0020}\u{0009}\u{000A}\u{000B}\u{000C}\u{000D}\u{0085}\u{200E}\u{200F}\u{2028}\u{2029}"
 
   assert string.trim_start(s) == ""
 }
 
 pub fn trim_whole_string_end_test() {
   let s =
-    "\u{0020}\u{0009}\u{000A}\u{000B}\u{000C}\u{000D}\u{0085}\u{2028}\u{2029}"
+    "\u{0020}\u{0009}\u{000A}\u{000B}\u{000C}\u{000D}\u{0085}\u{200E}\u{200F}\u{2028}\u{2029}"
 
   assert string.trim_end(s) == ""
 }
 
 pub fn trim_whole_string_test() {
   let s =
-    "\u{0020}\u{0009}\u{000A}\u{000B}\u{000C}\u{000D}\u{0085}\u{2028}\u{2029}"
+    "\u{0020}\u{0009}\u{000A}\u{000B}\u{000C}\u{000D}\u{0085}\u{200E}\u{200F}\u{2028}\u{2029}"
 
   assert string.trim(s) == ""
 }
@@ -315,6 +315,14 @@ pub fn trim_thin_space_test() {
 
 pub fn trim_hair_space_test() {
   assert string.trim("hats\u{200A}") == "hats\u{200A}"
+}
+
+pub fn trim_left_to_right_mark_test() {
+  assert string.trim("hats\u{200E}") == "hats"
+}
+
+pub fn trim_right_to_left_mark_test() {
+  assert string.trim("hats\u{200F}") == "hats"
 }
 
 pub fn trim_line_separator_test() {

@@ -10,6 +10,9 @@
   improved on the Erlang target.
 - The performance of the `inspect` function from the `string` module for floats
   has been improved on the Erlang target.
+- Fixed a bug where `string.trim`, `string.trim_start` and `string.trim_end` on
+  the JavaScript target would not remove the left-to-right mark (U+200E) and
+  the right-to-left mark (U+200F).
 
 ## v1.0.5 - 2026-08-06
 
