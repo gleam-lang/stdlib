@@ -273,6 +273,8 @@ const unicode_whitespaces = [
   "\u000C", // Form feed
   "\u000D", // Carriage return
   "\u0085", // Next line
+  "\u200E", // Left-to-right mark
+  "\u200F", // Right-to-left mark
   "\u2028", // Line separator
   "\u2029", // Paragraph separator
 ].join("");
