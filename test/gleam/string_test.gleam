@@ -92,9 +92,31 @@ pub fn split_once_empty_test() {
   assert string.split_once("", ",") == Error(Nil)
 }
 
+// An empty pattern matches the zero-width gap at the start.
+pub fn split_once_empty_pattern_test() {
+  assert string.split_once("Gleam", "") == Ok(#("", "Gleam"))
+}
+
+pub fn split_once_empty_pattern_empty_string_test() {
+  assert string.split_once("", "") == Ok(#("", ""))
+}
+
 pub fn replace_test() {
   assert string.replace("Gleam,Erlang,Elixir", ",", "++")
     == "Gleam++Erlang++Elixir"
+}
+
+// An empty pattern matches the gap around every grapheme.
+pub fn replace_empty_pattern_test() {
+  assert string.replace("ab", "", "-") == "-a-b-"
+}
+
+pub fn replace_empty_pattern_empty_string_test() {
+  assert string.replace("", "", "-") == "-"
+}
+
+pub fn replace_empty_pattern_grapheme_test() {
+  assert string.replace("👩‍👩‍👦‍👦x", "", "-") == "-👩‍👩‍👦‍👦-x-"
 }
 
 pub fn append_test() {
