@@ -584,7 +584,7 @@ pub fn percent_decode(value: String) -> Result(String, Nil)
 pub fn path_segments(path: String) -> List(String) {
   path
   |> string.split("/")
-  |> remove_dot_segments()
+  |> remove_dot_segments
   |> list.filter(fn(segment) { segment != "" })
 }
 
