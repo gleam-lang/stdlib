@@ -320,6 +320,10 @@ export function crash(message) {
   throw new globalThis.Error(message);
 }
 
+export function bit_array_is_utf8(bit_array) {
+  return Result$isOk(bit_array_to_string(bit_array));
+}
+
 export function bit_array_to_string(bit_array) {
   // If the bit array isn't a whole number of bytes then return an error
   if (bit_array.bitSize % 8 !== 0) {
