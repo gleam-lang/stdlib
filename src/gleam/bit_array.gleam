@@ -70,27 +70,87 @@ pub fn slice(
 ) -> Result(BitArray, Nil)
 
 /// Tests to see whether a bit array is valid UTF-8.
-///
+@external(javascript, "../gleam_stdlib.mjs", "bit_array_is_utf8")
 pub fn is_utf8(bits: BitArray) -> Bool {
-  is_utf8_loop(bits)
-}
-
-@target(erlang)
-fn is_utf8_loop(bits: BitArray) -> Bool {
   case bits {
-    <<>> -> True
-    <<_:utf8, rest:bytes>> -> is_utf8_loop(rest)
+    // Try to consume a BOM mark before trying to consume ascii characters.
+    <<0xEF, 0xBB, 0xBF, rest:bytes>> -> is_utf8_loop(rest)
+    <<rest:bytes>> -> is_utf8_loop(rest)
     _ -> False
   }
 }
 
-@target(javascript)
 fn is_utf8_loop(bits: BitArray) -> Bool {
-  case to_string(bits) {
-    Ok(_) -> True
-    Error(_) -> False
+  case bits {
+    <<>> -> True
+    // Here, we consume bytes in 56-bit slices, the biggest number that fits
+    // into an Erlang 60-bit small integer. This allows us to test 7 bytes
+    // at once, considerably speeding up this loop comparing to checking each
+    // byte one-by-one.
+    <<word:size(56), rest:bits>> ->
+      // The 0x80..80 pattern represents 0b10000000 repeated, or 128 in decimal.
+      // Since all ASCII characters only use the lower 7 bits of a byte, this
+      // allows us to check all 7 characters at once to determine if all of
+      // them are ASCII characters.
+      // If they are, we continue in this fast loop; if one of those characters
+      // has its high bit set, that means it's a non-ascii character and we fall
+      // back to the slower codepoint-based loop.
+      case int.bitwise_and(word, 0x80808080808080) {
+        0 -> is_utf8_loop(rest)
+        _ -> is_utf8_codepoints(bits)
+      }
+    // These branches handle the end of the string.
+    <<word:size(48)>> ->
+      int.bitwise_and(word, 0x808080808080) == 0 || is_utf8_codepoints(bits)
+    <<word:size(40)>> ->
+      int.bitwise_and(word, 0x8080808080) == 0 || is_utf8_codepoints(bits)
+    <<word:size(32)>> ->
+      int.bitwise_and(word, 0x80808080) == 0 || is_utf8_codepoints(bits)
+    <<word:size(24)>> ->
+      int.bitwise_and(word, 0x808080) == 0 || is_utf8_codepoints(bits)
+    <<word:size(16)>> ->
+      int.bitwise_and(word, 0x8080) == 0 || is_utf8_codepoints(bits)
+    <<byte>> -> int.bitwise_and(byte, 0x80) == 0
+    _ -> is_utf8_codepoints(bits)
   }
 }
+
+fn is_utf8_codepoints(bits: BitArray) -> Bool {
+  case bits {
+    <<>> -> True
+    // We are definitely at a non-ASCII codepoint now. If we found one and we
+    // have at least 4KiB of text left, we call the natively implemented
+    // function to check this entire chunk at once.
+    // We have to look-ahead for one codepoint though, since we don't know where
+    // the next codepoint boundary is in the utf8 binary data. We try up to 4
+    // times, as longer UTF8 encodings are always invalid.
+    <<_:utf8, chunk:bytes-size(4096), _:utf8, rest:bits>>
+    | <<_:utf8, chunk:bytes-size(4095), _:utf8, rest:bits>>
+    | <<_:utf8, chunk:bytes-size(4094), _:utf8, rest:bits>>
+    | <<_:utf8, chunk:bytes-size(4093), _:utf8, rest:bits>> ->
+      erlang_is_utf8(chunk) && is_utf8_loop(rest)
+
+    // The most we get called with is 7 codepoints. If those are all valid,
+    // we swap to the native check, as it's likely that we will encounter
+    // more non-ascii codepoints in this string.
+    <<_:utf8, _:utf8, _:utf8, _:utf8, _:utf8, _:utf8, _:utf8>> -> True
+    <<_:utf8, _:utf8, _:utf8, _:utf8, _:utf8, _:utf8, _:utf8, rest:bits>> ->
+      erlang_is_utf8(rest)
+
+    // Handle all cases where we have less than 7 codepoints left.
+    <<_:utf8, _:utf8, _:utf8, _:utf8, _:utf8, _:utf8>>
+    | <<_:utf8, _:utf8, _:utf8, _:utf8, _:utf8>>
+    | <<_:utf8, _:utf8, _:utf8, _:utf8>>
+    | <<_:utf8, _:utf8, _:utf8>>
+    | <<_:utf8, _:utf8>>
+    | <<_:utf8>> -> True
+
+    _ -> False
+  }
+}
+
+@external(erlang, "gleam_stdlib", "is_utf8")
+fn erlang_is_utf8(bits: BitArray) -> Bool
 
 /// Converts a bit array to a string.
 ///
