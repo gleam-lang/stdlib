@@ -70,8 +70,12 @@ pub fn slice(
 ) -> Result(BitArray, Nil)
 
 /// Tests to see whether a bit array is valid UTF-8.
-@external(javascript, "../gleam_stdlib.mjs", "bit_array_is_utf8")
 pub fn is_utf8(bits: BitArray) -> Bool {
+  is_utf8_implementation(bits)
+}
+
+@target(erlang)
+fn is_utf8_implementation(bits: BitArray) -> Bool {
   case bits {
     // Try to consume a BOM mark before trying to consume ascii characters.
     <<0xEF, 0xBB, 0xBF, rest:bytes>> -> is_utf8_loop(rest)
@@ -80,6 +84,16 @@ pub fn is_utf8(bits: BitArray) -> Bool {
   }
 }
 
+@target(javascript)
+fn is_utf8_implementation(bits: BitArray) {
+  case to_string(bits) {
+    Ok(_) -> True
+    Error(_) -> False
+  }
+}
+
+// @target to avoid a warning on the JS target.
+@target(erlang)
 fn is_utf8_loop(bits: BitArray) -> Bool {
   case bits {
     <<>> -> True
@@ -115,6 +129,8 @@ fn is_utf8_loop(bits: BitArray) -> Bool {
   }
 }
 
+// Target to avoid a warning on the JS target.
+@target(erlang)
 fn is_utf8_codepoints(bits: BitArray) -> Bool {
   case bits {
     <<>> -> True
@@ -149,6 +165,8 @@ fn is_utf8_codepoints(bits: BitArray) -> Bool {
   }
 }
 
+// Target to avoid a warning on the JS target.
+@target(erlang)
 @external(erlang, "gleam_stdlib", "is_utf8")
 fn erlang_is_utf8(bits: BitArray) -> Bool
 
