@@ -128,7 +128,7 @@ string_pop_grapheme(String) ->
 string_pop_codeunit(<<Cp/integer, Rest/binary>>) -> {Cp, Rest};
 string_pop_codeunit(Binary) -> {0, Binary}.
 
-is_utf8(BitArray)when is_binary(BitArray) ->
+is_utf8(BitArray) when is_binary(BitArray) ->
     is_binary(unicode:characters_to_binary(BitArray, utf8));
 is_utf8(_) ->
     false.
