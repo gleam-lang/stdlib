@@ -20,6 +20,8 @@
 - Fixed a bug where `uri.merge` would incorrectly merge a relative URI
   containing a scheme with the base. The behaviour now follows RFC 3986
   and treats the relative URI as absolute.
+- The performance of `bit_array.is_utf8`, `bit_array.to_string`, and
+  `decode.string` have been improved on the Erlang target.
 
 ## v1.0.5 - 2026-08-06
 
