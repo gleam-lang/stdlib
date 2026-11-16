@@ -97,11 +97,11 @@ fn is_utf8_implementation(bits: BitArray) {
 fn is_utf8_loop(bits: BitArray) -> Bool {
   case bits {
     <<>> -> True
-    // Here, we consume bytes in 56-bit slices, the biggest number that fits
-    // into an Erlang 60-bit small integer. This allows us to test 7 bytes
+    // Here, we consume bytes in 4 56-bit slices, the biggest number that fits
+    // into an Erlang 60-bit small integer. This allows us to test 28 bytes
     // at once, considerably speeding up this loop comparing to checking each
     // byte one-by-one.
-    <<word:size(56), rest:bits>> ->
+    <<a:size(56), b:size(56), c:size(56), d:size(56), rest:bits>> ->
       // The 0x80..80 pattern represents 0b10000000 repeated, or 128 in decimal.
       // Since all ASCII characters only use the lower 7 bits of a byte, this
       // allows us to check all 7 characters at once to determine if all of
@@ -109,6 +109,17 @@ fn is_utf8_loop(bits: BitArray) -> Bool {
       // If they are, we continue in this fast loop; if one of those characters
       // has its high bit set, that means it's a non-ascii character and we fall
       // back to the slower codepoint-based loop.
+      case
+        int.bitwise_and(a, 0x80808080808080) == 0
+        && int.bitwise_and(b, 0x80808080808080) == 0
+        && int.bitwise_and(c, 0x80808080808080) == 0
+        && int.bitwise_and(d, 0x80808080808080) == 0
+      {
+        True -> is_utf8_loop(rest)
+        False -> is_utf8_codepoints(bits)
+      }
+    // The same thing but for 7 byte chunks instead of 28 byte chunks.
+    <<word:size(56), rest:bits>> ->
       case int.bitwise_and(word, 0x80808080808080) {
         0 -> is_utf8_loop(rest)
         _ -> is_utf8_codepoints(bits)
@@ -134,7 +145,7 @@ fn is_utf8_loop(bits: BitArray) -> Bool {
 fn is_utf8_codepoints(bits: BitArray) -> Bool {
   case bits {
     <<>> -> True
-    // We are definitely at a non-ASCII codepoint now. If we found one and we
+    // The input contains non-ASCII bytes. If we match a codepoint and
     // have at least 4KiB of text left, we call the natively implemented
     // function to check this entire chunk at once.
     // We have to look-ahead for one codepoint though, since we don't know where
