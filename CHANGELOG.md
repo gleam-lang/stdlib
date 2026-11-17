@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v1.1.0 - 2026-11-17
 
 - Fixed a bug where `string.inspect` on the JavaScript target would incorrectly
   print numbers like `1.0e300`.
