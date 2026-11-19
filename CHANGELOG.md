@@ -1,5 +1,20 @@
 # Changelog
 
+## Unreleased
+
+- The performance of the `gleam/dynamic/decode` module has been improved.
+- Fixed a bug where decoding a dictionary of mapped keys would sometimes not
+  keep the last value of 2 keys decoded to the same value.
+- Fixed a bug where decoding a missing field from a `Map` or `WeakMap` would be
+  treated the same as decoding an existing field with the value `undefined`.
+- Fixed a bug where trying to decode a `WeakMap` with `decode.dict` would
+  crash instead of returning an error.
+- Fixed a bug where `decode.dict` would not decode entries if their raw JavaScript
+  keys where considered equal by Gleams structural equality algorithm.
+- Fixed a bug where cyclic keys or symbol keys would crash `decode.dict`.
+- Fixed a bug where `decode.optional_field` would report an error at the wrong
+  path if a value could not be indexed.
+
 ## v1.1.0 - 2026-11-17
 
 - Fixed a bug where `string.inspect` on the JavaScript target would incorrectly
