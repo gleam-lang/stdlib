@@ -521,13 +521,15 @@ decode_list(List, Decode, PrefixErrors) when is_list(List) ->
 decode_list(Unexpected, _, _) ->
     {[], gleam@dynamic@decode:decode_error(<<"List"/utf8>>, Unexpected)}.
 
-decode_list([], _, _, _, Acc) ->
-    {lists:reverse(Acc), []};
+decode_list(Tuple, Decode, PrefixErrors, Index, Acc) when is_tuple(Tuple) ->
+    decode_list(tuple_to_list(Tuple), Decode, PrefixErrors, Index, Acc);
 decode_list([X | Xs], Decode, PrefixErrors, Index, Acc) ->
     case Decode(X) of
         {Out, []} -> decode_list(Xs, Decode, PrefixErrors, Index + 1, [Out | Acc]);
         {_, Errors} -> {[], PrefixErrors(integer_to_binary(Index), Errors)}
-    end.
+    end;
+decode_list(_, _, _, _, Acc) ->
+    {lists:reverse(Acc), []}.
 
 decode_dict(#{} = Data, DecodeEntry) ->
     maps:fold(fun
