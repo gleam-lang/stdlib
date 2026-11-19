@@ -10,9 +10,8 @@
     println/1, print_error/1, println_error/1, inspect/1, float_to_string/1,
     int_from_base_string/2, utf_codepoint_list_to_string/1, contains_string/2,
     crop_string/2, base16_encode/1, base16_decode/1, string_replace/3, slice/3,
-    bit_array_to_int_and_size/1, index/2, list/5,
-    dict/1, int/1, float/1, bit_array/1, is_null/1, string_remove_prefix/2,
-    string_remove_suffix/2, is_utf8/1
+    bit_array_to_int_and_size/1, key_to_string/1, lookup_field/2, decode_list/3, decode_dict/2,
+    is_null/1, string_remove_prefix/2, string_remove_suffix/2, is_utf8/1
 ]).
 
 %% Taken from OTP's uri_string module
@@ -469,70 +468,77 @@ slice(String, Index, Length) ->
         X when is_list(X) -> unicode:characters_to_binary(X)
     end.
 
-index([X | _], 0) ->
-    {ok, {some, X}};
-index([_, X | _], 1) ->
-    {ok, {some, X}};
-index([_, _, X | _], 2) ->
-    {ok, {some, X}};
-index([_, _, _, X | _], 3) ->
-    {ok, {some, X}};
-index([_, _, _, _, X | _], 4) ->
-    {ok, {some, X}};
-index([_, _, _, _, _, X | _], 5) ->
-    {ok, {some, X}};
-index([_, _, _, _, _, _, X | _], 6) ->
-    {ok, {some, X}};
-index([_, _, _, _, _, _, _, X | _], 7) ->
-    {ok, {some, X}};
-index(Tuple, Index) when is_tuple(Tuple) andalso is_integer(Index) ->
-    {ok, try
-        {some, element(Index + 1, Tuple)}
-    catch _:_ ->
-        none
-    end};
-index(Map, Key) when is_map(Map) ->
-    {ok, try
-        {some, maps:get(Key, Map)}
-    catch _:_ ->
-        none
-    end};
-index(_, Index) when is_integer(Index) ->
-    {error, <<"Indexable">>};
-index(_, _) ->
-    {error, <<"Dict">>}.
-
-list(T, A, B, C, D) when is_tuple(T) ->
-    list(tuple_to_list(T), A, B, C, D);
-list([], _, _, _, Acc) ->
-    {lists:reverse(Acc), []};
-list([X | Xs], Decode, PushPath, Index, Acc) ->
-    {Out, Errors} = Decode(X),
-    case Errors of
-        [] -> list(Xs, Decode, PushPath, Index + 1, [Out | Acc]);
-        _ -> PushPath({[], Errors}, integer_to_binary(Index))
+key_to_string(Data) when is_integer(Data) ->
+    integer_to_binary(Data);
+key_to_string(Data) when is_float(Data) ->
+    float_to_binary(Data, [short]);
+key_to_string(Data) when is_binary(Data) ->
+    case gleam@bit_array:is_utf8(Data) of
+        true -> Data;
+        false -> classified_key(Data)
     end;
-list(Unexpected, _, _, _, []) ->
-    Found = gleam@dynamic:classify(Unexpected),
-    Error = {decode_error, <<"List"/utf8>>, Found, []},
-    {[], [Error]};
-list(_, _, _, _, Acc) ->
-    {lists:reverse(Acc), []}.
+key_to_string(Data) ->
+    classified_key(Data).
 
-dict(#{} = Data) -> {ok, Data};
-dict(_) -> {error, nil}.
+classified_key(Data) ->
+    <<"<", (gleam@dynamic:classify(Data))/binary, ">">>.
 
-int(I) when is_integer(I) -> {ok, I};
-int(_) -> {error, 0}.
+lookup_field([X | _], 0) ->
+    {found, X};
+lookup_field([_, X | _], 1) ->
+    {found, X};
+lookup_field([_, _, X | _], 2) ->
+    {found, X};
+lookup_field([_, _, _, X | _], 3) ->
+    {found, X};
+lookup_field([_, _, _, _, X | _], 4) ->
+    {found, X};
+lookup_field([_, _, _, _, _, X | _], 5) ->
+    {found, X};
+lookup_field([_, _, _, _, _, _, X | _], 6) ->
+    {found, X};
+lookup_field([_, _, _, _, _, _, _, X | _], 7) ->
+    {found, X};
+lookup_field(Tuple, Index) when is_tuple(Tuple), is_integer(Index), Index >= 0, Index < tuple_size(Tuple) ->
+    {found, element(Index + 1, Tuple)};
+lookup_field(Tuple, Index) when is_tuple(Tuple), is_integer(Index) ->
+    missing;
+lookup_field(Map, Key) when is_map(Map) ->
+    case Map of
+        #{Key := Child} -> {found, Child};
+        #{} -> missing
+    end;
+lookup_field(_, Index) when is_integer(Index) ->
+    invalid_index;
+lookup_field(_, _) ->
+    invalid_key.
 
-float(F) when is_float(F) -> {ok, F};
-float(_) -> {error, 0.0}.
 
-bit_array(B) when is_bitstring(B) -> {ok, B};
-bit_array(_) -> {error, <<>>}.
+decode_list(Tuple, Decode, PrefixErrors) when is_tuple(Tuple) ->
+    decode_list(tuple_to_list(Tuple), Decode, PrefixErrors, 0, []);
+decode_list(List, Decode, PrefixErrors) when is_list(List) ->
+    decode_list(List, Decode, PrefixErrors, 0, []);
+decode_list(Unexpected, _, _) ->
+    {[], gleam@dynamic@decode:decode_error(<<"List"/utf8>>, Unexpected)}.
 
-is_null(X) ->
-    X =:= undefined orelse X =:= null orelse X =:= nil.
+decode_list([], _, _, _, Acc) ->
+    {lists:reverse(Acc), []};
+decode_list([X | Xs], Decode, PrefixErrors, Index, Acc) ->
+    case Decode(X) of
+        {Out, []} -> decode_list(Xs, Decode, PrefixErrors, Index + 1, [Out | Acc]);
+        {_, Errors} -> {[], PrefixErrors(integer_to_binary(Index), Errors)}
+    end.
+
+decode_dict(#{} = Data, DecodeEntry) ->
+    maps:fold(fun
+        (Key, Value, {Acc, []}) -> DecodeEntry(Acc, Key, Value);
+        (_, _, Failure) -> Failure
+    end, {#{}, []}, Data);
+decode_dict(Data, _) ->
+    {#{}, gleam@dynamic@decode:decode_error(<<"Dict"/utf8>>, Data)}.
+
+is_null(X) when X =:= undefined; X =:= null; X =:= nil -> true;
+is_null(_) -> false.
 
 string_remove_prefix(String, Prefix) ->
     PrefixSize = byte_size(Prefix),
