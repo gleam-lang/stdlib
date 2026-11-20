@@ -48,23 +48,23 @@ iodata_append(Iodata, String) -> [Iodata, String].
 
 identity(X) -> X.
 
-classify_dynamic(nil) -> <<"Nil">>;
-classify_dynamic(null) -> <<"Nil">>;
-classify_dynamic(undefined) -> <<"Nil">>;
-classify_dynamic(X) when is_boolean(X) -> <<"Bool">>;
-classify_dynamic(X) when is_atom(X) -> <<"Atom">>;
-classify_dynamic(X) when is_binary(X) -> <<"String">>;
-classify_dynamic(X) when is_bitstring(X) -> <<"BitArray">>;
-classify_dynamic(X) when is_integer(X) -> <<"Int">>;
-classify_dynamic(X) when is_float(X) -> <<"Float">>;
-classify_dynamic(X) when is_list(X) -> <<"List">>;
-classify_dynamic(X) when is_map(X) -> <<"Dict">>;
-classify_dynamic(X) when is_tuple(X) -> <<"Array">>;
-classify_dynamic(X) when is_reference(X) -> <<"Reference">>;
-classify_dynamic(X) when is_pid(X) -> <<"Pid">>;
-classify_dynamic(X) when is_port(X) -> <<"Port">>;
-classify_dynamic(X) when is_function(X) -> <<"Function">>;
-classify_dynamic(_) -> <<"Unknown">>.
+classify_dynamic(nil) -> ~"Nil";
+classify_dynamic(null) -> ~"Nil";
+classify_dynamic(undefined) -> ~"Nil";
+classify_dynamic(X) when is_boolean(X) -> ~"Bool";
+classify_dynamic(X) when is_atom(X) -> ~"Atom";
+classify_dynamic(X) when is_binary(X) -> ~"String";
+classify_dynamic(X) when is_bitstring(X) -> ~"BitArray";
+classify_dynamic(X) when is_integer(X) -> ~"Int";
+classify_dynamic(X) when is_float(X) -> ~"Float";
+classify_dynamic(X) when is_list(X) -> ~"List";
+classify_dynamic(X) when is_map(X) -> ~"Dict";
+classify_dynamic(X) when is_tuple(X) -> ~"Array";
+classify_dynamic(X) when is_reference(X) -> ~"Reference";
+classify_dynamic(X) when is_pid(X) -> ~"Pid";
+classify_dynamic(X) when is_port(X) -> ~"Port";
+classify_dynamic(X) when is_function(X) -> ~"Function";
+classify_dynamic(_) -> ~"Unknown".
 
 tuple_get(_tup, Index) when Index < 0 -> {error, nil};
 tuple_get(Data, Index) when Index >= tuple_size(Data) -> {error, nil};
@@ -519,7 +519,7 @@ decode_list(Tuple, Decode, PrefixErrors) when is_tuple(Tuple) ->
 decode_list(List, Decode, PrefixErrors) when is_list(List) ->
     decode_list(List, Decode, PrefixErrors, 0, []);
 decode_list(Unexpected, _, _) ->
-    {[], gleam@dynamic@decode:decode_error(<<"List"/utf8>>, Unexpected)}.
+    {[], gleam@dynamic@decode:decode_error(~"List", Unexpected)}.
 
 decode_list(Tuple, Decode, PrefixErrors, Index, Acc) when is_tuple(Tuple) ->
     decode_list(tuple_to_list(Tuple), Decode, PrefixErrors, Index, Acc);
@@ -537,9 +537,11 @@ decode_dict(#{} = Data, DecodeEntry) ->
         (_, _, Failure) -> Failure
     end, {#{}, []}, Data);
 decode_dict(Data, _) ->
-    {#{}, gleam@dynamic@decode:decode_error(<<"Dict"/utf8>>, Data)}.
+    {#{}, gleam@dynamic@decode:decode_error(~"Dict", Data)}.
 
-is_null(X) when X =:= undefined; X =:= null; X =:= nil -> true;
+is_null(nil) -> true;
+is_null(null) -> true;
+is_null(undefined) -> true;
 is_null(_) -> false.
 
 string_remove_prefix(String, Prefix) ->
