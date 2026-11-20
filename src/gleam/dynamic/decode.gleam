@@ -277,10 +277,8 @@
 import gleam/bit_array
 import gleam/dict.{type Dict}
 import gleam/dynamic
-import gleam/float
-import gleam/int
 import gleam/list
-import gleam/option.{type Option, None, Some}
+import gleam/option.{type Option}
 
 /// `Dynamic` data is data that we don't know the type of yet, originating from
 /// external untyped systems.
@@ -304,6 +302,20 @@ pub type DecodeError {
 ///
 pub opaque type Decoder(t) {
   Decoder(function: fn(Dynamic) -> #(t, List(DecodeError)))
+}
+
+/// Lookup represents the possible outcomes of trying to look up (roll credits)
+/// a key or an index on an arbitrary value of unknown type.
+@internal
+pub type Lookup {
+  /// The value could be indexed and the key could be found
+  Found(value: Dynamic)
+  /// The value could be indexed, but the key was missing
+  Missing
+  /// The value cannot be indexed with an integer
+  InvalidIndex
+  /// the value cannot be indexed with some other type of key
+  InvalidKey
 }
 
 /// The same as [`field`](#field), except taking a path to the value rather
@@ -341,15 +353,27 @@ pub fn subfield(
   field_decoder: Decoder(t),
   next: fn(t) -> Decoder(final),
 ) -> Decoder(final) {
+  let inner_decoder = at(field_path, field_decoder)
+
+  // You might be wondering why we always unwrap the Decoder values outside of
+  // the closure, and only work with the raw functions internally.
+  // There's 2 reasons for that:
+  //
+  // - A decoder might be reused and called multiple times in a row - for
+  //   example, when decoding lists. Accessing a field has a tiny but measurable
+  //   cost, and this means that we only need to pay that cost once!
+  // - In addition, The amount of data the closure... closes over gets smaller,
+  //   which makes allocating that new Decoder just a tiny bit faster and more
+  //   memory efficient, even if the Decoder is only used once.
+  // - It is slightly faster to access the field than to destructure on the
+  //   Erlang target, as it skips testing the record tag.
+  let decode_inner = inner_decoder.function
+
   Decoder(function: fn(data) {
-    let #(out, errors1) =
-      index(field_path, [], field_decoder.function, data, fn(data, position) {
-        let #(default, _) = field_decoder.function(data)
-        #(default, [DecodeError("Field", "Nothing", [])])
-        |> push_path(list.reverse(position))
-      })
-    let #(out, errors2) = next(out).function(data)
-    #(out, list.append(errors1, errors2))
+    case decode_inner(data) {
+      #(value, []) -> next(value).function(data)
+      #(value, errors) -> continue_with_errors(next, data, value, errors)
+    }
   })
 }
 
@@ -408,72 +432,56 @@ pub fn run(data: Dynamic, decoder: Decoder(t)) -> Result(t, List(DecodeError)) {
 /// ```
 ///
 pub fn at(path: List(segment), inner: Decoder(a)) -> Decoder(a) {
-  Decoder(function: fn(data) {
-    index(path, [], inner.function, data, fn(data, position) {
-      let #(default, _) = inner.function(data)
-      #(default, [DecodeError("Field", "Nothing", [])])
-      |> push_path(list.reverse(position))
-    })
-  })
-}
+  let decode_inner = inner.function
 
-fn index(
-  path: List(a),
-  position: List(a),
-  inner: fn(Dynamic) -> #(b, List(DecodeError)),
-  data: Dynamic,
-  handle_miss: fn(Dynamic, List(a)) -> #(b, List(DecodeError)),
-) -> #(b, List(DecodeError)) {
-  case path {
-    [] -> {
-      data
-      |> inner
-      |> push_path(list.reverse(position))
-    }
+  let step = fn(inner, key) {
+    fn(data) {
+      case lookup_field(data, key) {
+        Found(child) ->
+          case inner(child) {
+            #(_, []) as result -> result
+            #(value, errors) -> #(value, prefix_errors(key, errors))
+          }
 
-    [key, ..path] -> {
-      case bare_index(data, key) {
-        Ok(Some(data)) -> {
-          index(path, [key, ..position], inner, data, handle_miss)
-        }
-        Ok(None) -> {
-          handle_miss(data, [key, ..position])
-        }
-        Error(kind) -> {
-          let #(default, _) = inner(data)
-          #(default, [DecodeError(kind, dynamic.classify(data), [])])
-          |> push_path(list.reverse(position))
-        }
+        Missing -> #(decode_inner(data).0, missing_field_error(key))
+        InvalidIndex -> #(decode_inner(data).0, decode_error("Indexable", data))
+        InvalidKey -> #(decode_inner(data).0, decode_error("Dict", data))
       }
     }
   }
+
+  Decoder(function: list.fold_right(over: path, from: decode_inner, with: step))
 }
 
-@external(erlang, "gleam_stdlib", "index")
-@external(javascript, "../../gleam_stdlib.mjs", "index")
-fn bare_index(data: Dynamic, key: anything) -> Result(Option(Dynamic), String)
+@external(erlang, "gleam_stdlib", "lookup_field")
+@external(javascript, "../../gleam_stdlib.mjs", "lookup_field")
+fn lookup_field(data: Dynamic, name: name) -> Lookup
 
-fn push_path(
-  layer: #(t, List(DecodeError)),
-  path: List(key),
+@external(erlang, "gleam_stdlib", "key_to_string")
+@external(javascript, "../../gleam_stdlib.mjs", "key_to_string")
+fn key_to_string(key: anything) -> String
+
+fn prefix_errors(
+  key: anything,
+  errors: List(DecodeError),
+) -> List(DecodeError) {
+  let key = key_to_string(key)
+  list.map(errors, fn(error) { DecodeError(..error, path: [key, ..error.path]) })
+}
+
+fn missing_field_error(key: anything) -> List(DecodeError) {
+  [DecodeError("Field", "Nothing", [key_to_string(key)])]
+}
+
+fn continue_with_errors(
+  next: fn(a) -> Decoder(t),
+  data: Dynamic,
+  field: a,
+  earlier: List(DecodeError),
 ) -> #(t, List(DecodeError)) {
-  let path = list.map(path, fn(key) { key |> cast |> path_segment_to_string })
-  let errors =
-    list.map(layer.1, fn(error) {
-      DecodeError(..error, path: list.append(path, error.path))
-    })
-  #(layer.0, errors)
-}
-
-fn path_segment_to_string(key: Dynamic) -> String {
-  let decoder =
-    one_of(string, [
-      int |> map(int.to_string),
-      float |> map(float.to_string),
-    ])
-  case run(key, decoder) {
-    Ok(key) -> key
-    Error(_) -> "<" <> dynamic.classify(key) <> ">"
+  case next(field).function(data) {
+    #(value, []) -> #(value, earlier)
+    #(value, later) -> #(value, list.append(earlier, later))
   }
 }
 
@@ -549,7 +557,28 @@ pub fn field(
   field_decoder: Decoder(t),
   next: fn(t) -> Decoder(final),
 ) -> Decoder(final) {
-  subfield([field_name], field_decoder, next)
+  let decode_field = field_decoder.function
+
+  Decoder(function: fn(data) {
+    let lookup_error = fn(errors) {
+      let #(placeholder, _) = decode_field(data)
+      continue_with_errors(next, data, placeholder, errors)
+    }
+
+    case lookup_field(data, field_name) {
+      Found(child) ->
+        case decode_field(child) {
+          #(value, []) -> next(value).function(data)
+          #(value, errors) -> {
+            let errors = prefix_errors(field_name, errors)
+            continue_with_errors(next, data, value, errors)
+          }
+        }
+      Missing -> lookup_error(missing_field_error(field_name))
+      InvalidIndex -> lookup_error(decode_error("Indexable", data))
+      InvalidKey -> lookup_error(decode_error("Dict", data))
+    }
+  })
 }
 
 /// Run a decoder on a field of a `Dynamic` value, decoding the value if it is
@@ -584,18 +613,13 @@ pub fn optional_field(
   field_decoder: Decoder(t),
   next: fn(t) -> Decoder(final),
 ) -> Decoder(final) {
+  let decode_field = field_decoder.function
+
   Decoder(function: fn(data) {
-    let #(out, errors1) =
-      case bare_index(data, key) {
-        Ok(Some(data)) -> field_decoder.function(data)
-        Ok(None) -> #(default, [])
-        Error(kind) -> #(default, [
-          DecodeError(kind, dynamic.classify(data), []),
-        ])
-      }
-      |> push_path([key])
-    let #(out, errors2) = next(out).function(data)
-    #(out, list.append(errors1, errors2))
+    case optional_step(data, key, default, decode_field) {
+      #(value, []) -> next(value).function(data)
+      #(value, errors) -> continue_with_errors(next, data, value, errors)
+    }
   })
 }
 
@@ -624,21 +648,29 @@ pub fn optionally_at(
   default: a,
   inner: Decoder(a),
 ) -> Decoder(a) {
-  Decoder(function: fn(data) {
-    index(path, [], inner.function, data, fn(_, _) { #(default, []) })
-  })
+  let function =
+    list.fold_right(over: path, from: inner.function, with: fn(inner, key) {
+      fn(data) { optional_step(data, key, default, inner) }
+    })
+
+  Decoder(function:)
 }
 
-fn run_dynamic_function(
+fn optional_step(
   data: Dynamic,
-  name: String,
-  f: fn(Dynamic) -> Result(t, t),
-) -> #(t, List(DecodeError)) {
-  case f(data) {
-    Ok(data) -> #(data, [])
-    Error(placeholder) -> #(placeholder, [
-      DecodeError(name, dynamic.classify(data), []),
-    ])
+  key: key,
+  default: a,
+  inner: fn(Dynamic) -> #(a, List(DecodeError)),
+) -> #(a, List(DecodeError)) {
+  case lookup_field(data, key) {
+    Found(child) ->
+      case inner(child) {
+        #(_, []) as result -> result
+        #(value, errors) -> #(value, prefix_errors(key, errors))
+      }
+    Missing -> #(default, [])
+    InvalidIndex -> #(default, decode_error("Indexable", data))
+    InvalidKey -> #(default, decode_error("Dict", data))
   }
 }
 
@@ -654,19 +686,15 @@ fn run_dynamic_function(
 pub const string: Decoder(String) = Decoder(decode_string)
 
 fn decode_string(data: Dynamic) -> #(String, List(DecodeError)) {
-  run_dynamic_function(data, "String", dynamic_string)
+  case is_string(data) {
+    True -> #(unsafe_cast_from_dynamic(data), [])
+    False -> #("", decode_error("String", data))
+  }
 }
 
-@external(javascript, "../../gleam_stdlib.mjs", "string")
-fn dynamic_string(from data: Dynamic) -> Result(String, String) {
-  case dynamic_bit_array(data) {
-    Ok(data) ->
-      case bit_array.to_string(data) {
-        Ok(string) -> Ok(string)
-        Error(_) -> Error("")
-      }
-    Error(_) -> Error("")
-  }
+@external(javascript, "../../gleam_stdlib.mjs", "is_string")
+fn is_string(data: Dynamic) -> Bool {
+  is_bit_array(data) && bit_array.is_utf8(unsafe_cast_from_dynamic(data))
 }
 
 /// A decoder that decodes `Bool` values.
@@ -681,15 +709,15 @@ fn dynamic_string(from data: Dynamic) -> Result(String, String) {
 pub const bool: Decoder(Bool) = Decoder(decode_bool)
 
 fn decode_bool(data: Dynamic) -> #(Bool, List(DecodeError)) {
-  case cast(True) == data {
-    True -> #(True, [])
-    False ->
-      case cast(False) == data {
-        True -> #(False, [])
-        False -> #(False, decode_error("Bool", data))
-      }
+  case is_bool(data) {
+    True -> #(unsafe_cast_from_dynamic(data), [])
+    False -> #(False, decode_error("Bool", data))
   }
 }
+
+@external(erlang, "erlang", "is_boolean")
+@external(javascript, "../../gleam_stdlib.mjs", "is_bool")
+fn is_bool(data: Dynamic) -> Bool
 
 /// A decoder that decodes `Int` values.
 ///
@@ -710,12 +738,15 @@ fn decode_bool(data: Dynamic) -> #(Bool, List(DecodeError)) {
 pub const int: Decoder(Int) = Decoder(decode_int)
 
 fn decode_int(data: Dynamic) -> #(Int, List(DecodeError)) {
-  run_dynamic_function(data, "Int", dynamic_int)
+  case is_int(data) {
+    True -> #(unsafe_cast_from_dynamic(data), [])
+    False -> #(0, decode_error("Int", data))
+  }
 }
 
-@external(erlang, "gleam_stdlib", "int")
-@external(javascript, "../../gleam_stdlib.mjs", "int")
-fn dynamic_int(data: Dynamic) -> Result(Int, Int)
+@external(erlang, "erlang", "is_integer")
+@external(javascript, "../../gleam_stdlib.mjs", "is_int")
+fn is_int(data: Dynamic) -> Bool
 
 /// A decoder that decodes `Float` values.
 ///
@@ -736,12 +767,15 @@ fn dynamic_int(data: Dynamic) -> Result(Int, Int)
 pub const float: Decoder(Float) = Decoder(decode_float)
 
 fn decode_float(data: Dynamic) -> #(Float, List(DecodeError)) {
-  run_dynamic_function(data, "Float", dynamic_float)
+  case is_float(data) {
+    True -> #(unsafe_cast_from_dynamic(data), [])
+    False -> #(0.0, decode_error("Float", data))
+  }
 }
 
-@external(erlang, "gleam_stdlib", "float")
-@external(javascript, "../../gleam_stdlib.mjs", "float")
-fn dynamic_float(data: Dynamic) -> Result(Float, Float)
+@external(erlang, "erlang", "is_float")
+@external(javascript, "../../gleam_stdlib.mjs", "is_float")
+fn is_float(data: Dynamic) -> Bool
 
 /// A decoder that decodes `Dynamic` values. This decoder never returns an error.
 ///
@@ -769,13 +803,16 @@ fn decode_dynamic(data: Dynamic) -> #(Dynamic, List(DecodeError)) {
 ///
 pub const bit_array: Decoder(BitArray) = Decoder(decode_bit_array)
 
+@external(javascript, "../../gleam_stdlib.mjs", "decode_bit_array")
 fn decode_bit_array(data: Dynamic) -> #(BitArray, List(DecodeError)) {
-  run_dynamic_function(data, "BitArray", dynamic_bit_array)
+  case is_bit_array(data) {
+    True -> #(unsafe_cast_from_dynamic(data), [])
+    False -> #(<<>>, decode_error("BitArray", data))
+  }
 }
 
-@external(erlang, "gleam_stdlib", "bit_array")
-@external(javascript, "../../gleam_stdlib.mjs", "bit_array")
-fn dynamic_bit_array(data: Dynamic) -> Result(BitArray, BitArray)
+@external(erlang, "erlang", "is_bitstring")
+fn is_bit_array(data: Dynamic) -> Bool
 
 /// A decoder that decodes lists where all elements are decoded with a given
 /// decoder.
@@ -792,20 +829,19 @@ fn dynamic_bit_array(data: Dynamic) -> Result(BitArray, BitArray)
 /// ```
 ///
 pub fn list(of inner: Decoder(a)) -> Decoder(List(a)) {
-  Decoder(fn(data) {
-    decode_list(data, inner.function, fn(p, k) { push_path(p, [k]) }, 0, [])
+  let decode_element = inner.function
+  Decoder(function: fn(data) {
+    decode_list(data, decode_element, prefix_errors)
   })
 }
 
-@external(erlang, "gleam_stdlib", "list")
-@external(javascript, "../../gleam_stdlib.mjs", "list")
+@external(erlang, "gleam_stdlib", "decode_list")
+@external(javascript, "../../gleam_stdlib.mjs", "decode_list")
 fn decode_list(
   data: Dynamic,
-  item: fn(Dynamic) -> #(t, List(DecodeError)),
-  push_path: fn(#(t, List(DecodeError)), key) -> #(t, List(DecodeError)),
-  index: Int,
-  acc: List(t),
-) -> #(List(t), List(DecodeError))
+  inner: fn(Dynamic) -> #(a, List(DecodeError)),
+  prefix_errors: fn(String, List(DecodeError)) -> List(DecodeError),
+) -> #(List(a), List(DecodeError))
 
 /// A decoder that decodes dicts where all keys and values are decoded with
 /// given decoders.
@@ -827,51 +863,30 @@ pub fn dict(
   key: Decoder(key),
   value: Decoder(value),
 ) -> Decoder(Dict(key, value)) {
-  Decoder(fn(data) {
-    case decode_dict(data) {
-      Error(_) -> #(dict.new(), decode_error("Dict", data))
-      Ok(dict) ->
-        dict.fold(dict, #(dict.new(), []), fn(a, k, v) {
-          // If there are any errors from previous key-value pairs then we
-          // don't need to run the decoders, instead return the existing acc.
-          case a.1 {
-            [] -> fold_dict(a, k, v, key.function, value.function)
-            [_, ..] -> a
-          }
-        })
+  let decode_key = key.function
+  let decode_value = value.function
+
+  let decode_entry = fn(acc: Dict(key, value), key: Dynamic, value: Dynamic) {
+    case decode_key(key) {
+      #(decoded_key, []) ->
+        case decode_value(value) {
+          #(value, []) -> #(dict.insert(acc, decoded_key, value), [])
+          #(_, errors) -> #(dict.new(), prefix_errors(key, errors))
+        }
+
+      #(_, errors) -> #(dict.new(), prefix_errors("keys", errors))
     }
-  })
-}
-
-fn fold_dict(
-  acc: #(Dict(k, v), List(DecodeError)),
-  key: Dynamic,
-  value: Dynamic,
-  key_decoder: fn(Dynamic) -> #(k, List(DecodeError)),
-  value_decoder: fn(Dynamic) -> #(v, List(DecodeError)),
-) -> #(Dict(k, v), List(DecodeError)) {
-  // First we decode the key.
-  case key_decoder(key) {
-    #(key_decoded, []) ->
-      // Then we decode the value.
-      case value_decoder(value) {
-        #(value, []) -> {
-          // It worked! Insert the new key-value pair so we can move onto the next.
-          let dict = dict.insert(acc.0, key_decoded, value)
-          #(dict, acc.1)
-        }
-        #(_, errors) -> {
-          let key_identifier = path_segment_to_string(key)
-          push_path(#(dict.new(), errors), [key_identifier])
-        }
-      }
-    #(_, errors) -> push_path(#(dict.new(), errors), ["keys"])
   }
+
+  Decoder(function: decode_dict(_, decode_entry))
 }
 
-@external(erlang, "gleam_stdlib", "dict")
-@external(javascript, "../../gleam_stdlib.mjs", "dict")
-fn decode_dict(data: Dynamic) -> Result(Dict(Dynamic, Dynamic), Nil)
+@external(erlang, "gleam_stdlib", "decode_dict")
+@external(javascript, "../../gleam_stdlib.mjs", "decode_dict")
+fn decode_dict(
+  data: Dynamic,
+  decode: fn(Dict(k, v), Dynamic, Dynamic) -> #(Dict(k, v), List(DecodeError)),
+) -> #(Dict(k, v), List(DecodeError))
 
 /// A decoder that decodes nullable values of a type decoded by with a given
 /// decoder.
@@ -893,11 +908,12 @@ fn decode_dict(data: Dynamic) -> Result(Dict(Dynamic, Dynamic), Nil)
 /// ```
 ///
 pub fn optional(inner: Decoder(a)) -> Decoder(Option(a)) {
+  let decode_value = inner.function
   Decoder(function: fn(data) {
     case is_null(data) {
       True -> #(option.None, [])
       False -> {
-        let #(data, errors) = inner.function(data)
+        let #(data, errors) = decode_value(data)
         #(option.Some(data), errors)
       }
     }
@@ -1087,9 +1103,7 @@ pub fn new_primitive_decoder(
   Decoder(function: fn(d) {
     case decoding_function(d) {
       Ok(t) -> #(t, [])
-      Error(placeholder) -> #(placeholder, [
-        DecodeError(name, dynamic.classify(d), []),
-      ])
+      Error(placeholder) -> #(placeholder, decode_error(name, d))
     }
   })
 }
@@ -1124,10 +1138,18 @@ pub fn recursive(inner: fn() -> Decoder(a)) -> Decoder(a) {
   })
 }
 
-@external(erlang, "gleam_stdlib", "identity")
-@external(javascript, "../../gleam_stdlib.mjs", "identity")
-fn cast(a: anything) -> Dynamic
-
 @external(erlang, "gleam_stdlib", "is_null")
 @external(javascript, "../../gleam_stdlib.mjs", "is_null")
 fn is_null(a: Dynamic) -> Bool
+
+/// We use a local identity function here and refer to itself with @external to
+/// erase it's type. This causes the Gleam compiler to emit a local call instead
+/// of a remote function call, which causes the JIT to completely eliminate it.
+@external(erlang, "gleam/dynamic/decode", "identity")
+@external(javascript, "./decode.mjs", "identity")
+fn unsafe_cast_from_dynamic(data: Dynamic) -> anything
+
+@internal
+pub fn identity(value: anything) -> anything {
+  value
+}

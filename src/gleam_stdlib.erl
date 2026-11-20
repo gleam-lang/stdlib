@@ -10,9 +10,8 @@
     println/1, print_error/1, println_error/1, inspect/1, float_to_string/1,
     int_from_base_string/2, utf_codepoint_list_to_string/1, contains_string/2,
     crop_string/2, base16_encode/1, base16_decode/1, string_replace/3, slice/3,
-    bit_array_to_int_and_size/1, index/2, list/5,
-    dict/1, int/1, float/1, bit_array/1, is_null/1, string_remove_prefix/2,
-    string_remove_suffix/2, is_utf8/1
+    bit_array_to_int_and_size/1, key_to_string/1, lookup_field/2, decode_list/3, decode_dict/2,
+    is_null/1, string_remove_prefix/2, string_remove_suffix/2, is_utf8/1
 ]).
 
 %% Taken from OTP's uri_string module
@@ -49,23 +48,23 @@ iodata_append(Iodata, String) -> [Iodata, String].
 
 identity(X) -> X.
 
-classify_dynamic(nil) -> <<"Nil">>;
-classify_dynamic(null) -> <<"Nil">>;
-classify_dynamic(undefined) -> <<"Nil">>;
-classify_dynamic(X) when is_boolean(X) -> <<"Bool">>;
-classify_dynamic(X) when is_atom(X) -> <<"Atom">>;
-classify_dynamic(X) when is_binary(X) -> <<"String">>;
-classify_dynamic(X) when is_bitstring(X) -> <<"BitArray">>;
-classify_dynamic(X) when is_integer(X) -> <<"Int">>;
-classify_dynamic(X) when is_float(X) -> <<"Float">>;
-classify_dynamic(X) when is_list(X) -> <<"List">>;
-classify_dynamic(X) when is_map(X) -> <<"Dict">>;
-classify_dynamic(X) when is_tuple(X) -> <<"Array">>;
-classify_dynamic(X) when is_reference(X) -> <<"Reference">>;
-classify_dynamic(X) when is_pid(X) -> <<"Pid">>;
-classify_dynamic(X) when is_port(X) -> <<"Port">>;
-classify_dynamic(X) when is_function(X) -> <<"Function">>;
-classify_dynamic(_) -> <<"Unknown">>.
+classify_dynamic(nil) -> ~"Nil";
+classify_dynamic(null) -> ~"Nil";
+classify_dynamic(undefined) -> ~"Nil";
+classify_dynamic(X) when is_boolean(X) -> ~"Bool";
+classify_dynamic(X) when is_atom(X) -> ~"Atom";
+classify_dynamic(X) when is_binary(X) -> ~"String";
+classify_dynamic(X) when is_bitstring(X) -> ~"BitArray";
+classify_dynamic(X) when is_integer(X) -> ~"Int";
+classify_dynamic(X) when is_float(X) -> ~"Float";
+classify_dynamic(X) when is_list(X) -> ~"List";
+classify_dynamic(X) when is_map(X) -> ~"Dict";
+classify_dynamic(X) when is_tuple(X) -> ~"Array";
+classify_dynamic(X) when is_reference(X) -> ~"Reference";
+classify_dynamic(X) when is_pid(X) -> ~"Pid";
+classify_dynamic(X) when is_port(X) -> ~"Port";
+classify_dynamic(X) when is_function(X) -> ~"Function";
+classify_dynamic(_) -> ~"Unknown".
 
 tuple_get(_tup, Index) when Index < 0 -> {error, nil};
 tuple_get(Data, Index) when Index >= tuple_size(Data) -> {error, nil};
@@ -469,70 +468,88 @@ slice(String, Index, Length) ->
         X when is_list(X) -> unicode:characters_to_binary(X)
     end.
 
-index([X | _], 0) ->
-    {ok, {some, X}};
-index([_, X | _], 1) ->
-    {ok, {some, X}};
-index([_, _, X | _], 2) ->
-    {ok, {some, X}};
-index([_, _, _, X | _], 3) ->
-    {ok, {some, X}};
-index([_, _, _, _, X | _], 4) ->
-    {ok, {some, X}};
-index([_, _, _, _, _, X | _], 5) ->
-    {ok, {some, X}};
-index([_, _, _, _, _, _, X | _], 6) ->
-    {ok, {some, X}};
-index([_, _, _, _, _, _, _, X | _], 7) ->
-    {ok, {some, X}};
-index(Tuple, Index) when is_tuple(Tuple) andalso is_integer(Index) ->
-    {ok, try
-        {some, element(Index + 1, Tuple)}
-    catch _:_ ->
-        none
-    end};
-index(Map, Key) when is_map(Map) ->
-    {ok, try
-        {some, maps:get(Key, Map)}
-    catch _:_ ->
-        none
-    end};
-index(_, Index) when is_integer(Index) ->
-    {error, <<"Indexable">>};
-index(_, _) ->
-    {error, <<"Dict">>}.
-
-list(T, A, B, C, D) when is_tuple(T) ->
-    list(tuple_to_list(T), A, B, C, D);
-list([], _, _, _, Acc) ->
-    {lists:reverse(Acc), []};
-list([X | Xs], Decode, PushPath, Index, Acc) ->
-    {Out, Errors} = Decode(X),
-    case Errors of
-        [] -> list(Xs, Decode, PushPath, Index + 1, [Out | Acc]);
-        _ -> PushPath({[], Errors}, integer_to_binary(Index))
+key_to_string(Data) when is_integer(Data) ->
+    integer_to_binary(Data);
+key_to_string(Data) when is_float(Data) ->
+    float_to_binary(Data, [short]);
+key_to_string(Data) when is_binary(Data) ->
+    case gleam@bit_array:is_utf8(Data) of
+        true -> Data;
+        false -> classified_key(Data)
     end;
-list(Unexpected, _, _, _, []) ->
-    Found = gleam@dynamic:classify(Unexpected),
-    Error = {decode_error, <<"List"/utf8>>, Found, []},
-    {[], [Error]};
-list(_, _, _, _, Acc) ->
+key_to_string(Data) ->
+    classified_key(Data).
+
+classified_key(Data) ->
+    <<"<", (gleam@dynamic:classify(Data))/binary, ">">>.
+
+lookup_field([X | _], 0) ->
+    {found, X};
+lookup_field([_, X | _], 1) ->
+    {found, X};
+lookup_field([_, _, X | _], 2) ->
+    {found, X};
+lookup_field([_, _, _, X | _], 3) ->
+    {found, X};
+lookup_field([_, _, _, _, X | _], 4) ->
+    {found, X};
+lookup_field([_, _, _, _, _, X | _], 5) ->
+    {found, X};
+lookup_field([_, _, _, _, _, _, X | _], 6) ->
+    {found, X};
+lookup_field([_, _, _, _, _, _, _, X | _], 7) ->
+    {found, X};
+lookup_field(Tuple, Index) when is_tuple(Tuple), is_integer(Index), Index >= 0, Index < tuple_size(Tuple) ->
+    {found, element(Index + 1, Tuple)};
+lookup_field(Tuple, Index) when is_tuple(Tuple), is_integer(Index) ->
+    missing;
+lookup_field(Map, Key) when is_map(Map) ->
+    case Map of
+        #{Key := Child} -> {found, Child};
+        #{} -> missing
+    end;
+lookup_field(_, Index) when is_integer(Index) ->
+    invalid_index;
+lookup_field(_, _) ->
+    invalid_key.
+
+
+decode_list(Tuple, Decode, PrefixErrors) when is_tuple(Tuple) ->
+    decode_list(tuple_to_list(Tuple), Decode, PrefixErrors, 0, []);
+decode_list(List, Decode, PrefixErrors) when is_list(List) ->
+    decode_list(List, Decode, PrefixErrors, 0, []);
+decode_list(Unexpected, _, _) ->
+    {[], gleam@dynamic@decode:decode_error(~"List", Unexpected)}.
+
+decode_list(Tuple, Decode, PrefixErrors, Index, Acc) when is_tuple(Tuple) ->
+    decode_list(tuple_to_list(Tuple), Decode, PrefixErrors, Index, Acc);
+decode_list([X | Xs], Decode, PrefixErrors, Index, Acc) ->
+    case Decode(X) of
+        {Out, []} -> decode_list(Xs, Decode, PrefixErrors, Index + 1, [Out | Acc]);
+        {_, Errors} -> {[], PrefixErrors(integer_to_binary(Index), Errors)}
+    end;
+decode_list(_, _, _, _, Acc) ->
     {lists:reverse(Acc), []}.
 
-dict(#{} = Data) -> {ok, Data};
-dict(_) -> {error, nil}.
+decode_dict(#{} = Data, DecodeEntry) ->
+    decode_dict(maps:iterator(Data), DecodeEntry, #{});
+decode_dict(Data, _) ->
+    {#{}, gleam@dynamic@decode:decode_error(~"Dict", Data)}.
 
-int(I) when is_integer(I) -> {ok, I};
-int(_) -> {error, 0}.
+decode_dict(Iterator, DecodeEntry, Acc) ->
+    case maps:next(Iterator) of
+        none -> {Acc, []};
+        {Key, Value, Rest} ->
+            case DecodeEntry(Acc, Key, Value) of
+                {NextAcc, []} -> decode_dict(Rest, DecodeEntry, NextAcc);
+                Failure -> Failure
+            end
+    end.
 
-float(F) when is_float(F) -> {ok, F};
-float(_) -> {error, 0.0}.
-
-bit_array(B) when is_bitstring(B) -> {ok, B};
-bit_array(_) -> {error, <<>>}.
-
-is_null(X) ->
-    X =:= undefined orelse X =:= null orelse X =:= nil.
+is_null(nil) -> true;
+is_null(null) -> true;
+is_null(undefined) -> true;
+is_null(_) -> false.
 
 string_remove_prefix(String, Prefix) ->
     PrefixSize = byte_size(Prefix),

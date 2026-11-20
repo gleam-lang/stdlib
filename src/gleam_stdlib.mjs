@@ -1,10 +1,14 @@
 import {
   BitArray,
+  BitArray$BitArray,
   List$Empty,
   List$NonEmpty,
+  List$NonEmpty$first,
+  List$NonEmpty$rest,
   List$isEmpty,
   List$isNonEmpty,
   Result$Ok,
+  Result$Ok$0,
   Result$Error,
   Result$isOk,
   Result$isError,
@@ -18,12 +22,18 @@ import { Some, None } from "./gleam/option.mjs";
 import { pad_to_bytes as bits_pad_to_bytes } from "./gleam/bit_array.mjs";
 import {
   default as Dict,
+  make as dict_new,
   fold as dict_fold,
   get as dict_get,
-  from as dict_from_iterable,
 } from "./dict.mjs";
 import { classify } from "./gleam/dynamic.mjs";
-import { DecodeError$DecodeError } from "./gleam/dynamic/decode.mjs";
+import {
+  decode_error,
+  Lookup$Found,
+  Lookup$Missing,
+  Lookup$InvalidIndex,
+  Lookup$InvalidKey,
+} from "./gleam/dynamic/decode.mjs";
 
 const Nil = undefined;
 
@@ -983,107 +993,116 @@ export function list_to_array(list) {
   return array;
 }
 
-export function index(data, key) {
+export function key_to_string(key) {
+  if (typeof key === "string") return key;
+  if (Number.isInteger(key)) return "" + key;
+  if (typeof key === "number") return float_to_string(key);
+  return "<" + classify(key) + ">";
+}
+
+export function lookup_field(data, key) {
   // Dictionaries and dictionary-like objects can be indexed
   if (data instanceof Dict) {
     const result = dict_get(data, key);
-    return Result$Ok(result.isOk() ? new Some(result[0]) : new None());
+    return Result$isOk(result) ? Lookup$Found(Result$Ok$0(result)) : Lookup$Missing();
   }
 
   if (data instanceof WeakMap || data instanceof Map) {
-    const token = {};
-    const entry = data.get(key, token);
-    if (entry === token) return Result$Ok(new None());
-    return Result$Ok(new Some(entry));
+    return data.has(key) ? Lookup$Found(data.get(key)) : Lookup$Missing();
   }
 
   const key_is_int = Number.isInteger(key);
 
   // Only elements 0-7 of lists can be indexed, negative indices are not allowed
   if (key_is_int && key >= 0 && key < 8 && isList(data)) {
-    let i = 0;
-    for (const value of data) {
-      if (i === key) return Result$Ok(new Some(value));
-      i++;
+    for (let i = 0; List$isNonEmpty(data); i++, data = List$NonEmpty$rest(data)) {
+      if (i === key) return Lookup$Found(List$NonEmpty$first(data));
     }
-    return Result$Error("Indexable");
+    return Lookup$InvalidIndex();
   }
 
   // Arrays and objects can be indexed
-  if (
-    (key_is_int && Array.isArray(data)) ||
-    (data && typeof data === "object") ||
-    (data && Object.getPrototypeOf(data) === Object.prototype)
-  ) {
-    if (key in data) return Result$Ok(new Some(data[key]));
-    return Result$Ok(new None());
+  if (data !== null && typeof data === "object") {
+    return key in data ? Lookup$Found(data[key]) : Lookup$Missing();
   }
 
-  return Result$Error(key_is_int ? "Indexable" : "Dict");
+  return key_is_int ? Lookup$InvalidIndex() : Lookup$InvalidKey();
 }
 
-export function list(data, decode, pushPath, index, emptyList) {
-  if (!(isList(data) || Array.isArray(data))) {
-    const error = DecodeError$DecodeError("List", classify(data), emptyList);
-    return [emptyList, arrayToList([error])];
-  }
-
-  const decoded = [];
-
-  for (const element of data) {
-    const layer = decode(element);
-    const [out, errors] = layer;
-
-    if (List$isNonEmpty(errors)) {
-      const [_, errors] = pushPath(layer, index.toString());
-      return [emptyList, errors];
-    }
-    decoded.push(out);
-    index++;
-  }
-
-  return [arrayToList(decoded), emptyList];
+export function decode_list(data, decode, prefix_errors) {
+  if (Array.isArray(data)) return decode_array(data, decode, prefix_errors);
+  if (isList(data)) return decode_gleam_list(data, decode, prefix_errors);
+  return [List$Empty(), decode_error("List", data)];
 }
 
-export function dict(data) {
-  if (data instanceof Dict) {
-    return Result$Ok(data);
+function decode_array(data, decode, prefix_errors) {
+  let converted = new Array(data.length);
+  for (let index = 0; index < data.length; ++index) {
+    const [element, errors] = decode(data[index]);
+    if (List$isNonEmpty(errors)) return [List$Empty(), prefix_errors(String(index), errors)];
+    converted[index] = element;
   }
-  if (data instanceof Map || data instanceof WeakMap) {
-    return Result$Ok(dict_from_iterable(data));
-  }
-  if (data == null) {
-    return Result$Error("Dict");
-  }
-  if (typeof data !== "object") {
-    return Result$Error("Dict");
-  }
-  const proto = Object.getPrototypeOf(data);
-  if (proto === Object.prototype || proto === null) {
-    return Result$Ok(dict_from_iterable(Object.entries(data)));
-  }
-  return Result$Error("Dict");
+  return [arrayToList(converted), List$Empty()];
 }
 
-export function bit_array(data) {
-  if (data instanceof BitArray) return Result$Ok(data);
-  if (data instanceof Uint8Array) return Result$Ok(new BitArray(data));
-  return Result$Error(new BitArray(new Uint8Array()));
+function decode_gleam_list(data, decode, prefix_errors) {
+  let converted = [];
+  for (let index = 0; List$isNonEmpty(data); ++index, data = List$NonEmpty$rest(data)) {
+    const [element, errors] = decode(List$NonEmpty$first(data));
+    if (List$isNonEmpty(errors)) return [List$Empty(), prefix_errors(String(index), errors)];
+    converted.push(element);
+  }
+  return [arrayToList(converted), List$Empty()];
 }
 
-export function float(data) {
-  if (typeof data === "number") return Result$Ok(data);
-  return Result$Error(0.0);
+export function decode_dict(data, decode) {
+  if (data instanceof Dict) return decode_gleam_dict(data, decode);
+  if (data instanceof Map) return decode_entries(data.entries(), decode);
+  if (data !== null && typeof data === "object"
+    && (Object.getPrototypeOf(data) === Object.prototype || Object.getPrototypeOf(data) === null)) {
+    return decode_entries(Object.entries(data), decode);
+  }
+  return [dict_new(), decode_error("Dict", data)];
 }
 
-export function int(data) {
-  if (Number.isInteger(data)) return Result$Ok(data);
-  return Result$Error(0);
+function decode_gleam_dict(data, decode) {
+  return dict_fold(data, [dict_new(), List$Empty()], (state, key, value) => {
+    const [acc, errors] = state;
+    if (List$isNonEmpty(errors)) return state;
+    return decode(acc, key, value);
+  });
 }
 
-export function string(data) {
-  if (typeof data === "string") return Result$Ok(data);
-  return Result$Error("");
+function decode_entries(data, decode) {
+  let state = dict_new();
+  for (const [key, value] of data) {
+    const result = decode(state, key, value);
+    if (List$isNonEmpty(result[1])) return result;
+    state = result[0];
+  }
+  return [state, List$Empty()];
+}
+
+export function decode_bit_array(data) {
+  if (data instanceof BitArray) return [data, List$Empty()];
+  if (data instanceof Uint8Array) return [BitArray$BitArray(data), List$Empty()];
+  return [BitArray$BitArray(new Uint8Array()), decode_error("BitArray", data)];
+}
+
+export function is_float(data) {
+  return typeof data === "number";
+}
+
+export function is_bool(data) {
+  return typeof data === "boolean";
+}
+
+export function is_int(data) {
+  return Number.isInteger(data);
+}
+
+export function is_string(data) {
+  return typeof data === "string";
 }
 
 export function is_null(data) {
