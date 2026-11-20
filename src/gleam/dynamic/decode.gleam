@@ -304,14 +304,17 @@ pub opaque type Decoder(t) {
   Decoder(function: fn(Dynamic) -> #(t, List(DecodeError)))
 }
 
-/// Field lookups can result in 4 outcomes: The value indexed and the key could
-/// be found, the value could be indexed but the field was missing, or the value
-/// could not be indexed either by an integer or some other key.
+/// Lookup represents the possible outcomes of trying to look up (roll credits)
+/// a key or an index on an arbitrary value of unknown type.
 @internal
 pub type Lookup {
+  /// The value could be indexed and the key could be found
   Found(value: Dynamic)
+  /// The value could be indexed, but the key was missing
   Missing
+  /// The value cannot be indexed with an integer
   InvalidIndex
+  /// the value cannot be indexed with some other type of key
   InvalidKey
 }
 
@@ -350,9 +353,24 @@ pub fn subfield(
   field_decoder: Decoder(t),
   next: fn(t) -> Decoder(final),
 ) -> Decoder(final) {
-  let Decoder(function: inner) = at(field_path, field_decoder)
+  let inner_decoder = at(field_path, field_decoder)
+
+  // You might be wondering why we always unwrap the Decoder values outside of
+  // the closure, and only work with the raw functions internally.
+  // There's 2 reasons for that:
+  //
+  // - A decoder might be reused and called multiple times in a row - for
+  //   example, when decoding lists. Accessing a field has a tiny but measurable
+  //   cost, and this means that we only need to pay that cost once!
+  // - In addition, The amount of data the closure... closes over gets smaller,
+  //   which makes allocating that new Decoder just a tiny bit faster and more
+  //   memory efficient, even if the Decoder is only used once.
+  // - It is slightly faster to access the field than to destructure on the
+  //   Erlang target, as it skips testing the record tag.
+  let decode_inner = inner_decoder.function
+
   Decoder(function: fn(data) {
-    case inner(data) {
+    case decode_inner(data) {
       #(value, []) -> next(value).function(data)
       #(value, errors) -> continue_with_errors(next, data, value, errors)
     }
@@ -543,7 +561,8 @@ pub fn field(
 
   Decoder(function: fn(data) {
     let lookup_error = fn(errors) {
-      continue_with_errors(next, data, decode_field(data).0, errors)
+      let #(placeholder, _) = decode_field(data)
+      continue_with_errors(next, data, placeholder, errors)
     }
 
     case lookup_field(data, field_name) {
@@ -668,14 +687,14 @@ pub const string: Decoder(String) = Decoder(decode_string)
 
 fn decode_string(data: Dynamic) -> #(String, List(DecodeError)) {
   case is_string(data) {
-    True -> #(cast_from_dynamic(data), [])
+    True -> #(unsafe_cast_from_dynamic(data), [])
     False -> #("", decode_error("String", data))
   }
 }
 
 @external(javascript, "../../gleam_stdlib.mjs", "is_string")
 fn is_string(data: Dynamic) -> Bool {
-  is_bit_array(data) && bit_array.is_utf8(cast_from_dynamic(data))
+  is_bit_array(data) && bit_array.is_utf8(unsafe_cast_from_dynamic(data))
 }
 
 /// A decoder that decodes `Bool` values.
@@ -691,7 +710,7 @@ pub const bool: Decoder(Bool) = Decoder(decode_bool)
 
 fn decode_bool(data: Dynamic) -> #(Bool, List(DecodeError)) {
   case is_bool(data) {
-    True -> #(cast_from_dynamic(data), [])
+    True -> #(unsafe_cast_from_dynamic(data), [])
     False -> #(False, decode_error("Bool", data))
   }
 }
@@ -720,7 +739,7 @@ pub const int: Decoder(Int) = Decoder(decode_int)
 
 fn decode_int(data: Dynamic) -> #(Int, List(DecodeError)) {
   case is_int(data) {
-    True -> #(cast_from_dynamic(data), [])
+    True -> #(unsafe_cast_from_dynamic(data), [])
     False -> #(0, decode_error("Int", data))
   }
 }
@@ -749,7 +768,7 @@ pub const float: Decoder(Float) = Decoder(decode_float)
 
 fn decode_float(data: Dynamic) -> #(Float, List(DecodeError)) {
   case is_float(data) {
-    True -> #(cast_from_dynamic(data), [])
+    True -> #(unsafe_cast_from_dynamic(data), [])
     False -> #(0.0, decode_error("Float", data))
   }
 }
@@ -787,7 +806,7 @@ pub const bit_array: Decoder(BitArray) = Decoder(decode_bit_array)
 @external(javascript, "../../gleam_stdlib.mjs", "decode_bit_array")
 fn decode_bit_array(data: Dynamic) -> #(BitArray, List(DecodeError)) {
   case is_bit_array(data) {
-    True -> #(cast_from_dynamic(data), [])
+    True -> #(unsafe_cast_from_dynamic(data), [])
     False -> #(<<>>, decode_error("BitArray", data))
   }
 }
@@ -811,7 +830,9 @@ fn is_bit_array(data: Dynamic) -> Bool
 ///
 pub fn list(of inner: Decoder(a)) -> Decoder(List(a)) {
   let decode_element = inner.function
-  Decoder(function: decode_list(_, decode_element, prefix_errors))
+  Decoder(function: fn(data) {
+    decode_list(data, decode_element, prefix_errors)
+  })
 }
 
 @external(erlang, "gleam_stdlib", "decode_list")
@@ -1123,11 +1144,10 @@ fn is_null(a: Dynamic) -> Bool
 
 /// We use a local identity function here and refer to itself with @external to
 /// erase it's type. This causes the Gleam compiler to emit a local call instead
-/// of a remote function call, which causes the JIT to completely eliminate this
-/// function call.
+/// of a remote function call, which causes the JIT to completely eliminate it.
 @external(erlang, "gleam/dynamic/decode", "identity")
 @external(javascript, "./decode.mjs", "identity")
-fn cast_from_dynamic(data: Dynamic) -> t
+fn unsafe_cast_from_dynamic(data: Dynamic) -> anything
 
 @internal
 pub fn identity(value: anything) -> anything {
