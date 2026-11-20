@@ -532,12 +532,19 @@ decode_list(_, _, _, _, Acc) ->
     {lists:reverse(Acc), []}.
 
 decode_dict(#{} = Data, DecodeEntry) ->
-    maps:fold(fun
-        (Key, Value, {Acc, []}) -> DecodeEntry(Acc, Key, Value);
-        (_, _, Failure) -> Failure
-    end, {#{}, []}, Data);
+    decode_dict(maps:iterator(Data), DecodeEntry, #{});
 decode_dict(Data, _) ->
     {#{}, gleam@dynamic@decode:decode_error(~"Dict", Data)}.
+
+decode_dict(Iterator, DecodeEntry, Acc) ->
+    case maps:next(Iterator) of
+        none -> {Acc, []};
+        {Key, Value, Rest} ->
+            case DecodeEntry(Acc, Key, Value) of
+                {NextAcc, []} -> decode_dict(Rest, DecodeEntry, NextAcc);
+                Failure -> Failure
+            end
+    end.
 
 is_null(nil) -> true;
 is_null(null) -> true;
