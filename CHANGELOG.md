@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v1.2.0 - 2026-11-21
 
 - The performance of the `gleam/dynamic/decode` module has been improved.
 - Fixed a bug where decoding a dictionary of mapped keys would sometimes not
