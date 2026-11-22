@@ -121,6 +121,35 @@ pub fn split_multi_string_test() {
     ]
 }
 
+// An empty pattern splits between every grapheme.
+pub fn split_empty_pattern_test() {
+  assert "abc"
+    |> string_tree.from_string
+    |> string_tree.split("")
+    == [
+      string_tree.from_string("a"),
+      string_tree.from_string("b"),
+      string_tree.from_string("c"),
+    ]
+}
+
+// An empty pattern substitutes around every grapheme.
+pub fn replace_empty_pattern_test() {
+  assert "ab"
+    |> string_tree.from_string
+    |> string_tree.replace(each: "", with: "-")
+    |> string_tree.to_string
+    == "-a-b-"
+}
+
+pub fn replace_empty_pattern_empty_string_test() {
+  assert ""
+    |> string_tree.from_string
+    |> string_tree.replace(each: "", with: "-")
+    |> string_tree.to_string
+    == "-"
+}
+
 pub fn is_equal_different_structure_test() {
   assert string_tree.is_equal(
     string_tree.from_string("12"),
